@@ -1,0 +1,59 @@
+name: Rebuild activities index
+
+on:
+  push:
+    paths:
+      - "data/activities/**"
+      - ".github/workflows/rebuild-activities-index.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-index:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Rebuild data/meta/activities-index.json
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p data/meta
+
+          # data/activities 配下の .json を集めて、JSON配列として書き出す
+          files=$(find data/activities -type f -name "*.json" | sort)
+
+          echo "[" > data/meta/activities-index.json
+          first=1
+          for f in $files; do
+            if [ $first -eq 1 ]; then
+              first=0
+            else
+              echo "," >> data/meta/activities-index.json
+            fi
+            echo "  \"${f}\"" >> data/meta/activities-index.json
+          done
+          echo "" >> data/meta/activities-index.json
+          echo "]" >> data/meta/activities-index.json
+
+          echo "Generated activities-index.json:"
+          cat data/meta/activities-index.json
+
+      - name: Commit and push if changed
+        shell: bash
+        run: |
+          set -euo pipefail
+          if git diff --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/meta/activities-index.json
+          git commit -m "chore: rebuild activities index"
+          git push
+``
