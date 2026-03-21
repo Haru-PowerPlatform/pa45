@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="PA45 スライド一覧 — Xで投稿した1枚スライドをカテゴリ別に整理。関数・概念をひとつずつ学べます。">
+  <title>スライド一覧（Slides）— PA45</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .filter-bar { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 20px; }
+    .f-pill {
+      font-size: 12px; padding: 5px 13px; border-radius: 20px;
+      border: 1px solid var(--c-border-md); color: var(--c-muted);
+      cursor: pointer; font-family: var(--font-mono); font-weight: 500;
+      background: var(--c-surface); transition: .15s;
+    }
+    .f-pill:hover, .f-pill.active {
+      background: var(--c-blue-bg); border-color: var(--c-blue-mid); color: var(--c-blue-text);
+    }
+    .slides-grid {
+      display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 12px;
+    }
+    .slide-card {
+      background: var(--c-surface); border-radius: var(--radius-lg);
+      overflow: hidden; box-shadow: var(--shadow-card);
+      transition: box-shadow .2s, transform .2s; display: block;
+    }
+    .slide-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
+    .slide-img {
+      height: 90px; display: flex; align-items: center;
+      justify-content: center; font-size: 11px; color: var(--c-hint); letter-spacing: .04em;
+    }
+    .slide-img.var    { background: var(--c-blue-bg); }
+    .slide-img.cond   { background: var(--c-purple-bg); }
+    .slide-img.select { background: var(--c-green-bg); }
+    .slide-img.filter { background: var(--c-amber-bg); }
+    .slide-img.ate    { background: var(--c-coral-bg); }
+    .slide-img.date   { background: var(--c-teal-bg); }
+    .slide-img.exp    { background: var(--c-amber-bg); }
+    .slide-img.pjson  { background: var(--c-purple-bg); }
+    .slide-img.dbg    { background: #f1efe8; }
+    .slide-body { padding: 10px 12px; }
+    .slide-title { font-size: 12px; font-weight: 500; line-height: 1.45; margin: 5px 0 4px; }
+    .slide-meta  { font-size: 10px; color: var(--c-hint); margin-bottom: 7px; }
+    .slide-links { display: flex; gap: 6px; flex-wrap: wrap; }
+    .slide-link {
+      font-size: 10px; color: var(--c-blue-mid);
+      border: 1px solid var(--c-border-md); border-radius: 3px;
+      padding: 1px 7px; transition: background .15s;
+    }
+    .slide-link:hover { background: var(--c-blue-bg); border-color: var(--c-blue-mid); }
+    .hidden { display: none; }
+    @media (max-width: 640px) {
+      .slides-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    }
+    @media (max-width: 380px) {
+      .slides-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="../" class="site-logo">PA45<span>Power Automate 45</span></a>
+    <nav class="header-nav">
+      <a href="../learn/">学ぶ</a>
+      <a href="../slides/" class="active">スライド</a>
+      <a href="../sessions/">参加する</a>
+      <a href="../start-here/">初めての方へ</a>
+      <a href="../achievements/">実績</a>
+      <a href="../about/">About</a>
+    </nav>
+    <a href="../sessions/" class="header-cta">次回イベントに参加する →</a>
+    <button class="hamburger" aria-label="メニュー" onclick="toggleMenu()"><span></span><span></span><span></span></button>
+  </div>
+  <nav class="mobile-nav" id="mobileNav">
+    <a href="../learn/">学ぶ（Learn）</a>
+    <a href="../slides/">スライド一覧（Slides）</a>
+    <a href="../sessions/">参加する（Sessions）</a>
+    <a href="../start-here/">初めての方へ（Start Here）</a>
+    <a href="../achievements/">活動実績（Achievements）</a>
+    <a href="../method/">PA45とは（Method）</a>
+    <a href="../about/">About</a>
+    <a href="../sessions/" style="color:#0b3e72;font-weight:600;margin-top:4px;">→ 次回イベントに参加する</a>
+  </nav>
+</header>
+
+<section class="page-hero">
+  <div class="container">
+    <span class="page-hero-eyebrow">Slides</span>
+    <h1 class="page-hero-h1">関数の概念を、1枚で整理する</h1>
+    <p class="page-hero-sub">PA45の各セッションで扱ったテーマを1枚のスライドにまとめて投稿しています。気になるカテゴリから読み始めてください。</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+
+    <!-- フィルターバー -->
+    <div class="filter-bar">
+      <button class="f-pill active" onclick="filterSlides('all', this)">すべて</button>
+      <button class="f-pill" onclick="filterSlides('var', this)">VAR</button>
+      <button class="f-pill" onclick="filterSlides('cond', this)">COND</button>
+      <button class="f-pill" onclick="filterSlides('select', this)">SELECT</button>
+      <button class="f-pill" onclick="filterSlides('filter', this)">FILTER</button>
+      <button class="f-pill" onclick="filterSlides('ate', this)">ATE</button>
+      <button class="f-pill" onclick="filterSlides('date', this)">DATE</button>
+      <button class="f-pill" onclick="filterSlides('exp', this)">EXP</button>
+      <button class="f-pill" onclick="filterSlides('pjson', this)">PJSON</button>
+      <button class="f-pill" onclick="filterSlides('dbg', this)">DBG</button>
+    </div>
+
+    <!-- スライドグリッド -->
+    <!-- ★ここにスライドを追加していきます。data-cat="カテゴリ名" を書くことでフィルターが機能します -->
+    <div class="slides-grid" id="slidesGrid">
+
+      <a href="https://x.com/あなたのアカウント" target="_blank" rel="noopener" class="slide-card" data-cat="var" id="var">
+        <div class="slide-img var">[ スライド画像 ]</div>
+        <div class="slide-body">
+          <span class="tag-code var">VAR</span>
+          <div class="slide-title">変数の初期化と設定の違い</div>
+          <div class="slide-meta">2024-04-15 · PA45 #32</div>
+          <div class="slide-links">
+            <span class="slide-link">X投稿を見る</span>
+            <span class="slide-link">VARを学ぶ</span>
+          </div>
+        </div>
+      </a>
+
+      <a href="https://x.com/あなたのアカウント" target="_blank" rel="noopener" class="slide-card" data-cat="cond" id="cond">
+        <div class="slide-img cond">[ スライド画像 ]</div>
+        <div class="slide-body">
+          <span class="tag-code cond">COND</span>
+          <div class="slide-title">空白チェックの正しい書き方</div>
+          <div class="slide-meta">2024-04-08 · PA45 #31</div>
+          <div class="slide-links">
+            <span class="slide-link">X投稿を見る</span>
+            <span class="slide-link">CONDを学ぶ</span>
+          </div>
+        </div>
+      </a>
+
+      <a href="https://x.com/あなたのアカウント" target="_blank" rel="noopener" class="slide-card" data-cat="select">
+        <div class="slide-img select">[ スライド画像 ]</div>
+        <div class="slide-body">
+          <span class="tag-code select">SELECT</span>
+          <div class="slide-title">select関数で列を絞る — 実務パターン</div>
+          <div class="slide-meta">2024-04-01 · PA45 #30</div>
+          <div class="slide-links">
+            <span class="slide-link">X投稿を見る</span>
+            <span class="slide-link">SELECTを学ぶ</span>
+          </div>
+        </div>
+      </a>
+
+      <a href="https://x.com/あなたのアカウント" target="_blank" rel="noopener" class="slide-card" data-cat="filter">
+        <div class="slide-img filter">[ スライド画像 ]</div>
+        <div class="slide-body">
+          <span class="tag-code filter">FILTER</span>
+          <div class="slide-title">filter配列 — 条件の組み合わせ方</div>
+          <div class="slide-meta">2024-03-25 · PA45 #29</div>
+          <div class="slide-links">
+            <span class="slide-link">X投稿を見る</span>
+            <span class="slide-link">FILTERを学ぶ</span>
+          </div>
+        </div>
+      </a>
+
+      <a href="https://x.com/あなたのアカウント" target="_blank" rel="noopener" class="slide-card" data-cat="ate">
+        <div class="slide-img ate">[ スライド画像 ]</div>
+        <div class="slide-body">
+          <span class="tag-code ate">ATE</span>
+          <div class="slide-title">テキスト結合の3パターン</div>
+          <div class="slide-meta">2024-03-18 · PA45 #28</div>
+          <div class="slide-links">
+            <span class="slide-link">X投稿を見る</span>
+            <span class="slide-link">ATEを学ぶ</span>
+          </div>
+        </div>
+      </a>
+
+      <a href="https://x.com/あなたのアカウント" target="_blank" rel="noopener" class="slide-card" data-cat="date">
+        <div class="slide-img date">[ スライド画像 ]</div>
+        <div class="slide-body">
+          <span class="tag-code date">DATE</span>
+          <div class="slide-title">日付フォーマットの変換パターン</div>
+          <div class="slide-meta">2024-03-11 · PA45 #27</div>
+          <div class="slide-links">
+            <span class="slide-link">X投稿を見る</span>
+            <span class="slide-link">DATEを学ぶ</span>
+          </div>
+        </div>
+      </a>
+
+    </div>
+    <!-- ★ここまでがスライドカード。新しいスライドは上のパターンをコピーして追加する -->
+
+    <div class="cta-bar">
+      <p>スライドを見て興味が出たら、次回セッションで実際に手を動かしてみませんか</p>
+      <a href="../sessions/" class="btn-small">次回セッションを確認 →</a>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <div class="footer-col-title">学ぶ</div>
+        <a href="../learn/">Learn（学習ハブ）</a>
+        <a href="../slides/">Slides（スライド一覧）</a>
+        <a href="https://example.com" target="_blank" rel="noopener">Blog（WordPress）</a>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">参加する</div>
+        <a href="../sessions/">Sessions（次回・過去回）</a>
+        <a href="../start-here/">Start Here（初参加ガイド）</a>
+        <a href="https://connpass.com" target="_blank" rel="noopener">connpass（外部）</a>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">このサイトについて</div>
+        <a href="../achievements/">Achievements（活動実績）</a>
+        <a href="../method/">PA45 Method（設計思想）</a>
+        <a href="../about/">About（問い合わせ）</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>PA45 — Power Automate 45</span>
+      <span>GitHub Pages で公開 · 静的サイト</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+function toggleMenu() { document.getElementById('mobileNav').classList.toggle('open'); }
+document.addEventListener('click', function(e) {
+  const nav = document.getElementById('mobileNav'), btn = document.querySelector('.hamburger');
+  if (nav.classList.contains('open') && !nav.contains(e.target) && !btn.contains(e.target)) nav.classList.remove('open');
+});
+
+// カテゴリフィルター
+function filterSlides(cat, btn) {
+  document.querySelectorAll('.f-pill').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('#slidesGrid .slide-card').forEach(card => {
+    if (cat === 'all' || card.dataset.cat === cat) {
+      card.classList.remove('hidden');
+    } else {
+      card.classList.add('hidden');
+    }
+  });
+}
+
+// URLハッシュでフィルター（learn/#var などからの遷移対応）
+window.addEventListener('DOMContentLoaded', function() {
+  const hash = location.hash.replace('#', '');
+  if (hash) {
+    const btn = document.querySelector(`.f-pill[onclick*="'${hash}'"]`);
+    if (btn) filterSlides(hash, btn);
+  }
+});
+</script>
+</body>
+</html>

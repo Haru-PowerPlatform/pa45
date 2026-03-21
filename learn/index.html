@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="PA45 学習ハブ — Power Automateの関数・概念をカテゴリ別に整理。初心者ロードマップで迷わず学べます。">
+  <title>学習ハブ（Learn）— PA45</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .road-box {
+      background: var(--c-blue-bg);
+      border-radius: var(--radius-lg);
+      padding: 18px 20px;
+      margin-bottom: 8px;
+    }
+    .road-title { font-size: 14px; font-weight: 600; color: var(--c-blue-text); margin-bottom: 10px; }
+    .road-steps { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; }
+    .road-step {
+      font-size: 12px; font-family: var(--font-mono); font-weight: 500;
+      background: var(--c-surface); color: var(--c-blue-text);
+      padding: 4px 10px; border-radius: 4px;
+      border: 1px solid rgba(42,125,212,.25);
+    }
+    .road-arr { font-size: 14px; color: var(--c-blue-mid); }
+    .cat-grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 10px; }
+    .cat-card {
+      background: var(--c-surface);
+      border-radius: var(--radius-lg);
+      padding: 16px 18px;
+      box-shadow: var(--shadow-card);
+      cursor: pointer;
+      transition: box-shadow .2s, transform .2s;
+      display: block;
+    }
+    .cat-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
+    .cat-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .cat-name { font-size: 14px; font-weight: 600; }
+    .cat-desc { font-size: 12px; color: var(--c-muted); line-height: 1.6; margin-bottom: 8px; }
+    .cat-count { font-size: 11px; color: var(--c-hint); }
+    @media (max-width: 640px) {
+      .cat-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .road-steps { gap: 4px; }
+    }
+    @media (max-width: 400px) {
+      .cat-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="../" class="site-logo">PA45<span>Power Automate 45</span></a>
+    <nav class="header-nav">
+      <a href="../learn/" class="active">学ぶ</a>
+      <a href="../slides/">スライド</a>
+      <a href="../sessions/">参加する</a>
+      <a href="../start-here/">初めての方へ</a>
+      <a href="../achievements/">実績</a>
+      <a href="../about/">About</a>
+    </nav>
+    <a href="../sessions/" class="header-cta">次回イベントに参加する →</a>
+    <button class="hamburger" aria-label="メニュー" onclick="toggleMenu()"><span></span><span></span><span></span></button>
+  </div>
+  <nav class="mobile-nav" id="mobileNav">
+    <a href="../learn/">学ぶ（Learn）</a>
+    <a href="../slides/">スライド一覧（Slides）</a>
+    <a href="../sessions/">参加する（Sessions）</a>
+    <a href="../start-here/">初めての方へ（Start Here）</a>
+    <a href="../achievements/">活動実績（Achievements）</a>
+    <a href="../method/">PA45とは（Method）</a>
+    <a href="../about/">About</a>
+    <a href="../sessions/" style="color:#0b3e72;font-weight:600;margin-top:4px;">→ 次回イベントに参加する</a>
+  </nav>
+</header>
+
+<section class="page-hero">
+  <div class="container">
+    <span class="page-hero-eyebrow">Learn</span>
+    <h1 class="page-hero-h1">今日はこれだけ、<br>を選べる学習ハブ</h1>
+    <p class="page-hero-sub">カテゴリ別に整理されたスライドとブログ記事。気になるところから始めてください。</p>
+  </div>
+</section>
+
+<!-- 初心者ロードマップ -->
+<section class="section">
+  <div class="container">
+    <p class="section-label">初めての方におすすめの順番</p>
+    <div class="road-box">
+      <div class="road-title">この順で進むと迷いにくいです</div>
+      <div class="road-steps">
+        <span class="road-step">VAR 変数</span>
+        <span class="road-arr">→</span>
+        <span class="road-step">COND 条件分岐</span>
+        <span class="road-arr">→</span>
+        <span class="road-step">SELECT 選択</span>
+        <span class="road-arr">→</span>
+        <span class="road-step">FILTER 絞り込み</span>
+        <span class="road-arr">→</span>
+        <span class="road-step">ATE テキスト</span>
+        <span class="road-arr">→</span>
+        <span class="road-step">DATE 日付</span>
+        <span class="road-arr">→</span>
+        <span class="road-step">DBG デバッグ</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- カテゴリ一覧 -->
+<section class="section">
+  <div class="container">
+    <p class="section-label">カテゴリ別（9カテゴリ）</p>
+    <div class="cat-grid">
+
+      <a href="../slides/#var" class="cat-card" id="var">
+        <div class="cat-header">
+          <span class="tag-code var">VAR</span>
+          <span class="cat-name">変数</span>
+        </div>
+        <div class="cat-desc">データを一時的に保存して使い回す。initializeVariable と setVariable の違いから始めよう。</div>
+        <div class="cat-count">スライド ○枚 · 記事 ○本</div>
+      </a>
+
+      <a href="../slides/#cond" class="cat-card" id="cond">
+        <div class="cat-header">
+          <span class="tag-code cond">COND</span>
+          <span class="cat-name">条件分岐</span>
+        </div>
+        <div class="cat-desc">「もし〜なら」の判断ロジック。空白チェックや値の比較で毎回使う。</div>
+        <div class="cat-count">スライド ○枚 · 記事 ○本</div>
+      </a>
+
+      <a href="../slides/#select" class="cat-card" id="select">
+        <div class="cat-header">
+          <span class="tag-code select">SELECT</span>
+          <span class="cat-name">選択</span>
+        </div>
+        <div class="cat-desc">配列から必要な列・項目だけを取り出す。SharePointリストとの組み合わせで威力を発揮。</div>
+        <div class="cat-count">スライド ○枚 · 記事 ○本</div>
+      </a>
+
+      <a href="../slides/#filter" class="cat-card" id="filter">
+        <div class="cat-header">
+          <span class="tag-code filter">FILTER</span>
+          <span class="cat-name">絞り込み</span>
+        </div>
+        <div class="cat-desc">条件に合うデータだけを残す。filterArray の構文は最初は難しく見えるが、パターンを覚えれば簡単。</div>
+        <div class="cat-count">スライド ○枚 · 記事 ○本</div>
+      </a>
+
+      <a href="../slides/#ate" class="cat-card" id="ate">
+        <div class="cat-header">
+          <span class="tag-code ate">ATE</span>
+          <span class="cat-name">テキスト</span>
+        </div>
+        <div class="cat-desc">文字列の結合・変換・抽出。concat / substring / replace など実務でよく使う関数を整理。</div>
+        <div class="cat-count">スライド ○枚 · 記事 ○本</div>
+      </a>
+
+      <a href="../slides/#date" class="cat-card" id="date">
+        <div class="cat-header">
+          <span class="tag-code date">DATE</span>
+          <span class="cat-name">日付・時刻</span>
+        </div>
+        <div class="cat-desc">日付の計算・フォーマット変換。utcNow と addDays の組み合わせが定番。</div>
+        <div class="cat-count">スライド ○枚 · 記事 ○本</div>
+      </a>
+
+      <a href="../slides/#exp" class="cat-card" id="exp">
+        <div class="cat-header">
+          <span class="tag-code exp">EXP</span>
+          <span class="cat-name">数式</span>
+        </div>
+        <div class="cat-desc">合計・平均・四捨五入など数値の計算。Excelと似ているようで微妙に違うポイントを解説。</div>
+        <div class="cat-count">スライド ○枚 · 記事 ○本</div>
+      </a>
+
+      <a href="../slides/#pjson" class="cat-card" id="pjson">
+        <div class="cat-header">
+          <span class="tag-code pjson">PJSON</span>
+          <span class="cat-name">JSON解析</span>
+        </div>
+        <div class="cat-desc">APIレスポンスを扱うための基本。Parse JSON アクションと body() の読み方から始めよう。</div>
+        <div class="cat-count">スライド ○枚 · 記事 ○本</div>
+      </a>
+
+      <a href="../slides/#dbg" class="cat-card" id="dbg">
+        <div class="cat-header">
+          <span class="tag-code dbg">DBG</span>
+          <span class="cat-name">デバッグ</span>
+        </div>
+        <div class="cat-desc">エラーの読み方・直し方。実行履歴の見方とよくあるエラーパターンを覚えると一気に楽になる。</div>
+        <div class="cat-count">スライド ○枚 · 記事 ○本</div>
+      </a>
+
+    </div>
+
+    <div class="cta-bar">
+      <p>学習したら、実践の場へ。次回イベントで手を動かしてみましょう</p>
+      <a href="../sessions/" class="btn-small">次回セッションを確認 →</a>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <div class="footer-col-title">学ぶ</div>
+        <a href="../learn/">Learn（学習ハブ）</a>
+        <a href="../slides/">Slides（スライド一覧）</a>
+        <a href="https://example.com" target="_blank" rel="noopener">Blog（WordPress）</a>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">参加する</div>
+        <a href="../sessions/">Sessions（次回・過去回）</a>
+        <a href="../start-here/">Start Here（初参加ガイド）</a>
+        <a href="https://connpass.com" target="_blank" rel="noopener">connpass（外部）</a>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">このサイトについて</div>
+        <a href="../achievements/">Achievements（活動実績）</a>
+        <a href="../method/">PA45 Method（設計思想）</a>
+        <a href="../about/">About（問い合わせ）</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>PA45 — Power Automate 45</span>
+      <span>GitHub Pages で公開 · 静的サイト</span>
+    </div>
+  </div>
+</footer>
+<script>
+function toggleMenu() { document.getElementById('mobileNav').classList.toggle('open'); }
+document.addEventListener('click', function(e) {
+  const nav = document.getElementById('mobileNav'), btn = document.querySelector('.hamburger');
+  if (nav.classList.contains('open') && !nav.contains(e.target) && !btn.contains(e.target)) nav.classList.remove('open');
+});
+</script>
+</body>
+</html>
