@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Power Automate 45 — 45分で一歩ずつPower Automateを学ぶコミュニティ。初心者歓迎・オンライン無料・質問しなくてOK。">
+  <title>PA45 — Power Automate 45</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    /* ===== リセット・基本 ===== */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    /* ===== デザイントークン ===== */
+    :root {
+      --c-bg:        #f8f7f4;
+      --c-surface:   #ffffff;
+      --c-border:    rgba(0,0,0,0.10);
+      --c-border-md: rgba(0,0,0,0.18);
+      --c-text:      #1a1a18;
+      --c-muted:     #6b6b67;
+      --c-hint:      #9b9b96;
+
+      --c-blue-bg:   #e8f1fb;
+      --c-blue-mid:  #2a7dd4;
+      --c-blue-text: #0b3e72;
+
+      --c-green-bg:  #e6f3e0;
+      --c-green-text:#2a5e1e;
+
+      --c-amber-bg:  #fdf0d8;
+      --c-amber-text:#6b3d08;
+
+      --c-teal-bg:   #e0f4ee;
+      --c-teal-text: #0d5c42;
+
+      --c-purple-bg: #edeefe;
+      --c-purple-text:#3a3598;
+
+      --c-coral-bg:  #fbeae6;
+      --c-coral-text:#7a2e1a;
+
+      --radius-sm:  6px;
+      --radius-md:  10px;
+      --radius-lg:  14px;
+      --radius-xl:  20px;
+
+      --shadow-card: 0 1px 3px rgba(0,0,0,0.07), 0 0 0 0.5px rgba(0,0,0,0.09);
+      --shadow-hover: 0 4px 12px rgba(0,0,0,0.10), 0 0 0 0.5px rgba(0,0,0,0.12);
+
+      --font-body: 'Noto Sans JP', system-ui, sans-serif;
+      --font-mono: 'DM Mono', monospace;
+
+      --max-w: 760px;
+      --pad-page: clamp(16px, 4vw, 40px);
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--c-bg);
+      color: var(--c-text);
+      line-height: 1.7;
+      font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img { max-width: 100%; display: block; }
+
+    /* ===== レイアウト共通 ===== */
+    .container {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0 var(--pad-page);
+    }
+
+    .section { padding: 48px 0; }
+    .section + .section { padding-top: 0; }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: .10em;
+      text-transform: uppercase;
+      color: var(--c-hint);
+      margin-bottom: 14px;
+    }
+
+    /* ===== アニメーション ===== */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .fade-up {
+      opacity: 0;
+      animation: fadeUp .55s ease forwards;
+    }
+    .fade-up:nth-child(1) { animation-delay: .05s; }
+    .fade-up:nth-child(2) { animation-delay: .13s; }
+    .fade-up:nth-child(3) { animation-delay: .21s; }
+    .fade-up:nth-child(4) { animation-delay: .29s; }
+    .fade-up:nth-child(5) { animation-delay: .37s; }
+
+    /* ===== ヘッダー ===== */
+    .site-header {
+      background: var(--c-surface);
+      border-bottom: 1px solid var(--c-border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .header-inner {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      height: 56px;
+    }
+    .site-logo {
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: -.02em;
+      color: var(--c-text);
+      margin-right: auto;
+    }
+    .site-logo span {
+      font-weight: 400;
+      font-size: 13px;
+      color: var(--c-muted);
+      margin-left: 6px;
+    }
+    .header-nav { display: flex; gap: 2px; }
+    .header-nav a {
+      font-size: 13px;
+      color: var(--c-muted);
+      padding: 5px 9px;
+      border-radius: var(--radius-sm);
+      transition: background .15s, color .15s;
+      white-space: nowrap;
+    }
+    .header-nav a:hover { background: var(--c-bg); color: var(--c-text); }
+    .header-cta {
+      font-size: 13px;
+      font-weight: 500;
+      background: var(--c-blue-bg);
+      color: var(--c-blue-text);
+      padding: 7px 14px;
+      border-radius: var(--radius-sm);
+      white-space: nowrap;
+      transition: background .15s;
+    }
+    .header-cta:hover { background: #d4e8f8; }
+
+    /* ハンバーガー（モバイル） */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 8px;
+      border: none;
+      background: none;
+    }
+    .hamburger span {
+      display: block; width: 20px; height: 1.5px;
+      background: var(--c-muted); border-radius: 2px;
+      transition: .2s;
+    }
+    .mobile-nav {
+      display: none;
+      background: var(--c-surface);
+      border-top: 1px solid var(--c-border);
+      padding: 12px var(--pad-page) 16px;
+    }
+    .mobile-nav a {
+      display: block;
+      font-size: 15px;
+      color: var(--c-muted);
+      padding: 10px 4px;
+      border-bottom: 1px solid var(--c-border);
+    }
+    .mobile-nav a:last-child { border-bottom: none; }
+    .mobile-nav.open { display: block; }
+
+    /* ===== ヒーロー ===== */
+    .hero {
+      background: var(--c-surface);
+      border-bottom: 1px solid var(--c-border);
+      padding: 52px 0 44px;
+    }
+    .hero-eyebrow {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      background: var(--c-blue-bg);
+      color: var(--c-blue-text);
+      padding: 3px 10px;
+      border-radius: 20px;
+      margin-bottom: 16px;
+    }
+    .hero-h1 {
+      font-size: clamp(26px, 5vw, 38px);
+      font-weight: 700;
+      line-height: 1.25;
+      letter-spacing: -.02em;
+      margin-bottom: 14px;
+      color: var(--c-text);
+    }
+    .hero-sub {
+      font-size: 15px;
+      color: var(--c-muted);
+      line-height: 1.7;
+      max-width: 520px;
+      margin-bottom: 28px;
+    }
+    .hero-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 32px;
+    }
+    .badge {
+      font-size: 12px;
+      padding: 4px 12px;
+      border-radius: 20px;
+      border: 1px solid var(--c-border);
+      color: var(--c-muted);
+      background: var(--c-bg);
+    }
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+      gap: 10px;
+    }
+    .stat-card {
+      background: var(--c-bg);
+      border-radius: var(--radius-md);
+      padding: 14px 12px;
+      text-align: center;
+    }
+    .stat-n {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--c-text);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .stat-l {
+      font-size: 11px;
+      color: var(--c-hint);
+    }
+
+    /* ===== カード共通 ===== */
+    .card {
+      background: var(--c-surface);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-card);
+      transition: box-shadow .2s, transform .2s;
+    }
+    .card:hover {
+      box-shadow: var(--shadow-hover);
+      transform: translateY(-2px);
+    }
+
+    /* ===== 3分岐セクション ===== */
+    .fork-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: 12px;
+    }
+    .fork-card {
+      padding: 20px;
+      cursor: pointer;
+      display: block;
+      border-radius: var(--radius-lg);
+    }
+    .fork-icon {
+      width: 36px; height: 36px;
+      border-radius: var(--radius-sm);
+      margin-bottom: 12px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .fork-icon svg { width: 18px; height: 18px; }
+    .fork-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+    .fork-desc {
+      font-size: 12px;
+      color: var(--c-muted);
+      line-height: 1.6;
+      margin-bottom: 10px;
+    }
+    .fork-cta {
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    /* ===== 次回イベント ===== */
+    .event-card {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 20px;
+      cursor: pointer;
+    }
+    .event-date-box {
+      background: var(--c-blue-bg);
+      border-radius: var(--radius-sm);
+      padding: 8px 12px;
+      text-align: center;
+      min-width: 52px;
+      flex-shrink: 0;
+    }
+    .event-day { font-size: 22px; font-weight: 700; color: var(--c-blue-text); line-height: 1; }
+    .event-mon { font-size: 10px; color: var(--c-blue-mid); margin-top: 2px; letter-spacing: .05em; text-transform: uppercase; }
+    .event-info { flex: 1; }
+    .event-title { font-size: 14px; font-weight: 600; margin-bottom: 3px; }
+    .event-meta  { font-size: 12px; color: var(--c-muted); }
+    .event-badge {
+      font-size: 11px;
+      background: var(--c-green-bg);
+      color: var(--c-green-text);
+      padding: 4px 10px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+    .event-arrow { font-size: 18px; color: var(--c-hint); margin-left: 4px; }
+
+    /* ===== 第三者の声 ===== */
+    .voice-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 10px;
+    }
+    .voice-card { padding: 16px 18px; }
+    .voice-body {
+      font-size: 13px;
+      color: var(--c-text);
+      font-style: italic;
+      line-height: 1.65;
+      margin-bottom: 10px;
+    }
+    .voice-body::before { content: '「'; }
+    .voice-body::after  { content: '」'; }
+    .voice-meta { font-size: 11px; color: var(--c-hint); display: flex; align-items: center; gap: 6px; }
+    .voice-tag {
+      font-size: 10px;
+      background: var(--c-blue-bg);
+      color: var(--c-blue-text);
+      padding: 1px 7px;
+      border-radius: 3px;
+    }
+
+    /* ===== 今日の1粒（スライド） ===== */
+    .slides-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 14px;
+      gap: 12px;
+    }
+    .slides-header-text {}
+    .slides-header-title { font-size: 15px; font-weight: 600; margin-bottom: 3px; }
+    .slides-header-sub   { font-size: 12px; color: var(--c-muted); }
+    .slides-all-link {
+      font-size: 12px;
+      color: var(--c-blue-mid);
+      white-space: nowrap;
+      font-weight: 500;
+    }
+    .slides-mini-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .slide-mini-card {
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .slide-thumb {
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      color: var(--c-hint);
+      letter-spacing: .04em;
+    }
+    .slide-thumb.var    { background: var(--c-blue-bg); }
+    .slide-thumb.cond   { background: var(--c-purple-bg); }
+    .slide-thumb.date   { background: var(--c-teal-bg); }
+    .slide-mini-body { padding: 9px 11px; background: var(--c-surface); }
+    .slide-cat-badge {
+      display: inline-block;
+      font-size: 9px;
+      font-family: var(--font-mono);
+      font-weight: 500;
+      padding: 1px 6px;
+      border-radius: 3px;
+      margin-bottom: 4px;
+    }
+    .slide-cat-badge.var    { background: var(--c-blue-bg);   color: var(--c-blue-text); }
+    .slide-cat-badge.cond   { background: var(--c-purple-bg); color: var(--c-purple-text); }
+    .slide-cat-badge.date   { background: var(--c-teal-bg);   color: var(--c-teal-text); }
+    .slide-mini-title { font-size: 11px; font-weight: 500; line-height: 1.4; margin-bottom: 2px; }
+    .slide-mini-date  { font-size: 10px; color: var(--c-hint); }
+
+    .slides-cta-bar {
+      background: var(--c-blue-bg);
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .slides-cta-bar p { font-size: 12px; color: var(--c-blue-text); }
+    .btn-small {
+      font-size: 12px;
+      font-weight: 500;
+      background: var(--c-surface);
+      color: var(--c-blue-text);
+      border: 1px solid var(--c-blue-mid);
+      padding: 6px 14px;
+      border-radius: var(--radius-sm);
+      white-space: nowrap;
+      cursor: pointer;
+      transition: background .15s;
+    }
+    .btn-small:hover { background: var(--c-blue-bg); }
+
+    /* ===== タグ横断ナビ ===== */
+    .tag-row { display: flex; flex-wrap: wrap; gap: 7px; }
+    .tag-pill {
+      font-size: 12px;
+      padding: 5px 13px;
+      border-radius: 20px;
+      border: 1px solid var(--c-border-md);
+      color: var(--c-muted);
+      cursor: pointer;
+      transition: background .15s, border-color .15s, color .15s;
+      font-family: var(--font-mono);
+      font-weight: 500;
+      background: var(--c-surface);
+    }
+    .tag-pill:hover {
+      background: var(--c-blue-bg);
+      border-color: var(--c-blue-mid);
+      color: var(--c-blue-text);
+    }
+
+    /* ===== 実績ハイライト ===== */
+    .proof-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+      gap: 10px;
+    }
+    .proof-card {
+      background: var(--c-surface);
+      border-radius: var(--radius-md);
+      padding: 16px 12px;
+      text-align: center;
+      box-shadow: var(--shadow-card);
+      cursor: pointer;
+      transition: box-shadow .2s, transform .2s;
+    }
+    .proof-card:hover {
+      box-shadow: var(--shadow-hover);
+      transform: translateY(-2px);
+    }
+    .proof-n { font-size: 20px; font-weight: 700; color: var(--c-text); line-height: 1; margin-bottom: 4px; }
+    .proof-l { font-size: 10px; color: var(--c-hint); margin-bottom: 5px; }
+    .proof-link { font-size: 10px; color: var(--c-blue-mid); }
+
+    /* ===== フッター ===== */
+    .site-footer {
+      background: var(--c-surface);
+      border-top: 1px solid var(--c-border);
+      padding: 36px 0 28px;
+      margin-top: 60px;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: 24px;
+      margin-bottom: 28px;
+    }
+    .footer-col-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--c-text);
+      margin-bottom: 10px;
+    }
+    .footer-col a {
+      display: block;
+      font-size: 13px;
+      color: var(--c-muted);
+      padding: 3px 0;
+      transition: color .15s;
+    }
+    .footer-col a:hover { color: var(--c-text); }
+    .footer-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 20px;
+      border-top: 1px solid var(--c-border);
+      font-size: 12px;
+      color: var(--c-hint);
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    /* ===== レスポンシブ ===== */
+    @media (max-width: 640px) {
+      .header-nav { display: none; }
+      .header-cta { display: none; }
+      .hamburger { display: flex; }
+
+      .stats-row { grid-template-columns: repeat(2, 1fr); }
+      .fork-grid  { grid-template-columns: 1fr; }
+      .voice-grid { grid-template-columns: 1fr; }
+      .slides-mini-grid { grid-template-columns: 1fr; }
+      .proof-grid { grid-template-columns: repeat(2, 1fr); }
+      .footer-grid { grid-template-columns: 1fr; gap: 20px; }
+
+      .event-card { flex-wrap: wrap; }
+      .event-badge { margin-left: auto; }
+
+      .slides-cta-bar { flex-direction: column; align-items: flex-start; }
+
+      .hero { padding: 36px 0 32px; }
+    }
+
+    @media (max-width: 400px) {
+      .stats-row { grid-template-columns: repeat(2, 1fr); }
+      .proof-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== グローバルヘッダー ===== -->
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="./" class="site-logo">PA45<span>Power Automate 45</span></a>
+    <nav class="header-nav">
+      <a href="learn/">学ぶ</a>
+      <a href="slides/">スライド</a>
+      <a href="sessions/">参加する</a>
+      <a href="start-here/">初めての方へ</a>
+      <a href="achievements/">実績</a>
+      <a href="about/">About</a>
+    </nav>
+    <a href="sessions/" class="header-cta">次回イベントに参加する →</a>
+    <button class="hamburger" aria-label="メニュー" onclick="toggleMenu()">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <nav class="mobile-nav" id="mobileNav">
+    <a href="learn/">学ぶ（Learn）</a>
+    <a href="slides/">スライド一覧（Slides）</a>
+    <a href="sessions/">参加する（Sessions）</a>
+    <a href="start-here/">初めての方へ（Start Here）</a>
+    <a href="achievements/">活動実績（Achievements）</a>
+    <a href="method/">PA45とは（Method）</a>
+    <a href="about/">About</a>
+    <a href="sessions/" style="color: #0b3e72; font-weight: 600; margin-top: 4px;">→ 次回イベントに参加する</a>
+  </nav>
+</header>
+
+
+<!-- ===== A: ヒーロー ===== -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-eyebrow fade-up">Power Automate 45</div>
+    <h1 class="hero-h1 fade-up">45分で一歩ずつ、<br>Power Automateを学ぶコミュニティ</h1>
+    <p class="hero-sub fade-up">関数の使い方から自動化の設計まで、1回1テーマを45分で。<br>初心者歓迎・完全オンライン・無料・質問しなくてOK。</p>
+    <div class="hero-badges fade-up">
+      <span class="badge">初心者歓迎</span>
+      <span class="badge">オンライン完全無料</span>
+      <span class="badge">質問しなくてOK</span>
+      <span class="badge">見るだけでも大丈夫</span>
+    </div>
+    <div class="stats-row fade-up">
+      <div class="stat-card">
+        <div class="stat-n">30+</div>
+        <div class="stat-l">開催回数</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-n">数百名</div>
+        <div class="stat-l">累計参加者</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-n">100+</div>
+        <div class="stat-l">スライド枚数</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-n">40+</div>
+        <div class="stat-l">ブログ記事</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== B: 3分岐セクション ===== -->
+<section class="section">
+  <div class="container">
+    <p class="section-label">あなたはどちらですか？</p>
+    <div class="fork-grid">
+
+      <a href="learn/" class="card fork-card">
+        <div class="fork-icon" style="background: var(--c-blue-bg);">
+          <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="2" y="3" width="14" height="2.5" rx="1.25" fill="#0b3e72"/>
+            <rect x="2" y="7.75" width="10" height="2.5" rx="1.25" fill="#2a7dd4"/>
+            <rect x="2" y="12.5" width="7" height="2.5" rx="1.25" fill="#6aaee8"/>
+          </svg>
+        </div>
+        <div class="fork-title">初めて学ぶ</div>
+        <p class="fork-desc">「Power Automateって何？」というところから体系的に学べます。カテゴリ別ロードマップで迷わず進めます。</p>
+        <span class="fork-cta" style="color: var(--c-blue-text);">学習ロードマップへ →</span>
+      </a>
+
+      <a href="start-here/" class="card fork-card">
+        <div class="fork-icon" style="background: var(--c-green-bg);">
+          <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="9" cy="6.5" r="3.5" fill="#2a5e1e"/>
+            <path d="M3 16.5c0-3.3 2.7-6 6-6s6 2.7 6 6" stroke="#2a5e1e" stroke-width="1.5" stroke-linecap="round" fill="none"/>
+          </svg>
+        </div>
+        <div class="fork-title">イベントに参加したい</div>
+        <p class="fork-desc">初参加のよくある不安を先に解消します。無料・オンライン・見るだけでもOK。</p>
+        <span class="fork-cta" style="color: var(--c-green-text);">参加ガイドを読む →</span>
+      </a>
+
+      <a href="achievements/" class="card fork-card">
+        <div class="fork-icon" style="background: var(--c-amber-bg);">
+          <svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="2"   y="11" width="3.5" height="5" rx="1" fill="#6b3d08"/>
+            <rect x="7.3" y="8"  width="3.5" height="8" rx="1" fill="#b56a14"/>
+            <rect x="12.5" y="4" width="3.5" height="12" rx="1" fill="#e8a020"/>
+          </svg>
+        </div>
+        <div class="fork-title">活動実績を確認したい</div>
+        <p class="fork-desc">証拠リンク付き。審査者・上司・協力者の方が独立検証できる実績ページです。</p>
+        <span class="fork-cta" style="color: var(--c-amber-text);">実績ページへ →</span>
+      </a>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== C: 次回イベント ===== -->
+<section class="section">
+  <div class="container">
+    <p class="section-label">次回イベント</p>
+    <a href="sessions/" class="card event-card" style="display: flex;">
+      <div class="event-date-box">
+        <div class="event-day">28</div>
+        <div class="event-mon">APR</div>
+      </div>
+      <div class="event-info">
+        <div class="event-title">PA45 #○○ — [次回テーマ]</div>
+        <div class="event-meta">オンライン（Zoom）&nbsp;·&nbsp;19:00〜19:45&nbsp;·&nbsp;無料&nbsp;·&nbsp;残り定員 ○名</div>
+      </div>
+      <span class="event-badge">参加受付中</span>
+      <span class="event-arrow">›</span>
+    </a>
+  </div>
+</section>
+
+
+<!-- ===== D: 第三者の声 ===== -->
+<section class="section">
+  <div class="container">
+    <p class="section-label">参加者の声</p>
+    <div class="voice-grid">
+      <div class="card voice-card">
+        <p class="voice-body">45分という短さで最後まで集中できた。翌週には業務で使い始めた。</p>
+        <div class="voice-meta">
+          <span class="voice-tag">初参加</span>
+          connpassアンケート要約 · 個人特定なし
+        </div>
+      </div>
+      <div class="card voice-card">
+        <p class="voice-body">1枚スライドで概念が整理される。複数回通ううちに迷わなくなった。</p>
+        <div class="voice-meta">
+          <span class="voice-tag">継続参加</span>
+          connpassコメント要約 · 個人特定なし
+        </div>
+      </div>
+      <div class="card voice-card">
+        <p class="voice-body">質問しなくても雰囲気で理解できる設計。初心者として入りやすかった。</p>
+        <div class="voice-meta">
+          <span class="voice-tag">初参加</span>
+          アンケート要約 · 個人特定なし
+        </div>
+      </div>
+      <div class="card voice-card">
+        <p class="voice-body">毎回テーマが絞られていて負担が少ない。自分のペースで選んで参加できる。</p>
+        <div class="voice-meta">
+          <span class="voice-tag">継続参加</span>
+          connpassコメント要約 · 個人特定なし
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== E: 今日の1粒（Xスライド）===== -->
+<section class="section">
+  <div class="container">
+    <div class="slides-header">
+      <div class="slides-header-text">
+        <div class="slides-header-title">今日の1粒 — 最新スライド</div>
+        <div class="slides-header-sub">毎回のセッションで扱った概念を1枚にまとめています</div>
+      </div>
+      <a href="slides/" class="slides-all-link">カテゴリ別に全て見る →</a>
+    </div>
+
+    <div class="slides-mini-grid">
+      <!-- スライド1 -->
+      <a href="slides/" class="card slide-mini-card">
+        <div class="slide-thumb var">[ スライド画像 ]</div>
+        <div class="slide-mini-body">
+          <span class="slide-cat-badge var">VAR</span>
+          <div class="slide-mini-title">変数の初期化と設定の違い</div>
+          <div class="slide-mini-date">2024-04-15</div>
+        </div>
+      </a>
+      <!-- スライド2 -->
+      <a href="slides/" class="card slide-mini-card">
+        <div class="slide-thumb cond">[ スライド画像 ]</div>
+        <div class="slide-mini-body">
+          <span class="slide-cat-badge cond">COND</span>
+          <div class="slide-mini-title">空白チェックの正しい書き方</div>
+          <div class="slide-mini-date">2024-04-08</div>
+        </div>
+      </a>
+      <!-- スライド3 -->
+      <a href="slides/" class="card slide-mini-card">
+        <div class="slide-thumb date">[ スライド画像 ]</div>
+        <div class="slide-mini-body">
+          <span class="slide-cat-badge date">DATE</span>
+          <div class="slide-mini-title">日付フォーマットの変換パターン</div>
+          <div class="slide-mini-date">2024-04-01</div>
+        </div>
+      </a>
+    </div>
+
+    <div class="slides-cta-bar">
+      <p>カテゴリ別にまとめて見たい方はスライド一覧へどうぞ</p>
+      <a href="slides/" class="btn-small">スライド一覧を見る →</a>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== F: タグ横断ナビ ===== -->
+<section class="section">
+  <div class="container">
+    <p class="section-label">テーマで探す</p>
+    <div class="tag-row">
+      <a href="learn/#var"    class="tag-pill">VAR — 変数</a>
+      <a href="learn/#cond"   class="tag-pill">COND — 条件分岐</a>
+      <a href="learn/#select" class="tag-pill">SELECT — 選択</a>
+      <a href="learn/#filter" class="tag-pill">FILTER — 絞り込み</a>
+      <a href="learn/#ate"    class="tag-pill">ATE — テキスト</a>
+      <a href="learn/#date"   class="tag-pill">DATE — 日付</a>
+      <a href="learn/#exp"    class="tag-pill">EXP — 数式</a>
+      <a href="learn/#pjson"  class="tag-pill">PJSON — JSON解析</a>
+      <a href="learn/#dbg"    class="tag-pill">DBG — デバッグ</a>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== G: 実績ハイライト ===== -->
+<section class="section">
+  <div class="container">
+    <p class="section-label">活動実績ハイライト</p>
+    <div class="proof-grid">
+      <a href="achievements/" class="proof-card">
+        <div class="proof-n">30+</div>
+        <div class="proof-l">勉強会開催回数</div>
+        <div class="proof-link">connpass一覧 →</div>
+      </a>
+      <a href="achievements/" class="proof-card">
+        <div class="proof-n">3年+</div>
+        <div class="proof-l">継続運営年数</div>
+        <div class="proof-link">2021年〜継続中</div>
+      </a>
+      <a href="achievements/" class="proof-card">
+        <div class="proof-n">数件</div>
+        <div class="proof-l">外部登壇実績</div>
+        <div class="proof-link">資料リンク →</div>
+      </a>
+      <a href="achievements/" class="proof-card">
+        <div class="proof-n">全記録</div>
+        <div class="proof-l">公開・検証可能</div>
+        <div class="proof-link">実績詳細を見る →</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== フッター ===== -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <div class="footer-col-title">学ぶ</div>
+        <a href="learn/">Learn（学習ハブ）</a>
+        <a href="slides/">Slides（スライド一覧）</a>
+        <a href="https://example.com" target="_blank" rel="noopener">Blog（WordPress）</a>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">参加する</div>
+        <a href="sessions/">Sessions（次回・過去回）</a>
+        <a href="start-here/">Start Here（初参加ガイド）</a>
+        <a href="https://connpass.com" target="_blank" rel="noopener">connpass（外部）</a>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">このサイトについて</div>
+        <a href="achievements/">Achievements（活動実績）</a>
+        <a href="method/">PA45 Method（設計思想）</a>
+        <a href="about/">About（問い合わせ）</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>PA45 — Power Automate 45</span>
+      <span>GitHub Pages で公開 · 静的サイト</span>
+    </div>
+  </div>
+</footer>
+
+
+<script>
+  // ハンバーガーメニュー
+  function toggleMenu() {
+    const nav = document.getElementById('mobileNav');
+    nav.classList.toggle('open');
+  }
+
+  // メニュー外クリックで閉じる
+  document.addEventListener('click', function(e) {
+    const nav = document.getElementById('mobileNav');
+    const btn = document.querySelector('.hamburger');
+    if (nav.classList.contains('open') && !nav.contains(e.target) && !btn.contains(e.target)) {
+      nav.classList.remove('open');
+    }
+  });
+</script>
+
+</body>
+</html>
