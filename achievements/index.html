@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="PA45 活動実績 — 証拠リンク付きで活動を可視化。審査者・協力者の方が独立検証できる構成です。">
+  <title>活動実績（Achievements）— PA45</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    .summary-grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 10px; margin-bottom: 8px; }
+    .summary-card {
+      background: var(--c-surface); border-radius: var(--radius-md);
+      padding: 16px 12px; text-align: center; box-shadow: var(--shadow-card);
+    }
+    .sum-n { font-size: 22px; font-weight: 700; margin-bottom: 4px; }
+    .sum-l { font-size: 11px; color: var(--c-hint); }
+
+    .cat5-grid { display: grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap: 8px; margin-bottom: 10px; }
+    .cat5-card { background: var(--c-surface); border-radius: var(--radius-md); padding: 12px 10px; box-shadow: var(--shadow-card); }
+    .cat5-title { font-size: 12px; font-weight: 600; margin-bottom: 8px; }
+    .cat5-row { display: flex; justify-content: space-between; margin-bottom: 3px; font-size: 11px; }
+    .cat5-key { color: var(--c-hint); }
+    .cat5-val { font-weight: 500; color: var(--c-muted); }
+    .cat5-link { font-size: 10px; color: var(--c-blue-mid); display: block; margin-top: 6px; }
+
+    .log-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 8px; }
+    .log-table th { font-size: 10px; color: var(--c-hint); text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--c-border); }
+    .log-table td { padding: 8px 8px; border-bottom: 1px solid var(--c-border); color: var(--c-muted); vertical-align: top; line-height: 1.5; }
+    .log-table td:first-child { color: var(--c-text); white-space: nowrap; font-family: var(--font-mono); font-size: 11px; }
+    .log-pill { font-size: 9px; background: var(--c-bg); border-radius: 3px; padding: 1px 6px; color: var(--c-muted); font-family: var(--font-mono); }
+    .log-link { color: var(--c-blue-mid); }
+
+    .voice-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 8px; margin-bottom: 10px; }
+    .voice-card { background: var(--c-surface); border-radius: var(--radius-md); padding: 13px 15px; box-shadow: var(--shadow-card); }
+    .voice-body { font-size: 12px; font-style: italic; line-height: 1.65; margin-bottom: 7px; }
+    .voice-body::before { content: '「'; }
+    .voice-body::after  { content: '」'; }
+    .voice-meta { font-size: 10px; color: var(--c-hint); }
+    .voice-tag  { font-size: 9px; background: var(--c-blue-bg); color: var(--c-blue-text); padding: 1px 6px; border-radius: 3px; margin-right: 4px; }
+
+    .mvp-card { background: var(--c-surface); border-radius: var(--radius-md); padding: 14px 16px; box-shadow: var(--shadow-card); margin-bottom: 8px; }
+    .mvp-len  { font-size: 10px; font-weight: 500; color: var(--c-hint); margin-bottom: 6px; letter-spacing: .05em; text-transform: uppercase; }
+    .mvp-text { font-size: 13px; line-height: 1.75; color: var(--c-text); }
+    .mvp-en   { font-size: 12px; color: var(--c-muted); line-height: 1.65; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--c-border); font-style: italic; }
+
+    @media (max-width: 640px) {
+      .summary-grid { grid-template-columns: repeat(2, 1fr); }
+      .cat5-grid    { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .voice-grid   { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="../" class="site-logo">PA45<span>Power Automate 45</span></a>
+    <nav class="header-nav">
+      <a href="../learn/">学ぶ</a>
+      <a href="../slides/">スライド</a>
+      <a href="../sessions/">参加する</a>
+      <a href="../start-here/">初めての方へ</a>
+      <a href="../achievements/" class="active">実績</a>
+      <a href="../about/">About</a>
+    </nav>
+    <a href="../sessions/" class="header-cta">次回イベントに参加する →</a>
+    <button class="hamburger" aria-label="メニュー" onclick="toggleMenu()"><span></span><span></span><span></span></button>
+  </div>
+  <nav class="mobile-nav" id="mobileNav">
+    <a href="../learn/">学ぶ（Learn）</a>
+    <a href="../slides/">スライド一覧（Slides）</a>
+    <a href="../sessions/">参加する（Sessions）</a>
+    <a href="../start-here/">初めての方へ（Start Here）</a>
+    <a href="../achievements/">活動実績（Achievements）</a>
+    <a href="../method/">PA45とは（Method）</a>
+    <a href="../about/">About</a>
+    <a href="../sessions/" style="color:#0b3e72;font-weight:600;margin-top:4px;">→ 次回イベントに参加する</a>
+  </nav>
+</header>
+
+<section class="page-hero">
+  <div class="container">
+    <span class="page-hero-eyebrow">Achievements</span>
+    <h1 class="page-hero-h1">活動実績</h1>
+    <p class="page-hero-sub">数字はレンジ表現。証拠リンクで独立検証できる構成にしています。主張より記録を大切にしています。</p>
+  </div>
+</section>
+
+<!-- 年間サマリ -->
+<section class="section">
+  <div class="container">
+    <p class="section-label">年間サマリ</p>
+    <div class="summary-grid">
+      <div class="summary-card"><div class="sum-n">30+</div><div class="sum-l">PA45 開催回数</div></div>
+      <div class="summary-card"><div class="sum-n">100+</div><div class="sum-l">Xスライド投稿</div></div>
+      <div class="summary-card"><div class="sum-n">40+</div><div class="sum-l">ブログ記事</div></div>
+      <div class="summary-card"><div class="sum-n">数件</div><div class="sum-l">外部登壇</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- カテゴリ別サマリ -->
+<section class="section">
+  <div class="container">
+    <p class="section-label">カテゴリ別サマリ（5軸）</p>
+    <div class="cat5-grid">
+      <div class="cat5-card">
+        <div class="cat5-title">PA45 勉強会</div>
+        <div class="cat5-row"><span class="cat5-key">開催</span><span class="cat5-val">30+回</span></div>
+        <div class="cat5-row"><span class="cat5-key">規模</span><span class="cat5-val">数百名</span></div>
+        <div class="cat5-row"><span class="cat5-key">年数</span><span class="cat5-val">3年以上</span></div>
+        <a href="../sessions/" class="cat5-link">Sessions →</a>
+      </div>
+      <div class="cat5-card">
+        <div class="cat5-title">Xスライド</div>
+        <div class="cat5-row"><span class="cat5-key">投稿</span><span class="cat5-val">100+枚</span></div>
+        <div class="cat5-row"><span class="cat5-key">分類</span><span class="cat5-val">9カテゴリ</span></div>
+        <div class="cat5-row"><span class="cat5-key">形式</span><span class="cat5-val">1枚・図解</span></div>
+        <a href="../slides/" class="cat5-link">Slides →</a>
+      </div>
+      <div class="cat5-card">
+        <div class="cat5-title">ブログ</div>
+        <div class="cat5-row"><span class="cat5-key">記事</span><span class="cat5-val">40+本</span></div>
+        <div class="cat5-row"><span class="cat5-key">対象</span><span class="cat5-val">初心者</span></div>
+        <div class="cat5-row"><span class="cat5-key">媒体</span><span class="cat5-val">WordPress</span></div>
+        <a href="https://example.com" target="_blank" rel="noopener" class="cat5-link">Blog →</a>
+      </div>
+      <div class="cat5-card">
+        <div class="cat5-title">外部登壇</div>
+        <div class="cat5-row"><span class="cat5-key">件数</span><span class="cat5-val">数件</span></div>
+        <div class="cat5-row"><span class="cat5-key">種別</span><span class="cat5-val">コミュニティ</span></div>
+        <div class="cat5-row"><span class="cat5-key">資料</span><span class="cat5-val">公開済</span></div>
+        <a href="#log" class="cat5-link">ログを見る →</a>
+      </div>
+      <div class="cat5-card">
+        <div class="cat5-title">コミュニティ</div>
+        <div class="cat5-row"><span class="cat5-key">運営</span><span class="cat5-val">個人主催</span></div>
+        <div class="cat5-row"><span class="cat5-key">告知</span><span class="cat5-val">connpass/X</span></div>
+        <div class="cat5-row"><span class="cat5-key">形式</span><span class="cat5-val">オンライン</span></div>
+        <a href="../about/" class="cat5-link">About →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 月次ログ -->
+<section class="section" id="log">
+  <div class="container">
+    <p class="section-label">月次活動ログ（証拠リンク付き）</p>
+    <div class="info-box">記入ルール：① 数字はレンジ表現のみ ② 社名・個人名は不記載 ③ 一次リンクを必ず添付</div>
+    <!-- ★ここに月次ログを追加していきます -->
+    <table class="log-table">
+      <thead>
+        <tr><th>年月</th><th>軸</th><th>内容（レンジ表現）</th><th>証拠</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>2024-04</td>
+          <td><span class="log-pill">PA45</span></td>
+          <td>第○○回 開催。テーマ：○○。参加 数十名規模</td>
+          <td><a href="https://connpass.com/event/xxxxxx/" target="_blank" rel="noopener" class="log-link">connpass →</a></td>
+        </tr>
+        <tr>
+          <td>2024-04</td>
+          <td><span class="log-pill">X</span></td>
+          <td>スライド投稿 数枚。VAR / COND カテゴリ</td>
+          <td><a href="https://x.com/あなたのアカウント" target="_blank" rel="noopener" class="log-link">X投稿 →</a></td>
+        </tr>
+        <tr>
+          <td>2024-03</td>
+          <td><span class="log-pill">登壇</span></td>
+          <td>○○コミュニティにて登壇。Power Platform初学者支援がテーマ</td>
+          <td><a href="#" class="log-link">資料 →</a></td>
+        </tr>
+        <tr>
+          <td>2024-03</td>
+          <td><span class="log-pill">Blog</span></td>
+          <td>記事公開 数本。初心者向けハンズオン解説</td>
+          <td><a href="https://example.com" target="_blank" rel="noopener" class="log-link">記事 →</a></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- 第三者の声 -->
+<section class="section">
+  <div class="container">
+    <p class="section-label">第三者の声（要約・匿名）</p>
+    <div class="voice-grid">
+      <div class="voice-card">
+        <div class="voice-body">45分という短さで最後まで集中できた。翌週には業務で使い始めた。</div>
+        <div class="voice-meta"><span class="voice-tag">初参加</span>connpassアンケート要約 · 個人特定なし</div>
+      </div>
+      <div class="voice-card">
+        <div class="voice-body">質問しなくても雰囲気で理解できる設計。初心者として入りやすかった。</div>
+        <div class="voice-meta"><span class="voice-tag">初参加</span>アンケート要約 · 個人特定なし</div>
+      </div>
+      <div class="voice-card">
+        <div class="voice-body">1枚スライドで概念が整理される。複数回通ううちに迷わなくなった。</div>
+        <div class="voice-meta"><span class="voice-tag">継続参加</span>connpassコメント要約 · 個人特定なし</div>
+      </div>
+      <div class="voice-card">
+        <div class="voice-body">毎回テーマが絞られていて負担が少ない。自分のペースで選んで参加できる。</div>
+        <div class="voice-meta"><span class="voice-tag">継続参加</span>connpassコメント要約 · 個人特定なし</div>
+      </div>
+    </div>
+    <p style="font-size:11px;color:var(--c-hint);line-height:1.6;">
+      掲載ポリシー：実名・所属・役職は不記載。connpassコメント・アンケート回答を運営者が要約。原文の意味を変えない範囲で個人が特定されない表現に変換しています。
+    </p>
+  </div>
+</section>
+
+<!-- MVP申請転用テキスト -->
+<section class="section">
+  <div class="container">
+    <p class="section-label">活動概要（100字 / 300字）</p>
+    <div class="mvp-card">
+      <div class="mvp-len">100字版</div>
+      <div class="mvp-text">Power Automateの初学者支援を目的に、45分単位の勉強会を継続的に主催。複数年にわたり数十回以上の開催と数百名規模の学習機会を提供。スライド・ブログ・コミュニティ運営を一体で展開。</div>
+    </div>
+    <div class="mvp-card">
+      <div class="mvp-len">300字版</div>
+      <div class="mvp-text">「45分・1テーマ・成功体験で終える」設計原則のもと、Power Automateを初めて学ぶ層を継続的に支援しています。Xでの1枚スライド投稿（累計100枚以上）、WordPressブログ、connpassイベント運営を組み合わせ、学習コンテンツの体系化と再利用性を実現。参加者からは「翌週から業務で使い始めた」「質問しなくても理解できる設計」といった声が寄せられています。</div>
+      <div class="mvp-en">English summary: Community-based Power Automate learning support — PA45 methodology, multi-year operation, and measurable impact on first-time learners. All activities are publicly documented and independently verifiable via connpass, X, and WordPress.</div>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <div class="footer-col-title">学ぶ</div>
+        <a href="../learn/">Learn（学習ハブ）</a>
+        <a href="../slides/">Slides（スライド一覧）</a>
+        <a href="https://example.com" target="_blank" rel="noopener">Blog（WordPress）</a>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">参加する</div>
+        <a href="../sessions/">Sessions（次回・過去回）</a>
+        <a href="../start-here/">Start Here（初参加ガイド）</a>
+        <a href="https://connpass.com" target="_blank" rel="noopener">connpass（外部）</a>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">このサイトについて</div>
+        <a href="../achievements/">Achievements（活動実績）</a>
+        <a href="../method/">PA45 Method（設計思想）</a>
+        <a href="../about/">About（問い合わせ）</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>PA45 — Power Automate 45</span>
+      <span>GitHub Pages で公開 · 静的サイト</span>
+    </div>
+  </div>
+</footer>
+<script>
+function toggleMenu() { document.getElementById('mobileNav').classList.toggle('open'); }
+document.addEventListener('click', function(e) {
+  const nav = document.getElementById('mobileNav'), btn = document.querySelector('.hamburger');
+  if (nav.classList.contains('open') && !nav.contains(e.target) && !btn.contains(e.target)) nav.classList.remove('open');
+});
+</script>
+</body>
+</html>
