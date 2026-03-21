@@ -25,12 +25,16 @@ async function loadLatestActivities(limit = 3) {
 
   listEl.innerHTML = "";
   for (const a of latest) {
-    const li = document.createElement("li");
-    li.innerHTML = `
-      <strong>${a.date ?? ""}</strong> — ${a.title ?? ""}<br>
-      <small>${a.summary ?? ""}</small>
-    `;
-    listEl.appendChild(li);
+    const card = document.createElement("div");
+card.className = "card";
+
+card.innerHTML = `
+  <div class="card-title">${a.title ?? ""}</div>
+  <div class="card-meta">${a.date ?? ""}</div>
+  <div class="card-body">${a.summary ?? ""}</div>
+`;
+
+listEl.appendChild(card);
   }
 }
 
