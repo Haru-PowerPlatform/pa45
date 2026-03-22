@@ -20,6 +20,7 @@ jobs:
         uses: actions/github-script@v7
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           script: |
             const fs = require('fs');
@@ -48,6 +49,16 @@ jobs:
               throw new Error("Claude output is not valid JSON");
             }
 
+            async function fetchWithAuth(url) {
+              // private系URL対策：トークン付きで取得を試す（ダメならエラーになる）
+              return fetch(url, {
+                headers: {
+                  "Authorization": "Bearer " + (process.env.GITHUB_TOKEN || ""),
+                  "User-Agent": "github-actions"
+                }
+              });
+            }
+
             // -----------------------
             // 1) Read issue/comment
             // -----------------------
@@ -65,11 +76,16 @@ jobs:
               return;
             }
 
-            // 画像URL抽出（GitHubの形式に対応）
             const text = ibody + "\n" + cbody;
-            const re = /https:\/\/github\.com\/user-attachments\/assets\/\S+|https:\/\/user-images\.githubusercontent\.com\/\S+|https:\/\/private-user-images\.githubusercontent\.com\/\S+/;
-            const mm = text.match(re);
-            const imageUrl = mm ? mm[0].replace(/\)$/, "") : "";
+
+            // -----------------------
+            // 2) Extract image URL (priority order)
+            // -----------------------
+            const m1 = text.match(/https:\/\/github\.com\/user-attachments\/assets\/\S+/);
+            const m2 = text.match(/https:\/\/user-images\.githubusercontent\.com\/\S+/);
+            const m3 = text.match(/https:\/\/private-user-images\.githubusercontent\.com\/\S+/);
+
+            const imageUrl = (m1 || m2 || m3) ? (m1 || m2 || m3)[0].replace(/\)$/, "") : "";
 
             if (!imageUrl) {
               await github.rest.issues.createComment({
@@ -81,8 +97,22 @@ jobs:
               return;
             }
 
+            // private-user-images は一時URLで404になりやすいので、ここで止めて再投稿依頼
+            if (imageUrl.startsWith("https://private-user-images.githubusercontent.com/") && !m1 && !m2) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                body:
+                  "この画像リンクは一時URL（private-user-images）で、Actionsから取得できず404になりやすいです🙏\n" +
+                  "お手数ですが **同じIssueに画像をもう一度ドラッグ＆ドロップしてコメント投稿**してください。\n" +
+                  "（GitHubが user-attachments の安定URLを付けます。テーマは不要です）"
+              });
+              return;
+            }
+
             // -----------------------
-            // 2) Ensure base dirs/files
+            // 3) Ensure base dirs/files
             // -----------------------
             ensureDir("assets/img/x");
             ensureDir("data/activities");
@@ -94,7 +124,7 @@ jobs:
             }
 
             // -----------------------
-            // 3) Compute next Vol
+            // 4) Compute next Vol
             // -----------------------
             let nextVol = 1;
             try {
@@ -102,8 +132,8 @@ jobs:
               let mx = 0;
               for (const it of (idx.items || [])) {
                 const v = String(it.vol || "");
-                const m = v.match(/(\d+)/);
-                if (m) mx = Math.max(mx, parseInt(m[1], 10));
+                const mm = v.match(/(\d+)/);
+                if (mm) mx = Math.max(mx, parseInt(mm[1], 10));
               }
               nextVol = mx + 1;
             } catch (e) {
@@ -112,15 +142,22 @@ jobs:
             }
 
             // -----------------------
-            // 4) Download image
+            // 5) Download image
             // -----------------------
-            const imgRes = await fetch(imageUrl);
-            if (!imgRes.ok) throw new Error("Failed to download image: " + imgRes.status + " " + imgRes.statusText);
+            let imgRes = await fetchWithAuth(imageUrl);
+            if (!imgRes.ok) {
+              // 念のため、認証なしでもう一回
+              imgRes = await fetch(imageUrl);
+            }
+            if (!imgRes.ok) {
+              throw new Error("Failed to download image: " + imgRes.status + " " + imgRes.statusText + " url=" + imageUrl);
+            }
+
             const imgBuf = Buffer.from(await imgRes.arrayBuffer());
             const imgB64 = imgBuf.toString('base64');
 
             // -----------------------
-            // 5) Load system prompt (prefer file)
+            // 6) Load system prompt (prefer file)
             // -----------------------
             const sysPath = ".claude/xpost_system.md";
             let systemPrompt = "";
@@ -147,7 +184,7 @@ jobs:
             }
 
             // -----------------------
-            // 6) Call Claude API (Anthropic)
+            // 7) Call Claude API (Anthropic)
             // -----------------------
             const apiKey = process.env.ANTHROPIC_API_KEY;
             if (!apiKey) throw new Error("ANTHROPIC_API_KEY is missing (GitHub Secrets)");
@@ -192,7 +229,7 @@ jobs:
             const slug = slugify(theme);
 
             // -----------------------
-            // 7) Write files (image/draft/index/activity)
+            // 8) Write files (image/draft/index/activity)
             // -----------------------
             const now = new Date();
             const yyyy = String(now.getFullYear());
@@ -223,7 +260,6 @@ jobs:
             draft += "ALT: " + (gen.alt_text || "") + "\n";
             writeText(draftPath, draft);
 
-            // update index.json
             let idx = { items: [] };
             try { idx = JSON.parse(readText(idxPath)); } catch (e) { idx = { items: [] }; }
 
@@ -239,7 +275,6 @@ jobs:
             idx.items = [item].concat(idx.items || []);
             writeText(idxPath, JSON.stringify(idx, null, 2));
 
-            // activity detail
             const activityPath = "data/activities/" + iso + "-vol" + volStr + "-" + slug + ".json";
             const activity = {
               date: iso,
@@ -254,11 +289,10 @@ jobs:
             };
             writeText(activityPath, JSON.stringify(activity, null, 2));
 
-            // debug
             writeText("gen.json", JSON.stringify(gen, null, 2));
 
             // -----------------------
-            // 8) Comment back (NO backticks)
+            // 9) Comment back (NO backticks)
             // -----------------------
             const msgLines = [
               "✅ 画像からテーマ推定→X投稿文生成→画像保存→活動ログ更新まで完了しました。",
