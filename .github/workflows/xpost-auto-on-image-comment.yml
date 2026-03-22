@@ -1,0 +1,290 @@
+name: Xpost Auto (image comment -> Claude -> update repo)
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  run:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate (download image -> call Claude -> write files -> comment)
+        uses: actions/github-script@v7
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        with:
+          script: |
+            const fs = require('fs');
+
+            // -----------------------
+            // Helpers
+            // -----------------------
+            function ensureDir(p) { fs.mkdirSync(p, { recursive: true }); }
+            function exists(p) { try { fs.accessSync(p); return true; } catch { return false; } }
+            function readText(p) { return fs.readFileSync(p, 'utf8'); }
+            function writeText(p, s) { fs.writeFileSync(p, s, 'utf8'); }
+            function writeBin(p, buf) { fs.writeFileSync(p, buf); }
+
+            function slugify(s) {
+              s = (s || "xpost").toLowerCase();
+              s = s.replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
+              return (s.slice(0, 40) || "xpost");
+            }
+
+            function extractJson(text) {
+              let t = (text || "").trim();
+              t = t.replace(/^```json\s*/i, "").replace(/^```\s*/i, "").replace(/```$/i, "").trim();
+              try { return JSON.parse(t); } catch {}
+              const m = t.match(/\{[\s\S]*\}$/);
+              if (m) return JSON.parse(m[0]);
+              throw new Error("Claude output is not valid JSON");
+            }
+
+            // -----------------------
+            // 1) Read issue/comment
+            // -----------------------
+            const issue = context.payload.issue;
+            const comment = context.payload.comment;
+
+            const title = issue.title || "";
+            const ibody = issue.body || "";
+            const cbody = comment.body || "";
+
+            // 誤爆防止：タイトルに「X投稿したい」が含まれるIssueのみ対象
+            const isTarget = /X投稿したい/i.test(title);
+            if (!isTarget) {
+              core.info("Not target issue. Skip.");
+              return;
+            }
+
+            // 画像URL抽出（GitHubの形式に対応）
+            const text = ibody + "\n" + cbody;
+            const re = /https:\/\/github\.com\/user-attachments\/assets\/\S+|https:\/\/user-images\.githubusercontent\.com\/\S+|https:\/\/private-user-images\.githubusercontent\.com\/\S+/;
+            const mm = text.match(re);
+            const imageUrl = mm ? mm[0].replace(/\)$/, "") : "";
+
+            if (!imageUrl) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                body: "画像URLが見つかりません🙏 このIssueのコメント欄に画像をドラッグ＆ドロップして投稿してください（テーマは不要。画像から推定します）。"
+              });
+              return;
+            }
+
+            // -----------------------
+            // 2) Ensure base dirs/files
+            // -----------------------
+            ensureDir("assets/img/x");
+            ensureDir("data/activities");
+            ensureDir("x/drafts");
+
+            const idxPath = "data/activities/index.json";
+            if (!exists(idxPath)) {
+              writeText(idxPath, JSON.stringify({ items: [] }, null, 2));
+            }
+
+            // -----------------------
+            // 3) Compute next Vol
+            // -----------------------
+            let nextVol = 1;
+            try {
+              const idx = JSON.parse(readText(idxPath));
+              let mx = 0;
+              for (const it of (idx.items || [])) {
+                const v = String(it.vol || "");
+                const m = v.match(/(\d+)/);
+                if (m) mx = Math.max(mx, parseInt(m[1], 10));
+              }
+              nextVol = mx + 1;
+            } catch (e) {
+              nextVol = 1;
+              writeText(idxPath, JSON.stringify({ items: [] }, null, 2));
+            }
+
+            // -----------------------
+            // 4) Download image
+            // -----------------------
+            const imgRes = await fetch(imageUrl);
+            if (!imgRes.ok) throw new Error("Failed to download image: " + imgRes.status + " " + imgRes.statusText);
+            const imgBuf = Buffer.from(await imgRes.arrayBuffer());
+            const imgB64 = imgBuf.toString('base64');
+
+            // -----------------------
+            // 5) Load system prompt (prefer file)
+            // -----------------------
+            const sysPath = ".claude/xpost_system.md";
+            let systemPrompt = "";
+            if (exists(sysPath)) {
+              systemPrompt = readText(sysPath);
+            } else {
+              systemPrompt = [
+                "あなたはPA45のX投稿文を作るAIです。",
+                "ユーザーは画像だけ渡します。画像からテーマ(theme)を推定してください。",
+                "",
+                "【必ず守る固定フォーマット】",
+                "本文は必ずこの形：",
+                "📌【Vol.xx】タイトル",
+                "",
+                "（2〜4段落で：何を整理したか／なぜ大事か／よくある落とし穴）",
+                "・箇条書きは2〜4行（チェックリスト形式）",
+                "",
+                "保存用にもどうぞ👇",
+                "#PowerAutomate #ローコード #PA45",
+                "",
+                "【出力形式】",
+                "JSONのみで返す：title, theme, x_main, x_thread(array), alt_text"
+              ].join("\n");
+            }
+
+            // -----------------------
+            // 6) Call Claude API (Anthropic)
+            // -----------------------
+            const apiKey = process.env.ANTHROPIC_API_KEY;
+            if (!apiKey) throw new Error("ANTHROPIC_API_KEY is missing (GitHub Secrets)");
+
+            const payload = {
+              model: "claude-3-5-sonnet-latest",
+              max_tokens: 1400,
+              system: systemPrompt,
+              messages: [{
+                role: "user",
+                content: [
+                  { type: "image", source: { type: "base64", media_type: "image/png", data: imgB64 } },
+                  { type: "text", text: "Vol=" + nextVol + ". 画像からthemeを推定し、固定フォーマットでx_mainを作ってください。JSONだけで返してください。" }
+                ]
+              }]
+            };
+
+            const claudeRes = await fetch("https://api.anthropic.com/v1/messages", {
+              method: "POST",
+              headers: {
+                "content-type": "application/json",
+                "x-api-key": apiKey,
+                "anthropic-version": "2023-06-01"
+              },
+              body: JSON.stringify(payload)
+            });
+
+            if (!claudeRes.ok) {
+              const errText = await claudeRes.text();
+              throw new Error("Claude API error: " + claudeRes.status + " " + claudeRes.statusText + "\n" + errText);
+            }
+
+            const claudeJson = await claudeRes.json();
+            const textParts = (claudeJson.content || [])
+              .filter(x => x.type === "text")
+              .map(x => x.text)
+              .join("");
+
+            const gen = extractJson(textParts);
+
+            const theme = gen.theme || gen.title || "Power Automate tips";
+            const slug = slugify(theme);
+
+            // -----------------------
+            // 7) Write files (image/draft/index/activity)
+            // -----------------------
+            const now = new Date();
+            const yyyy = String(now.getFullYear());
+            const ymd = yyyy
+              + String(now.getMonth() + 1).padStart(2, '0')
+              + String(now.getDate()).padStart(2, '0');
+
+            const iso = yyyy
+              + "-" + String(now.getMonth() + 1).padStart(2, '0')
+              + "-" + String(now.getDate()).padStart(2, '0');
+
+            ensureDir("assets/img/x/" + yyyy);
+
+            const volStr = String(nextVol).padStart(2, '0');
+            const imgPath = "assets/img/x/" + yyyy + "/" + ymd + "-vol" + volStr + "-" + slug + ".png";
+            writeBin(imgPath, imgBuf);
+
+            const draftPath = "x/drafts/" + iso + "-vol" + volStr + "-" + slug + ".md";
+            let draft = "# X Draft Vol." + volStr + "\n\n";
+            draft += "Theme: " + theme + "\n\n";
+            draft += (gen.x_main || "") + "\n\n";
+            if (Array.isArray(gen.x_thread) && gen.x_thread.length) {
+              draft += "## Thread\n";
+              gen.x_thread.forEach((t, i) => { draft += (i + 1) + ". " + t + "\n"; });
+              draft += "\n";
+            }
+            draft += "Image: " + imgPath + "\n";
+            draft += "ALT: " + (gen.alt_text || "") + "\n";
+            writeText(draftPath, draft);
+
+            // update index.json
+            let idx = { items: [] };
+            try { idx = JSON.parse(readText(idxPath)); } catch (e) { idx = { items: [] }; }
+
+            const item = {
+              date: iso,
+              category: "X投稿",
+              vol: "Vol." + volStr,
+              theme: theme,
+              image: imgPath,
+              draft: draftPath
+            };
+
+            idx.items = [item].concat(idx.items || []);
+            writeText(idxPath, JSON.stringify(idx, null, 2));
+
+            // activity detail
+            const activityPath = "data/activities/" + iso + "-vol" + volStr + "-" + slug + ".json";
+            const activity = {
+              date: iso,
+              category: "X投稿",
+              vol: "Vol." + volStr,
+              theme: theme,
+              image: imgPath,
+              draft: draftPath,
+              x_main: gen.x_main || "",
+              x_thread: gen.x_thread || [],
+              alt_text: gen.alt_text || ""
+            };
+            writeText(activityPath, JSON.stringify(activity, null, 2));
+
+            // debug
+            writeText("gen.json", JSON.stringify(gen, null, 2));
+
+            // -----------------------
+            // 8) Comment back (NO backticks)
+            // -----------------------
+            const msgLines = [
+              "✅ 画像からテーマ推定→X投稿文生成→画像保存→活動ログ更新まで完了しました。",
+              "",
+              "【推定テーマ】" + theme,
+              "【保存画像】" + imgPath,
+              "【下書き】" + draftPath,
+              "",
+              "--- X本文 ---",
+              (gen.x_main || ""),
+              "",
+              "保存用にもどうぞ👇",
+              "#PowerAutomate #ローコード #PA45"
+            ];
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              body: msgLines.join("\n")
+            });
+
+      - name: Commit & push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add assets/img/x data/activities/index.json data/activities x/drafts gen.json || true
+          git commit -m "Auto: X draft + save image + update activities" || exit 0
+          git push
