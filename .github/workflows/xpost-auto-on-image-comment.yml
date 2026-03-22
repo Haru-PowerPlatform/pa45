@@ -40,6 +40,13 @@ jobs:
               return (s.slice(0, 40) || "xpost");
             }
 
+            // ★今回の肝：URL末尾の余計な記号を剥がす（" ) ' ] など）
+            function cleanUrl(u) {
+              u = (u || "").trim();
+              u = u.replace(/[)"'\]]+$/, "");
+              return u;
+            }
+
             function extractJson(text) {
               let t = (text || "").trim();
               t = t.replace(/^```json\s*/i, "").replace(/^```\s*/i, "").replace(/```$/i, "").trim();
@@ -50,7 +57,6 @@ jobs:
             }
 
             async function fetchWithAuth(url) {
-              // private系URL対策：トークン付きで取得を試す（ダメならエラーになる）
               return fetch(url, {
                 headers: {
                   "Authorization": "Bearer " + (process.env.GITHUB_TOKEN || ""),
@@ -85,7 +91,8 @@ jobs:
             const m2 = text.match(/https:\/\/user-images\.githubusercontent\.com\/\S+/);
             const m3 = text.match(/https:\/\/private-user-images\.githubusercontent\.com\/\S+/);
 
-            const imageUrl = (m1 || m2 || m3) ? (m1 || m2 || m3)[0].replace(/\)$/, "") : "";
+            let imageUrl = (m1 || m2 || m3) ? (m1 || m2 || m3)[0] : "";
+            imageUrl = cleanUrl(imageUrl);
 
             if (!imageUrl) {
               await github.rest.issues.createComment({
@@ -97,8 +104,8 @@ jobs:
               return;
             }
 
-            // private-user-images は一時URLで404になりやすいので、ここで止めて再投稿依頼
-            if (imageUrl.startsWith("https://private-user-images.githubusercontent.com/") && !m1 && !m2) {
+            // private-user-images しか無い場合は一時URLで不安定なので、安定URLで再投稿してもらう
+            if (imageUrl.startsWith("https://private-user-images.githubusercontent.com/") && !(m1 || m2)) {
               await github.rest.issues.createComment({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
@@ -142,13 +149,10 @@ jobs:
             }
 
             // -----------------------
-            // 5) Download image
+            // 5) Download image (with auth retry)
             // -----------------------
             let imgRes = await fetchWithAuth(imageUrl);
-            if (!imgRes.ok) {
-              // 念のため、認証なしでもう一回
-              imgRes = await fetch(imageUrl);
-            }
+            if (!imgRes.ok) imgRes = await fetch(imageUrl);
             if (!imgRes.ok) {
               throw new Error("Failed to download image: " + imgRes.status + " " + imgRes.statusText + " url=" + imageUrl);
             }
