@@ -41,10 +41,27 @@
     .voice-meta { font-size: 10px; color: var(--c-hint); }
     .voice-tag  { font-size: 9px; background: var(--c-blue-bg); color: var(--c-blue-text); padding: 1px 6px; border-radius: 3px; margin-right: 4px; }
 
+    /* アンケートグラフ */
+    .survey-meta { font-size: 12px; color: var(--c-hint); margin-bottom: 16px; }
+    .survey-double { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+    .survey-chart-card { background: var(--c-surface); border-radius: var(--radius-md); padding: 16px 18px; box-shadow: var(--shadow-card); margin-bottom: 12px; }
+    .survey-q { font-size: 13px; font-weight: 600; margin-bottom: 12px; color: var(--c-text); }
+    .sbar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 9px; }
+    .sbar-label { font-size: 11px; color: var(--c-muted); min-width: 130px; flex-shrink: 0; line-height: 1.4; }
+    .sbar-label-wide { font-size: 11px; color: var(--c-muted); min-width: 210px; flex-shrink: 0; line-height: 1.4; }
+    .sbar-track { flex: 1; height: 10px; background: var(--c-bg); border-radius: 5px; overflow: hidden; }
+    .sbar-fill { height: 100%; border-radius: 5px; }
+    .sbar-hi  { background: #2563eb; }
+    .sbar-mid { background: #93c5fd; }
+    .sbar-lo  { background: #cbd5e1; }
+    .sbar-count { font-size: 11px; font-family: 'DM Mono', monospace; color: var(--c-hint); min-width: 30px; text-align: right; flex-shrink: 0; }
+
     @media (max-width: 640px) {
-      .summary-grid { grid-template-columns: repeat(2, 1fr); }
-      .cat5-grid    { grid-template-columns: repeat(2, minmax(0,1fr)); }
-      .voice-grid   { grid-template-columns: 1fr; }
+      .summary-grid  { grid-template-columns: repeat(2, 1fr); }
+      .cat5-grid     { grid-template-columns: repeat(2, minmax(0,1fr)); }
+      .voice-grid    { grid-template-columns: 1fr; }
+      .survey-double { grid-template-columns: 1fr; }
+      .sbar-label-wide { min-width: 140px; }
     }
   </style>
 </head>
@@ -197,30 +214,112 @@
   </div>
 </section>
 
-<!-- 参加者の声 -->
+<!-- アンケート結果 -->
 <section class="section">
   <div class="container">
-    <p class="section-label">参加者の声</p>
-    <div class="voice-grid">
-      <div class="voice-card">
-        <div class="voice-body">45分という短さで最後まで集中できた。翌週には業務で使い始めた。</div>
-        <div class="voice-meta"><span class="voice-tag">初参加</span>connpassコメント要約 · 個人特定なし</div>
+    <p class="section-label">受講者アンケート（第1回）</p>
+    <p class="survey-meta">30名回答 · 2026年3月5日実施</p>
+
+    <!-- 2列: 理解度 + 役立ちそう -->
+    <div class="survey-double">
+      <div class="survey-chart-card" style="margin-bottom:0;">
+        <div class="survey-q">内容の理解しやすさ</div>
+        <div class="sbar-row">
+          <div class="sbar-label">とても理解できた</div>
+          <div class="sbar-track"><div class="sbar-fill sbar-hi" style="width:87%;"></div></div>
+          <div class="sbar-count">26名</div>
+        </div>
+        <div class="sbar-row">
+          <div class="sbar-label">理解できた</div>
+          <div class="sbar-track"><div class="sbar-fill sbar-mid" style="width:10%;"></div></div>
+          <div class="sbar-count">3名</div>
+        </div>
+        <div class="sbar-row">
+          <div class="sbar-label">その他</div>
+          <div class="sbar-track"><div class="sbar-fill sbar-lo" style="width:3%;"></div></div>
+          <div class="sbar-count">1名</div>
+        </div>
       </div>
-      <div class="voice-card">
-        <div class="voice-body">質問しなくても雰囲気で理解できる設計。初心者として入りやすかった。</div>
-        <div class="voice-meta"><span class="voice-tag">初参加</span>connpassコメント要約 · 個人特定なし</div>
-      </div>
-      <div class="voice-card">
-        <div class="voice-body">1枚スライドで概念が整理される。複数回通ううちに迷わなくなった。</div>
-        <div class="voice-meta"><span class="voice-tag">継続参加</span>connpassコメント要約 · 個人特定なし</div>
-      </div>
-      <div class="voice-card">
-        <div class="voice-body">毎回テーマが絞られていて負担が少ない。自分のペースで選んで参加できる。</div>
-        <div class="voice-meta"><span class="voice-tag">継続参加</span>connpassコメント要約 · 個人特定なし</div>
+      <div class="survey-chart-card" style="margin-bottom:0;">
+        <div class="survey-q">業務・生活に役立ちそう</div>
+        <div class="sbar-row">
+          <div class="sbar-label">役立ちそう</div>
+          <div class="sbar-track"><div class="sbar-fill sbar-hi" style="width:90%;"></div></div>
+          <div class="sbar-count">27名</div>
+        </div>
+        <div class="sbar-row">
+          <div class="sbar-label">少し役立ちそう</div>
+          <div class="sbar-track"><div class="sbar-fill sbar-mid" style="width:3%;"></div></div>
+          <div class="sbar-count">1名</div>
+        </div>
+        <div class="sbar-row">
+          <div class="sbar-label">まだイメージがついていない</div>
+          <div class="sbar-track"><div class="sbar-fill sbar-lo" style="width:7%;"></div></div>
+          <div class="sbar-count">2名</div>
+        </div>
       </div>
     </div>
-    <p style="font-size:11px;color:var(--c-hint);line-height:1.6;">
-      掲載ポリシー：実名・所属・役職は不記載。connpassコメントを運営者が要約。原文の意味を変えない範囲で個人が特定されない表現に変換しています。
+
+    <!-- できるようになったこと -->
+    <div class="survey-chart-card">
+      <div class="survey-q">できるようになったこと（複数選択・30名中）</div>
+      <div class="sbar-row">
+        <div class="sbar-label-wide">変数（初期化）の意味が分かった</div>
+        <div class="sbar-track"><div class="sbar-fill sbar-hi" style="width:77%;"></div></div>
+        <div class="sbar-count">23名</div>
+      </div>
+      <div class="sbar-row">
+        <div class="sbar-label-wide">フローの流れがイメージできるようになった</div>
+        <div class="sbar-track"><div class="sbar-fill sbar-hi" style="width:60%;"></div></div>
+        <div class="sbar-count">18名</div>
+      </div>
+      <div class="sbar-row">
+        <div class="sbar-label-wide">変数を自分で作れるようになった</div>
+        <div class="sbar-track"><div class="sbar-fill sbar-hi" style="width:53%;"></div></div>
+        <div class="sbar-count">16名</div>
+      </div>
+      <div class="sbar-row">
+        <div class="sbar-label-wide">実行履歴の見方が分かった</div>
+        <div class="sbar-track"><div class="sbar-fill sbar-mid" style="width:27%;"></div></div>
+        <div class="sbar-count">8名</div>
+      </div>
+      <div class="sbar-row">
+        <div class="sbar-label-wide">とりあえずPower Automateを触る勇気が出た</div>
+        <div class="sbar-track"><div class="sbar-fill sbar-mid" style="width:27%;"></div></div>
+        <div class="sbar-count">8名</div>
+      </div>
+    </div>
+
+    <!-- コメント抜粋 -->
+    <p class="section-label" style="margin-top:8px;">コメント抜粋</p>
+    <div class="voice-grid">
+      <div class="voice-card">
+        <div class="voice-body">「なんとなく知ってた」から、「はっきりと理解できた」に変わりました。次回も楽しみにしています！</div>
+        <div class="voice-meta"><span class="voice-tag">第1回</span>アンケート原文より</div>
+      </div>
+      <div class="voice-card">
+        <div class="voice-body">ユーザが詰まりそうなところに寄り添ってくれる説明ですごくいいと思いました。自分もHaruさんのように「自分を頼ってくれる人」の力になりたい。</div>
+        <div class="voice-meta"><span class="voice-tag">第1回</span>アンケート原文より</div>
+      </div>
+      <div class="voice-card">
+        <div class="voice-body">45分という時間が長すぎず短すぎず良い感じでした。</div>
+        <div class="voice-meta"><span class="voice-tag">第1回</span>アンケート原文より</div>
+      </div>
+      <div class="voice-card">
+        <div class="voice-body">どこをクリックするか分かるように、ゆっくり操作していただけるところが嬉しいです。サンプルフローは、より実務に近い感じで私も作れるようになりたいと思いました。</div>
+        <div class="voice-meta"><span class="voice-tag">第1回</span>アンケート原文より</div>
+      </div>
+      <div class="voice-card">
+        <div class="voice-body">基礎に立ち返る機会をいただけて感謝です。改めて体系的に復習できる内容は非常に有益です。また、英語表記が併記されている点も、耳を慣らす良いトレーニングになっております。</div>
+        <div class="voice-meta"><span class="voice-tag">第1回</span>アンケート原文より</div>
+      </div>
+      <div class="voice-card">
+        <div class="voice-body">Power Automateって便利そうなのに実際どんな場面でどのフローを使えばいいのか分からずモヤモヤしていたので、今回の内容はめちゃくちゃ勉強になりました。こういう勉強会は本当にありがたいです。</div>
+        <div class="voice-meta"><span class="voice-tag">第1回</span>アンケート原文より</div>
+      </div>
+    </div>
+    <p style="font-size:11px;color:var(--c-hint);line-height:1.6;margin-top:8px;">
+      掲載ポリシー：実名・所属・役職は不記載。アンケート原文から一部抜粋・省略しています。
     </p>
   </div>
 </section>
