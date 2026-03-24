@@ -80,7 +80,7 @@ def step_create_post(env, title, body, post_id=None):
 
 
 # ── Step 2: アイキャッチ画像生成 ────────────────────────────────────────
-def step_generate_ogp(title_lines, label, sub):
+def step_generate_ogp(title_lines, label, sub, theme="blue"):
     print("▶ Step 2: アイキャッチ画像を生成...")
     import subprocess
     result = subprocess.run(
@@ -90,6 +90,7 @@ def step_generate_ogp(title_lines, label, sub):
             "--title", title_lines,
             "--label", label,
             "--sub",   sub,
+            "--theme", theme,
             "--out",   "scripts/ogp-output.png",
         ],
         cwd=str(ROOT_DIR),
@@ -147,6 +148,9 @@ def main():
     p.add_argument("--body",    default="",     help="本文（HTML可）")
     p.add_argument("--label",   required=True,  help="アイキャッチ pill 上段")
     p.add_argument("--sub",     required=True,  help="アイキャッチ pill 下段")
+    p.add_argument("--theme",   default="blue",
+                   choices=["blue","orange","green","red","yellow"],
+                   help="アイキャッチカラーテーマ")
     p.add_argument("--ogp",     default="",     help="アイキャッチ用タイトル（省略時は--titleを使用）")
     p.add_argument("--slug",    default="",     help="英語パーマリンク")
     p.add_argument("--post-id", default=None,   type=int, help="既存投稿IDを更新する場合")
@@ -159,7 +163,7 @@ def main():
     ogp_title = args.ogp if args.ogp else args.title
 
     post_id  = step_create_post(env, args.title, args.body, args.post_id)
-    step_generate_ogp(ogp_title, args.label, args.sub)
+    step_generate_ogp(ogp_title, args.label, args.sub, args.theme)
     media_id = step_upload_media(env, png_path)
     step_set_featured(env, post_id, media_id)
     step_set_slug(env, post_id, args.slug)
