@@ -171,11 +171,22 @@ def main():
     args = p.parse_args()
 
     vol      = args.vol
-    prev_vol = vol - 1  # テンプレートの回数（通常 1 つ前）
 
     # テンプレートPPTX
     template_path = Path(args.template) if args.template else find_template()
     print(f"テンプレート: {template_path}")
+
+    # テンプレートの回数を自動検出（「第N回」が最も多く登場するNを使う）
+    from collections import Counter
+    prs_tmp = Presentation(str(template_path))
+    counter = Counter()
+    for slide in prs_tmp.slides:
+        for shape in slide.shapes:
+            if shape.has_text_frame:
+                for m in re.findall(r'第(\d+)回', shape.text_frame.text):
+                    counter[int(m)] += 1
+    prev_vol = counter.most_common(1)[0][0] if counter else vol - 1
+    print(f"テンプレートの回数: 第{prev_vol}回 → 第{vol}回 に置換")
 
     # 出力先
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
@@ -197,12 +208,14 @@ def main():
     n = replace_text(prs, f"Vol.{prev_vol}", f"Vol.{vol}")
     print(f"  「Vol.{prev_vol}」→「Vol.{vol}」: {n}箇所")
 
-    # 次回 Vol
-    next_vol_old = f"Vol.{vol}"    # テンプレートの「次回」はちょうど今回の次
-    next_vol_new = f"Vol.{args.next_vol}"
-    # Slide 15 のみ対象（次回予告スライド = index 14）
-    n = replace_slide_text(slides[14], next_vol_old, next_vol_new)
+    # 次回 Vol（テンプレートの「次回Vol」は prev_vol+1）
+    template_next_vol = prev_vol + 1
+    n = replace_slide_text(slides[14], f"Vol.{template_next_vol}", f"Vol.{args.next_vol}")
     print(f"  次回Vol: {n}箇所（Slide 15）")
+
+    # Slide 15 の「Next Session（第N回）」も更新
+    n = replace_slide_text(slides[14], f"第{template_next_vol}回）", f"第{args.next_vol}回）")
+    print(f"  Next Session ラベル: {n}箇所（Slide 15）")
 
     # ── Slide 5 (index 4)：タイトルスライド ──────────────────────────
     sl5 = slides[4]
