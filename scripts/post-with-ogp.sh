@@ -1,16 +1,17 @@
 #!/bin/bash
 # PA45 アイキャッチ自動生成 + WordPress投稿スクリプト
-# 使い方: bash scripts/post-with-ogp.sh <PostId> <Title> [Sub]
-# 例: bash scripts/post-with-ogp.sh 1224 "記事タイトル" "PA45"
+# 使い方: bash scripts/post-with-ogp.sh <PostId> <Title> [Sub] [Label]
+# 例: bash scripts/post-with-ogp.sh 1224 "記事タイトル" "PA45" "業務効率化 × Teams 活用"
 
 set -e
 
 POST_ID="${1}"
 TITLE="${2}"
 SUB="${3:-Power Automate 45}"
+LABEL="${4:-社外コミュニティ活動}"
 
 if [ -z "$POST_ID" ] || [ -z "$TITLE" ]; then
-  echo "使い方: bash scripts/post-with-ogp.sh <PostId> <Title> [Sub]"
+  echo "使い方: bash scripts/post-with-ogp.sh <PostId> <Title> [Sub] [Label]"
   exit 1
 fi
 
@@ -35,7 +36,8 @@ TITLE_HTML=$(echo "$TITLE" | sed 's/\\n/<br>/g')
 sed \
   "s|<div class=\"title\" id=\"title\">[^<]*\(<br>[^<]*\)*</div>|<div class=\"title\" id=\"title\">${TITLE_HTML}</div>|g" \
   "$TEMPLATE" | \
-sed "s|<span class=\"sub\" id=\"sub\">[^<]*</span>|<span class=\"sub\" id=\"sub\">${SUB}</span>|g" \
+sed "s|<span class=\"sub\" id=\"sub\">[^<]*</span>|<span class=\"sub\" id=\"sub\">${SUB}</span>|g" | \
+sed "s|社外コミュニティ活動|${LABEL}|g" \
   > "$TEMP_HTML"
 
 echo "  HTML OK"
