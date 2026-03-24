@@ -87,7 +87,7 @@ def step_convert_slides(pptx_path: Path, out_dir: Path) -> list[Path]:
     # --- 方法A: win32com (Windows + PowerPoint必須) ---
     try:
         import win32com.client
-        import os
+        import re as _re
         pptx_abs = str(pptx_path.resolve())
         out_abs  = str(out_dir.resolve())
 
@@ -99,13 +99,29 @@ def step_convert_slides(pptx_path: Path, out_dir: Path) -> list[Path]:
         ppt.Quit()
         print("  win32com (PowerPoint) でPNG変換完了")
 
-        # PowerPointが出力するファイル名を slide_001.png 形式に統一
+        # PowerPointは「スライド1.PNG」などのファイル名で出力する
+        # 大文字小文字を区別せず一意ファイルを収集
+        seen = set()
+        raw_pngs = []
+        for f in out_dir.iterdir():
+            if f.suffix.lower() == ".png" and f.name not in seen:
+                seen.add(f.name)
+                raw_pngs.append(f)
+
+        # 数値順でソート（スライド1, 2, ..., 16）
+        def _slide_num(p):
+            m = _re.search(r"(\d+)", p.stem)
+            return int(m.group(1)) if m else 999
+
+        raw_pngs.sort(key=_slide_num)
+
+        # slide_001.png 形式にリネーム
         slides = []
-        exported = sorted(out_dir.glob("*.png"))
-        for i, f in enumerate(exported, 1):
+        for i, f in enumerate(raw_pngs, 1):
             new_name = out_dir / f"slide_{i:03d}.png"
             f.rename(new_name)
             slides.append(new_name)
+        print(f"  {len(slides)}枚のスライド画像を生成")
         return slides
 
     except ImportError:
