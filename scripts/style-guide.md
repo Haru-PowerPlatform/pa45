@@ -109,3 +109,61 @@ python scripts/new-post.py \
   --ogp    "アイキャッチ用タイトル\n2行目\n3行目" \
   --slug   "english-url-slug"
 ```
+
+---
+
+## PA45 スライド自動化フロー
+
+### 講座前：スライド生成（pa45-gen.py）
+
+```bash
+python scripts/pa45-gen.py \
+  --vol        2 \
+  --title-ja   "変数を操作しよう" \
+  --title-en   "Set variable" \
+  --date       "2026-04-16" \
+  --next-vol   3 \
+  --next-title-ja "条件分岐を使おう" \
+  --next-title-en "Condition" \
+  --next-desc  "フローに「もし〜なら」の分岐を追加します。" \
+  --template   "C:/Users/isamu/Downloads/.../P001_PA45_*.pptx"
+```
+
+自動で更新されるもの:
+- `第N回` ラベル（全スライド）
+- `Vol.N` 番号（タイトルスライド・次回予告）
+- 英語タイトル行（Slide 5）
+- 次回テーマ・説明・Vol番号（Slide 15）
+
+### 講座後：公開フロー（pa45-publish.py）
+
+```bash
+python scripts/pa45-publish.py \
+  --pptx     "outputs/pa45/P002_PA45_変数を操作しよう_20260416.pptx" \
+  --vol      2 \
+  --title-ja "変数を操作しよう" \
+  --title-en "Set variable" \
+  --date     "2026-04-16" \
+  --publish
+```
+
+自動実行される処理:
+1. PPTXを各スライドPNGに変換（win32com / LibreOffice）
+2. スライド画像をWordPressにアップロード
+3. OGPアイキャッチ（オレンジテーマ）生成・アップロード
+4. スライド埋め込みブログ記事を作成
+5. アイキャッチ・パーマリンク設定
+6. PPTXをリポジトリ（assets/pa45/）にコピー
+7. 活動データJSON（data/activities/）を追加
+8. git commit & push → GitHub Pages 自動デプロイ
+
+### スライドを手動でPNG変換した場合
+
+```bash
+python scripts/pa45-publish.py \
+  --pptx     "outputs/pa45/P002_.pptx" \
+  --vol      2 \
+  --title-ja "変数を操作しよう" \
+  --date     "2026-04-16" \
+  --slides-dir "scripts/pa45-slides/vol002"  # slide_001.png ... を配置
+```
