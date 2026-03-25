@@ -31,17 +31,72 @@
       transition: background .15s;
     }
     .btn-connpass:hover { background: #1c62b0; }
-    .past-grid { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 8px; }
-    .past-card {
-      background: var(--c-surface); border-radius: var(--radius-md);
-      padding: 12px 13px; box-shadow: var(--shadow-card);
-      cursor: pointer; transition: box-shadow .2s, transform .2s; display: block;
+    /* ── 資料アーカイブ カード ── */
+    .archive-intro {
+      background: var(--c-blue-bg); border-radius: var(--radius-xl);
+      padding: 20px 24px; margin-bottom: 24px;
+      border-left: 4px solid var(--c-blue-mid);
     }
-    .past-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
-    .past-num   { font-size: 12px; font-weight: 700; color: var(--c-text); margin-bottom: 3px; }
-    .past-theme { font-size: 11px; color: var(--c-muted); line-height: 1.4; margin-bottom: 5px; }
-    .past-link  { font-size: 10px; color: var(--c-blue-mid); }
-    .past-date  { font-size: 10px; color: var(--c-hint); margin-bottom: 3px; }
+    .archive-intro-label { font-size: 11px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--c-blue-mid); margin-bottom: 6px; }
+    .archive-intro-text  { font-size: 14px; color: var(--c-blue-text); line-height: 1.7; margin: 0; }
+    .past-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 20px;
+    }
+    .past-card {
+      background: var(--c-surface); border-radius: 16px;
+      box-shadow: var(--shadow-card);
+      overflow: hidden;
+      transition: box-shadow .2s, transform .2s;
+      display: flex; flex-direction: column;
+    }
+    .past-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-3px); }
+    .past-card-thumb {
+      width: 100%; aspect-ratio: 16/9;
+      overflow: hidden; background: #e8f0fb; position: relative;
+    }
+    .past-card-thumb img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+    }
+    .past-card-thumb-placeholder {
+      width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
+      font-size: 28px; font-weight: 800; color: #c5d8f5; letter-spacing: .05em;
+    }
+    .past-card-vol {
+      position: absolute; top: 10px; left: 10px;
+      background: var(--c-blue-mid); color: #fff;
+      font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px;
+    }
+    .past-card-body { padding: 16px; flex: 1; display: flex; flex-direction: column; gap: 4px; }
+    .past-num   { font-size: 13px; font-weight: 700; color: var(--c-text); }
+    .past-date  { font-size: 11px; color: var(--c-hint); }
+    .past-theme { font-size: 13px; color: var(--c-muted); line-height: 1.5; flex: 1; }
+    .btn-slide  {
+      margin-top: 14px; display: block; text-align: center;
+      background: var(--c-blue-mid); color: #fff;
+      font-size: 13px; font-weight: 700; padding: 10px 16px;
+      border-radius: 10px; transition: background .15s; text-decoration: none;
+    }
+    .btn-slide:hover { background: #1c62b0; color: #fff; }
+    .btn-slide-blog {
+      margin-top: 8px; display: block; text-align: center;
+      background: transparent; color: var(--c-blue-mid);
+      font-size: 12px; font-weight: 500; padding: 7px 16px;
+      border-radius: 10px; border: 1px solid rgba(42,125,212,.35);
+      transition: background .15s; text-decoration: none;
+    }
+    .btn-slide-blog:hover { background: var(--c-blue-bg); }
+    .past-card-coming {
+      background: var(--c-surface); border-radius: 16px;
+      box-shadow: var(--shadow-card); overflow: hidden;
+      display: flex; flex-direction: column;
+    }
+    .past-card-coming .past-card-thumb-placeholder { background: #f3f3f3; }
+    .past-card-coming .past-card-body { opacity: .55; }
+    @media (max-width: 640px) {
+      .past-grid { grid-template-columns: 1fr; }
+    }
     .category-label {
       font-size: 14px; font-weight: 700; letter-spacing: .02em;
       text-transform: none; color: var(--c-text); margin-bottom: 6px;
@@ -121,39 +176,54 @@
 <section class="section">
   <div class="container">
     <hr class="category-divider">
-    <p class="category-label">過去回アーカイブ（説明資料・振り返り）</p>
-    <!-- ★過去回を追加するときはここにコピーして追加します -->
-    <!-- カード構造：past-num / past-date（開催日）/ past-theme / past-link（PDFリンク or 準備中） -->
-    <!-- PDFは slides/archive/pa45-{回数}.pdf に配置。準備できたらコメントを外してください。 -->
-    <div class="past-grid">
-      <!-- ★第2回（実績） -->
-      <div class="past-card">
-        <div class="past-num">第2回</div>
-        <div class="past-date">2026-03-12 · 参加者32名</div>
-        <div class="past-theme">VAR — 変数の設定</div>
-        <div class="past-link">
-          <!-- <a href="../slides/archive/pa45-02.pdf" target="_blank" rel="noopener">資料を見る（PDF）→</a> -->
-          <span style="color:var(--c-hint);">（資料準備中）</span>
-          <a href="https://connpass.com/event/386742/" target="_blank" rel="noopener" style="font-size:10px;color:var(--c-blue-mid);margin-left:6px;">connpass →</a>
-        </div>
-      </div>
-      <!-- ★第1回（実績） -->
-      <div class="past-card">
-        <div class="past-num">第1回</div>
-        <div class="past-date">2026-03-05 · 参加者26名</div>
-        <div class="past-theme">VAR — 変数の初期化</div>
-        <div class="past-link">
-          <!-- <a href="../slides/archive/pa45-01.pdf" target="_blank" rel="noopener">資料を見る（PDF）→</a> -->
-          <span style="color:var(--c-hint);">（資料準備中）</span>
-          <a href="https://powerautomate-create.connpass.com/event/386395/" target="_blank" rel="noopener" style="font-size:10px;color:var(--c-blue-mid);margin-left:6px;">connpass →</a>
-        </div>
-      </div>
-      <!-- ★第4回以降：開催後に追加予定 -->
+    <p class="category-label">📂 PA45 資料アーカイブ</p>
+    <div class="archive-intro">
+      <div class="archive-intro-label">Slide Archive</div>
+      <p class="archive-intro-text">過去のPA45で使用したスライド資料をすべて公開しています。<br>各回のカードから「資料閲覧はこちら」を押すとスライド解説ブログ・資料ダウンロードにアクセスできます。</p>
     </div>
-    <!-- ★ここまでが過去回カード -->
-    <p style="font-size:12px;color:var(--c-hint);margin-top:12px;text-align:center;">
-      PDFが揃い次第、順次 slides/archive/ に追加していきます。<br>
-      活動実績の詳細は <a href="../achievements/" style="color:var(--c-blue-mid);">Achievementsページ</a> をご覧ください。
+    <!-- ★過去回を追加するときはここにコピーして追加します -->
+    <div class="past-grid">
+
+      <!-- ★第2回 -->
+      <div class="past-card">
+        <div class="past-card-thumb">
+          <img src="https://www.automate136.com/wp-content/uploads/2026/03/pa45-ogp-1774361059.png"
+               alt="PA45 第2回 アイキャッチ" loading="lazy">
+          <span class="past-card-vol">Vol.2</span>
+        </div>
+        <div class="past-card-body">
+          <div class="past-num">第2回：変数を操作しよう</div>
+          <div class="past-date">2026-03-12 · 参加者32名</div>
+          <div class="past-theme">Set variable（変数の設定）を使って変数の値を書き換える方法を学ぶ回です。</div>
+          <a href="https://haru-powerplatform.github.io/pa45/assets/pa45/P002_PA45_%E5%A4%89%E6%95%B0%E3%82%92%E6%93%8D%E4%BD%9C%E3%81%97%E3%82%88%E3%81%86_20260416.pptx"
+             target="_blank" rel="noopener" class="btn-slide">📥 資料閲覧はこちら（PPTX）→</a>
+          <a href="https://www.automate136.com/pa45-vol2-set-variable/"
+             target="_blank" rel="noopener" class="btn-slide-blog">📖 スライド解説ブログ →</a>
+        </div>
+      </div>
+
+      <!-- ★第1回 -->
+      <div class="past-card">
+        <div class="past-card-thumb">
+          <img src="https://www.automate136.com/wp-content/uploads/2026/03/pa45-ogp-1774395409.png"
+               alt="PA45 第1回 アイキャッチ" loading="lazy">
+          <span class="past-card-vol">Vol.1</span>
+        </div>
+        <div class="past-card-body">
+          <div class="past-num">第1回：変数の初期化</div>
+          <div class="past-date">2026-03-05 · 参加者26名</div>
+          <div class="past-theme">Initialize variable（変数を初期化する）で変数を作る基礎を学ぶ回です。</div>
+          <a href="https://haru-powerplatform.github.io/pa45/assets/pa45/P001_PA45_%E5%A4%89%E6%95%B0%E3%81%AE%E5%88%9D%E6%9C%9F%E5%8C%96_20260306.pptx"
+             target="_blank" rel="noopener" class="btn-slide">📥 資料閲覧はこちら（PPTX）→</a>
+          <a href="https://www.automate136.com/pa45-vol1-initialize-variable/"
+             target="_blank" rel="noopener" class="btn-slide-blog">📖 スライド解説ブログ →</a>
+        </div>
+      </div>
+
+      <!-- ★第3回以降：開催後に追加予定 -->
+    </div>
+    <p style="font-size:12px;color:var(--c-hint);margin-top:16px;text-align:center;">
+      毎回の講座終了後に資料を追加しています。
     </p>
   </div>
 </section>
