@@ -1,0 +1,99 @@
+name: WordPress Auto Post
+
+on:
+  push:
+    paths:
+      - "data/blog-draft/*.json"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Post draft to WordPress
+        env:
+          WP_SITE_URL: ${{ secrets.WP_SITE_URL }}
+          WP_API_USER: ${{ secrets.WP_API_USER }}
+          WP_API_APP_PASSWORD: ${{ secrets.WP_API_APP_PASSWORD }}
+          WP_CATEGORY_MAP: ${{ secrets.WP_CATEGORY_MAP }}
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import os, json, glob, base64, urllib.request
+          import urllib.error
+
+          site = os.environ["WP_SITE_URL"].rstrip("/")
+          user = os.environ["WP_API_USER"]
+          app_pass = os.environ["WP_API_APP_PASSWORD"]
+          cat_map = json.loads(os.environ.get("WP_CATEGORY_MAP","{}"))
+
+          def wp_request(method, path, payload=None):
+              url = site + path
+              auth = base64.b64encode(f"{user}:{app_pass}".encode()).decode()
+              headers = {"Authorization": f"Basic {auth}", "Content-Type": "application/json"}
+              data = None
+              if payload is not None:
+                  data = json.dumps(payload, ensure_ascii=False).encode("utf-8")
+
+              req = urllib.request.Request(url, data=data, headers=headers, method=method)
+
+              try:
+                  with urllib.request.urlopen(req) as res:
+                      return json.loads(res.read().decode("utf-8"))
+              except urllib.error.HTTPError as e:
+                  body = e.read().decode("utf-8", errors="ignore")
+                  print("HTTPError:", e.code, e.reason)
+                  print("URL:", url)
+                  print("Response body (first 2000 chars):")
+                  print(body[:2000])
+                  raise
+
+          drafts = sorted(glob.glob("data/blog-draft/*.json"))
+          if not drafts:
+              print("No drafts found.")
+              raise SystemExit(0)
+
+          for fp in drafts:
+              with open(fp, "r", encoding="utf-8") as f:
+                  d = json.load(f)
+
+              title = d["title"]
+              content = d["content_html"]
+              excerpt = d.get("excerpt","")
+              status = d.get("status","draft")
+              slug = d["slug"]
+              category_key = d.get("category","")
+              cat_id = cat_map.get(category_key)
+
+              payload = {"title": title, "content": content, "excerpt": excerpt, "status": status, "slug": slug}
+              if cat_id:
+                  payload["categories"] = [cat_id]
+
+              post = wp_request("POST", "/wp-json/wp/v2/posts", payload)
+              link = post.get("link")
+              print("Posted:", fp, "->", link)
+
+              # 処理済みに移動（再投稿防止）
+              os.makedirs("data/blog-draft/processed", exist_ok=True)
+              os.rename(fp, "data/blog-draft/processed/" + os.path.basename(fp))
+
+          PY
+
+      - name: Commit and push processed drafts
+        run: |
+          set -euo pipefail
+          if git diff --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/blog-draft/processed
+          git commit -m "chore: mark blog drafts as processed"
+          git push
