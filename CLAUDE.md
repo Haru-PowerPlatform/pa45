@@ -162,6 +162,49 @@ Vol.1〜30（Vol.11・Vol.27除く）の28件を処理済み：
 
 ---
 
+## YouTube動画ワークフロー（PA45開催後）
+
+PA45の各回が終わったら以下の手順でYouTube動画を公開する：
+
+### 動画編集（ffmpegで実施）
+- Teamsの録画はPowerShellのffmpegで編集する
+- **クロップコマンド（白いスライドエリアのみ切り抜き）**
+  - 解像度1920×1080の場合：`crop=1133:719:125:49`
+  - 最初N分削除・終了時刻指定の場合：`-ss 00:11:00 -to 01:11:00`
+- 出力ファイル名：`P00N-PA45.mp4`（例：P001-PA45.mp4）
+
+```powershell
+ffmpeg -ss 00:11:00 -to 01:11:00 -i "元ファイル.mp4" -vf "crop=1133:719:125:49" "P001-PA45.mp4"
+```
+
+### YouTubeアップロード（手動）
+- YouTube Studioのファイル選択は手動操作（Claudeはiframeの制約でアップロードできない）
+- タイトル・説明欄はClaude が生成し、ユーザーがコピペ
+- 公開設定は「公開」
+
+### アップロード後の自動処理（Claudeが実施）
+1. `data/activities/YYYY-MM-DD-pa45-volN.json` の `evidence.youtube` にURLを追記
+2. `sessions/index.html` の該当回カードに「▶ YouTube動画を見る →」ボタンを追加
+3. git commit & push
+
+### YouTube動画URL記録
+| 回 | YouTube URL |
+|----|-------------|
+| 1 | https://youtu.be/GEB2zGcmF88 |
+
+---
+
+## Qiitaクロスポスト
+
+- **APIトークン**: `.env` に `QIITA_TOKEN` として保存済み（GitHub Secretsにも登録済み）
+- **スクリプト**: `scripts/cross-post-qiita.py`
+- **投稿ペース**: 火・木・土（GitHub Actions `daily-qiita-post.yml`）
+- **canonical URLの代わり**: 記事冒頭に「元記事：https://www.automate136.com/...」を自動挿入
+- **現状**: Vol.1投稿済み（https://qiita.com/Haru_PowerAutomate136）。Vol.2以降は火・木・土に自動投稿。
+- **Zenn**: 未連携（後回し）
+
+---
+
 ## 重要な注意事項
 
 - `.env` ファイル（WordPress認証）は gitignore 済み。絶対にコミットしない
