@@ -141,6 +141,8 @@ Vol.1〜30（Vol.11・Vol.27除く）の28件を処理済み：
 | `scripts/batch-x-posts.py` | X投稿スライドの一括処理（OGP・WP・JSON） |
 | `scripts/update-blog-content.py` | X投稿スライドの記事内容を一括更新 |
 | `scripts/status.py` | ステータスレポート生成・メール送信 |
+| `scripts/parse-survey.py` | SharePointからアンケートExcelを取得・集計・JSON出力 |
+| `scripts/cross-post-qiita.py` | WordPressからQiitaへのクロスポスト |
 
 ---
 
@@ -164,20 +166,36 @@ Vol.1〜30（Vol.11・Vol.27除く）の28件を処理済み：
 
 ## アンケート自動化ワークフロー
 
-PA45翌日にMicrosoft FormsのExcelをエクスポートして以下を実行する：
+### 完全自動（GitHub Actions）
+毎週金曜にGitHub Actionsが自動実行：
+- Microsoft Graph APIでSharePointのExcelをダウンロード
+- 日付でVol別に分割して `data/surveys/vol-XX.json` を自動生成・更新
+- git commit & push まで自動
 
-```powershell
-python scripts/parse-survey.py --vol N --file "C:\Users\isamu\Downloads\PowerAutoamte45 アンケート.xlsx"
+**SharePoint設定（変更不要）：**
+- ファイルオーナー: `ixa_mct@plug136.onmicrosoft.com`
+- ファイルID: `47E8E22E-7B13-4D0C-9181-31D6B9BF9150`
+- Azure App: `PA45-survey-reader`（GitHub SecretsにMS_CLIENT_ID・MS_TENANT_ID・MS_CLIENT_SECRET登録済み）
+
+### survey JSONの必須フィールド
+```json
+{
+  "vol": 1,
+  "date": "2026-03-05",
+  "total_responses": 17,
+  "understanding_pct": 82.4,
+  "usefulness_pct": 88.2,
+  "understanding": {...},
+  "usefulness": {...},
+  "time_preference": {...},
+  "can_do": {...},
+  "comments": [...]
+}
 ```
 
-- 出力先：`data/surveys/vol-N.json`
-- テスト回答（「テスト」を含む）は自動除外
-- sessions/index.html はJSで自動読み込みのため **HTMLの変更不要**
-- カードに「理解度・役立ち度・ハイライトコメント」が自動表示される
-- 実行後は `git add data/surveys/vol-N.json && git commit && git push` のみ
-
-### アンケートExcelファイルのダウンロード先
-Microsoft Forms → 回答 → Excelで開く → Downloadsに保存
+- `sessions/index.html` はJSで `data/surveys/vol-{N}.json` を自動読み込み（HTMLの変更不要）
+- カードに「理解度・役立ち度・コメント1件」が自動表示される
+- テスト回答（5件未満の日付）は自動除外
 
 ---
 
@@ -221,6 +239,8 @@ ffmpeg -ss 00:11:00 -to 01:11:00 -i "元ファイル.mp4" -vf "crop=1133:719:125
 - **canonical URLの代わり**: 記事冒頭に「元記事：https://www.automate136.com/...」を自動挿入
 - **現状**: Vol.1投稿済み（https://qiita.com/Haru_PowerAutomate136）。Vol.2以降は火・木・土に自動投稿。
 - **Zenn**: 未連携（後回し）
+- **WordPress記事**: ユーザーが内容を確認・編集してから手動で公開する（自動公開はしない）
+- **Qiitaスコープ**: `write_qiita`（read_qiitaは任意）
 
 ---
 
