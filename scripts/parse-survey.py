@@ -97,8 +97,13 @@ def load_existing_mapping():
     for f in sorted(OUTPUT_DIR.glob("vol-*.json")):
         m = re.search(r"vol-(\d+)", f.name)
         if m:
-            data = json.loads(f.read_text(encoding="utf-8"))
-            mapping[data["date"]] = int(m.group(1))
+            try:
+                data = json.loads(f.read_text(encoding="utf-8"))
+                date_val = data.get("date")
+                if date_val:
+                    mapping[str(date_val)] = int(m.group(1))
+            except Exception:
+                pass
     return mapping
 
 
