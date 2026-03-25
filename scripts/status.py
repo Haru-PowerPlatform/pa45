@@ -163,6 +163,8 @@ def build_report():
             issues.append(f"  ⬜ 第{a['title'].replace('PA45 第','').split('回')[0]}回：スライドなし")
         if a.get("participants", 0) == 0:
             issues.append(f"  ⬜ 第{a['title'].replace('PA45 第','').split('回')[0]}回：参加者数未確定")
+        if not a.get("evidence", {}).get("youtube"):
+            issues.append(f"  ⬜ 第{a['title'].replace('PA45 第','').split('回')[0]}回：YouTube動画未アップロード（編集→アップロード→公開）")
 
     if issues:
         lines.extend(issues)
