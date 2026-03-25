@@ -349,7 +349,7 @@ def step_update_site(act_id: str, vol: int, title_ja: str, title_en: str,
     print("Step 9: pa45サイトの活動データを更新...")
 
     blog_url  = f"{env['WP_URL']}/{slug}/" if slug else ""
-    pptx_url  = f"https://isamu-kato.github.io/pa45/assets/pa45/{pptx_dest.name}" if pptx_dest else ""
+    pptx_url  = f"https://haru-powerplatform.github.io/pa45/assets/pa45/{pptx_dest.name}" if pptx_dest else ""
 
     activity = {
         "id":      act_id,
