@@ -124,6 +124,28 @@ def build_report():
             slide = "✅スライドあり" if a.get("evidence", {}).get("slide") else "⬜スライドなし"
             lines.append(f"  第{vol}回  参加者:{participants}人  {blog}  {slide}")
 
+    # ── 次に作るべき X投稿 Vol ──────────────────────────────────────────────
+    lines.append("")
+    lines.append("📣 次のX投稿スライド")
+
+    x_acts = [a for a in activities if a.get("type") == "X"]
+    if x_acts:
+        # Vol番号を title から抽出（例: "Vol.12：Power Automate..." → 12）
+        vols = []
+        for a in x_acts:
+            title = a.get("title", "")
+            m = re.search(r"Vol\.(\d+)", title)
+            if m:
+                vols.append(int(m.group(1)))
+        if vols:
+            next_vol = max(vols) + 1
+            lines.append(f"  現在の最新：Vol.{max(vols)}")
+            lines.append(f"  👉 次に作る：Vol.{next_vol}")
+        else:
+            lines.append("  （Vol番号を取得できませんでした）")
+    else:
+        lines.append("  X投稿の活動が登録されていません")
+
     # ── 全活動件数 ──────────────────────────────────────────────────────────
     lines.append("")
     lines.append(f"📁 登録済み活動数：{len(activities)} 件")
