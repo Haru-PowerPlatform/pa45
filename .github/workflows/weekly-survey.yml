@@ -1,0 +1,35 @@
+name: Weekly Survey Update
+
+on:
+  schedule:
+    - cron: '0 15 * * 5'  # 毎週金曜 24:00 JST (15:00 UTC)
+  workflow_dispatch:
+
+jobs:
+  update-survey:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install pandas openpyxl requests
+
+      - name: Parse survey
+        env:
+          MS_TENANT_ID:     ${{ secrets.MS_TENANT_ID }}
+          MS_CLIENT_ID:     ${{ secrets.MS_CLIENT_ID }}
+          MS_CLIENT_SECRET: ${{ secrets.MS_CLIENT_SECRET }}
+        run: python scripts/parse-survey.py
+
+      - name: Commit and push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/surveys/
+          git diff --staged --quiet || git commit -m "📊 アンケートデータ自動更新 $(date +'%Y-%m-%d')"
+          git push
