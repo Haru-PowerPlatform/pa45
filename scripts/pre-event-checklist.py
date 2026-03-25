@@ -54,6 +54,7 @@ def main():
          f"https://haru-powerplatform.github.io/pa45/assets/pa45/"),
         ("connpassのお知らせ欄にスライドURLを掲載済みか", connpass_url),
         ("Teams会議URLの動作確認をしたか", None),
+        ("X（開催告知）を投稿したか", None),
     ]
 
     # ── 当日 ─────────────────────────────────────────────────────────────────
@@ -64,15 +65,35 @@ def main():
         ("参加者数をメモしておく（開催後のJSONに使う）", None),
     ]
 
+    # ── X投稿文（告知・レポート） ─────────────────────────────────────────
+    x_pre = (
+        f"【開催告知】\n"
+        f"PA45 第{args.vol}回「{args.theme}」を開催します🎉\n"
+        f"📅 {args.date}\n"
+        f"🔗 {connpass_url}\n"
+        f"#PowerAutomate #PA45 #ハンズオン"
+    )
+    x_post = (
+        f"【開催レポート】\n"
+        f"PA45 第{args.vol}回「{args.theme}」が終わりました！\n"
+        f"参加者XX人、ありがとうございました🙏\n"
+        f"スライド：（URLを入れる）\n"
+        f"#PowerAutomate #PA45 #ハンズオン"
+    )
+
     # ── 開催後 ───────────────────────────────────────────────────────────────
     section_4 = [
         ("参加者数を確認する（connpassの参加者数）",
          f"python scripts/fetch-connpass-participants.py {args.event_id}"),
         ("activities JSONを作成する",
          f"python scripts/post-event.py --vol {args.vol} --event-id {args.event_id} --date {args.date} --theme \"{args.theme}\""),
-        ("ブログ記事を書いて公開する", "https://www.automate136.com/wp-admin/post-new.php"),
-        ("ブログURLを取得して post-event.py を --blog オプション付きで再実行", None),
+        ("ブログ下書きを生成する",
+         f"python scripts/new-blog-draft.py --vol {args.vol} --date {args.date} --theme \"{args.theme}\""),
+        ("ブログを公開し、URLを取得して post-event.py を --blog オプション付きで再実行", None),
+        ("X（開催後レポート）を投稿する", None),
     ]
+
+    print_x = True
 
     def print_section(title, items, active=True):
         mark = "✅" if active else "⬜"
@@ -101,6 +122,15 @@ def main():
         print_section("開催前（済んでいれば✅）", section_1 + section_2 + section_3)
         print_section("開催後にやること ← 今日！", section_4)
 
+    # ── X投稿文 ──────────────────────────────────────────────────────────────
+    print("=" * 60)
+    print("\n📣 X投稿文（コピペ用）\n")
+    for line in x_pre.splitlines():
+        print(f"  {line}")
+    print()
+    for line in x_post.splitlines():
+        print(f"  {line}")
+    print()
     print("=" * 60)
 
 
