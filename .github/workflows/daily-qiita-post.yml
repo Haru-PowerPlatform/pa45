@@ -1,0 +1,40 @@
+name: Daily Qiita Cross-Post
+
+on:
+  schedule:
+    - cron: "0 23 * * *"   # 毎日 23:00 UTC = 日本時間 08:00
+  workflow_dispatch:         # 手動実行も可能
+
+jobs:
+  post-to-qiita:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Post next article to Qiita
+        env:
+          WP_USER: ${{ secrets.WP_USER }}
+          WP_PASS: ${{ secrets.WP_PASS }}
+          WP_URL: ${{ secrets.WP_URL }}
+          QIITA_TOKEN: ${{ secrets.QIITA_TOKEN }}
+        run: |
+          # .envの代わりに環境変数から直接読み込む
+          echo "WP_USER=$WP_USER" > .env
+          echo "WP_PASS=$WP_PASS" >> .env
+          echo "WP_URL=$WP_URL" >> .env
+          echo "QIITA_TOKEN=$QIITA_TOKEN" >> .env
+          python scripts/cross-post-qiita.py --next
+
+      - name: Commit progress
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/meta/qiita-posts.json
+          git diff --cached --quiet || git commit -m "chore: update qiita-posts progress"
+          git push
