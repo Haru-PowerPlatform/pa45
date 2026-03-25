@@ -1,145 +1,160 @@
 """
-PA45 アンケートExcelファイルを解析してJSONに変換するスクリプト
+PA45アンケート自動取得・集計スクリプト
 
 使い方:
-  python scripts/parse-survey.py --vol 1 --date 2026-03-05 --file "C:/path/to/アンケート.xlsx"
-  python scripts/parse-survey.py --vol 2 --date 2026-03-12 --file "C:/path/to/アンケート.xlsx"
-  # --date 省略時は全行を対象にする
+  # Graph API経由（GitHub Actions用）
+  python scripts/parse-survey.py
 
-出力: data/surveys/vol-N.json
+  # ローカルファイル指定
+  python scripts/parse-survey.py --file "C:/path/to/アンケート.xlsx"
+
+出力: data/surveys/vol-NN.json
 """
-import sys
-import io
-import json
-import argparse
-import re
+
+import os, sys, io, json, re, argparse
 from pathlib import Path
+from datetime import date
 
-sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="replace")
+ROOT       = Path(__file__).parent.parent
+OUTPUT_DIR = ROOT / "data" / "surveys"
+OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
-ROOT = Path(__file__).parent.parent
-SURVEYS_DIR = ROOT / "data" / "surveys"
-SURVEYS_DIR.mkdir(parents=True, exist_ok=True)
+FILE_OWNER = "ixa_mct@plug136.onmicrosoft.com"
+FILE_ID    = "47E8E22E-7B13-4D0C-9181-31D6B9BF9150"
 
-# テスト回答を除外するキーワード
-TEST_KEYWORDS = ["テスト", "test", "dummy"]
+Q_UNDERSTAND = "今日の内容は理解しやすかったですか？"
+Q_USEFUL     = "今日の学びは、あなたの業務や生活に役立ちそうですか？\n"
+Q_TIME       = "参加しやすい時間帯を教えてください"
+Q_CAN        = "今日のPA45で\u201cできるようになったこと\u201dはありますか？（複数選択可）"
+Q_COMMENT    = "今回のPA45について感想・コメントを記入お願いします。（運営の励みになります）"
 
 
-def is_test_response(row):
-    comment_col = next((c for c in row.index if "感想" in str(c) or "コメント" in str(c)), None)
-    if comment_col:
-        val = str(row.get(comment_col, "")).strip().lower()
-        if any(kw in val for kw in TEST_KEYWORDS):
-            return True
-    return False
+def get_token():
+    import requests
+    resp = requests.post(
+        f"https://login.microsoftonline.com/{os.environ['MS_TENANT_ID']}/oauth2/v2.0/token",
+        data={
+            "grant_type":    "client_credentials",
+            "client_id":     os.environ["MS_CLIENT_ID"],
+            "client_secret": os.environ["MS_CLIENT_SECRET"],
+            "scope":         "https://graph.microsoft.com/.default",
+        }
+    )
+    resp.raise_for_status()
+    return resp.json()["access_token"]
+
+
+def download_excel(token):
+    import requests
+    url  = f"https://graph.microsoft.com/v1.0/users/{FILE_OWNER}/drive/items/{FILE_ID}/content"
+    resp = requests.get(url, headers={"Authorization": f"Bearer {token}"})
+    resp.raise_for_status()
+    return io.BytesIO(resp.content)
 
 
 def count_choices(series):
-    """複数選択肢の集計（セミコロン区切り）"""
     counts = {}
     for val in series.dropna():
-        for choice in str(val).split(";"):
-            choice = choice.strip()
-            if choice:
-                counts[choice] = counts.get(choice, 0) + 1
+        for item in str(val).split(";"):
+            item = item.strip()
+            if item:
+                counts[item] = counts.get(item, 0) + 1
     return dict(sorted(counts.items(), key=lambda x: -x[1]))
 
 
-def pick_highlight_comments(series, n=3):
-    """コメントからハイライトを選ぶ（50文字以上・テスト除外・短めに）"""
-    comments = []
-    for val in series.dropna():
-        val = str(val).strip()
-        if len(val) >= 20 and not any(kw in val.lower() for kw in TEST_KEYWORDS):
-            comments.append(val)
-    # 文字数が適度なものを優先（長すぎず短すぎず 30〜120文字）
-    preferred = [c for c in comments if 30 <= len(c) <= 120]
-    result = preferred[:n] if len(preferred) >= n else comments[:n]
-    return result
+def analyze_session(df_session, vol_num, session_date):
+    total    = len(df_session)
+    can_do   = count_choices(df_session[Q_CAN])
+    comments = [
+        str(c).strip() for c in df_session[Q_COMMENT].dropna()
+        if len(str(c).strip()) > 5 and str(c).strip().lower() != "nan"
+        and "テスト" not in str(c)
+    ]
+
+    understand  = df_session[Q_UNDERSTAND].value_counts().to_dict()
+    useful      = df_session[Q_USEFUL].value_counts().to_dict()
+    time_pref   = df_session[Q_TIME].value_counts().to_dict()
+
+    understand_pct = round(understand.get("とても理解できた", 0) / total * 100, 1) if total else 0
+    useful_pct     = round(useful.get("役立ちそう", 0) / total * 100, 1) if total else 0
+
+    return {
+        "vol":              vol_num,
+        "date":             str(session_date),
+        "total_responses":  total,
+        "understanding":    understand,
+        "understanding_pct": understand_pct,
+        "usefulness":       useful,
+        "usefulness_pct":   useful_pct,
+        "time_preference":  time_pref,
+        "can_do":           can_do,
+        "comments":         comments,
+    }
+
+
+def load_existing_mapping():
+    mapping = {}
+    for f in sorted(OUTPUT_DIR.glob("vol-*.json")):
+        m = re.search(r"vol-(\d+)", f.name)
+        if m:
+            data = json.loads(f.read_text(encoding="utf-8"))
+            mapping[data["date"]] = int(m.group(1))
+    return mapping
+
+
+def process(excel_source):
+    import pandas as pd
+
+    if isinstance(excel_source, (str, Path)):
+        df = pd.read_excel(excel_source)
+    else:
+        df = pd.read_excel(excel_source)
+
+    df["日付"] = pd.to_datetime(df["開始時刻"]).dt.date
+
+    # 5件以上の日をイベント日とみなす
+    date_counts  = df["日付"].value_counts()
+    event_dates  = sorted([d for d, c in date_counts.items() if c >= 5])
+    print(f"イベント日: {event_dates}")
+
+    existing = load_existing_mapping()
+    next_vol = max(existing.values(), default=0) + 1
+    updated  = []
+
+    for event_date in event_dates:
+        date_str = str(event_date)
+        if date_str in existing:
+            vol_num = existing[date_str]
+            print(f"  Vol.{vol_num} ({date_str}) - 更新")
+        else:
+            vol_num = next_vol
+            next_vol += 1
+            print(f"  Vol.{vol_num} ({date_str}) - 新規")
+
+        df_session = df[df["日付"] == event_date].copy()
+        result     = analyze_session(df_session, vol_num, event_date)
+
+        out_path = OUTPUT_DIR / f"vol-{vol_num:02d}.json"
+        out_path.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
+        print(f"    → {out_path} ({result['total_responses']}件, 理解度{result['understanding_pct']}%, 役立ち{result['usefulness_pct']}%)")
+        updated.append(vol_num)
+
+    print(f"\n完了: Vol.{updated} を更新しました")
 
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--vol", required=True, type=int)
-    parser.add_argument("--file", required=True, help="アンケートExcelファイルのパス")
-    parser.add_argument("--date", default=None, help="開催日でフィルタ YYYY-MM-DD（省略時は全行）")
-    parser.add_argument("--comments", type=int, default=3, help="ハイライトコメント数")
+    parser.add_argument("--file", default=None, help="ローカルExcelファイルパス（省略時はGraph API使用）")
     args = parser.parse_args()
 
-    try:
-        import pandas as pd
-    except ImportError:
-        print("pandas が必要です: pip install pandas openpyxl")
-        sys.exit(1)
-
-    df = pd.read_excel(args.file)
-    print(f"読み込み: {len(df)}件")
-
-    # 日付フィルタ
-    if args.date:
-        df['_date'] = pd.to_datetime(df['開始時刻']).dt.date.astype(str)
-        df = df[df['_date'] == args.date].reset_index(drop=True)
-        print(f"日付フィルタ({args.date})後: {len(df)}件")
-
-    # テスト回答を除外
-    df = df[~df.apply(is_test_response, axis=1)].reset_index(drop=True)
-    print(f"テスト除外後: {len(df)}件")
-
-    total = len(df)
-
-    # 列名マッピング
-    col_understanding = next((c for c in df.columns if "理解しやすかった" in str(c) and "点数" not in str(c) and "フィードバック" not in str(c)), None)
-    col_usefulness    = next((c for c in df.columns if "役立ちそう" in str(c) and "点数" not in str(c) and "フィードバック" not in str(c)), None)
-    col_time          = next((c for c in df.columns if "時間帯" in str(c) and "点数" not in str(c) and "フィードバック" not in str(c)), None)
-    col_learned       = next((c for c in df.columns if "できるようになった" in str(c) and "点数" not in str(c) and "フィードバック" not in str(c)), None)
-    col_comment       = next((c for c in df.columns if "感想" in str(c) and "点数" not in str(c) and "フィードバック" not in str(c)), None)
-
-    result = {
-        "vol": args.vol,
-        "total_responses": total,
-        "understanding": {},
-        "usefulness": {},
-        "time_preference": {},
-        "learned": {},
-        "highlight_comments": []
-    }
-
-    if col_understanding:
-        result["understanding"] = df[col_understanding].value_counts().to_dict()
-
-    if col_usefulness:
-        result["usefulness"] = df[col_usefulness].value_counts().to_dict()
-
-    if col_time:
-        result["time_preference"] = df[col_time].value_counts().to_dict()
-
-    if col_learned:
-        result["learned"] = count_choices(df[col_learned])
-
-    if col_comment:
-        result["highlight_comments"] = pick_highlight_comments(df[col_comment], args.comments)
-
-    # パーセンテージ追加
-    if result["understanding"]:
-        top = max(result["understanding"], key=result["understanding"].get)
-        result["understanding_pct"] = round(result["understanding"].get(top, 0) / total * 100, 1)
-        result["understanding_top"] = top
-
-    if result["usefulness"]:
-        useful_count = result["usefulness"].get("役立ちそう", 0)
-        result["usefulness_pct"] = round(useful_count / total * 100, 1)
-
-    # 保存
-    out_path = SURVEYS_DIR / f"vol-{args.vol}.json"
-    with open(out_path, "w", encoding="utf-8") as f:
-        json.dump(result, f, ensure_ascii=False, indent=2)
-        f.write("\n")
-
-    print(f"\n✅ 保存: {out_path}")
-    print(f"  回答数: {total}")
-    print(f"  理解度トップ: {result.get('understanding_top')} ({result.get('understanding_pct')}%)")
-    print(f"  役立ち度: {result.get('usefulness_pct')}%")
-    print(f"  ハイライトコメント: {len(result['highlight_comments'])}件")
+    if args.file:
+        print(f"ローカルファイル読み込み: {args.file}")
+        process(args.file)
+    else:
+        print("Graph API経由でダウンロード中...")
+        token      = get_token()
+        excel_bytes = download_excel(token)
+        process(excel_bytes)
 
 
 if __name__ == "__main__":
