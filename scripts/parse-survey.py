@@ -2,8 +2,9 @@
 PA45 アンケートExcelファイルを解析してJSONに変換するスクリプト
 
 使い方:
-  python scripts/parse-survey.py --vol 1 --file "C:/path/to/アンケート.xlsx"
-  python scripts/parse-survey.py --vol 1 --file "C:/path/to/アンケート.xlsx" --comments 3
+  python scripts/parse-survey.py --vol 1 --date 2026-03-05 --file "C:/path/to/アンケート.xlsx"
+  python scripts/parse-survey.py --vol 2 --date 2026-03-12 --file "C:/path/to/アンケート.xlsx"
+  # --date 省略時は全行を対象にする
 
 出力: data/surveys/vol-N.json
 """
@@ -61,6 +62,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--vol", required=True, type=int)
     parser.add_argument("--file", required=True, help="アンケートExcelファイルのパス")
+    parser.add_argument("--date", default=None, help="開催日でフィルタ YYYY-MM-DD（省略時は全行）")
     parser.add_argument("--comments", type=int, default=3, help="ハイライトコメント数")
     args = parser.parse_args()
 
@@ -72,6 +74,12 @@ def main():
 
     df = pd.read_excel(args.file)
     print(f"読み込み: {len(df)}件")
+
+    # 日付フィルタ
+    if args.date:
+        df['_date'] = pd.to_datetime(df['開始時刻']).dt.date.astype(str)
+        df = df[df['_date'] == args.date].reset_index(drop=True)
+        print(f"日付フィルタ({args.date})後: {len(df)}件")
 
     # テスト回答を除外
     df = df[~df.apply(is_test_response, axis=1)].reset_index(drop=True)
