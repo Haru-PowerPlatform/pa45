@@ -22,8 +22,12 @@ jobs:
           set -euo pipefail
           mkdir -p data/meta
           python3 - <<'PY'
-          import json, glob
-          files = sorted(glob.glob("data/activities/*.json"))
+          import json, glob, os
+          files = sorted([
+              f for f in glob.glob("data/activities/*.json")
+              if not os.path.basename(f).startswith("_")
+              and os.path.basename(f) != "index.json"
+          ])
           with open("data/meta/activities-index.json", "w", encoding="utf-8") as f:
               json.dump(files, f, ensure_ascii=False, indent=2)
           print("Wrote", len(files), "entries")
