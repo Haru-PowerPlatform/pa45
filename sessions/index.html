@@ -290,8 +290,9 @@ document.querySelectorAll('.past-card[data-vol]').forEach(card => {
       if (!data) return;
       const body = card.querySelector('.past-card-body');
       if (!body) return;
-      const comment = data.highlight_comments && data.highlight_comments.length > 0
-        ? `<div class="survey-comment">「${data.highlight_comments[0]}」</div>` : '';
+      const commentList = data.comments || data.highlight_comments || [];
+      const comment = commentList.length > 0
+        ? `<div class="survey-comment">「${commentList[0]}」</div>` : '';
       const block = document.createElement('div');
       block.className = 'survey-block';
       block.innerHTML = `
