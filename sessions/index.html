@@ -107,6 +107,21 @@
     @media (max-width: 640px) {
       .past-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
     }
+    /* ── アンケート結果 ── */
+    .survey-block {
+      margin-top: 12px; padding: 10px 12px;
+      background: #f0f6ff; border-radius: 10px;
+      border-left: 3px solid var(--c-blue-mid);
+    }
+    .survey-label { font-size: 10px; font-weight: 700; color: var(--c-blue-mid); letter-spacing: .08em; margin-bottom: 6px; }
+    .survey-stats { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 6px; }
+    .survey-stat  { font-size: 12px; color: var(--c-blue-text); }
+    .survey-stat strong { font-size: 15px; font-weight: 700; }
+    .survey-comment {
+      font-size: 11px; color: var(--c-muted); line-height: 1.6;
+      border-top: 1px solid rgba(42,125,212,.15); padding-top: 6px; margin-top: 4px;
+      font-style: italic;
+    }
   </style>
 </head>
 <body>
@@ -185,7 +200,7 @@
     <div class="past-grid">
 
       <!-- ★第2回 -->
-      <div class="past-card">
+      <div class="past-card" data-vol="2">
         <div class="past-card-thumb">
           <img src="https://www.automate136.com/wp-content/uploads/2026/03/pa45-ogp-1774361059.png"
                alt="PA45 第2回 アイキャッチ" loading="lazy">
@@ -203,7 +218,7 @@
       </div>
 
       <!-- ★第1回 -->
-      <div class="past-card">
+      <div class="past-card" data-vol="1">
         <div class="past-card-thumb">
           <img src="https://www.automate136.com/wp-content/uploads/2026/03/pa45-ogp-1774395409.png"
                alt="PA45 第1回 アイキャッチ" loading="lazy">
@@ -263,6 +278,35 @@ function toggleMenu() { document.getElementById('mobileNav').classList.toggle('o
 document.addEventListener('click', function(e) {
   const nav = document.getElementById('mobileNav'), btn = document.querySelector('.hamburger');
   if (nav.classList.contains('open') && !nav.contains(e.target) && !btn.contains(e.target)) nav.classList.remove('open');
+});
+
+// アンケート結果を動的に読み込んでカードに表示
+document.querySelectorAll('.past-card[data-vol]').forEach(card => {
+  const vol = card.getAttribute('data-vol');
+  fetch(`../data/surveys/vol-${vol}.json`)
+    .then(r => r.ok ? r.json() : null)
+    .catch(() => null)
+    .then(data => {
+      if (!data) return;
+      const body = card.querySelector('.past-card-body');
+      if (!body) return;
+      const comment = data.highlight_comments && data.highlight_comments.length > 0
+        ? `<div class="survey-comment">「${data.highlight_comments[0]}」</div>` : '';
+      const block = document.createElement('div');
+      block.className = 'survey-block';
+      block.innerHTML = `
+        <div class="survey-label">📊 アンケート結果（${data.total_responses}件）</div>
+        <div class="survey-stats">
+          <div class="survey-stat">理解度 <strong>${data.understanding_pct}%</strong></div>
+          <div class="survey-stat">役立ち度 <strong>${data.usefulness_pct}%</strong></div>
+        </div>
+        ${comment}
+      `;
+      // ボタンの前に挿入
+      const firstBtn = body.querySelector('.btn-slide');
+      if (firstBtn) body.insertBefore(block, firstBtn);
+      else body.appendChild(block);
+    });
 });
 </script>
 </body>

@@ -162,6 +162,25 @@ Vol.1〜30（Vol.11・Vol.27除く）の28件を処理済み：
 
 ---
 
+## アンケート自動化ワークフロー
+
+PA45翌日にMicrosoft FormsのExcelをエクスポートして以下を実行する：
+
+```powershell
+python scripts/parse-survey.py --vol N --file "C:\Users\isamu\Downloads\PowerAutoamte45 アンケート.xlsx"
+```
+
+- 出力先：`data/surveys/vol-N.json`
+- テスト回答（「テスト」を含む）は自動除外
+- sessions/index.html はJSで自動読み込みのため **HTMLの変更不要**
+- カードに「理解度・役立ち度・ハイライトコメント」が自動表示される
+- 実行後は `git add data/surveys/vol-N.json && git commit && git push` のみ
+
+### アンケートExcelファイルのダウンロード先
+Microsoft Forms → 回答 → Excelで開く → Downloadsに保存
+
+---
+
 ## YouTube動画ワークフロー（PA45開催後）
 
 PA45の各回が終わったら以下の手順でYouTube動画を公開する：
