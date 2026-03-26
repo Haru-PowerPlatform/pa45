@@ -15,6 +15,14 @@ import os, sys, io, json, re, argparse
 from pathlib import Path
 from datetime import date
 
+# ローカル実行時に .env を読み込む
+_env_path = Path(__file__).parent.parent / ".env"
+if _env_path.exists():
+    for _line in _env_path.read_text(encoding="utf-8").splitlines():
+        if "=" in _line and not _line.startswith("#"):
+            _k, _v = _line.split("=", 1)
+            os.environ.setdefault(_k.strip(), _v.strip())
+
 ROOT       = Path(__file__).parent.parent
 OUTPUT_DIR = ROOT / "data" / "surveys"
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
