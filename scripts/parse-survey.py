@@ -96,12 +96,16 @@ def analyze_session(df_session, vol_num, session_date):
     ) if total else 0
     understand_pcts = {k: round(understand.get(k, 0) / total * 100, 1) for k in U} if total else {k: 0 for k in U}
 
-    # 役立ち度：加重平均（役立ちそう=2点、少し役立ちそう=1点）
-    f_top = useful.get("役立ちそう", 0)
-    f_sub = useful.get("少し役立ちそう", 0)
-    useful_pct     = round((f_top * 2 + f_sub) / (total * 2) * 100, 1) if total else 0
-    useful_top_pct = round(f_top / total * 100, 1) if total else 0
-    useful_all_pct = round((f_top + f_sub) / total * 100, 1) if total else 0
+    # 役立ち度：3択スコア（役立ちそう=100, 少し役立ちそう=50, まだイメージがついていない=0）
+    F = {
+        "役立ちそう":               100,
+        "少し役立ちそう":            50,
+        "まだイメージがついていない":  0,
+    }
+    useful_pct  = round(
+        sum(useful.get(k, 0) * v for k, v in F.items()) / (total * 100) * 100, 1
+    ) if total else 0
+    useful_pcts = {k: round(useful.get(k, 0) / total * 100, 1) for k in F} if total else {k: 0 for k in F}
 
     return {
         "vol":                  vol_num,
@@ -112,8 +116,7 @@ def analyze_session(df_session, vol_num, session_date):
         "understanding_pcts":   understand_pcts,
         "usefulness":           useful,
         "usefulness_pct":       useful_pct,
-        "usefulness_top_pct":   useful_top_pct,
-        "usefulness_all_pct":   useful_all_pct,
+        "usefulness_pcts":      useful_pcts,
         "time_preference":      time_pref,
         "can_do":               can_do,
         "comments":             comments,
