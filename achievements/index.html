@@ -41,13 +41,27 @@
     .voice-meta { font-size: 10px; color: var(--c-hint); }
     .voice-tag  { font-size: 9px; background: var(--c-blue-bg); color: var(--c-blue-text); padding: 1px 6px; border-radius: 3px; margin-right: 4px; }
 
-    /* アンケートグラフ */
+    /* KPIカード */
+    .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 8px; }
+    .kpi-card { background: var(--c-surface); border-radius: var(--radius-md); padding: 20px 12px; text-align: center; box-shadow: var(--shadow-card); }
+    .kpi-n { font-size: 30px; font-weight: 700; color: var(--c-blue-text); margin-bottom: 4px; font-family: var(--font-mono); line-height: 1; }
+    .kpi-l { font-size: 11px; color: var(--c-hint); line-height: 1.5; }
+
+    /* セグメント（多色）バー */
+    .seg-section { margin-bottom: 20px; }
+    .seg-q { font-size: 13px; font-weight: 600; margin-bottom: 10px; color: var(--c-text); }
+    .seg-row { display: grid; grid-template-columns: 44px 1fr; align-items: center; gap: 8px; margin-bottom: 6px; }
+    .seg-label { font-size: 11px; color: var(--c-hint); font-family: var(--font-mono); }
+    .seg-bar { height: 16px; border-radius: 8px; overflow: hidden; background: var(--c-bg); display: flex; }
+    .seg-seg { height: 100%; }
+    .seg-legend { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 8px; }
+    .seg-legend-item { font-size: 10px; color: var(--c-muted); display: flex; align-items: center; gap: 4px; }
+    .seg-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+    /* アンケートグラフ（既存・can_do用） */
     .survey-meta { font-size: 12px; color: var(--c-hint); margin-bottom: 16px; }
-    .survey-double { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
     .survey-chart-card { background: var(--c-surface); border-radius: var(--radius-md); padding: 16px 18px; box-shadow: var(--shadow-card); margin-bottom: 12px; }
     .survey-q { font-size: 13px; font-weight: 600; margin-bottom: 12px; color: var(--c-text); }
-    /* グリッドで左端を完全に揃える */
-    .sbar-row      { display: grid; grid-template-columns: 140px 1fr 36px; align-items: center; gap: 8px; margin-bottom: 9px; }
     .sbar-row-wide { display: grid; grid-template-columns: 220px 1fr 36px; align-items: center; gap: 8px; margin-bottom: 9px; }
     .sbar-label { font-size: 11px; color: var(--c-muted); line-height: 1.4; }
     .sbar-track { height: 10px; background: var(--c-bg); border-radius: 5px; overflow: hidden; }
@@ -59,9 +73,9 @@
 
     @media (max-width: 640px) {
       .summary-grid  { grid-template-columns: repeat(3, 1fr); }
+      .kpi-grid      { grid-template-columns: repeat(2, 1fr); }
       .cat5-grid     { grid-template-columns: repeat(2, minmax(0,1fr)); }
       .voice-grid    { grid-template-columns: 1fr; }
-      .survey-double { grid-template-columns: 1fr; }
       .sbar-label-wide { min-width: 140px; }
     }
   </style>
@@ -99,6 +113,19 @@
     <span class="page-hero-eyebrow">Achievements</span>
     <h1 class="page-hero-h1">活動の記録</h1>
     <p class="page-hero-sub">PA45ハンズオン・Xスライド・ブログ・社外コミュニティでの活動をまとめています。各記録にはconnpassやX・ブログへのリンクを添付しています。</p>
+  </div>
+</section>
+
+<!-- KPIサマリ（JS動的生成） -->
+<section class="section">
+  <div class="container">
+    <p class="section-label">PA45 実績サマリ</p>
+    <div class="kpi-grid">
+      <div class="kpi-card"><div class="kpi-n" id="kpi-participants">—</div><div class="kpi-l">累計参加者数</div></div>
+      <div class="kpi-card"><div class="kpi-n" id="kpi-sessions">—</div><div class="kpi-l">開催回数</div></div>
+      <div class="kpi-card"><div class="kpi-n" id="kpi-understand">—</div><div class="kpi-l">平均理解スコア</div></div>
+      <div class="kpi-card"><div class="kpi-n" id="kpi-useful">—</div><div class="kpi-l">平均役立ちスコア</div></div>
+    </div>
   </div>
 </section>
 
@@ -219,6 +246,7 @@
   <div class="container">
     <p class="section-label" id="survey-section-label">受講者アンケート</p>
     <p class="survey-meta" id="survey-meta">読み込み中...</p>
+    <div id="survey-seg"></div>
     <div id="survey-charts"></div>
     <p class="section-label" style="margin-top:8px;" id="survey-voice-label" hidden>コメント（全件）</p>
     <div class="voice-grid" id="survey-voices"></div>
@@ -264,8 +292,12 @@ document.addEventListener('click', function(e) {
   if (nav.classList.contains('open') && !nav.contains(e.target) && !btn.contains(e.target)) nav.classList.remove('open');
 });
 
-// アンケートデータを動的読み込み
+// 活動実績 + アンケートデータを動的読み込み
 (async function() {
+  // --- アクティビティ（PA45のみ）からKPI集計 ---
+  const PA45_PARTICIPANTS = { 1: 26, 2: 32, 3: 30 }; // activities JSONに合わせて随時更新
+
+  // --- アンケートデータ読み込み ---
   const base = '../data/surveys/';
   const allData = [];
   for (let i = 1; i <= 50; i++) {
@@ -278,67 +310,94 @@ document.addEventListener('click', function(e) {
   }
   if (!allData.length) return;
 
-  // 集計
+  // --- KPI計算 ---
+  const totalParticipants = Object.values(PA45_PARTICIPANTS).reduce((s,v)=>s+v,0);
+  const sessions = Object.keys(PA45_PARTICIPANTS).length;
   const totalResponses = allData.reduce((s, d) => s + d.total_responses, 0);
-  const volNums = allData.map(d => `第${d.vol}回`).join('・');
-  const understand = {}, useful = {}, canDo = {};
-  const allComments = [];
+  const avgUnderstand = Math.round(allData.reduce((s,d)=>s+(d.understanding_pct||0),0)/allData.length);
+  const avgUseful     = Math.round(allData.reduce((s,d)=>s+(d.usefulness_pct||0),0)/allData.length);
 
+  // KPIカード更新
+  document.getElementById('kpi-participants').textContent = totalParticipants + '名';
+  document.getElementById('kpi-sessions').textContent     = sessions + '回';
+  document.getElementById('kpi-understand').textContent   = avgUnderstand + '%';
+  document.getElementById('kpi-useful').textContent       = avgUseful + '%';
+
+  // メタ情報
+  const volNums = allData.map(d => `第${d.vol}回`).join('・');
+  document.getElementById('survey-section-label').textContent = `受講者アンケート（${volNums}）`;
+  document.getElementById('survey-meta').textContent = `${totalResponses}名回答`;
+
+  // --- セグメントバー（多色）定義 ---
+  const U_KEYS = ['とても理解できた','理解できた','普通','少し難しかった','難しかった'];
+  const U_COLS = ['#2563eb','#db2777','#0891b2','#7c3aed','#16a34a'];
+  const V_KEYS = ['役立ちそう','少し役立ちそう','まだイメージがついていない'];
+  const V_COLS = ['#2563eb','#db2777','#0891b2'];
+
+  function segBar(data, keys, cols) {
+    const total = keys.reduce((s,k) => s + (data[k]||0), 0);
+    if (!total) return '';
+    const segs = keys.map((k,i) => {
+      const pct = (data[k]||0) / total * 100;
+      return pct > 0 ? `<div class="seg-seg" style="width:${pct.toFixed(1)}%;background:${cols[i]};"></div>` : '';
+    }).join('');
+    return `<div class="seg-bar">${segs}</div>`;
+  }
+
+  function legend(keys, cols) {
+    return `<div class="seg-legend">${keys.map((k,i)=>`<div class="seg-legend-item"><div class="seg-dot" style="background:${cols[i]};"></div>${k}</div>`).join('')}</div>`;
+  }
+
+  // セグメントバーHTML生成
+  let segHtml = `<div class="survey-chart-card">
+    <div class="survey-q">内容の理解しやすさ（回別）</div>
+    <div class="seg-section">`;
   allData.forEach(d => {
-    Object.entries(d.understanding || {}).forEach(([k, v]) => { understand[k] = (understand[k]||0) + v; });
-    Object.entries(d.usefulness || {}).forEach(([k, v]) => { useful[k] = (useful[k]||0) + v; });
+    segHtml += `<div class="seg-row"><div class="seg-label">第${d.vol}回</div>${segBar(d.understanding||{}, U_KEYS, U_COLS)}</div>`;
+  });
+  // 全体集計
+  const totalU = {};
+  allData.forEach(d => U_KEYS.forEach(k => { totalU[k] = (totalU[k]||0) + (d.understanding?.[k]||0); }));
+  segHtml += `<div class="seg-row"><div class="seg-label" style="font-weight:600;color:var(--c-text);">合計</div>${segBar(totalU, U_KEYS, U_COLS)}</div>`;
+  segHtml += legend(U_KEYS, U_COLS) + `</div></div>`;
+
+  segHtml += `<div class="survey-chart-card">
+    <div class="survey-q">業務・生活に役立ちそう（回別）</div>
+    <div class="seg-section">`;
+  allData.forEach(d => {
+    segHtml += `<div class="seg-row"><div class="seg-label">第${d.vol}回</div>${segBar(d.usefulness||{}, V_KEYS, V_COLS)}</div>`;
+  });
+  const totalV = {};
+  allData.forEach(d => V_KEYS.forEach(k => { totalV[k] = (totalV[k]||0) + (d.usefulness?.[k]||0); }));
+  segHtml += `<div class="seg-row"><div class="seg-label" style="font-weight:600;color:var(--c-text);">合計</div>${segBar(totalV, V_KEYS, V_COLS)}</div>`;
+  segHtml += legend(V_KEYS, V_COLS) + `</div></div>`;
+
+  document.getElementById('survey-seg').innerHTML = segHtml;
+
+  // --- できるようになったこと ---
+  const canDo = {};
+  const allComments = [];
+  allData.forEach(d => {
     Object.entries(d.can_do || {}).forEach(([k, v]) => { canDo[k] = (canDo[k]||0) + v; });
     (d.comments || []).forEach(c => allComments.push({ text: c, vol: d.vol }));
   });
 
-  // メタ情報
-  document.getElementById('survey-section-label').textContent = `受講者アンケート（${volNums}）`;
-  document.getElementById('survey-meta').textContent = `${totalResponses}名回答`;
-
-  // バー生成ヘルパー
-  function bar(label, count, total, cls) {
-    const pct = Math.round(count / total * 100);
-    return `<div class="sbar-row"><div class="sbar-label">${label}</div><div class="sbar-track"><div class="sbar-fill ${cls}" style="width:${pct}%;"></div></div><div class="sbar-count">${count}名</div></div>`;
-  }
+  const canDoSorted = Object.entries(canDo).sort((a,b) => b[1]-a[1]).slice(0,7);
   function barWide(label, count, total) {
     const pct = Math.round(count / total * 100);
     const cls = pct >= 60 ? 'sbar-hi' : pct >= 30 ? 'sbar-mid' : 'sbar-lo';
     return `<div class="sbar-row-wide"><div class="sbar-label">${label}</div><div class="sbar-track"><div class="sbar-fill ${cls}" style="width:${pct}%;"></div></div><div class="sbar-count">${count}名</div></div>`;
   }
 
-  // グラフHTML生成
-  const hiU = understand['とても理解できた'] || 0;
-  const midU = understand['理解できた'] || 0;
-  const hiV = useful['役立ちそう'] || 0;
-  const midV = useful['少し役立ちそう'] || 0;
-  const loV = useful['まだイメージがついていない'] || 0;
-
-  const canDoSorted = Object.entries(canDo).sort((a,b) => b[1]-a[1]).slice(0,7);
-
-  let html = `<div class="survey-double">
-    <div class="survey-chart-card" style="margin-bottom:0;">
-      <div class="survey-q">内容の理解しやすさ</div>
-      ${bar('とても理解できた', hiU, totalResponses, 'sbar-hi')}
-      ${bar('理解できた', midU, totalResponses, 'sbar-mid')}
-      ${totalResponses - hiU - midU > 0 ? bar('その他', totalResponses - hiU - midU, totalResponses, 'sbar-lo') : ''}
-    </div>
-    <div class="survey-chart-card" style="margin-bottom:0;">
-      <div class="survey-q">業務・生活に役立ちそう</div>
-      ${bar('役立ちそう', hiV, totalResponses, 'sbar-hi')}
-      ${midV > 0 ? bar('少し役立ちそう', midV, totalResponses, 'sbar-mid') : ''}
-      ${loV > 0 ? bar('まだイメージがついていない', loV, totalResponses, 'sbar-lo') : ''}
-    </div>
-  </div>
-  <div class="survey-chart-card">
-    <div class="survey-q">できるようになったこと（複数選択・${totalResponses}名中）</div>
-    ${canDoSorted.map(([k,v]) => barWide(k, v, totalResponses)).join('')}
-  </div>`;
-
-  document.getElementById('survey-charts').innerHTML = html;
+  document.getElementById('survey-charts').innerHTML = `
+    <div class="survey-chart-card">
+      <div class="survey-q">できるようになったこと（複数選択・${totalResponses}名中）</div>
+      ${canDoSorted.map(([k,v]) => barWide(k, v, totalResponses)).join('')}
+    </div>`;
 
   // コメントカード
   const voiceLabel = document.getElementById('survey-voice-label');
-  const voiceGrid = document.getElementById('survey-voices');
+  const voiceGrid  = document.getElementById('survey-voices');
   if (allComments.length) {
     voiceLabel.hidden = false;
     voiceGrid.innerHTML = allComments.map(c =>
