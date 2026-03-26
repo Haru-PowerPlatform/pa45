@@ -331,14 +331,16 @@ document.querySelectorAll('.past-card[data-vol]').forEach(card => {
         ).join('')}</div>`;
       }
       // 役立ち度3色バー
-      function makeUsefulBar(topPct, allPct) {
-        const midPct = Math.max(0, (allPct||0) - (topPct||0));
-        const lowPct = Math.max(0, 100 - (allPct||0));
-        return `<div class="survey-bar">
-          <div style="width:${topPct||0}%;background:#2563eb;height:100%;"></div>
-          <div style="width:${midPct}%;background:#60a5fa;height:100%;"></div>
-          <div style="width:${lowPct}%;background:#f87171;height:100%;"></div>
-        </div>`;
+      function makeUsefulBar(pcts) {
+        if (!pcts) return '';
+        const segs = [
+          { key: '役立ちそう',               color: '#2563eb' },
+          { key: '少し役立ちそう',            color: '#db2777' },
+          { key: 'まだイメージがついていない', color: '#0d9488' },
+        ];
+        return `<div class="survey-bar">${segs.map(s =>
+          `<div style="width:${pcts[s.key]||0}%;background:${s.color};height:100%;"></div>`
+        ).join('')}</div>`;
       }
 
       const commentList = data.comments || data.highlight_comments || [];
@@ -359,7 +361,7 @@ document.querySelectorAll('.past-card[data-vol]').forEach(card => {
           <div class="survey-row-head">
             <span>役立ち度</span><strong>${data.usefulness_pct}%</strong>
           </div>
-          ${makeUsefulBar(data.usefulness_top_pct, data.usefulness_all_pct)}
+          ${makeUsefulBar(data.usefulness_pcts)}
         </div>
         ${comment}
       `;
