@@ -83,22 +83,35 @@ def analyze_session(df_session, vol_num, session_date):
     useful      = df_session[Q_USEFUL].value_counts().to_dict()
     time_pref   = df_session[Q_TIME].value_counts().to_dict()
 
-    understand_positive = understand.get("とても理解できた", 0) + understand.get("理解できた", 0)
-    understand_pct = round(understand_positive / total * 100, 1) if total else 0
-    useful_positive = useful.get("役立ちそう", 0) + useful.get("少し役立ちそう", 0)
-    useful_pct     = round(useful_positive / total * 100, 1) if total else 0
+    # 理解度：加重平均（とても=2点、理解できた=1点）
+    u_top = understand.get("とても理解できた", 0)
+    u_sub = understand.get("理解できた", 0)
+    understand_pct     = round((u_top * 2 + u_sub) / (total * 2) * 100, 1) if total else 0
+    understand_top_pct = round(u_top / total * 100, 1) if total else 0
+    understand_all_pct = round((u_top + u_sub) / total * 100, 1) if total else 0
+
+    # 役立ち度：加重平均（役立ちそう=2点、少し役立ちそう=1点）
+    f_top = useful.get("役立ちそう", 0)
+    f_sub = useful.get("少し役立ちそう", 0)
+    useful_pct     = round((f_top * 2 + f_sub) / (total * 2) * 100, 1) if total else 0
+    useful_top_pct = round(f_top / total * 100, 1) if total else 0
+    useful_all_pct = round((f_top + f_sub) / total * 100, 1) if total else 0
 
     return {
-        "vol":              vol_num,
-        "date":             str(session_date),
-        "total_responses":  total,
-        "understanding":    understand,
-        "understanding_pct": understand_pct,
-        "usefulness":       useful,
-        "usefulness_pct":   useful_pct,
-        "time_preference":  time_pref,
-        "can_do":           can_do,
-        "comments":         comments,
+        "vol":                  vol_num,
+        "date":                 str(session_date),
+        "total_responses":      total,
+        "understanding":        understand,
+        "understanding_pct":    understand_pct,
+        "understanding_top_pct": understand_top_pct,
+        "understanding_all_pct": understand_all_pct,
+        "usefulness":           useful,
+        "usefulness_pct":       useful_pct,
+        "usefulness_top_pct":   useful_top_pct,
+        "usefulness_all_pct":   useful_all_pct,
+        "time_preference":      time_pref,
+        "can_do":               can_do,
+        "comments":             comments,
     }
 
 

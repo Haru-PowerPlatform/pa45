@@ -113,13 +113,23 @@
       background: #f0f6ff; border-radius: 10px;
       border-left: 3px solid var(--c-blue-mid);
     }
-    .survey-label { font-size: 10px; font-weight: 700; color: var(--c-blue-mid); letter-spacing: .08em; margin-bottom: 6px; }
-    .survey-stats { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 6px; }
-    .survey-stat  { font-size: 12px; color: var(--c-blue-text); }
-    .survey-stat strong { font-size: 15px; font-weight: 700; }
+    .survey-label { font-size: 10px; font-weight: 700; color: var(--c-blue-mid); letter-spacing: .08em; margin-bottom: 8px; }
+    .survey-row   { margin-bottom: 6px; }
+    .survey-row-head {
+      display: flex; justify-content: space-between; align-items: baseline;
+      font-size: 11px; color: var(--c-blue-text); margin-bottom: 3px;
+    }
+    .survey-row-head strong { font-size: 14px; font-weight: 700; }
+    .survey-bar {
+      height: 8px; border-radius: 4px; background: #dce8f5;
+      overflow: hidden; display: flex;
+    }
+    .survey-bar-top  { background: #1a6bbf; height: 100%; transition: width .4s; }
+    .survey-bar-mid  { background: #7ab3e0; height: 100%; transition: width .4s; }
+    .survey-bar-low  { background: #f0b8a0; height: 100%; transition: width .4s; }
     .survey-comment {
       font-size: 11px; color: var(--c-muted); line-height: 1.6;
-      border-top: 1px solid rgba(42,125,212,.15); padding-top: 6px; margin-top: 4px;
+      border-top: 1px solid rgba(42,125,212,.15); padding-top: 6px; margin-top: 6px;
       font-style: italic;
     }
   </style>
@@ -305,20 +315,39 @@ document.querySelectorAll('.past-card[data-vol]').forEach(card => {
       if (!data) return;
       const body = card.querySelector('.past-card-body');
       if (!body) return;
+
+      function makeBar(topPct, allPct) {
+        const midPct  = Math.max(0, (allPct || 0) - (topPct || 0));
+        const lowPct  = Math.max(0, 100 - (allPct || 0));
+        return `<div class="survey-bar">
+          <div class="survey-bar-top" style="width:${topPct||0}%"></div>
+          <div class="survey-bar-mid" style="width:${midPct}%"></div>
+          <div class="survey-bar-low" style="width:${lowPct}%"></div>
+        </div>`;
+      }
+
       const commentList = data.comments || data.highlight_comments || [];
       const comment = commentList.length > 0
         ? `<div class="survey-comment">「${commentList[0]}」</div>` : '';
+
       const block = document.createElement('div');
       block.className = 'survey-block';
       block.innerHTML = `
         <div class="survey-label">📊 アンケート結果（${data.total_responses}件）</div>
-        <div class="survey-stats">
-          <div class="survey-stat">理解度 <strong>${data.understanding_pct}%</strong></div>
-          <div class="survey-stat">役立ち度 <strong>${data.usefulness_pct}%</strong></div>
+        <div class="survey-row">
+          <div class="survey-row-head">
+            <span>理解度</span><strong>${data.understanding_pct}%</strong>
+          </div>
+          ${makeBar(data.understanding_top_pct, data.understanding_all_pct)}
+        </div>
+        <div class="survey-row">
+          <div class="survey-row-head">
+            <span>役立ち度</span><strong>${data.usefulness_pct}%</strong>
+          </div>
+          ${makeBar(data.usefulness_top_pct, data.usefulness_all_pct)}
         </div>
         ${comment}
       `;
-      // ボタンの前に挿入
       const firstBtn = body.querySelector('.btn-slide');
       if (firstBtn) body.insertBefore(block, firstBtn);
       else body.appendChild(block);
