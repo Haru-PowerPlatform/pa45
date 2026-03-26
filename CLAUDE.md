@@ -159,7 +159,7 @@ Vol.1〜30（Vol.11・Vol.27除く）の28件を処理済み：
 ## 作業の流れ・決定事項
 
 - **ブランチ戦略**: `main` に直接push（基本）
-- **Claude Code設定**: `~/.claude/settings.json` に `defaultMode: acceptEdits` 設定済み → ファイル編集・読み込みは自動承認
+- **Claude Code設定**: `~/.claude/settings.json` に `defaultMode: dontAsk` 設定済み → Read・Edit・Write・Bash すべて自動承認。`git push` のみ `ask` で1回だけ確認する運用。
 - **git push が rejected されたとき**: `git pull --rebase origin main && git push origin main` で解決
 
 ---
