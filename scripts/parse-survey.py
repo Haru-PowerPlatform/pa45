@@ -83,8 +83,10 @@ def analyze_session(df_session, vol_num, session_date):
     useful      = df_session[Q_USEFUL].value_counts().to_dict()
     time_pref   = df_session[Q_TIME].value_counts().to_dict()
 
-    understand_pct = round(understand.get("とても理解できた", 0) / total * 100, 1) if total else 0
-    useful_pct     = round(useful.get("役立ちそう", 0) / total * 100, 1) if total else 0
+    understand_positive = understand.get("とても理解できた", 0) + understand.get("理解できた", 0)
+    understand_pct = round(understand_positive / total * 100, 1) if total else 0
+    useful_positive = useful.get("役立ちそう", 0) + useful.get("少し役立ちそう", 0)
+    useful_pct     = round(useful_positive / total * 100, 1) if total else 0
 
     return {
         "vol":              vol_num,
