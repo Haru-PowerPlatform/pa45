@@ -83,12 +83,18 @@ def analyze_session(df_session, vol_num, session_date):
     useful      = df_session[Q_USEFUL].value_counts().to_dict()
     time_pref   = df_session[Q_TIME].value_counts().to_dict()
 
-    # 理解度：加重平均（とても=2点、理解できた=1点）
-    u_top = understand.get("とても理解できた", 0)
-    u_sub = understand.get("理解できた", 0)
-    understand_pct     = round((u_top * 2 + u_sub) / (total * 2) * 100, 1) if total else 0
-    understand_top_pct = round(u_top / total * 100, 1) if total else 0
-    understand_all_pct = round((u_top + u_sub) / total * 100, 1) if total else 0
+    # 理解度：5択スコア（とても=100, 理解=75, 普通=50, 少し難=25, 難=0）
+    U = {
+        "とても理解できた": 100,
+        "理解できた":       75,
+        "普通":             50,
+        "少し難しかった":   25,
+        "難しかった":        0,
+    }
+    understand_pct = round(
+        sum(understand.get(k, 0) * v for k, v in U.items()) / (total * 100) * 100, 1
+    ) if total else 0
+    understand_pcts = {k: round(understand.get(k, 0) / total * 100, 1) for k in U} if total else {k: 0 for k in U}
 
     # 役立ち度：加重平均（役立ちそう=2点、少し役立ちそう=1点）
     f_top = useful.get("役立ちそう", 0)
@@ -103,8 +109,7 @@ def analyze_session(df_session, vol_num, session_date):
         "total_responses":      total,
         "understanding":        understand,
         "understanding_pct":    understand_pct,
-        "understanding_top_pct": understand_top_pct,
-        "understanding_all_pct": understand_all_pct,
+        "understanding_pcts":   understand_pcts,
         "usefulness":           useful,
         "usefulness_pct":       useful_pct,
         "usefulness_top_pct":   useful_top_pct,

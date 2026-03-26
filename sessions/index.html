@@ -316,13 +316,28 @@ document.querySelectorAll('.past-card[data-vol]').forEach(card => {
       const body = card.querySelector('.past-card-body');
       if (!body) return;
 
-      function makeBar(topPct, allPct) {
-        const midPct  = Math.max(0, (allPct || 0) - (topPct || 0));
-        const lowPct  = Math.max(0, 100 - (allPct || 0));
+      // 理解度5色バー
+      function makeUnderstandBar(pcts) {
+        if (!pcts) return '';
+        const segs = [
+          { key: 'とても理解できた', color: '#2563eb' },
+          { key: '理解できた',       color: '#60a5fa' },
+          { key: '普通',             color: '#9ca3af' },
+          { key: '少し難しかった',   color: '#fb923c' },
+          { key: '難しかった',        color: '#ef4444' },
+        ];
+        return `<div class="survey-bar">${segs.map(s =>
+          `<div style="width:${pcts[s.key]||0}%;background:${s.color};height:100%;"></div>`
+        ).join('')}</div>`;
+      }
+      // 役立ち度3色バー
+      function makeUsefulBar(topPct, allPct) {
+        const midPct = Math.max(0, (allPct||0) - (topPct||0));
+        const lowPct = Math.max(0, 100 - (allPct||0));
         return `<div class="survey-bar">
-          <div class="survey-bar-top" style="width:${topPct||0}%"></div>
-          <div class="survey-bar-mid" style="width:${midPct}%"></div>
-          <div class="survey-bar-low" style="width:${lowPct}%"></div>
+          <div style="width:${topPct||0}%;background:#2563eb;height:100%;"></div>
+          <div style="width:${midPct}%;background:#60a5fa;height:100%;"></div>
+          <div style="width:${lowPct}%;background:#f87171;height:100%;"></div>
         </div>`;
       }
 
@@ -338,13 +353,13 @@ document.querySelectorAll('.past-card[data-vol]').forEach(card => {
           <div class="survey-row-head">
             <span>理解度</span><strong>${data.understanding_pct}%</strong>
           </div>
-          ${makeBar(data.understanding_top_pct, data.understanding_all_pct)}
+          ${makeUnderstandBar(data.understanding_pcts)}
         </div>
         <div class="survey-row">
           <div class="survey-row-head">
             <span>役立ち度</span><strong>${data.usefulness_pct}%</strong>
           </div>
-          ${makeBar(data.usefulness_top_pct, data.usefulness_all_pct)}
+          ${makeUsefulBar(data.usefulness_top_pct, data.usefulness_all_pct)}
         </div>
         ${comment}
       `;
