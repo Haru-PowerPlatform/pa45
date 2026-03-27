@@ -19,6 +19,22 @@
 - **名前**: はる（ism136）
 - **WordPress**: https://www.automate136.com
 - **WordPress認証**: `.env` ファイル（リポジトリルート、gitignore済み）を参照
+  - WP_USER / WP_PASS / WP_URL が設定済み
+  - **ClaudeはWordPress REST API（`/wp-json/wp/v2/`）に直接アクセスできる**
+  - カテゴリー確認: `GET /wp-json/wp/v2/categories?per_page=100`
+  - 投稿操作: `GET/POST /wp-json/wp/v2/posts`
+  - 「WordPressの管理画面を確認して」と言われたらREST APIで直接取得する（毎回同じ質問をしない）
+
+### WordPressカテゴリー構成（2026-03-27更新）
+
+| ID | カテゴリー名 | 用途 |
+|----|------------|------|
+| 76 | Power Automate 実践・Tips | 技術解説・Tips・ハウツー記事 |
+| 77 | コミュニティ運営（PA45） | PA45セッションレポート・外部コミュニティ記事 |
+| 78 | 社内DX推進・人材育成 | 社内研修・講座設計・育成事例 |
+
+- デフォルトカテゴリー: ID76
+- 新規投稿時のカテゴリーは上記3つのみ使用する
 - **スタイル指向**: 温かみ・読者に語りかける口調（冒頭は淡々と。MVP関連文言は一切使わない）
 - **ユーザーからの指示**: 言わなくてもCLAUDE.mdに保存する（毎回「GitHubに保存して」と言わなくてよい）
 
