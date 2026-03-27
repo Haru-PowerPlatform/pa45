@@ -68,7 +68,19 @@ def get_token():
 
 # ─── FormsのExcelを読み込む（共通処理） ──────────
 def load_forms_excel(token: str):
-    """Excelを読み込んで全行を返す。返り値: (headers, rows, email_col, ts_col)"""
+    """Excelを読み込んで全行を返す。返り値: (headers, rows, email_col, ts_col)
+
+    既知のExcel構成:
+      列0: Id（行番号）
+      列1: 開始時刻（タイムスタンプ "2026-03-26 21:00:51" 形式）← ここで日付フィルター
+      列2: 完了時刻
+      列3: メール → 常に「匿名」（Formsの自動フィールド・使えない）
+      列4: 名前
+      ...
+      列23: Xアカウント名（現在のバッジ配布用）
+      列26以降: Formsに質問を追加すると増えていく
+      ※ バッジ用メールアドレス列はまだない（Formsに追加後に自動検出）
+    """
     import requests
     try:
         import openpyxl
@@ -76,13 +88,9 @@ def load_forms_excel(token: str):
         print("ERROR: openpyxl が必要です → pip install openpyxl")
         sys.exit(1)
 
-    file_id    = os.environ.get("BADGE_FORMS_FILE_ID", "").strip()
-    file_owner = os.environ.get("BADGE_FORMS_FILE_OWNER",
-                                "ixa_mct@plug136.onmicrosoft.com").strip()
-
-    if not file_id or file_id.startswith("←"):
-        print("ERROR: .env に BADGE_FORMS_FILE_ID が設定されていません")
-        sys.exit(1)
+    # アンケートExcelと同じファイルを使う（FILE_IDは固定）
+    file_owner = "ixa_mct@plug136.onmicrosoft.com"
+    file_id    = "47E8E22E-7B13-4D0C-9181-31D6B9BF9150"
 
     url  = f"https://graph.microsoft.com/v1.0/users/{file_owner}/drive/items/{file_id}/content"
     resp = requests.get(url, headers={"Authorization": f"Bearer {token}"})
@@ -92,21 +100,40 @@ def load_forms_excel(token: str):
     ws      = wb.active
     headers = [str(cell.value or "").strip() for cell in ws[1]]
 
-    # メールアドレス列を探す
+    # タイムスタンプ列: 列1（開始時刻）
+    ts_col = 1
+
+    # バッジ用メールアドレス列を探す
+    # 注意: 列3「メール」は常に「匿名」なので除外する
+    # 「バッジ」「メールアドレス」「@」を含む列名を対象にする
     email_col = None
     for i, h in enumerate(headers):
-        if any(kw in h.lower() for kw in ["メール", "mail", "email", "e-mail"]):
+        if i == 3:
+            continue  # 列3「メール」は匿名フィールドなのでスキップ
+        h_lower = h.lower()
+        if any(kw in h_lower for kw in ["メールアドレス", "mail address", "email address"]) or \
+           ("メール" in h and "バッジ" in h) or \
+           ("メール" in h and "送付" in h) or \
+           ("メール" in h and "自動" in h):
             email_col = i
             break
 
     if email_col is None:
-        print("ERROR: メールアドレス列が見つかりません")
-        print(f"  ヘッダー: {headers}")
+        print("⚠️  バッジ用メールアドレス列が見つかりません")
+        print("   現在の列構成:")
+        for i, h in enumerate(headers):
+            marker = " ← 匿名フィールド（使えない）" if i == 3 else ""
+            print(f"     列{i}: {h}{marker}")
+        print()
+        print("   → Formsに「メールアドレスを入力してください（バッジ配布用）」")
+        print("     という質問を追加してください。")
+        print("     追加後はExcelに列が自動で増えます。")
         sys.exit(1)
 
-    ts_col = 0  # 開始時刻（タイムスタンプ）は通常0列目
-    rows   = list(ws.iter_rows(min_row=2, values_only=True))
+    print(f"  タイムスタンプ列: 列{ts_col} [{headers[ts_col]}]")
+    print(f"  メールアドレス列: 列{email_col} [{headers[email_col]}]")
 
+    rows = list(ws.iter_rows(min_row=2, values_only=True))
     return headers, rows, email_col, ts_col
 
 # ─── タイムスタンプ → dateに変換 ──────────────────
