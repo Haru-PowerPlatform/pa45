@@ -233,6 +233,41 @@ rm -f /c/Temp/slides/slide-*.jpg
 
 ---
 
+## バッジ自動送信ワークフロー
+
+### 仕組み
+Formsのアンケート回答者に参加バッジ＋お礼メール＋次回connpass URLを自動送信する。
+
+### 使い方（Claudeへの指示）
+「第4回のバッジ送って」と言えばClaudeが以下を実行する：
+
+```bash
+python scripts/send-badges.py --session 4          # 送信
+python scripts/send-badges.py --session 4 --dry-run # 確認のみ
+```
+
+### 安全装置（必ず通過）
+**以下の条件を満たさない限り、メールは1件も送信しない：**
+- `assets/badges/session-XXX/badge.png` が存在すること（バッジ未配置なら即終了）
+- `data/badge-sent/session-XXX.json` で重複送信チェック（送信済みアドレスには送らない）
+
+### バッジ画像配置ルール
+- ユーザーがClaudeにバッジ画像を渡す
+- Claudeが `assets/badges/session-XXX/badge.png` に保存してコミット
+- **画像が配置・コミットされるまでスクリプトは実行しない**
+
+### 毎回の更新箇所（.env）
+- `NEXT_CONNPASS_URL` → 次回のconnpass URL（開催前に更新）
+- `BADGE_FORMS_FILE_ID` → FormsのExcel（OneDrive）のファイルID（初回設定後は変更不要）
+
+### 初回セットアップ（まだ未実施）
+1. FormsにE-mailアドレス入力列を追加する
+2. Forms → 「Excelで開く」でOneDriveにExcelをリンク保存する
+3. そのExcelのファイルIDを `BADGE_FORMS_FILE_ID` に設定する
+4. Outlookアプリパスワードを発行して `SMTP_USER` / `SMTP_PASSWORD` に設定する
+
+---
+
 ## アンケート自動化ワークフロー
 
 ### 完全自動（GitHub Actions）
