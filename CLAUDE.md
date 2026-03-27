@@ -159,8 +159,77 @@ Vol.1〜30（Vol.11・Vol.27除く）の28件を処理済み：
 ## 作業の流れ・決定事項
 
 - **ブランチ戦略**: `main` に直接push（基本）
-- **Claude Code設定**: `~/.claude/settings.json` に `defaultMode: dontAsk` 設定済み → Read・Edit・Write・Bash すべて自動承認。`git push` のみ最後に1回Enterを押す運用。
+- **Claude Code設定**: `.claude/settings.json` に `allow: ["Bash","Read","Write","Edit","Glob","Grep"]` + `ask: ["Bash(git push:*)","Bash(git commit:*)"]` 設定済み → git push/commit のみ確認、それ以外は全自動承認。
 - **git push が rejected されたとき**: `git pull --rebase origin main && git push origin main` で解決
+
+---
+
+## PA45スライド構成ルール（第4回以降）
+
+P003で確立した標準構成。毎回この順番で作成する：
+
+| # | 内容 | 備考 |
+|---|------|------|
+| 1 | PA45とは？（INTRODUCTION） | 固定 |
+| 2 | ご参加にあたってのお願い | 固定 |
+| 3 | 講師自己紹介（Haru） | 固定 |
+| 4 | タイトルスライド（第N回：テーマ名） | 毎回更新。Theme/Target/Time |
+| 5 | 今日やること（3つだけ） | 毎回更新 |
+| 6 | テーマ解説（概念・演算子など） | 毎回更新。フォント16pt以上 |
+| 7 | 10分ハンズオン4つのステップ | 毎回フロー内容に合わせて更新 |
+| 8 | 今日のポイント3つ | 初心者が「受講して良かった」と思える内容 |
+| 9 | 活用事例（実務での自動化） | 毎回テーマに合わせて更新 |
+| 10 | うまくいかない時のチェックポイント | 毎回テーマに合わせて更新 |
+| 11 | アンケートへの誘導（Special Gift） | フッターに第N回を入れる |
+
+**削除済みスライド（P003から廃止）：**
+- 「Power Automateって何？」（第4回以降不要）
+- 「ネクストセッション」（不要）
+- 「今日の学び」（8番と重複）
+
+**スタイルルール：**
+- フォント最小16pt（例外なし）
+- Flow Imageプレースホルダーは使わない → テキストで条件を記述
+- スライド9の活用事例カードは「条件ラベル（≥ 5件？など）」＋「フロー説明文」で構成
+
+---
+
+## 視覚確認ツール（スライドQA）
+
+インストール済み：
+- LibreOffice: `C:\Program Files\LibreOffice\program\soffice.exe`
+- Poppler (pdftoppm): `C:\Temp\poppler\poppler-24.08.0\Library\bin\pdftoppm.exe`
+
+**スライドを画像変換する手順：**
+```bash
+cp "assets/pa45/PXXX.pptx" "C:\Temp\test.pptx"
+"C:\Program Files\LibreOffice\program\soffice.exe" --headless --convert-to pdf "C:\Temp\test.pptx" --outdir "C:\Temp"
+rm -f /c/Temp/slides/slide-*.jpg
+"/c/Temp/poppler/poppler-24.08.0/Library/bin/pdftoppm.exe" -jpeg -r 120 "C:\Temp\test.pdf" "C:\Temp\slides\slide"
+```
+※ファイルパスに日本語があるとLibreOfficeがエラーになるため、C:\Tempにコピーしてから変換する
+
+---
+
+## MVP戦略
+
+目標：Microsoft MVP（Power Platform カテゴリ）取得
+
+**作戦①：YouTube仕組み化（最優先）**
+- PA45の各回終了後にYouTube動画を公開する仕組みを構築中
+- `scripts/youtube-release.py <vol> <YouTube URL>` を作成予定
+  - YouTube用タイトル・説明文を自動生成
+  - `data/activities/vol-N.json` に youtube フィールドを追記
+  - `sessions/index.html` に YouTubeボタンを追加
+  - git commit & push まで完了
+
+**作戦②：ブログ週2-3本公開**
+- 28記事が下書き済み。ユーザーが確認・編集してから手動公開
+
+**作戦③：数字で実績を可視化**
+- PA45参加者数・理解度スコアをサイトに自動表示（実装済み）
+
+**重要：自動化はスケジュール・配信のみOK。コンテンツは必ずユーザーが確認してから公開。**
 
 ---
 
