@@ -270,11 +270,22 @@ STEP 3: ユーザーのOKが出た後のみ本番送信
 - `NEXT_CONNPASS_URL` → 次回のconnpass URL（開催前に更新）
 - `BADGE_FORMS_FILE_ID` → FormsのExcel（OneDrive）のファイルID（初回設定後は変更不要）
 
-### 初回セットアップ（まだ未実施）
-1. FormsにE-mailアドレス入力列を追加する
-2. Forms → 「Excelで開く」でOneDriveにExcelをリンク保存する
-3. そのExcelのファイルIDを `BADGE_FORMS_FILE_ID` に設定する
-4. Outlookアプリパスワードを発行して `SMTP_USER` / `SMTP_PASSWORD` に設定する
+### アンケートExcelの構造（確認済み）
+- ファイルID: `47E8E22E-7B13-4D0C-9181-31D6B9BF9150`（parse-survey.pyと同じ）
+- オーナー: `ixa_mct@plug136.onmicrosoft.com`
+- 全回のアンケートが1ファイルに蓄積される（同じFormsリンクを毎回使用）
+- 列1「開始時刻」= タイムスタンプ（例: `2026-03-26 21:00:51`）← 日付フィルターに使用
+- 列3「メール」= 常に「匿名」（Formsの自動フィールド、メアドは取れない）
+- 列23 = Xアカウント名（現在のバッジ配布列）
+- **バッジ用メールアドレス列はまだない** → 下記セットアップが必要
+
+### 残りのセットアップ（1回だけ）
+1. **Formsにメールアドレス質問を追加する**
+   - 質問文例: 「メールアドレスを入力してください（バッジ配布用・任意）」
+   - 種類: テキスト入力
+   - 追加後、Excelに新しい列が自動で増える
+2. **Outlookアプリパスワードを発行** → `.env` の `SMTP_USER` / `SMTP_PASSWORD` に設定する
+3. **`NEXT_CONNPASS_URL`** を `.env` に設定する（開催前に毎回更新）
 
 ---
 
