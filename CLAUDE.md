@@ -239,17 +239,27 @@ rm -f /c/Temp/slides/slide-*.jpg
 Formsのアンケート回答者に参加バッジ＋お礼メール＋次回connpass URLを自動送信する。
 
 ### 使い方（Claudeへの指示）
-「第4回のバッジ送って」と言えばClaudeが以下を実行する：
+「第4回のバッジ送って」と言われたら、Claudeは以下の3ステップで進める。**ユーザー確認なしに本番送信しない。**
 
-```bash
-python scripts/send-badges.py --session 4          # 送信
-python scripts/send-badges.py --session 4 --dry-run # 確認のみ
+```
+STEP 1: 日付一覧を確認（送信しない）
+  python scripts/send-badges.py --session 4 --scan
+  → 出力を見てユーザーに「どの日付の回答に送りますか？」と聞く
+
+STEP 2: 送信予定リストを確認（送信しない）
+  python scripts/send-badges.py --session 4 --date 2026-04-02 --dry-run
+  → 宛先一覧を見てユーザーに「この宛先でよいですか？」と聞く
+
+STEP 3: ユーザーのOKが出た後のみ本番送信
+  python scripts/send-badges.py --session 4 --date 2026-04-02
 ```
 
 ### 安全装置（必ず通過）
 **以下の条件を満たさない限り、メールは1件も送信しない：**
 - `assets/badges/session-XXX/badge.png` が存在すること（バッジ未配置なら即終了）
+- `--date` が明示されていること（未指定なら即終了・誤送信防止）
 - `data/badge-sent/session-XXX.json` で重複送信チェック（送信済みアドレスには送らない）
+- **Claudeはユーザーのチャット確認なしに --dry-run なしのコマンドを実行しない**
 
 ### バッジ画像配置ルール
 - ユーザーがClaudeにバッジ画像を渡す
