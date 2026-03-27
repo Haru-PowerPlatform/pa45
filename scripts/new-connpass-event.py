@@ -18,6 +18,22 @@ sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8", errors="repla
 # ── テンプレート ─────────────────────────────────────────────────────────────
 # 「参加者への情報」欄（Teams URLは毎回同じ）
 PARTICIPANTS_INFO_TEMPLATE = """\
+【📹 録画・YouTube公開について】
+第4回より、講座の録画をそのままYouTubeで公開しています。
+Teams の表示名（参加者名）が画面に映る場合があります。
+お名前を映したくない方は、以下の手順で「匿名参加」してください。
+
+▼ Teamsで匿名参加する方法
+1. Teams会議URLをブラウザ（Chrome / Edge など）で開く
+2. 「このブラウザで続ける」を選択（アプリを使わない）
+3. 名前入力欄に任意の名前（例：「匿名」「PA45参加者」など）を入力
+4. 「今すぐ参加」をクリック
+
+※ Teamsアプリで参加する場合は、プロフィールの表示名が映ります。
+　 事前に表示名を変更するか、ブラウザ参加をご利用ください。
+
+---
+
 【Teams会議URL】
 https://teams.microsoft.com/l/meetup-join/19%3ameeting_OWY5NTlmZjMtMWRmYy00NDk5LTg4YmUtZjRlMGI3ZGFiYWNk%40thread.v2/0?context=%7b%22Tid%22%3a%22ad7b0428-b3ae-4132-a47d-d9eda8cbab9a%22%2c%22Oid%22%3a%22d7ac68af-2e74-43e5-ac56-0aad7e9148a7%22%7d
 
@@ -71,7 +87,21 @@ Power Automateを45分で学ぶハンズオン勉強会です。
 - Power Automate が使えるMicrosoft 365アカウントをご用意ください
 - 接続テストは不要です。当日Teams URLからそのままご参加ください
 - 途中参加・途中退出OK
-- 録画はしません
+
+## 📹 録画・YouTube公開について
+
+本講座は録画してYouTubeで公開しています。
+**Teamsの表示名（参加者名）が画面に映る場合があります。**
+お名前を映したくない方は「匿名参加」をご利用ください。
+
+▼ 匿名参加の方法（ブラウザ推奨）
+1. Teams会議URLをブラウザ（Chrome / Edgeなど）で開く
+2. 「このブラウザで続ける」を選択（アプリは使わない）
+3. 名前入力欄に任意の名前（例：「匿名」「PA45参加者」）を入力
+4. 「今すぐ参加」をクリック
+
+※ Teamsアプリで参加する場合、プロフィールの表示名が映ります。
+　 事前に表示名を変更するか、上記のブラウザ参加をお使いください。
 
 ---
 
