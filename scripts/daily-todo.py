@@ -3,13 +3,13 @@ PA45 毎日のTODOメール生成 & 送信スクリプト
 
 使い方:
   python scripts/daily-todo.py            # コンソール表示のみ
-  python scripts/daily-todo.py --send     # Outlook下書き作成 (Graph API)
+  python scripts/daily-todo.py --send     # Gmailで送信
   python scripts/daily-todo.py --preview  # HTMLプレビューをブラウザで表示
 
 環境変数:
-  MS_TENANT_ID, MS_CLIENT_ID, MS_CLIENT_SECRET  (Graph API)
-  TODO_RECIPIENT   受信先メールアドレス (未設定時は送信者自身)
-  BADGE_SENDER     送信元メールアドレス
+  EMAIL_FROM      送信元Gmailアドレス
+  EMAIL_PASSWORD  Gmailアプリパスワード
+  EMAIL_TO        受信先メールアドレス
 """
 
 import sys, io, json, os, re, argparse
@@ -257,51 +257,32 @@ def render_html(data):
     return body
 
 # ──────────────────────────────────────────────────────────────
-# Graph API でOutlook下書き作成
+# Gmail で送信
 # ──────────────────────────────────────────────────────────────
 
-def get_graph_token():
-    import urllib.request, urllib.parse
-    tenant  = os.environ.get("MS_TENANT_ID", "")
-    client  = os.environ.get("MS_CLIENT_ID", "")
-    secret  = os.environ.get("MS_CLIENT_SECRET", "")
-    if not all([tenant, client, secret]):
-        raise ValueError("MS_TENANT_ID / MS_CLIENT_ID / MS_CLIENT_SECRET が未設定です")
-    data = urllib.parse.urlencode({
-        "grant_type": "client_credentials",
-        "client_id": client,
-        "client_secret": secret,
-        "scope": "https://graph.microsoft.com/.default",
-    }).encode()
-    req = urllib.request.Request(
-        f"https://login.microsoftonline.com/{tenant}/oauth2/v2.0/token",
-        data=data, method="POST"
-    )
-    with urllib.request.urlopen(req) as r:
-        return json.loads(r.read())["access_token"]
+def send_gmail(html_body, subject):
+    import smtplib
+    from email.mime.multipart import MIMEMultipart
+    from email.mime.text import MIMEText
 
-def send_draft(html_body, subject):
-    import urllib.request
-    token   = get_graph_token()
-    sender  = os.environ.get("BADGE_SENDER", "ixa_mct@plug136.onmicrosoft.com")
-    to_addr = os.environ.get("TODO_RECIPIENT", sender)
+    email_from = os.environ.get("EMAIL_FROM", "")
+    email_pass = os.environ.get("EMAIL_PASSWORD", "")
+    email_to   = os.environ.get("EMAIL_TO", email_from)
 
-    payload = json.dumps({
-        "subject": subject,
-        "body": {"contentType": "HTML", "content": html_body},
-        "toRecipients": [{"emailAddress": {"address": to_addr}}],
-    }).encode("utf-8")
+    if not all([email_from, email_pass]):
+        raise ValueError("EMAIL_FROM / EMAIL_PASSWORD が未設定です")
 
-    req = urllib.request.Request(
-        f"https://graph.microsoft.com/v1.0/users/{sender}/messages",
-        data=payload, method="POST",
-        headers={"Authorization": f"Bearer {token}",
-                 "Content-Type": "application/json"}
-    )
-    with urllib.request.urlopen(req) as r:
-        resp = json.loads(r.read())
-    print(f"✅ Outlook下書き作成完了（件名: {subject}）")
-    print(f"   ID: {resp.get('id', '')[:40]}...")
+    msg = MIMEMultipart("alternative")
+    msg["Subject"] = subject
+    msg["From"]    = email_from
+    msg["To"]      = email_to
+    msg.attach(MIMEText(html_body, "html", "utf-8"))
+
+    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as smtp:
+        smtp.login(email_from, email_pass)
+        smtp.send_message(msg)
+
+    print(f"✅ Gmail送信完了 → {email_to}（件名: {subject}）")
 
 # ──────────────────────────────────────────────────────────────
 # メイン
@@ -330,7 +311,7 @@ def main():
 
     if args.send:
         html = render_html(data)
-        send_draft(html, subject)
+        send_gmail(html, subject)
 
 if __name__ == "__main__":
     main()
