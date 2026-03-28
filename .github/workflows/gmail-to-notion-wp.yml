@@ -1,0 +1,42 @@
+name: Gmail[自己検証] → Notion → WordPress下書き
+
+on:
+  schedule:
+    - cron: "0 22 * * *"   # JST 07:00（UTC 22:00 前日）毎朝チェック
+  workflow_dispatch:        # 手動実行（テスト用）
+
+permissions:
+  contents: read
+
+jobs:
+  process:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          pip install \
+            google-auth-oauthlib \
+            google-api-python-client \
+            anthropic \
+            requests
+
+      - name: Run Gmail → Notion → WP pipeline
+        env:
+          GMAIL_CREDENTIALS: ${{ secrets.GMAIL_CREDENTIALS }}
+          GMAIL_TOKEN:       ${{ secrets.GMAIL_TOKEN }}
+          NOTION_TOKEN:      ${{ secrets.NOTION_TOKEN }}
+          NOTION_DB_ID:      "13656c494f674c83b63d7b8d543da5d3"
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          WP_URL:            ${{ secrets.WP_URL }}
+          WP_USER:           ${{ secrets.WP_USER }}
+          WP_APP_PASSWORD:   ${{ secrets.WP_APP_PASSWORD }}
+        run: python scripts/gmail_to_notion_wp.py
