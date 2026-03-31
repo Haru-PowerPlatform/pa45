@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="PA45 活動統計 — 参加者数・理解度・役立ち度の推移をグラフで確認できます。">
+  <title>活動統計（Stats）— PA45</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    /* ===== KPI ===== */
+    .kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .kpi-card {
+      background: var(--c-surface); border-radius: var(--radius-md);
+      padding: 20px 12px; text-align: center; box-shadow: var(--shadow-card);
+    }
+    .kpi-n { font-size: 30px; font-weight: 700; color: var(--c-blue-text); margin-bottom: 4px; font-family: var(--font-mono); line-height: 1; }
+    .kpi-l { font-size: 11px; color: var(--c-hint); line-height: 1.5; }
+
+    /* ===== チャート共通 ===== */
+    .chart-card {
+      background: var(--c-surface); border-radius: var(--radius-md);
+      padding: 24px 20px; box-shadow: var(--shadow-card);
+    }
+    .chart-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+    .chart-sub   { font-size: 12px; color: var(--c-muted); margin-bottom: 20px; }
+
+    /* ===== 縦棒グラフ ===== */
+    .vchart-wrap {
+      display: flex; align-items: flex-end; gap: 8px;
+      height: 180px; padding-bottom: 28px; position: relative;
+    }
+    /* グリッド線 */
+    .vchart-wrap::before,
+    .vchart-wrap::after {
+      content: ''; position: absolute; left: 0; right: 0;
+      border-top: 1px dashed var(--c-border);
+    }
+    .vchart-wrap::before { top: 0; }
+    .vchart-wrap::after  { top: 50%; }
+
+    .vchart-col {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; height: 100%; justify-content: flex-end;
+    }
+    .vchart-val  { font-size: 12px; font-weight: 600; color: var(--c-text); margin-bottom: 4px; font-family: var(--font-mono); }
+    .vchart-bar  {
+      width: 100%; max-width: 56px; border-radius: 4px 4px 0 0;
+      background: var(--c-blue-mid); transition: height .6s cubic-bezier(.22,.61,.36,1);
+    }
+    .vchart-bar.green  { background: #22c55e; }
+    .vchart-bar.blue   { background: var(--c-blue-mid); }
+    .vchart-bar.amber  { background: #f59e0b; }
+    .vchart-bar.teal   { background: #14b8a6; }
+
+    .vchart-label {
+      position: absolute; bottom: 4px;
+      font-size: 11px; color: var(--c-muted); text-align: center; width: 100%;
+    }
+    .vchart-col-wrap {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; height: 100%; justify-content: flex-end; position: relative;
+    }
+
+    /* 2本並び（グループ棒） */
+    .vchart-group {
+      flex: 1; display: flex; gap: 4px; align-items: flex-end;
+      height: 100%; justify-content: center;
+    }
+    .vchart-group-col {
+      flex: 1; display: flex; flex-direction: column;
+      align-items: center; height: 100%; justify-content: flex-end;
+    }
+
+    .vchart-xlabel {
+      text-align: center; font-size: 11px; color: var(--c-muted);
+      margin-top: 4px;
+    }
+
+    /* ===== 凡例 ===== */
+    .legend {
+      display: flex; flex-wrap: wrap; gap: 4px 16px;
+      margin-top: 14px;
+    }
+    .legend-item { font-size: 11px; color: var(--c-muted); display: flex; align-items: center; gap: 5px; }
+    .legend-dot  { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+
+    /* ===== 横棒グラフ（できるようになったこと） ===== */
+    .hbar-row {
+      display: grid; grid-template-columns: 1fr 120px 40px;
+      align-items: center; gap: 8px; margin-bottom: 10px;
+    }
+    .hbar-label { font-size: 12px; color: var(--c-muted); line-height: 1.4; }
+    .hbar-track { height: 10px; background: var(--c-bg); border-radius: 5px; overflow: hidden; }
+    .hbar-fill  { height: 100%; border-radius: 5px; background: var(--c-blue-mid); transition: width .7s cubic-bezier(.22,.61,.36,1); }
+    .hbar-count { font-size: 11px; font-family: var(--font-mono); color: var(--c-hint); text-align: right; }
+
+    /* ===== 参加者の声 ===== */
+    .voice-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+    .voice-card { background: var(--c-surface); border-radius: var(--radius-md); padding: 14px 16px; box-shadow: var(--shadow-card); }
+    .voice-body { font-size: 13px; font-style: italic; line-height: 1.65; margin-bottom: 8px; }
+    .voice-body::before { content: '「'; }
+    .voice-body::after  { content: '」'; }
+    .voice-meta { font-size: 11px; color: var(--c-hint); display: flex; align-items: center; gap: 6px; }
+    .voice-tag  { font-size: 10px; background: var(--c-blue-bg); color: var(--c-blue-text); padding: 1px 7px; border-radius: 3px; }
+
+    /* ===== ローディング ===== */
+    .loading { color: var(--c-hint); font-size: 13px; padding: 24px 0; }
+
+    /* ===== レスポンシブ ===== */
+    @media (max-width: 640px) {
+      .kpi-grid  { grid-template-columns: repeat(2, 1fr); }
+      .voice-grid { grid-template-columns: 1fr; }
+      .hbar-row  { grid-template-columns: 1fr 80px 36px; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="../" class="site-logo">PA45<span>Power Automate 45</span></a>
+    <nav class="header-nav">
+      <a href="../learn/">学ぶ</a>
+      <a href="../slides/">スライド</a>
+      <a href="../sessions/">参加する</a>
+      <a href="../start-here/">初めての方へ</a>
+      <a href="../achievements/">活動記録</a>
+      <a href="../stats/" class="active">統計</a>
+      <a href="../about/">About</a>
+    </nav>
+    <a href="../sessions/" class="header-cta">次回PA45に参加する →</a>
+    <button class="hamburger" aria-label="メニュー" onclick="toggleMenu()"><span></span><span></span><span></span></button>
+  </div>
+  <nav class="mobile-nav" id="mobileNav">
+    <a href="../learn/">学ぶ（Learn）</a>
+    <a href="../slides/">スライド一覧（Slides）</a>
+    <a href="../sessions/">参加する（Sessions）</a>
+    <a href="../start-here/">初めての方へ（Start Here）</a>
+    <a href="../achievements/">活動記録（Achievements）</a>
+    <a href="../stats/">統計（Stats）</a>
+    <a href="../about/">About</a>
+    <a href="../sessions/" style="color:#0b3e72;font-weight:600;margin-top:4px;">→ 次回PA45に参加する</a>
+  </nav>
+</header>
+
+<!-- ページヘッダー -->
+<section class="section" style="padding-bottom: 0;">
+  <div class="container">
+    <div class="section-label">Stats</div>
+    <h1 style="font-size: clamp(22px,4vw,30px); font-weight:700; margin-bottom:8px; letter-spacing:-.02em;">活動統計</h1>
+    <p style="font-size:14px; color:var(--c-muted); max-width:480px;">PA45の参加者数・理解度・役立ち度の推移をグラフで確認できます。データはアンケート回答をもとに集計しています。</p>
+  </div>
+</section>
+
+<!-- KPI サマリー -->
+<section class="section">
+  <div class="container">
+    <div class="section-label">サマリー</div>
+    <div class="kpi-grid fade-up" id="kpi-grid">
+      <div class="kpi-card"><div class="kpi-n">—</div><div class="kpi-l">開催回数</div></div>
+      <div class="kpi-card"><div class="kpi-n">—</div><div class="kpi-l">累計参加者</div></div>
+      <div class="kpi-card"><div class="kpi-n">—</div><div class="kpi-l">平均理解度</div></div>
+      <div class="kpi-card"><div class="kpi-n">—</div><div class="kpi-l">平均役立ち度</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- Chart 1: 参加者数の推移 -->
+<section class="section" style="padding-top:0;">
+  <div class="container">
+    <div class="chart-card">
+      <div class="chart-title">参加者数の推移</div>
+      <div class="chart-sub">各回の参加者数（connpassデータより）</div>
+      <div id="participants-chart" class="loading">読み込み中...</div>
+    </div>
+  </div>
+</section>
+
+<!-- Chart 2: 理解度・役立ち度の推移 -->
+<section class="section" style="padding-top:0;">
+  <div class="container">
+    <div class="chart-card">
+      <div class="chart-title">理解度・役立ち度の推移</div>
+      <div class="chart-sub">アンケート回答者のスコア（%）</div>
+      <div id="scores-chart" class="loading">読み込み中...</div>
+      <div class="legend" id="scores-legend" style="display:none;">
+        <div class="legend-item"><div class="legend-dot" style="background:var(--c-blue-mid);"></div>理解度</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#22c55e;"></div>役立ち度</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Chart 3: できるようになったことランキング -->
+<section class="section" style="padding-top:0;">
+  <div class="container">
+    <div class="chart-card">
+      <div class="chart-title">できるようになったこと ランキング</div>
+      <div class="chart-sub" id="learned-sub">アンケート回答者の集計（複数選択可）</div>
+      <div id="learned-chart" class="loading">読み込み中...</div>
+    </div>
+  </div>
+</section>
+
+<!-- 参加者の声 -->
+<section class="section" style="padding-top:0;">
+  <div class="container">
+    <div class="section-label">参加者の声</div>
+    <div id="voice-grid" class="voice-grid">
+      <div class="loading">読み込み中...</div>
+    </div>
+  </div>
+</section>
+
+<footer style="background:var(--c-surface); border-top:1px solid var(--c-border); padding:24px 0; margin-top:48px;">
+  <div class="container" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;">
+    <span style="font-size:13px; font-weight:600;">PA45</span>
+    <span style="font-size:12px; color:var(--c-hint);">© 2026 Haru / ism136</span>
+  </div>
+</footer>
+
+<script>
+// ハンバーガーメニュー
+function toggleMenu() {
+  document.getElementById('mobileNav').classList.toggle('open');
+}
+
+// ============================================================
+//  データ取得・グラフ描画
+// ============================================================
+(async function () {
+  try {
+    // 1. activities-index.json から全パスを取得
+    const idxRes = await fetch('../data/meta/activities-index.json');
+    const paths  = await idxRes.json();
+
+    // 2. 全 activity JSON を並列取得
+    const all = await Promise.all(
+      paths.map(p => fetch('../' + p).then(r => r.ok ? r.json() : null).catch(() => null))
+    );
+
+    // 3. PA45 のみフィルタ → vol 番号を付与 → 日付順ソート
+    const pa45 = all
+      .filter(a => a && a.type === 'PA45')
+      .map(a => {
+        const m = (a.id || '').match(/vol(\d+)/i);
+        return { ...a, vol: m ? parseInt(m[1]) : null };
+      })
+      .filter(a => a.vol)
+      .sort((a, b) => a.vol - b.vol);
+
+    // 4. vol 重複を排除（同 vol は日付が早い方を採用）
+    const seen     = new Set();
+    const sessions = pa45.filter(a => {
+      if (!seen.has(a.vol)) { seen.add(a.vol); return true; }
+      return false;
+    });
+
+    // 5. 各 vol のアンケート JSON を並列取得
+    const surveys = await Promise.all(
+      sessions.map(s =>
+        fetch(`../data/surveys/vol-${s.vol}.json`)
+          .then(r => r.ok ? r.json() : null)
+          .catch(() => null)
+      )
+    );
+    sessions.forEach((s, i) => { s.survey = surveys[i]; });
+
+    // ============ 描画 ============
+    renderKPIs(sessions);
+    renderParticipantsChart(sessions);
+    renderScoresChart(sessions);
+    renderLearnedChart(sessions);
+    renderVoices(sessions);
+
+  } catch (e) {
+    console.error('Stats load error:', e);
+  }
+})();
+
+// ---- KPI ----
+function renderKPIs(sessions) {
+  const total = sessions.reduce((s, a) => s + (a.participants || 0), 0);
+
+  const sessWithSurvey  = sessions.filter(s => s.survey);
+  const avgUnderstanding = sessWithSurvey.length
+    ? (sessWithSurvey.reduce((s, a) => s + (a.survey.understanding_pct || 0), 0) / sessWithSurvey.length).toFixed(1)
+    : '—';
+  const avgUsefulness   = sessWithSurvey.length
+    ? (sessWithSurvey.reduce((s, a) => s + (a.survey.usefulness_pct   || 0), 0) / sessWithSurvey.length).toFixed(1)
+    : '—';
+
+  const cards = document.querySelectorAll('#kpi-grid .kpi-card .kpi-n');
+  if (cards[0]) cards[0].textContent = sessions.length + '回';
+  if (cards[1]) cards[1].textContent = total ? total + '名' : '—';
+  if (cards[2]) cards[2].textContent = avgUnderstanding !== '—' ? avgUnderstanding + '%' : '—';
+  if (cards[3]) cards[3].textContent = avgUsefulness    !== '—' ? avgUsefulness    + '%' : '—';
+}
+
+// ---- 縦棒グラフ ヘルパー ----
+function buildVChart(rows, maxVal, barClass) {
+  // rows: [{ label, value, valDisplay }]
+  const BAR_H = 140; // px（最大バー高さ）
+  const wrap = document.createElement('div');
+  wrap.className = 'vchart-wrap';
+
+  rows.forEach(r => {
+    const h  = maxVal > 0 ? Math.round((r.value / maxVal) * BAR_H) : 0;
+    const pct = maxVal > 0 ? Math.round(r.value / maxVal * 100) : 0;
+
+    const colWrap = document.createElement('div');
+    colWrap.className = 'vchart-col-wrap';
+
+    const col = document.createElement('div');
+    col.className = 'vchart-col';
+
+    const val = document.createElement('div');
+    val.className = 'vchart-val';
+    val.textContent = r.valDisplay || r.value;
+
+    const bar = document.createElement('div');
+    bar.className = 'vchart-bar ' + (barClass || 'blue');
+    bar.style.height = h + 'px';
+
+    col.appendChild(val);
+    col.appendChild(bar);
+
+    const lbl = document.createElement('div');
+    lbl.className = 'vchart-xlabel';
+    lbl.textContent = r.label;
+
+    colWrap.appendChild(col);
+    colWrap.appendChild(lbl);
+    wrap.appendChild(colWrap);
+  });
+
+  return wrap;
+}
+
+// ---- 参加者数グラフ ----
+function renderParticipantsChart(sessions) {
+  const el = document.getElementById('participants-chart');
+  el.className = '';
+
+  const rows = sessions.map(s => ({
+    label: '第' + s.vol + '回',
+    value: s.participants || 0,
+    valDisplay: (s.participants || 0) + '人'
+  }));
+  const maxVal = Math.max(...rows.map(r => r.value), 1);
+
+  el.appendChild(buildVChart(rows, maxVal, 'blue'));
+}
+
+// ---- 理解度・役立ち度グラフ（2本並べ） ----
+function renderScoresChart(sessions) {
+  const el = document.getElementById('scores-chart');
+  el.className = '';
+
+  const withSurvey = sessions.filter(s => s.survey);
+  if (!withSurvey.length) {
+    el.textContent = 'アンケートデータがありません';
+    return;
+  }
+
+  const BAR_H = 140;
+  const wrap  = document.createElement('div');
+  wrap.className = 'vchart-wrap';
+
+  withSurvey.forEach(s => {
+    const u = s.survey.understanding_pct || 0;
+    const f = s.survey.usefulness_pct   || 0;
+    const uH = Math.round(u / 100 * BAR_H);
+    const fH = Math.round(f / 100 * BAR_H);
+
+    const colWrap = document.createElement('div');
+    colWrap.className = 'vchart-col-wrap';
+
+    const group = document.createElement('div');
+    group.className = 'vchart-group';
+
+    // 理解度バー
+    const uCol = document.createElement('div');
+    uCol.className = 'vchart-group-col';
+    const uVal = document.createElement('div');
+    uVal.className = 'vchart-val';
+    uVal.style.fontSize = '11px';
+    uVal.textContent = u.toFixed(1) + '%';
+    const uBar = document.createElement('div');
+    uBar.className = 'vchart-bar blue';
+    uBar.style.height = uH + 'px';
+    uCol.appendChild(uVal);
+    uCol.appendChild(uBar);
+
+    // 役立ち度バー
+    const fCol = document.createElement('div');
+    fCol.className = 'vchart-group-col';
+    const fVal = document.createElement('div');
+    fVal.className = 'vchart-val';
+    fVal.style.fontSize = '11px';
+    fVal.textContent = f.toFixed(1) + '%';
+    const fBar = document.createElement('div');
+    fBar.className = 'vchart-bar green';
+    fBar.style.height = fH + 'px';
+    fCol.appendChild(fVal);
+    fCol.appendChild(fBar);
+
+    group.appendChild(uCol);
+    group.appendChild(fCol);
+
+    const lbl = document.createElement('div');
+    lbl.className = 'vchart-xlabel';
+    lbl.textContent = '第' + s.vol + '回';
+
+    colWrap.appendChild(group);
+    colWrap.appendChild(lbl);
+    wrap.appendChild(colWrap);
+  });
+
+  el.appendChild(wrap);
+  document.getElementById('scores-legend').style.display = 'flex';
+}
+
+// ---- できるようになったことランキング ----
+function renderLearnedChart(sessions) {
+  const el  = document.getElementById('learned-chart');
+  const sub = document.getElementById('learned-sub');
+  el.className = '';
+
+  // learned または can_do フィールドを集計
+  const agg  = {};
+  let totalRespondents = 0;
+  let volsUsed = [];
+
+  sessions.forEach(s => {
+    if (!s.survey) return;
+    const src = s.survey.learned || s.survey.can_do;
+    if (!src) return;
+    volsUsed.push(s.vol);
+    totalRespondents += s.survey.total_responses || 0;
+    Object.entries(src).forEach(([k, v]) => {
+      if (k === 'その他') return; // その他は除外
+      agg[k] = (agg[k] || 0) + v;
+    });
+  });
+
+  if (!Object.keys(agg).length) {
+    el.textContent = 'データがありません（アンケートに learned/can_do フィールドが必要です）';
+    return;
+  }
+
+  sub.textContent = `第${Math.min(...volsUsed)}回〜第${Math.max(...volsUsed)}回のアンケート集計（複数選択可、n=${totalRespondents}）`;
+
+  // 多い順にソート
+  const sorted = Object.entries(agg).sort((a, b) => b[1] - a[1]);
+  const maxCount = sorted[0][1];
+
+  sorted.forEach(([label, count]) => {
+    const row = document.createElement('div');
+    row.className = 'hbar-row';
+
+    const lbl   = document.createElement('div');
+    lbl.className = 'hbar-label';
+    lbl.textContent = label;
+
+    const track = document.createElement('div');
+    track.className = 'hbar-track';
+    const fill = document.createElement('div');
+    fill.className = 'hbar-fill';
+    fill.style.width = Math.round(count / maxCount * 100) + '%';
+    track.appendChild(fill);
+
+    const cnt = document.createElement('div');
+    cnt.className = 'hbar-count';
+    cnt.textContent = count + '件';
+
+    row.appendChild(lbl);
+    row.appendChild(track);
+    row.appendChild(cnt);
+    el.appendChild(row);
+  });
+}
+
+// ---- 参加者の声 ----
+function renderVoices(sessions) {
+  const grid = document.getElementById('voice-grid');
+  grid.innerHTML = '';
+
+  const voices = [];
+  sessions.forEach(s => {
+    if (!s.survey) return;
+    const comments = s.survey.highlight_comments || s.survey.comments || [];
+    comments.slice(0, 2).forEach(c => {
+      voices.push({ text: c, vol: s.vol });
+    });
+  });
+
+  if (!voices.length) {
+    grid.innerHTML = '<div class="loading">コメントデータがありません</div>';
+    return;
+  }
+
+  voices.slice(0, 6).forEach(v => {
+    const card = document.createElement('div');
+    card.className = 'voice-card fade-up';
+    card.innerHTML = `
+      <div class="voice-body">${escHtml(v.text)}</div>
+      <div class="voice-meta"><span class="voice-tag">第${v.vol}回</span> 参加者アンケートより</div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+</script>
+</body>
+</html>
