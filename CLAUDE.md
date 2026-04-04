@@ -369,6 +369,7 @@ ffmpeg -ss 00:11:00 -to 01:11:00 -i "元ファイル.mp4" -vf "crop=1133:719:125
 | 回 | YouTube URL |
 |----|-------------|
 | 1 | https://youtu.be/GEB2zGcmF88 |
+| 4 | https://youtu.be/RzHylaoTRrs |
 
 ---
 
