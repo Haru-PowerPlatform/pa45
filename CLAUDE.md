@@ -83,7 +83,7 @@
 ```html
 <div class="speech-wrap sb-id-14 sbs-stn sbp-l sbis-cb cf">
 <div class="speech-person">
-<figure class="speech-icon"><img class="speech-icon-image" src="https://www.automate136.com/wp-content/uploads/2025/07/u9429395585_side_profile_portrait_of_a_man_in_his_30s_with_me_e4cca787-50fc-42ba-8f64-d0185bce97e5_1.png" alt="" width="1024" height="1024" /></figure>
+<figure class="speech-icon"><img class="speech-icon-image" src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="" width="1024" height="1024" /></figure>
 </div>
 <div class="speech-balloon">
 吹き出しの中のテキスト
@@ -97,7 +97,7 @@
 ```
 
 **アバター画像URL**
-`https://www.automate136.com/wp-content/uploads/2025/07/u9429395585_side_profile_portrait_of_a_man_in_his_30s_with_me_e4cca787-50fc-42ba-8f64-d0185bce97e5_1.png`
+`https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png`
 
 ---
 
