@@ -28,14 +28,15 @@ jobs:
           python-version: "3.12"
 
       - name: Install dependencies
-        run: pip install requests requests-oauthlib
+        run: pip install requests requests-oauthlib anthropic
 
-      - name: Post PA45 reminder to X
+      - name: Run PA45 reminder
         env:
-          X_API_KEY:      ${{ secrets.X_API_KEY }}
-          X_API_SECRET:   ${{ secrets.X_API_SECRET }}
-          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
-          X_ACCESS_SECRET: ${{ secrets.X_ACCESS_SECRET }}
+          X_API_KEY:         ${{ secrets.X_API_KEY }}
+          X_API_SECRET:      ${{ secrets.X_API_SECRET }}
+          X_ACCESS_TOKEN:    ${{ secrets.X_ACCESS_TOKEN }}
+          X_ACCESS_SECRET:   ${{ secrets.X_ACCESS_SECRET }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
           DRY="${{ github.event.inputs.dry_run || 'false' }}"
           if [ "$DRY" = "true" ]; then
