@@ -400,6 +400,8 @@ ffmpeg -ss 00:11:00 -to 01:11:00 -i "元ファイル.mp4" -vf "crop=1133:719:125
 | 1 | https://youtu.be/GEB2zGcmF88 |
 | 4 | https://youtu.be/RzHylaoTRrs |
 
+※ Vol.2・3 は録画データなし（公開不可）。対応不要。
+
 ---
 
 ## Qiitaクロスポスト
