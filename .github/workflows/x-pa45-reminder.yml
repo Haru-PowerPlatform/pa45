@@ -1,0 +1,45 @@
+name: PA45 当日リマインダー X投稿（12:15 JST）
+
+on:
+  schedule:
+    - cron: "15 3 * * 4"   # 毎週木曜 JST 12:15（UTC 03:15）
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "dry-run（投稿せず本文だけ表示）"
+        required: false
+        default: "true"
+        type: choice
+        options:
+          - "true"
+          - "false"
+
+jobs:
+  remind:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install requests requests-oauthlib
+
+      - name: Post PA45 reminder to X
+        env:
+          X_API_KEY:      ${{ secrets.X_API_KEY }}
+          X_API_SECRET:   ${{ secrets.X_API_SECRET }}
+          X_ACCESS_TOKEN: ${{ secrets.X_ACCESS_TOKEN }}
+          X_ACCESS_SECRET: ${{ secrets.X_ACCESS_SECRET }}
+        run: |
+          DRY="${{ github.event.inputs.dry_run || 'false' }}"
+          if [ "$DRY" = "true" ]; then
+            python scripts/x-pa45-reminder.py --dry-run
+          else
+            python scripts/x-pa45-reminder.py
+          fi
