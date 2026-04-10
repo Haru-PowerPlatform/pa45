@@ -111,7 +111,7 @@
 1. `data/activities/YYYY-MM-DD-pa45-volN.json` を作成
 2. `data/meta/activities-index.json` を更新
 3. git commit & push
-4. WordPress ブログ記事に解説を追加
+4. WordPress PA45ランディングページ（ID:2228）の開催実績リストに今回の回を追加（post-event.py が自動実行）
 
 connpassの参加者数は `scripts/fetch-connpass-participants.py <event_id>` で自動取得可能。
 全自動は `scripts/post-event.py --vol N --event-id XXXXX --date YYYY-MM-DD --theme "テーマ名"` で実行。
