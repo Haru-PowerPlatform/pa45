@@ -400,11 +400,33 @@ ffmpeg -ss 00:11:00 -to 01:11:00 -i "元ファイル.mp4" -vf "crop=1133:719:125
 5. **公開操作のみユーザーに依頼**（誤公開防止）
 6. ユーザーが公開完了を伝えたら後続処理を実行
 
+### YouTube SEO設定（公開後にClaude MCP自動実施）
+
+**タグ設定（12個固定）**
+```
+PowerAutomate, PA45, PowerPlatform, Microsoft365, 自動化, ハンズオン, 初心者向け, 変数, 条件分岐, 繰り返し処理, ローコード, RPA
+```
+- JS注入パターン：
+  1. `inputs.find(el => el.getAttribute('aria-label') === 'タグ')` で input 取得
+  2. `input.value = tag; input.dispatchEvent(new KeyboardEvent('keydown', {key:'Enter', keyCode:13, bubbles:true}))` で追加
+
+**言語設定**
+- 動画の言語：日本語（「すべて表示」→「動画の言語」ドロップダウン → `find("日本語 option")` → click）
+- タイトルと説明の言語：日本語（同様の手順）
+
+**サムネイル（カスタムサムネイル）**
+- CSPにより Claude から直接ファイルアップロード不可（"Not allowed"）
+- 手順：
+  1. `python scripts/make-ogp.py --title "第N回\nテーマ名" --label "PA45 第N回" --sub "Power Automate ハンズオン" --theme orange --out assets/ogp/pa45-volN-thumb.png`
+  2. `cp assets/ogp/pa45-volN-thumb.png C:/Temp/pa45-volN-thumb.png`
+  3. ユーザーに手動アップロードを依頼：「カスタムサムネイル」→ C:/Temp/pa45-volN-thumb.png を選択 → 保存
+
 ### アップロード後の自動処理（Claudeが実施）
 1. `data/activities/YYYY-MM-DD-pa45-volN.json` の `evidence.youtube` にURLを追記
 2. `sessions/index.html` の該当回カードに「▶ YouTube動画を見る →」ボタンを追加
-3. CLAUDE.md のYouTube動画URL記録テーブルを更新
-4. git commit & push
+3. WordPress に該当回の session report 下書き投稿を作成（カテゴリID:77）
+4. CLAUDE.md のYouTube動画URL記録テーブルを更新
+5. git commit & push
 
 ### YouTube動画URL記録
 | 回 | YouTube URL |
