@@ -388,19 +388,30 @@ ffmpeg -ss 00:11:00 -to 01:11:00 -i "元ファイル.mp4" -vf "crop=1133:719:125
 
 ### YouTubeアップロード（手動）
 - YouTube Studioのファイル選択は手動操作（Claudeはiframeの制約でアップロードできない）
-- タイトル・説明欄はClaude が生成し、ユーザーがコピペ
-- 公開設定は「公開」
+- ユーザーが「アップロードした」「続きをお願い」と言ったら、ClaudeはChrome MCP（mcp__Claude_in_Chrome）を使ってYouTube Studioを自動操作する
+
+### YouTube Studio 自動操作手順（Chrome MCP使用）
+1. YouTube Studio動画一覧（https://studio.youtube.com/channel/UCjRBVwQ33_mqT6II1BvHriA/videos）を開く
+2. 最新のドラフト動画を探し、「ドラフトを編集」ボタンをクリックしてvideo IDを取得（URLの `udvid=XXXXXXXXXXX` から取得）
+3. `/video/{ID}/edit` に移動
+4. JavaScriptでタイトル・説明文を設定して保存
+   - タイトル形式：`Power Automate 45 第N回 – {テーマ}を45分で体験しよう！`
+   - 説明文：PA45概要・公式サイトURL・connpass URL・ブログURL・ハッシュタグ
+5. **公開操作のみユーザーに依頼**（誤公開防止）
+6. ユーザーが公開完了を伝えたら後続処理を実行
 
 ### アップロード後の自動処理（Claudeが実施）
 1. `data/activities/YYYY-MM-DD-pa45-volN.json` の `evidence.youtube` にURLを追記
 2. `sessions/index.html` の該当回カードに「▶ YouTube動画を見る →」ボタンを追加
-3. git commit & push
+3. CLAUDE.md のYouTube動画URL記録テーブルを更新
+4. git commit & push
 
 ### YouTube動画URL記録
 | 回 | YouTube URL |
 |----|-------------|
 | 1 | https://youtu.be/GEB2zGcmF88 |
 | 4 | https://youtu.be/RzHylaoTRrs |
+| 5 | https://youtu.be/cltHw91fYm4 |
 
 ※ Vol.2・3 は録画データなし（公開不可）。対応不要。
 
