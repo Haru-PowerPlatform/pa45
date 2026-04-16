@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="PA45で作ったPower Automateフローを無料ダウンロード。初心者向けのフローテンプレートをそのままインポートして使えます。">
+  <title>フローダウンロード — PA45 Power Automateハンズオン</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <style>
+    /* ── フロー一覧 カード ── */
+    .flows-intro {
+      background: var(--c-blue-bg); border-radius: var(--radius-xl);
+      padding: 22px 26px; margin-bottom: 28px;
+      border-left: 4px solid var(--c-blue-mid);
+    }
+    .flows-intro-label {
+      font-size: 11px; font-weight: 700; letter-spacing: .1em;
+      text-transform: uppercase; color: var(--c-blue-mid); margin-bottom: 6px;
+    }
+    .flows-intro-text {
+      font-size: 14px; color: var(--c-blue-text); line-height: 1.75; margin: 0;
+    }
+    .flows-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 20px;
+    }
+    .flow-card {
+      background: var(--c-surface); border-radius: 16px;
+      box-shadow: var(--shadow-card);
+      overflow: hidden;
+      transition: box-shadow .2s, transform .2s;
+      display: flex; flex-direction: column;
+    }
+    .flow-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-3px); }
+    .flow-card.coming { opacity: .65; pointer-events: none; }
+
+    /* カードヘッダー（カラーバー） */
+    .flow-card-header {
+      height: 8px;
+      background: linear-gradient(90deg, var(--c-blue-mid), #5ba3e8);
+    }
+    .flow-card-header.vol1 { background: linear-gradient(90deg, #2a7dd4, #5ba3e8); }
+    .flow-card-header.vol2 { background: linear-gradient(90deg, #2196a8, #4dbfd0); }
+    .flow-card-header.vol3 { background: linear-gradient(90deg, #7c4dab, #b07cd8); }
+    .flow-card-header.vol4 { background: linear-gradient(90deg, #e07b2a, #f0a85a); }
+    .flow-card-header.vol5 { background: linear-gradient(90deg, #2a8c5a, #4bbf85); }
+    .flow-card-header.vol6 { background: linear-gradient(90deg, #c03838, #e07070); }
+
+    .flow-card-body { padding: 18px 18px 6px; flex: 1; display: flex; flex-direction: column; gap: 6px; }
+    .flow-vol-badge {
+      display: inline-block; font-size: 11px; font-weight: 700;
+      background: var(--c-blue-bg); color: var(--c-blue-mid);
+      padding: 2px 10px; border-radius: 20px; width: fit-content;
+    }
+    .flow-title { font-size: 15px; font-weight: 700; color: var(--c-text); line-height: 1.45; }
+    .flow-desc  { font-size: 13px; color: var(--c-muted); line-height: 1.65; flex: 1; }
+
+    /* アクションタグ（トリガー・アクション） */
+    .flow-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
+    .flow-tag {
+      font-size: 11px; font-family: var(--font-mono);
+      background: #f3f5f8; color: var(--c-muted);
+      padding: 2px 8px; border-radius: 4px;
+    }
+    .flow-tag.trigger { background: #e8f1fb; color: var(--c-blue-mid); }
+
+    /* ボタンエリア */
+    .flow-card-footer { padding: 14px 18px 18px; display: flex; flex-direction: column; gap: 8px; }
+    .btn-download {
+      display: flex; align-items: center; justify-content: center; gap: 7px;
+      background: var(--c-blue-mid); color: #fff;
+      font-size: 13px; font-weight: 700; padding: 11px 16px;
+      border-radius: 10px; transition: background .15s; text-decoration: none;
+    }
+    .btn-download:hover { background: #1c62b0; color: #fff; }
+    .btn-download .dl-icon { font-size: 16px; }
+    .btn-session {
+      display: block; text-align: center;
+      background: transparent; color: var(--c-blue-mid);
+      font-size: 12px; font-weight: 500; padding: 7px 16px;
+      border-radius: 10px; border: 1px solid rgba(42,125,212,.35);
+      transition: background .15s; text-decoration: none;
+    }
+    .btn-session:hover { background: var(--c-blue-bg); }
+    .coming-badge {
+      display: block; text-align: center;
+      font-size: 12px; color: var(--c-hint); padding: 11px 16px;
+      border-radius: 10px; border: 1px dashed var(--c-border-md);
+    }
+
+    /* インポート手順 */
+    .how-to {
+      background: var(--c-surface); border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-card); padding: 24px 28px; margin-bottom: 32px;
+    }
+    .how-to-title {
+      font-size: 14px; font-weight: 700; color: var(--c-blue-text); margin-bottom: 14px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .how-to-steps { display: flex; flex-direction: column; gap: 10px; counter-reset: step; }
+    .how-to-step {
+      display: flex; gap: 12px; align-items: flex-start;
+      font-size: 13px; color: var(--c-muted); line-height: 1.6;
+    }
+    .step-num {
+      flex-shrink: 0; width: 24px; height: 24px;
+      background: var(--c-blue-mid); color: #fff;
+      border-radius: 50%; font-size: 12px; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    @media (max-width: 600px) {
+      .flows-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="../" class="site-logo">PA45<span>Power Automate 45</span></a>
+    <nav class="header-nav">
+      <a href="../learn/">学ぶ</a>
+      <a href="../slides/">スライド</a>
+      <a href="../flows/" class="active">フロー</a>
+      <a href="../sessions/">参加する</a>
+      <a href="../start-here/">初めての方へ</a>
+      <a href="../achievements/">活動記録</a>
+      <a href="../about/">About</a>
+    </nav>
+    <a href="../sessions/" class="header-cta">次回PA45に参加する →</a>
+    <button class="hamburger" aria-label="メニュー" onclick="toggleMenu()">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <nav class="mobile-nav" id="mobileNav">
+    <a href="../learn/">学ぶ（Learn）</a>
+    <a href="../slides/">スライド一覧（Slides）</a>
+    <a href="../flows/">フローダウンロード（Flows）</a>
+    <a href="../sessions/">参加する（Sessions）</a>
+    <a href="../start-here/">初めての方へ（Start Here）</a>
+    <a href="../achievements/">活動の記録（Achievements）</a>
+    <a href="../method/">PA45とは（Method）</a>
+    <a href="../about/">About</a>
+    <a href="../sessions/" style="color:#0b3e72;font-weight:600;margin-top:4px;">→ 次回PA45に参加する</a>
+  </nav>
+</header>
+
+<main class="container" style="padding-top:36px; padding-bottom:60px;">
+
+  <div style="margin-bottom: 24px;">
+    <h1 style="font-size:22px; font-weight:700; color:var(--c-blue-text); margin-bottom:6px;">
+      📦 フローダウンロード
+    </h1>
+    <p style="font-size:14px; color:var(--c-muted); line-height:1.7; margin:0;">
+      PA45ハンズオンで作成したPower AutomateフローをZIPファイルで配布しています。<br>
+      ダウンロードしてそのままインポートし、自分の環境で使い回してください。
+    </p>
+  </div>
+
+  <!-- インポート手順 -->
+  <div class="how-to">
+    <div class="how-to-title">
+      <span style="font-size:18px;">⬇️</span> ZIPのインポート方法
+    </div>
+    <div class="how-to-steps">
+      <div class="how-to-step">
+        <div class="step-num">1</div>
+        <div>ZIPファイルをダウンロードして、PCに保存する</div>
+      </div>
+      <div class="how-to-step">
+        <div class="step-num">2</div>
+        <div><a href="https://make.powerautomate.com" target="_blank" style="color:var(--c-blue-mid);">make.powerautomate.com</a> を開き、左メニューの「マイフロー」をクリック</div>
+      </div>
+      <div class="how-to-step">
+        <div class="step-num">3</div>
+        <div>画面上部の「インポート」→「インポート（レガシー）」→「パッケージのアップロード (.zip)」を選択</div>
+      </div>
+      <div class="how-to-step">
+        <div class="step-num">4</div>
+        <div>ダウンロードしたZIPを選択してアップロード。接続（コネクタ）を自分のアカウントに紐づけて完了</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- フロー一覧 -->
+  <div class="flows-grid">
+
+    <!-- Vol.1 -->
+    <div class="flow-card">
+      <div class="flow-card-header vol1"></div>
+      <div class="flow-card-body">
+        <span class="flow-vol-badge">第1回</span>
+        <div class="flow-title">変数を初期化して使ってみよう</div>
+        <div class="flow-desc">Initialize variable アクションで変数を作り、値をセット・メールで送信するシンプルなフロー。</div>
+        <div class="flow-tags">
+          <span class="flow-tag trigger">手動トリガー</span>
+          <span class="flow-tag">Initialize variable</span>
+          <span class="flow-tag">Set variable</span>
+          <span class="flow-tag">メール送信</span>
+        </div>
+      </div>
+      <div class="flow-card-footer">
+        <a href="vol-01/flow.zip" class="btn-download" download>
+          <span class="dl-icon">⬇</span> ZIPをダウンロード
+        </a>
+        <a href="https://www.automate136.com/?p=1294" target="_blank" class="btn-session">解説ブログを読む →</a>
+      </div>
+    </div>
+
+    <!-- Vol.2 -->
+    <div class="flow-card">
+      <div class="flow-card-header vol2"></div>
+      <div class="flow-card-body">
+        <span class="flow-vol-badge">第2回</span>
+        <div class="flow-title">変数を操作しよう（Set variable）</div>
+        <div class="flow-desc">変数に値を代入・上書きし、条件によって内容を切り替える使い方を練習するフロー。</div>
+        <div class="flow-tags">
+          <span class="flow-tag trigger">手動トリガー</span>
+          <span class="flow-tag">Initialize variable</span>
+          <span class="flow-tag">Set variable</span>
+          <span class="flow-tag">Compose</span>
+        </div>
+      </div>
+      <div class="flow-card-footer">
+        <a href="vol-02/flow.zip" class="btn-download" download>
+          <span class="dl-icon">⬇</span> ZIPをダウンロード
+        </a>
+        <a href="../sessions/" target="_blank" class="btn-session">セッション詳細を見る →</a>
+      </div>
+    </div>
+
+    <!-- Vol.3 -->
+    <div class="flow-card">
+      <div class="flow-card-header vol3"></div>
+      <div class="flow-card-body">
+        <span class="flow-vol-badge">第3回</span>
+        <div class="flow-title">条件分岐（Condition）で処理を分ける</div>
+        <div class="flow-desc">Condition アクションで「もし〜なら」の分岐を作り、はい/いいえで異なるメールを送るフロー。</div>
+        <div class="flow-tags">
+          <span class="flow-tag trigger">手動トリガー</span>
+          <span class="flow-tag">Initialize variable</span>
+          <span class="flow-tag">Condition</span>
+          <span class="flow-tag">メール送信</span>
+        </div>
+      </div>
+      <div class="flow-card-footer">
+        <a href="vol-03/flow.zip" class="btn-download" download>
+          <span class="dl-icon">⬇</span> ZIPをダウンロード
+        </a>
+        <a href="../sessions/" target="_blank" class="btn-session">セッション詳細を見る →</a>
+      </div>
+    </div>
+
+    <!-- Vol.4 -->
+    <div class="flow-card">
+      <div class="flow-card-header vol4"></div>
+      <div class="flow-card-body">
+        <span class="flow-vol-badge">第4回</span>
+        <div class="flow-title">Apply to each で繰り返し処理</div>
+        <div class="flow-desc">SharePointリストのアイテムを1件ずつ取り出し、条件に合うものだけTeamsに通知するフロー。</div>
+        <div class="flow-tags">
+          <span class="flow-tag trigger">手動トリガー</span>
+          <span class="flow-tag">Get items</span>
+          <span class="flow-tag">Apply to each</span>
+          <span class="flow-tag">Teams通知</span>
+        </div>
+      </div>
+      <div class="flow-card-footer">
+        <a href="vol-04/flow.zip" class="btn-download" download>
+          <span class="dl-icon">⬇</span> ZIPをダウンロード
+        </a>
+        <a href="../sessions/" target="_blank" class="btn-session">セッション詳細を見る →</a>
+      </div>
+    </div>
+
+    <!-- Vol.5 -->
+    <div class="flow-card">
+      <div class="flow-card-header vol5"></div>
+      <div class="flow-card-body">
+        <span class="flow-vol-badge">第5回</span>
+        <div class="flow-title">基礎固めWeek — 第1〜4回の総復習</div>
+        <div class="flow-desc">変数・条件分岐・繰り返しを1本のフローに組み合わせた、基礎定着用の総合練習フロー。</div>
+        <div class="flow-tags">
+          <span class="flow-tag trigger">手動トリガー</span>
+          <span class="flow-tag">Initialize variable</span>
+          <span class="flow-tag">Condition</span>
+          <span class="flow-tag">Apply to each</span>
+        </div>
+      </div>
+      <div class="flow-card-footer">
+        <a href="vol-05/flow.zip" class="btn-download" download>
+          <span class="dl-icon">⬇</span> ZIPをダウンロード
+        </a>
+        <a href="../sessions/" target="_blank" class="btn-session">セッション詳細を見る →</a>
+      </div>
+    </div>
+
+    <!-- Vol.6 -->
+    <div class="flow-card">
+      <div class="flow-card-header vol6"></div>
+      <div class="flow-card-body">
+        <span class="flow-vol-badge">第6回</span>
+        <div class="flow-title">Formsの回答が来たらお礼メールを送ろう</div>
+        <div class="flow-desc">Microsoft Formsに回答が届いたら、回答者に自動でお礼メールを送信するフロー。</div>
+        <div class="flow-tags">
+          <span class="flow-tag trigger">Forms 回答時</span>
+          <span class="flow-tag">回答の詳細を取得</span>
+          <span class="flow-tag">メール送信</span>
+        </div>
+      </div>
+      <div class="flow-card-footer">
+        <span class="coming-badge">🕐 準備中 — もうしばらくお待ちください</span>
+        <a href="../sessions/" target="_blank" class="btn-session">セッション詳細を見る →</a>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- CTA -->
+  <div style="margin-top: 48px; background: var(--c-blue-bg); border-radius: var(--radius-xl); padding: 28px 26px; text-align: center;">
+    <div style="font-size: 15px; font-weight: 700; color: var(--c-blue-text); margin-bottom: 8px;">毎週木曜夜、一緒にフローを作りませんか？</div>
+    <div style="font-size: 13px; color: var(--c-muted); margin-bottom: 18px; line-height: 1.7;">
+      PA45は45分のライブハンズオン勉強会。ここで公開しているフローは、毎回参加者が実際に手を動かして作ったものです。
+    </div>
+    <a href="../sessions/" class="btn-download" style="display:inline-flex; max-width: 260px; margin: 0 auto;">
+      次回のPA45に参加する →
+    </a>
+  </div>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container footer-inner">
+    <span class="footer-logo">PA45</span>
+    <nav class="footer-nav">
+      <a href="../learn/">学ぶ</a>
+      <a href="../slides/">スライド</a>
+      <a href="../flows/">フロー</a>
+      <a href="../sessions/">参加する</a>
+      <a href="../about/">About</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+function toggleMenu() {
+  document.getElementById('mobileNav').classList.toggle('open');
+}
+document.addEventListener('click', (e) => {
+  const nav = document.getElementById('mobileNav');
+  const btn = document.querySelector('.hamburger');
+  if (nav.classList.contains('open') && !nav.contains(e.target) && !btn.contains(e.target)) {
+    nav.classList.remove('open');
+  }
+});
+</script>
+</body>
+</html>
