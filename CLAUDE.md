@@ -112,6 +112,10 @@
 2. `data/meta/activities-index.json` を更新
 3. git commit & push
 4. WordPress PA45ランディングページ（ID:2228）の開催実績リストに今回の回を追加（post-event.py が自動実行）
+5. **WordPressホームページ（ID:2069）の「参加する」ボタンを次回に更新**
+   - テキスト：「第N回に参加する」→「第N+1回に参加する」
+   - URL：`event/旧ID/` → `event/新ID/`
+   - REST API経由で直接更新（pages/2069をPATCH）
 
 connpassの参加者数は `scripts/fetch-connpass-participants.py <event_id>` で自動取得可能。
 全自動は `scripts/post-event.py --vol N --event-id XXXXX --date YYYY-MM-DD --theme "テーマ名"` で実行。
@@ -153,7 +157,6 @@ Vol.1〜30（Vol.11・Vol.27除く）の28件：**すべて公開済み**（ID 1
 | `scripts/make-ogp.py` | OGP画像（アイキャッチ）生成 |
 | `scripts/batch-x-posts.py` | X投稿スライドの一括処理（OGP・WP・JSON） |
 | `scripts/update-blog-content.py` | X投稿スライドの記事内容を一括更新 |
-| `scripts/status.py` | ステータスレポート生成・メール送信 |
 | `scripts/parse-survey.py` | SharePointからアンケートExcelを取得・集計・JSON出力 |
 | `scripts/cross-post-qiita.py` | WordPressからQiitaへのクロスポスト |
 
@@ -547,25 +550,6 @@ data/surveys/
 
 ---
 
-#### 2. Gmail→Notion→WordPress 自動化（未解決）
-
-**完了済み：**
-- Gmail API・OAuth認証・GitHub Secrets全部登録済み
-- Notion書き込み・Gmail既読化 → 動作確認済み
-- ワークフロー: .github/workflows/gmail-to-notion-wp.yml（毎朝JST 7:00）
-
-**❌ 未解決: WordPress REST API 403エラー**
-- エンドポイント自体は動作（401 rest_not_logged_in を返す）
-- Basic認証ヘッダーがPHPに渡っていない可能性
-- 次の確認手順:
-  $user = "ism136"
-  $pass = "（アプリパスワード）"
-  $base64 = [Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes("${user}:${pass}"))
-  Invoke-RestMethod -Uri "https://www.automate136.com/wp-json/wp/v2/users/me" -Headers @{Authorization="Basic $base64"}
-  → 失敗なら .htaccessに SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1 を追加
-
----
-
 ### 📊 PA45 開催実績
 
 | 回 | 日付       | テーマ             | 参加者 | connpass event_id |
@@ -608,4 +592,78 @@ data/surveys/
 | アンケートデータ | data/surveys/vol-XX.json |
 | CSSスニペット管理 | WPCode Lite > ID 2087 |
 | JSスニペット管理 | WPCode Lite > ID 2086 |
-| Gmail→Notion→WPスクリプト | scripts/gmail_to_notion_wp.py |これが会話の初めに指示した前提
+これが会話の初めに指示した前提
+
+---
+
+## biz-english-ai.com アフィリエイトブログ
+
+**完全別プロジェクト。PA45とは独立して運用。**
+
+### WordPress認証
+- URL: https://biz-english-ai.com
+- USER: phi93399
+- APP PASSWORD: lWvX knO4 IGL5 7gW1 nms1 G7fg
+- REST API: `POST /wp-json/wp/v2/posts/{id}` で記事更新
+
+### 記事スタイルの絶対ルール
+1. **インラインスタイルのみ**（CSSクラス禁止。WordPressのwpautopがフレックス等を破壊するため）
+2. **吹き出し（バルーン）なし**（アイコン品質が低いため廃止）
+3. **体験談なし**（「実際に使ってみた」等の主観的な体験記述を書かない）
+4. **段落前に必ず空行**（`\n\n<p>...</p>` 形式）
+5. 各HTML要素は1行で完結させる（改行でwpautopに干渉させない）
+
+### 記事生成用ヘルパー関数（毎回再利用）
+```python
+P  = lambda t: f"\n\n<p>{t}</p>"
+H2 = lambda t: f"\n\n<h2>{t}</h2>"
+H3 = lambda t: f"\n\n<h3>{t}</h3>"
+UL = lambda items: "\n\n<ul>" + "".join(f"\n<li>{i}</li>" for i in items) + "\n</ul>"
+def box_yellow(html): return f'\n\n<div style="background:#fffbeb;border-left:5px solid #f59e0b;padding:16px 20px;margin:24px 0;border-radius:8px;font-size:15px;line-height:1.8;">{html}</div>'
+def box_blue(html): return f'\n\n<div style="background:#eff6ff;border-left:5px solid #3b82f6;padding:16px 20px;margin:24px 0;border-radius:8px;font-size:15px;line-height:1.8;">{html}</div>'
+def box_green(title, items):
+    li = "".join(f"<li style='margin:8px 0;font-size:14px;'>{i}</li>" for i in items)
+    return f'\n\n<div style="background:#f0fdf4;border:2px solid #86efac;border-radius:12px;padding:20px 24px;margin:16px 0;"><p style="font-weight:700;font-size:15px;margin:0 0 12px;">✅ {title}</p><ul style="margin:0;padding-left:20px;">{li}</ul></div>'
+def box_red(title, items):
+    li = "".join(f"<li style='margin:8px 0;font-size:14px;'>{i}</li>" for i in items)
+    return f'\n\n<div style="background:#fff1f2;border:2px solid #fda4af;border-radius:12px;padding:20px 24px;margin:16px 0;"><p style="font-weight:700;font-size:15px;margin:0 0 12px;">❌ {title}</p><ul style="margin:0;padding-left:20px;">{li}</ul></div>'
+def cta(label, url, sub=""):
+    s = f'<p style="margin:10px 0 0;font-size:13px;color:#64748b;">{sub}</p>' if sub else ""
+    return f'\n\n<div style="text-align:center;margin:36px 0;"><a href="{url}" style="display:inline-block;background:linear-gradient(135deg,#3b82f6,#8b5cf6);color:#fff;text-decoration:none;padding:16px 36px;border-radius:50px;font-size:16px;font-weight:700;box-shadow:0 4px 14px rgba(59,130,246,.4);" target="_blank">{label}</a>{s}</div>'
+def compare_table(headers, rows):
+    ths = "".join(f'<th style="background:linear-gradient(135deg,#3b82f6,#6366f1);color:#fff;padding:12px 14px;text-align:left;font-size:14px;">{h}</th>' for h in headers)
+    trs = ""
+    for i, row in enumerate(rows):
+        bg = "background:#f8faff;" if i%2==1 else ""
+        tds = "".join(f'<td style="padding:10px 14px;font-size:14px;border-bottom:1px solid #e2e8f0;{bg}">{c}</td>' for c in row)
+        trs += f"<tr>{tds}</tr>"
+    return f'\n\n<table style="width:100%;border-collapse:collapse;margin:24px 0;font-size:14px;"><thead><tr>{ths}</tr></thead><tbody>{trs}</tbody></table>'
+```
+
+### 現在の記事一覧（10記事）
+| Post ID | タイトル | スラッグ | キーワード |
+|---------|---------|---------|-----------|
+| 7 | AIビジネス英会話アプリ おすすめ5選 | ai-business-english-apps-recommended | AIビジネス英会話アプリ 比較 |
+| 10 | ELSA Speak 評判・料金・効果 | elsa-speak-review | ELSA Speak 評判 日本人 |
+| 11 | スタサプENGLISH ビジネス版 | studysapuri-english-business | スタサプ ビジネス英語 評判 |
+| 12 | AIアプリで英語は話せるようになる？ | ai-english-study-effect | AIアプリ 英語 効果 |
+| 13 | Speak 評判・料金レビュー | speak-app-review | Speak スピーク 評判 |
+| 14 | ビジネス英語メールをAIで書く方法 | business-english-email-ai-template | ビジネス英語 メール AI |
+| 59 | 無料AI英会話アプリまとめ | free-ai-english-conversation-app | 英会話アプリ 無料 おすすめ AI |
+| 60 | 英語の発音矯正 完全ガイド | english-pronunciation-correction-guide | 英語 発音 矯正 方法 |
+| 61 | ビジネス英語フレーズ集 会議・プレゼン | business-english-phrases-meeting-presentation | ビジネス英語 フレーズ 会議 |
+| 62 | 英語学習が続かない理由と対策 | english-study-continue-tips-ai-app | 英語 続かない 対策 |
+
+### アイキャッチ画像のデザインルール
+- テンプレート：白背景・グレー枠・バインダークリップ（左上）・ラベル「[ REVIEW ]」＋横線・大見出し・太線区切り・サブテキスト
+- サイズ：1280×670px
+- 生成：Python (Pillow) または Chrome headless screenshot
+- フォント：Yu Gothic / Meiryo（Windowsシステムフォント）
+- ラベル種類：`[ REVIEW ]`（評判記事）、`[ GUIDE ]`（解説・ガイド）、`[ TIPS ]`（実践・フレーズ）
+
+### SEO方針
+- 長尾キーワード狙い（検索ボリューム小・競合弱）
+- 体験談なし → 客観的比較・データ・引用でE-E-A-T対策
+- 内部リンクは全記事間でクモの巣状に接続
+- アフィリエイトリンク先：ELSA Speak・Speak・スタサプENGLISH・ChatGPT
+
