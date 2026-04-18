@@ -642,26 +642,66 @@ def compare_table(headers, rows):
     return f'\n\n<table style="width:100%;border-collapse:collapse;margin:24px 0;font-size:14px;"><thead><tr>{ths}</tr></thead><tbody>{trs}</tbody></table>'
 ```
 
-### 現在の記事一覧（10記事）
-| Post ID | タイトル | スラッグ | キーワード |
-|---------|---------|---------|-----------|
-| 7 | AIビジネス英会話アプリ おすすめ5選 | ai-business-english-apps-recommended | AIビジネス英会話アプリ 比較 |
-| 10 | ELSA Speak 評判・料金・効果 | elsa-speak-review | ELSA Speak 評判 日本人 |
-| 11 | スタサプENGLISH ビジネス版 | studysapuri-english-business | スタサプ ビジネス英語 評判 |
-| 12 | AIアプリで英語は話せるようになる？ | ai-english-study-effect | AIアプリ 英語 効果 |
-| 13 | Speak 評判・料金レビュー | speak-app-review | Speak スピーク 評判 |
-| 14 | ビジネス英語メールをAIで書く方法 | business-english-email-ai-template | ビジネス英語 メール AI |
-| 59 | 無料AI英会話アプリまとめ | free-ai-english-conversation-app | 英会話アプリ 無料 おすすめ AI |
-| 60 | 英語の発音矯正 完全ガイド | english-pronunciation-correction-guide | 英語 発音 矯正 方法 |
-| 61 | ビジネス英語フレーズ集 会議・プレゼン | business-english-phrases-meeting-presentation | ビジネス英語 フレーズ 会議 |
-| 62 | 英語学習が続かない理由と対策 | english-study-continue-tips-ai-app | 英語 続かない 対策 |
+### 現在の記事一覧（10記事・全記事 publish 済み）
+
+| Post ID | ラベル | タイトル | スラッグ | 投稿日 |
+|---------|--------|---------|---------|--------|
+| 7  | COMPARE | AIビジネス英会話アプリ おすすめ5選 | ai-business-english-apps-recommended | 2026-04-16 |
+| 10 | REVIEW  | ELSA Speak 評判・料金・効果 | elsa-speak-review | 2026-04-12 |
+| 11 | REVIEW  | スタサプENGLISH ビジネス版 | studysapuri-english-business-review | 2026-04-11 |
+| 12 | GUIDE   | AIアプリで英語は話せるようになる？ | ai-english-app-effectiveness | 2026-04-08 |
+| 13 | REVIEW  | Speak 評判・料金レビュー | speak-app-review | 2026-04-05 |
+| 14 | TIPS    | ビジネス英語メールをAIで書く方法 | business-english-email-ai-template | 2026-03-27 |
+| 59 | GUIDE   | 無料AI英会話アプリまとめ | free-ai-english-conversation-app | 2026-03-26 |
+| 60 | GUIDE   | 英語の発音矯正 完全ガイド | english-pronunciation-correction-guide | 2026-03-23 |
+| 61 | TIPS    | ビジネス英語フレーズ集 会議・プレゼン | business-english-phrases-meeting-presentation | 2026-03-22 |
+| 62 | TIPS    | 英語学習が続かない理由と対策 | english-study-continue-tips-ai-app | 2026-03-19 |
+
+記事一覧ページ: https://biz-english-ai.com/articles/ （Page ID=87）
+
+### 実装済み機能（2026-04-18）
+- **全記事モバイルリライト済み**：p/h2/h3/ul/hl/box/cta/compare_tableヘルパー使用。段落margin:2em、line-height:2.0
+- **蛍光ペンアニメーション**：`.hl`クラス + IntersectionObserver でスクロール時に左→右アニメーション
+- **SNS非表示CSS**：全記事の`<style>`ブロックに `.sns-share,.author-box`等を`display:none`で組み込み
+- **関連記事カルーセル**：各記事末尾に `<!-- related-posts -->` マーカー付きの横スクロールカード
+- **記事一覧ページ**：/articles/ にカテゴリ別リスト（Page ID=87）
 
 ### アイキャッチ画像のデザインルール
 - テンプレート：白背景・グレー枠・バインダークリップ（左上）・ラベル「[ REVIEW ]」＋横線・大見出し・太線区切り・サブテキスト
 - サイズ：1280×670px
-- 生成：Python (Pillow) または Chrome headless screenshot
-- フォント：Yu Gothic / Meiryo（Windowsシステムフォント）
-- ラベル種類：`[ REVIEW ]`（評判記事）、`[ GUIDE ]`（解説・ガイド）、`[ TIPS ]`（実践・フレーズ）
+- **カテゴリ別グラデーション枠（14px）**：
+  - COMPARE → インディゴ(99,102,241)→パープル(139,92,246)
+  - REVIEW  → ブルー(59,130,246)→シアン(6,182,212)
+  - GUIDE   → グリーン(16,185,129)→ティール(5,150,105)
+  - TIPS    → アンバー(245,158,11)→オレンジ(249,115,22)
+- 生成スクリプト：`C:\Temp\eyecatch_border_preview.py` / `C:\Temp\apply_all_borders_and_dates.py`
+
+### サイドバー（2026-04-18構成）
+- WordPress widget: `text-2`（sidebar）のみ使用
+- 構成：①自己紹介（Hana / AI英語学習アドバイザー） → ②アフィリエイトランキングTOP3 → ③カテゴリー
+- プロフィール画像URL: `https://biz-english-ai.com/wp-content/uploads/2026/04/sidebar_profile.png`
+- アフィリエイトリンク（現在は直リンク・ASP登録後に差し替え予定）：
+  - ELSA Speak: https://elsaspeak.com/ja/
+  - Speak: https://www.speak.com/ja
+  - スタサプENGLISH: https://eigosapuri.jp/
+
+### アフィリエイト登録状況（2026-04-18）
+- もしもアフィリエイト: 仮登録完了（本登録はブログ5記事後）
+- **A8.net: 未登録 → 今すぐ申請可能（記事10本公開済み）**
+- **afb: 未登録 → スタサプENGLISH案件あり**
+- リンク差し替えはスクリプトで一括対応予定
+
+### Python作業スクリプト（C:\Temp\）
+| ファイル | 用途 |
+|---------|------|
+| rewrite_post7_mobile.py | 記事7モバイルリライトテンプレート |
+| rewrite_post13_mobile.py | 記事13（蛍光ペン+口コミ削除） |
+| rewrite_all_mobile.py | 残り8記事一括リライト+publish |
+| add_related_posts.py | 関連記事カルーセル全記事追加 |
+| hide_sns_all_posts.py | SNS非表示CSS全記事追加 |
+| create_index_page.py | 記事一覧ページ生成 |
+| rebuild_sidebar.py | サイドバーウィジェット再構築 |
+| apply_all_borders_and_dates.py | アイキャッチ枠追加+投稿日ランダム設定 |
 
 ### SEO方針
 - 長尾キーワード狙い（検索ボリューム小・競合弱）
