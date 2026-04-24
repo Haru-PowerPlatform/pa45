@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex,nofollow">
+<title>3サイト進捗ダッシュボード｜2026-04-24 更新</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f8fc;--surface:#fff;--text:#0f172a;--muted:#475569;--hint:#94a3b8;--border:#e2e8f0;--blue:#1e3a8a;--blue-mid:#2563eb;--blue-bg:#eff6ff;--green:#16a34a;--green-bg:#f0fdf4;--purple:#9333ea;--purple-bg:#faf5ff;--orange:#ea580c;--orange-bg:#fff7ed;--rose:#e11d48;--radius:12px;--shadow:0 2px 8px rgba(15,23,42,.06);}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Noto Sans JP',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.7;-webkit-font-smoothing:antialiased}
+.container{max-width:1100px;margin:0 auto;padding:24px 20px 80px}
+header.hero{background:linear-gradient(135deg,#1e3a8a 0%,#2563eb 100%);color:#fff;padding:40px 20px;border-radius:var(--radius);margin-bottom:24px;box-shadow:var(--shadow)}
+.hero h1{font-size:26px;margin:0 0 8px;font-weight:700}
+.hero .sub{font-size:14px;opacity:.9;margin:0}
+.hero .updated{font-size:12px;opacity:.75;margin-top:12px;font-family:'DM Mono',monospace}
+h2{font-size:18px;border-left:4px solid var(--blue);padding:4px 12px;margin:36px 0 16px}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+.kpi{background:var(--surface);border-radius:var(--radius);padding:18px 14px;text-align:center;box-shadow:var(--shadow)}
+.kpi-n{font-size:26px;font-weight:700;color:var(--blue);font-family:'DM Mono',monospace;line-height:1.1}
+.kpi-l{font-size:11px;color:var(--hint);margin-top:4px}
+.sites-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px}
+.site-card{background:var(--surface);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);border-top:4px solid var(--blue)}
+.site-card.s2{border-top-color:var(--green)}
+.site-card.s3{border-top-color:var(--purple)}
+.site-name{font-size:16px;font-weight:700;margin:0 0 4px}
+.site-url{font-size:11px;color:var(--blue-mid);text-decoration:none;font-family:'DM Mono',monospace;word-break:break-all}
+.site-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:14px 0;padding:12px 8px;background:var(--blue-bg);border-radius:8px}
+.site-card.s2 .site-stats{background:var(--green-bg)}
+.site-card.s3 .site-stats{background:var(--purple-bg)}
+.stat{text-align:center}
+.stat-n{font-size:18px;font-weight:700;font-family:'DM Mono',monospace}
+.stat-l{font-size:10px;color:var(--muted)}
+.site-topic{font-size:12px;color:var(--muted);margin:8px 0;line-height:1.6}
+.site-latest{margin-top:14px}
+.site-latest h4{font-size:11px;color:var(--hint);margin:0 0 8px;font-weight:500;letter-spacing:.05em}
+.latest-item{font-size:11.5px;margin-bottom:8px;line-height:1.5}
+.latest-item a{color:var(--text);text-decoration:none}
+.latest-item a:hover{color:var(--blue-mid)}
+.latest-date{font-family:'DM Mono',monospace;color:var(--hint);font-size:10px;margin-right:6px}
+.milestone-card{background:var(--surface);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);margin-bottom:16px}
+.milestone-card h3{font-size:15px;margin:0 0 12px;font-weight:700}
+.ml-list{margin:0;padding:0;list-style:none}
+.ml-list li{font-size:13px;padding:6px 0;border-bottom:1px dashed var(--border);display:flex;justify-content:space-between;gap:10px}
+.ml-list li:last-child{border-bottom:none}
+.ml-tag{font-size:10px;padding:1px 7px;border-radius:10px;background:var(--blue-bg);color:var(--blue);white-space:nowrap;align-self:center;font-weight:500}
+.ml-tag.done{background:var(--green-bg);color:var(--green)}
+.ml-tag.todo{background:#fef3c7;color:#92400e}
+.ml-tag.blocked{background:#fee2e2;color:#b91c1c}
+.asp-table{width:100%;border-collapse:collapse;font-size:12.5px;background:var(--surface);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+.asp-table th{background:var(--blue);color:#fff;font-weight:600;padding:10px 12px;text-align:left;font-size:12px}
+.asp-table td{padding:10px 12px;border-bottom:1px solid var(--border);color:var(--muted)}
+.asp-table td:first-child{color:var(--text);font-weight:500}
+.badge{display:inline-block;font-size:10px;padding:1px 8px;border-radius:10px;font-weight:500}
+.badge.ok{background:var(--green-bg);color:var(--green)}
+.badge.wait{background:#fef3c7;color:#92400e}
+.badge.ng{background:#fee2e2;color:#b91c1c}
+.timeline{background:var(--surface);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow)}
+.tl-item{display:grid;grid-template-columns:90px 1fr;gap:12px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px dashed var(--border)}
+.tl-item:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.tl-date{font-family:'DM Mono',monospace;font-size:11px;color:var(--hint);padding-top:2px}
+.tl-body h4{margin:0 0 4px;font-size:13.5px}
+.tl-body p{margin:0;font-size:12px;color:var(--muted);line-height:1.6}
+footer{margin-top:40px;text-align:center;font-size:11px;color:var(--hint)}
+footer a{color:var(--blue-mid)}
+@media (max-width:700px){
+  .kpi-grid{grid-template-columns:repeat(2,1fr)}
+  .sites-grid{grid-template-columns:1fr}
+  .hero h1{font-size:20px}
+  .tl-item{grid-template-columns:1fr;gap:4px}
+  .tl-date{font-size:10px}
+  .site-stats{grid-template-columns:repeat(3,1fr)}
+  .asp-table{font-size:11.5px}
+  .asp-table th,.asp-table td{padding:8px 8px}
+}
+</style>
+</head>
+<body>
+<div class="container">
+<header class="hero">
+<h1>🏗 3サイト進捗ダッシュボード</h1>
+<p class="sub">はるの運営するアフィリエイト3サイトの現状・実績・次の一手を一画面で把握</p>
+<p class="updated">Last updated: 2026-04-24</p>
+</header>
+
+<h2>📊 全体KPI</h2>
+<div class="kpi-grid">
+<div class="kpi"><div class="kpi-n">3</div><div class="kpi-l">運営サイト</div></div>
+<div class="kpi"><div class="kpi-n">88</div><div class="kpi-l">公開記事合計</div></div>
+<div class="kpi"><div class="kpi-n">872K</div><div class="kpi-l">総文字数</div></div>
+<div class="kpi"><div class="kpi-n">5</div><div class="kpi-l">A8提携案件</div></div>
+</div>
+
+<h2>🌐 サイト別</h2>
+<div class="sites-grid">
+
+<div class="site-card">
+<p class="site-name">side-invest.com</p>
+<a class="site-url" href="https://side-invest.com" target="_blank" rel="noopener">https://side-invest.com</a>
+<p class="site-topic">副業×投資ログ／共働き夫婦の資産4,953万円を一次情報スクショで全公開</p>
+<div class="site-stats">
+<div class="stat"><div class="stat-n">21</div><div class="stat-l">記事</div></div>
+<div class="stat"><div class="stat-n">318K</div><div class="stat-l">文字数</div></div>
+<div class="stat"><div class="stat-n">0.13</div><div class="stat-l">年経過</div></div>
+</div>
+<div class="site-latest"><h4>最新5記事</h4>
+<div class="latest-item"><span class="latest-date">04/24</span><a href="https://side-invest.com/2026/04/24/couple-total-assets-4953man-2026/" target="_blank">夫婦資産4,953万円を全公開</a></div>
+<div class="latest-item"><span class="latest-date">04/24</span><a href="https://side-invest.com/2026/04/24/kigyo-dc-1145man-all-fund-review/" target="_blank">企業型DC 1,145万円を全公開</a></div>
+<div class="latest-item"><span class="latest-date">04/24</span><a href="https://side-invest.com/2026/04/24/nvidia-nvda-9x-real-record-2026/" target="_blank">NVIDIA 9.3倍になった話</a></div>
+<div class="latest-item"><span class="latest-date">04/20</span><a href="https://side-invest.com/2026/04/20/self-intro/" target="_blank">夫婦の自己紹介</a></div>
+<div class="latest-item"><span class="latest-date">04/18</span><a href="https://side-invest.com/2026/04/18/shoken-kaishain-hikaku/" target="_blank">会社員のネット証券 比較</a></div>
+</div>
+</div>
+
+<div class="site-card s2">
+<p class="site-name">biz-english-ai.com</p>
+<a class="site-url" href="https://biz-english-ai.com" target="_blank" rel="noopener">https://biz-english-ai.com</a>
+<p class="site-topic">AIビジネス英会話アプリ比較／スタサプ・ネイティブキャンプ・レアジョブ・ELSA・Speak</p>
+<div class="site-stats">
+<div class="stat"><div class="stat-n">34</div><div class="stat-l">記事</div></div>
+<div class="stat"><div class="stat-n">296K</div><div class="stat-l">文字数</div></div>
+<div class="stat"><div class="stat-n">0.20</div><div class="stat-l">年経過</div></div>
+</div>
+<div class="site-latest"><h4>最新5記事</h4>
+<div class="latest-item"><span class="latest-date">04/24</span><a href="https://biz-english-ai.com/elsa-speak-free-vs-paid-plan-comparison/" target="_blank">ELSA Speak 無料vs有料</a></div>
+<div class="latest-item"><span class="latest-date">04/23</span><a href="https://biz-english-ai.com/speak-vs-elsa-speak-comparison/" target="_blank">Speak vs ELSA Speak</a></div>
+<div class="latest-item"><span class="latest-date">04/19</span><a href="https://biz-english-ai.com/business-english-complete-guide/" target="_blank">ビジネス英語 完全ガイド</a></div>
+<div class="latest-item"><span class="latest-date">04/17</span><a href="https://biz-english-ai.com/studysapuri-english-free-trial-guide-2/" target="_blank">スタサプENGLISH 無料体験</a></div>
+<div class="latest-item"><span class="latest-date">04/17</span><a href="https://biz-english-ai.com/nativecamp-free-plan-limits/" target="_blank">ネイティブキャンプ 無料の限界</a></div>
+</div>
+</div>
+
+<div class="site-card s3">
+<p class="site-name">ai-gyomu.jp</p>
+<a class="site-url" href="https://ai-gyomu.jp" target="_blank" rel="noopener">https://ai-gyomu.jp</a>
+<p class="site-topic">AI×業務効率化メディア／BtoB SaaS（Notta・MF・freee・クラウドサイン）</p>
+<div class="site-stats">
+<div class="stat"><div class="stat-n">33</div><div class="stat-l">記事</div></div>
+<div class="stat"><div class="stat-n">258K</div><div class="stat-l">文字数</div></div>
+<div class="stat"><div class="stat-n">0.02</div><div class="stat-l">年経過</div></div>
+</div>
+<div class="site-latest"><h4>最新5記事</h4>
+<div class="latest-item"><span class="latest-date">04/22</span><a href="https://ai-gyomu.jp/2026/04/22/denshikeiyaku-naze-hirogarnai/" target="_blank">電子契約が定着しない3つの理由</a></div>
+<div class="latest-item"><span class="latest-date">04/20</span><a href="https://ai-gyomu.jp/2026/04/20/cloudsign-pricing-howto/" target="_blank">クラウドサイン 料金プラン徹底解説</a></div>
+<div class="latest-item"><span class="latest-date">04/16</span><a href="https://ai-gyomu.jp/2026/04/16/denshikeiyaku-guide/" target="_blank">電子契約とは？</a></div>
+<div class="latest-item"><span class="latest-date">04/12</span><a href="https://ai-gyomu.jp/2026/04/12/denshikeiyaku-compare/" target="_blank">電子契約サービス 5選</a></div>
+<div class="latest-item"><span class="latest-date">04/08</span><a href="https://ai-gyomu.jp/2026/04/08/cloudsign-review/" target="_blank">クラウドサイン 正直レビュー</a></div>
+</div>
+</div>
+
+</div>
+
+<h2>💰 ASP提携状況</h2>
+<table class="asp-table">
+<thead><tr><th>ASP</th><th>ステータス</th><th>提携済み案件</th><th>該当サイト</th></tr></thead>
+<tbody>
+<tr><td>A8.net</td><td><span class="badge ok">稼働中</span></td><td>スタサプ／ネイティブキャンプ／レアジョブ／Notta／MF クラウド会計／freee／Misoca／弥生シリーズ</td><td>biz-english-ai / ai-gyomu / side-invest</td></tr>
+<tr><td>もしもアフィリ</td><td><span class="badge ng">使用不可</span></td><td>審査不合格で消滅（2026-04-21）</td><td>—</td></tr>
+<tr><td>afb</td><td><span class="badge wait">審査待ち</span></td><td>申請済み（2026-04-20）</td><td>biz-english-ai予定</td></tr>
+<tr><td>バリューコマース</td><td><span class="badge wait">未登録</span></td><td>SBI証券・楽天証券を狙うなら必要</td><td>side-invest予定</td></tr>
+<tr><td>Qiita</td><td><span class="badge ok">連携済</span></td><td>PA45ブログのクロスポスト</td><td>pa45（参考）</td></tr>
+</tbody>
+</table>
+
+<h2>🎯 マイルストーン／次の一手</h2>
+<div class="milestone-card">
+<h3>side-invest.com</h3>
+<ul class="ml-list">
+<li>本日の一次情報12枚を3新規記事＋19既存記事に差し込み <span class="ml-tag done">完了</span></li>
+<li>サイドバー強化（4ウィジェット：プロフィール／注目記事3本／人気記事／SBI CTA） <span class="ml-tag done">完了</span></li>
+<li>JSON-LD Schema 全記事付与（Article/FAQ/Breadcrumb） <span class="ml-tag done">完了</span></li>
+<li>MF・freeeリンクをA8アフィリに一括置換（10記事） <span class="ml-tag done">完了</span></li>
+<li>GSC確認タグ登録（クロール促進） <span class="ml-tag done">完了</span></li>
+<li>IndexNow プラグイン有効化（自動送信） <span class="ml-tag done">完了</span></li>
+<li>バリューコマース登録 → SBI証券・楽天証券のアフィリリンク取得 <span class="ml-tag todo">未</span></li>
+</ul>
+</div>
+
+<div class="milestone-card">
+<h3>biz-english-ai.com</h3>
+<ul class="ml-list">
+<li>34記事公開済み・AI英会話アプリ軸 <span class="ml-tag done">稼働中</span></li>
+<li>A8スタサプ／ネイティブ／レアジョブ／DMM英会話 提携済み <span class="ml-tag done">完了</span></li>
+<li>afb審査（ELSA・Speak・レアジョブ追加狙い） <span class="ml-tag wait">審査中</span></li>
+<li>X Daily Auto Post ワークフロー失敗が連続 <span class="ml-tag blocked">要修正</span></li>
+</ul>
+</div>
+
+<div class="milestone-card">
+<h3>ai-gyomu.jp</h3>
+<ul class="ml-list">
+<li>33記事公開済み・BtoB SaaS軸（電子契約／AI議事録／会計） <span class="ml-tag done">稼働中</span></li>
+<li>MF クラウド／freee／Notta A8提携済み <span class="ml-tag done">完了</span></li>
+<li>sync-articles / weekly-article-draft ワークフロー失敗 <span class="ml-tag blocked">要修正</span></li>
+<li>電子契約特集（5記事）シリーズ完成 <span class="ml-tag done">完了</span></li>
+</ul>
+</div>
+
+<h2>🕘 今日のタイムライン（2026-04-24）</h2>
+<div class="timeline">
+<div class="tl-item"><div class="tl-date">17:05</div><div class="tl-body"><h4>一次情報スクショ作業開始</h4><p>SBI証券残高・推移グラフ・保有ファンド等12枚をアップロード、3新規記事＋19既存記事に差し込み完了。</p></div></div>
+<div class="tl-item"><div class="tl-date">17:44</div><div class="tl-body"><h4>新規3記事公開</h4><p>NVIDIA 9.3倍・企業型DC 1,145万円・夫婦資産4,953万円（各7,000〜11,700字）</p></div></div>
+<div class="tl-item"><div class="tl-date">18:10</div><div class="tl-body"><h4>競合分析→主要5記事を強化リライト</h4><p>共働き資産公開・新NISA40代・SBI評判・NVIDIA・NISA埋め方に、競合が持っていない一次情報セクションを追加。</p></div></div>
+<div class="tl-item"><div class="tl-date">18:30</div><div class="tl-body"><h4>サイト全体の仕上げ</h4><p>About/Startページ刷新／Hello World削除／内部リンク網105本／excerpt 21件更新</p></div></div>
+<div class="tl-item"><div class="tl-date">19:00</div><div class="tl-body"><h4>JSON-LD + サイドバー + IndexNow プラグイン</h4><p>Article/FAQ/Breadcrumb/Person/WebSite Schema 全記事付与、サイドバー4ウィジェット新設、IndexNow自動送信有効化。</p></div></div>
+<div class="tl-item"><div class="tl-date">19:30</div><div class="tl-body"><h4>ASPリンク5案件取得＆10記事に置換</h4><p>A8.netで MF クラウド会計・freee・Misoca・弥生・MFクラウド のアフィリURLを取得、rel="sponsored" 付きで一括置換。</p></div></div>
+<div class="tl-item"><div class="tl-date">20:00</div><div class="tl-body"><h4>3サイト横断で「。」後改行 1,200件＋</h4><p>side-invest／biz-english-ai／ai-gyomu の計91記事＋5ページで、モバイル可読性向上のため段落内の「。」直後に&lt;br&gt;を挿入（冪等・2文以上のみ対象）。</p></div></div>
+</div>
+
+<h2>🚀 Google早期クロールのための実装</h2>
+<div class="milestone-card">
+<ul class="ml-list">
+<li>IndexNow プラグイン（bing/yandex自動通知） <span class="ml-tag done">稼働中</span></li>
+<li>GSC サイトマップ登録 <span class="ml-tag done">3サイトとも認証済</span></li>
+<li>robots.txt → sitemap.xml 自動検出 <span class="ml-tag done">完了</span></li>
+<li>PubSubHubbub 通知（新規投稿時） <span class="ml-tag done">実装済</span></li>
+<li>JSON-LD 構造化データ <span class="ml-tag done">完了</span></li>
+<li>内部リンク網（クローラビリティ向上） <span class="ml-tag done">完了</span></li>
+</ul>
+</div>
+
+<footer>
+<p>🔒 noindex設定済み／本ダッシュボードは運営者のみ参照用</p>
+<p>作成: Claude × はる｜更新日: 2026-04-24</p>
+</footer>
+</div>
+</body>
+</html>
