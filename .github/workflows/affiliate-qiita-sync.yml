@@ -1,0 +1,60 @@
+name: Affiliate Qiita Cross-Post (PA45不可侵・分離アカウント)
+
+on:
+  schedule:
+    # 月・水・金 JST 9:30 (UTC 0:30)
+    - cron: '30 0 * * 1,3,5'
+  workflow_dispatch:
+    inputs:
+      site:
+        description: 'site to post (biz-english-ai or ai-gyomu)'
+        required: true
+        default: 'biz-english-ai'
+      limit:
+        description: 'how many posts'
+        required: false
+        default: '1'
+
+jobs:
+  cross-post:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        site: [biz-english-ai, ai-gyomu]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Cross-post 1 article
+        env:
+          WP_BIZENGLISHAI_USER: ${{ secrets.WP_BIZENGLISHAI_USER }}
+          WP_BIZENGLISHAI_PASS: ${{ secrets.WP_BIZENGLISHAI_PASS }}
+          QIITA_TOKEN_BIZENGLISHAI: ${{ secrets.QIITA_TOKEN_BIZENGLISHAI }}
+          WP_AIGYOMU_USER: ${{ secrets.WP_AIGYOMU_USER }}
+          WP_AIGYOMU_PASS: ${{ secrets.WP_AIGYOMU_PASS }}
+          QIITA_TOKEN_AIGYOMU: ${{ secrets.QIITA_TOKEN_AIGYOMU }}
+        run: |
+          # If a Qiita token for this matrix site is missing, skip gracefully
+          if [ "${{ matrix.site }}" = "biz-english-ai" ] && [ -z "${QIITA_TOKEN_BIZENGLISHAI}" ]; then
+            echo "biz-english-ai Qiita token not set, skipping"; exit 0
+          fi
+          if [ "${{ matrix.site }}" = "ai-gyomu" ] && [ -z "${QIITA_TOKEN_AIGYOMU}" ]; then
+            echo "ai-gyomu Qiita token not set, skipping"; exit 0
+          fi
+          python scripts/affiliate-qiita-sync.py --site ${{ matrix.site }} --limit 1
+
+      - name: Commit state
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if [ -n "$(git status --porcelain data/affiliate-qiita-state.json)" ]; then
+            git add data/affiliate-qiita-state.json
+            git commit -m "affiliate-qiita: state update [skip ci]"
+            git push
+          fi
