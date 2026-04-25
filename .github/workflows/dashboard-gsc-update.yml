@@ -1,0 +1,39 @@
+name: Dashboard GSC Rank Update
+
+on:
+  schedule:
+    - cron: '0 23 * * *'   # JST 8:00 daily
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install deps
+        run: |
+          pip install google-api-python-client google-auth google-auth-oauthlib
+
+      - name: Update dashboard rank section
+        env:
+          GSC_TOKEN_JSON: ${{ secrets.GSC_TOKEN_JSON }}
+        run: python sites/scripts/update_dashboard_rank.py
+
+      - name: Commit & push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if [ -n "$(git status --porcelain sites/index.html)" ]; then
+            git add sites/index.html
+            git commit -m "dashboard: GSC順位データを自動更新 [skip ci]"
+            git push
+          else
+            echo "no changes"
+          fi
