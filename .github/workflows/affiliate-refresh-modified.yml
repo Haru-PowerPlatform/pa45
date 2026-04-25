@@ -1,0 +1,27 @@
+name: Affiliate Refresh Modified Date (鮮度シグナル)
+
+on:
+  schedule:
+    # 毎月1日 JST 9:00 (UTC 0:00)
+    - cron: '0 0 1 * *'
+  workflow_dispatch:
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Refresh modified date
+        env:
+          WP_BIZENGLISHAI_USER: ${{ secrets.WP_BIZENGLISHAI_USER }}
+          WP_BIZENGLISHAI_PASS: ${{ secrets.WP_BIZENGLISHAI_PASS }}
+          WP_AIGYOMU_USER:      ${{ secrets.WP_AIGYOMU_USER }}
+          WP_AIGYOMU_PASS:      ${{ secrets.WP_AIGYOMU_PASS }}
+          WP_SIDEINVEST_USER:   ${{ secrets.WP_SIDEINVEST_USER }}
+          WP_SIDEINVEST_PASS:   ${{ secrets.WP_SIDEINVEST_PASS }}
+        run: python scripts/affiliate-refresh-modified.py
