@@ -266,154 +266,213 @@ function getTemplates() {
   const useful= gv('g-useful')|| '?';
   const tips  = gv('g-tips');
   const voice = gv('g-voice');
-  const countLine = count ? `\n参加者：${count}名` : '';
 
   const announce = [
     {
       title:'📢 当日案内（昼）', badge:'当日 昼', cls:'badge-blue',
-      text:`📢 本日開催！PA45 第${vol}回\nテーマ：${theme}\n本日${time}〜\n${url}\n#PowerAutomate #PA45`
+      text:`今夜開催！PA45 第${vol}回「${theme}」\n${time}〜 Teams（オンライン）\n45分でアクション1つをゼロから一緒に作ります。途中参加もOKです。\n${url}\n#PowerAutomate #PA45`
     },
     {
       title:'⏰ 開催直前（45分前）', badge:'当日 夜', cls:'badge-green',
-      text:`⏰ あと45分で始まります！\nPA45 第${vol}回「${theme}」\n本日${time}〜 オンライン開催\n${url}\n#PowerAutomate #PA45`
+      text:`あと45分で始まります。PA45 第${vol}回「${theme}」\n${time}〜 Teams\nカメラOFF・聞くだけ参加もOKです。気軽にどうぞ。\n${url}\n#PowerAutomate #PA45`
     },
     {
-      title:'✅ 開催後報告', badge:'開催後', cls:'badge-amber',
-      text:`PA45 第${vol}回、終わりました。${count ? '\n参加者：' + count + '名。' : ''}\nテーマ：${theme}\nご参加ありがとうございました🙏\n#PowerAutomate #PA45`
+      title:'✅ 開催後報告（シンプル）', badge:'開催後', cls:'badge-amber',
+      text:`PA45 第${vol}回「${theme}」おわりました。${count ? '\n' + count + '名ご参加ありがとうございました。' : '\nご参加ありがとうございました。'}今日もフローが動いてよかったです。\n#PowerAutomate #PA45`
+    },
+    {
+      title:'✅ 開催後報告（アンケート付き）', badge:'開催後', cls:'badge-amber',
+      text:`PA45 第${vol}回おわりました。${count ? count + '名、' : ''}ありがとうございました。\nアンケート：理解度${score}%・役立ち度${useful}%\n次回もよろしくお願いします。\n#PowerAutomate #PA45`
     },
     {
       title:'📅 次回募集開始', badge:'次回告知', cls:'badge-green',
-      text:`📅 PA45 次回の受付を開始しました。\nテーマ：（次回テーマ）\n${url}\n#PowerAutomate #PA45`
+      text:`PA45 次回の受付をはじめました。\nテーマ：（次回テーマ）\n45分・ゼロから・ハンズオン。初参加の方も歓迎です。\n${url}\n#PowerAutomate #PA45`
     },
     {
       title:'▶ YouTube公開', badge:'YouTube', cls:'badge-purple',
-      text:`▶ PA45 第${vol}回「${theme}」の録画を公開しました。\n（YouTube URL）\n#PowerAutomate #PA45`
+      text:`PA45 第${vol}回「${theme}」の録画を公開しました。\n45分まるごと見られます。倍速でもどうぞ。\n（YouTube URL）\n#PowerAutomate #PA45`
     },
     {
-      title:'📝 ブログ新記事', badge:'ブログ', cls:'badge-teal',
-      text:`📝 新記事を書きました。\n「（記事タイトル）」\n（記事URL）\n#PowerAutomate #PA45`
+      title:'📝 ブログ記事公開', badge:'ブログ', cls:'badge-teal',
+      text:`ブログ書きました。\n「（記事タイトル）」\n（記事URL）\n#PowerAutomate #PA45`
     },
   ];
 
   const feels = [
     {
-      title:'終わった', badge:'感想', cls:'badge-green',
-      text:`PA45 第${vol}回おわった。${count ? count + '名ありがとうございました。' : 'ありがとうございました。'}\n#PA45`
+      title:'終わった（基本形）', badge:'感想', cls:'badge-green',
+      text:`PA45 第${vol}回おわった。${count ? count + '名来てくれた。' : ''}今日もフロー動かせた人いてよかった。ありがとうございました。\n#PA45`
     },
     {
-      title:'アンケート見た', badge:'感想', cls:'badge-amber',
-      text:`第${vol}回のアンケート見た。理解度${score}%、役立ち度${useful}%。\nよかった。\n#PA45`
+      title:'第1回の緊張（Teamsに一人）', badge:'思い出', cls:'badge-gray',
+      text:`PA45の第1回、Teamsに早めに入ったら自分一人だった。独り言を45分続けるやつかと思ったけど、ちゃんとみんな来てくれた。26名。あのときのほっとした感じ、まだ覚えてる。\n#PA45`
     },
     {
-      title:'コメントもらった', badge:'感想', cls:'badge-purple',
-      text:`${voice || '「また来ます」'}ってコメントもらった。うれしかった。\n#PA45`
+      title:'アンケートコメントが刺さった', badge:'感想', cls:'badge-amber',
+      text:`「ゆっくり丁寧に説明してもらえて安心して参加できました」って第1回のアンケートにあった。スコアより先にコメントを読んでしまう。\n#PA45`
     },
     {
-      title:'バタバタした', badge:'反省', cls:'badge-gray',
-      text:`今日のPA45、ちょっとバタバタしてしまった。次はもう少しゆっくりやりたい。\n#PA45`
+      title:'「職場で広めたい」コメント', badge:'感想', cls:'badge-purple',
+      text:`「ありがとうございます。職場で広めたいです」ってアンケートに書いてくれた人がいた。参加者が自分の職場に持ち帰ろうとしてくれてるの、うれしかった。\n#PA45`
     },
     {
-      title:'スライド作ってる', badge:'準備中', cls:'badge-gray',
-      text:`来週のPA45のスライド作ってる。初めて見る人の目線で考えると、なかなか難しい。\n#PA45`
+      title:'役立ち度100%が出た', badge:'驚き', cls:'badge-teal',
+      text:`第4回のアンケート、役立ち度100%だった。100って出ると思ってなかったのでちょっと動揺した。ありがとうございました。\n#PA45`
     },
     {
-      title:'第N回まで来た', badge:'ひとこと', cls:'badge-teal',
-      text:`PA45、気づいたら第${vol}回まで来てた。\n#PA45`
+      title:'アンケートスコア見た', badge:'感想', cls:'badge-amber',
+      text:`第${vol}回のアンケート見た。理解度${score}%・役立ち度${useful}%。毎回スコアより自由コメントを先に読んでしまう。\n#PA45`
     },
     {
-      title:'説明が難しかった', badge:'反省', cls:'badge-gray',
-      text:`今日うまく説明できなかったところがあった。伝わってる前提で話してた。反省。\n#PA45`
+      title:'チャット「できました！」', badge:'感想', cls:'badge-green',
+      text:`今日のPA45、チャットで「できました！」って書いてくれる人がいるとほっとする。フロー動いた瞬間、みんないい感じのリアクションする。\n#PA45`
     },
     {
-      title:'アンケートのコメント', badge:'感想', cls:'badge-amber',
-      text:`PA45のアンケート、スコアより自由記述のコメントの方を先に読んでしまう。\n#PA45`
+      title:'スライド作りながら深夜', badge:'準備中', cls:'badge-gray',
+      text:`来週のPA45のスライド作ってたら23時になってた。初めて見る人の目線で考えると、何をどこまで説明するか毎回迷う。\n#PA45`
     },
     {
-      title:'木曜終わった', badge:'ひとこと', cls:'badge-blue',
-      text:`今週の木曜おわった。ありがとうございました。\n#PA45`
+      title:'N回まで来た', badge:'ひとこと', cls:'badge-teal',
+      text:`PA45、気づいたら第${vol}回まで来てた。第1回から参加してくれてる人がいるのがありがたい。\n#PA45`
     },
     {
-      title:'フロー動いた', badge:'感想', cls:'badge-green',
-      text:`今日のPA45、フロー動いた人多くてよかった。\n#PA45 #PowerAutomate`
+      title:'うまく説明できなかった', badge:'反省', cls:'badge-gray',
+      text:`今日のPA45、一部うまく説明できなかったところがあった。自分が分かってるから伝わってると思ってた。次回は順番を変えてみる。\n#PA45`
+    },
+    {
+      title:'参加者が増えた', badge:'ひとこと', cls:'badge-blue',
+      text:`第1回が26人で、第5回が38人だった。急に増えたわけじゃないけど、じわじわ増えてる感じがある。\n#PA45`
+    },
+    {
+      title:'木曜おわった', badge:'ひとこと', cls:'badge-blue',
+      text:`今週の木曜、PA45おわった。${count ? count + '名ありがとうございました。' : 'ありがとうございました。'}また来週。\n#PA45`
+    },
+    {
+      title:'声が届いた', badge:'感想', cls:'badge-purple',
+      text:`${voice ? `「${voice}」` : '「また来ます」'}ってコメントもらった。こういうの読むと、また来週も準備しようと思う。\n#PA45`
     },
   ];
 
   const insight = [
     {
-      title:'自動化って何だろう', badge:'思い付き', cls:'badge-amber',
-      text:`自動化って「時間を作る」というより「気にしなくていいことを増やす」に近い気がしてる。\n#PowerAutomate`
+      title:'Approvalsを分解した', badge:'発見', cls:'badge-amber',
+      text:`Approvals（承認フロー）って名前だけで難しそうに見えるけど、分解すると①受け取る②判断する③分岐する、だけだった。名前の難しさと仕組みの難しさは別。\n#PowerAutomate`
     },
     {
-      title:'なんで難しそうに見えるのか', badge:'疑問', cls:'badge-gray',
-      text:`Power Automateってなんで「難しそう」って思われるんだろう。自分も最初そうだったから気になる。\n#PowerAutomate`
+      title:'Apply to eachの言い方', badge:'発見', cls:'badge-purple',
+      text:`Apply to eachって聞くと構える人が多い。「リストの全部に同じ処理をする」って言い方に変えたら、すんなり伝わった。\n#PowerAutomate`
     },
     {
-      title:'フロー作る前に', badge:'思い付き', cls:'badge-purple',
-      text:`フローを作る前に「なぜ今これが手作業なのか」を考えるようにしてる。わりと大事だった。\n#PowerAutomate`
+      title:'エラーメッセージ読む', badge:'発見', cls:'badge-green',
+      text:`Power Automateのエラーメッセージ、最初は無視してたけどちゃんと読むとだいたい答えが書いてある。エラーが出たアクションの「詳細を表示」を押すのが最初の一手。\n#PowerAutomate`
     },
     {
-      title:'エラーが怖かった頃', badge:'昔話', cls:'badge-gray',
-      text:`Power Automateを始めた頃、エラーが出るたびにビビってた。今は別に何とも思わないけど。\n#PowerAutomate`
+      title:'フロー作れないの本当の理由', badge:'気づき', cls:'badge-gray',
+      text:`「フローが作れない」より「何を自動化したいかわからない」の方が多い気がしてる。ツールの問題じゃなくて、業務を整理できてないことが多い。\n#PowerAutomate`
     },
     {
-      title:'難しくないところでつまずく', badge:'発見', cls:'badge-purple',
-      text:`難しい機能より「簡単でしょ」と思ってた部分でつまずくことが多い。自分もそうだった。\n#PowerAutomate`
+      title:'45分という設定', badge:'気づき', cls:'badge-blue',
+      text:`45分って「フローをゼロから作って動かすまで」にちょうど足りる時間だった。1時間だと後半失速するし、30分だと中途半端。試してみてよかった設定。\n#PA45`
     },
     {
-      title:'承認フローって', badge:'思い付き', cls:'badge-amber',
-      text:`承認フローって複雑に聞こえるけど、分解すると①受け取る②確認する③分岐する、だけだった。\n#PowerAutomate`
+      title:'「今日も来た」の積み重ね', badge:'思い付き', cls:'badge-teal',
+      text:`「参加したけど何もできなかった」より「今日も来た」の積み重ねの方がたぶん大事。PA45はそういう場にしたいと思ってる。\n#PA45`
     },
     {
-      title:'ツール入れるだけでは', badge:'ひとこと', cls:'badge-gray',
-      text:`Power Platform導入したからって勝手には広まらないな、と社内を見ていて思う。\n#PowerPlatform`
+      title:'教えるより一緒に作る', badge:'ひとこと', cls:'badge-purple',
+      text:`PA45、教えるというより「一緒に作ってる」感覚の方が近い。その方が自分も楽しいし、参加者も手が動きやすいと思ってる。\n#PA45`
     },
     {
-      title:'質問が来た', badge:'ひとこと', cls:'badge-green',
-      text:`社内で「これどうやるの？」って聞かれた。少し広まってきたのかも。\n#PowerAutomate`
+      title:'ツール導入より人を増やす', badge:'気づき', cls:'badge-gray',
+      text:`Power Platform、ツールを入れるより「使う人を増やす」方が時間がかかる。ここが社内推進の本当の難しさな気がしてる。\n#PowerPlatform`
     },
     {
-      title:'45分という長さ', badge:'思い付き', cls:'badge-blue',
-      text:`45分って、長くもなく短くもなく、フローを作って動かすのにちょうどよかった。\n#PA45`
+      title:'「ここに使える」が先', badge:'発見', cls:'badge-amber',
+      text:`社内講座で気づいたこと。操作の説明より「あなたのこの業務に使えますよ」を先に話した方が、ずっと聞いてもらえた。\n#PowerAutomate #PowerPlatform`
     },
     {
-      title:'教えるというより', badge:'ひとこと', cls:'badge-teal',
-      text:`PA45、教えるというより一緒に作ってる感覚の方が強い。その方が自分も楽しい。\n#PA45`
+      title:'変数の「箱」の説明', badge:'思い付き', cls:'badge-green',
+      text:`変数を「値をしまっておく箱」で説明するの、自分も最初に聞いたとき「なるほど」と思った。でも「なるほど」が「使える」になるまでには手を動かさないといけない。\n#PowerAutomate`
+    },
+    {
+      title:'「業務時間内に何やってんの」', badge:'昔話', cls:'badge-gray',
+      text:`Power Automateを社内で始めた頃、周囲に「業務時間内に何やってんの」みたいな空気があった気がしてた。今は「これどうやるの」って聞かれるようになった。\n#PowerPlatform`
+    },
+    {
+      title:'勉強会をやる側になって', badge:'発見', cls:'badge-teal',
+      text:`勉強会ってこれまで参加する側が多かった自分が主催側になった。やってみて分かることが全然違う。参加するだけでは見えなかったことばかり。\n#PA45`
     },
   ];
 
   const tipsArr = [
     {
-      title: tips ? `今日気づいたこと` : 'セッション後ひとこと', badge:'ひとこと', cls:'badge-amber',
+      title: tips ? 'セッション後ひとこと' : 'Condition設計のコツ', badge:'Tips', cls:'badge-amber',
       text: tips
         ? `今日の${theme}でやってて気づいたこと。${tips}\n#PowerAutomate #PA45`
-        : `${theme}のセッション終わった。毎回やってるのに毎回どこかで引っかかる。\n#PowerAutomate #PA45`
+        : `Power AutomateのCondition、「もし〜なら」の日本語で考えると設計しやすい。Yes/Noの2択で整理してからアクションを追加するのがコツ。\n#PowerAutomate`
     },
     {
-      title:'エラーメッセージ', badge:'ひとこと', cls:'badge-green',
-      text:`Power Automateのエラーメッセージ、ちゃんと読むとだいたい答えが書いてある。\n#PowerAutomate`
+      title:'変数の2ステップ', badge:'Tips', cls:'badge-green',
+      text:`Power Automateの変数は①Initialize variable（作る）→②Set variable（書き換える）の順。この2つがセット。第1・2回のPA45で基礎からやってます。\n#PowerAutomate`
     },
     {
-      title:'アンケートスコア', badge:'データ', cls:'badge-purple',
-      text:`第${vol}回のアンケート。理解度${score}%・役立ち度${useful}%。\nまあまあよかった。\n#PA45`
+      title:'coalesce()関数', badge:'Tips', cls:'badge-purple',
+      text:`coalesce()は、空欄が来るかもしれない項目に入れておく関数。空欄のせいでフローが止まる前に使うと安定する。地味だけど実務でよく出てくる。\n#PowerAutomate`
+    },
+    {
+      title:'Apply to each + Condition', badge:'Tips', cls:'badge-teal',
+      text:`Apply to eachの中にConditionを入れる組み合わせ、実務ではよく出てくる。「リストを全部見て、条件に合うものだけ処理する」がこれ1つでできる。\n#PowerAutomate`
+    },
+    {
+      title:'フロー設計前のメモ', badge:'Tips', cls:'badge-amber',
+      text:`フローを作り始める前に「トリガー→条件→アクション」を手書きでメモする。これだけで途中で詰まる回数がかなり減った。\n#PowerAutomate`
+    },
+    {
+      title:'エラー詳細の読み方', badge:'Tips', cls:'badge-green',
+      text:`Power Automateでエラーが出たら、まずそのアクションの「詳細を表示」を開く。英語でも頑張って読む。だいたい答えが書いてある。\n#PowerAutomate`
+    },
+    {
+      title:'if()関数の使いどころ', badge:'Tips', cls:'badge-purple',
+      text:`if()関数、単純な分岐ならConditionアクションより式が短く書ける。「〇〇ならA、そうでなければB」くらいのシンプルな分岐に使いやすい。\n#PowerAutomate`
+    },
+    {
+      title:'Formsフローの基本', badge:'Tips', cls:'badge-teal',
+      text:`FormsのアンケートをSharePointに自動登録するフロー、手作業のコピペが一切なくなった。Forms→SharePoint→Teams通知の構成でだいたい動く。\n#PowerAutomate`
     },
   ];
 
   const shakai = [
     {
-      title:'社内で勉強会やった', badge:'社内', cls:'badge-teal',
-      text:`社内でPower Automateの勉強会をやった。フロー動かせた人が多くてよかった。\n#PowerAutomate #PowerPlatform`
+      title:'PLUG立ち上げ', badge:'コミュニティ', cls:'badge-teal',
+      text:`広島でPower Platformのコミュニティ「PLUG」を立ち上げた。PPECで出会った広島のDX推進者の皆さんと一緒に。未経験の人が参加しやすい場を最初から意識してる。\n#PowerPlatform`
     },
     {
-      title:'社内推進してて思う', badge:'社内', cls:'badge-gray',
-      text:`社内でPower Platform広めてて思うのは、使い方より「どう使うか」のイメージが先だということ。\n#PowerPlatform`
+      title:'北関東から来てくれた', badge:'コミュニティ', cls:'badge-purple',
+      text:`広島のPower Platformイベント、北関東から来てくれた方がいた。コミュニティってそういう引力があるんだと思った。\n#PowerPlatform`
     },
     {
-      title:'社内で質問来た', badge:'社内', cls:'badge-green',
-      text:`社内で「これどうやるの？」って聞かれることが最近増えてきた。\n#PowerPlatform`
+      title:'PPECで気づいたこと', badge:'コミュニティ', cls:'badge-amber',
+      text:`PPECで全国のDX推進者と話して「同じ課題で詰まってる人がこんなにいるんだ」と気づいた。社内で一人で悩まなくていい、という感覚になれた。\n#PowerPlatform`
     },
     {
-      title:'社内講座やってみた', badge:'社内', cls:'badge-amber',
-      text:`社内講座やってみた。操作の説明より「こういう場面で使える」を先に話した方がよかった。\n#PowerPlatform #PowerAutomate`
+      title:'社内講座の気づき', badge:'社内', cls:'badge-green',
+      text:`社内でPower Automateの勉強会をやった。操作説明より「自分の業務のどこに使えるか」を考えてもらう時間が一番大事だった。\n#PowerAutomate #PowerPlatform`
+    },
+    {
+      title:'「難しくない」より「ここに使える」', badge:'社内', cls:'badge-amber',
+      text:`社内でPower Automateを広めようとしたとき、「難しくないですよ」より「あなたのあの業務に使えますよ」の方がずっと刺さった。\n#PowerAutomate`
+    },
+    {
+      title:'「業務時間内に何を」から今', badge:'社内', cls:'badge-gray',
+      text:`Power Automateを社内で始めた頃は「業務時間内に何やってんの」みたいな空気があった。今は社内で相談が来るようになった。時間はかかるけど動いてはいる。\n#PowerPlatform`
+    },
+    {
+      title:'「一緒に作りましょう」スタイル', badge:'社内', cls:'badge-teal',
+      text:`社内では「このフロー作ってもらえますか」じゃなくて「一緒に作りましょう」で進めるようにしてる。作れる人が増える方が組織には効く。\n#PowerAutomate`
+    },
+    {
+      title:'5人が少し使える方が広まる', badge:'社内', cls:'badge-purple',
+      text:`社内でPower Platform推進してて思うのは、1人が詳しくなるより5人が少し使えるようになる方が、組織には広まりやすい。\n#PowerPlatform`
     },
   ];
 
