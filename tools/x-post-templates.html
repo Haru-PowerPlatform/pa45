@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PA45 X投稿テンプレート</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #0f172a;
+  color: #e2e8f0;
+  min-height: 100vh;
+  padding: 20px 16px 60px;
+}
+h1 { text-align:center; font-size:1.4rem; font-weight:700; color:#38bdf8; margin-bottom:4px; }
+.subtitle { text-align:center; font-size:0.82rem; color:#64748b; margin-bottom:22px; }
+
+/* タブ */
+.tabs { display:flex; gap:6px; max-width:820px; margin:0 auto 20px; flex-wrap:wrap; }
+.tab {
+  flex:1 1 auto; padding:8px 14px; border:1px solid #334155;
+  border-radius:8px; background:#1e293b; color:#94a3b8;
+  font-size:0.82rem; font-weight:600; cursor:pointer; text-align:center;
+  transition:all 0.15s; white-space:nowrap;
+}
+.tab:hover { border-color:#38bdf8; color:#38bdf8; }
+.tab.active { background:#0284c7; border-color:#0284c7; color:#fff; }
+
+/* セクション */
+.section { display:none; max-width:820px; margin:0 auto; }
+.section.active { display:block; }
+
+/* 設定パネル */
+.config-panel {
+  background:#1e293b; border:1px solid #334155;
+  border-radius:12px; padding:18px; margin-bottom:20px;
+}
+.config-panel h2 { font-size:0.78rem; font-weight:600; color:#64748b; text-transform:uppercase; letter-spacing:.05em; margin-bottom:14px; }
+.config-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.config-grid .full { grid-column:1/-1; }
+label { display:block; font-size:0.78rem; color:#94a3b8; margin-bottom:4px; }
+input[type="text"],input[type="number"],input[type="time"] {
+  width:100%; background:#0f172a; border:1px solid #334155;
+  border-radius:8px; color:#e2e8f0; font-size:0.9rem; padding:8px 11px;
+  outline:none; transition:border-color .2s;
+}
+input:focus { border-color:#38bdf8; }
+
+/* カード */
+.cards { display:flex; flex-direction:column; gap:14px; }
+
+/* ランダム専用グリッド */
+.random-grid {
+  display:grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap:14px;
+}
+
+.card { background:#1e293b; border:1px solid #334155; border-radius:12px; overflow:hidden; }
+.card-header {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:11px 16px; border-bottom:1px solid #334155;
+}
+.card-title { font-size:0.85rem; font-weight:600; }
+.badge { font-size:0.7rem; padding:2px 9px; border-radius:999px; font-weight:600; white-space:nowrap; }
+.badge-blue   { background:#1d4ed8; color:#bfdbfe; }
+.badge-green  { background:#166534; color:#bbf7d0; }
+.badge-amber  { background:#92400e; color:#fde68a; }
+.badge-purple { background:#581c87; color:#e9d5ff; }
+.badge-pink   { background:#9d174d; color:#fbcfe8; }
+.badge-teal   { background:#134e4a; color:#99f6e4; }
+.badge-gray   { background:#374151; color:#d1d5db; }
+
+.card-body { padding:13px 16px; }
+.tpl {
+  background:#0f172a; border:1px solid #2d3748; border-radius:8px;
+  padding:12px; font-size:0.88rem; line-height:1.75;
+  white-space:pre-wrap; word-break:break-all; color:#cbd5e1;
+  margin-bottom:8px; min-height:60px;
+}
+.char-line { font-size:0.75rem; color:#64748b; margin-bottom:9px; }
+.char-line span.ok   { color:#22c55e; font-weight:700; }
+.char-line span.warn { color:#f59e0b; font-weight:700; }
+.char-line span.over { color:#ef4444; font-weight:700; }
+
+.btn-copy {
+  width:100%; padding:9px; border:none; border-radius:8px;
+  font-size:0.85rem; font-weight:600; cursor:pointer;
+  background:#0284c7; color:white; transition:background .15s;
+}
+.btn-copy:hover { background:#0369a1; }
+.btn-copy.ok { background:#16a34a; }
+
+/* シャッフルボタン */
+.shuffle-bar {
+  display:flex; gap:10px; align-items:center;
+  margin-bottom:18px;
+}
+.btn-shuffle {
+  padding:9px 20px; border:none; border-radius:8px;
+  background:#7c3aed; color:white; font-size:0.88rem;
+  font-weight:700; cursor:pointer; transition:background .15s;
+}
+.btn-shuffle:hover { background:#6d28d9; }
+.shuffle-note { font-size:0.8rem; color:#64748b; }
+</style>
+</head>
+<body>
+
+<h1>📣 PA45 X投稿テンプレート</h1>
+<p class="subtitle">カテゴリを選んで → コピーするだけ</p>
+
+<div class="tabs">
+  <div class="tab active" onclick="showTab('random')">🎲 ランダム</div>
+  <div class="tab" onclick="showTab('announce')">📢 告知系</div>
+  <div class="tab" onclick="showTab('feels')">💭 感想・気持ち</div>
+  <div class="tab" onclick="showTab('insight')">💡 気づき・思い付き</div>
+  <div class="tab" onclick="showTab('tips')">🔥 Tips・学び</div>
+  <div class="tab" onclick="showTab('shakai')">🏢 社内活動</div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     共通設定（全タブで使う）
+════════════════════════════════════════ -->
+<div style="max-width:820px;margin:0 auto 20px;">
+  <div class="config-panel">
+    <h2>⚙ 共通情報（全タブで使用）</h2>
+    <div class="config-grid">
+      <div><label>開催回数（今回）</label><input type="number" id="g-vol" value="8" min="1" oninput="rebuildAll()"></div>
+      <div><label>累計参加者数</label><input type="number" id="g-total" value="219" oninput="rebuildAll()"></div>
+      <div><label>開始時刻</label><input type="time" id="g-time" value="20:15" oninput="rebuildAll()"></div>
+      <div><label>参加者数（今回）</label><input type="number" id="g-count" value="" placeholder="開催後に入力" oninput="rebuildAll()"></div>
+      <div class="full"><label>テーマ</label><input type="text" id="g-theme" value="申請承認フロー（Approvals）" oninput="rebuildAll()"></div>
+      <div class="full"><label>connpass URL</label><input type="text" id="g-url" value="https://powerautomate-create.connpass.com/event/391996/" oninput="rebuildAll()"></div>
+      <div><label>理解度スコア（%）</label><input type="number" id="g-score" value="85" min="0" max="100" oninput="rebuildAll()"></div>
+      <div><label>役立ち度（%）</label><input type="number" id="g-useful" value="90" min="0" max="100" oninput="rebuildAll()"></div>
+      <div class="full"><label>今日の一言Tips（任意）</label><input type="text" id="g-tips" value="" placeholder="例：Approvalsは承認者のメール1つで動く" oninput="rebuildAll()"></div>
+      <div class="full"><label>参加者の声（任意）</label><input type="text" id="g-voice" value="" placeholder='例：「45分でフローが完成して驚きました」' oninput="rebuildAll()"></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     🎲 ランダム
+════════════════════════════════════════ -->
+<div class="section active" id="sec-random">
+  <div class="shuffle-bar">
+    <button class="btn-shuffle" onclick="shuffle()">🔀 シャッフル</button>
+    <span class="shuffle-note">気に入ったものだけコピーしてください</span>
+  </div>
+  <div class="random-grid" id="random-grid"></div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     📢 告知系
+════════════════════════════════════════ -->
+<div class="section" id="sec-announce">
+  <div class="cards" id="announce-cards"></div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     💭 感想・気持ち
+════════════════════════════════════════ -->
+<div class="section" id="sec-feels">
+  <div class="cards" id="feels-cards"></div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     💡 気づき・思い付き
+════════════════════════════════════════ -->
+<div class="section" id="sec-insight">
+  <div class="cards" id="insight-cards"></div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     🔥 Tips・学び
+════════════════════════════════════════ -->
+<div class="section" id="sec-tips">
+  <div class="cards" id="tips-cards"></div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+     🏢 社内活動
+════════════════════════════════════════ -->
+<div class="section" id="sec-shakai">
+  <div class="cards" id="shakai-cards"></div>
+</div>
+
+
+<script>
+/* ─────────────────────────────
+   ユーティリティ
+───────────────────────────── */
+const g  = id => document.getElementById(id);
+const gv = id => g(id).value.trim();
+
+function xLen(str) {
+  return str.replace(/https?:\/\/\S+/g, '                       ').length;
+}
+function charSpan(n) {
+  const cls = n > 280 ? 'over' : n > 250 ? 'warn' : 'ok';
+  return `<span class="${cls}">${n}</span>`;
+}
+
+let copyTimer = {};
+function copy(btn, text) {
+  navigator.clipboard.writeText(text).then(() => {
+    const id = btn.dataset.id;
+    clearTimeout(copyTimer[id]);
+    btn.textContent = '✅ コピーしました！';
+    btn.classList.add('ok');
+    copyTimer[id] = setTimeout(() => {
+      btn.textContent = '📋 コピー';
+      btn.classList.remove('ok');
+    }, 2000);
+  });
+}
+
+function makeCard(title, badge, badgeClass, text) {
+  const id = 'c' + Math.random().toString(36).slice(2);
+  const n = xLen(text);
+  const div = document.createElement('div');
+  div.className = 'card';
+  div.innerHTML = `
+    <div class="card-header">
+      <span class="card-title">${title}</span>
+      <span class="badge ${badgeClass}">${badge}</span>
+    </div>
+    <div class="card-body">
+      <div class="tpl">${escHtml(text)}</div>
+      <div class="char-line">文字数：${charSpan(n)} / 280</div>
+      <button class="btn-copy" data-id="${id}" onclick="copy(this, ${JSON.stringify(text)})">📋 コピー</button>
+    </div>`;
+  return div;
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function renderCards(containerId, items) {
+  const c = g(containerId);
+  c.innerHTML = '';
+  items.forEach(item => c.appendChild(makeCard(item.title, item.badge, item.cls, item.text)));
+}
+
+/* ─────────────────────────────
+   テンプレート定義
+───────────────────────────── */
+function getTemplates() {
+  const vol   = gv('g-vol')   || '?';
+  const total = gv('g-total') || '?';
+  const time  = gv('g-time')  || '20:15';
+  const count = gv('g-count');
+  const theme = gv('g-theme') || '（テーマ）';
+  const url   = gv('g-url')   || 'https://connpass.com/';
+  const score = gv('g-score') || '?';
+  const useful= gv('g-useful')|| '?';
+  const tips  = gv('g-tips');
+  const voice = gv('g-voice');
+  const countLine = count ? `\n参加者：${count}名` : '';
+
+  const announce = [
+    {
+      title:'📢 当日案内（昼）', badge:'当日 昼', cls:'badge-blue',
+      text:`📢 本日開催！PA45 第${vol}回\nテーマ：${theme}\n本日${time}〜\n${url}\n#PowerAutomate #PA45`
+    },
+    {
+      title:'⏰ 開催直前（45分前）', badge:'当日 夜', cls:'badge-green',
+      text:`⏰ あと45分で始まります！\nPA45 第${vol}回「${theme}」\n本日${time}〜 オンライン開催\n${url}\n#PowerAutomate #PA45`
+    },
+    {
+      title:'✅ 開催後報告', badge:'開催後', cls:'badge-amber',
+      text:`PA45 第${vol}回、終わりました。${count ? '\n参加者：' + count + '名。' : ''}\nテーマ：${theme}\nご参加ありがとうございました🙏\n#PowerAutomate #PA45`
+    },
+    {
+      title:'📅 次回募集開始', badge:'次回告知', cls:'badge-green',
+      text:`📅 PA45 次回の受付を開始しました。\nテーマ：（次回テーマ）\n${url}\n#PowerAutomate #PA45`
+    },
+    {
+      title:'▶ YouTube公開', badge:'YouTube', cls:'badge-purple',
+      text:`▶ PA45 第${vol}回「${theme}」の録画を公開しました。\n（YouTube URL）\n#PowerAutomate #PA45`
+    },
+    {
+      title:'📝 ブログ新記事', badge:'ブログ', cls:'badge-teal',
+      text:`📝 新記事を書きました。\n「（記事タイトル）」\n（記事URL）\n#PowerAutomate #PA45`
+    },
+  ];
+
+  const feels = [
+    {
+      title:'終わった', badge:'感想', cls:'badge-green',
+      text:`PA45 第${vol}回おわった。${count ? count + '名ありがとうございました。' : 'ありがとうございました。'}\n#PA45`
+    },
+    {
+      title:'アンケート見た', badge:'感想', cls:'badge-amber',
+      text:`第${vol}回のアンケート見た。理解度${score}%、役立ち度${useful}%。\nよかった。\n#PA45`
+    },
+    {
+      title:'コメントもらった', badge:'感想', cls:'badge-purple',
+      text:`${voice || '「また来ます」'}ってコメントもらった。うれしかった。\n#PA45`
+    },
+    {
+      title:'バタバタした', badge:'反省', cls:'badge-gray',
+      text:`今日のPA45、ちょっとバタバタしてしまった。次はもう少しゆっくりやりたい。\n#PA45`
+    },
+    {
+      title:'スライド作ってる', badge:'準備中', cls:'badge-gray',
+      text:`来週のPA45のスライド作ってる。初めて見る人の目線で考えると、なかなか難しい。\n#PA45`
+    },
+    {
+      title:'第N回まで来た', badge:'ひとこと', cls:'badge-teal',
+      text:`PA45、気づいたら第${vol}回まで来てた。\n#PA45`
+    },
+    {
+      title:'説明が難しかった', badge:'反省', cls:'badge-gray',
+      text:`今日うまく説明できなかったところがあった。伝わってる前提で話してた。反省。\n#PA45`
+    },
+    {
+      title:'アンケートのコメント', badge:'感想', cls:'badge-amber',
+      text:`PA45のアンケート、スコアより自由記述のコメントの方を先に読んでしまう。\n#PA45`
+    },
+    {
+      title:'木曜終わった', badge:'ひとこと', cls:'badge-blue',
+      text:`今週の木曜おわった。ありがとうございました。\n#PA45`
+    },
+    {
+      title:'フロー動いた', badge:'感想', cls:'badge-green',
+      text:`今日のPA45、フロー動いた人多くてよかった。\n#PA45 #PowerAutomate`
+    },
+  ];
+
+  const insight = [
+    {
+      title:'自動化って何だろう', badge:'思い付き', cls:'badge-amber',
+      text:`自動化って「時間を作る」というより「気にしなくていいことを増やす」に近い気がしてる。\n#PowerAutomate`
+    },
+    {
+      title:'なんで難しそうに見えるのか', badge:'疑問', cls:'badge-gray',
+      text:`Power Automateってなんで「難しそう」って思われるんだろう。自分も最初そうだったから気になる。\n#PowerAutomate`
+    },
+    {
+      title:'フロー作る前に', badge:'思い付き', cls:'badge-purple',
+      text:`フローを作る前に「なぜ今これが手作業なのか」を考えるようにしてる。わりと大事だった。\n#PowerAutomate`
+    },
+    {
+      title:'エラーが怖かった頃', badge:'昔話', cls:'badge-gray',
+      text:`Power Automateを始めた頃、エラーが出るたびにビビってた。今は別に何とも思わないけど。\n#PowerAutomate`
+    },
+    {
+      title:'難しくないところでつまずく', badge:'発見', cls:'badge-purple',
+      text:`難しい機能より「簡単でしょ」と思ってた部分でつまずくことが多い。自分もそうだった。\n#PowerAutomate`
+    },
+    {
+      title:'承認フローって', badge:'思い付き', cls:'badge-amber',
+      text:`承認フローって複雑に聞こえるけど、分解すると①受け取る②確認する③分岐する、だけだった。\n#PowerAutomate`
+    },
+    {
+      title:'ツール入れるだけでは', badge:'ひとこと', cls:'badge-gray',
+      text:`Power Platform導入したからって勝手には広まらないな、と社内を見ていて思う。\n#PowerPlatform`
+    },
+    {
+      title:'質問が来た', badge:'ひとこと', cls:'badge-green',
+      text:`社内で「これどうやるの？」って聞かれた。少し広まってきたのかも。\n#PowerAutomate`
+    },
+    {
+      title:'45分という長さ', badge:'思い付き', cls:'badge-blue',
+      text:`45分って、長くもなく短くもなく、フローを作って動かすのにちょうどよかった。\n#PA45`
+    },
+    {
+      title:'教えるというより', badge:'ひとこと', cls:'badge-teal',
+      text:`PA45、教えるというより一緒に作ってる感覚の方が強い。その方が自分も楽しい。\n#PA45`
+    },
+  ];
+
+  const tipsArr = [
+    {
+      title: tips ? `今日気づいたこと` : 'セッション後ひとこと', badge:'ひとこと', cls:'badge-amber',
+      text: tips
+        ? `今日の${theme}でやってて気づいたこと。${tips}\n#PowerAutomate #PA45`
+        : `${theme}のセッション終わった。毎回やってるのに毎回どこかで引っかかる。\n#PowerAutomate #PA45`
+    },
+    {
+      title:'エラーメッセージ', badge:'ひとこと', cls:'badge-green',
+      text:`Power Automateのエラーメッセージ、ちゃんと読むとだいたい答えが書いてある。\n#PowerAutomate`
+    },
+    {
+      title:'アンケートスコア', badge:'データ', cls:'badge-purple',
+      text:`第${vol}回のアンケート。理解度${score}%・役立ち度${useful}%。\nまあまあよかった。\n#PA45`
+    },
+  ];
+
+  const shakai = [
+    {
+      title:'社内で勉強会やった', badge:'社内', cls:'badge-teal',
+      text:`社内でPower Automateの勉強会をやった。フロー動かせた人が多くてよかった。\n#PowerAutomate #PowerPlatform`
+    },
+    {
+      title:'社内推進してて思う', badge:'社内', cls:'badge-gray',
+      text:`社内でPower Platform広めてて思うのは、使い方より「どう使うか」のイメージが先だということ。\n#PowerPlatform`
+    },
+    {
+      title:'社内で質問来た', badge:'社内', cls:'badge-green',
+      text:`社内で「これどうやるの？」って聞かれることが最近増えてきた。\n#PowerPlatform`
+    },
+    {
+      title:'社内講座やってみた', badge:'社内', cls:'badge-amber',
+      text:`社内講座やってみた。操作の説明より「こういう場面で使える」を先に話した方がよかった。\n#PowerPlatform #PowerAutomate`
+    },
+  ];
+
+  return { announce, feels, insight, tips: tipsArr, shakai };
+}
+
+/* ─────────────────────────────
+   タブ切り替え
+───────────────────────────── */
+function showTab(name) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  g('sec-' + name).classList.add('active');
+  event.currentTarget.classList.add('active');
+}
+
+/* ─────────────────────────────
+   ランダム表示
+───────────────────────────── */
+function shuffle() {
+  const t = getTemplates();
+  const all = [
+    ...t.feels,
+    ...t.insight,
+    ...t.tips,
+    ...t.shakai,
+  ];
+  // Fisher-Yates shuffle
+  for (let i = all.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [all[i], all[j]] = [all[j], all[i]];
+  }
+  const grid = g('random-grid');
+  grid.innerHTML = '';
+  all.forEach(item => grid.appendChild(makeCard(item.title, item.badge, item.cls, item.text)));
+}
+
+/* ─────────────────────────────
+   全体更新
+───────────────────────────── */
+function rebuildAll() {
+  const t = getTemplates();
+  renderCards('announce-cards', t.announce);
+  renderCards('feels-cards', t.feels);
+  renderCards('insight-cards', t.insight);
+  renderCards('tips-cards', t.tips);
+  renderCards('shakai-cards', t.shakai);
+  shuffle(); // ランダムも更新
+}
+
+/* ─────────────────────────────
+   upcoming-event.json から自動取得
+───────────────────────────── */
+async function loadUpcomingEvent() {
+  try {
+    const res = await fetch('../data/config/upcoming-event.json');
+    if (!res.ok) return;
+    const data = await res.json();
+    if (data.vol)          g('g-vol').value   = data.vol;
+    if (data.theme)        g('g-theme').value = data.theme;
+    if (data.connpass_url) g('g-url').value   = data.connpass_url;
+    rebuildAll();
+    console.log('✅ upcoming-event.json を読み込みました:', data);
+  } catch (e) {
+    // ローカルファイルアクセス時はスキップ
+    console.log('upcoming-event.json の自動取得をスキップ（ローカル環境）');
+  }
+}
+
+/* 初期表示 */
+loadUpcomingEvent().then(() => rebuildAll());
+</script>
+</body>
+</html>
