@@ -1,0 +1,60 @@
+name: PA45 開催後 自動サイト更新
+
+on:
+  # 木曜 21:15 JST = UTC 12:15
+  schedule:
+    - cron: "15 12 * * 4"
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "日付チェックをスキップして強制実行"
+        required: false
+        default: "false"
+      dry_run:
+        description: "ファイルを書き換えずに動作確認"
+        required: false
+        default: "false"
+
+permissions:
+  contents: write
+
+jobs:
+  post-event:
+    runs-on: ubuntu-latest
+    env:
+      WP_USER: ${{ secrets.WP_USER }}
+      WP_PASS: ${{ secrets.WP_PASS }}
+      WP_URL: ${{ secrets.WP_URL }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Run auto-post-event.py
+        run: |
+          ARGS=""
+          if [ "${{ github.event.inputs.force }}" = "true" ]; then
+            ARGS="$ARGS --force"
+          fi
+          if [ "${{ github.event.inputs.dry_run }}" = "true" ]; then
+            ARGS="$ARGS --dry-run"
+          fi
+          python scripts/auto-post-event.py $ARGS
+
+      - name: Commit and push if changed
+        run: |
+          set -euo pipefail
+          if git diff --quiet && git diff --staged --quiet; then
+            echo "No changes to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "auto: PA45 開催後サイト自動更新"
+          git push
