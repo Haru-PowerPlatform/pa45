@@ -450,9 +450,22 @@ document.addEventListener('click', function(e) {
   const voiceGrid  = document.getElementById('survey-voices');
   if (allComments.length) {
     voiceLabel.hidden = false;
-    voiceGrid.innerHTML = allComments.map(c =>
-      `<div class="voice-card"><div class="voice-body">${c.text.replace(/\n/g,'<br>')}</div><div class="voice-meta"><span class="voice-tag">第${c.vol}回</span>アンケート原文</div></div>`
-    ).join('');
+    const seenVols = new Set();
+    voiceGrid.innerHTML = allComments.map(c => {
+      const idAttr = !seenVols.has(c.vol) ? ` id="survey-vol-${c.vol}"` : '';
+      seenVols.add(c.vol);
+      return `<div class="voice-card"${idAttr}><div class="voice-body">${c.text.replace(/\n/g,'<br>')}</div><div class="voice-meta"><span class="voice-tag">第${c.vol}回</span>アンケート原文</div></div>`;
+    }).join('');
+    // ハッシュフラグメント対応：sessions側からのジャンプで該当回のコメントをハイライト
+    if (location.hash.startsWith('#survey-vol-')) {
+      const target = document.querySelector(location.hash);
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        target.style.transition = 'box-shadow .4s';
+        target.style.boxShadow = '0 0 0 3px rgba(42,125,212,.45)';
+        setTimeout(() => { target.style.boxShadow = ''; }, 2400);
+      }
+    }
   }
 })();
 </script>

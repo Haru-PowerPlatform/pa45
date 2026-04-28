@@ -140,7 +140,10 @@
       margin-top: 12px; padding: 10px 12px;
       background: #f0f6ff; border-radius: 10px;
       border-left: 3px solid var(--c-blue-mid);
+      min-height: 280px;
+      display: flex; flex-direction: column;
     }
+    .past-card { min-height: 540px; }
     .survey-label { font-size: 10px; font-weight: 700; color: var(--c-blue-mid); letter-spacing: .08em; margin-bottom: 8px; }
     .survey-row   { margin-bottom: 6px; }
     .survey-row-head {
@@ -159,7 +162,20 @@
       font-size: 11px; color: var(--c-muted); line-height: 1.6;
       border-top: 1px solid rgba(42,125,212,.15); padding-top: 6px; margin-top: 6px;
       font-style: italic;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
+    .survey-more {
+      display: inline-block;
+      font-size: 11px; font-weight: 600;
+      color: var(--c-blue-mid); margin-top: 8px;
+      padding: 4px 10px; border-radius: 14px;
+      background: rgba(42,125,212,.08);
+      transition: background .15s;
+    }
+    .survey-more:hover { background: rgba(42,125,212,.16); }
   </style>
 
   <!-- SEO / OGP -->
@@ -509,8 +525,13 @@ document.querySelectorAll('.past-card[data-vol]').forEach(card => {
       }
 
       const commentList = data.comments || data.highlight_comments || [];
-      const comment = commentList.length > 0
-        ? commentList.map(c => `<div class="survey-comment">「${c}」</div>`).join('') : '';
+      const SHOW = 2;
+      const previewComments = commentList.slice(0, SHOW)
+        .map(c => `<div class="survey-comment">「${c}」</div>`).join('');
+      const moreLink = commentList.length > SHOW
+        ? `<a class="survey-more" href="../achievements/#survey-vol-${vol}">続きを見る（${commentList.length - SHOW}件）→</a>`
+        : '';
+      const comment = previewComments + moreLink;
 
       const block = document.createElement('div');
       block.className = 'survey-block';
