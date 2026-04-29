@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+<meta name="theme-color" content="#1e40af">
+<title>PL-300 暗記カード | はる専用</title>
+<meta name="description" content="PL-300（Power BI Data Analyst）試験対策の暗記カードサイト。間違えやすい問題と反射パターンをまとめた完全カスタム版。">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f172a;--panel:#1e293b;--card:#334155;--card-back:linear-gradient(135deg,#1e3a8a,#7c3aed);
+  --text:#f1f5f9;--muted:#94a3b8;--accent:#60a5fa;--success:#10b981;--warn:#f59e0b;--danger:#ef4444;
+  --radius:14px;--shadow:0 4px 20px rgba(0,0,0,.4);
+}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Sans","Yu Gothic UI",sans-serif;background:var(--bg);color:var(--text);line-height:1.7;-webkit-text-size-adjust:100%;min-height:100vh;padding-bottom:80px}
+.wrap{max-width:1100px;margin:0 auto;padding:16px}
+header{padding:24px 16px;text-align:center;background:linear-gradient(135deg,#1e3a8a 0%,#7c3aed 100%);border-radius:var(--radius);margin-bottom:20px;box-shadow:var(--shadow)}
+header h1{font-size:clamp(1.4rem,5vw,2rem);margin-bottom:6px;font-weight:700}
+header p{font-size:.9rem;opacity:.9}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.stat{background:var(--panel);padding:14px 8px;border-radius:var(--radius);text-align:center;border:1px solid #334155}
+.stat .num{font-size:clamp(1.4rem,5vw,2rem);font-weight:700;color:var(--accent);display:block}
+.stat .lbl{font-size:.75rem;color:var(--muted);margin-top:2px}
+
+.controls{position:sticky;top:0;background:var(--bg);padding:12px 0;z-index:10;border-bottom:1px solid #334155;margin-bottom:16px}
+.search{width:100%;padding:12px 14px;border:1px solid #475569;border-radius:10px;background:var(--panel);color:var(--text);font-size:1rem;margin-bottom:10px}
+.search:focus{outline:2px solid var(--accent)}
+.filters{display:flex;gap:6px;flex-wrap:wrap}
+.filter{padding:6px 12px;border:1px solid #475569;border-radius:20px;background:var(--panel);color:var(--text);cursor:pointer;font-size:.8rem;transition:all .2s;-webkit-tap-highlight-color:transparent}
+.filter.active{background:var(--accent);color:#0f172a;border-color:var(--accent);font-weight:600}
+.filter:active{transform:scale(.95)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.card{perspective:1000px;height:240px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.card-inner{position:relative;width:100%;height:100%;transition:transform .6s;transform-style:preserve-3d}
+.card.flipped .card-inner{transform:rotateY(180deg)}
+.face{position:absolute;width:100%;height:100%;backface-visibility:hidden;border-radius:var(--radius);padding:18px;display:flex;flex-direction:column;box-shadow:var(--shadow);overflow-y:auto}
+.front{background:var(--card);border:2px solid #475569}
+.back{background:var(--card-back);transform:rotateY(180deg);font-size:.88rem}
+.lvl{display:inline-block;font-size:.65rem;padding:3px 8px;border-radius:10px;font-weight:700;margin-bottom:6px;letter-spacing:.05em;align-self:flex-start}
+.lvl-4{background:var(--danger);color:#fff}
+.lvl-3{background:var(--warn);color:#0f172a}
+.lvl-2{background:#3b82f6;color:#fff}
+.lvl-1{background:var(--success);color:#fff}
+.cat{display:inline-block;font-size:.65rem;padding:3px 8px;border-radius:10px;background:rgba(255,255,255,.15);margin-bottom:6px;align-self:flex-start;margin-left:6px}
+.q{font-weight:700;font-size:1rem;margin:6px 0 8px;color:var(--text);flex:0 0 auto}
+.hint{font-size:.78rem;color:var(--muted);margin-top:auto;text-align:right}
+.a-title{font-weight:700;margin-bottom:6px;font-size:.95rem;color:#fde68a}
+.a-body{flex:1}
+.a-body strong{color:#fde68a}
+table{width:100%;border-collapse:collapse;margin:6px 0;font-size:.78rem}
+table td,table th{padding:4px 6px;border:1px solid rgba(255,255,255,.2);text-align:left}
+table th{background:rgba(0,0,0,.2)}
+.no-result{text-align:center;color:var(--muted);padding:40px 20px;grid-column:1/-1}
+
+footer{text-align:center;padding:20px;color:var(--muted);font-size:.75rem;margin-top:30px}
+footer a{color:var(--accent);text-decoration:none}
+
+.fab{position:fixed;bottom:20px;right:20px;width:56px;height:56px;border-radius:50%;background:var(--accent);color:#0f172a;border:none;font-size:1.5rem;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.5);z-index:20}
+.fab:active{transform:scale(.92)}
+
+@media(max-width:480px){
+  .cards{grid-template-columns:1fr}
+  .card{height:auto;min-height:200px}
+  .card-inner{position:relative;height:100%}
+  .face{position:relative;height:auto;min-height:200px}
+  .back{position:absolute;top:0}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .card-inner{transition:none}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>📘 PL-300 暗記カード</h1>
+  <p>はる専用 / Power BI Data Analyst 試験対策</p>
+</header>
+
+<div class="stats">
+  <div class="stat"><span class="num" id="total">0</span><span class="lbl">総カード数</span></div>
+  <div class="stat"><span class="num" id="critical">0</span><span class="lbl">最重要🚨</span></div>
+  <div class="stat"><span class="num" id="mastered">0</span><span class="lbl">確認済み</span></div>
+</div>
+
+<div class="controls">
+  <input id="search" class="search" type="search" placeholder="🔍 キーワード検索（例：DAX, RLS, ALL）">
+  <div class="filters" id="filters">
+    <button class="filter active" data-filter="all">全て</button>
+    <button class="filter" data-filter="critical">🚨 最重要</button>
+    <button class="filter" data-filter="DAX">DAX</button>
+    <button class="filter" data-filter="モデル">モデル</button>
+    <button class="filter" data-filter="PowerQuery">Power Query</button>
+    <button class="filter" data-filter="セキュリティ">セキュリティ</button>
+    <button class="filter" data-filter="配布">配布・管理</button>
+    <button class="filter" data-filter="視覚化">視覚化</button>
+  </div>
+</div>
+
+<div class="cards" id="cards"></div>
+
+<footer>
+  <p>更新日: 2026-04-29 / カードをタップで答え表示</p>
+  <p><a href="https://github.com/Haru-PowerPlatform/pa45/blob/main/docs/pl300-mistakes.md" target="_blank">📝 ミス記録の元データ</a></p>
+</footer>
+
+</div>
+
+<button class="fab" id="shuffle" title="シャッフル">🔀</button>
+
+<script>
+const data = [
+  // 🚨 最重要（4回以上ミス）
+  {lvl:4,cat:"PowerQuery",critical:true,q:"変換ロジックの一元管理・元データソースへのアクセス制限",a:"<strong>Power BI データフロー</strong>",body:"<table><tr><th>レイヤー</th><th>機能</th></tr><tr><td>変換層(ETL)</td><td><strong>データフロー</strong></td></tr><tr><td>モデル層</td><td>共有データセット</td></tr><tr><td>レポート層</td><td>アプリ/.pbit</td></tr></table>「変換ロジック・Power Query再利用」キーワードで反射。<strong>4回ミスの最重要項目。</strong>"},
+  {lvl:4,cat:"DAX",critical:true,q:"全国合計に対する割合 vs 表示中合計に対する割合",a:"<strong>ALL vs ALLSELECTED</strong>",body:"・「全国・全体・総〇〇」→ <strong>ALL</strong>（全フィルター解除）<br>・「表示中・選択範囲」→ <strong>ALLSELECTED</strong>（スライサー尊重）<br><br>例：スライサーで東京選択時<br>ALL → 全国合計が分母<br>ALLSELECTED → 東京だけ＝100%<br><br><strong>4回ミスの最重要項目。</strong>"},
+
+  // 🟠 3回ミス
+  {lvl:3,cat:"モデル",critical:true,q:"OrderDate / ShipDate / DueDate を独立して期間分析",a:"<strong>非アクティブ + USERELATIONSHIP</strong>",body:"・Dateテーブルは1つだけ作る<br>・1本アクティブ、残り2本は<strong>非アクティブ</strong>リレーション<br>・DAXで <code>USERELATIONSHIP</code> 切り替え<br><br>「1つのDateテーブル」「複数の日付列」がキーワード。"},
+  {lvl:3,cat:"モデル",q:"粒度違いテーブルのリレーション（日次vs月次）",a:"<strong>計算列で粒度を揃えて1対多</strong>",body:"多対多はほぼ罠。<br>例：日次の売上と月次の予算 → 売上側に「年月」計算列を作って予算と1対多。<br><br><strong>3回ミスの頻出パターン（CS③-Q5）。</strong>"},
+  {lvl:3,cat:"セキュリティ",q:"RLS（行レベルセキュリティ）の実装手順",a:"<strong>定義=Desktop / 割り当て=Service</strong>",body:"<table><tr><th>場所</th><th>役割</th></tr><tr><td>Desktop</td><td>ロール定義（DAX式）</td></tr><tr><td>Service</td><td>ユーザー割り当て</td></tr></table>テストは Desktop の「ロールとして表示」。<br><br><strong>3回ミス（Q65・ランダム②・新問28）。</strong>"},
+
+  // 🟡 2回ミス
+  {lvl:2,cat:"配布",q:"開発・テスト・本番の3環境管理・昇格",a:"<strong>展開パイプライン</strong>",body:"3つのステージ間でレポート・データセット・データフローを昇格。Premium機能。"},
+  {lvl:2,cat:"PowerQuery",q:"インポートデータ量を減らしたい",a:"<strong>Power Query（上流）でフィルター</strong>",body:"レポートフィルター・DAX FILTER は全データロード後の表示制御にすぎない。<br>Power Queryのフィルターは<strong>取得時点で削減</strong>される。"},
+  {lvl:2,cat:"セキュリティ",q:"Build vs Read 権限の違い",a:"<strong>Read=閲覧のみ / Build=新規レポート作成可</strong>",body:"Build権限は「データセットを使って新しいレポートを作る」許可。共有データセットでは必須。"},
+  {lvl:2,cat:"セキュリティ",q:"レポートのエクスポート禁止設定",a:"<strong>Desktop と Service の両方</strong>を変更",body:"Desktop のレポート設定 ＋ Service のテナント設定。<strong>片方だけだと有効にならない。</strong>"},
+  {lvl:2,cat:"モデル",q:"役割別日付テーブル（Role-playing dimension）",a:"<strong>Dateテーブルを複製して別名で使う</strong>",body:"OrderDateテーブル / ShipDateテーブルなど、それぞれ独立したDateテーブルとして配置。"},
+
+  // DAX タイムインテリジェンス
+  {lvl:2,cat:"DAX",q:"前年同月比（YoY）",a:"<strong>SAMEPERIODLASTYEAR</strong>",body:"<code>CALCULATE(SUM(Sales[Amount]), SAMEPERIODLASTYEAR(Date[Date]))</code><br>PARALLELPERIOD・PREVIOUSYEAR は罠。同<strong>期間</strong>比較にならない。"},
+  {lvl:2,cat:"DAX",q:"年初から今日まで累計",a:"<strong>TOTALYTD</strong>",body:"年累計=TOTALYTD / 四半期累計=TOTALQTD / 月累計=TOTALMTD<br>「〇〇累計」→ TOTAL〇〇 で反射。"},
+  {lvl:2,cat:"DAX",q:"任意起点から過去Nヶ月遡る（ローリング）",a:"<strong>DATESINPERIOD</strong>",body:"読み方：デイツ・イン・ピリオド<br><code>DATESINPERIOD(Date[Date], LASTDATE(Date[Date]), -12, MONTH)</code><br>「N日/Nヶ月/N年遡って」「ローリング」キーワード。"},
+  {lvl:2,cat:"DAX",q:"行ごとに掛け算/割り算してから合計",a:"<strong>SUMX</strong>",body:"<code>SUMX(Sales, Sales[Qty] * Sales[Price])</code><br>SUM = 1列をそのまま足す（速い）<br>SUMX = 行ごとに式評価して足す（柔軟・遅い）"},
+  {lvl:2,cat:"DAX",q:"製品ごとに最新の有効データの値を取りたい",a:"<strong>LASTNONBLANK</strong>",body:"在庫スナップショット・期末残高の定番。LASTDATEは空白でも日付を返す。"},
+  {lvl:2,cat:"DAX",q:"1列だけフィルター解除（他は残す）",a:"<strong>ALL(列名)</strong>",body:"・ALL(列名) = ピンポイント解除<br>・ALL(テーブル) = テーブル全列<br>・REMOVEFILTERS() = モデル全体（やりすぎ）"},
+  {lvl:2,cat:"DAX",q:"上位N件を抽出して集計",a:"<strong>TOPN + ALL</strong>",body:"<code>CALCULATE(SUM(...), TOPN(10, ALL(Product), [売上]))</code><br>ALLで全体から、TOPNで上位N件を切り出す。"},
+  {lvl:1,cat:"DAX",q:"#DIV/0! エラーを防ぐ割り算",a:"<strong>DIVIDE関数</strong>",body:"<code>DIVIDE(分子, 分母, 代替値)</code><br>分母が0/空白なら自動で代替値（既定はBLANK）を返す。"},
+
+  // モデル
+  {lvl:2,cat:"モデル",q:"タイムインテリジェンス関数が動かない原因",a:"<strong>「日付テーブルとしてマーク」未設定</strong>",body:"・AUTO DATE/TIME OFF<br>・カスタムDateテーブル<br>・<strong>「日付テーブルとしてマーク」</strong> がベストプラクティス"},
+  {lvl:2,cat:"モデル",q:"Auto Date/Time（自動の日付/時刻）",a:"<strong>オフ推奨</strong>",body:"日付列ごとに隠しテーブルが自動生成されてファイルサイズが膨れる。<br>「ファイル → オプション → 現在のファイル → データ読み込み」でオフ。"},
+
+  // Power Query
+  {lvl:2,cat:"PowerQuery",q:"JSON・Record型の列を表形式に展開",a:"<strong>列の展開（Expand）</strong>",body:"「列の分割」はテキストを区切り文字で切る別物。JSONの構造を理解しない。"},
+  {lvl:2,cat:"PowerQuery",q:"同じ構造のテーブルを縦に結合",a:"<strong>追加（Append）</strong>",body:"SQLの UNION 相当。月別売上テーブルを年間にまとめる時など。"},
+  {lvl:2,cat:"PowerQuery",q:"キーで結合して列を横に追加",a:"<strong>マージ（Merge）</strong>",body:"SQLの JOIN 相当。マスタ情報を取り込む時など。"},
+  {lvl:2,cat:"PowerQuery",q:"サービス上で接続先を切り替えたい",a:"<strong>Power Queryパラメーター</strong>",body:"展開パイプラインはコンテンツ昇格用で接続切替ではない。"},
+  {lvl:1,cat:"PowerQuery",q:"列名変更後にエラー「列が見つかりません」",a:"<strong>列名のハードコード問題</strong>",body:"Power Queryのステップは<strong>列名を文字列でハードコード</strong>する。<br>上流で列名を変えても下流のM式は自動連鎖しない。"},
+
+  // 視覚化
+  {lvl:2,cat:"視覚化",q:"別ページに飛ぶ + フィルター引き継ぎ",a:"<strong>ドリルスルー</strong>",body:"右クリック → ドリルスルー → 詳細ページへ。クリックした行のフィルターが自動で持ち込まれる。"},
+  {lvl:2,cat:"視覚化",q:"同じグラフで階層を掘る（年→月→日）",a:"<strong>ドリルダウン</strong>",body:"ページは変わらず同じビジュアルが細かくなる。Google Mapsのズーム的イメージ。"},
+  {lvl:2,cat:"視覚化",q:"複数ビジュアルの表示/非表示・グループ管理",a:"<strong>選択ペイン（Selection Pane）</strong>",body:"PowerPointのレイヤーパネル相当。目のアイコンで表示/非表示。Ctrl+Gでグループ化。<br>ブックマークは<strong>状態のスナップショット保存</strong>用で別物。"},
+  {lvl:2,cat:"視覚化",q:"クリックしたビジュアルが他に影響を与えないように",a:"<strong>相互作用を編集</strong>",body:"書式設定 → 相互作用を編集 → 「フィルター/強調表示/<strong>なし</strong>」から選択。"},
+  {lvl:2,cat:"視覚化",q:"値によって色を変えたい",a:"<strong>条件付き書式</strong>",body:"「データの色」は固定色のみ。条件付き書式はルール・グラデーション・FXで動的変更。"},
+  {lvl:2,cat:"視覚化",q:"地図ビジュアルで場所がずれる",a:"<strong>データカテゴリを設定</strong>",body:"国・都道府県・郵便番号などの地理列に「データカテゴリ」を割り当てる。モデルビュー or Power Query。"},
+  {lvl:2,cat:"視覚化",q:"複数列を国→地域→都市の階層にしたい",a:"<strong>モデルビューで階層を作成</strong>",body:"列をドラッグするだけでは正式な階層にならない。「階層の作成」で公式階層を作ってから軸へ。"},
+  {lvl:2,cat:"視覚化",q:"印刷・PDF・全行表示・帳票",a:"<strong>ページ分割レポート（Paginated Report）</strong>",body:"請求書・明細書など。.rdl形式。通常レポートはインタラクティブ向け。"},
+  {lvl:1,cat:"視覚化",q:"ページ間でスライサーを連動",a:"<strong>同期スライサー</strong>",body:"「表示しないがフィルターは効かせたい」→ 同期ON・表示OFF（独立トグル）。"},
+  {lvl:1,cat:"視覚化",q:"行ごとにフラグ・値を付けたい",a:"<strong>計算列</strong>",body:"メジャーは行を持てない。フィルターは表示制御のみ。「上位10%にフラグ」「各行に分類」→ 計算列。"},
+  {lvl:1,cat:"視覚化",q:"複数メジャーに同じ計算パターンを一括適用",a:"<strong>計算グループ</strong>",body:"YoY・YTDなどを全メジャーに適用したい時。Tabular Editor等で作成。クイックメジャーは個別作成。"},
+
+  // 配布・管理
+  {lvl:2,cat:"配布",q:"オンプレミスSQL Serverへ自動接続",a:"<strong>オンプレミスデータゲートウェイ</strong>",body:"ImportでもDirectQueryでも必須。クラウドのPower BI Serviceは社内ネットワークに直接入れない。"},
+  {lvl:2,cat:"配布",q:"定期的にレポートをメール送信",a:"<strong>サブスクリプション</strong>",body:"スケジュール設定でPDF/PPTX添付メール。レポートビューア向け。"},
+  {lvl:2,cat:"配布",q:"閾値を超えたら通知",a:"<strong>データアラート</strong>",body:"KPI/カードビジュアルのみ対応。Power Automate連携可能。"},
+  {lvl:2,cat:"配布",q:"ライセンスなし・社外・誰でも閲覧",a:"<strong>Webに公開（Publish to Web）</strong>",body:"完全公開になるため<strong>機密データNG</strong>。匿名アクセス可。"},
+  {lvl:2,cat:"配布",q:"DirectQuery vs ライブ接続",a:"<strong>用途で使い分け</strong>",body:"・DirectQuery → SQL Server等の<strong>生のデータソース</strong>に直接<br>・ライブ接続 → <strong>Power BIデータセット or SSAS</strong>"},
+  {lvl:1,cat:"配布",q:"レポートが遅い原因を調べたい",a:"<strong>パフォーマンスアナライザー</strong>",body:"表示タブ → 記録の開始 → ビジュアル毎にDAX/表示/その他の時間内訳が出る。"},
+];
+
+const cardsEl = document.getElementById("cards");
+const searchEl = document.getElementById("search");
+const filtersEl = document.getElementById("filters");
+let currentFilter = "all";
+
+function render(){
+  const kw = searchEl.value.trim().toLowerCase();
+  let list = data.filter(d=>{
+    if(currentFilter==="critical" && !d.critical) return false;
+    if(currentFilter!=="all" && currentFilter!=="critical" && d.cat!==currentFilter) return false;
+    if(kw){
+      const text = (d.q+d.a+d.body+d.cat).toLowerCase();
+      if(!text.includes(kw)) return false;
+    }
+    return true;
+  });
+  list.sort((a,b)=>b.lvl-a.lvl);
+  cardsEl.innerHTML = list.length===0
+    ? '<div class="no-result">該当するカードがありません</div>'
+    : list.map((d,i)=>cardHTML(d,i)).join("");
+  document.getElementById("total").textContent = data.length;
+  document.getElementById("critical").textContent = data.filter(d=>d.critical).length;
+  document.getElementById("mastered").textContent = countMastered();
+}
+function countMastered(){
+  try{return JSON.parse(localStorage.getItem("pl300_mastered")||"[]").length}catch(e){return 0}
+}
+function cardHTML(d,i){
+  const lvlText = {4:"🚨 最重要",3:"⚠️ 重要",2:"📌 頻出",1:"📖 基本"}[d.lvl];
+  return `<div class="card" data-idx="${i}" onclick="this.classList.toggle('flipped')">
+    <div class="card-inner">
+      <div class="face front">
+        <div><span class="lvl lvl-${d.lvl}">${lvlText}</span><span class="cat">${d.cat}</span></div>
+        <div class="q">Q. ${d.q}</div>
+        <div class="hint">タップで答えを見る →</div>
+      </div>
+      <div class="face back">
+        <div class="a-title">A. ${d.a}</div>
+        <div class="a-body">${d.body}</div>
+      </div>
+    </div>
+  </div>`;
+}
+filtersEl.addEventListener("click", e=>{
+  const btn = e.target.closest(".filter");
+  if(!btn) return;
+  document.querySelectorAll(".filter").forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+  currentFilter = btn.dataset.filter;
+  render();
+});
+searchEl.addEventListener("input", render);
+document.getElementById("shuffle").addEventListener("click", ()=>{
+  for(let i=data.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [data[i],data[j]] = [data[j],data[i]];
+  }
+  render();
+  window.scrollTo({top:0,behavior:"smooth"});
+});
+render();
+</script>
+</body>
+</html>
