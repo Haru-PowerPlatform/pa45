@@ -175,6 +175,31 @@ const data = [
   {lvl:2,cat:"配布",q:"オンプレミスSQL自動更新セットアップの手順",a:"<strong>C→B→D→A</strong>",body:"<ol style='padding-left:18px'><li><strong>C</strong> ゲートウェイをサーバーにインストール</li><li><strong>B</strong> Desktopでレポート作成→Service発行</li><li><strong>D</strong> データソース資格情報を構成</li><li><strong>A</strong> スケジュール更新を有効化</li></ol>「<strong>橋を先に架ける</strong>」が定石。"},
   {lvl:2,cat:"DAX",q:"メジャーの小計・総計を自動計算したい",a:"<strong>何も特別な対応不要</strong>",body:"メジャーはフィルターコンテキストに応じて<strong>各集計レベルで自動再計算</strong>される。<br>ALLは「全フィルター無視で全体強制参照」の時だけ使う。<br>小計・総計の自動計算には不要（罠選択肢）。"},
   {lvl:2,cat:"配布",q:"オンプレミス接続で「最大遅延X分」要件",a:"<strong>DirectQuery（スケジュール更新不要）</strong>",body:"・「リアルタイム」「最大遅延N分」→ <strong>DirectQuery</strong><br>・DirectQueryなので<strong>スケジュール更新は不要</strong><br>・ただしオンプレミス接続なので<strong>ゲートウェイは必須</strong><br>「リアルタイム＝Import+短時間更新」と勘違いしやすいが、Importは更新間隔に下限がある。"},
+
+  // === 過去アーカイブ（Q61-Q117）からの追加カード ===
+  {lvl:3,cat:"視覚化",q:"レポートに新ビジュアル追加→ダッシュボードに自動反映",a:"<strong>ライブページのピン留め（Pin live page）</strong>",body:"個別ビジュアルのピン留めはスナップショット扱いで自動反映されない。<br>「ライブページのピン留め」=ページ全体を貼る → 後から追加したビジュアルも自動表示。<br><strong>Power BI サービス側でしか操作できない</strong>（Desktop不可）。Q61。"},
+  {lvl:3,cat:"PowerQuery",q:"Mergeに使うだけの中間クエリ（Categoriesなど）",a:"<strong>「読み込みを有効にする」をオフ</strong>",body:"結合に使うだけで最終モデルに単独テーブルとして要らないクエリは<strong>Enable load = OFF</strong>でモデルサイズ削減。<br>右ペイン「クエリ」→ 右クリック →「読み込みを有効にする」で切替。Q83・Q78。"},
+  {lvl:3,cat:"視覚化",q:"カスタムツールチップを使えるようにする3操作",a:"<strong>許可ON＋ビジュアル配置＋フィルター設定</strong>",body:"<ol style='padding-left:18px'><li>対象ページの「ページ情報」→<strong>「ツールチップとして使用を許可する」をON</strong></li><li>そのページに<strong>ビジュアルを配置</strong></li><li>そのページに<strong>フィルター</strong>を設定</li></ol>呼び出し側ビジュアル自体の設定は不要。Q90。"},
+  {lvl:3,cat:"モデル",q:"リレーションを作る前にやるべき準備",a:"<strong>キー列のデータ型を一致させる（整数推奨）</strong>",body:"両テーブルのキー列データ型が違うとリレーションは成立しない。<br>キー列のベストプラクティス＝<strong>整数型</strong>（メモリ効率・パフォーマンスとも◎）。Q96。"},
+  {lvl:3,cat:"PowerQuery",q:"列の一意性を確認したい",a:"<strong>列の分布 ＋ 列のプロファイル</strong>",body:"<table><tr><th>機能</th><th>用途</th></tr><tr><td>列の品質</td><td>有効/空白/エラー率の<strong>棒グラフ</strong></td></tr><tr><td><strong>列の分布</strong></td><td>ユニーク数・distinct数</td></tr><tr><td><strong>列のプロファイル</strong></td><td>詳細統計（最小/最大/平均）</td></tr></table>「列の品質」だけでは一意性は判定できない。Q7。"},
+  {lvl:3,cat:"PowerQuery",q:"エラー値が含まれる列を解決したい",a:"<strong>「エラーを置換」</strong>",body:"<table><tr><th>操作</th><th>結果</th></tr><tr><td><strong>エラーを置換</strong></td><td>指定値に差し替え（データ保持）</td></tr><tr><td>エラーの削除</td><td>行ごと削除（データ損失）</td></tr><tr><td>エラーを保持</td><td>デバッグ用</td></tr></table>「データを失いたくない」要件では削除は選ばない。Q97。"},
+  {lvl:3,cat:"視覚化",q:"色覚異常のユーザー向けに全体色を変えたい",a:"<strong>テーマカラー ＋ センチメントカラー</strong>",body:"・<strong>テーマカラー</strong>：レポート全体のデフォルト色を一括変更<br>・<strong>センチメントカラー</strong>：KPIやウォーターフォールの<strong>増減色</strong>（赤=悪・緑=良など）<br>「第1レベル要素の色」「発散色」は限定用途で全体変更には不十分。Q101。"},
+  {lvl:3,cat:"視覚化",q:"カスタムテーマをダッシュボードでも使いたい",a:"<strong>JSON保存→アップロード</strong>",body:"テーマの実体は<strong>JSONファイル</strong>。ダッシュボードはレポートのテーマを自動継承しない。<br>1. ReportAから<strong>テーマをJSON保存</strong><br>2. DashboardAで<strong>JSONをアップロード</strong><br>ダッシュボード上でテーマ新規作成は不可。Q103。"},
+  {lvl:3,cat:"DAX",q:"日次スナップショット型ファクト（Balances等）の集計",a:"<strong>日単位のカウントのみ正確</strong>",body:"・年・月で集計すると<strong>同じ口座が複数日でカウントされ延べ数</strong>になる<br>・「通じて（throughout）」=全期間該当の意味は単純カウントでは出せない（intersect判定が必要）<br>類例：在庫スナップショット、従業員在籍判定。Q112。"},
+  {lvl:2,cat:"配布",q:"Azure SQL接続のCommand timeout既定値",a:"<strong>10分</strong>",body:"Power BI Desktop のSQL系接続のCommand timeout既定値=<strong>10分</strong>。<br>ナビゲーターは<strong>メタデータ表示</strong>＝データ有無と無関係に表示。「完全な階層を使用して移動」は表示形式（スキーマ階層/フラット）の切替であって絞り込みではない。Q115。"},
+  {lvl:3,cat:"PowerQuery",q:"同構造2テーブルから重複なしリストを作る",a:"<strong>Append ＋ 重複削除</strong>",body:"縦に積む（Append）→ 重複行を削除。<br>「マージ」は横方向に列を足す別操作。Q63（3回失点）。"},
+  {lvl:2,cat:"PowerQuery",q:"「日付 at 時刻」を日付列に変換したい",a:"<strong>「at」で列分割 ＋ Date型変換</strong>",body:"区切り文字で分割→Date型に変換が定石。「例から列を作成」は不安定。<br>「時間ごと分析」要件があるならDate型変換すると<strong>時刻が消失するのでNG</strong>。Q64・Q93・Q21②。"},
+  {lvl:2,cat:"モデル",q:"Dual モード（Storage Mode）",a:"<strong>Import/DirectQuery 両方と結合するディメンション用</strong>",body:"DualテーブルはInportとDirectQueryの両方のテーブルとリレーションを持てる。<br>「両刀使いのディメンション」と覚える。Date等の共通ディメンションで活用。Q41。"},
+  {lvl:2,cat:"セキュリティ",q:"動的RLS（1ロールで多数ユーザー対応）",a:"<strong>USERNAME() ＋ 両方向フィルター</strong>",body:"<code>[Email] = USERNAME()</code>等で動的にフィルター。1ロールで全ユーザー対応。<br>従業員→部署のフィルターを効かせるには<strong>双方向フィルター</strong>が必要なケースあり。Q48。"},
+  {lvl:2,cat:"セキュリティ",q:"RLS実装の正しい順序",a:"<strong>定義→発行→割当→権限</strong>",body:"<ol style='padding-left:18px'><li>Desktopでロール定義（DAX）</li><li>Service へ発行</li><li>Service でユーザー割り当て</li><li>レポート権限を付与</li></ol>「発行してから割当」が鉄則。順序逆を選ばない。Q57。"},
+  {lvl:2,cat:"視覚化",q:"10カテゴリの利益を比較したい",a:"<strong>集合棒グラフ</strong>",body:"カテゴリ比較=棒グラフが定石。面グラフは時系列の累積向け。<br>「比較」キーワード→ 棒で反射。Q73。"},
+  {lvl:2,cat:"視覚化",q:"売上実績 vs 目標を時系列で見たい",a:"<strong>KPIビジュアル</strong>",body:"折れ線は推移は見せるが<strong>目標との対比</strong>がない。<br>KPIビジュアル＝「実績値 ＋ 目標値 ＋ 推移」を1つで表示。Case③-Q3。"},
+  {lvl:2,cat:"視覚化",q:"既存ダッシュボードに最小影響でビジュアル追加",a:"<strong>ピン留め ＋ Q&A</strong>",body:"レポートを変更すると他にも影響。Q&A結果をピン留めすれば<strong>レポートに手を入れず</strong>追加可。<br>「クイックインサイト」は別物（インサイト自動生成）。Q85。"},
+  {lvl:2,cat:"配布",q:"Azure DevOps Analytics への接続",a:"<strong>OData フィード</strong>",body:"分析ビュー＝OData<strong>フィード</strong>（Queryではない）。<br>「OData クエリ」と「OData フィード」の罠用語に注意。Q52。"},
+  {lvl:2,cat:"配布",q:"既存メジャーを別レポートで再利用したい",a:"<strong>共有データセット</strong>（データフローではない）",body:"データフローは<strong>変換ロジックの再利用</strong>用で、メジャーは引き継げない。<br>メジャー再利用＝<strong>共有データセット</strong>に接続して新レポート作成。Q79。"},
+  {lvl:2,cat:"視覚化",q:"レポートにコメント・@メンションで報告",a:"<strong>コメント機能</strong>",body:"アラートは閾値通知用。コメント機能は<strong>レポート内の議論・@メンション通知</strong>用。Q105。"},
+  {lvl:2,cat:"モデル",q:"大規模データの集計（パフォーマンス重視）",a:"<strong>グループ化 ＋ COUNTROWS ＋ リレーション</strong>",body:"計算テーブルは逆効果（メモリ消費）。<br>Power Queryで<strong>事前集計</strong>→集計テーブルとファクトをリレーション。Q94。"},
+  {lvl:2,cat:"PowerQuery",q:"AppSourceでユーザーが見られない",a:"<strong>アクセス設定</strong>（コンテンツ設定ではない）",body:"「コンテンツ設定」と「アクセス設定」の用語の罠。<br>ユーザーが<strong>見られない</strong>＝アクセス権の問題。Q25。"},
 ];
 
 const cardsEl = document.getElementById("cards");
