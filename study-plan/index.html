@@ -112,6 +112,72 @@
     100% { transform: translate(-50%, -200%) scale(1); opacity: 0; }
   }
 
+  .friends-row { margin-top: 14px; min-height: 36px; position: relative; z-index: 1; }
+  .friend-penguin {
+    display: inline-block; font-size: 28px; margin: 0 2px;
+    animation: pet-idle 2s ease-in-out infinite;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+  }
+  .friend-penguin:nth-child(2n) { animation-delay: -0.5s; }
+  .friend-penguin:nth-child(3n) { animation-delay: -1s; }
+
+  .inventory {
+    background: white;
+    padding: 16px 18px;
+    border-radius: 16px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  }
+  .inventory-title {
+    font-size: 13px; font-weight: 700; color: #475569; margin-bottom: 10px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .inventory-grid {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px;
+  }
+  .inv-item {
+    background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 10px 4px;
+    text-align: center;
+    transition: all 0.2s;
+  }
+  .inv-item.has { border-color: #fbbf24; background: linear-gradient(135deg, #fffbeb, #fef3c7); }
+  .inv-emoji { font-size: 28px; line-height: 1; }
+  .inv-count {
+    font-size: 13px; font-weight: 700; margin-top: 4px;
+    color: #94a3b8;
+  }
+  .inv-item.has .inv-count { color: #d97706; }
+  .inv-name { font-size: 10px; color: #64748b; margin-top: 2px; }
+
+  .item-drop {
+    position: fixed; pointer-events: none; z-index: 9999;
+    font-size: 40px;
+    animation: item-drop-anim 1.4s ease-out forwards;
+  }
+  @keyframes item-drop-anim {
+    0% { transform: translate(-50%, -50%) scale(0) rotate(0); opacity: 0; }
+    20% { transform: translate(-50%, -100%) scale(1.4) rotate(-15deg); opacity: 1; }
+    60% { transform: translate(-50%, -100%) scale(1.2) rotate(15deg); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(0.8) rotate(0); opacity: 0; }
+  }
+  .item-toast {
+    position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    color: white; padding: 12px 24px; border-radius: 999px;
+    font-weight: 700; font-size: 14px; z-index: 9999;
+    box-shadow: 0 8px 24px rgba(245,158,11,0.4);
+    animation: toast-in 2.2s ease forwards;
+  }
+  @keyframes toast-in {
+    0% { transform: translate(-50%, 100px); opacity: 0; }
+    15% { transform: translate(-50%, 0); opacity: 1; }
+    85% { transform: translate(-50%, 0); opacity: 1; }
+    100% { transform: translate(-50%, -20px); opacity: 0; }
+  }
+
   .legend {
     background: white;
     padding: 14px 18px;
@@ -288,8 +354,17 @@
   <div class="pet-emoji" id="pet-emoji">🥚</div>
   <div class="pet-name" id="pet-name">たまご</div>
   <div class="pet-message" id="pet-message">これからよろしく！</div>
+  <div class="friends-row" id="friends-row"></div>
   <div class="pet-stage-bar" id="pet-stage-bar"></div>
   <div class="pet-stage-label" id="pet-stage-label">ステージ 1 / 7</div>
+</div>
+
+<div class="inventory">
+  <div class="inventory-title">
+    <span>🎁 アイテムコレクション</span>
+    <span style="font-size:11px;color:#94a3b8;font-weight:400">タスク達成でゲット！</span>
+  </div>
+  <div class="inventory-grid" id="inventory-grid"></div>
 </div>
 
 <div class="progress-card">
@@ -485,6 +560,97 @@ const schedule = [
 
 const STORAGE_KEY = "johoku-chu2-midterm-2026-05";
 const STAGE_KEY = STORAGE_KEY + "-stage";
+const INV_KEY = STORAGE_KEY + "-inv";
+const FRIENDS_KEY = STORAGE_KEY + "-friends";
+
+const ITEMS = [
+  { id: "fish",    emoji: "🐟", name: "さかな",   weight: 50 },
+  { id: "shrimp",  emoji: "🦐", name: "エビ",     weight: 25 },
+  { id: "ice",     emoji: "🧊", name: "こおり",   weight: 15 },
+  { id: "crab",    emoji: "🦀", name: "カニ",     weight: 7 },
+  { id: "friend",  emoji: "🐧", name: "ともだち", weight: 3 }
+];
+
+function rollItem() {
+  const total = ITEMS.reduce((s, i) => s + i.weight, 0);
+  let r = Math.random() * total;
+  for (const item of ITEMS) {
+    r -= item.weight;
+    if (r <= 0) return item;
+  }
+  return ITEMS[0];
+}
+
+function loadInv() {
+  try { return JSON.parse(localStorage.getItem(INV_KEY) || "{}"); }
+  catch { return {}; }
+}
+function saveInv(inv) {
+  localStorage.setItem(INV_KEY, JSON.stringify(inv));
+}
+function loadFriends() {
+  return parseInt(localStorage.getItem(FRIENDS_KEY) || "0");
+}
+function saveFriends(n) {
+  localStorage.setItem(FRIENDS_KEY, String(n));
+}
+
+let inventory = loadInv();
+let friendsCount = loadFriends();
+
+function showItemDrop(item) {
+  const el = document.createElement("div");
+  el.className = "item-drop";
+  el.textContent = item.emoji;
+  el.style.left = (50 + (Math.random() - 0.5) * 30) + "vw";
+  el.style.top = "40vh";
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 1500);
+
+  const toast = document.createElement("div");
+  toast.className = "item-toast";
+  toast.textContent = `${item.emoji} ${item.name}をゲット！`;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 2400);
+}
+
+function dropItem() {
+  const item = rollItem();
+  inventory[item.id] = (inventory[item.id] || 0) + 1;
+  saveInv(inventory);
+  if (item.id === "friend") {
+    friendsCount = Math.min(friendsCount + 1, 8);
+    saveFriends(friendsCount);
+  }
+  showItemDrop(item);
+}
+
+function renderInventory() {
+  const grid = document.getElementById("inventory-grid");
+  grid.innerHTML = "";
+  ITEMS.forEach(item => {
+    const count = inventory[item.id] || 0;
+    const div = document.createElement("div");
+    div.className = "inv-item" + (count > 0 ? " has" : "");
+    div.innerHTML = `
+      <div class="inv-emoji">${item.emoji}</div>
+      <div class="inv-count">×${count}</div>
+      <div class="inv-name">${item.name}</div>
+    `;
+    grid.appendChild(div);
+  });
+}
+
+function renderFriends() {
+  const row = document.getElementById("friends-row");
+  row.innerHTML = "";
+  for (let i = 0; i < friendsCount; i++) {
+    const f = document.createElement("span");
+    f.className = "friend-penguin";
+    f.textContent = "🐧";
+    row.appendChild(f);
+  }
+}
 
 const PET_STAGES = [
   { min: 0,  emoji: "🥚",     name: "たまご",         msg: "これからよろしく！" },
@@ -608,11 +774,19 @@ function render() {
     showConfetti();
   }
   localStorage.setItem(STAGE_KEY, String(stageIdx));
+
+  renderInventory();
+  renderFriends();
 }
 
 function toggleTask(key) {
-  doneState[key] = !doneState[key];
+  const wasOn = !!doneState[key];
+  doneState[key] = !wasOn;
   saveDone(doneState);
+  // チェック時のみアイテムドロップ（外す時はドロップしない）
+  if (!wasOn) {
+    dropItem();
+  }
   render();
 }
 
@@ -628,9 +802,13 @@ function collapseAll() {
   document.querySelectorAll(".day").forEach(d => d.classList.remove("open"));
 }
 function resetAll() {
-  if (!confirm("すべてのチェックをリセットしますか？\n（ペンギンもたまごに戻ります）")) return;
+  if (!confirm("すべてのチェックをリセットしますか？\n（ペンギン・アイテム・ともだちもリセットされます）")) return;
   doneState = {};
+  inventory = {};
+  friendsCount = 0;
   saveDone(doneState);
+  saveInv(inventory);
+  saveFriends(friendsCount);
   localStorage.removeItem(STAGE_KEY);
   render();
 }
