@@ -265,11 +265,19 @@
     text-align: center;
     transition: all 0.2s;
   }
-  .inv-item.has { border-color: #fbbf24; background: linear-gradient(135deg, #fffbeb, #fef3c7); }
-  .inv-item.has[data-tier="rare"] { border-color: #3b82f6; background: linear-gradient(135deg, #dbeafe, #bfdbfe); box-shadow: 0 0 8px rgba(59,130,246,0.3); }
-  .inv-item.has[data-tier="epic"] { border-color: #a855f7; background: linear-gradient(135deg, #f3e8ff, #e9d5ff); box-shadow: 0 0 10px rgba(168,85,247,0.4); }
+  /* レア度ごとの枠（未取得でも分かる） */
+  .inv-item[data-tier="common"]    { border-color: #cbd5e1; }
+  .inv-item[data-tier="uncommon"]  { border-color: #86efac; }
+  .inv-item[data-tier="rare"]      { border-color: #60a5fa; }
+  .inv-item[data-tier="epic"]      { border-color: #c084fc; }
+  .inv-item[data-tier="legendary"] { border-color: #fbbf24; }
+
+  /* 取得済みは色濃く＋発光 */
+  .inv-item.has[data-tier="common"]    { background: linear-gradient(135deg, #f1f5f9, #e2e8f0); }
+  .inv-item.has[data-tier="uncommon"]  { background: linear-gradient(135deg, #dcfce7, #bbf7d0); }
+  .inv-item.has[data-tier="rare"]      { background: linear-gradient(135deg, #dbeafe, #bfdbfe); box-shadow: 0 0 8px rgba(59,130,246,0.3); }
+  .inv-item.has[data-tier="epic"]      { background: linear-gradient(135deg, #f3e8ff, #e9d5ff); box-shadow: 0 0 10px rgba(168,85,247,0.4); }
   .inv-item.has[data-tier="legendary"] {
-    border-color: #f59e0b;
     background: linear-gradient(135deg, #fef3c7, #fde68a);
     animation: legendary-pulse 2s ease-in-out infinite;
   }
@@ -277,6 +285,18 @@
     0%,100% { box-shadow: 0 0 8px rgba(245,158,11,0.5); }
     50% { box-shadow: 0 0 18px rgba(245,158,11,0.9); }
   }
+
+  /* レア度バッジ */
+  .inv-tier {
+    font-size: 8px; font-weight: 800; letter-spacing: 0.5px;
+    padding: 1px 4px; border-radius: 4px; margin-bottom: 2px;
+    display: inline-block; color: white;
+  }
+  .inv-tier.common    { background: #94a3b8; }
+  .inv-tier.uncommon  { background: #22c55e; }
+  .inv-tier.rare      { background: #3b82f6; }
+  .inv-tier.epic      { background: #a855f7; }
+  .inv-tier.legendary { background: linear-gradient(90deg, #f59e0b, #ef4444); }
   .inv-emoji { font-size: 20px; line-height: 1; }
   .inv-count {
     font-size: 11px; font-weight: 700; margin-top: 2px;
@@ -1027,10 +1047,17 @@ function renderInventory() {
     const div = document.createElement("div");
     div.className = "inv-item" + (count > 0 ? " has" : "");
     div.dataset.tier = item.tier || "common";
+    const tier = item.tier || "common";
+    const tierLabel = { common:"コモン", uncommon:"アンコモン", rare:"レア", epic:"超レア", legendary:"伝説" }[tier];
+    // 秘密アイテム（unicorn）は未取得時は？表示
+    const isSecret = item.id === "unicorn" && count === 0;
+    const displayEmoji = isSecret ? "❓" : item.emoji;
+    const displayName = isSecret ? "？？？" : item.name;
     div.innerHTML = `
-      <div class="inv-emoji">${item.emoji}</div>
+      <div class="inv-tier ${tier}">${tierLabel}</div>
+      <div class="inv-emoji">${displayEmoji}</div>
       <div class="inv-count">×${count}</div>
-      <div class="inv-name">${item.name}</div>
+      <div class="inv-name">${displayName}</div>
     `;
     grid.appendChild(div);
   });
