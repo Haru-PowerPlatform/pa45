@@ -8,13 +8,89 @@
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", sans-serif;
-    background: linear-gradient(135deg, #f0f4ff 0%, #fef9f0 100%);
+    background: linear-gradient(180deg, #87ceeb 0%, #4fb3d9 40%, #1e90c4 100%);
     color: #1a202c;
     line-height: 1.6;
     padding: 16px;
     min-height: 100vh;
+    overflow-x: hidden;
   }
-  .container { max-width: 900px; margin: 0 auto; }
+  .container { max-width: 900px; margin: 0 auto; position: relative; z-index: 2; }
+
+  /* 海の背景 */
+  .ocean-bg {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden;
+  }
+  .wave {
+    position: absolute; left: -10%; right: -10%; height: 80px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 50% 50% 0 0;
+    animation: wave-move 8s ease-in-out infinite;
+  }
+  .wave.w1 { top: 25%; animation-duration: 9s; opacity: 0.4; }
+  .wave.w2 { top: 50%; animation-duration: 11s; animation-delay: -3s; opacity: 0.3; }
+  .wave.w3 { top: 75%; animation-duration: 13s; animation-delay: -5s; opacity: 0.25; }
+  @keyframes wave-move {
+    0%, 100% { transform: translateX(-3%) scaleY(1); }
+    50% { transform: translateX(3%) scaleY(1.05); }
+  }
+  .swimmer {
+    position: absolute; font-size: 28px;
+    animation: swim 18s linear infinite;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
+  }
+  .swimmer.s1 { top: 15%; animation-duration: 22s; }
+  .swimmer.s2 { top: 38%; animation-duration: 26s; animation-delay: -8s; font-size: 22px; }
+  .swimmer.s3 { top: 62%; animation-duration: 30s; animation-delay: -15s; font-size: 32px; }
+  .swimmer.s4 { top: 85%; animation-duration: 24s; animation-delay: -5s; font-size: 24px; }
+  .swimmer.s5 { top: 28%; animation-duration: 35s; animation-delay: -20s; font-size: 20px; }
+  @keyframes swim {
+    0%   { left: -10%; transform: scaleX(1) translateY(0); }
+    25%  { transform: scaleX(1) translateY(-15px); }
+    50%  { left: 110%; transform: scaleX(1) translateY(0); }
+    51%  { transform: scaleX(-1) translateY(0); }
+    75%  { transform: scaleX(-1) translateY(15px); }
+    100% { left: -10%; transform: scaleX(-1) translateY(0); }
+  }
+  .bubble {
+    position: absolute;
+    width: 12px; height: 12px;
+    background: rgba(255,255,255,0.4);
+    border-radius: 50%;
+    animation: bubble-up 6s linear infinite;
+  }
+  @keyframes bubble-up {
+    0% { transform: translateY(100vh) scale(0.3); opacity: 0; }
+    10% { opacity: 0.6; }
+    90% { opacity: 0.6; }
+    100% { transform: translateY(-10vh) scale(1); opacity: 0; }
+  }
+
+  /* 連続達成バッジ */
+  .streak-badge {
+    background: linear-gradient(135deg, #fb923c, #f97316);
+    color: white;
+    padding: 12px 18px;
+    border-radius: 14px;
+    margin-bottom: 16px;
+    text-align: center;
+    box-shadow: 0 4px 14px rgba(249,115,22,0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+  .streak-fire { font-size: 28px; animation: fire-flicker 1.5s ease-in-out infinite; }
+  @keyframes fire-flicker {
+    0%, 100% { transform: scale(1) rotate(-3deg); }
+    50% { transform: scale(1.15) rotate(3deg); }
+  }
+  .streak-num { font-size: 24px; font-weight: 800; }
+  .streak-label { font-size: 12px; opacity: 0.95; }
+  .streak-badge.cold {
+    background: linear-gradient(135deg, #94a3b8, #64748b);
+    box-shadow: 0 4px 14px rgba(100,116,139,0.25);
+  }
 
   header {
     background: linear-gradient(135deg, #4f46e5, #7c3aed);
@@ -337,6 +413,23 @@
 </style>
 </head>
 <body>
+
+<div class="ocean-bg" aria-hidden="true">
+  <div class="wave w1"></div>
+  <div class="wave w2"></div>
+  <div class="wave w3"></div>
+  <div class="swimmer s1">🐧</div>
+  <div class="swimmer s2">🐟</div>
+  <div class="swimmer s3">🐧</div>
+  <div class="swimmer s4">🐠</div>
+  <div class="swimmer s5">🐟</div>
+  <div class="bubble" style="left:10%;animation-delay:0s"></div>
+  <div class="bubble" style="left:25%;animation-delay:-2s"></div>
+  <div class="bubble" style="left:50%;animation-delay:-4s"></div>
+  <div class="bubble" style="left:75%;animation-delay:-1s"></div>
+  <div class="bubble" style="left:90%;animation-delay:-3s"></div>
+</div>
+
 <div class="container">
 
 <header>
@@ -348,6 +441,14 @@
 <div class="duolingo">
   <h3>🦉 Duolingo 毎日15分（時間枠外で継続）</h3>
   <p>朝・寝る前のすきま時間で。テスト前もやめない。</p>
+</div>
+
+<div class="streak-badge" id="streak-badge">
+  <div class="streak-fire">🔥</div>
+  <div>
+    <div class="streak-num"><span id="streak-num">0</span>日れんぞく！</div>
+    <div class="streak-label" id="streak-label">毎日チェックして記録をのばそう</div>
+  </div>
 </div>
 
 <div class="pet-card">
@@ -562,6 +663,61 @@ const STORAGE_KEY = "johoku-chu2-midterm-2026-05";
 const STAGE_KEY = STORAGE_KEY + "-stage";
 const INV_KEY = STORAGE_KEY + "-inv";
 const FRIENDS_KEY = STORAGE_KEY + "-friends";
+const STREAK_KEY = STORAGE_KEY + "-streak";
+const LAST_DATE_KEY = STORAGE_KEY + "-last";
+
+function todayStr() {
+  const d = new Date();
+  return d.getFullYear() + "-" + (d.getMonth()+1).toString().padStart(2,"0") + "-" + d.getDate().toString().padStart(2,"0");
+}
+function yesterdayStr() {
+  const d = new Date();
+  d.setDate(d.getDate() - 1);
+  return d.getFullYear() + "-" + (d.getMonth()+1).toString().padStart(2,"0") + "-" + d.getDate().toString().padStart(2,"0");
+}
+
+function updateStreak() {
+  const today = todayStr();
+  const lastDate = localStorage.getItem(LAST_DATE_KEY);
+  let streak = parseInt(localStorage.getItem(STREAK_KEY) || "0");
+
+  if (lastDate === today) {
+    // 今日すでに記録済み、変化なし
+  } else if (lastDate === yesterdayStr()) {
+    streak += 1;
+  } else {
+    streak = 1;
+  }
+  localStorage.setItem(STREAK_KEY, String(streak));
+  localStorage.setItem(LAST_DATE_KEY, today);
+  return streak;
+}
+
+function renderStreak() {
+  const today = todayStr();
+  const lastDate = localStorage.getItem(LAST_DATE_KEY);
+  const streak = parseInt(localStorage.getItem(STREAK_KEY) || "0");
+  const numEl = document.getElementById("streak-num");
+  const labelEl = document.getElementById("streak-label");
+  const badge = document.getElementById("streak-badge");
+
+  numEl.textContent = streak;
+
+  if (lastDate === today) {
+    badge.classList.remove("cold");
+    if (streak >= 7) labelEl.textContent = `すごい！${streak}日も続いてる！🌟`;
+    else if (streak >= 3) labelEl.textContent = "この調子！明日も続けよう♪";
+    else if (streak >= 1) labelEl.textContent = "今日もよくやった！";
+    else labelEl.textContent = "今日チェックすればスタート！";
+  } else if (lastDate === yesterdayStr()) {
+    badge.classList.remove("cold");
+    labelEl.textContent = "今日もチェックして記録をのばそう！";
+  } else {
+    badge.classList.add("cold");
+    if (streak > 0) labelEl.textContent = "1日サボった…でも気にせず再スタート！";
+    else labelEl.textContent = "毎日チェックして記録をのばそう";
+  }
+}
 
 const ITEMS = [
   { id: "fish",    emoji: "🐟", name: "さかな",   weight: 50 },
@@ -783,9 +939,11 @@ function toggleTask(key) {
   const wasOn = !!doneState[key];
   doneState[key] = !wasOn;
   saveDone(doneState);
-  // チェック時のみアイテムドロップ（外す時はドロップしない）
+  // チェック時のみアイテムドロップ＋ストリーク更新（外す時はドロップしない）
   if (!wasOn) {
     dropItem();
+    updateStreak();
+    renderStreak();
   }
   render();
 }
@@ -802,7 +960,7 @@ function collapseAll() {
   document.querySelectorAll(".day").forEach(d => d.classList.remove("open"));
 }
 function resetAll() {
-  if (!confirm("すべてのチェックをリセットしますか？\n（ペンギン・アイテム・ともだちもリセットされます）")) return;
+  if (!confirm("すべてのチェックをリセットしますか？\n（ペンギン・アイテム・ともだち・れんぞく日数もリセットされます）")) return;
   doneState = {};
   inventory = {};
   friendsCount = 0;
@@ -810,10 +968,14 @@ function resetAll() {
   saveInv(inventory);
   saveFriends(friendsCount);
   localStorage.removeItem(STAGE_KEY);
+  localStorage.removeItem(STREAK_KEY);
+  localStorage.removeItem(LAST_DATE_KEY);
   render();
+  renderStreak();
 }
 
 render();
+renderStreak();
 </script>
 </body>
 </html>
