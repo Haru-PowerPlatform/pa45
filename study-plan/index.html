@@ -266,6 +266,17 @@
     transition: all 0.2s;
   }
   .inv-item.has { border-color: #fbbf24; background: linear-gradient(135deg, #fffbeb, #fef3c7); }
+  .inv-item.has[data-tier="rare"] { border-color: #3b82f6; background: linear-gradient(135deg, #dbeafe, #bfdbfe); box-shadow: 0 0 8px rgba(59,130,246,0.3); }
+  .inv-item.has[data-tier="epic"] { border-color: #a855f7; background: linear-gradient(135deg, #f3e8ff, #e9d5ff); box-shadow: 0 0 10px rgba(168,85,247,0.4); }
+  .inv-item.has[data-tier="legendary"] {
+    border-color: #f59e0b;
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    animation: legendary-pulse 2s ease-in-out infinite;
+  }
+  @keyframes legendary-pulse {
+    0%,100% { box-shadow: 0 0 8px rgba(245,158,11,0.5); }
+    50% { box-shadow: 0 0 18px rgba(245,158,11,0.9); }
+  }
   .inv-emoji { font-size: 20px; line-height: 1; }
   .inv-count {
     font-size: 11px; font-weight: 700; margin-top: 2px;
@@ -451,6 +462,37 @@
 
   .footer { text-align: center; margin-top: 30px; padding: 20px; font-size: 12px; color: #64748b; }
 
+  .tabs-nav {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 16px;
+    background: rgba(255,255,255,0.6);
+    padding: 6px;
+    border-radius: 14px;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  }
+  .tab-btn {
+    flex: 1;
+    padding: 12px 16px;
+    border: none;
+    background: transparent;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .tab-btn.active {
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    color: white;
+    box-shadow: 0 4px 12px rgba(79,70,229,0.3);
+  }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; animation: tab-fade 0.3s ease; }
+  @keyframes tab-fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
   @media (max-width: 480px) {
     body { padding: 10px; }
     header h1 { font-size: 18px; }
@@ -485,6 +527,13 @@
   <h3>🦉 Duolingo 毎日15分（時間枠外で継続）</h3>
   <p>朝・寝る前のすきま時間で。テスト前もやめない。</p>
 </div>
+
+<div class="tabs-nav">
+  <button class="tab-btn active" data-tab="achievement" onclick="switchTab('achievement')">🏆 達成度・アイテム</button>
+  <button class="tab-btn" data-tab="tasks" onclick="switchTab('tasks')">📅 やること</button>
+</div>
+
+<div class="tab-content active" id="tab-achievement">
 
 <div class="streak-badge" id="streak-badge">
   <div class="streak-fire">🔥</div>
@@ -530,6 +579,10 @@
   <div id="subjects-rows"></div>
 </div>
 
+</div><!-- /tab-achievement -->
+
+<div class="tab-content" id="tab-tasks">
+
 <div class="legend">
   <div class="row"><strong>T</strong> = テキスト（教科書・参考書）／<strong>W</strong> = 問題集（ワーク）</div>
   <div class="row">基本：問題集を解く → ×だけテキストを確認 → もう一度解く</div>
@@ -543,6 +596,8 @@
 </div>
 
 <div id="schedule"></div>
+
+</div><!-- /tab-tasks -->
 
 <div class="footer">
   ✅ チェックは自動保存されます（同じiPadなら次回も残ります）<br>
@@ -579,28 +634,16 @@ const schedule = [
     ]
   },
   {
-    date: "5/1 (金・休)", time: "5h", type: "holiday",
+    date: "5/1 (金・休) ⚠帰宅遅め", time: "3h", type: "holiday",
     tasks: [
       { s: "数学", c: "s-math", t: 75, txt: "W 体系問題集 P10〜P14 を解く（5ページ × 15分）" },
-      { s: "数学", c: "s-math", t: 45, txt: "W P15〜P17 を解く（1周目完了！）" },
       { s: "数学", c: "s-math", t: 15, txt: "答え合わせ → ×だけT確認" },
       { s: "英語", c: "s-eng", t: 15, txt: "T Unit2 音読4回＋本文1回書き写し" },
       { s: "英語", c: "s-eng", t: 15, txt: "W 必修テキスト Unit2-1 を解く" },
       { s: "英語", c: "s-eng", t: 5, txt: "Unit2-1 答え合わせ" },
-      { s: "英語", c: "s-eng", t: 15, txt: "W 必修テキスト Unit2-2 を解く" },
-      { s: "英語", c: "s-eng", t: 5, txt: "Unit2-2 答え合わせ" },
-      { s: "英語", c: "s-eng", t: 10, txt: "W 必修 Unit2 文法のまとめ を解く" },
-      { s: "英語", c: "s-eng", t: 5, txt: "文法まとめ 答え合わせ" },
-      { s: "英語", c: "s-eng", t: 10, txt: "W 必修 Unit2 得点Up問題 を解く" },
-      { s: "英語", c: "s-eng", t: 5, txt: "得点Up 答え合わせ" },
-      { s: "歴史", c: "s-his", t: 25, txt: "【5/11から平準化】W 歴史の学習 P6〜P7 を解く" },
-      { s: "歴史", c: "s-his", t: 5, txt: "P6〜P7 答え合わせ" },
-      { s: "歴史", c: "s-his", t: 25, txt: "【5/11から平準化】W P8〜P9 を解く" },
-      { s: "歴史", c: "s-his", t: 5, txt: "P8〜P9 答え合わせ" },
       { s: "国語A", c: "s-jpn-a", t: 20, txt: "T「セミロングホームルーム」を読む＋心情変化を線引き" },
       { s: "国語A", c: "s-jpn-a", t: 10, txt: "T「話し言葉と書き言葉」を読む" },
-      { s: "国語B", c: "s-jpn-b", t: 30, txt: "W スパッと国語攻略 動詞活用5種 を解く" },
-      { s: "漢字", c: "s-kanji", t: 30, txt: "W 漢字ダブルクリア P60〜P61（2ページ × 15分）" }
+      { s: "国語B", c: "s-jpn-b", t: 30, txt: "W スパッと国語攻略 動詞活用5種 を解く" }
     ]
   },
   {
@@ -891,16 +934,23 @@ function renderStreak() {
 }
 
 const ITEMS = [
-  { id: "fish",    emoji: "🐟", name: "さかな",   weight: 35 },
-  { id: "shrimp",  emoji: "🦐", name: "エビ",     weight: 18 },
-  { id: "ice",     emoji: "🧊", name: "こおり",   weight: 12 },
-  { id: "octopus", emoji: "🐙", name: "タコ",     weight: 10 },
-  { id: "squid",   emoji: "🦑", name: "イカ",     weight: 8 },
-  { id: "turtle",  emoji: "🐢", name: "カメ",     weight: 6 },
-  { id: "crab",    emoji: "🦀", name: "カニ",     weight: 5 },
-  { id: "coral",   emoji: "🪸", name: "サンゴ",   weight: 3 },
-  { id: "whale",   emoji: "🐳", name: "クジラ",   weight: 2 },
-  { id: "friend",  emoji: "🐧", name: "ともだち", weight: 1 }
+  // コモン（合計約72%）
+  { id: "fish",     emoji: "🐟", name: "さかな",   weight: 40, tier: "common" },
+  { id: "shrimp",   emoji: "🦐", name: "エビ",     weight: 20, tier: "common" },
+  { id: "ice",      emoji: "🧊", name: "こおり",   weight: 12, tier: "common" },
+  // アンコモン（合計約19%）
+  { id: "octopus",  emoji: "🐙", name: "タコ",     weight: 8,  tier: "uncommon" },
+  { id: "squid",    emoji: "🦑", name: "イカ",     weight: 6,  tier: "uncommon" },
+  { id: "crab",     emoji: "🦀", name: "カニ",     weight: 5,  tier: "uncommon" },
+  // レア（合計約6.5%）
+  { id: "diamond",  emoji: "💎", name: "ダイヤ",   weight: 4,  tier: "rare" },
+  { id: "star",     emoji: "🌟", name: "ほし",     weight: 2.5,tier: "rare" },
+  // 超レア（合計約1.8%）
+  { id: "whale",    emoji: "🐳", name: "クジラ",   weight: 1.2,tier: "epic" },
+  { id: "rainbow",  emoji: "🌈", name: "にじ",     weight: 0.6,tier: "epic" },
+  // 伝説（合計約0.7%）
+  { id: "friend",   emoji: "🐧", name: "ともだち", weight: 0.5,tier: "legendary" },
+  { id: "unicorn",  emoji: "🦄", name: "ひみつ",   weight: 0.2,tier: "legendary" }
 ];
 
 function rollItem() {
@@ -964,6 +1014,7 @@ function renderInventory() {
     const count = inventory[item.id] || 0;
     const div = document.createElement("div");
     div.className = "inv-item" + (count > 0 ? " has" : "");
+    div.dataset.tier = item.tier || "common";
     div.innerHTML = `
       <div class="inv-emoji">${item.emoji}</div>
       <div class="inv-count">×${count}</div>
@@ -1209,6 +1260,19 @@ function toggleDay(di) {
   const days = document.querySelectorAll(".day");
   days[di].classList.toggle("open");
 }
+
+const TAB_KEY = STORAGE_KEY + "-tab";
+function switchTab(name) {
+  document.querySelectorAll(".tab-btn").forEach(b => b.classList.toggle("active", b.dataset.tab === name));
+  document.querySelectorAll(".tab-content").forEach(c => c.classList.toggle("active", c.id === "tab-" + name));
+  localStorage.setItem(TAB_KEY, name);
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+// 起動時に前回のタブを復元
+(function restoreTab() {
+  const saved = localStorage.getItem(TAB_KEY);
+  if (saved && (saved === "achievement" || saved === "tasks")) switchTab(saved);
+})();
 
 function expandAll() {
   document.querySelectorAll(".day").forEach(d => d.classList.add("open"));
