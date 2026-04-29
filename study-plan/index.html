@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>上田晴生 中2 1学期中間テスト計画 | 広島城北中学校</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", sans-serif;
+    background: linear-gradient(135deg, #f0f4ff 0%, #fef9f0 100%);
+    color: #1a202c;
+    line-height: 1.6;
+    padding: 16px;
+    min-height: 100vh;
+  }
+  .container { max-width: 900px; margin: 0 auto; }
+
+  header {
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    color: white;
+    padding: 24px 20px;
+    border-radius: 16px;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 24px rgba(79,70,229,0.25);
+  }
+  header h1 { font-size: 22px; margin-bottom: 8px; }
+  header .sub { font-size: 14px; opacity: 0.9; }
+  header .goal { margin-top: 12px; padding: 10px 14px; background: rgba(255,255,255,0.15); border-radius: 8px; font-size: 14px; font-weight: 600; }
+
+  .progress-card {
+    background: white;
+    padding: 20px;
+    border-radius: 16px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  }
+  .progress-label { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 14px; color: #475569; }
+  .progress-bar { width: 100%; height: 14px; background: #e2e8f0; border-radius: 999px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, #10b981, #34d399); transition: width 0.4s; }
+  .progress-percent { font-size: 24px; font-weight: 700; color: #059669; text-align: center; margin-top: 8px; }
+
+  .legend {
+    background: white;
+    padding: 14px 18px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  }
+  .legend strong { color: #4f46e5; }
+  .legend .row { margin: 4px 0; }
+
+  .day {
+    background: white;
+    margin-bottom: 14px;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    border-left: 6px solid #4f46e5;
+  }
+  .day.holiday { border-left-color: #f59e0b; }
+  .day.bukatsu { border-left-color: #94a3b8; }
+  .day.test { border-left-color: #ef4444; }
+
+  .day-header {
+    padding: 14px 18px;
+    background: #f8fafc;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    user-select: none;
+  }
+  .day-title { font-size: 16px; font-weight: 700; }
+  .day-meta { font-size: 12px; color: #64748b; margin-top: 2px; }
+  .day-time {
+    background: #4f46e5;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .day-time.bukatsu { background: #94a3b8; }
+  .day-time.holiday { background: #f59e0b; }
+  .day-time.test { background: #ef4444; }
+  .arrow { transition: transform 0.3s; font-size: 20px; color: #94a3b8; margin-left: 8px; }
+  .day.open .arrow { transform: rotate(180deg); }
+
+  .day-body {
+    padding: 0 18px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, padding 0.3s ease;
+  }
+  .day.open .day-body { padding: 16px 18px 18px; max-height: 2000px; }
+
+  .task {
+    display: flex;
+    align-items: flex-start;
+    padding: 12px 14px;
+    background: #f8fafc;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+  .task:active { transform: scale(0.98); }
+  .task.done { background: #ecfdf5; }
+  .task.done .task-text { text-decoration: line-through; color: #94a3b8; }
+
+  .checkbox {
+    flex-shrink: 0;
+    width: 26px;
+    height: 26px;
+    border: 2px solid #cbd5e1;
+    border-radius: 8px;
+    margin-right: 12px;
+    margin-top: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    transition: all 0.2s;
+  }
+  .task.done .checkbox {
+    background: linear-gradient(135deg, #10b981, #059669);
+    border-color: #059669;
+  }
+  .check-icon { color: white; font-weight: bold; opacity: 0; transition: opacity 0.2s; font-size: 14px; }
+  .task.done .check-icon { opacity: 1; }
+
+  .task-content { flex: 1; }
+  .task-subject {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 999px;
+    margin-bottom: 4px;
+    color: white;
+  }
+  .task-text { font-size: 14px; color: #1e293b; line-height: 1.5; }
+  .task-time { font-size: 11px; color: #64748b; margin-left: 8px; }
+
+  .s-math   { background: #3b82f6; }
+  .s-eng    { background: #8b5cf6; }
+  .s-jpn-a  { background: #ec4899; }
+  .s-jpn-b  { background: #f43f5e; }
+  .s-sci1   { background: #10b981; }
+  .s-sci2   { background: #14b8a6; }
+  .s-his    { background: #f59e0b; }
+  .s-geo    { background: #ea580c; }
+  .s-kanji  { background: #d946ef; }
+  .s-misc   { background: #64748b; }
+
+  .duolingo {
+    background: linear-gradient(135deg, #58cc02, #43a047);
+    color: white;
+    padding: 16px 20px;
+    border-radius: 14px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  .duolingo h3 { font-size: 16px; margin-bottom: 6px; }
+  .duolingo p { font-size: 13px; opacity: 0.95; }
+
+  .controls {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    flex: 1;
+    min-width: 120px;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-expand { background: #4f46e5; color: white; }
+  .btn-collapse { background: #64748b; color: white; }
+  .btn-reset { background: #fee2e2; color: #b91c1c; }
+  .btn:active { transform: scale(0.96); }
+
+  .footer { text-align: center; margin-top: 30px; padding: 20px; font-size: 12px; color: #64748b; }
+
+  @media (max-width: 480px) {
+    body { padding: 10px; }
+    header h1 { font-size: 18px; }
+    .day-title { font-size: 15px; }
+    .task-text { font-size: 13px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <h1>📘 上田晴生 中2 1学期中間テスト計画</h1>
+  <div class="sub">広島城北中学校 / 2026-05-19（火）〜05-22（金）</div>
+  <div class="goal">🎯 目標：学年10番以内 ／ 学習サイクル：解く優先（W → 答え合わせ → ×だけT → 再度W）</div>
+</header>
+
+<div class="duolingo">
+  <h3>🦉 Duolingo 毎日15分（時間枠外で継続）</h3>
+  <p>朝・寝る前のすきま時間で。テスト前もやめない。</p>
+</div>
+
+<div class="progress-card">
+  <div class="progress-label">
+    <span>全体の進捗</span>
+    <span id="progress-text">0 / 0</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+  <div class="progress-percent" id="progress-percent">0%</div>
+</div>
+
+<div class="legend">
+  <div class="row"><strong>T</strong> = テキスト（教科書・参考書）／<strong>W</strong> = 問題集（ワーク）</div>
+  <div class="row">基本：問題集を解く → ×だけテキストを確認 → もう一度解く</div>
+  <div class="row">例外：英語の本文は音読・暗唱必須／国語の本文は最初だけ精読</div>
+</div>
+
+<div class="controls">
+  <button class="btn btn-expand" onclick="expandAll()">全部開く</button>
+  <button class="btn btn-collapse" onclick="collapseAll()">全部閉じる</button>
+  <button class="btn btn-reset" onclick="resetAll()">チェックリセット</button>
+</div>
+
+<div id="schedule"></div>
+
+<div class="footer">
+  ✅ チェックは自動保存されます（同じiPadなら次回も残ります）<br>
+  Generated 2026-04-29
+</div>
+
+</div>
+
+<script>
+const schedule = [
+  {
+    date: "4/29 (水・祝)", time: "4h", type: "holiday", today: true,
+    tasks: [
+      { s: "数学", c: "s-math", t: 120, txt: "W 体系問題集 P1〜P10を解く → ×だけT体系数学を確認 → 解き直す" },
+      { s: "英語", c: "s-eng", t: 120, txt: "T BLUE SKY Unit1 音読5回＋本文書き写し（暗唱目標）／W 必修テキストUnit1を解く" }
+    ]
+  },
+  {
+    date: "4/30 (木・部活)", time: "1h", type: "bukatsu",
+    tasks: [
+      { s: "数学", c: "s-math", t: 60, txt: "W 体系問題集 P11〜P17を解く（1周目完了）→ ×だけT確認" }
+    ]
+  },
+  {
+    date: "5/1 (金・休)", time: "4h", type: "holiday",
+    tasks: [
+      { s: "数学", c: "s-math", t: 120, txt: "W 体系問題集 P1〜P17 ×だけ2周目＋章末・応用問題に挑戦" },
+      { s: "英語", c: "s-eng", t: 120, txt: "T Unit2 音読5回＋書き写し／W 必修テキストUnit2を解く" }
+    ]
+  },
+  {
+    date: "5/2 (土・午後部活)", time: "2h", type: "bukatsu",
+    tasks: [
+      { s: "理科1", c: "s-sci1", t: 120, txt: "W 中学の理科 物理化学（物質の分解＋水の電気分解）→ ×をT教科書で確認＋実験操作の理由を白紙に書き出す" }
+    ]
+  },
+  {
+    date: "5/3 (日・祝)", time: "4h", type: "holiday",
+    tasks: [
+      { s: "英語", c: "s-eng", t: 120, txt: "W 新中問13章（不定詞 副詞的）を解く＋例文5つ暗唱" },
+      { s: "歴史", c: "s-his", t: 120, txt: "W 歴史の学習 P2〜P9を解く（1周目）→ ×をT教科書P98〜P113で確認＋年号5つ語呂合わせ" }
+    ]
+  },
+  {
+    date: "5/4 (月・祝)", time: "4h", type: "holiday",
+    tasks: [
+      { s: "国語A", c: "s-jpn-a", t: 120, txt: "T 「宇宙にいくための素材」「セミロングホームルーム」「話し言葉と書き言葉」を1回精読＋ノート整理" },
+      { s: "漢字", c: "s-kanji", t: 60, txt: "W 漢字ダブルクリア P60〜P63（書き＋意味＋例文）" },
+      { s: "国語B", c: "s-jpn-b", t: 60, txt: "W スパッと国語攻略 動詞活用5種を解く" }
+    ]
+  },
+  {
+    date: "5/5 (火・祝)", time: "4h", type: "holiday",
+    tasks: [
+      { s: "英語", c: "s-eng", t: 120, txt: "W 新中問14章（不定詞 形容詞的）＋13章×だけ2周目＋例文5つ暗唱" },
+      { s: "理科1", c: "s-sci1", t: 120, txt: "W 物理化学 ×だけ2周目＋応用問題＋化学反応式を白紙に書き出す" }
+    ]
+  },
+  {
+    date: "5/6 (水・祝)", time: "4h", type: "holiday",
+    tasks: [
+      { s: "理科2", c: "s-sci2", t: 120, txt: "W 中学の理科 生物地学（細胞＋葉のつくり）→ ×をT教科書で確認＋用語を白紙テスト" },
+      { s: "地理", c: "s-geo", t: 120, txt: "W わかるって楽しい P2〜P5全部解く（オセアニア＋縮尺計算）→ ×をT教科書P118〜P139で確認＋オセアニア白地図テスト" }
+    ]
+  },
+  {
+    date: "5/7 (木・部活)", time: "1h", type: "bukatsu",
+    tasks: [
+      { s: "漢字", c: "s-kanji", t: 60, txt: "W 漢字ダブルクリア P64〜P67を解く＋P60〜P67を白紙テスト形式で再確認" }
+    ]
+  },
+  {
+    date: "5/8 (金・オフ)", time: "2h", type: "bukatsu",
+    tasks: [
+      { s: "数学", c: "s-math", t: 120, txt: "W 体系問題集 ×だけ3周目＋章末・応用問題＋スピード演習（時間を計る）" }
+    ]
+  },
+  {
+    date: "5/9 (土・午後部活)", time: "2h", type: "bukatsu",
+    tasks: [
+      { s: "英語", c: "s-eng", t: 120, txt: "W 必修＋新中問13・14章 ×だけ2周目＋教科書本文 暗唱テスト" }
+    ]
+  },
+  {
+    date: "5/10 (日・部活)", time: "1h", type: "bukatsu",
+    tasks: [
+      { s: "国語B", c: "s-jpn-b", t: 60, txt: "W 形容詞・形容動詞を解く＋活用表を白紙に書き出すテスト" }
+    ]
+  },
+  {
+    date: "5/11 (月・平)", time: "2h", type: "normal",
+    tasks: [
+      { s: "歴史", c: "s-his", t: 120, txt: "W 歴史の学習 ×だけ2周目＋一問一答（教科書太字を白紙テスト）＋資料問題" }
+    ]
+  },
+  {
+    date: "5/12 (火・平)", time: "2h", type: "normal",
+    tasks: [
+      { s: "地理", c: "s-geo", t: 120, txt: "W ×だけ2周目＋オセアニア完全暗記＋縮尺計算スピード演習" }
+    ]
+  },
+  {
+    date: "5/13 (水・平)", time: "2h", type: "normal",
+    tasks: [
+      { s: "理科2", c: "s-sci2", t: 120, txt: "W ×だけ2周目＋細胞・葉・茎・根の図を白紙に再現＋応用問題" }
+    ]
+  },
+  {
+    date: "5/14 (木・平)", time: "2h", type: "normal",
+    tasks: [
+      { s: "数学", c: "s-math", t: 120, txt: "W ×だけ4周目＋応用問題＋時間計測スピード演習（テスト形式）" }
+    ]
+  },
+  {
+    date: "5/15 (金・平)", time: "2h", type: "normal",
+    tasks: [
+      { s: "英語", c: "s-eng", t: 60, txt: "T 教科書本文 暗唱テスト＋W 不定詞並べ替え集中＋ライティング（基本文10題英作）" },
+      { s: "国語A", c: "s-jpn-a", t: 60, txt: "T 小説の心情変化箇所を読み返す＋漢字最終テスト" }
+    ]
+  },
+  {
+    date: "5/16 (土・休)", time: "4h", type: "holiday",
+    tasks: [
+      { s: "総合", c: "s-misc", t: 240, txt: "苦手科目に集中4h：間違いノートと×がまだ残っている問題集を全教科チェック → 残り×を全部潰す" }
+    ]
+  },
+  {
+    date: "5/17 (日・休)", time: "4h", type: "holiday",
+    tasks: [
+      { s: "総合", c: "s-misc", t: 240, txt: "全科目総復習：各科目30分×8で問題集の×＋暗記カード総ざらい（テキストの太字も最終確認）" }
+    ]
+  },
+  {
+    date: "5/18 (月・平)", time: "2h", type: "normal",
+    tasks: [
+      { s: "翌日科目", c: "s-misc", t: 120, txt: "テスト時間割を見て翌日科目に全力2h（暗記詰め込み＋直前確認）" }
+    ]
+  },
+  {
+    date: "5/19 (火) テスト1日目", time: "—", type: "test",
+    tasks: [
+      { s: "テスト", c: "s-misc", t: 0, txt: "朝に最終チェック／前日夜に翌日科目を仕上げる" }
+    ]
+  },
+  {
+    date: "5/20 (水) テスト2日目", time: "—", type: "test",
+    tasks: [
+      { s: "テスト", c: "s-misc", t: 0, txt: "朝に最終チェック／前日夜に翌日科目を仕上げる" }
+    ]
+  },
+  {
+    date: "5/21 (木) テスト3日目", time: "—", type: "test",
+    tasks: [
+      { s: "テスト", c: "s-misc", t: 0, txt: "朝に最終チェック／前日夜に翌日科目を仕上げる" }
+    ]
+  },
+  {
+    date: "5/22 (金) テスト最終日", time: "—", type: "test",
+    tasks: [
+      { s: "テスト", c: "s-misc", t: 0, txt: "最後まで気を抜かない！" }
+    ]
+  }
+];
+
+const STORAGE_KEY = "johoku-chu2-midterm-2026-05";
+
+function loadDone() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}"); }
+  catch { return {}; }
+}
+function saveDone(state) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+let doneState = loadDone();
+
+function render() {
+  const container = document.getElementById("schedule");
+  container.innerHTML = "";
+  let totalTasks = 0;
+  let doneTasks = 0;
+
+  schedule.forEach((day, di) => {
+    const dayEl = document.createElement("div");
+    dayEl.className = "day " + day.type;
+    if (day.today) dayEl.classList.add("open");
+
+    const allDone = day.tasks.every((_, ti) => doneState[`${di}-${ti}`]);
+
+    let tasksHtml = "";
+    day.tasks.forEach((task, ti) => {
+      const key = `${di}-${ti}`;
+      const isDone = !!doneState[key];
+      totalTasks++;
+      if (isDone) doneTasks++;
+      tasksHtml += `
+        <div class="task ${isDone ? "done" : ""}" onclick="toggleTask('${key}')">
+          <div class="checkbox"><span class="check-icon">✓</span></div>
+          <div class="task-content">
+            <span class="task-subject ${task.c}">${task.s}</span>
+            ${task.t > 0 ? `<span class="task-time">${task.t}分</span>` : ""}
+            <div class="task-text">${task.txt}</div>
+          </div>
+        </div>
+      `;
+    });
+
+    dayEl.innerHTML = `
+      <div class="day-header" onclick="toggleDay(${di})">
+        <div>
+          <div class="day-title">${allDone ? "✅ " : ""}${day.date}</div>
+          <div class="day-meta">${day.tasks.length}タスク</div>
+        </div>
+        <div style="display:flex;align-items:center">
+          <span class="day-time ${day.type}">${day.time}</span>
+          <span class="arrow">▼</span>
+        </div>
+      </div>
+      <div class="day-body">${tasksHtml}</div>
+    `;
+    container.appendChild(dayEl);
+  });
+
+  const pct = totalTasks > 0 ? Math.round((doneTasks / totalTasks) * 100) : 0;
+  document.getElementById("progress-text").textContent = `${doneTasks} / ${totalTasks}`;
+  document.getElementById("progress-fill").style.width = pct + "%";
+  document.getElementById("progress-percent").textContent = pct + "%";
+}
+
+function toggleTask(key) {
+  doneState[key] = !doneState[key];
+  saveDone(doneState);
+  render();
+}
+
+function toggleDay(di) {
+  const days = document.querySelectorAll(".day");
+  days[di].classList.toggle("open");
+}
+
+function expandAll() {
+  document.querySelectorAll(".day").forEach(d => d.classList.add("open"));
+}
+function collapseAll() {
+  document.querySelectorAll(".day").forEach(d => d.classList.remove("open"));
+}
+function resetAll() {
+  if (!confirm("すべてのチェックをリセットしますか？")) return;
+  doneState = {};
+  saveDone(doneState);
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
