@@ -119,6 +119,36 @@
   .progress-fill { height: 100%; background: linear-gradient(90deg, #10b981, #34d399); transition: width 0.4s; }
   .progress-percent { font-size: 28px; font-weight: 700; color: #059669; text-align: center; margin-top: 8px; }
 
+  .subjects-card {
+    background: white;
+    padding: 14px 16px;
+    border-radius: 16px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  }
+  .subjects-title {
+    font-size: 13px; font-weight: 700; color: #475569; margin-bottom: 12px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .subj-row {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 7px;
+  }
+  .subj-row:last-child { margin-bottom: 0; }
+  .subj-tag {
+    flex-shrink: 0;
+    font-size: 10px; font-weight: 700; color: white;
+    padding: 3px 8px; border-radius: 999px;
+    min-width: 56px; text-align: center;
+  }
+  .subj-bar {
+    flex: 1; height: 10px; background: #e2e8f0; border-radius: 999px; overflow: hidden;
+  }
+  .subj-fill { height: 100%; transition: width 0.4s; opacity: 0.85; }
+  .subj-count {
+    flex-shrink: 0; font-size: 11px; color: #64748b; min-width: 48px; text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+
   .top-grid {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
@@ -489,6 +519,14 @@
   </div>
 </div>
 
+<div class="subjects-card">
+  <div class="subjects-title">
+    <span>📊 教科別の進捗</span>
+    <span style="font-size:10px;color:#94a3b8;font-weight:400">タスクの完了率</span>
+  </div>
+  <div id="subjects-rows"></div>
+</div>
+
 <div class="legend">
   <div class="row"><strong>T</strong> = テキスト（教科書・参考書）／<strong>W</strong> = 問題集（ワーク）</div>
   <div class="row">基本：問題集を解く → ×だけテキストを確認 → もう一度解く</div>
@@ -513,7 +551,7 @@
 <script>
 const schedule = [
   {
-    date: "4/29 (水・祝) はじまりの日", time: "4.5h", type: "holiday", today: true,
+    date: "4/29 (水・祝) はじまりの日", time: "2.5h", type: "holiday", today: true,
     tasks: [
       { s: "数学", c: "s-math", t: 75, txt: "W 体系問題集 P1〜P5 を解く（5ページ × 15分）" },
       { s: "数学", c: "s-math", t: 15, txt: "答え合わせ → ×だけT体系数学で確認" },
@@ -522,29 +560,19 @@ const schedule = [
       { s: "英語", c: "s-eng", t: 5, txt: "Unit1-1 答え合わせ" },
       { s: "英語", c: "s-eng", t: 15, txt: "W 必修 Unit1-2 を解く" },
       { s: "英語", c: "s-eng", t: 5, txt: "Unit1-2 答え合わせ" },
-      { s: "英語", c: "s-eng", t: 15, txt: "W 必修 Unit1-3 を解く" },
-      { s: "英語", c: "s-eng", t: 5, txt: "Unit1-3 答え合わせ" },
-      { s: "英語", c: "s-eng", t: 15, txt: "W 必修 Unit1-4 を解く" },
-      { s: "英語", c: "s-eng", t: 5, txt: "Unit1-4 答え合わせ" },
-      { s: "英語", c: "s-eng", t: 10, txt: "W 必修 Unit1 単語・重要表現のまとめ を解く" },
-      { s: "英語", c: "s-eng", t: 5, txt: "単語まとめ 答え合わせ" },
-      { s: "英語", c: "s-eng", t: 10, txt: "W 必修 Unit1 文法のまとめ を解く" },
-      { s: "英語", c: "s-eng", t: 5, txt: "文法まとめ 答え合わせ" },
-      { s: "英語", c: "s-eng", t: 10, txt: "W 必修 Unit1 得点Up問題 を解く" },
-      { s: "英語", c: "s-eng", t: 5, txt: "得点Up 答え合わせ" },
-      { s: "英語", c: "s-eng", t: 10, txt: "W 必修 Unit1 読解・英作文問題 を解く" },
-      { s: "英語", c: "s-eng", t: 5, txt: "読解英作 答え合わせ" },
-      { s: "英語", c: "s-eng", t: 10, txt: "W 必修 Unit1 Let's Talk / Let's Listen を解く" },
-      { s: "英語", c: "s-eng", t: 5, txt: "Let's Talk 答え合わせ" },
       { s: "国語A", c: "s-jpn-a", t: 10, txt: "T「宇宙にいくための素材」を1回読む＋気になった所にマーカー" }
     ]
   },
   {
-    date: "4/30 (木・部活)", time: "1.5h", type: "bukatsu",
+    date: "4/30 (木・部活)", time: "2h", type: "bukatsu",
     tasks: [
       { s: "宿題", c: "s-hw", t: 30, txt: "学校の宿題" },
       { s: "数学", c: "s-math", t: 45, txt: "W 体系問題集 P6〜P9 を解く（4ページ × 15分）" },
-      { s: "数学", c: "s-math", t: 15, txt: "答え合わせ → ×だけT確認" }
+      { s: "数学", c: "s-math", t: 15, txt: "答え合わせ → ×だけT確認" },
+      { s: "英語", c: "s-eng", t: 15, txt: "【4/29から繰越】W 必修 Unit1-3 を解く" },
+      { s: "英語", c: "s-eng", t: 5, txt: "Unit1-3 答え合わせ" },
+      { s: "英語", c: "s-eng", t: 10, txt: "【4/29から繰越】W 必修 Unit1 単語・重要表現のまとめ" },
+      { s: "英語", c: "s-eng", t: 5, txt: "単語まとめ 答え合わせ" }
     ]
   },
   {
@@ -579,18 +607,28 @@ const schedule = [
     ]
   },
   {
-    date: "5/2 (土・午後部活)", time: "2h", type: "bukatsu",
+    date: "5/2 (土・午後部活)", time: "3h", type: "bukatsu",
     tasks: [
       { s: "理科1", c: "s-sci1", t: 30, txt: "W 中学の理科 物理化学「物質の分解（炭酸水素Na）」を解く" },
       { s: "理科1", c: "s-sci1", t: 15, txt: "×T確認＋実験操作の理由をメモ" },
       { s: "理科1", c: "s-sci1", t: 30, txt: "W「水の電気分解」を解く" },
       { s: "理科1", c: "s-sci1", t: 15, txt: "×T確認＋反応式を書いて覚える（2H₂O→2H₂+O₂）" },
-      { s: "漢字", c: "s-kanji", t: 30, txt: "W 漢字ダブルクリア P62〜P63（2ページ）" }
+      { s: "漢字", c: "s-kanji", t: 30, txt: "W 漢字ダブルクリア P62〜P63（2ページ）" },
+      { s: "英語", c: "s-eng", t: 15, txt: "【4/29から繰越】W 必修 Unit1-4 を解く" },
+      { s: "英語", c: "s-eng", t: 5, txt: "Unit1-4 答え合わせ" },
+      { s: "英語", c: "s-eng", t: 10, txt: "【繰越】W 必修 Unit1 文法のまとめ" },
+      { s: "英語", c: "s-eng", t: 5, txt: "文法まとめ 答え合わせ" },
+      { s: "英語", c: "s-eng", t: 10, txt: "【繰越】W 必修 Unit1 得点Up問題" },
+      { s: "英語", c: "s-eng", t: 5, txt: "得点Up 答え合わせ" }
     ]
   },
   {
-    date: "5/3 (日・祝)", time: "4h", type: "holiday",
+    date: "5/3 (日・祝)", time: "4.5h", type: "holiday",
     tasks: [
+      { s: "英語", c: "s-eng", t: 10, txt: "【繰越】W 必修 Unit1 読解・英作文問題" },
+      { s: "英語", c: "s-eng", t: 5, txt: "読解英作 答え合わせ" },
+      { s: "英語", c: "s-eng", t: 10, txt: "【繰越】W 必修 Unit1 Let's Talk / Let's Listen" },
+      { s: "英語", c: "s-eng", t: 5, txt: "Let's Talk 答え合わせ" },
       { s: "英語", c: "s-eng", t: 40, txt: "W 新中問13章（不定詞 副詞的）前半 を解く" },
       { s: "英語", c: "s-eng", t: 10, txt: "13章 前半 答え合わせ → ×を確認" },
       { s: "英語", c: "s-eng", t: 30, txt: "W 新中問13章 後半 を解く" },
@@ -938,6 +976,38 @@ function renderFriends() {
   }
 }
 
+function renderSubjects() {
+  const SUBJECT_COLORS = {
+    "s-math":"#3b82f6","s-eng":"#8b5cf6","s-jpn-a":"#ec4899","s-jpn-b":"#f43f5e",
+    "s-sci1":"#10b981","s-sci2":"#14b8a6","s-his":"#f59e0b","s-geo":"#ea580c",
+    "s-kanji":"#d946ef","s-hw":"#92400e","s-misc":"#64748b"
+  };
+  const counts = {};
+  schedule.forEach((day, di) => {
+    day.tasks.forEach((task, ti) => {
+      // 旅行・テスト・休みはカウント対象外
+      if (task.t === 0 || task.s === "休み" || task.s === "テスト") return;
+      const key = `${di}-${ti}`;
+      const subject = task.s;
+      if (!counts[subject]) counts[subject] = { done: 0, total: 0, color: task.c };
+      counts[subject].total++;
+      if (doneState[key]) counts[subject].done++;
+    });
+  });
+  const order = ["数学","英語","国語A","国語B","漢字","理科1","理科2","歴史","地理","宿題","翌日科目","総合"];
+  const rows = order.filter(s => counts[s]).map(s => {
+    const c = counts[s];
+    const pct = c.total > 0 ? Math.round(c.done/c.total*100) : 0;
+    const color = SUBJECT_COLORS[c.color] || "#64748b";
+    return `<div class="subj-row">
+      <span class="subj-tag" style="background:${color}">${s}</span>
+      <div class="subj-bar"><div class="subj-fill" style="width:${pct}%;background:${color}"></div></div>
+      <span class="subj-count">${c.done}/${c.total} (${pct}%)</span>
+    </div>`;
+  }).join('');
+  document.getElementById('subjects-rows').innerHTML = rows;
+}
+
 function renderOceanSwimmers() {
   const container = document.getElementById("ocean-swimmers");
   container.innerHTML = "";
@@ -1101,6 +1171,7 @@ function render() {
   renderInventory();
   renderFriends();
   renderOceanSwimmers();
+  renderSubjects();
 }
 
 function toggleTask(key) {
@@ -1110,6 +1181,7 @@ function toggleTask(key) {
   // チェック時のみアイテムドロップ＋ストリーク更新（外す時はドロップしない）
   if (!wasOn) {
     dropItem();
+    setTimeout(() => dropItem(), 200); // 2個目を少し遅らせて演出を分ける
     updateStreak();
     renderStreak();
   }
