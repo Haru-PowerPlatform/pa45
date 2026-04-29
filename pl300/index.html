@@ -210,6 +210,10 @@ const data = [
   {lvl:2,cat:"配布",q:"Teamsで最新データを操作可能にしたい",a:"<strong>Power BI タブを Teams チャンネルに追加</strong>",body:"PDF・スクショ＝スナップショット（最新でない）。Webに公開＝匿名公開で機密NG。<br>Power BIタブ埋め込み＝<strong>ライブ表示・SSO認証・RLS継承</strong>。Teamsを離れず操作可。"},
   {lvl:2,cat:"モデル",q:"5,000万行のファクトでレポートが遅い",a:"<strong>集計テーブル（Aggregations）＋ リンク</strong>",body:"高頻度クエリは事前集計テーブルから返す。詳細クエリのみ大規模ファクトに。<br>「モデルビュー→テーブル右クリック→集計の管理」で設定。<strong>Dualストレージモード</strong>と組み合わせると最強。"},
   {lvl:2,cat:"PowerQuery",q:"区切り文字あり文字列から特定パートを抽出（標準）",a:"<strong>区切り記号で列を分割</strong>",body:"優先順位：🥇区切り記号で分割 🥈位置・文字数で分割 🥉Text.Middle等のM式 🏅例から列を追加（AI推測）。「例から列」は便利だがM式が読みにくくなり保守性低下。"},
+  {lvl:2,cat:"PowerQuery",q:"大文字小文字＋空白の混在を統一",a:"<strong>Trim ＋ Capitalize Each Word</strong>",body:"「ELECTRONICS」「electronics」「 Electronics 」→「Electronics」。<br>定番3点セット：<br>🧹 Trim → 前後空白削除<br>🔡 Capitalize / lowercase / UPPERCASE → 大小統一<br>🔄 Replace Values → 特定値の置換<br><strong>複数選択は1個漏れで0点</strong>（Microsoft試験は厳格）。"},
+  {lvl:3,cat:"DAX",q:"タイムインテリジェンス関数に渡す引数（重要）",a:"<strong>必ず日付ディメンション側の日付列</strong>",body:"<code>DATESYTD(Date[Date])</code> ✅<br><code>DATESYTD(Sales[OrderDate])</code> ❌<br><br>ファクトの日付列は<strong>売上ゼロの日付が抜けて期間連続性が壊れる</strong>。日付ディメンションは全日付連続。<br>DATESYTD/QTD/MTD・SAMEPERIODLASTYEAR・DATESINPERIOD全て同じルール。"},
+  {lvl:2,cat:"配布",q:"展開パイプラインの構築手順",a:"<strong>箱→道→流す（B→D→C→A）</strong>",body:"<ol style='padding-left:18px'><li><strong>箱</strong>：ワークスペース3つ作成 + Premium容量割当</li><li><strong>道</strong>：展開パイプライン作成 + 開発WS割当</li><li><strong>流す①</strong>：開発→テスト昇格</li><li><strong>流す②</strong>：テスト→本番昇格</li></ol>Premium必須。順序逆を選ばない。"},
+  {lvl:2,cat:"セキュリティ",q:"RLS適用ユーザーのオンボーディング3点セット",a:"<strong>閲覧者(A) + RLSロール割当(C) + Proライセンス(D)</strong>",body:"<table><tr><th>要素</th><th>内容</th></tr><tr><td>🏠 アクセス権</td><td>ワークスペース<strong>閲覧者</strong>（メンバーは編集可なのでNG）</td></tr><tr><td>🔐 RLSロール</td><td>データセット→セキュリティ→ロールにユーザー追加</td></tr><tr><td>🎫 ライセンス</td><td>Pro必須（Premium容量配信なら不要）</td></tr></table>「ロール変更させたくない」→ 閲覧者一択。"},
 ];
 
 const cardsEl = document.getElementById("cards");
