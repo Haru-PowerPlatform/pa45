@@ -200,6 +200,16 @@ const data = [
   {lvl:2,cat:"視覚化",q:"レポートにコメント・@メンションで報告",a:"<strong>コメント機能</strong>",body:"アラートは閾値通知用。コメント機能は<strong>レポート内の議論・@メンション通知</strong>用。Q105。"},
   {lvl:2,cat:"モデル",q:"大規模データの集計（パフォーマンス重視）",a:"<strong>グループ化 ＋ COUNTROWS ＋ リレーション</strong>",body:"計算テーブルは逆効果（メモリ消費）。<br>Power Queryで<strong>事前集計</strong>→集計テーブルとファクトをリレーション。Q94。"},
   {lvl:2,cat:"PowerQuery",q:"AppSourceでユーザーが見られない",a:"<strong>アクセス設定</strong>（コンテンツ設定ではない）",body:"「コンテンツ設定」と「アクセス設定」の用語の罠。<br>ユーザーが<strong>見られない</strong>＝アクセス権の問題。Q25。"},
+
+  // === 130問総復習セッション（2026-04-29〜）===
+  {lvl:2,cat:"PowerQuery",q:"フォルダから複数ファイルを取り込む正しい順序",a:"<strong>フォルダから→結合と変換→サンプル自動選択→型整え</strong>",body:"<ol style='padding-left:18px'><li>「フォルダから」コネクタでパス指定</li><li>「結合と変換」ボタン</li><li>サンプルファイルが自動選択される</li><li>Power Queryエディターで型整え</li></ol>「接続なしに変換は始まらない／サンプルなしに型整えはできない」と依存関係を逆算。"},
+  {lvl:2,cat:"視覚化",q:"ユーザーがスライダーで値を動かしてシミュレーションしたい",a:"<strong>What-if パラメーター</strong>",body:"自動生成される3点セット：<br>・計算テーブル（値の選択肢）<br>・メジャー（選択中の値を返す）<br>・スライサー（画面UI）<br><br>「シミュレーション・感度分析・スライダーで試す」→ What-if 一択。<strong>数値のみ対応・テキスト不可</strong>。"},
+  {lvl:3,cat:"DAX",q:"RELATED / RELATEDTABLE / LOOKUPVALUE / CROSSFILTER の使い分け",a:"<strong>リレーションの矢印の向きで覚える</strong>",body:"<table><tr><th>関数</th><th>動き</th></tr><tr><td><strong>RELATED</strong></td><td>多→一の単一値（子→親）</td></tr><tr><td><strong>RELATEDTABLE</strong></td><td>一→多のテーブル全体（親→子全部）</td></tr><tr><td><strong>LOOKUPVALUE</strong></td><td>リレーションなしでも値引き</td></tr><tr><td><strong>CROSSFILTER</strong></td><td>フィルター方向の一時変更</td></tr></table>動的RLSは<strong>LOOKUPVALUE + USERNAME()</strong>で構築。"},
+  {lvl:2,cat:"モデル",q:"リレーションキーがGUID（36桁文字列）で重い",a:"<strong>整数（サロゲートキー）に置き換える</strong>",body:"GUID/長い文字列キー → 整数化で<strong>圧倒的に高速＋メモリ削減</strong>。<br>キー型ベストプラクティス：🥇整数 🥈短文字列 🥉GUID 🚫小数/日付。"},
+  {lvl:2,cat:"セキュリティ",q:"PII含むデータセットの自動機密ラベル付与",a:"<strong>センシティビティラベル ＋ Microsoft Purview 自動分類ポリシー</strong>",body:"<strong>2層構造</strong>：<br>1. <strong>ラベル付与</strong>：手動=センシティビティラベル／自動=Purview<br>2. <strong>アクセス制御</strong>：行=RLS／オブジェクト=ロール<br><br>ラベルはExcel/PPTエクスポートでも継承される。"},
+  {lvl:2,cat:"配布",q:"Teamsで最新データを操作可能にしたい",a:"<strong>Power BI タブを Teams チャンネルに追加</strong>",body:"PDF・スクショ＝スナップショット（最新でない）。Webに公開＝匿名公開で機密NG。<br>Power BIタブ埋め込み＝<strong>ライブ表示・SSO認証・RLS継承</strong>。Teamsを離れず操作可。"},
+  {lvl:2,cat:"モデル",q:"5,000万行のファクトでレポートが遅い",a:"<strong>集計テーブル（Aggregations）＋ リンク</strong>",body:"高頻度クエリは事前集計テーブルから返す。詳細クエリのみ大規模ファクトに。<br>「モデルビュー→テーブル右クリック→集計の管理」で設定。<strong>Dualストレージモード</strong>と組み合わせると最強。"},
+  {lvl:2,cat:"PowerQuery",q:"区切り文字あり文字列から特定パートを抽出（標準）",a:"<strong>区切り記号で列を分割</strong>",body:"優先順位：🥇区切り記号で分割 🥈位置・文字数で分割 🥉Text.Middle等のM式 🏅例から列を追加（AI推測）。「例から列」は便利だがM式が読みにくくなり保守性低下。"},
 ];
 
 const cardsEl = document.getElementById("cards");
