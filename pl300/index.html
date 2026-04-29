@@ -214,6 +214,17 @@ const data = [
   {lvl:3,cat:"DAX",q:"タイムインテリジェンス関数に渡す引数（重要）",a:"<strong>必ず日付ディメンション側の日付列</strong>",body:"<code>DATESYTD(Date[Date])</code> ✅<br><code>DATESYTD(Sales[OrderDate])</code> ❌<br><br>ファクトの日付列は<strong>売上ゼロの日付が抜けて期間連続性が壊れる</strong>。日付ディメンションは全日付連続。<br>DATESYTD/QTD/MTD・SAMEPERIODLASTYEAR・DATESINPERIOD全て同じルール。"},
   {lvl:2,cat:"配布",q:"展開パイプラインの構築手順",a:"<strong>箱→道→流す（B→D→C→A）</strong>",body:"<ol style='padding-left:18px'><li><strong>箱</strong>：ワークスペース3つ作成 + Premium容量割当</li><li><strong>道</strong>：展開パイプライン作成 + 開発WS割当</li><li><strong>流す①</strong>：開発→テスト昇格</li><li><strong>流す②</strong>：テスト→本番昇格</li></ol>Premium必須。順序逆を選ばない。"},
   {lvl:2,cat:"セキュリティ",q:"RLS適用ユーザーのオンボーディング3点セット",a:"<strong>閲覧者(A) + RLSロール割当(C) + Proライセンス(D)</strong>",body:"<table><tr><th>要素</th><th>内容</th></tr><tr><td>🏠 アクセス権</td><td>ワークスペース<strong>閲覧者</strong>（メンバーは編集可なのでNG）</td></tr><tr><td>🔐 RLSロール</td><td>データセット→セキュリティ→ロールにユーザー追加</td></tr><tr><td>🎫 ライセンス</td><td>Pro必須（Premium容量配信なら不要）</td></tr></table>「ロール変更させたくない」→ 閲覧者一択。"},
+
+  // === 抜けてた過去ミス補完（Q22/Q44/Q75/Q81/Q86/Case②-Q3,Q6,Q9/Case④-Q4）===
+  {lvl:2,cat:"モデル",q:"スタースキーマで役割が違うものをまとめる？",a:"<strong>別ディメンションに分ける</strong>",body:"教師ディメンションと期間ディメンションのように<strong>意味の異なる属性</strong>はそれぞれ独立したディメンションテーブルにする。Class等に詰め込むとアンチパターン。Q22。"},
+  {lvl:2,cat:"セキュリティ",q:"Build権限とは具体的に何ができる？",a:"<strong>サービス・Desktop両方からデータセットに接続して新規レポート作成可</strong>",body:"Read=閲覧のみ。Build=既存データセットを使って<strong>新しいレポート作成</strong>OK。共有データセット運用では必須権限。Q44。"},
+  {lvl:2,cat:"モデル",q:"Customer_IDとPhoto列の扱い（リレーション設計）",a:"<strong>ID=非表示、Photo=削除</strong>",body:"<table><tr><th>列の状態</th><th>処理</th></tr><tr><td>リレーションキー（ID等）</td><td><strong>非表示</strong>（残すが見せない）</td></tr><tr><td>不要 ＋ 重い（Photo等）</td><td><strong>削除</strong>（メモリ削減）</td></tr></table>「両方非表示」「両方削除」は罠。Q75。"},
+  {lvl:2,cat:"PowerQuery",q:"重複情報の列がある時の扱い",a:"<strong>片方を削除（情報損失なし側を残す）</strong>",body:"MovementDate と Date列が重複している場合、情報の少ない方を削除。データ型変更で済まそうとせず、根本的に列を消す方がモデルがクリーン。Q81。"},
+  {lvl:2,cat:"視覚化",q:"フィルター手段になりうるビジュアル要素",a:"<strong>スライサー / ドリルスルー / ドリルダウン / 視覚的相互作用 / ページナビ</strong>",body:"<strong>除外（ユーザーが操作できない）</strong>：Table・Card・KPI・ゲージ等の<strong>表示専用ビジュアル</strong>。「フィルターできる手段」を問われたらTable/Card/KPIは即除外。Q86。"},
+  {lvl:3,cat:"セキュリティ",q:"アナリストにレポート開発させるが、データセット編集はさせない",a:"<strong>メンバー + Build権限</strong>",body:"閲覧者+Read=閲覧のみ。<br>メンバー+Build=自分のレポートは作れるが、データセット定義は編集できない。<br>「アナリストに新規レポートを作らせたい」→ <strong>メンバー+Build</strong>反射。Case②-Q3（2回目ミス）。"},
+  {lvl:2,cat:"DAX",q:"四半期末日を取得したい",a:"<strong>DAX計算列 + ENDOFQUARTER(Date[Date])</strong>",body:"M言語（Power Query）にENDOFQUARTERは無い。<strong>ENDOFはDAX関数</strong>。<br>類似関数：ENDOFMONTH / ENDOFYEAR / STARTOFMONTH / STARTOFQUARTER / STARTOFYEAR。Case②-Q6。"},
+  {lvl:3,cat:"DAX",q:"小計行だけ違う計算をしたい（粒度制御メジャー）",a:"<strong>IF + NOT ISFILTERED + SUM</strong>",body:"<code>IF(NOT ISFILTERED(Table[Col]), 別計算, SUM(...))</code><br>ISFILTEREDで「フィルターが効いていない=小計/総計」を判定し、その時だけ別ロジックを適用。Case②-Q9。"},
+  {lvl:2,cat:"モデル",q:"カーディナリティの判定（典型ミス）",a:"<strong>多くのケースは1対多が正解</strong>",body:"1対1はマスタ-マスタの稀なケースのみ。多対多はパフォーマンス悪化＋集計曖昧化でほぼ罠。<br>「マスタテーブル → ファクト/トランザクション」は基本<strong>1対多（単方向）</strong>。Case④-Q4。"},
 ];
 
 const cardsEl = document.getElementById("cards");
