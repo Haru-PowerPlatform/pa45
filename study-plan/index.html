@@ -254,6 +254,9 @@
   .inventory-grid {
     display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px;
   }
+  @media (max-width: 720px) {
+    .inventory-grid { grid-template-columns: repeat(5, 1fr); }
+  }
   .inv-item {
     background: linear-gradient(135deg, #f8fafc, #f1f5f9);
     border: 1.5px solid #e2e8f0;
@@ -888,11 +891,16 @@ function renderStreak() {
 }
 
 const ITEMS = [
-  { id: "fish",    emoji: "🐟", name: "さかな",   weight: 50 },
-  { id: "shrimp",  emoji: "🦐", name: "エビ",     weight: 25 },
-  { id: "ice",     emoji: "🧊", name: "こおり",   weight: 15 },
-  { id: "crab",    emoji: "🦀", name: "カニ",     weight: 7 },
-  { id: "friend",  emoji: "🐧", name: "ともだち", weight: 3 }
+  { id: "fish",    emoji: "🐟", name: "さかな",   weight: 35 },
+  { id: "shrimp",  emoji: "🦐", name: "エビ",     weight: 18 },
+  { id: "ice",     emoji: "🧊", name: "こおり",   weight: 12 },
+  { id: "octopus", emoji: "🐙", name: "タコ",     weight: 10 },
+  { id: "squid",   emoji: "🦑", name: "イカ",     weight: 8 },
+  { id: "turtle",  emoji: "🐢", name: "カメ",     weight: 6 },
+  { id: "crab",    emoji: "🦀", name: "カニ",     weight: 5 },
+  { id: "coral",   emoji: "🪸", name: "サンゴ",   weight: 3 },
+  { id: "whale",   emoji: "🐳", name: "クジラ",   weight: 2 },
+  { id: "friend",  emoji: "🐧", name: "ともだち", weight: 1 }
 ];
 
 function rollItem() {
@@ -1020,19 +1028,28 @@ function renderOceanSwimmers() {
       el.className = "swimmer";
       el.textContent = item.emoji;
       const top = 8 + Math.random() * 84; // 8%〜92%の縦位置
-      const dur = 18 + Math.random() * 22; // 18〜40秒
+      let dur = 18 + Math.random() * 22; // 18〜40秒
+      const sizeMap = { whale: 38, turtle: 30, friend: 30, octopus: 26, crab: 26, squid: 24, coral: 22, fish: 22, shrimp: 22, ice: 22 };
+      const size = sizeMap[item.id] || 22;
+      // 大きい生き物はゆっくり
+      if (item.id === "whale" || item.id === "turtle") dur = 30 + Math.random() * 20;
       const delay = -Math.random() * dur;
-      const size = item.id === "friend" ? 30 : (item.id === "crab" ? 26 : 22);
       el.style.top = top + "%";
       el.style.animationDuration = dur + "s";
       el.style.animationDelay = delay + "s";
       el.style.fontSize = size + "px";
-      // こおりはふわっと上昇、他は水平swim
+      // こおりはふわっと上昇
       if (item.id === "ice") {
         el.classList.add("float-up");
         el.style.left = (Math.random() * 100) + "%";
         el.style.top = (50 + Math.random() * 50) + "%";
         el.style.animationDuration = (8 + Math.random() * 6) + "s";
+      }
+      // サンゴは海底に固定
+      if (item.id === "coral") {
+        el.style.animation = "none";
+        el.style.left = (Math.random() * 95) + "%";
+        el.style.top = (88 + Math.random() * 8) + "%";
       }
       container.appendChild(el);
     }
