@@ -297,6 +297,75 @@
   .inv-tier.rare      { background: #3b82f6; }
   .inv-tier.epic      { background: #a855f7; }
   .inv-tier.legendary { background: linear-gradient(90deg, #f59e0b, #ef4444); }
+
+  /* 水槽（コレクション展示） */
+  .aquarium {
+    position: relative;
+    height: 220px;
+    background: linear-gradient(180deg, #87ceeb 0%, #4fb3d9 50%, #1e90c4 100%);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    box-shadow: inset 0 0 30px rgba(0,0,0,0.15), 0 4px 16px rgba(0,0,0,0.08);
+    border: 4px solid #94a3b8;
+  }
+  .aquarium-title {
+    position: absolute; top: 8px; left: 12px; z-index: 5;
+    background: rgba(255,255,255,0.85);
+    padding: 4px 10px; border-radius: 999px;
+    font-size: 11px; font-weight: 700; color: #1e293b;
+    backdrop-filter: blur(4px);
+  }
+  .aquarium-empty {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    color: rgba(255,255,255,0.7); font-size: 13px;
+    text-align: center; padding: 0 20px;
+    z-index: 2;
+  }
+  .aq-wave {
+    position: absolute; left: -10%; right: -10%; height: 60px;
+    background: rgba(255,255,255,0.18);
+    border-radius: 50% 50% 0 0;
+    animation: wave-move 7s ease-in-out infinite;
+  }
+  .aq-wave.aw1 { top: 25%; opacity: 0.5; }
+  .aq-wave.aw2 { top: 60%; animation-delay: -3s; opacity: 0.3; }
+  .aq-bubble {
+    position: absolute; width: 8px; height: 8px;
+    background: rgba(255,255,255,0.45); border-radius: 50%;
+    animation: aq-bubble-up 5s linear infinite;
+  }
+  @keyframes aq-bubble-up {
+    0% { bottom: -10px; opacity: 0; }
+    10% { opacity: 0.7; }
+    90% { opacity: 0.7; }
+    100% { bottom: 110%; opacity: 0; }
+  }
+  .aq-creature {
+    position: absolute;
+    animation: aq-swim linear infinite;
+    filter: drop-shadow(0 2px 3px rgba(0,0,0,0.2));
+  }
+  @keyframes aq-swim {
+    0%   { left: -10%; transform: scaleX(1) translateY(0); }
+    25%  { transform: scaleX(1) translateY(-8px); }
+    49%  { left: 105%; transform: scaleX(1) translateY(0); }
+    50%  { left: 105%; transform: scaleX(-1) translateY(0); }
+    75%  { transform: scaleX(-1) translateY(8px); }
+    100% { left: -10%; transform: scaleX(-1) translateY(0); }
+  }
+  .aq-creature.float-up {
+    animation: aq-float linear infinite;
+  }
+  @keyframes aq-float {
+    0%   { bottom: -5%; opacity: 0.5; }
+    50%  { bottom: 50%; opacity: 0.9; }
+    100% { bottom: 105%; opacity: 0; }
+  }
+  .aq-creature.bottom {
+    animation: none;
+  }
   .inv-emoji { font-size: 20px; line-height: 1; }
   .inv-count {
     font-size: 11px; font-weight: 700; margin-top: 2px;
@@ -527,7 +596,6 @@
   <div class="wave w1"></div>
   <div class="wave w2"></div>
   <div class="wave w3"></div>
-  <div id="ocean-swimmers"></div>
   <div class="bubble" style="left:10%;animation-delay:0s"></div>
   <div class="bubble" style="left:25%;animation-delay:-2s"></div>
   <div class="bubble" style="left:50%;animation-delay:-4s"></div>
@@ -549,11 +617,11 @@
 </div>
 
 <div class="tabs-nav">
-  <button class="tab-btn active" data-tab="achievement" onclick="switchTab('achievement')">🏆 達成度・アイテム</button>
-  <button class="tab-btn" data-tab="tasks" onclick="switchTab('tasks')">📅 やること</button>
+  <button class="tab-btn active" data-tab="tasks" onclick="switchTab('tasks')">📅 やること</button>
+  <button class="tab-btn" data-tab="achievement" onclick="switchTab('achievement')">🏆 達成度・アイテム</button>
 </div>
 
-<div class="tab-content active" id="tab-achievement">
+<div class="tab-content" id="tab-achievement">
 
 <div class="streak-badge" id="streak-badge">
   <div class="streak-fire">🔥</div>
@@ -591,6 +659,18 @@
   </div>
 </div>
 
+<div class="aquarium" id="aquarium">
+  <div class="aquarium-title">🐠 みんなの水槽</div>
+  <div class="aq-wave aw1"></div>
+  <div class="aq-wave aw2"></div>
+  <div class="aq-bubble" style="left:15%;animation-delay:0s"></div>
+  <div class="aq-bubble" style="left:35%;animation-delay:-2s"></div>
+  <div class="aq-bubble" style="left:60%;animation-delay:-3s"></div>
+  <div class="aq-bubble" style="left:85%;animation-delay:-1s"></div>
+  <div id="aq-creatures"></div>
+  <div class="aquarium-empty" id="aq-empty">タスクを終わらせて<br>みんなを水槽に集めよう！</div>
+</div>
+
 <div class="subjects-card">
   <div class="subjects-title">
     <span>📊 教科別の進捗</span>
@@ -601,7 +681,7 @@
 
 </div><!-- /tab-achievement -->
 
-<div class="tab-content" id="tab-tasks">
+<div class="tab-content active" id="tab-tasks">
 
 <div class="legend">
   <div class="row"><strong>T</strong> = テキスト（教科書・参考書）／<strong>W</strong> = 問題集（ワーク）</div>
@@ -1106,24 +1186,27 @@ function renderSubjects() {
   document.getElementById('subjects-rows').innerHTML = rows;
 }
 
-function renderOceanSwimmers() {
-  const container = document.getElementById("ocean-swimmers");
+function renderAquarium() {
+  const container = document.getElementById("aq-creatures");
+  const empty = document.getElementById("aq-empty");
+  if (!container) return;
   container.innerHTML = "";
-  // 集めたアイテムだけ背景に登場（こおり=泡として上昇、それ以外は水平に泳ぐ）
-  const SWIM_CAP = 12; // 各種類の最大表示数（多すぎると重い）
-  ITEMS.forEach((item, idx) => {
+  // 集めたアイテムだけが水槽の中で動く
+  const SWIM_CAP = 8; // 各種類の最大表示数
+  let totalCreatures = 0;
+  ITEMS.forEach(item => {
     const count = Math.min(inventory[item.id] || 0, SWIM_CAP);
     for (let i = 0; i < count; i++) {
+      totalCreatures++;
       const el = document.createElement("div");
-      el.className = "swimmer";
+      el.className = "aq-creature";
       el.textContent = item.emoji;
-      const top = 8 + Math.random() * 84; // 8%〜92%の縦位置
-      let dur = 18 + Math.random() * 22; // 18〜40秒
-      const sizeMap = { whale: 38, turtle: 30, friend: 30, octopus: 26, crab: 26, squid: 24, coral: 22, fish: 22, shrimp: 22, ice: 22 };
-      const size = sizeMap[item.id] || 22;
-      // 大きい生き物はゆっくり
-      if (item.id === "whale" || item.id === "turtle") dur = 30 + Math.random() * 20;
+      const sizeMap = { whale: 36, friend: 28, unicorn: 30, rainbow: 26, diamond: 22, star: 22, octopus: 24, crab: 24, squid: 22, fish: 20, shrimp: 18, ice: 20 };
+      const size = sizeMap[item.id] || 20;
+      let dur = 12 + Math.random() * 12; // 12〜24秒
+      if (item.id === "whale") dur = 22 + Math.random() * 8;
       const delay = -Math.random() * dur;
+      const top = 15 + Math.random() * 70; // 15%〜85%
       el.style.top = top + "%";
       el.style.animationDuration = dur + "s";
       el.style.animationDelay = delay + "s";
@@ -1131,19 +1214,20 @@ function renderOceanSwimmers() {
       // こおりはふわっと上昇
       if (item.id === "ice") {
         el.classList.add("float-up");
-        el.style.left = (Math.random() * 100) + "%";
-        el.style.top = (50 + Math.random() * 50) + "%";
-        el.style.animationDuration = (8 + Math.random() * 6) + "s";
+        el.style.left = (Math.random() * 90) + "%";
+        el.style.bottom = "-5%";
+        el.style.top = "auto";
+        el.style.animationDuration = (6 + Math.random() * 4) + "s";
       }
-      // サンゴは海底に固定
-      if (item.id === "coral") {
-        el.style.animation = "none";
-        el.style.left = (Math.random() * 95) + "%";
-        el.style.top = (88 + Math.random() * 8) + "%";
+      // ダイヤ・ほし・にじ・ユニコーンは特別演出（点滅・浮遊）
+      if (item.tier === "rare" || item.tier === "epic" || item.tier === "legendary") {
+        el.style.filter = "drop-shadow(0 0 6px rgba(255,255,255,0.9))";
       }
       container.appendChild(el);
     }
   });
+  // 1匹もいなければメッセージ表示
+  if (empty) empty.style.display = totalCreatures > 0 ? "none" : "flex";
 }
 
 const PET_STAGES = [
@@ -1277,7 +1361,7 @@ function render() {
 
   renderInventory();
   renderFriends();
-  renderOceanSwimmers();
+  renderAquarium();
   renderSubjects();
 }
 
@@ -1307,10 +1391,10 @@ function switchTab(name) {
   localStorage.setItem(TAB_KEY, name);
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
-// 起動時に前回のタブを復元
+// 起動時に前回のタブを復元（デフォルトはやること）
 (function restoreTab() {
   const saved = localStorage.getItem(TAB_KEY);
-  if (saved && (saved === "achievement" || saved === "tasks")) switchTab(saved);
+  switchTab(saved === "achievement" ? "achievement" : "tasks");
 })();
 
 function expandAll() {
