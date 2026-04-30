@@ -105,7 +105,7 @@ footer a{color:var(--accent);text-decoration:none}
 <div class="cards" id="cards"></div>
 
 <footer>
-  <p>更新日: 2026-04-29 / カードをタップで答え表示</p>
+  <p>更新日: 2026-04-30 / カードをタップで答え表示</p>
   <p><a href="https://github.com/Haru-PowerPlatform/pa45/blob/main/docs/pl300-mistakes.md" target="_blank">📝 ミス記録の元データ</a></p>
 </footer>
 
@@ -200,6 +200,20 @@ const data = [
   {lvl:2,cat:"視覚化",q:"レポートにコメント・@メンションで報告",a:"<strong>コメント機能</strong>",body:"アラートは閾値通知用。コメント機能は<strong>レポート内の議論・@メンション通知</strong>用。Q105。"},
   {lvl:2,cat:"モデル",q:"大規模データの集計（パフォーマンス重視）",a:"<strong>グループ化 ＋ COUNTROWS ＋ リレーション</strong>",body:"計算テーブルは逆効果（メモリ消費）。<br>Power Queryで<strong>事前集計</strong>→集計テーブルとファクトをリレーション。Q94。"},
   {lvl:2,cat:"PowerQuery",q:"AppSourceでユーザーが見られない",a:"<strong>アクセス設定</strong>（コンテンツ設定ではない）",body:"「コンテンツ設定」と「アクセス設定」の用語の罠。<br>ユーザーが<strong>見られない</strong>＝アクセス権の問題。Q25。"},
+
+  // === ランダム㉞ 追加（2026-04-30 ミス） ===
+  {lvl:2,cat:"DAX",q:"行ごとに分類フラグ（VIP/通常）を作りたい",a:"<strong>計算列（メジャー不可）</strong>",body:"<table><tr><th>使い方</th><th>計算列</th><th>メジャー</th></tr><tr><td>スライサー</td><td>✅</td><td>❌</td></tr><tr><td>軸・カテゴリ</td><td>✅</td><td>❌</td></tr><tr><td>カード・KPI</td><td>—</td><td>✅</td></tr><tr><td>合計・平均</td><td>—</td><td>✅</td></tr></table>メジャーは<strong>集計値1つ</strong>しか返せない。スライサー・軸には<strong>行ごとの値を持つ列</strong>が必要なので必ず計算列。<br>反射：「分類して<strong>絞り込みたい</strong>」→ 計算列／「集計値を<strong>表示したい</strong>」→ メジャー。ランダム㉞。"},
+
+  // === バッチ㊴〜㊽ 追加（2026-04-30 ミス） ===
+  {lvl:2,cat:"配布",q:"ゲートウェイが必要なデータソースの判断",a:"<strong>オンプレミスのみ必要、クラウドは不要</strong>",body:"<table><tr><th>場所</th><th>例</th><th>ゲートウェイ</th></tr><tr><td>☁️ クラウド</td><td>Azure SQL / SharePoint Online / OneDrive</td><td>❌ 不要</td></tr><tr><td>🏢 オンプレミス</td><td>オンプレSQL Server / 社内ファイル共有のExcel</td><td>✅ 必要</td></tr></table>判断軸は「データの置き場所」だけ。SharePoint <strong>Online</strong> はクラウド／SharePoint <strong>Server</strong> はオンプレ。Excelも置き場所による。ランダム㊱。"},
+  {lvl:3,cat:"DAX",q:"ALL vs ALLSELECTED（地域シェア計算）【🚨5回ミス】",a:"<strong>「選択した範囲内」=ALLSELECTED／「全国/全体」=ALL</strong>",body:"問題文のキーワードで反射：<br>・「<strong>選択した</strong>」「<strong>表示中</strong>」「<strong>選択範囲</strong>」「<strong>絞り込んだ中で</strong>」→ ALLSELECTED<br>・「<strong>全国</strong>」「<strong>全体</strong>」「<strong>総〇〇</strong>」「<strong>全社</strong>」→ ALL<br>罠：「地域全体に占めるシェア」の「全体」だけ見るとALLに見えるが、「<strong>選択した地域の中での全体</strong>」 → ALLSELECTED。「何の全体？」を必ず確認。<strong>5回目ミス</strong>。"},
+  {lvl:2,cat:"PowerQuery",q:"列の品質・列の分布・列のプロファイルの違い",a:"<strong>3つの機能で見える情報が違う</strong>",body:"<table><tr><th>機能</th><th>見える情報</th></tr><tr><td>列の品質</td><td>有効/空白/エラー率の<strong>棒グラフ</strong></td></tr><tr><td>列の分布</td><td><strong>ユニーク値・distinct数</strong>（ヒストグラム）</td></tr><tr><td>列のプロファイル</td><td><strong>最小/最大/平均</strong>などの詳細統計</td></tr></table>「一意性確認」→ 列の分布／「統計的ばらつき」→ 列のプロファイル。すべて欲しいなら3つON。ランダム㊳。"},
+  {lvl:2,cat:"セキュリティ",q:"動的RLS：USERNAME() vs USERPRINCIPALNAME()",a:"<strong>USERPRINCIPALNAME() 一択</strong>",body:"USERNAME() は Desktop で <code>DOMAIN\\user</code>、Service で UPN形式と<strong>戻り値の形式が違う</strong>。<br>USERPRINCIPALNAME() は Desktop でも Service でも <strong>UPN形式で一貫</strong>。<br>Microsoft Entra ID（旧Azure AD）環境では UPN ベースなので USERPRINCIPALNAME() が安全・推奨。ランダム㊵。"},
+  {lvl:2,cat:"DAX",q:"AVERAGE と BLANK の関係",a:"<strong>AVERAGE は BLANK を自動除外（NOT ISBLANK は冗長）</strong>",body:"DAX の <strong>AVERAGE / SUM / MIN / MAX / COUNT は BLANK を自動的に無視</strong>する。<br><code>CALCULATE(AVERAGE(...), NOT ISBLANK(...))</code> は冗長で書く必要なし。<br>⚠️ <strong>COUNTROWS</strong> だけはテーブルの行数を数えるので BLANK行も数える（罠）。<br>「平均出すならAVERAGE一発でOK」「NOT ISBLANK 書きたくなったら一旦止まれ」。ランダム㊶。"},
+  {lvl:2,cat:"PowerQuery",q:"タグ列（「Apple; Mobile; Apple」など）の展開",a:"<strong>列の分割 → 各「行」に分割</strong>",body:"1セルに「; 」区切りで複数値が入ってる → <strong>列の分割で「各行」を選択</strong>。<br>複数列に分割すると同じ値（"Apple"）が異なる列に散らばってスライサー・集計に使えない。<br>各行に分割すると1製品が複数行に複製され、各行に1タグ＝スライサーで反応する。<br>反射：「タグ的な複数値」「絞り込みたい」→ <strong>行に分割</strong>。ランダム㊷。"},
+  {lvl:3,cat:"視覚化",q:"条件付き書式：複数列の複合条件で色付け",a:"<strong>フィールド値（Field value）</strong>",body:"<table><tr><th>種類</th><th>用途</th></tr><tr><td>色スケール</td><td>1列の数値でグラデーション</td></tr><tr><td>ルール</td><td>1列の値の範囲で分岐</td></tr><tr><td><strong>フィールド値</strong></td><td><strong>メジャーが返す色名で動的色付け</strong></td></tr><tr><td>アイコン</td><td>アイコン表示用（背景色不可）</td></tr></table>複数列のAND/OR条件 → メジャーで判定 → 色名を返す → フィールド値で適用。<br><code>警告色 = IF([ProfitMargin]&lt;0.05 && [QuantitySold]&gt;100, "Red", BLANK())</code><br>ランダム㊸。"},
+  {lvl:2,cat:"配布",q:"コンテンツの承認（Endorsement）",a:"<strong>認定（Certified）= 公式品質マーク</strong>",body:"<table><tr><th>レベル</th><th>付与者</th><th>意味</th></tr><tr><td>なし</td><td>—</td><td>—</td></tr><tr><td>プロモーション</td><td>誰でも（共同作成者以上）</td><td>「いいね」レベルの推奨</td></tr><tr><td><strong>認定</strong></td><td><strong>テナント管理者が指定したユーザーのみ</strong></td><td>組織として品質保証済み</td></tr></table>⚠️ <strong>機密ラベル</strong>は情報の機密度（Confidential など）であって品質マークではない。<strong>承認(品質)</strong> と <strong>機密ラベル(機密度)</strong> は別概念。ランダム㊺。"},
+  {lvl:2,cat:"視覚化",q:"帳票・請求書を1取引先=1PDFで出力",a:"<strong>ページ分割レポート（Paginated Report / .rdl）</strong>",body:"反射キーワード：「帳票」「請求書」「明細書」「印刷」「改ページ」「ヘッダー/フッター」「.rdl」「Report Builder」「全行表示」「ピクセル単位」→ ページ分割レポート。<br>通常レポート（PBIX）はインタラクティブ向きで改ページや帳票機能なし。「PDFで出したい」だけなら通常レポートでもできるが、<strong>帳票要件</strong>（改ページ・1行ずつ正確に）が出たらページ分割レポート一択。ランダム㊼。"},
 ];
 
 const cardsEl = document.getElementById("cards");
