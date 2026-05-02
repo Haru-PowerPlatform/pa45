@@ -551,6 +551,7 @@ PowerAutomate, PA45, PowerPlatform, Microsoft365, 自動化, ハンズオン, �
 | 5 | https://youtu.be/cltHw91fYm4 |
 | 6 | https://youtu.be/rvSX575fdbo |
 | 7 | https://youtu.be/JOOlaiBvYgQ |
+| 8 | https://youtu.be/4QmDeRgGGLk |
 
 ※ Vol.2・3 は録画データなし（公開不可）。対応不要。
 
