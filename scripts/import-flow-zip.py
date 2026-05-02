@@ -14,8 +14,11 @@ from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 
-# Solution UniqueName から Vol番号 を取り出す regex（例: PA45_No9_SharePointUpdate_1_0_0_5_managed.zip）
-SOLUTION_RE = re.compile(r'PA45_No(\d+)_([A-Za-z]+)_\d+_\d+_\d+_\d+_managed\.zip$', re.IGNORECASE)
+# Solution UniqueName から Vol番号 を取り出す regex
+# 実ファイル名パターン:
+#   PA45No9SharePointUpdate_managed.zip                (バージョン無)
+#   PA45No9SharePointUpdate_1_0_0_0_managed.zip        (バージョン有)
+SOLUTION_RE = re.compile(r'PA45No(\d+)([A-Za-z]+?)(?:_\d+_\d+_\d+_\d+)?_managed\.zip$', re.IGNORECASE)
 
 # Vol番号 → 配布ファイル名サフィックス（既存flows/vol-NN/PA45-VolNN-XXX.zipと整合）
 VOL_TOPIC = {
@@ -34,7 +37,7 @@ VOL_TOPIC = {
 def find_latest_zip(src: Path, vol: int | None = None) -> Path | None:
     """src フォルダから最新の PA45_NoN_*.zip を取得（vol指定時は絞り込み）"""
     candidates = []
-    for p in src.glob('PA45_No*_managed.zip'):
+    for p in src.glob('PA45No*_managed.zip'):
         m = SOLUTION_RE.match(p.name)
         if not m:
             continue
@@ -102,7 +105,7 @@ def main():
     print(f'  src: {src}')
 
     if args.all:
-        zips = list(src.glob('PA45_No*_managed.zip'))
+        zips = list(src.glob('PA45No*_managed.zip'))
         zips.sort()
         if not zips:
             print('  対象ZIPなし')

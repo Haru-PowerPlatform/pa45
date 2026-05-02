@@ -31,19 +31,20 @@ if "%VOL%"=="" (
 )
 
 REM Vol → Solution UniqueName のマッピング
-if "%VOL%"=="1" set SOLUTION=PA45_No1_Initialize
-if "%VOL%"=="2" set SOLUTION=PA45_No2_SetVariable
-if "%VOL%"=="3" set SOLUTION=PA45_No3_Condition
-if "%VOL%"=="4" set SOLUTION=PA45_No4_ApplyToEach
-if "%VOL%"=="5" set SOLUTION=PA45_No5_Review
-if "%VOL%"=="6" set SOLUTION=PA45_No6_FormsMail
-if "%VOL%"=="7" set SOLUTION=PA45_No7_FormsSPTeams
-if "%VOL%"=="8" set SOLUTION=PA45_No8_Approval
-if "%VOL%"=="9" set SOLUTION=PA45_No9_SharePointUpdate
+REM Power PlatformはUniqueNameの`_`を自動削除するため、実体は連結形式
+if "%VOL%"=="1" set SOLUTION=PA45No1Initialize
+if "%VOL%"=="2" set SOLUTION=PA45No2SetVariable
+if "%VOL%"=="3" set SOLUTION=PA45No3Condition
+if "%VOL%"=="4" set SOLUTION=PA45No4ApplyToEach
+if "%VOL%"=="5" set SOLUTION=PA45No5Review
+if "%VOL%"=="6" set SOLUTION=PA45No6FormsMail
+if "%VOL%"=="7" set SOLUTION=PA45No7FormsSPTeams
+if "%VOL%"=="8" set SOLUTION=PA45No8Approval
+if "%VOL%"=="9" set SOLUTION=PA45No9SharePointUpdate
 
 if "%VOL%"=="all" (
     echo === 全Vol一括エクスポート ===
-    for %%S in (PA45_No1_Initialize PA45_No2_SetVariable PA45_No3_Condition PA45_No4_ApplyToEach PA45_No5_Review PA45_No6_FormsMail PA45_No7_FormsSPTeams PA45_No8_Approval PA45_No9_SharePointUpdate) do (
+    for %%S in (PA45No1Initialize PA45No2SetVariable PA45No3Condition PA45No4ApplyToEach PA45No5Review PA45No6FormsMail PA45No7FormsSPTeams PA45No8Approval PA45No9SharePointUpdate) do (
         echo.
         echo --- %%S ---
         pac solution export --name %%S --path "%EXPORT_DIR%" --managed --overwrite
