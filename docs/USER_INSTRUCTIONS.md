@@ -95,6 +95,11 @@ C:\Users\isamu\Documents\pa45
 ### 絶対書かないこと
 - **MVP（Microsoft Most Valuable Professional）審査・認定に関する文言は一切禁止**
 - 「MVP審査で〇〇」「MVPを狙う」「MVP認定に有利」全てNG
+- **架空の参加者反応・チャット欄実況・盛り上がり描写は禁止**（うそ混入NG）
+  - 「参加者から『〜』という声」「チャット欄に『できました！』」「盛り上がりました」「明日から業務で使えそう」等NG
+  - `<h2>当日の様子</h2>` セクション全体NG
+  - 講師の語りかけ（「『できた！』を一緒に作りましょう」）はOK
+  - 事実値（アンケート集計値など）はOK
 
 ### よく使うHTMLパターン
 - 吹き出し: `<div class="speech-wrap sb-id-14 sbs-stn sbp-l sbis-cb cf">...</div>`
