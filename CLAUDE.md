@@ -117,6 +117,62 @@ START-HERE.md が PL-300 セッションの**単一情報源**。スタイル変
 
 ---
 
+## PA45 フロー命名ルール（重要・絶対遵守）
+
+詳細：[`docs/PA45_NAMING.md`](docs/PA45_NAMING.md)
+
+### Solution（Power Automate）
+- 表示名: 自由
+- 名前: `PA45_NoN_TopicXxx`（半角英数 + `_`）
+- 実体（UniqueName）: Power Platform が `_` を自動削除 → `PA45NoNTopicXxx`
+
+### フロー名（マイフロー）
+- `PA45-No{N}-{Topic}` （ハイフン区切り、英語推奨）
+
+### 既存マッピング（Vol.1〜9）
+| Vol | UniqueName | Topic |
+|---|---|---|
+| 1 | PA45No1Initialize | InitializeVariable |
+| 2 | PA45No2SetVariable | SetVariable |
+| 3 | PA45No3Condition | Condition |
+| 4 | PA45No4ApplyToEach | ApplyToEach |
+| 5 | PA45No5Review | Review |
+| 6 | PA45No6FormsMail | FormsMail |
+| 7 | PA45No7FormsSPTeams | FormsSPTeams |
+| 8 | PA45No8Approval | ApprovalFlow |
+| 9 | PA45No9SharePointUpdate | SharePointUpdate |
+
+### Claude が PA フロー作成相談時にすべきこと
+ユーザー（はる）が「PA45のフロー作りたい」「Vol.10のフロー作る」等と言ったら：
+1. **必ず命名提案を最初に提示する**（ユーザーが命名ミスしないように）
+2. 提案フォーマット：
+   ```
+   推奨命名（このまま使ってOK）:
+   - フロー名（マイフロー）: PA45-No{N}-{Topic}
+   - Solution 表示名: PA45 No.{N} {テーマ短縮}
+   - Solution 名前: PA45_No{N}_{Topic}
+   - Solution UniqueName（自動）: PA45No{N}{Topic}
+   - GitHub内ZIP: flows/vol-{NN}/PA45-Vol{NN}-{Topic}.zip
+   ```
+3. `Topic` は既存規則（[docs/PA45_NAMING.md](docs/PA45_NAMING.md) §3）に従う
+4. 新規Volは `scripts/add-vol-card.py` で登録（手動でマッピング書かない）
+
+### 日常運用
+- フロー更新後: `.\scripts\release-flow.bat all`（推奨・全Vol一括）
+- 単発Volのみ: `.\scripts\release-flow.bat 9`
+- 命名検証: `python scripts/check-naming.py`
+- 新Vol追加: `python scripts/add-vol-card.py --vol 10 ...`
+
+### スクリプト一覧（フロー自動化）
+| スクリプト | 用途 |
+|---|---|
+| `scripts/release-flow.bat [N\|all]` | pac CLI でエクスポート → サイト反映 → push |
+| `scripts/import-flow-zip.py --src ... --vol N` | ZIP配置 + sessions/index.html 更新 |
+| `scripts/check-naming.py` | Solution命名と release-flow.bat マッピングの整合性検証 |
+| `scripts/add-vol-card.py --vol N --topic ...` | 新Volカード追加 + マッピング自動更新 |
+
+---
+
 ## 自動化トリガー：「第N回が終わった」
 
 ユーザーが以下の形式で言ったとき：

@@ -20,6 +20,18 @@ if "%VOL%"=="" (
     exit /b 1
 )
 
+REM Naming validation (skip with --skip-check)
+if not "%2"=="--skip-check" (
+    echo.
+    echo === Naming validation ===
+    python "%~dp0check-naming.py"
+    if errorlevel 1 (
+        echo.
+        echo Naming check failed. Fix above issues, or run with --skip-check to bypass.
+        exit /b 1
+    )
+)
+
 REM Solution UniqueName mapping (Power Platform strips underscores)
 if "%VOL%"=="1" set SOLUTION=PA45No1Initialize
 if "%VOL%"=="2" set SOLUTION=PA45No2SetVariable
