@@ -990,6 +990,7 @@ const STORAGE_KEY = "johoku-chu2-midterm-2026-05";
 const STAGE_KEY = STORAGE_KEY + "-stage";
 const INV_KEY = STORAGE_KEY + "-inv";
 const FRIENDS_KEY = STORAGE_KEY + "-friends";
+const DROPPED_KEY = STORAGE_KEY + "-dropped";
 const STREAK_KEY = STORAGE_KEY + "-streak";
 const LAST_DATE_KEY = STORAGE_KEY + "-last";
 
@@ -1366,14 +1367,28 @@ function render() {
   renderSubjects();
 }
 
+function loadDropped() {
+  try { return JSON.parse(localStorage.getItem(DROPPED_KEY) || "{}"); }
+  catch { return {}; }
+}
+function saveDropped(d) {
+  localStorage.setItem(DROPPED_KEY, JSON.stringify(d));
+}
+
 function toggleTask(key) {
   const wasOn = !!doneState[key];
   doneState[key] = !wasOn;
   saveDone(doneState);
   // チェック時のみアイテムドロップ＋ストリーク更新（外す時はドロップしない）
+  // かつ、そのタスクで過去にドロップしていない場合のみ（つけ外しでの増殖防止）
   if (!wasOn) {
-    dropItem();
-    setTimeout(() => dropItem(), 200); // 2個目を少し遅らせて演出を分ける
+    const dropped = loadDropped();
+    if (!dropped[key]) {
+      dropItem();
+      setTimeout(() => dropItem(), 200); // 2個目を少し遅らせて演出を分ける
+      dropped[key] = true;
+      saveDropped(dropped);
+    }
     updateStreak();
     renderStreak();
   }
@@ -1410,6 +1425,7 @@ function resetItemsOnly() {
   friendsCount = 0;
   saveInv(inventory);
   saveFriends(friendsCount);
+  localStorage.removeItem(DROPPED_KEY);
   render();
 }
 
@@ -1424,6 +1440,7 @@ function resetAll() {
   localStorage.removeItem(STAGE_KEY);
   localStorage.removeItem(STREAK_KEY);
   localStorage.removeItem(LAST_DATE_KEY);
+  localStorage.removeItem(DROPPED_KEY);
   render();
   renderStreak();
 }
