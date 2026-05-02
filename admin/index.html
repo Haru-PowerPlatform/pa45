@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>PA45 運営ダッシュボード</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Hiragino Kaku Gothic ProN', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #0f172a; color: #e2e8f0;
+    margin: 0; padding: 24px; line-height: 1.6;
+  }
+  h1 { font-size: 22px; margin: 0 0 8px; color: #fbbf24; }
+  h2 {
+    font-size: 16px; margin: 32px 0 12px; padding: 8px 12px;
+    background: #1e293b; border-left: 4px solid #38bdf8; border-radius: 4px;
+  }
+  .meta { color: #94a3b8; font-size: 12px; margin-bottom: 24px; }
+
+  /* Hero (next session) */
+  .hero {
+    background: linear-gradient(135deg, #1e3a8a 0%, #1e293b 100%);
+    border: 1px solid #334155; border-radius: 12px;
+    padding: 20px 24px; margin-bottom: 24px;
+  }
+  .hero-label { font-size: 11px; letter-spacing: .1em; color: #38bdf8; font-weight: 700; }
+  .hero-title { font-size: 24px; font-weight: 700; margin: 4px 0 6px; color: #f1f5f9; }
+  .hero-meta { font-size: 13px; color: #94a3b8; }
+  .hero-progress {
+    margin-top: 14px; font-size: 13px; color: #fde68a;
+  }
+
+  /* TODO */
+  .todo-list { display: flex; flex-direction: column; gap: 8px; }
+  .todo-item {
+    background: #1e293b; border: 1px solid #334155; border-radius: 8px;
+    padding: 12px 14px; display: flex; align-items: flex-start; gap: 12px;
+    transition: background .15s;
+  }
+  .todo-item:hover { background: #263449; }
+  .todo-item.done { opacity: 0.45; text-decoration: line-through; }
+  .todo-item.priority-1 { border-left: 4px solid #ef4444; }
+  .todo-item.priority-2 { border-left: 4px solid #f59e0b; }
+  .todo-item.priority-3 { border-left: 4px solid #38bdf8; }
+  .todo-item.priority-4 { border-left: 4px solid #64748b; }
+  .todo-checkbox { transform: scale(1.2); cursor: pointer; margin-top: 4px; }
+  .todo-body { flex: 1; }
+  .todo-title { font-size: 14px; font-weight: 600; color: #f1f5f9; }
+  .todo-meta { font-size: 11px; color: #94a3b8; margin-top: 4px; }
+  .todo-tag {
+    display: inline-block; font-size: 10px; padding: 2px 8px; border-radius: 12px;
+    background: #334155; color: #cbd5e1; margin-right: 6px;
+  }
+  .todo-tag.cat-X { background: #1e3a8a; color: #93c5fd; }
+  .todo-tag.cat-blog { background: #14532d; color: #86efac; }
+  .todo-tag.cat-yt { background: #7f1d1d; color: #fca5a5; }
+  .todo-note { font-size: 11px; color: #94a3b8; margin-top: 4px; font-style: italic; }
+
+  /* Matrix table */
+  table {
+    width: 100%; border-collapse: collapse; font-size: 12px;
+    background: #1e293b; border-radius: 8px; overflow: hidden;
+  }
+  th, td {
+    padding: 10px 8px; text-align: center; border-bottom: 1px solid #334155;
+  }
+  th {
+    background: #0f172a; color: #94a3b8; font-weight: 600; font-size: 11px;
+    text-transform: uppercase; letter-spacing: .05em;
+  }
+  td.vol-col {
+    text-align: left; font-weight: 700; color: #fbbf24; min-width: 50px;
+  }
+  td.theme-col {
+    text-align: left; font-size: 11px; color: #cbd5e1;
+    max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .icon-ok { color: #4ade80; font-weight: bold; }
+  .icon-no { color: #ef4444; font-weight: bold; }
+  .icon-na { color: #475569; }
+
+  /* KPI */
+  .kpi-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+  }
+  .kpi-card {
+    background: #1e293b; border: 1px solid #334155; border-radius: 8px;
+    padding: 16px; text-align: center;
+  }
+  .kpi-num { font-size: 28px; font-weight: 800; color: #fbbf24; }
+  .kpi-label { font-size: 11px; color: #94a3b8; margin-top: 4px; }
+
+  /* Quick links */
+  .links { display: flex; flex-wrap: wrap; gap: 8px; }
+  .links a {
+    background: #1e293b; border: 1px solid #334155; padding: 6px 12px; border-radius: 6px;
+    color: #38bdf8; text-decoration: none; font-size: 12px;
+  }
+  .links a:hover { background: #263449; }
+
+  /* Mobile */
+  @media (max-width: 640px) {
+    body { padding: 12px; }
+    .kpi-grid { grid-template-columns: repeat(2, 1fr); }
+    table { font-size: 10px; }
+    th, td { padding: 6px 4px; }
+    td.theme-col { max-width: 100px; }
+  }
+</style>
+</head>
+<body>
+
+<h1>🛠️ PA45 運営ダッシュボード</h1>
+<div class="meta" id="meta">読み込み中...</div>
+
+<!-- Hero: 次の開催情報 -->
+<div class="hero" id="hero"></div>
+
+<!-- KPI -->
+<h2>📈 累計</h2>
+<div class="kpi-grid" id="kpi"></div>
+
+<!-- TODO -->
+<h2>🔥 やるべきこと（直近）</h2>
+<div class="todo-list" id="todo-list"></div>
+
+<!-- Vol進捗マトリクス -->
+<h2>📊 Vol別 達成マトリクス</h2>
+<div style="overflow-x:auto;">
+<table id="matrix">
+  <thead>
+    <tr>
+      <th class="vol-col">Vol</th>
+      <th class="theme-col">テーマ</th>
+      <th title="Solution作成">Sol</th>
+      <th title="PPTX">PPT</th>
+      <th title="フローZIP">Zip</th>
+      <th title="アクティビティJSON">JSON</th>
+      <th title="アンケートJSON">📊</th>
+      <th title="セッションカード">Card</th>
+      <th title="WordPress LP更新">WP-LP</th>
+      <th title="YouTube公開">▶</th>
+      <th title="ブログ公開">📝</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+</div>
+
+<!-- サイト反映状況 -->
+<h2>🌐 各サイト反映状況</h2>
+<div style="overflow-x:auto;">
+<table id="reflection">
+  <thead>
+    <tr>
+      <th class="vol-col">Vol</th>
+      <th class="theme-col">テーマ</th>
+      <th>GitHub Pages<br>sessions/</th>
+      <th>WordPress LP<br>(2228)</th>
+      <th>YouTube</th>
+      <th>ブログ記事<br>(automate136)</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+</div>
+
+<!-- リンク -->
+<h2>🔗 クイックリンク</h2>
+<div class="links">
+  <a href="../sessions/" target="_blank">セッション一覧</a>
+  <a href="../" target="_blank">PA45 トップ</a>
+  <a href="../achievements/" target="_blank">活動実績</a>
+  <a href="https://www.automate136.com/pa45/" target="_blank">WordPress LP</a>
+  <a href="https://powerautomate-create.connpass.com/" target="_blank">connpass</a>
+  <a href="https://www.youtube.com/@Haru_PowerAutomate136" target="_blank">YouTubeチャンネル</a>
+  <a href="https://github.com/Haru-PowerPlatform/pa45" target="_blank">GitHubリポジトリ</a>
+  <a href="https://github.com/Haru-PowerPlatform/pa45/blob/main/docs/USER_INSTRUCTIONS.md" target="_blank">ユーザー指示集約</a>
+  <a href="https://github.com/Haru-PowerPlatform/pa45/blob/main/docs/PA45_NAMING.md" target="_blank">命名ルール</a>
+  <a href="https://github.com/Haru-PowerPlatform/pa45/blob/main/docs/TASK_SCHEDULER_SETUP.md" target="_blank">タスクスケジューラ手順</a>
+</div>
+
+<script>
+  // データ読み込み（GitHub Pagesからの相対パス）
+  const BASE = '../data/';
+
+  function icon(value) {
+    if (value === true || (typeof value === 'string' && value.length > 0)) return '<span class="icon-ok">✅</span>';
+    if (value === false) return '<span class="icon-no">❌</span>';
+    return '<span class="icon-na">−</span>';
+  }
+
+  function linkIcon(url) {
+    if (!url) return '<span class="icon-no">❌</span>';
+    return `<a href="${url}" target="_blank" style="color:#4ade80;text-decoration:none;">✅</a>`;
+  }
+
+  async function load() {
+    let status, todo;
+    try {
+      status = await (await fetch(BASE + 'admin/vol-status.json')).json();
+      todo = await (await fetch(BASE + 'admin/todo.json')).json();
+    } catch (e) {
+      document.body.innerHTML = '<h1>データ読み込みエラー</h1><pre>' + e.message + '</pre>';
+      return;
+    }
+
+    document.getElementById('meta').textContent =
+      `データ更新: ${status._updated} ／ 状況更新は data/admin/vol-status.json と data/admin/todo.json を編集`;
+
+    // ===== Hero (次回開催) =====
+    const hero = document.getElementById('hero');
+    const nextVol = status.vols.find(v => v.vol === todo.next_session_vol);
+    const heroTasks = todo.tasks.filter(t => t.vol === todo.next_session_vol && t.status !== 'skipped');
+    const totalCount = heroTasks.length;
+    hero.innerHTML = `
+      <div class="hero-label">次回開催 — 第${todo.next_session_vol}回</div>
+      <div class="hero-title">${nextVol ? nextVol.theme : '(未定)'}</div>
+      <div class="hero-meta">${todo.next_session_date}（木）20:15〜</div>
+      ${totalCount > 0 ? `<div class="hero-progress">📋 第${todo.next_session_vol}回の残タスク：${totalCount}件</div>` : ''}
+    `;
+
+    // ===== KPI =====
+    const completed = status.vols.filter(v => v.participants);
+    const totalP = completed.reduce((s, v) => s + (v.participants || 0), 0);
+    const ytCount = status.vols.filter(v => v.youtube_url).length;
+    const blogCount = status.vols.filter(v => v.blog_url).length;
+    const kpi = document.getElementById('kpi');
+    kpi.innerHTML = `
+      <div class="kpi-card"><div class="kpi-num">${completed.length}</div><div class="kpi-label">開催回</div></div>
+      <div class="kpi-card"><div class="kpi-num">${totalP}</div><div class="kpi-label">累計参加者</div></div>
+      <div class="kpi-card"><div class="kpi-num">${ytCount}/${status.vols.length}</div><div class="kpi-label">YouTube公開</div></div>
+      <div class="kpi-card"><div class="kpi-num">${blogCount}/${status.vols.length}</div><div class="kpi-label">ブログ公開</div></div>
+    `;
+
+    // ===== TODO =====
+    const tl = document.getElementById('todo-list');
+    const open = todo.tasks.filter(t => t.status !== 'skipped').sort((a, b) => a.priority - b.priority);
+    if (open.length === 0) {
+      tl.innerHTML = '<div class="todo-item">🎉 直近の対応事項はなし！</div>';
+    } else {
+      tl.innerHTML = open.map(t => {
+        const cat = t.category;
+        let catClass = '';
+        if (cat.includes('X')) catClass = 'cat-X';
+        else if (cat.includes('ブログ')) catClass = 'cat-blog';
+        else if (cat.includes('YouTube')) catClass = 'cat-yt';
+        const deadline = t.deadline ? `〆 ${t.deadline}` : '';
+        const volTag = t.vol ? `Vol.${t.vol}` : '全般';
+        return `
+          <div class="todo-item priority-${t.priority}" data-id="${t.id}">
+            <input type="checkbox" class="todo-checkbox">
+            <div class="todo-body">
+              <div class="todo-title">${t.title}</div>
+              <div class="todo-meta">
+                <span class="todo-tag ${catClass}">${cat}</span>
+                <span class="todo-tag">${volTag}</span>
+                ${deadline ? `<span class="todo-tag">${deadline}</span>` : ''}
+                <span class="todo-tag">優先度${t.priority}</span>
+              </div>
+              ${t.note ? `<div class="todo-note">${t.note}</div>` : ''}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // チェック動作（ローカルストレージ保存）
+      tl.querySelectorAll('.todo-item').forEach(el => {
+        const id = el.dataset.id;
+        const cb = el.querySelector('.todo-checkbox');
+        cb.checked = localStorage.getItem('pa45-todo-' + id) === '1';
+        if (cb.checked) el.classList.add('done');
+        cb.addEventListener('change', () => {
+          if (cb.checked) {
+            el.classList.add('done');
+            localStorage.setItem('pa45-todo-' + id, '1');
+          } else {
+            el.classList.remove('done');
+            localStorage.removeItem('pa45-todo-' + id);
+          }
+        });
+      });
+    }
+
+    // ===== Matrix =====
+    const tbody = document.querySelector('#matrix tbody');
+    tbody.innerHTML = status.vols.map(v => `
+      <tr>
+        <td class="vol-col">Vol.${v.vol}</td>
+        <td class="theme-col" title="${v.theme}">${v.theme}</td>
+        <td>${icon(v.solution_created)}</td>
+        <td>${icon(v.pptx_uploaded)}</td>
+        <td>${icon(v.flow_zip_uploaded)}</td>
+        <td>${icon(v.activity_json)}</td>
+        <td>${icon(v.survey_json)}</td>
+        <td>${icon(v.sessions_card)}</td>
+        <td>${icon(v.wp_lp_updated)}</td>
+        <td>${linkIcon(v.youtube_url)}</td>
+        <td>${linkIcon(v.blog_url)}</td>
+      </tr>
+    `).join('');
+
+    // ===== Site reflection =====
+    const rbody = document.querySelector('#reflection tbody');
+    rbody.innerHTML = status.vols.map(v => `
+      <tr>
+        <td class="vol-col">Vol.${v.vol}</td>
+        <td class="theme-col" title="${v.theme}">${v.theme}</td>
+        <td>${icon(v.sessions_card)}</td>
+        <td>${icon(v.wp_lp_updated)}</td>
+        <td>${linkIcon(v.youtube_url)}</td>
+        <td>${linkIcon(v.blog_url)}</td>
+      </tr>
+    `).join('');
+  }
+  load();
+</script>
+
+</body>
+</html>
