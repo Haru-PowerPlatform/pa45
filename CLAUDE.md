@@ -5,6 +5,20 @@
 
 ---
 
+## 🎯 PL-300 学習セッション（最重要・最初に確認）
+
+ユーザー（はる）は PL-300（Power BI Data Analyst）受験準備中。  
+**「PL-300の続き」「PL-300やろう」「次の問題」等と言われたら、即座に以下を実施:**
+
+1. [`docs/pl300-START-HERE.md`](docs/pl300-START-HERE.md) を**最初に**読む（出題スタイル・ルール・運用すべて記載）
+2. [`docs/pl300-handoff.md`](docs/pl300-handoff.md) で現在地（次は何問目か）確認
+3. [`docs/pl300-mistakes.md`](docs/pl300-mistakes.md) で直近のミス傾向把握
+4. START-HERE.md のスタイルに従って出題再開
+
+START-HERE.md が PL-300 セッションの**単一情報源**。スタイル変更・ルール追加もこのファイルに集約する。
+
+---
+
 ## プロジェクト概要
 
 **PA45（Power Automate 45分）**は、はる（ism136）が主催するPower Automateハンズオン勉強会。
