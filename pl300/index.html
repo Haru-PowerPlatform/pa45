@@ -105,7 +105,7 @@ footer a{color:var(--accent);text-decoration:none}
 <div class="cards" id="cards"></div>
 
 <footer>
-  <p>更新日: 2026-04-30（54問目まで） / カードをタップで答え表示</p>
+  <p>更新日: 2026-05-02（97問目まで） / カードをタップで答え表示</p>
   <p><a href="https://github.com/Haru-PowerPlatform/pa45/blob/main/docs/pl300-mistakes.md" target="_blank">📝 ミス記録の元データ</a></p>
 </footer>
 
@@ -222,6 +222,45 @@ const data = [
   {lvl:2,cat:"配布",q:"定期メール配信 と しきい値即時通知 の使い分け",a:"<strong>定期=サブスクリプション／値=データアラート</strong>",body:"<table><tr><th></th><th>サブスクリプション</th><th>データアラート</th></tr><tr><td>トリガー</td><td>時刻ベース</td><td>値ベース（KPI閾値）</td></tr><tr><td>対象</td><td>レポート全体・ページ</td><td>KPI/カード/ゲージのみ</td></tr><tr><td>配信</td><td>PDF/PPTX添付</td><td>メール本文通知</td></tr><tr><td>Power Automate連携</td><td>❌</td><td>✅</td></tr></table>覚え方：<strong>時間=サブスク／値=アラート</strong>。ランダム52。"},
   {lvl:2,cat:"DAX",q:"複数メジャーに同じ計算パターンを一括適用",a:"<strong>計算グループ（Calculation Groups）</strong>",body:"5メジャー × 3パターン（YTD/YoY/MoM）= 15個に爆発するのを防ぐ。<br>計算グループは1パターン定義 → 全メジャーに適用。Tabular Editor等の外部ツールで作成（Desktop標準機能ではない）。<br>反射：「メジャーが爆発」「N×M個になる」「YoY/YTDを全メジャーに」「Tabular Editor」→ 計算グループ。<br>「メジャーをフォルダ整理」は<strong>メジャーテーブル</strong>（別物）。ランダム53。"},
   {lvl:2,cat:"視覚化",q:"自然言語で質問してグラフ生成",a:"<strong>Power BI Q&amp;A</strong>",body:"反射：<br>・「自然言語で質問」「ユーザーが入力」→ <strong>Q&amp;A</strong>（能動）<br>・「自動でインサイト発見」→ クイックインサイト（自動）<br>・「データを文章で説明」→ スマートナラティブ<br>・「閾値超え通知」→ データアラート<br>Q&amp;Aは用語学習機能あり（「売上」と「Sales」を同義語登録可能）。ランダム54。"},
+
+  // === バッチ55〜97 追加（2026-04-30〜2026-05-02） ===
+  {lvl:2,cat:"視覚化",q:"分解ツリー vs 主要なインフルエンサー",a:"<strong>用途が真逆のAIビジュアル</strong>",body:"・<strong>分解ツリー</strong>：「メジャーを階層的に分解」「次元をAIが提案」<br>・<strong>主要なインフルエンサー</strong>：「何が影響？」「要因分析」<br>反射：「分解」「深掘り」→ 分解ツリー／「何が原因？」「要因」→ 主要なインフルエンサー。ランダム57ミス。"},
+  {lvl:2,cat:"DAX",q:"任意の期間・単位で日付シフト",a:"<strong>DATEADD(日付列, N, 単位)</strong>",body:"単位：DAY / MONTH / QUARTER / YEAR<br>反射：「N月前」「N年前」「期間と単位を柔軟に」→ DATEADD。SAMEPERIODLASTYEAR / PREVIOUSMONTH は専用。PARALLELPERIOD は同期間比較にならない罠。ランダム60。"},
+  {lvl:3,cat:"モデル",q:"テキスト列をアルファベット順以外で並べたい",a:"<strong>モデルレベルで「列で並べ替え」設定</strong>",body:"MonthName 列を MonthNumber で並べ替えるなど。<br>列ツール → 列で並べ替え → 並び順用列を選択。<br>全ビジュアルに一貫適用。ビジュアル単位の並べ替えは対症療法（保守性低）。ランダム62ミス。"},
+  {lvl:3,cat:"視覚化",q:"スマホで見やすいレイアウト",a:"<strong>携帯電話レイアウト（Mobile Layout）</strong>",body:"Power BI Desktop → <strong>表示タブ → 携帯電話レイアウト</strong>。1ファイルにPC版＋モバイル版が同居。Mobile アプリで縦持ち時に自動表示。<br>反射：「スマホで見やすく」「モバイル対応」「縦長レイアウト」→ Mobile Layout。ランダム63ミス。"},
+  {lvl:3,cat:"DAX",q:"ゼロ除算を回避（#DIV/0!対策）",a:"<strong>DIVIDE 関数</strong>",body:"<code>DIVIDE(分子, 分母)</code> → ゼロ時BLANK<br><code>DIVIDE(分子, 分母, 0)</code> → ゼロ時 0<br>IF + 割り算は冗長。常に DIVIDE を使う。<br>反射：「ゼロ除算」「#DIV/0!」「割り算でエラー」→ DIVIDE。ランダム76ミス。"},
+  {lvl:2,cat:"PowerQuery",q:"行に連番を振る・主キー作成",a:"<strong>インデックス列を追加</strong>",body:"列の追加タブ → インデックス列。0開始 / 1開始 / カスタム から選択。<br>反射：「行番号」「連番」「主キー作成」「並び順を保持」→ インデックス列。ランダム84。"},
+  {lvl:3,cat:"配布",q:"データセットを使うレポートの依存関係確認",a:"<strong>リネージビュー（Lineage View）</strong>",body:"ワークスペース画面 → 表示切替 → 系統。<br>データソース→データセット→レポートを矢印で可視化。変更前の影響範囲チェックに必須。<br>反射：「依存関係」「影響範囲」「どのレポートが使ってる？」→ リネージビュー。「誰が何をした」は<strong>監査ログ</strong>（別物）。ランダム91ミス。"},
+  {lvl:3,cat:"DAX",q:"派生テーブルをDAXで作る",a:"<strong>計算テーブル（Calculated Table）</strong>",body:"モデリングタブ → 新しいテーブル → DAX式を入力。<br>例：<code>Top10Products = TOPN(10, Product, [Total Sales])</code><br>反射：「派生テーブル」「TOP10専用テーブル」「DAXで完結」→ 計算テーブル。1ビジュアルだけのTop NはビジュアルレベルTop Nフィルター（別物）。ランダム97ミス。"},
+
+  // バッチ55〜97 の正解問題（重要反射キーワード）
+  {lvl:2,cat:"配布",q:"Pro vs Premium のスケジュール更新回数",a:"<strong>Pro=8回/日、Premium=48回/日</strong>",body:"両方とも最短間隔30分。1分間隔の自動更新は Premium 専用機能（Automatic page refresh）。<br>反射：「Pro で12回更新したい」→ Premium 必須。「リアルタイム」→ DirectQuery or Premium。ランダム55。"},
+  {lvl:1,cat:"PowerQuery",q:"データ型最適化（メモリ効率）",a:"<strong>整数 &gt; 固定小数点 &gt; 10進数 &gt; テキスト</strong>",body:"VertiPaq圧縮効率の順。整数値しか入らない列は <strong>Whole Number</strong> に変換でファイル激減。Boolean &lt; 整数 &lt; Date &lt; Currency &lt; Decimal &lt; DateTime &lt; テキスト。ランダム56。"},
+  {lvl:2,cat:"配布",q:"データモデル含むテンプレート配布",a:"<strong>PBIT（テンプレートファイル）</strong>",body:"・PBIX：実データ含む<br>・<strong>PBIT</strong>：レイアウト＋モデル定義のみ（データなし）<br>・PBIDS：データソース接続情報のみ<br>反射：「テンプレート」「データなしで配布」→ PBIT。ランダム58/78。"},
+  {lvl:2,cat:"視覚化",q:"スライダーで数値変更してシミュレーション",a:"<strong>What-If パラメーター</strong>",body:"モデリングタブ → 新しいパラメーター → 数値範囲。スライダー＋メジャーが自動生成。<br>反射：「What-If分析」「もし〜だったら」「割引率/利率を可変に」→ What-Ifパラメーター。ランダム59。"},
+  {lvl:2,cat:"PowerQuery",q:"フォルダー内の複数ファイル統合",a:"<strong>フォルダーから（From Folder）</strong>",body:"同構造CSVが継続追加される時。スケジュール更新時に新ファイルも自動取り込み。<br>反射：「フォルダー内の複数ファイル」「自動で追加取り込み」→ From Folder + Combine Files。ランダム70。"},
+  {lvl:1,cat:"配布",q:"少人数に1レポートだけ共有",a:"<strong>「共有」ボタン</strong>",body:"レポート右上 → 共有 → 個別ユーザー指定。<br>反射：「特定の少人数に1つだけ」→ 共有／「大規模配布・パッケージ」→ アプリ／「複数人で編集」→ ワークスペース メンバー。ランダム71。"},
+  {lvl:2,cat:"DAX",q:"複数閾値でランク分け",a:"<strong>SWITCH(TRUE(), ...)</strong>",body:"<code>SWITCH(TRUE(), [Score]&gt;=90, &quot;S&quot;, [Score]&gt;=80, &quot;A&quot;, &quot;C&quot;)</code><br>ネストIFより読みやすく保守性高。<br>反射：「複数閾値」「ランク分け」「N段階の条件分岐」→ SWITCH(TRUE())。ランダム72。"},
+  {lvl:1,cat:"視覚化",q:"ページ間でスライサー連動",a:"<strong>同期スライサー</strong>",body:"複数ページの同じスライサー値を連動。「表示しないがフィルターは効かせたい」→ 同期ON・表示OFF。同じページ内のビジュアル間制御は「相互作用を編集」（別機能）。ランダム73。"},
+  {lvl:2,cat:"PowerQuery",q:"結合セルなどで空白を直前の値で埋める",a:"<strong>下方向へフィル（Fill Down）</strong>",body:"列を右クリック → フィル → 下方向。Excel結合セル取り込み時の定番処理。逆は上方向へフィル。空白すべて同じ値は「値の置換」。ランダム74。"},
+  {lvl:2,cat:"視覚化",q:"年→四半期→月→日と階層的に深掘り",a:"<strong>モデルビューで「階層」を作成</strong>",body:"Date テーブルで Year/Quarter/Month/Day を含む階層を作成 → ビジュアルの軸に階層をドラッグ → ドリルダウンが正式に動く。<br>列をただ並べるだけでは正式階層にならない。ランダム77。"},
+  {lvl:2,cat:"DAX",q:"日付テーブルをDAXで作る",a:"<strong>CALENDARAUTO() / CALENDAR(開始, 終了)</strong>",body:"モデリングタブ → 新しいテーブル。<br>・CALENDARAUTO()：モデル内の日付範囲から自動生成<br>・CALENDAR(start, end)：明示的に範囲指定<br>反射：「日付テーブルを作る」「DAXで完結」→ CALENDARAUTO。ランダム79。"},
+  {lvl:2,cat:"PowerQuery",q:"Formula.Firewallエラー（社内データ＋公開API）",a:"<strong>プライバシーレベルを設定</strong>",body:"3レベル：Private（社外秘・他と混合不可）／Organizational（社内のみ）／Public（公開）。<br>適切に設定すれば機密情報を外部送信せずに組合せ可能。SkipPrivacyChecks はセキュリティリスクで非推奨。ランダム80。"},
+  {lvl:2,cat:"視覚化",q:"複数ページ間のナビゲーションバー",a:"<strong>ボタン → 動作「ページナビゲーター」</strong>",body:"挿入タブ → ボタン → 動作 → ページナビゲーター（Page Navigator）。ページ追加・削除を自動反映、現在ページ強調も標準対応。ランダム81。"},
+  {lvl:2,cat:"配布",q:"データセット所有者の退職対応",a:"<strong>「所有者を引き継ぐ（Take over）」機能</strong>",body:"データセット設定画面 → 所有者を引き継ぐ。スケジュール更新・ゲートウェイ設定も維持される。データフローにも同じ機能あり。<br>削除して再作成は履歴が消えるのでNG。ランダム82。"},
+  {lvl:2,cat:"DAX",q:"DAXコードの可読性とパフォーマンス改善",a:"<strong>VAR + RETURN で変数化</strong>",body:"<code>VAR Current = SUM(...)<br>VAR LastYear = CALCULATE(...)<br>RETURN SWITCH(TRUE(), Current &gt; LastYear, &quot;↑&quot;, ...)</code><br>同じ計算を1度だけ評価。ネストIFの代わりに SWITCH(TRUE()) と組み合わせると読みやすい。ランダム83。"},
+  {lvl:2,cat:"視覚化",q:"スライサーで多数項目から検索",a:"<strong>スライサーの「検索」を有効化</strong>",body:"スライサー右上「…」→ 検索。文字入力で候補絞込。<br>表示形式：リスト/タイル/ドロップダウン／向き：縦/横/レスポンシブ／選択モード：複数/単一。ランダム85。"},
+  {lvl:2,cat:"視覚化",q:"複数KPIを担当者割当で一元管理",a:"<strong>Power BI Goals（スコアカード/メトリクス）</strong>",body:"複数KPI管理・担当者割当・ステータス（On Track/At Risk/Off Track）追跡の専用機能。<br>単一KPIの実績/目標表示は KPI ビジュアル（別物）。ランダム88。"},
+  {lvl:2,cat:"DAX",q:"単一選択時の値、それ以外は代替値",a:"<strong>SELECTEDVALUE(列, 代替値)</strong>",body:"<code>SELECTEDVALUE(Product[Category], &quot;All Categories&quot;)</code><br>カードビジュアルでの動的タイトル定番。<br>VALUES はテーブル返すので使えない。HASONEVALUE は単一値判定（True/False）。ランダム89。"},
+  {lvl:1,cat:"PowerQuery",q:"1行目を列ヘッダーに昇格",a:"<strong>1行目をヘッダーとして使用</strong>",body:"変換タブ または 列ツール → 1行目をヘッダーとして使用。逆は「ヘッダーを1行目として使用」。Excel取り込み時に Column1, Column2... になっていたら必要。ランダム90。"},
+  {lvl:2,cat:"視覚化",q:"標準にないビジュアル（サンキー図など）",a:"<strong>AppSource からカスタムビジュアル</strong>",body:"挿入タブ → その他のビジュアル → AppSource から取得。Microsoft 認定。<br>R/Python ビジュアルは自作向き。組織のカスタムビジュアルは社内承認済みパッケージ。ランダム92。"},
+  {lvl:2,cat:"配布",q:"オンプレSQLをチームで共有更新",a:"<strong>標準モードゲートウェイ</strong>",body:"・<strong>標準モード</strong>：複数ユーザー・複数製品（PowerBI/Power Automate/Logic Apps等）で共有可<br>・個人モード：自分専用、Power BI Service との接続のみ<br>反射：「チームで共有」「集中管理」→ 標準モード。ランダム93。"},
+  {lvl:2,cat:"DAX",q:"暗黙メジャー vs 明示メジャー",a:"<strong>明示メジャーがベストプラクティス</strong>",body:"列をそのままドラッグ→暗黙メジャーは名前固定・書式統一不可・再利用不便。<br>明示メジャー：<code>売上合計 = SUM(Sales[Amount])</code> → 名前/書式統一・再利用・修正の一元反映。ランダム94。"},
+  {lvl:2,cat:"PowerQuery",q:"明細不要・集計値だけで取り込みたい",a:"<strong>グループ化（Group By）</strong>",body:"変換タブ → グループ化 → Region × Month で SUM等。<br>1000万行を数千行に圧縮可能。ファイルサイズ・パフォーマンス両方改善。ランダム95。"},
+  {lvl:2,cat:"配布",q:"アプリの利用ユーザーを追加",a:"<strong>アクセス許可で追加 → アプリの更新</strong>",body:"既存アプリ → アクセス許可の管理 → ユーザー追加 → アプリの更新ボタン。これで全員に反映。<br>新アプリ作成や再発行は過剰。ワークスペース メンバーは開発権限が広がるのでNG。ランダム96。"},
+  {lvl:2,cat:"PowerQuery",q:"Query Folding の確認方法",a:"<strong>右クリック →「ネイティブクエリの表示」</strong>",body:"ステップを右クリックしてメニューに表示されればフォールディング成功（SQL生成済）。<br>フォールディング可能：列選択/行フィルター/グループ化/結合<br>切れる：カスタムM/インデックス列/例から列。ランダム61。"},
+  {lvl:2,cat:"PowerQuery",q:"if-then-else をGUIで",a:"<strong>条件付き列（Conditional Column）</strong>",body:"列の追加タブ → 条件付き列。GUIで if-then-else 構築。M知識不要。<br>類似機能：「例から列を作成」（複雑な文字列加工をAI推論）／カスタム列（Mコード手書き）。ランダム67/87。"},
+  {lvl:2,cat:"視覚化",q:"折れ線に目標線・予測線を追加",a:"<strong>分析（Analytics）ペイン</strong>",body:"・定数線（任意の固定値）<br>・最小/最大/平均/中央値線<br>・予測（折れ線・面のみ）<br>・推移線・エラーバー・異常検出<br>反射：「グラフに線追加」「予測表示」→ 分析ペイン（書式ペインではない）。ランダム69。"},
 ];
 
 const cardsEl = document.getElementById("cards");
