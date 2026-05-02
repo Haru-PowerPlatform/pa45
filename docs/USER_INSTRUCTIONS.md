@@ -256,7 +256,41 @@ cp "assets/pa45/PXXX.pptx" "C:\Temp\test.pptx"
 
 ---
 
-## 16. このドキュメントの更新
+## 16. Edgeお気に入り（Profile 3 = ixa_mct@plug136）
+
+### ⚠️ クラウド同期の罠
+Microsoft アカウントの**クラウド同期**が ON だと、Bookmarksファイル直編集はEdge起動時に上書きされる。
+
+### 整理する場合の手順
+1. Edge設定 → プロファイル → 同期 → **「お気に入り」を OFF**
+2. Edge完全終了（msedge.exe プロセスもなし）
+3. `python C:/Temp/pa45/reorganize_bookmarks.py` でJSON書き換え
+4. Edge起動 → ローカル構造で固定
+
+### 8カテゴリの命名（設定済み）
+```
+📊 管理ダッシュボード   ← 私が作ったHTMLダッシュボード
+🚀 PA45 運営           ← 内部・運営者専用
+🌐 PA45 受講生向け     ← 公開・受講生も見る
+🪟 M365 / Power Platform
+✍️ Bizemi 3サイト
+📘 PL-300 学習
+🛠️ ツール・参考
+👤 個人
+```
+
+### スクリプト場所
+`C:\Temp\pa45\reorganize_bookmarks.py`（Profile 3 専用）
+バックアップ：`C:\Users\isamu\AppData\Local\Microsoft\Edge\User Data\Profile 3\Bookmarks.bak`
+
+### 他Profile
+- Default = isamu.u@outlook.jp
+- Profile 2 = Isamu136@1dwg4q.onmicrosoft.com
+- Profile 3 = ixa_mct@plug136.onmicrosoft.com（PA45メイン作業）
+
+---
+
+## 17. このドキュメントの更新
 
 ユーザーから新しい指示・好み・ルールが出たら、このドキュメントを更新して push する。
 更新の判断基準：
