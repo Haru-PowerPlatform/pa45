@@ -1296,6 +1296,12 @@ let doneState = loadDone();
 
 function render() {
   const container = document.getElementById("schedule");
+  // 再描画前に開いていた日付を記憶（チェック時に閉じないように）
+  const openIdx = new Set();
+  container.querySelectorAll(".day.open").forEach(d => {
+    const i = parseInt(d.dataset.di);
+    if (!isNaN(i)) openIdx.add(i);
+  });
   container.innerHTML = "";
   let totalTasks = 0;
   let doneTasks = 0;
@@ -1303,7 +1309,8 @@ function render() {
   schedule.forEach((day, di) => {
     const dayEl = document.createElement("div");
     dayEl.className = "day " + day.type;
-    if (day.today) dayEl.classList.add("open");
+    dayEl.dataset.di = di;
+    if (day.today || openIdx.has(di)) dayEl.classList.add("open");
 
     const allDone = day.tasks.every((_, ti) => doneState[`${di}-${ti}`]);
 
