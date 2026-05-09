@@ -1,0 +1,208 @@
+
+<p>家計簿、3 日続けて、4 日目に飛ぶ。これ、何度目だろう。</p>
+
+<p>書くのは頑張れる。むしろ書いてる時はちょっと達成感まである。なのに <strong>1 ヶ月後に見返したことが 1 度もない</strong>。書いただけで満足して、ノートはそのままカウンターの上に積まれていく。</p>
+
+<p>ある日ふと「これ、Power Automate に <span style="color: #0000ff;"><strong>「見返す係」</strong></span> をやってもらえばいいのでは？」と思った。レシートを撮って捨てるだけで、月末に AI が「今月、これ使いすぎだよ」って言ってくれる仕組み。</p>
+
+<p>試しに数枚のレシートで動かしてみたら、想像より自分のお金の使い方がはっきり見えてきた話と、<strong>続けるために最初に決めておくべき設計</strong>を一緒に書きます。「やってみたら詰まった」をなくすために、つまずきポイントも全部書いておきます。</p>
+
+&nbsp;
+
+<h2>家計簿、「書く」のはできても「見返す」ができない</h2>
+
+<p>家計簿アプリも、エクセル手入力も、紙のノートも、全部やったことがある。続いたことはない。</p>
+
+<p>続かない理由を考えてみると、たぶん <strong>「書く」と「見返す」の間に大きな溝がある</strong> からだと思う。書くのは 1 日 5 分でできる。でも「1 ヶ月分を集計して、何にいくら使ったか把握して、来月に活かす」までやろうとすると、月末に <strong>1 時間まとまった時間</strong>が必要で、その 1 時間が永遠に取れない。</p>
+
+<p>だったら <strong>「見返す」だけ自動化すればいい</strong>。書くのは続くんだから。</p>
+
+&nbsp;
+
+<h2>Power Automate に「見返す係」を任せた</h2>
+
+<p>やりたいことはシンプル：</p>
+
+<ul>
+<li>レシートをスマホで撮る（これだけ自分でやる）</li>
+<li>OneDrive に写真が保存される</li>
+<li>Power Automate が AI Builder で店名・金額を読み取って Excel に追記</li>
+<li>月末になったら 1 ヶ月分を AI が要約して Teams に通知</li>
+</ul>
+
+<p>こうしておけば、自分がやることは <strong>「レシートを撮る」だけ</strong>。あとは月末に Teams を開けば「今月、これ使いすぎ」が文字で届いている。</p>
+
+<div class="speech-wrap sb-id-14 sbs-stn sbp-l sbis-cb cf">
+<div class="speech-person">
+<figure class="speech-icon"><img class="speech-icon-image" src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="" width="1024" height="1024" /></figure>
+</div>
+<div class="speech-balloon">
+家計簿アプリと違うのは、<strong>自分の Excel に全データが残る</strong>ところ。あとから自分で集計し直したい時にも自由が効きます。
+</div>
+</div>
+
+&nbsp;
+
+<h2>始める前に決めておく「フォルダ設計」が一番大事</h2>
+
+<p>これが一番つまずくところ。先にここを決めておかないと、後から痛い目を見ます。</p>
+
+<p>OneDrive アプリには「カメラのアップロード（撮った写真を全部 OneDrive に同期）」という便利機能がある。でも <strong>これを ON にしてレシートと家族写真を混ぜると、Power Automate のトリガーが全写真で発火</strong> してしまう。AI Builder のレシート処理は <strong>1 回ごとに AI Builder クレジットを消費する有料機能</strong>なので、家族写真にまで反応されると <strong>クレジットが秒で溶ける</strong>。</p>
+
+<p>なので最初にやることは、<strong>レシート専用フォルダを 1 つ作る</strong>こと。</p>
+
+<ul>
+<li>OneDrive の中に <code>/Pictures/レシート</code> フォルダを作る（名前は何でも OK、Power Automate と揃えれば）</li>
+<li>このフォルダ <strong>だけ</strong> を Power Automate のトリガー対象にする</li>
+<li>家族写真や他の画像は別フォルダに置く（混ぜない）</li>
+</ul>
+
+<p>たったこれだけ。でもここを最初に決めておくと、後の運用が <strong>劇的に楽</strong>になる。</p>
+
+&nbsp;
+
+<h2>撮るところを iOS ショートカットで「1 タップ化」する</h2>
+
+<p>「OneDrive のレシートフォルダに保存」って書くと身構えるけど、iPhone のショートカットを使えば <strong>ホーム画面のアイコンを 1 タップ → カメラ起動 → 撮影 → 自動でレシートフォルダに保存</strong> までが一気通貫で完結する。</p>
+
+<h3>ショートカット作成手順（5 分でできる）</h3>
+
+<ul>
+<li>iPhone 標準アプリ <strong>「ショートカット」</strong>を開く</li>
+<li>右上の「+」で新規作成 → 名前を「レシート撮影」に</li>
+<li>アクションを 2 つ追加：
+<ul>
+<li><strong>「写真を撮る」</strong>（カメラ起動）</li>
+<li><strong>「OneDrive にファイルを保存」</strong>（保存先：<code>/Pictures/レシート</code>、ファイル名は日時を自動採番、確認なしで保存）</li>
+</ul>
+</li>
+<li>下の「共有」アイコン →「ホーム画面に追加」でアイコン化</li>
+</ul>
+
+<p>これでレジで会計が終わって財布にレシート入れる前に、<strong>ホーム画面のアイコン → 撮るだけ</strong>。3 秒で終わる。</p>
+
+<div class="speech-wrap sb-id-14 sbs-stn sbp-l sbis-cb cf">
+<div class="speech-person">
+<figure class="speech-icon"><img class="speech-icon-image" src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="" width="1024" height="1024" /></figure>
+</div>
+<div class="speech-balloon">
+「フォルダを分ける」と「ショートカットでアイコン化する」、この 2 つを最初に決めるだけで、続く確率が大きく変わります。
+</div>
+</div>
+
+&nbsp;
+
+<h2>フロー全体像（4 ステップ）</h2>
+
+<p>iPhone 側の準備ができたら、Power Automate 側はこんな構成。</p>
+
+<ul>
+<li><strong>① トリガー</strong>：OneDrive「ファイルが作成されたとき」 — フォルダーは <code>/Pictures/レシート</code> を必ず指定</li>
+<li><strong>② AI 分析</strong>：AI Builder「フォーム処理（レシート モデル）」で 店名・金額・日付 を抽出</li>
+<li><strong>③ 記録</strong>：Excel Online (Business)「テーブルに行を追加」で 日付・店名・金額・カテゴリ を書き込み</li>
+<li><strong>④ 月末通知</strong>：別フローを <strong>スケジュール起動</strong>（毎月最終日 21:00）→ Excel 1 ヶ月分を取得 → AI Builder「テキスト生成」で「浪費パターン 3 つ」を要約 → Teams（自分宛）に投稿</li>
+</ul>
+
+<p>ポイントは <strong>① 〜 ③ と ④ をフロー単位で分ける</strong>こと。トリガーが「ファイル作成」と「スケジュール」で別物なので、混ぜると後から触りにくい。最初は 2 本に分けて作るのがおすすめ。</p>
+
+&nbsp;
+
+<h2>AI Builder のレシート処理は、実際どこまで読めたか</h2>
+
+<p>これが一番気になるところだと思う。「OCR って言っても、レシートのクシャクシャ感とか、感熱紙の薄さとかで、全然読めないんじゃ？」というやつ。</p>
+
+<p>試しに <strong>手元にあったレシート 5 枚</strong>で動かしてみた結果は、こんな感触だった。</p>
+
+<ul>
+<li><strong>コンビニのレシート</strong>：店名・合計金額はほぼ完璧に読めた</li>
+<li><strong>カフェのレシート</strong>：店名は OK。日付の「年」が省略されてるパターンは要注意</li>
+<li><strong>スーパーのレシート（縦長）</strong>：合計金額は OK だが、明細まで取ろうとすると揺れる</li>
+</ul>
+
+<p>結論として、<strong>「店名・日付・合計金額」だけ取る前提</strong>なら実用に乗る精度。明細まで完全に取りたいなら別途工夫が必要、という温度感だった。</p>
+
+<div class="speech-wrap sb-id-14 sbs-stn sbp-l sbis-cb cf">
+<div class="speech-person">
+<figure class="speech-icon"><img class="speech-icon-image" src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="" width="1024" height="1024" /></figure>
+</div>
+<div class="speech-balloon">
+家計簿としては合計金額さえ取れれば成立するので、最初は <strong>店名・日付・合計</strong> の 3 つだけで運用するのが現実的です。
+</div>
+</div>
+
+<h3>うまく読めなかった時の保険</h3>
+
+<p>AI Builder が読み取れなかった場合に備えて、フローに <strong>「金額が空だったら自分宛に Teams 通知」</strong> の分岐を入れておくと安心。読めなかったレシートだけ手で Excel に入力すれば、データの欠落を防げる。</p>
+
+&nbsp;
+
+<h2>月末レポートに、何が出てきたか</h2>
+
+<p>5 枚という小さなサンプルでも、AI に要約させると意外な視点が出てきた。試しに「この 5 枚から見える支出傾向を 3 つ教えて」と投げたら、こんな返事が来た：</p>
+
+<ul>
+<li>カフェ・コンビニといった <strong>「ついで買い」系の出費が、5 件中 3 件を占めている</strong></li>
+<li>スーパーでのまとめ買いより、コンビニでの少額複数回買いの方が件数が多い</li>
+<li>平日の昼前後の購入が集中している（ランチ周辺）</li>
+</ul>
+
+<p>たった 5 枚でも、自分が <strong>「ちょこちょこ買い」タイプ</strong>であることが言語化された。これが 1 ヶ月分溜まったら、もっとはっきり傾向が出るはず。</p>
+
+<p>面白いのは、<strong>「無駄遣いだ」と説教するんじゃなくて、「傾向」として中立に提示してくれる</strong>こと。これだったら毎月読む気になる。家計簿アプリの「予算オーバーです！」みたいな圧がないのがいい。</p>
+
+&nbsp;
+
+<h2>運用してみて気づいた「続けるためのコツ」</h2>
+
+<ul>
+<li><strong>レシートは財布にためない</strong>。レジを離れる前に撮る。財布に入った瞬間「あとでまとめて」になって続かない</li>
+<li><strong>撮ったレシートは捨てていい</strong>。データは Excel に残る。物理レシートを捨てられるのが地味に嬉しい</li>
+<li><strong>月末通知の時刻は「平日の夜」に設定</strong>。土日にすると見ない。21:00 が個人的にちょうどよかった</li>
+<li><strong>最初の 1 週間はレシートを撮ること自体を習慣化</strong>。データ分析の精度は後から考える</li>
+</ul>
+
+&nbsp;
+
+<h2>正直に書いておきたいこと（コスト・プライバシー）</h2>
+
+<p>夢のある話だけ書くのはフェアじゃないので、現実的なところも。</p>
+
+<ul>
+<li><strong>AI Builder は有料機能</strong>。Power Automate Premium ライセンスか AI Builder クレジットが必要。<strong>30 日トライアル</strong>か <strong>Microsoft 365 Developer Program（無料）</strong>テナントで試せる</li>
+<li><strong>レシート 1 枚 = AI Builder クレジット消費</strong>。月 100 枚撮るならクレジット消費を見積もっておくこと（無料枠で足りるか要確認）</li>
+<li><strong>レシートは個人情報を含む</strong>。クレジットカード番号の下 4 桁が印字されてるレシートもある。OneDrive のレシートフォルダは <strong>共有しない</strong> 設定で運用すること</li>
+<li>このブログにレシートのスクショを載せる時は、店名・金額以外はモザイク必須</li>
+</ul>
+
+&nbsp;
+
+<h2>明日からあなたができること</h2>
+
+<p>このフロー、ハードル高そうに見えるけど、必要なものは意外と少ない。</p>
+
+<ul>
+<li>Microsoft 365 アカウント（OneDrive・Excel・Teams が使える）</li>
+<li>Power Automate Premium ライセンス（30 日トライアル可）</li>
+<li>iPhone のショートカットアプリ（標準で入ってる）</li>
+<li>レシート 5 枚（最初は試運転で OK）</li>
+</ul>
+
+<p>順番としては：</p>
+
+<ul>
+<li><strong>① OneDrive に <code>/Pictures/レシート</code> フォルダを作る</strong></li>
+<li><strong>② iOS ショートカットで「レシート撮影」ボタンを作ってホーム画面に追加</strong></li>
+<li><strong>③ Power Automate でフロー（撮影→Excel）を作って動作確認</strong></li>
+<li><strong>④ 1 週間、レシート撮るのを習慣化してから、月末通知フローを追加</strong></li>
+</ul>
+
+<p>「レシート撮るだけで月末に傾向が分かる」って体験、一度やると元に戻れない。家計簿が続かないタイプの人ほど、刺さると思う。</p>
+
+<div class="speech-wrap sb-id-14 sbs-stn sbp-l sbis-cb cf">
+<div class="speech-person">
+<figure class="speech-icon"><img class="speech-icon-image" src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="" width="1024" height="1024" /></figure>
+</div>
+<div class="speech-balloon">
+いきなり全部作ろうとすると挫折するので、<strong>①と②だけ先にやる</strong>のがおすすめ。撮る習慣ができてから Power Automate に進むと、無理なく続きます。
+</div>
+</div>
