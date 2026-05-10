@@ -1,0 +1,2337 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>小6 マナビーテスト 解説</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Yu Gothic UI", "Yu Gothic", "Meiryo", sans-serif;
+    background: #f8fafc;
+    color: #1f2937;
+    line-height: 1.8;
+    min-height: 100vh;
+    font-size: 17px;
+  }
+  header {
+    background: #1e40af;
+    color: white;
+    padding: 24px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  header h1 { font-size: 26px; margin-bottom: 4px; }
+  header p { font-size: 14px; opacity: 0.9; }
+
+  .tabs {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    padding: 20px 12px 0;
+    flex-wrap: wrap;
+    background: white;
+    border-bottom: 2px solid #e5e7eb;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  .tab {
+    padding: 12px 22px;
+    background: #f3f4f6;
+    border: 2px solid transparent;
+    border-bottom: none;
+    border-radius: 12px 12px 0 0;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    color: #6b7280;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .tab:hover { background: #e0e7ff; color: #1e40af; }
+  .tab.active {
+    background: white;
+    border-color: #1e40af;
+    border-bottom-color: white;
+    margin-bottom: -2px;
+  }
+  .tab.science.active { color: #047857; border-color: #047857; }
+  .tab.math.active { color: #1e40af; border-color: #1e40af; }
+  .tab .subject {
+    display: inline-block;
+    padding: 1px 8px;
+    border-radius: 999px;
+    font-size: 11px;
+    margin-right: 6px;
+    color: white;
+  }
+  .tab.science .subject { background: #10b981; }
+  .tab.math .subject { background: #3b82f6; }
+  .tab .date { display: block; font-size: 11px; color: #9ca3af; font-weight: normal; margin-top: 2px; }
+  .tab.active .date { color: #6366f1; }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 24px 16px 60px;
+  }
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  .toc {
+    background: white;
+    border-radius: 16px;
+    padding: 20px 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .toc h2 { font-size: 18px; color: #1e40af; margin-bottom: 12px; }
+  .toc ul { list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 8px; }
+  .toc a {
+    display: block;
+    padding: 8px 12px;
+    background: #f3f4f6;
+    border-radius: 8px;
+    color: #1f2937;
+    text-decoration: none;
+    font-size: 14px;
+    transition: all 0.2s;
+  }
+  .toc a:hover { background: #dbeafe; color: #1e40af; }
+
+  section.daimon {
+    background: white;
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  section.daimon h2 {
+    color: #1e40af;
+    background: #f1f5f9;
+    border-left: 6px solid #1e40af;
+    padding: 14px 20px;
+    border-radius: 6px;
+    font-size: 20px;
+    margin-bottom: 20px;
+  }
+  .panel.science section.daimon h2 {
+    color: #047857;
+    border-left-color: #047857;
+  }
+
+  .michibiki {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-left: 5px solid #f59e0b;
+    padding: 16px 20px;
+    border-radius: 8px;
+    margin: 16px 0;
+    font-size: 17px;
+  }
+  .michibiki h3 { color: #92400e; font-size: 18px; margin-bottom: 8px; }
+
+  .question {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-left: 5px solid #3b82f6;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 18px 0;
+  }
+  .question h3 {
+    color: #1e40af;
+    font-size: 20px;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .question h3 .qnum {
+    background: #3b82f6;
+    color: white;
+    padding: 3px 12px;
+    border-radius: 999px;
+    font-size: 15px;
+  }
+  .intro {
+    background: white;
+    padding: 14px 18px;
+    border-radius: 8px;
+    margin: 12px 0;
+    border: 1px solid #e5e7eb;
+    border-left: 5px solid #f59e0b;
+    font-size: 17px;
+    line-height: 1.9;
+  }
+  .intro b { color: #92400e; }
+  .answer {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-left: 5px solid #16a34a;
+    padding: 14px 18px;
+    border-radius: 8px;
+    margin: 12px 0;
+    font-size: 19px;
+    font-weight: bold;
+    color: #14532d;
+  }
+  .calc {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-left: 5px solid #6366f1;
+    padding: 12px 16px;
+    margin: 12px 0;
+    border-radius: 8px;
+    font-family: "Cambria Math", "Yu Gothic", monospace;
+    font-size: 18px;
+    line-height: 1.8;
+  }
+  .tip {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-left: 5px solid #ec4899;
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin: 12px 0;
+    font-size: 16px;
+    color: #555;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+  th, td {
+    padding: 12px 14px;
+    text-align: center;
+    border: 1px solid #e5e7eb;
+    font-size: 16px;
+  }
+  th {
+    background: #1e40af;
+    color: white;
+    font-weight: bold;
+  }
+  tr:nth-child(even) td { background: #f9fafb; }
+
+  .fig {
+    margin: 18px 0;
+    text-align: center;
+  }
+  .fig img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+  }
+  .fig figcaption {
+    font-size: 13px;
+    color: #6b7280;
+    margin-top: 6px;
+  }
+
+  .summary {
+    background: linear-gradient(135deg, #fef3c7, #fed7aa);
+    border-radius: 16px;
+    padding: 24px;
+    margin-top: 24px;
+  }
+  .summary h2 { color: #9a3412; margin-bottom: 16px; }
+
+  @media (max-width: 600px) {
+    section.daimon { padding: 18px; }
+    section.daimon h2 { font-size: 17px; }
+    th, td { padding: 6px 8px; font-size: 12px; }
+    .tab { padding: 10px 12px; font-size: 12px; }
+  }
+
+  /* 問題ジャンプ目次 */
+  .qlist {
+    background: white;
+    border-radius: 16px;
+    padding: 20px 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .qlist > h3 {
+    font-size: 18px;
+    color: #1e40af;
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #f3f4f6;
+  }
+  .panel.science .qlist > h3 { color: #047857; }
+  .qlist .ql-section {
+    margin-bottom: 14px;
+  }
+  .qlist .ql-title {
+    font-weight: bold;
+    color: #6b7280;
+    margin: 10px 0 6px;
+    font-size: 14px;
+    padding-left: 4px;
+  }
+  .qlist .ql-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 6px;
+  }
+  .qlist a {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    background: #f3f4f6;
+    border-radius: 8px;
+    color: #1f2937;
+    text-decoration: none;
+    font-size: 14px;
+    transition: all 0.15s;
+    border-left: 4px solid transparent;
+  }
+  .qlist a:hover {
+    background: #dbeafe;
+    color: #1e40af;
+    border-left-color: #3b82f6;
+    transform: translateX(2px);
+  }
+  .qlist a .ql-num {
+    background: #3b82f6;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: bold;
+    flex-shrink: 0;
+  }
+  .qlist a.q-solved-link { background: #f0fdf4; border-left-color: #16a34a; }
+  .qlist a.q-redo-link { background: #fef2f2; border-left-color: #dc2626; }
+  .qlist a.q-solved-link::after { content: '✅'; margin-left: auto; }
+  .qlist a.q-redo-link::after { content: '🔁'; margin-left: auto; }
+
+  html { scroll-behavior: smooth; scroll-padding-top: 100px; }
+
+  /* 問題文 */
+  .q-text {
+    background: #f8fafc;
+    border-left: 5px solid #1e40af;
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin: 14px 0;
+    font-size: 17px;
+    line-height: 1.9;
+    color: #1f2937;
+  }
+  .q-text::before {
+    content: '📝 問題';
+    display: inline-block;
+    color: #1e40af;
+    font-size: 13px;
+    font-weight: bold;
+    margin-right: 10px;
+  }
+  .panel.science .q-text { border-left-color: #047857; }
+  .panel.science .q-text::before { color: #047857; }
+
+  /* 答えを隠すギミック */
+  .answer, .calc {
+    display: none;
+  }
+  .question.revealed .answer,
+  .question.revealed .calc {
+    display: block;
+    animation: fadeIn 0.4s;
+  }
+  .reveal-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 22px;
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    color: white;
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    margin: 12px 0;
+    box-shadow: 0 3px 8px rgba(251,191,36,0.4);
+    transition: transform 0.15s;
+  }
+  .reveal-btn:hover { transform: translateY(-2px); }
+  .reveal-btn:active { transform: translateY(0); }
+  .question.revealed .reveal-btn { display: none; }
+  .reveal-hint {
+    font-size: 14px;
+    color: #6b7280;
+    margin: 8px 0 0;
+    font-style: italic;
+  }
+  .question.revealed .reveal-hint { display: none; }
+
+  /* チェックボタンUI */
+  .check-bar {
+    display: flex;
+    gap: 8px;
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px dashed #d1d5db;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .check-bar .label {
+    font-size: 13px;
+    color: #6b7280;
+    margin-right: 4px;
+  }
+  .check-btn {
+    padding: 6px 14px;
+    border: 2px solid #d1d5db;
+    background: white;
+    border-radius: 999px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: bold;
+    color: #6b7280;
+    transition: all 0.15s;
+    user-select: none;
+  }
+  .check-btn:hover { transform: translateY(-1px); }
+  .check-btn.solved.active {
+    background: #16a34a;
+    border-color: #16a34a;
+    color: white;
+  }
+  .check-btn.redo.active {
+    background: #dc2626;
+    border-color: #dc2626;
+    color: white;
+  }
+  .question.q-solved {
+    border-left-color: #16a34a;
+    background: #f0fdf4;
+  }
+  .question.q-redo {
+    border-left-color: #dc2626;
+    background: #fef2f2;
+  }
+
+  /* プレイヤーステータスバー */
+  .player-bar {
+    background: white;
+    color: #1f2937;
+    padding: 12px 20px;
+    display: flex;
+    gap: 18px;
+    align-items: center;
+    flex-wrap: wrap;
+    font-weight: bold;
+    border-bottom: 1px solid #e5e7eb;
+  }
+  .player-bar .level {
+    background: #f59e0b;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-size: 14px;
+  }
+  .player-bar .sticker-count {
+    font-size: 14px;
+  }
+  .player-bar .xp-bar {
+    flex: 1;
+    min-width: 150px;
+    height: 10px;
+    background: #e5e7eb;
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .player-bar .xp-fill {
+    height: 100%;
+    background: #f59e0b;
+    transition: width 0.5s;
+  }
+  .player-bar .next-level { color: #6b7280; font-weight: normal; }
+  .player-bar .next-level {
+    font-size: 12px;
+    opacity: 0.95;
+  }
+
+  /* シールドロップポップアップ */
+  .sticker-pop-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    animation: fadeIn 0.3s;
+  }
+  .sticker-pop-overlay.show { display: flex; }
+  @keyframes fadeIn { from {opacity:0;} to {opacity:1;} }
+  .sticker-pop {
+    background: white;
+    border-radius: 24px;
+    padding: 32px;
+    text-align: center;
+    max-width: 360px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    animation: popIn 0.5s;
+  }
+  @keyframes popIn {
+    0% { transform: scale(0) rotate(-180deg); opacity: 0; }
+    60% { transform: scale(1.2) rotate(20deg); }
+    100% { transform: scale(1) rotate(0); opacity: 1; }
+  }
+  .sticker-pop h3 {
+    color: #f59e0b;
+    font-size: 22px;
+    margin-bottom: 16px;
+  }
+  .sticker-pop .sticker-card {
+    margin: 16px auto;
+  }
+  .sticker-pop .label {
+    font-size: 18px;
+    margin: 12px 0 4px;
+    font-weight: bold;
+  }
+  .sticker-pop .rarity {
+    font-size: 13px;
+    margin-bottom: 16px;
+  }
+  .sticker-pop button {
+    background: #f59e0b;
+    color: white;
+    border: none;
+    padding: 10px 28px;
+    border-radius: 999px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 15px;
+  }
+  .sticker-pop button:hover { background: #d97706; }
+
+  /* シールカード共通（ぷっくりボンボンドロップ風） */
+  .sticker-card {
+    width: 116px;
+    height: 138px;
+    border-radius: 26px;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 10px;
+    position: relative;
+    transition: transform 0.2s, box-shadow 0.2s;
+    overflow: visible;
+    border: 4px solid white;
+    /* ぷっくり立体感 */
+    box-shadow:
+      inset 0 -10px 18px rgba(0,0,0,0.18),
+      inset 0 10px 16px rgba(255,255,255,0.55),
+      inset 6px 0 12px rgba(255,255,255,0.25),
+      inset -6px 0 12px rgba(0,0,0,0.10),
+      0 8px 16px rgba(0,0,0,0.22),
+      0 3px 5px rgba(0,0,0,0.15);
+  }
+  /* ハイライト（つやつやの光） */
+  .sticker-card::before {
+    content: '';
+    position: absolute;
+    top: 10%;
+    left: 14%;
+    width: 38%;
+    height: 28%;
+    background: radial-gradient(ellipse at center,
+                rgba(255,255,255,0.85) 0%,
+                rgba(255,255,255,0.4) 40%,
+                transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+    transform: rotate(-15deg);
+  }
+  /* 個別にランダムっぽく傾ける */
+  .sticker-book .sticker-card:nth-child(3n)   { transform: rotate(-3deg); }
+  .sticker-book .sticker-card:nth-child(3n+1) { transform: rotate(2deg); }
+  .sticker-book .sticker-card:nth-child(3n+2) { transform: rotate(-1deg); }
+  .sticker-book .sticker-card:nth-child(5n)   { transform: rotate(4deg); }
+  .sticker-book .sticker-card:nth-child(7n)   { transform: rotate(-5deg); }
+
+  .sticker-card:hover {
+    transform: scale(1.12) rotate(0deg) !important;
+    z-index: 5;
+    box-shadow:
+      inset 0 -10px 18px rgba(0,0,0,0.18),
+      inset 0 10px 16px rgba(255,255,255,0.6),
+      0 14px 28px rgba(0,0,0,0.3),
+      0 5px 10px rgba(0,0,0,0.2);
+  }
+
+  .sticker-card .emoji {
+    font-size: 56px;
+    line-height: 1;
+    filter: drop-shadow(0 4px 4px rgba(0,0,0,0.28))
+            drop-shadow(0 1px 1px rgba(255,255,255,0.4));
+    position: relative;
+    z-index: 2;
+  }
+  .sticker-card .name {
+    font-size: 11px;
+    margin-top: 8px;
+    font-weight: bold;
+    color: rgba(0,0,0,0.7);
+    text-shadow: 0 1px 0 rgba(255,255,255,0.7);
+    position: relative;
+    z-index: 2;
+  }
+  .sticker-card .rarity-badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    font-size: 9px;
+    padding: 3px 8px;
+    border-radius: 999px;
+    color: white;
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.25);
+    z-index: 3;
+  }
+
+  /* レア度ごとの色（放射グラデでぷっくり感） */
+  .rarity-c {
+    background: radial-gradient(ellipse at 30% 25%,
+                #ffffff 0%, #f3f4f6 35%, #d1d5db 75%, #9ca3af 100%);
+  }
+  .rarity-c .rarity-badge { background: linear-gradient(135deg, #9ca3af, #6b7280); }
+
+  .rarity-r {
+    background: radial-gradient(ellipse at 30% 25%,
+                #eff6ff 0%, #93c5fd 40%, #3b82f6 80%, #1e40af 100%);
+  }
+  .rarity-r .rarity-badge { background: linear-gradient(135deg, #3b82f6, #1e3a8a); }
+  .rarity-r .name { color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.3); }
+
+  .rarity-sr {
+    background: radial-gradient(ellipse at 30% 25%,
+                #fffbeb 0%, #fde68a 30%, #fbbf24 65%, #d97706 100%);
+    box-shadow:
+      inset 0 -10px 18px rgba(154,52,18,0.25),
+      inset 0 10px 16px rgba(255,255,255,0.7),
+      0 0 24px rgba(251,191,36,0.6),
+      0 8px 16px rgba(0,0,0,0.22);
+  }
+  .rarity-sr .rarity-badge { background: linear-gradient(135deg, #f59e0b, #b45309); }
+
+  .rarity-ur {
+    background:
+      radial-gradient(ellipse at 30% 25%, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.3) 25%, transparent 50%),
+      linear-gradient(135deg, #ec4899 0%, #a855f7 25%, #3b82f6 50%, #10b981 75%, #fbbf24 100%);
+    background-size: 100% 100%, 300% 300%;
+    animation: rainbow 4s linear infinite;
+    box-shadow:
+      inset 0 -10px 18px rgba(0,0,0,0.25),
+      inset 0 10px 16px rgba(255,255,255,0.8),
+      0 0 30px rgba(236,72,153,0.7),
+      0 0 50px rgba(168,85,247,0.4),
+      0 8px 16px rgba(0,0,0,0.25);
+  }
+  .rarity-ur .rarity-badge { background: linear-gradient(135deg, #ec4899, #831843); }
+  .rarity-ur .name { color: white; text-shadow: 0 1px 2px rgba(0,0,0,0.5); }
+
+  @keyframes rainbow {
+    0% { background-position: 0% 50%, 0% 50%; }
+    50% { background-position: 0% 50%, 100% 50%; }
+    100% { background-position: 0% 50%, 0% 50%; }
+  }
+
+  /* 未獲得（ロック）のシール：シルエット風 */
+  .sticker-card.locked {
+    background: linear-gradient(135deg, #e5e7eb, #d1d5db);
+    border-color: #f3f4f6;
+    box-shadow:
+      inset 0 -8px 14px rgba(0,0,0,0.1),
+      inset 0 6px 10px rgba(255,255,255,0.4),
+      0 4px 8px rgba(0,0,0,0.1);
+    animation: none;
+  }
+  .sticker-card.locked::before { display: none; }
+  .sticker-card.locked .emoji {
+    filter: grayscale(1) brightness(1.5) opacity(0.25);
+  }
+  .sticker-card.locked .name { color: #9ca3af; }
+  .sticker-card.locked .rarity-badge {
+    background: linear-gradient(135deg, #9ca3af, #6b7280) !important;
+    opacity: 0.7;
+  }
+
+  /* シール帳グリッド */
+  .sticker-book {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 14px;
+    margin-top: 16px;
+  }
+  .sticker-section {
+    background: white;
+    border-radius: 16px;
+    padding: 20px 24px;
+    margin-bottom: 18px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  }
+  .sticker-section h3 {
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #f3f4f6;
+  }
+
+  /* 獲得時のキラキラ演出（コンフェッティ風） */
+  .confetti {
+    position: fixed;
+    pointer-events: none;
+    inset: 0;
+    overflow: hidden;
+    z-index: 99;
+  }
+  .confetti span {
+    position: absolute;
+    font-size: 24px;
+    animation: fall 1.8s linear forwards;
+  }
+  @keyframes fall {
+    0% { transform: translateY(-100vh) rotate(0); opacity: 1; }
+    100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+  }
+
+  /* レベルアップ表示 */
+  .levelup {
+    position: fixed;
+    top: 30%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, #f59e0b, #ef4444);
+    color: white;
+    padding: 24px 40px;
+    border-radius: 24px;
+    font-size: 28px;
+    font-weight: bold;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    animation: levelup 2.5s forwards;
+    z-index: 101;
+    text-align: center;
+  }
+  @keyframes levelup {
+    0% { transform: translate(-50%, -200%) scale(0.5); opacity: 0; }
+    20% { transform: translate(-50%, 0) scale(1.1); opacity: 1; }
+    80% { transform: translate(-50%, 0) scale(1); opacity: 1; }
+    100% { transform: translate(-50%, 100%) scale(0.8); opacity: 0; }
+  }
+
+  /* 自分で書こう枠 */
+  .draw-yourself {
+    background: #fffbeb;
+    border: 1px dashed #f59e0b;
+    border-left: 5px solid #f59e0b;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin: 16px 0;
+    font-size: 17px;
+    line-height: 1.9;
+    color: #78350f;
+  }
+  .check-bar .label { font-size: 15px; }
+  .check-btn { font-size: 15px; padding: 8px 18px; }
+  .toc a { font-size: 16px; }
+  section.daimon h2 { font-size: 22px; }
+
+  /* 進捗バー */
+  .progress {
+    background: white;
+    border-radius: 16px;
+    padding: 16px 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .progress .stat {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: bold;
+  }
+  .progress .stat .num {
+    font-size: 22px;
+  }
+  .progress .stat.total { color: #1f2937; }
+  .progress .stat.solved { color: #16a34a; }
+  .progress .stat.redo { color: #dc2626; }
+  .progress .stat.untouched { color: #9ca3af; }
+  .progress .bar {
+    flex: 1;
+    min-width: 200px;
+    height: 14px;
+    background: #e5e7eb;
+    border-radius: 999px;
+    overflow: hidden;
+    display: flex;
+  }
+  .progress .bar .seg-solved { background: #16a34a; }
+  .progress .bar .seg-redo { background: #dc2626; }
+  .progress .reset-btn {
+    padding: 6px 12px;
+    border: 1px solid #d1d5db;
+    background: white;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 12px;
+    color: #6b7280;
+  }
+  .progress .reset-btn:hover { background: #f3f4f6; }
+</style>
+</head>
+<body>
+
+<header style="position:relative;">
+  <h1>📘 小6 マナビーテスト 解説</h1>
+  <p>家庭学習研究社 ／ 小6本人が読む前提のやさしい解説</p>
+  <button onclick="window.location.reload()" style="position:absolute; top:20px; right:20px; background:rgba(255,255,255,0.2); color:white; border:1px solid rgba(255,255,255,0.5); padding:8px 14px; border-radius:8px; cursor:pointer; font-size:13px; font-weight:bold; backdrop-filter:blur(4px);">🔄 更新</button>
+</header>
+
+<div class="player-bar" id="player-bar">
+  <span>🏆</span>
+  <span class="level">Lv.<span id="player-level">1</span></span>
+  <span class="sticker-count">🎟 シール <span id="player-stickers">0</span> 枚</span>
+  <div class="xp-bar"><div class="xp-fill" id="xp-fill"></div></div>
+  <span class="next-level" id="next-level">次のレベルまで</span>
+</div>
+
+<nav class="tabs" id="tabs">
+  <button class="tab science active" data-target="t-rika-5">
+    <span class="subject">理科</span>前期 第5回
+    <span class="date">2026年5月2日 実施</span>
+  </button>
+  <button class="tab math" data-target="t-math-5">
+    <span class="subject">算数</span>前期 第5回
+    <span class="date">2026年5月2日 実施</span>
+  </button>
+  <button class="tab math" data-target="t-math-4">
+    <span class="subject">算数</span>前期 第4回
+    <span class="date">2026年4月18日 実施</span>
+  </button>
+  <button class="tab math" data-target="t-text-hayasa">
+    <span class="subject">算数</span>MANABIE 速さ
+    <span class="date">要点チェック</span>
+  </button>
+  <button class="tab" data-target="t-sticker-book" style="background:linear-gradient(135deg,#fef3c7,#fbbf24); color:#78350f;">
+    🎟 シールちょう
+    <span class="date">コレクション</span>
+  </button>
+</nav>
+
+<div class="container">
+
+<!-- ============================================================= -->
+<!-- 🧪 理科 前期第5回（2026/5/2）                                  -->
+<!-- ============================================================= -->
+<div class="panel science active" id="t-rika-5">
+
+  <div class="toc">
+    <h2>📑 もくじ</h2>
+    <ul>
+      <li><a href="#r5-d1">大問1 水よう液</a></li>
+      <li><a href="#r5-d1-2">大問1-II 金属＋水よう液</a></li>
+      <li><a href="#r5-d1-3">大問1-III 中和</a></li>
+      <li><a href="#r5-d2">大問2 酸素・二酸化炭素の発生</a></li>
+      <li><a href="#r5-d3">大問3 酸素発生量とAの量</a></li>
+      <li><a href="#r5-summary">頻出ポイント TOP10</a></li>
+    </ul>
+  </div>
+
+  <section class="daimon" id="r5-d1">
+    <h2>🧪 大問1 ── 水よう液（あ〜か の6種類）</h2>
+    <div class="michibiki">
+      <h3>🌱 まずはここから</h3>
+      <p>水にいろんなものをとかしたものを「<b>水よう液</b>」というよ。水よう液には3つのせいしつがあるんだ。</p>
+      <p>👉 <b>酸性／ 中性／ アルカリ性</b></p>
+      <p>これを見やぶる道具が <b>リトマス紙</b> と <b>BTB液</b>。それから水よう液には「<b>気体がとけたもの</b>」と「<b>固体がとけたもの</b>」があって、加熱したときに残るかどうかが変わるよ。</p>
+    </div>
+    <figure class="fig"><img src="figs/R01_solutions.png" alt="6種類の水よう液">
+      <figcaption>6種類の水よう液まとめ ── ぜんぶ覚えればOK！</figcaption></figure>
+
+    <figure class="fig"><img src="figs/02_litmus.png" alt="リトマス紙"></figure>
+    <figure class="fig"><img src="figs/03_btb.png" alt="BTB液"></figure>
+
+    <figure class="fig"><img src="figs/R02_compare.png" alt="比較表">
+      <figcaption>📍 問(1)〜問(4) 共通：リトマス紙 と BTB液 の見分け方</figcaption></figure>
+
+    <h3 style="color:#047857; margin-top:20px;">6つの水よう液の早見ひょう</h3>
+    <table>
+      <tr><th>記号</th><th>水よう液</th><th>とけてるもの</th><th>性質</th><th>におい</th><th>加熱で残る？</th></tr>
+      <tr><td>あ</td><td>うすい塩酸</td><td>塩化水素（気体）</td><td>🟡 酸性</td><td>つよい</td><td>✕</td></tr>
+      <tr><td>い</td><td>食塩水</td><td>食塩（こ体）</td><td>🟢 中性</td><td>なし</td><td>⭕食塩</td></tr>
+      <tr><td>う</td><td>石かい水</td><td>水酸化カルシウム（こ体）</td><td>🔵 アルカリ</td><td>なし</td><td>⭕</td></tr>
+      <tr><td>え</td><td>アンモニア水</td><td>アンモニア（気体）</td><td>🔵 アルカリ</td><td>つよい</td><td>✕</td></tr>
+      <tr><td>お</td><td>炭酸水</td><td>二酸化炭素（気体）</td><td>🟡 酸性</td><td>なし</td><td>✕</td></tr>
+      <tr><td>か</td><td>水酸化Na水よう液</td><td>水酸化ナトリウム（こ体）</td><td>🔵 アルカリ</td><td>なし</td><td>⭕</td></tr>
+    </table>
+
+    <div class="question"><h3><span class="qnum">問(1)</span>赤色リトマス紙を青に変える水よう液は？</h3>
+      <div class="q-text">赤色リトマス紙につけると青色に変化する水よう液はどれですか。あ〜かの中からすべて選び、記号で答えなさい。</div>      <div class="intro"><b>〔みちびき〕</b> 赤→青に変わるのは <b>アルカリ性</b> のしるし！</div>
+      <div class="answer">✅ う・え・か</div>
+      <div class="tip">🔑「<b>赤が青になればアルカリ</b>」だけ覚えればOK</div>
+    </div>
+    <div class="question"><h3><span class="qnum">問(2)</span>うすい塩酸には何がとけている？</h3>
+      <div class="q-text">あのうすい塩酸は、水に何がとけていますか。とけているものの名前を答えなさい。</div>      <div class="intro"><b>〔みちびき〕</b> 塩酸は気体がとけている水よう液。</div>
+      <div class="answer">✅ 塩化水素</div>
+    </div>
+    <div class="question"><h3><span class="qnum">問(3)</span>においが強い水よう液（2つ）</h3>
+      <div class="q-text">刺激の強いにおいのある水よう液を、あ〜かの中から2つ選び、記号で答えなさい。</div>      <div class="intro"><b>〔みちびき〕</b> ツンとくる気体由来の水よう液。</div>
+      <div class="answer">✅ あ・え（うすい塩酸・アンモニア水）</div>
+    </div>
+    <div class="question"><h3><span class="qnum">問(4)</span>加熱で固体が出る水よう液</h3>
+      <div class="q-text">水よう液を加熱すると、とけていたものがつぶとなって出てくる水よう液を、あ〜かの中からすべて選び、記号で答えなさい。</div>      <div class="intro"><b>〔みちびき〕</b> 残るのは <b>こ体がとけていた水よう液</b> だけ。</div>
+      <div class="answer">✅ い・う・か</div>
+    </div>
+  </section>
+
+  <section class="daimon" id="r5-d1-2">
+    <h2>🧪 大問1-II ── 金属を水よう液に入れたら？</h2>
+    <div class="michibiki"><h3>🌱 みちびき</h3>
+      <p>3しゅるいの金ぞく（鉄・銅・アルミ）と3しゅるいの水よう液で実験。<b>銅は何にもとけない／アルミは両刀づかい／鉄は酸だけ</b>。</p>
+    </div>
+    <figure class="fig"><img src="figs/04_metal.png" alt="金属マトリクス"><figcaption>📍 問(5)〜問(7) 共通</figcaption></figure>
+
+    <div class="question"><h3><span class="qnum">問(5)</span>とけて気体が出たのは？</h3>
+      <div class="q-text">金属がとけて気体が発生したものはどれですか。表のア〜ケの中からすべて選び、記号で答えなさい。</div>      <div class="answer">✅ エ・カ・ケ</div></div>
+    <div class="question"><h3><span class="qnum">問(6)</span>発生した気体の名前</h3>
+      <div class="q-text">発生した気体の名前を答えなさい。</div>      <div class="intro"><b>〔みちびき〕</b> 金ぞく＋酸 ＝ いつもこの気体！</div>
+      <div class="answer">✅ 水素</div>
+      <div class="tip">⚠ 酸素じゃないよ！</div></div>
+    <div class="question"><h3><span class="qnum">問(7)</span>水素のせいしつ</h3>
+      <div class="q-text">発生した気体の特ちょうを説明した文の1〜3の( )にあてはまることばを、アまたはイから1つずつ選びなさい。「金属がとけたときに発生する気体は、水に1(ア.とけやすい イ.とけにくい)、空気よりも2(ア.軽い イ.重い)。火を近づけると3(ア.すぐに消える イ.はげしく燃える)。」</div>      <div class="intro"><b>〔みちびき〕</b> 水素はうちゅうでいちばんかるい気体。</div>
+      <table><tr><th>番号</th><th>性質</th><th>答え</th></tr>
+        <tr><td>1</td><td>水に</td><td>イ とけにくい</td></tr>
+        <tr><td>2</td><td>空気よりも</td><td>ア かるい</td></tr>
+        <tr><td>3</td><td>火を近づけると</td><td>イ はげしく燃える</td></tr>
+      </table></div>
+  </section>
+
+  <section class="daimon" id="r5-d1-3">
+    <h2>🧪 大問1-III ── 中和（ちゅうわ）</h2>
+    <div class="michibiki"><h3>🌱 みちびき</h3>
+      <p>酸性とアルカリ性の水よう液をまぜると、おたがいを打ち消し合う反のう＝<b>中和</b>。塩酸＋水酸化ナトリウム→<b>食塩＋水</b>ができる！</p>
+    </div>
+    <figure class="fig"><img src="figs/05_chuwa.png" alt="中和の図"></figure>
+    <figure class="fig"><img src="figs/06_tubes.png" alt="試験管A〜E"></figure>
+    <figure class="fig"><img src="figs/R04_tubes_full.png" alt="試験管詳細">
+      <figcaption>📍 問(8)〜問(10) 共通：A〜Eのリトマス紙・BTB・蒸発残留物まで全部まとめた表</figcaption></figure>
+
+    <table>
+      <tr><th>試験管</th><th>NaOH</th><th>BTB</th><th>性質</th><th>蒸発で残るもの</th></tr>
+      <tr><td>A</td><td>10mL</td><td>🟡黄</td><td>酸性</td><td>食塩＋塩酸</td></tr>
+      <tr><td>B</td><td>20mL</td><td>🟡黄</td><td>酸性</td><td>食塩＋塩酸</td></tr>
+      <tr style="background:#fef3c7;"><td><b>C</b></td><td><b>30mL</b></td><td><b>🟢緑</b></td><td><b>中性 ⭐</b></td><td><b>食塩のみ</b></td></tr>
+      <tr><td>D</td><td>40mL</td><td>🔵青</td><td>アルカリ</td><td>食塩＋NaOH</td></tr>
+      <tr><td>E</td><td>50mL</td><td>🔵青</td><td>アルカリ</td><td>食塩＋NaOH</td></tr>
+    </table>
+
+    <div class="question"><h3><span class="qnum">問(8)</span>反のうの名前（漢字2字）</h3>
+      <div class="q-text">アルカリ性と酸性の水よう液をまぜ合わせると、お互いの性質を打ち消し合います。このような反応をとくに何といいますか。漢字2字で答えなさい。</div>      <div class="answer">✅ 中和</div></div>
+    <div class="question"><h3><span class="qnum">問(9)</span>Cの水よう液を蒸発させると残る固体</h3>
+      <div class="q-text">Cの試験管の水よう液は、赤・青どちらのリトマス紙につけても色の変化がありませんでした。この液を加熱して水をすべて蒸発させたときに出てくる固体の名前を答えなさい。</div>      <div class="intro"><b>〔みちびき〕</b> Cはちょうど中和した中性の液。</div>
+      <div class="answer">✅ 食塩</div></div>
+    <div class="question"><h3><span class="qnum">問(10)</span>BTBで青色になる試験管（すべて）</h3>
+      <div class="q-text">BTB液を加えると、青色に変化する水よう液が入っている試験管はどれですか。A〜Eの中からすべて選び、記号で答えなさい。</div>      <div class="intro"><b>〔みちびき〕</b> 青＝アルカリ性。Cは緑（中性）だから入らない！</div>
+      <div class="answer">✅ D・E</div></div>
+  </section>
+
+  <section class="daimon" id="r5-d2">
+    <h2>🧪 大問2 ── 酸素・二酸化炭素の発生</h2>
+    <div class="michibiki"><h3>🌱 みちびき</h3>
+      <p>気体は決まった「こ体＋液体」をまぜると発生する。集めるには <b>水上置かん法</b>。</p></div>
+    <figure class="fig"><img src="figs/01_souchi.png" alt="装置"><figcaption>📍 問(1)〜問(5)(6) 共通</figcaption></figure>
+    <table>
+      <tr><th>気体</th><th>こ体</th><th>液体</th></tr>
+      <tr><td>🫧 酸素</td><td>二酸化マンガン (ウ)</td><td>オキシドール (オ)</td></tr>
+      <tr><td>🫧 二酸化炭素</td><td>石灰石 (ア)</td><td>うすい塩酸 (エ)</td></tr>
+    </table>
+    <div class="tip">🎯「酸素はマンガとオキシ／二酸化炭素は石に塩」</div>
+
+    <div class="question"><h3><span class="qnum">問(1)</span>器具aの名前</h3>
+      <div class="q-text">酸素や二酸化炭素を発生させる実験に使われる器具aの名前を答えなさい。</div>      <div class="answer">✅ 集気びん</div></div>
+    <div class="question"><h3><span class="qnum">問(2)</span>あ〜えにあてはまる材料</h3>
+      <div class="q-text">会話文中の(あ)〜(え)にあてはまる固体や液体を、ア〜カの中からそれぞれ1つ選び、記号で答えなさい。</div>      <div class="answer">✅ あ＝ウ ／ い＝オ ／ う＝ア ／ え＝エ</div></div>
+    <div class="question"><h3><span class="qnum">問(3)</span>ガラス管の長さ</h3>
+      <div class="q-text">図の実験装置は三角フラスコ内のガラス管の長さがちがっていることがわかりました。どのようにするとよいですか。ア〜エから1つ選び、記号で答えなさい。</div>      <div class="intro"><b>〔みちびき〕</b> ガラス管が液体につかると気体が外に出ていけない！</div>
+      <div class="answer">✅ ア（フラスコ内のガラス管が短い）</div></div>
+    <div class="question"><h3><span class="qnum">問(4)</span>集気びんの水の量</h3>
+      <div class="q-text">気体を集め始めるときの器具aに入れる水の量はどのようにするとよいですか。ア〜エから1つ選び、記号で答えなさい。</div>      <div class="answer">✅ ア いっぱいにしておく</div></div>
+    <div class="question"><h3><span class="qnum">問(5)(6)</span>集め方の名前と発生気体</h3>
+      <div class="q-text">実験のような気体の集め方をとくに何といいますか。また、発生させた気体の名前を答えなさい。</div>      <div class="answer">✅ 水上置かん（法）／ 酸素</div></div>
+    <figure class="fig"><img src="figs/09_atsumekata.png" alt="気体の集め方"></figure>
+    <figure class="fig"><img src="figs/R03_methods.png" alt="集め方詳細">
+      <figcaption>📍 問(7)〜問(10) 共通：3つの集め方の使い分け ── 性質で決まる</figcaption></figure>
+    <div class="question"><h3><span class="qnum">問(7)</span>水上置かんで集められない気体</h3>
+      <div class="q-text">(5)のような方法では集められない気体はどれですか。ア〜エの中からすべて選び、記号で答えなさい。ア.アンモニア イ.塩化水素 ウ.水素 エ.ちっ素</div>      <div class="intro"><b>〔みちびき〕</b> 水にとけやすい気体は水にとけてしまうから集められない。</div>
+      <div class="answer">✅ ア（アンモニア）・イ（塩化水素）</div></div>
+    <div class="question"><h3><span class="qnum">問(8)</span>最初のあわXの正体</h3>
+      <div class="q-text">会話文中の[X]にあてはまることばを、ア〜エから1つ選び、記号で答えなさい。ア.水にとけていた空気 イ.注いだ液体の中にとけていた空気 ウ.三角フラスコの中にあった空気 エ.器具aの中にあった空気</div>      <div class="intro"><b>〔みちびき〕</b> フラスコの中には最初から空気がある！</div>
+      <div class="answer">✅ ウ 三角フラスコの中にあった空気</div></div>
+    <div class="question"><h3><span class="qnum">問(9)</span>酸素のせいしつ</h3>
+      <div class="q-text">酸素の特ちょうを次のようにまとめました。1〜3の( )にあてはまるものを、アまたはイで答えなさい。1.空気よりも(ア軽い イ重い) 2.水に(アとけやすい イとけにくい) 3.ものを燃やすはたらきが(アある イない)</div>      <table><tr><th>番号</th><th>性質</th><th>答え</th></tr>
+        <tr><td>1</td><td>空気よりも</td><td>イ 重い</td></tr>
+        <tr><td>2</td><td>水に</td><td>イ とけにくい</td></tr>
+        <tr><td>3</td><td>燃やすはたらき</td><td>ア ある</td></tr>
+      </table></div>
+    <div class="question"><h3><span class="qnum">問(10)</span>二酸化炭素のせいしつ</h3>
+      <div class="q-text">二酸化炭素の特ちょう。1.空気よりも(ア軽い イ重い) 2.ものを燃やすはたらきが(アある イない) 3.水にとけ( )になる 4.( )に通すと白くにごる</div>      <table><tr><th>番号</th><th>性質</th><th>答え</th></tr>
+        <tr><td>1</td><td>空気よりも</td><td>イ 重い</td></tr>
+        <tr><td>2</td><td>燃やすはたらき</td><td>イ ない</td></tr>
+        <tr><td>3</td><td>水にとけて</td><td>炭酸水</td></tr>
+        <tr><td>4</td><td>白くにごるのは</td><td>石灰水</td></tr>
+      </table></div>
+  </section>
+
+  <section class="daimon" id="r5-d3">
+    <h2>🧪 大問3 ── 酸素発生量と液体Aの関係</h2>
+    <div class="michibiki"><h3>🌱 みちびき</h3>
+      <p>こ体B（二酸化マンガン）2gに対して液体A（オキシドール）の量を変えると、酸素が比例して出るよ。</p></div>
+    <figure class="fig"><img src="figs/07_graph.png" alt="グラフ"><figcaption>📍 問(1)〜問(3) 共通</figcaption></figure>
+    <table>
+      <tr><th>液体A (mL)</th><td>10</td><td>20</td><td>30</td><td>40</td><td>50</td></tr>
+      <tr><th>酸素 (mL)</th><td>125</td><td>250</td><td>375</td><td>500</td><td>625</td></tr>
+    </table>
+    <div class="tip">🔑 A 1mL あたり 12.5mL の酸素</div>
+
+    <div class="question"><h3><span class="qnum">問(1)</span>グラフ</h3>
+      <div class="q-text">実験の結果を、答案用紙のグラフに表しなさい。</div>      <div class="answer">✅ 原点と (50, 625) を直線で結ぶ</div></div>
+    <div class="question"><h3><span class="qnum">問(2)</span>酸素300mLに必要なA</h3>
+      <div class="q-text">酸素を300mL発生させるのに必要な液体Aの量は何mLですか。</div>      <div class="calc">300 ÷ 12.5 = 24</div>
+      <div class="answer">✅ 24mL</div></div>
+    <div class="question"><h3><span class="qnum">問(3)</span>A=26mLのときの酸素</h3>
+      <div class="q-text">液体A 26mLに固体Bを2個(2g)加えたとき、発生する酸素の量は何mLですか。</div>      <div class="calc">26 × 12.5 = 325</div>
+      <div class="answer">✅ 325mL</div></div>
+    <figure class="fig"><img src="figs/08_shokubai.png" alt="触媒"></figure>
+    <figure class="fig"><img src="figs/R05_catalyst_graph.png" alt="触媒のグラフ比較">
+      <figcaption>B=2g と B=4g のグラフは <b>完全に重なる</b>！ Bを増やしても結果は同じ</figcaption><figcaption>📍 問(4)用</figcaption></figure>
+    <div class="question"><h3><span class="qnum">問(4)</span>Bを4g（2倍）にしたら？</h3>
+      <div class="q-text">いろいろな量の液体Aに固体Bを4個(4g)加えたとき、発生した酸素の量の関係はどのようになりますか。表のア〜エから1つ選び、記号で答えなさい。</div>      <div class="intro"><b>〔みちびき〕</b> Bは <b>触媒</b>＝反のうを助けるだけで自分は変わらない。<b>量を増やしても酸素の量は変わらない</b>。</div>
+      <div class="answer">✅ イ（B=2gと同じ値）</div></div>
+  </section>
+
+  <section class="daimon summary" id="r5-summary">
+    <h2>🌟 試験頻出ポイント TOP10</h2>
+    <figure class="fig"><img src="figs/10_summary.png" alt="TOP10"></figure>
+  </section>
+
+</div>
+
+<!-- ============================================================= -->
+<!-- 🔢 算数 前期第5回（2026/5/2）                                   -->
+<!-- ============================================================= -->
+<div class="panel math" id="t-math-5">
+
+  <div class="toc">
+    <h2>📑 もくじ</h2>
+    <ul>
+      <li><a href="#m5-d1">大問1 計算</a></li>
+      <li><a href="#m5-d2">大問2 図形・歩道</a></li>
+      <li><a href="#m5-d3">大問3 文章題</a></li>
+      <li><a href="#m5-d4">大問4 並べ方・図形</a></li>
+      <li><a href="#m5-d5">大問5 硬貨ならべ</a></li>
+      <li><a href="#m5-d6">大問6 鉛筆を分ける</a></li>
+    </ul>
+  </div>
+
+  <section class="daimon" id="m5-d1">
+    <h2>🔢 大問1 ── 計算</h2>
+    <div class="michibiki"><h3>🌱 みちびき</h3>
+      <p>分数・小数のまじった計算は、<b>ぜんぶ分数になおす</b>のが安全。帯分数 → 仮分数にすれば、あとは ×÷ してから最後に通分の足し算引き算するだけ！</p></div>
+
+    <figure class="fig"><img src="figs/C5_calc1.png" alt="問(1)解き方">
+      <figcaption>📍 問(1)用：解き方ステップ</figcaption></figure>
+
+    <div class="question"><h3><span class="qnum">問(1)</span>4.6 − 2と5/6</h3>
+      <div class="q-text">次の計算をしなさい。 4.6 − 2と5/6</div>      <div class="intro"><b>〔みちびき〕</b> 小数は分数に。4.6 = 23/5、2と5/6 = 17/6。</div>
+      <div class="calc">23/5 − 17/6 = 138/30 − 85/30 = 53/30</div>
+      <div class="answer">✅ 1と23/30</div></div>
+
+    <figure class="fig"><img src="figs/C5_calc2.png" alt="問(2)解き方">
+      <figcaption>📍 問(2)用：解き方ステップ</figcaption></figure>
+
+    <div class="question"><h3><span class="qnum">問(2)</span>2と1/10 ÷ 4/5 ÷ 1と1/6</h3>
+      <div class="q-text">次の計算をしなさい。 2と1/10 ÷ 4/5 ÷ 1と1/6</div>      <div class="intro"><b>〔みちびき〕</b> ぜんぶ仮分数に → 割り算は <b>ひっくり返してかける</b>。</div>
+      <div class="calc">21/10 × 5/4 × 6/7 = (21×5×6)/(10×4×7) = 630/280 = 9/4</div>
+      <div class="answer">✅ 2と1/4</div></div>
+
+    <figure class="fig"><img src="figs/C5_calc3.png" alt="問(3)解き方">
+      <figcaption>📍 問(3)用：解き方ステップ</figcaption></figure>
+
+    <div class="question"><h3><span class="qnum">問(3)</span>1と9/16 × 3と1/5 ÷ 5/8</h3>
+      <div class="q-text">次の計算をしなさい。 1と9/16 × 3と1/5 ÷ 5/8</div>      <div class="calc">25/16 × 16/5 × 8/5 = (25×16×8)/(16×5×5) = 8</div>
+      <div class="answer">✅ 8</div></div>
+
+    <figure class="fig"><img src="figs/C5_calc4.png" alt="問(4)解き方">
+      <figcaption>📍 問(4)用：解き方ステップ（カッコの中の÷を先に！）</figcaption></figure>
+
+    <div class="question"><h3><span class="qnum">問(4)</span>(2/3 − 1/3 ÷ 1と1/3) × 1.8</h3>
+      <div class="q-text">次の計算をしなさい。 (2/3 − 1/3 ÷ 1と1/3) × 1.8</div>      <div class="intro"><b>〔みちびき〕</b> カッコの中は <b>÷を先に</b>！ 1/3 ÷ 4/3 = 1/4。</div>
+      <div class="calc">(2/3 − 1/4) × 9/5 = (8/12 − 3/12) × 9/5 = 5/12 × 9/5 = 3/4</div>
+      <div class="answer">✅ 3/4</div></div>
+  </section>
+
+  <section class="daimon" id="m5-d2">
+    <h2>🔢 大問2 ── 図形と歩道</h2>
+
+    <figure class="fig"><img src="figs/B08_kobaisuu.png" alt="6と15の公倍数">
+      <figcaption>📍 問(1)用：公倍数 ＝ 最小公倍数(LCM)の倍数（数直線で見える化）</figcaption></figure>
+
+    <div class="question"><h3><span class="qnum">問(1)</span>1〜300で6と15の公倍数は何個？</h3>
+      <div class="q-text">1から300までの整数の中に、6と15の公倍数は何個ありますか。</div>      <div class="intro"><b>〔みちびき〕</b> 公倍数 ＝ <b>最小公倍数の倍数</b>。6と15のLCMは30。</div>
+      <div class="calc">300 ÷ 30 = 10</div>
+      <div class="answer">✅ 10個</div></div>
+
+    <figure class="fig"><img src="figs/M01_circle_square.png" alt="正方形と円"><figcaption>📍 問(2)①〜問(2)② 共通</figcaption></figure>
+
+    <div class="question"><h3><span class="qnum">問(2)①</span>アの部分の面積（4すみ）</h3>
+      <div class="q-text">右の図は、面積が400㎠の正方形の中に円をかき、円の中に正方形をかいたものです。円周率を3.14として、点をうったアの部分(円の外、外正方形の4すみ)の面積は何㎠ですか。</div>      <div class="intro"><b>〔みちびき〕</b> 外の正方形(400)から円をひく。1辺=20cm（√400）、円の半径=10cm。</div>
+      <div class="calc">400 − 10×10×3.14 = 400 − 314 = 86</div>
+      <div class="answer">✅ 86 ㎠</div></div>
+
+    <div class="question"><h3><span class="qnum">問(2)②</span>イの部分の面積（円内、内側正方形のすき間）</h3>
+      <div class="q-text">斜線を引いたイの部分(円の中、内側の正方形の外側)の面積は何㎠ですか。</div>      <div class="intro"><b>〔みちびき〕</b> 円から内接正方形をひく。内接正方形の面積 ＝ 対角線×対角線÷2 ＝ 20×20÷2 ＝ 200。</div>
+      <div class="calc">314 − 200 = 114</div>
+      <div class="answer">✅ 114 ㎠</div></div>
+
+    <figure class="fig"><img src="figs/M02_road.png" alt="自然歩道"><figcaption>📍 問(3)①〜問(3)② 共通</figcaption></figure>
+
+    <div class="question"><h3><span class="qnum">問(3)①</span>太郎君が売店に戻ってくるのは？</h3>
+      <div class="q-text">図のような1周3200mの自然歩道があります。最も高い場所に展望台があり、売店から展望台まで右回りで1100mあります。太郎君は売店を出発し、右回りで展望台に向かいました。上りは分速55m、展望台で10分休けいをし、下りは分速70mで進み、1周して売店にもどってきました。太郎君が売店にもどってくるのは、出発してから何分後ですか。</div>      <div class="intro"><b>〔みちびき〕</b> 上り(右回り1100m)＋休憩10分＋下り(左回り2100m)。</div>
+      <div class="calc">1100÷55 + 10 + 2100÷70 = 20 + 10 + 30 = 60</div>
+      <div class="answer">✅ 60分後</div></div>
+
+    <div class="question"><h3><span class="qnum">問(3)②</span>太郎君と次郎君が出会うのは？</h3>
+      <div class="q-text">次郎君は太郎君と同時に売店を出発し、左回りで展望台に向かいました。次郎君の上りの速さが太郎君の上りの速さと同じとき、2人が出会うのは、2人が売店を出発してから何分何秒後ですか。</div>      <div class="intro"><b>〔みちびき〕</b> 次郎は左回りで上り（55m/分）。太郎は20分で展望台、10分休んで30分後に下り出発（70m/分）。30分後以降、2人は同じ左回りコースで近づいていく。
+      <br>30分時点：次郎は売店から55×30=1650m、太郎は展望台(2100m)。差=450m。
+      <br>2人が近づく速さ＝55+70=125m/分。</div>
+      <div class="calc">450 ÷ 125 = 3.6 分 = 3分36秒<br>30分 + 3分36秒 = 33分36秒</div>
+      <div class="answer">✅ 33分36秒後</div></div>
+  </section>
+
+  <section class="daimon" id="m5-d3">
+    <h2>🔢 大問3 ── 文章題（過不足算・つるかめ算）</h2>
+
+    <figure class="fig"><img src="figs/E02_kakubusoku.png" alt="過不足算の線分図">
+      <figcaption>📍 問(1)用：線分図にすると「不足14＋あまり10＝24」がハッキリ見える</figcaption></figure>
+
+    <div class="question"><h3><span class="qnum">問(1)</span>クリを7個ずつ→14個不足、5個ずつ→10個あまり。クリは何個？</h3>
+      <div class="q-text">何人かの子どもたちに、クリを7個ずつ分けようとしたら、14個たりませんでした。そこで5個ずつ分けたら10個あまりました。クリは全部で何個ありますか。</div>      <div class="intro"><b>〔みちびき〕</b> 子どもの人数を ◯人として、両方の式が同じクリ数になるようにする。<br>
+      <b>差を使う考え方</b>：1人につき 7−5=2個 ずつ多く分けると、不足14個＋あまり10個＝24個分の差ができる。</div>
+      <div class="calc">人数 = 24 ÷ 2 = 12人<br>クリ = 5×12 + 10 = 70個</div>
+      <div class="answer">✅ 70個</div></div>
+
+    <figure class="fig"><img src="figs/E11_candy.png" alt="キャンディ過不足算">
+      <figcaption>📍 問(2)用：キャンディの過不足算（7個でもあまり／10個でもあまり）</figcaption></figure>
+
+    <div class="question"><h3><span class="qnum">問(2)</span>キャンディ7個→33あまり、10個→3あまり。全部で？</h3>
+      <div class="q-text">子供会でキャンディを1人に7個ずつ分けると33個あまるので、1人に10個ずつ分けることにしましたが、やはり3個あまります。キャンディは全部で何個ありますか。</div>      <div class="intro"><b>〔みちびき〕</b> 1人につき 10−7=3個増やすと、33−3=30個多く必要になる。</div>
+      <div class="calc">人数 = 30 ÷ 3 = 10人<br>キャンディ = 7×10 + 33 = 103個</div>
+      <div class="answer">✅ 103個</div></div>
+
+    <figure class="fig"><img src="figs/E10_purin1.png" alt="兄弟プリン同数">
+      <figcaption>📍 問(3)①用：同じ数だけ買ったら、差は1個あたり30円 × 個数</figcaption></figure>
+
+    <div class="question"><h3><span class="qnum">問(3)①</span>同じ数だけ買って差120円。150円のプリン何個？</h3>
+      <div class="q-text">弟は120円、兄は150円のプリンを同じ数だけ買ったところ、代金の差が120円になりました。兄は、150円のプリンを何個買いましたか。</div>      <div class="intro"><b>〔みちびき〕</b> 1個あたりの値段差は 150−120=30円。</div>
+      <div class="calc">120 ÷ 30 = 4</div>
+      <div class="answer">✅ 4個</div></div>
+
+    <figure class="fig"><img src="figs/E03_purin.png" alt="兄弟プリン線分図">
+      <figcaption>📍 問(3)②用：妹5個と姉8個（妹+3個）の代金差を線分図で見る</figcaption></figure>
+
+    <div class="question"><h3><span class="qnum">問(3)②</span>姉が3個多く、姉の方が600円高い。代金合計は？</h3>
+      <div class="q-text">妹は120円のプリンを何個か買い、姉は150円のプリンを妹より3個多く買ったので、代金が600円高くなりました。2人の代金の合計は何円でしたか。</div>      <div class="intro"><b>〔みちびき〕</b> 妹が x 個、姉は x+3 個。差600円から x を求める。<br>姉の代金−妹の代金 ＝ 150(x+3) − 120x ＝ 30x+450 ＝ 600</div>
+      <div class="calc">30x = 150 → x = 5<br>妹: 120×5=600 ／ 姉: 150×8=1200<br>合計: 600+1200 = 1800</div>
+      <div class="answer">✅ 1800円</div></div>
+  </section>
+
+  <section class="daimon" id="m5-d4">
+    <h2>🔢 大問4 ── 並べ方・図形</h2>
+
+    <figure class="fig"><img src="figs/M03_goishi.png" alt="碁石パターン"><figcaption>📍 問(1)①〜問(1)② 共通</figcaption></figure>
+
+    <div class="question"><h3><span class="qnum">問(1)①</span>65個目のご石は何色？</h3>
+      <div class="q-text">100個のご石を、●○○○●●○○○●●●○○○・・・のあるきまりにしたがってならべました。65個目のご石は何色になりますか。</div>      <div class="intro"><b>〔みちびき〕</b> パターンは ●1+○3、●2+○3、●3+○3 …。
+      グループkは「●k個＋○3個」(k+3個)。
+      累計（〜k番目グループの最後）= (1+2+...+k) + 3k。<br>
+      k=8まで: 60個。k=9（●9+○3、12個）→ 61〜69が●、70〜72が○。65は●！</div>
+      <div class="answer">✅ 黒（●）</div></div>
+
+    <div class="question"><h3><span class="qnum">問(1)②</span>白だけの20番目は全体で何番目？</h3>
+      <div class="q-text">白だけの20個目は、全体では何個目になりますか。</div>      <div class="intro"><b>〔みちびき〕</b> 各グループに白は3個ずつ。20÷3 = 6あまり2 → グループ7の白の2個目。<br>
+      グループ7（●7+○3）は40〜49個目。●が40〜46、白が47〜49 → 2個目は <b>48番目</b>。</div>
+      <div class="answer">✅ 48番目</div></div>
+
+    <figure class="fig"><img src="figs/E04_squarestone.png" alt="正方形碁石">
+      <figcaption>📍 問(2)①〜問(2)② 共通：角の4つを2回数えてしまうので「−4」がポイント</figcaption></figure>
+
+    <div class="question"><h3><span class="qnum">問(2)①</span>1辺18個のとき、外周の個数は？</h3>
+      <div class="q-text">ご石を、正方形の形にぎっしりならべていきます。1辺の個数が18個のとき、外側の周りの個数は何個ですか。</div>      <div class="intro"><b>〔みちびき〕</b> 周りの個数 ＝ 4×(1辺) − 4（角を二重に数えない）。</div>
+      <div class="calc">4×18 − 4 = 68</div>
+      <div class="answer">✅ 68個</div></div>
+
+    <div class="question"><h3><span class="qnum">問(2)②</span>外周76個のとき、全部の個数は？</h3>
+      <div class="q-text">外側の周りの個数が76個のとき、全部の個数は何個ですか。</div>      <div class="calc">4×n − 4 = 76 → n = 20<br>20×20 = 400</div>
+      <div class="answer">✅ 400個</div></div>
+
+    <figure class="fig"><img src="figs/M04_shapes.png" alt="図形9種"><figcaption>📍 問(3)①〜問(4) 共通</figcaption></figure>
+
+    <div class="question"><h3><span class="qnum">問(3)①</span>対称の軸が2本以上ある図形（順番に）</h3>
+      <div class="q-text">次のア〜クの図形について、対称の軸が2本以上ある図形を、アイウエオ順にすべて答えなさい。ア正七角形 イ台形 ウ平行四辺形 エひし形 オ長方形 カ二等辺三角形 キ正三角形 クおうぎ形</div>      <div class="intro"><b>〔みちびき〕</b> 軸の本数：ア正七角形=7、イ台形=0、ウ平行四辺形=0、エひし形=2、オ長方形=2、カ二等辺三角形=1、キ正三角形=3、クおうぎ形=1。</div>
+      <div class="answer">✅ ア・エ・オ・キ</div></div>
+
+    <div class="question"><h3><span class="qnum">問(3)②</span>点対称ではあるが線対称ではない図形</h3>
+      <div class="q-text">点対称ではあるが線対称ではない図形を答えなさい。</div>      <div class="intro"><b>〔みちびき〕</b> 平行四辺形は点対称○・線対称✕（軸0本だけど180°回すと重なる）。</div>
+      <div class="answer">✅ ウ（平行四辺形）</div></div>
+
+    <div class="question"><h3><span class="qnum">問(4)</span>線対称・点対称の図形をかく</h3>
+      <div class="q-text">直線ABを対称の軸とする線対称な図形アと、点Oを中心とする点対称な図形イをかきなさい。</div>      <div class="intro"><b>〔みちびき〕</b> 線対称：軸ABから同じ距離・反対側に点を打つ。点対称：点Oから反対側に同じ距離だけ伸ばした位置に点を打つ。</div>
+      <div class="answer">✅ 図にかきこむ問題（軸 or 点 で反対側に折り返す）</div></div>
+  </section>
+
+  <section class="daimon" id="m5-d5">
+    <h2>🔢 大問5 ── 1円と50円の硬貨ならべ</h2>
+    <div class="michibiki"><h3>🌱 みちびき</h3>
+      <p>1円硬貨で「3列幅の額縁（がくぶち）」をつくり、その外側に50円硬貨を1周ぐるっとならべる。
+      50円硬貨の1辺の枚数を A とすると、1円硬貨の外側は (A−2)、内側は (A−8)。</p>
+    </div>
+    <figure class="fig"><img src="figs/M05_coins.png" alt="硬貨配置"><figcaption>📍 問(1)〜問(3) 共通</figcaption></figure>
+
+    <div class="question"><h3><span class="qnum">問(1)</span>50円硬貨が2000円のとき、1番外側の1辺は？</h3>
+      <div class="q-text">1円硬貨を3列にならべ、中をあけた正方形を作り、さらに周りに50円硬貨をならべました。50円硬貨だけの合計金額が2000円のとき、1番外側の1辺の枚数は何枚ですか。</div>      <div class="intro"><b>〔みちびき〕</b> 50円玉の枚数 = 2000÷50 = 40枚。周りの式は 4A−4。</div>
+      <div class="calc">4A − 4 = 40 → A = 11</div>
+      <div class="answer">✅ 11枚</div></div>
+
+    <div class="question"><h3><span class="qnum">問(2)</span>1円硬貨が120円のとき、1番内側の1辺は？</h3>
+      <div class="q-text">1円硬貨だけの合計金額が120円のとき、1番内側の1辺の枚数は何枚ですか。</div>      <div class="intro"><b>〔みちびき〕</b> 1円玉の枚数 ＝ (A−2)² − (A−8)² ＝ 12A − 60。</div>
+      <div class="calc">12A − 60 = 120 → A = 15<br>1番内側 = A − 8 = 7</div>
+      <div class="answer">✅ 7枚</div></div>
+
+    <div class="question"><h3><span class="qnum">問(3)</span>全部で2920円のとき、1番外側の周りは何枚？</h3>
+      <div class="q-text">全部で2920円の硬貨がならんでいるとき、1番外側の周りには何枚の硬貨がならんでいますか。</div>      <div class="intro"><b>〔みちびき〕</b> 1円(1枚=1円) と 50円(1枚=50円) を Aで表してたす。</div>
+      <div class="calc">1×(12A−60) + 50×(4A−4) = 2920<br>12A − 60 + 200A − 200 = 2920<br>212A = 3180 → A = 15<br>外周 = 4×15 − 4 = 56</div>
+      <div class="answer">✅ 56枚</div></div>
+  </section>
+
+  <section class="daimon" id="m5-d6">
+    <h2>🔢 大問6 ── 鉛筆を5・6年生に分ける</h2>
+
+    <div class="michibiki"><h3>🌱 みちびき</h3>
+      <p>5年生 ＝ 6年生＋2人。鉛筆を「5年に4本、6年に6本」分けると6本不足。</p></div>
+
+    <figure class="fig"><img src="figs/M06_pencil.png" alt="鉛筆問題">
+      <figcaption>📍 大問6 全体イメージ</figcaption></figure>
+    <figure class="fig"><img src="figs/E05_pencil_lines.png" alt="鉛筆線分図">
+      <figcaption>📍 大問6 全体：2つのプランの線分図 ── 鉛筆の総数が等しい！</figcaption></figure>
+
+    <div class="question"><h3><span class="qnum">問(1)</span>もし6年生が5年生と同じ人数だったら、何本不足？</h3>
+      <div class="q-text">5年生と6年生で作ったチームが、サッカー大会に出場しました。参加賞としてもらった鉛筆を分けることになり、5年生に4本、6年生に6本ずつ分けようとすると6本の鉛筆が不足します。5年生の人数が6年生より2人多いとき、もし6年生が5年生と同じ人数とすると、鉛筆は何本不足することになりますか。</div>      <div class="intro"><b>〔みちびき〕</b> 6年生が2人増えるとして、その2人にも6本ずつ必要。</div>
+      <div class="calc">追加で必要な本数 = 2人 × 6本 = 12本<br>もとから6本不足だったから、12+6 = 18本不足</div>
+      <div class="answer">✅ 18本</div></div>
+
+    <div class="question"><h3><span class="qnum">問(2)</span>実際は5年に3本・6年に4本→17本余り。鉛筆は全部で何本？</h3>
+      <div class="q-text">実際は5年生に3本、6年生に4本ずつ分けたので、17本の鉛筆があまりました。参加賞としてもらった鉛筆は、全部で何本ありましたか。</div>      <div class="intro"><b>〔みちびき〕</b> 2つの分け方どちらも鉛筆の総数は同じ。式を立てて等しくおく。<br>
+      5年x人、6年y人（x=y+2）。<br>
+      4x+6y−6 = 3x+4y+17 → x+2y = 23 → (y+2)+2y = 23 → y = 7、x = 9</div>
+      <div class="calc">3×9 + 4×7 + 17 = 27 + 28 + 17 = 72</div>
+      <div class="answer">✅ 72本</div></div>
+  </section>
+
+</div>
+
+<!-- ============================================================= -->
+<!-- 🔢 算数 前期第4回（2026/4/18）                                  -->
+<!-- ============================================================= -->
+<div class="panel math" id="t-math-4">
+
+  <div class="toc">
+    <h2>📑 もくじ</h2>
+    <ul>
+      <li><a href="#m4-d1">大問1 計算</a></li>
+      <li><a href="#m4-d2">大問2 図形・並べ方</a></li>
+      <li><a href="#m4-d3">大問3 約数・公約数</a></li>
+      <li><a href="#m4-d4">大問4 倍数・カレンダー・うるう年</a></li>
+      <li><a href="#m4-d5">大問5 ベン図</a></li>
+      <li><a href="#m4-d6">大問6 数列の並び</a></li>
+    </ul>
+  </div>
+
+  <section class="daimon" id="m4-d1">
+    <h2>🔢 大問1 ── 計算</h2>
+
+    <figure class="fig"><img src="figs/C4_calc1.png" alt="問(1)解き方">
+      <figcaption>📍 問(1)用：解き方ステップ（小数→分数化）</figcaption></figure>
+
+    <div class="question"><h3><span class="qnum">問(1)</span>6/7 × 1.05</h3>
+      <div class="q-text">次の計算をしなさい。 6/7 × 1.05</div>      <div class="intro"><b>〔みちびき〕</b> 1.05 = 105/100 = 21/20。</div>
+      <div class="calc">6/7 × 21/20 = (6×21)/(7×20) = 126/140 = 9/10</div>
+      <div class="answer">✅ 9/10</div></div>
+
+    <figure class="fig"><img src="figs/C4_calc2.png" alt="問(2)解き方">
+      <figcaption>📍 問(2)用：解き方ステップ</figcaption></figure>
+
+    <div class="question"><h3><span class="qnum">問(2)</span>7.75 ÷ 1と11/16</h3>
+      <div class="q-text">次の計算をしなさい。 7.75 ÷ 1と11/16</div>      <div class="intro"><b>〔みちびき〕</b> 7.75 = 31/4、1と11/16 = 27/16。</div>
+      <div class="calc">31/4 ÷ 27/16 = 31/4 × 16/27 = (31×16)/(4×27) = 124/27</div>
+      <div class="answer">✅ 4と16/27</div></div>
+
+    <figure class="fig"><img src="figs/C4_calc3.png" alt="問(3)解き方">
+      <figcaption>📍 問(3)用：解き方ステップ</figcaption></figure>
+
+    <div class="question"><h3><span class="qnum">問(3)</span>1と1/6 ÷ 2/3 × 3.2</h3>
+      <div class="q-text">次の計算をしなさい。 1と1/6 ÷ 2/3 × 3.2</div>      <div class="intro"><b>〔みちびき〕</b> 1と1/6 = 7/6、3.2 = 16/5。</div>
+      <div class="calc">7/6 × 3/2 × 16/5 = (7×3×16)/(6×2×5) = 336/60 = 28/5</div>
+      <div class="answer">✅ 5と3/5</div></div>
+
+    <figure class="fig"><img src="figs/C4_calc4.png" alt="問(4)解き方">
+      <figcaption>📍 問(4)用：解き方ステップ（共通項をくくり出す！）</figcaption></figure>
+
+    <div class="question"><h3><span class="qnum">問(4)</span>888×3.14×1/6 − 216×3.14×1/6 − 72×3.14×1/6</h3>
+      <div class="q-text">次の計算をしなさい。 888×3.14×1/6 − 216×3.14×1/6 − 72×3.14×1/6</div>      <div class="intro"><b>〔みちびき〕</b> ぜんぶに「3.14×1/6」がついている → くくり出して計算をかんたんに！</div>
+      <div class="calc">3.14 × 1/6 × (888 − 216 − 72)<br>
+      = 3.14 × 1/6 × 600<br>
+      = 3.14 × 100 = 314</div>
+      <div class="answer">✅ 314</div>
+      <div class="tip">🎯 同じ数がついているときは <b>くくり出す</b>と一気にラクになる！</div></div>
+  </section>
+
+  <section class="daimon" id="m4-d2">
+    <h2>🔢 大問2 ── 図形・並べ方</h2>
+
+    <div class="draw-yourself">
+      ✏ <b>長方形をかいてみよう！</b><br>
+      たて12マス・横13マスのマス目をノートにかいて、まわりの長さが100cm（1m）になるように考えてみて。
+    </div>
+
+    <figure class="fig"><img src="figs/E01_ratio.png" alt="比12:13の長方形">
+      <figcaption>📍 問(1)用：たて12マス・横13マスの長方形 → 1マス=2cm</figcaption></figure>
+
+    <div class="question"><h3><span class="qnum">問(1)</span>たて：横＝12:13、周り1mの長方形の面積</h3>
+      <div class="q-text">たてと横の長さの比が12:13で、まわりの長さが1mの長方形があります。この長方形の面積は何㎠ですか。</div>      <div class="intro"><b>〔みちびき〕</b> 周り1m=100cm → たて＋横=50cm。比 12:13 を全部で 25 とみなして 50を分ける。<br>
+      → 1マスが何cmか分かれば、たてと横が決まって、面積が出せる！</div>
+      <div class="calc">1単位 = 50 ÷ 25 = 2cm<br>たて = 12×2 = 24cm、横 = 13×2 = 26cm<br>面積 = 24×26 = 624</div>
+      <div class="answer">✅ 624 ㎠</div></div>
+
+    <figure class="fig"><img src="figs/N01_container.png" alt="容器">
+      <figcaption>📍 問(2)用：厚さ1cmの板で作った容器（外32×22×22 → 内30×20×20）</figcaption></figure>
+
+    <div class="question"><h3><span class="qnum">問(2)</span>厚さ1cmの板で作った容器の容積</h3>
+      <div class="q-text">厚さ1cmの板で、右の図のような容器を作りました。この容器の容積は何cm³ですか。（外側 32cm × 22cm × 22cm）</div>      <div class="intro"><b>〔みちびき〕</b> 容積は <b>内側の体積</b>。厚さ1cmなので、たて・横・高さがそれぞれ2cm小さくなる（両側1cmずつ）。
+      外側 32×22×22 → 内側 30×20×20。</div>
+      <div class="calc">30 × 20 × 20 = 12000</div>
+      <div class="answer">✅ 12000 cm³</div></div>
+
+    <figure class="fig"><img src="figs/N02_cards.png" alt="カードならべ">
+      <figcaption>📍 問(3)用：2,3,5,7のカードから3枚で偶数</figcaption></figure>
+
+    <div class="draw-yourself">
+      ✏ <b>樹形図（じゅけいず）をかこう！</b><br>
+      一の位を「2」に決めたら、百の位は3・5・7のどれか、十の位は残った2枚のどちらか。<br>
+      ノートに「枝分かれの図」をかいて、ぜんぶ書き出してみよう！
+    </div>
+
+    <figure class="fig"><img src="figs/E08_cards_tree.png" alt="カード樹形図">
+      <figcaption>📍 問(3)用：樹形図にすると6通りがハッキリ見える！（百の位3とおり × 十の位2とおり）</figcaption></figure>
+
+    <div class="question"><h3><span class="qnum">問(3)</span>2,3,5,7のカードから3枚で3けたの偶数</h3>
+      <div class="q-text">2,3,5,7の数字が書かれたカードが4枚あります。この中から3枚を選んで並べ、3けたの整数を作るとき、偶数は何通りできますか。</div>      <div class="intro"><b>〔みちびき〕</b> 偶数 ＝ <b>一の位が偶数</b>。4枚の中で偶数は2だけ。
+      → 一の位は2に固定、百の位・十の位は残り3枚から2枚並べる。<br>
+      樹形図を見ると：百3とおり × 十2とおり ＝ 6 が一目でわかる！</div>
+      <div class="calc">3 × 2 = 6</div>
+      <div class="answer">✅ 6通り</div></div>
+
+    <figure class="fig"><img src="figs/N06_triangle.png" alt="三角形">
+      <figcaption>📍 問(4)①②用：直角二等辺三角形＋おうぎ形</figcaption></figure>
+
+    <div class="question"><h3><span class="qnum">問(4)①</span>xの長さ</h3>
+      <div class="q-text">右の図は、2つの直角二等辺三角形とおうぎ形をかいたもので、辺ABは16cmです。xの長さは何cmですか。</div>      <div class="intro"><b>〔みちびき〕</b> 大きい直角二等辺三角形の斜辺AB=16。x はその斜辺AB に頂点から下ろした高さ。直角二等辺三角形では <b>斜辺の半分＝高さ</b>。</div>
+      <div class="calc">x = 16 ÷ 2 = 8</div>
+      <div class="answer">✅ 8 cm</div></div>
+
+    <div class="question"><h3><span class="qnum">問(4)②</span>点をうった部分の面積</h3>
+      <div class="q-text">点をうった部分の面積は何㎠ですか。</div>      <div class="intro"><b>〔みちびき〕</b> 点をうった部分は「<b>半径16・中心角45°のおうぎ形</b>から<b>小さい直角二等辺三角形(辺8)</b>を引いた部分」。
+      <br>おうぎ形は円全体の 45/360 = 1/8 ぶん。</div>
+      <div class="calc">おうぎ形(半径16, 中心角45°) = 16 × 16 × 3.14 ÷ 8 = 100.48<br>
+      小さい直角二等辺三角形(直角辺8) = 8 × 8 ÷ 2 = 32<br>
+      点をうった部分 = 100.48 − 32 = 68.48</div>
+      <div class="answer">✅ 68.48 ㎠</div>
+      <div class="tip">🎯 ポイント：<b>大きい図形 − 小さい図形</b>で面積を求めるパターン。「全体から不要な部分を引く」発想は超頻出！</div></div>
+  </section>
+
+  <section class="daimon" id="m4-d3">
+    <h2>🔢 大問3 ── 約数・公約数</h2>
+
+    <figure class="fig"><img src="figs/B01_gcd.png" alt="連除法">
+      <figcaption>📍 問(1)用：連除法（れんじょほう）── 共通の素数で順にわって、左の数を全部かける</figcaption></figure>
+
+    <div class="question"><h3><span class="qnum">問(1)</span>28と42と70の最大公約数</h3>
+      <div class="q-text">28と42と70の最大公約数を求めなさい。</div>      <div class="intro"><b>〔みちびき〕</b> 連除法（れんじょほう）で同時にわっていく。<br>
+      28 = 2²×7、42 = 2×3×7、70 = 2×5×7 → 共通は 2×7。</div>
+      <div class="calc">最大公約数 = 2 × 7 = 14</div>
+      <div class="answer">✅ 14</div></div>
+
+    <figure class="fig"><img src="figs/B02_yakusuu.png" alt="90の約数">
+      <figcaption>📍 問(2)用：90の約数（=90を割り切れる整数）は12個</figcaption></figure>
+
+    <div class="question"><h3><span class="qnum">問(2)</span>90をある整数でわると割り切れる。考えられる整数は何個？</h3>
+      <div class="q-text">90をある整数でわると、わりきれました。ある整数として考えられる整数は、何個ありますか。</div>      <div class="intro"><b>〔みちびき〕</b> ＝ <b>90の約数の個数</b>。90 = 2×3²×5 → 約数 (1+1)(2+1)(1+1) = 12個。</div>
+      <div class="calc">90の約数: 1,2,3,5,6,9,10,15,18,30,45,90</div>
+      <div class="answer">✅ 12個</div></div>
+
+    <figure class="fig"><img src="figs/B03_amari_gcd.png" alt="51・81余り">
+      <figcaption>📍 問(3)用：余りを引くと公約数の問題に変わる！</figcaption></figure>
+
+    <div class="question"><h3><span class="qnum">問(3)</span>51を割ると3余り、81を同じ数で割ると1余り</h3>
+      <div class="q-text">51をある整数でわると3あまり、81を同じ整数でわると1あまりました。この整数にあてはまる数を、小さい順にすべて答えなさい。</div>      <div class="intro"><b>〔みちびき〕</b> 「割った余り」を引くとその数の<b>倍数</b>になる。
+      51−3 = 48、81−1 = 80。<br>
+      ある整数 ＝ 48 と 80 の <b>公約数</b>。最大公約数=16 → 16の約数 1,2,4,8,16。
+      ただし「余り3」が出るには割る数 > 3 でなければダメ！</div>
+      <div class="calc">条件を満たす数: 4, 8, 16</div>
+      <div class="answer">✅ 4・8・16</div></div>
+
+    <figure class="fig"><img src="figs/B04_9bai.png" alt="9の倍数">
+      <figcaption>📍 問(4)①用：1〜200の数直線上に9の倍数を点で打つ</figcaption></figure>
+
+    <div class="question"><h3><span class="qnum">問(4)①</span>1〜200で9の倍数は何個？</h3>
+      <div class="q-text">1から200までの整数について、9の倍数は何個ありますか。</div>      <div class="calc">200 ÷ 9 = 22 あまり2 → 22個</div>
+      <div class="answer">✅ 22個</div></div>
+
+    <figure class="fig"><img src="figs/B05_or_baisuu.png" alt="9または15の倍数のベン図">
+      <figcaption>📍 問(4)②用：「または」はベン図でかぶり（45の倍数）を引く！</figcaption></figure>
+
+    <div class="question"><h3><span class="qnum">問(4)②</span>9または15の倍数は何個？</h3>
+      <div class="q-text">9や15の倍数は何個ありますか。</div>      <div class="intro"><b>〔みちびき〕</b> 「または」は <b>足して、かぶり（公倍数=45の倍数）を引く</b>！</div>
+      <div class="calc">9の倍数 = 22個、15の倍数 = 200÷15 = 13個、45の倍数 = 200÷45 = 4個<br>
+      合計 = 22 + 13 − 4 = 31個</div>
+      <div class="answer">✅ 31個</div></div>
+  </section>
+
+  <section class="daimon" id="m4-d4">
+    <h2>🔢 大問4 ── 倍数・カレンダー・うるう年</h2>
+
+    <figure class="fig"><img src="figs/B09_4bai_300_500.png" alt="300〜500で4の倍数">
+      <figcaption>📍 問(1)①用：300〜500の数直線で4の倍数を見える化</figcaption></figure>
+
+    <div class="question"><h3><span class="qnum">問(1)①</span>300〜500で4の倍数は何個？</h3>
+      <div class="q-text">300から500までの整数について、4の倍数は何個ありますか。</div>      <div class="calc">500÷4 = 125、299÷4 = 74あまり3<br>125 − 74 = 51</div>
+      <div class="answer">✅ 51個</div></div>
+
+    <figure class="fig"><img src="figs/B10_4_9_kobaisuu.png" alt="4と9の公倍数">
+      <figcaption>📍 問(1)②用：4と9の公倍数 = 36の倍数（300〜500の範囲）</figcaption></figure>
+
+    <div class="question"><h3><span class="qnum">問(1)②</span>4と9の公倍数は何個？</h3>
+      <div class="q-text">4と9の公倍数は何個ありますか。</div>      <div class="intro"><b>〔みちびき〕</b> 4と9のLCM=36。300〜500で36の倍数。</div>
+      <div class="calc">500÷36 = 13あまり12、299÷36 = 8あまり11<br>13 − 8 = 5</div>
+      <div class="answer">✅ 5個</div></div>
+
+    <figure class="fig"><img src="figs/B06_amari10.png" alt="10余る数">
+      <figcaption>📍 問(2)用：「同じ余り」→ 余りを引いた数が公倍数</figcaption></figure>
+
+    <div class="question"><h3><span class="qnum">問(2)</span>15でも20でも10余る最小の3けたの数</h3>
+      <div class="q-text">15でわっても20でわっても10あまる整数で、最も小さい3けたの整数を答えなさい。</div>      <div class="intro"><b>〔みちびき〕</b> 「割って余りが同じ」→ <b>余りを引いた数が公倍数</b>。15と20のLCM=60。<br>
+      候補は 60+10=70（2けた）、120+10=130（3けた）。</div>
+      <div class="answer">✅ 130</div></div>
+
+    <figure class="fig"><img src="figs/E06_amari.png" alt="余り問題の図">
+      <figcaption>📍 問(3)用：両方の条件を満たす数を順に書き出す → 60にいちばん近いのを選ぶ</figcaption></figure>
+
+    <div class="question"><h3><span class="qnum">問(3)</span>9で割って5余り、6で割って2余る、最も60に近い整数</h3>
+      <div class="q-text">9でわると5あまり、6でわると2あまる整数で、最も60に近い整数を答えなさい。</div>      <div class="intro"><b>〔みちびき〕</b> 9で割って5余る数：5,14,23,32,41,50,59,68,...
+      <br>その中で6で割って2余るもの：14, 32, 50, 68, ...（差は18＝LCM(9,6)）。
+      <br>60に近いのは50と68。差は |60−50|=10、|68−60|=8 → <b>68</b>の方が近い！</div>
+      <div class="answer">✅ 68</div></div>
+
+    <figure class="fig"><img src="figs/B07_7yakusu.png" alt="約数7個">
+      <figcaption>📍 問(4)用：約数の個数が「素数個」のときは「ある素数の(その数−1)乗」だけ</figcaption></figure>
+
+    <div class="question"><h3><span class="qnum">問(4)</span>50〜99で約数が7個ある整数</h3>
+      <div class="q-text">50から99までの整数の中で、約数が7個ある整数を答えなさい。</div>      <div class="intro"><b>〔みちびき〕</b> 約数の個数が「7個」＝<b>素数</b>個 ＝ 整数が「ある素数の6乗」のときだけ！
+      <br>2⁶=64 ⭕、3⁶=729 ✕。</div>
+      <div class="answer">✅ 64</div></div>
+
+    <figure class="fig"><img src="figs/N03_calendar.png" alt="カレンダー">
+      <figcaption>📍 問(5)①用：4月のカレンダー（1日が金曜）</figcaption></figure>
+
+    <div class="question"><h3><span class="qnum">問(5)①</span>5月25日は何曜日？（4月1日が金）</h3>
+      <div class="q-text">ある年の4月のカレンダーは右のようになります(1日が金曜日)。この年の5月25日は何曜日ですか。</div>      <div class="intro"><b>〔みちびき〕</b> 4月は30日まで。4月1日(金)→4月30日(土)→5月1日(日)。
+      <br>5月25日は5月1日(日)から24日後。24÷7=3あまり3 → 日+3=水。</div>
+      <div class="answer">✅ 水曜日</div></div>
+
+    <div class="question"><h3><span class="qnum">問(5)②</span>ひろ子の誕生日は1月7日。次の年は何曜日？</h3>
+      <div class="q-text">ひろ子さんの誕生日は1月7日です。次の年のひろ子さんの誕生日は何曜日ですか。</div>      <div class="intro"><b>〔みちびき〕</b> 4月1日が金 → 1月1日は土曜日 → 1月7日は金曜日。
+      <br>1年（365日、うるう年でない）後 → 365÷7=52あまり1 → 1日進む → <b>土曜</b>。</div>
+      <div class="answer">✅ 土曜日</div></div>
+
+    <figure class="fig"><img src="figs/E07_uruu.png" alt="うるう年タイムライン">
+      <figcaption>📍 問(6)用：1900は×、2000は400の倍数だから⭕ がポイント</figcaption></figure>
+
+    <div class="question"><h3><span class="qnum">問(6)</span>1900〜2026年でうるう年は何回？</h3>
+      <div class="q-text">西暦年数が4の倍数になる年はうるう年(1年が366日)です。1900年〜2026年までに、うるう年は何回ありましたか。ただし、西暦年数が100の倍数になる年はうるう年ではありませんが、400の倍数になる年はうるう年です。</div>      <div class="intro"><b>〔みちびき〕</b> ルール：「4の倍数 ⭕、ただし100の倍数は✕、ただし400の倍数は⭕」。<br>
+      1900〜2026の4の倍数：1900,1904,…,2024 → (2024−1900)÷4+1 = 32個。<br>
+      この中で100の倍数：1900, 2000。1900は400で割れない→うるう年ではない。2000は400で割れる→うるう年⭕。<br>
+      除外するのは1900だけ。</div>
+      <div class="calc">32 − 1 = 31</div>
+      <div class="answer">✅ 31回</div></div>
+  </section>
+
+  <section class="daimon" id="m4-d5">
+    <h2>🔢 大問5 ── ベン図（200〜400で5・9・12の倍数）</h2>
+
+    <div class="michibiki"><h3>🌱 みちびき</h3>
+      <p>200〜400 の整数で、5と9と12の倍数の関係。<br>
+      9の倍数：200〜400で <b>23個</b>（200÷9=22あまり2、400÷9=44あまり4 → 44−22=22個…正確には22個）<br>
+      正確に：200/9=22.2 → 22、400/9=44.4 → 44 → 44−22=22個。<br>
+      9と12のLCM=36。200〜400で 36の倍数 → 216,252,288,324,360,396 → <b>6個</b><br>
+      5・9・12の3つすべてのLCM=180。200〜400で180の倍数 → 360 のみ → <b>1個</b></p>
+    </div>
+
+    <figure class="fig"><img src="figs/N04_venn.png" alt="ベン図">
+      <figcaption>📍 大問5全体：5・9・12の倍数のベン図</figcaption></figure>
+
+    <div class="question"><h3><span class="qnum">問(1)</span>斜線部分（9の倍数 ∩ 12の倍数、ただし5の倍数を除く）</h3>
+      <div class="q-text">右のベン図は、200〜400までの整数について、5と9と12の倍数の関係を表したものです。斜線部分(9と12の重なり)に入る整数は何個ありますか。</div>      <div class="calc">36の倍数 − 180の倍数 = 6 − 1 = 5</div>
+      <div class="answer">✅ 5個</div>
+      <div class="tip">⚠ 図の斜線範囲によっては「6個」の可能性も。塾の解答で確認！</div></div>
+
+    <div class="question"><h3><span class="qnum">問(2)</span>点をうった部分（5・9・12 すべての公倍数＝180の倍数）</h3>
+      <div class="q-text">点をうった部分(5と9と12のすべての公倍数)に入る整数は何個ありますか。</div>      <div class="answer">✅ 1個（360 のみ）</div></div>
+  </section>
+
+  <section class="daimon" id="m4-d6">
+    <h2>🔢 大問6 ── 3の倍数と7の倍数を小さい順に</h2>
+
+    <div class="michibiki"><h3>🌱 みちびき</h3>
+      <p>3の倍数 OR 7の倍数 を小さい順に並べた数列：<br>
+      3, 6, 7, 9, 12, 14, 15, 18, 21, 24, 27, 30, 33, 36, 39, ...<br>
+      ※21は両方の倍数だが <b>1回だけ</b>並べる。</p>
+    </div>
+
+    <figure class="fig"><img src="figs/N05_seq.png" alt="数列">
+      <figcaption>📍 大問6全体：3の倍数と7の倍数の並び（21は1回だけ）</figcaption></figure>
+
+    <div class="question"><h3><span class="qnum">問(1)</span>15番目の数</h3>
+      <div class="q-text">整数の中から3の倍数と7の倍数だけをすべて取り出して小さい順にならべると 3,6,7,9,12,14,15,18,21,24,27,30… のようになります。15番目の数は何ですか。</div>
+      <div class="intro"><b>〔みちびき〕</b> 上の並びを15番まで数える。</div>
+      <div class="answer">✅ 39</div></div>
+
+    <div class="question"><h3><span class="qnum">問(2)</span>198は何番目？</h3>
+      <div class="q-text">198は何番目にならぶ数ですか。</div>
+      <div class="intro"><b>〔みちびき〕</b> 198 = 3×66 → 3の倍数、7の倍数ではない。
+      <br>1〜198の中で「3または7の倍数」の個数を数える。</div>
+      <div class="calc">3の倍数: 198÷3 = 66個<br>
+      7の倍数: 198÷7 = 28あまり2 → 28個<br>
+      21の倍数（両方）: 198÷21 = 9あまり9 → 9個<br>
+      合計: 66 + 28 − 9 = 85</div>
+      <div class="answer">✅ 85番目</div></div>
+  </section>
+
+</div>
+
+</div>
+
+<!-- ============================================================= -->
+<!-- 📖 算数 テキスト「速さ」要点チェック                            -->
+<!-- ============================================================= -->
+<div class="panel math" id="t-text-hayasa">
+
+  <div class="toc">
+    <h2>📖 2-1 速さ ／ 要点チェック</h2>
+    <ul>
+      <li><a href="#th-michibiki">🌱 速さの3つの公式</a></li>
+      <li><a href="#th-q1">問(1) 単位の変換</a></li>
+      <li><a href="#th-q2">問(2) 速さを求める</a></li>
+      <li><a href="#th-q3">問(3) 速さを求める（分数時間）</a></li>
+      <li><a href="#th-q4">問(4) 道のりを求める</a></li>
+      <li><a href="#th-q5">問(5) 道のりを求める（分数時間）</a></li>
+      <li><a href="#th-q6">問(6) 時間を求める</a></li>
+    </ul>
+  </div>
+
+  <section class="daimon" id="th-michibiki">
+    <h2>🌱 まずはここから ── 速さの3つの公式</h2>
+
+    <div class="michibiki">
+      <h3>✏ ぜったいルール：問題を読んだら<u>まず線分図！</u></h3>
+      <p>速さの問題は、頭の中で考えるとこんがらがる！ <b>必ずノートに線分図をかく</b>くせをつけよう。
+      数字をならべるだけじゃなく <b>図にすると関係がパッと見える</b>よ。</p>
+    </div>
+
+    <figure class="fig"><img src="figs/H01_linehow.png" alt="線分図の書き方">
+      <figcaption>線分図の3ステップ ── まずはこの形をマネしよう</figcaption></figure>
+
+    <div class="michibiki">
+      <h3>速さ・道のり・時間の関係（公式）</h3>
+      <table>
+        <tr><th>求めたいもの</th><th>公式</th></tr>
+        <tr><td>🏃 速さ</td><td>速さ ＝ 道のり ÷ 時間</td></tr>
+        <tr><td>📏 道のり</td><td>道のり ＝ 速さ × 時間</td></tr>
+        <tr><td>⏰ 時間</td><td>時間 ＝ 道のり ÷ 速さ</td></tr>
+      </table>
+    </div>
+
+    <figure class="fig"><img src="figs/H00_hajiki.png" alt="は・じ・き">
+      <figcaption>「は・じ・き」の図 ── 求めたいものを指でかくすと公式が出る！</figcaption></figure>
+
+    <figure class="fig"><img src="figs/H07_unit.png" alt="単位変換">
+      <figcaption>単位の変換 ── ×60／÷60／×1000／÷1000</figcaption></figure>
+  </section>
+
+  <section class="daimon" id="th-q1">
+    <h2>📝 問(1) 単位の変換</h2>
+
+    <figure class="fig"><img src="figs/H08_unit80.png" alt="分速→時速変換">
+      <figcaption>📍 問(1)①用：分速80m から 時速 km への変換ステップ</figcaption></figure>
+
+    <div class="question"><h3><span class="qnum">①</span>分速80m ＝ 時速 □ km</h3>
+      <div class="q-text">次の式の □ にあてはまる数を答えなさい。① 分速80m ＝ 時速 □ km</div>      <div class="intro"><b>〔みちびき〕</b> 分速 → 時速は <b>×60</b>。それから m → km は <b>÷1000</b>。</div>
+      <div class="calc">80m × 60 = 4800m/時 = 4800 ÷ 1000 = 4.8km/時</div>
+      <div class="answer">✅ 4.8 km</div></div>
+
+    <figure class="fig"><img src="figs/H09_unit96.png" alt="時速→分速変換">
+      <figcaption>📍 問(1)②用：時速9.6km から 分速 m への変換ステップ</figcaption></figure>
+
+    <div class="question"><h3><span class="qnum">②</span>時速9.6km ＝ 分速 □ m</h3>
+      <div class="q-text">時速9.6km ＝ 分速 □ m</div>      <div class="intro"><b>〔みちびき〕</b> 時速 → 分速は <b>÷60</b>。km → m は <b>×1000</b>。
+      <br>順番はどっちでもOKだけど、先にkm→mにする方がわかりやすい。</div>
+      <div class="calc">9.6km = 9600m<br>9600 ÷ 60 = 160m/分</div>
+      <div class="answer">✅ 160 m</div></div>
+  </section>
+
+  <section class="daimon" id="th-q2">
+    <h2>📝 問(2) 3分で1050m進む自転車の速さは、分速何m？</h2>
+
+    <div class="draw-yourself">
+      ✏ <b>まずノートに線分図をかこう！</b><br>
+      横線をひいて、左に「出発(0分)」、右に「ゴール(3分)」、上に「1050m」と書いてみよう。
+      書けたら下の図と見くらべてね。
+    </div>
+
+    <figure class="fig"><img src="figs/H02_bike.png" alt="自転車の線分図">
+      <figcaption>📍 問用：線分図にすると「3分で1050m進んでいる」のがハッキリ見える</figcaption></figure>
+
+    <div class="question"><h3>図を見ながら考えよう</h3>
+      <div class="q-text">3分で1050m進む自転車の速さは、分速何mですか。</div>      <div class="intro"><b>〔みちびき〕</b> 図で3つに分かれているね。1つ分（=1分間で進む距離）を求めれば、それが分速。
+      <br>速さ ＝ <b>道のり ÷ 時間</b>。</div>
+      <div class="calc">1050 ÷ 3 = 350</div>
+      <div class="answer">✅ 分速 350 m</div></div>
+  </section>
+
+  <section class="daimon" id="th-q3">
+    <h2>📝 問(3) 30kmの道のりを1/2時間で走る電車の速さは、時速何km？</h2>
+
+    <div class="draw-yourself">
+      ✏ <b>線分図をかいて考えよう！</b><br>
+      30kmを「1/2時間（30分）」で進む。<u>1時間</u>だったら何km進むかを、図でつなげて考えてみよう！
+    </div>
+
+    <figure class="fig"><img src="figs/H03_train.png" alt="電車の線分図">
+      <figcaption>📍 問用：1/2時間で30km なら、もう半分つけたして1時間で60km！</figcaption></figure>
+
+    <div class="question"><h3>図を見ながら考えよう</h3>
+      <div class="q-text">30kmの道のりを 1/2時間 で走る電車の速さは、時速何kmですか。</div>      <div class="intro"><b>〔みちびき〕</b> 30分で30km進むんだから、1時間（30分の2倍）で60km！ これがいちばんわかりやすい考え方。
+      <br>公式でも：÷1/2 ＝ ×2 だから 30×2=60。</div>
+      <div class="calc">30 ÷ 1/2 = 30 × 2 = 60</div>
+      <div class="answer">✅ 時速 60 km</div></div>
+  </section>
+
+  <section class="daimon" id="th-q4">
+    <h2>📝 問(4) 毎時4kmで歩く人は、1と1/4時間で何km進む？</h2>
+
+    <div class="draw-yourself">
+      ✏ <b>線分図をかいて考えよう！</b><br>
+      「1時間で4km」を表した長い線をひいて、そのあと「もう1/4時間」分を書きたしてみよう。何km増える？
+    </div>
+
+    <figure class="fig"><img src="figs/H04_walk.png" alt="歩く人の線分図">
+      <figcaption>📍 問用：1時間で4km、さらに1/4時間で1km → 合計5km</figcaption></figure>
+
+    <div class="question"><h3>図を見ながら考えよう</h3>
+      <div class="q-text">毎時4kmで歩く人は、1と1/4時間 で何km進みますか。</div>      <div class="intro"><b>〔みちびき〕</b> 道のり ＝ <b>速さ × 時間</b>。1と1/4 ＝ 5/4 にしてかける。
+      <br>図で見ると「4kmが1セット＋その1/4(=1km)」。</div>
+      <div class="calc">4 × 1と1/4 = 4 × 5/4 = 20/4 = 5</div>
+      <div class="answer">✅ 5 km</div></div>
+  </section>
+
+  <section class="daimon" id="th-q5">
+    <h2>📝 問(5) 分速60mで 5/6 時間進むと、何m進む？</h2>
+
+    <div class="draw-yourself">
+      ✏ <b>図を書く前に、まず気づこう！</b><br>
+      速さは「分速」、時間は「5/6 <u>時間</u>」── 単位がちがう！ そのまま 60×5/6 をやると大失敗！<br>
+      まず「5/6時間を<u>分</u>に直す」ところからスタート。図にも「50分」と書こう。
+    </div>
+
+    <figure class="fig"><img src="figs/H05_unit.png" alt="単位そろえの図">
+      <figcaption>📍 問用：STEP1: 時間を分に直す → STEP2: 速さ × 時間</figcaption></figure>
+
+    <div class="question"><h3>2ステップで解く</h3>
+      <div class="q-text">分速60mで 5/6時間 進むと、何m進みますか。</div>      <div class="intro"><b>〔みちびき〕</b> 5/6時間 ＝ 60分 × 5/6 ＝ <b>50分</b>。これでようやく分速60mとかけられる！</div>
+      <div class="calc">5/6 時間 = 60 × 5/6 = 50分<br>道のり = 60 × 50 = 3000 m</div>
+      <div class="answer">✅ 3000 m</div>
+      <div class="tip">⚠ 60 × 5/6 ＝ 50 だけで止まって「50m」と書く ── これが速さ問題のいちばん多いミス！</div></div>
+  </section>
+
+  <section class="daimon" id="th-q6">
+    <h2>📝 問(6) 25kmの道のりを時速 8と1/3 km で進むと何時間？</h2>
+
+    <div class="draw-yourself">
+      ✏ <b>線分図をかいて考えよう！</b><br>
+      長い線（=25km）の中に「8と1/3 km」が何回入るかを、区切り線をかきながら考えよう。
+    </div>
+
+    <figure class="fig"><img src="figs/H06_time.png" alt="時間を求める">
+      <figcaption>📍 問用：25km の中に「8と1/3 km」が3こ入る → 3時間！</figcaption></figure>
+
+    <div class="question"><h3>図を見ながら考えよう</h3>
+      <div class="q-text">25kmの道のりを、時速 8と1/3km の速さで進むと、何時間かかりますか。</div>      <div class="intro"><b>〔みちびき〕</b> 時間 ＝ <b>道のり ÷ 速さ</b>。8と1/3 ＝ 25/3 にして、ひっくり返してかける。</div>
+      <div class="calc">25 ÷ 25/3 = 25 × 3/25 = 3</div>
+      <div class="answer">✅ 3 時間</div></div>
+  </section>
+
+  <section class="daimon summary">
+    <h2>🌟 速さの単元 まとめ</h2>
+    <ol style="padding-left:24px; line-height:2;">
+      <li><b>3つの公式</b>：速さ＝道のり÷時間／道のり＝速さ×時間／時間＝道のり÷速さ</li>
+      <li><b>「は・じ・き」の図</b>で公式を一発で出す</li>
+      <li><b>単位そろえ</b>が最大の落とし穴！ 分速なのに「時間」で計算しちゃダメ</li>
+      <li><b>分数で割る</b>ときは「ひっくり返してかける」</li>
+      <li><b>分数時間 → 分</b>の変換：×60</li>
+      <li><b>m ⇄ km</b>：×1000 / ÷1000</li>
+    </ol>
+  </section>
+
+</div>
+
+<!-- ============================================================= -->
+<!-- 🎟 シールちょう                                                 -->
+<!-- ============================================================= -->
+<div class="panel" id="t-sticker-book">
+  <div class="sticker-section">
+    <h2 style="color:#b45309;">🎟 きみのシールちょう</h2>
+    <p style="color:#6b7280; font-size:14px;">問題を解いて「✅ 解けた」を押すと、ランダムでシールがもらえるよ！ ぜんぶ集められるかな？</p>
+    <div style="margin-top:16px; display:flex; gap:14px; flex-wrap:wrap; font-size:14px;">
+      <div>📊 集まったシール：<b id="book-collected">0</b> / <b id="book-total">0</b></div>
+      <div>⭐ コンプリート率：<b id="book-pct">0%</b></div>
+    </div>
+    <div style="margin-top:18px; padding:14px; background:#f0f9ff; border-radius:10px; border:1px solid #bfdbfe;">
+      <div style="font-size:14px; color:#1e40af; font-weight:bold; margin-bottom:8px;">📲 PC ⇄ iPad で履歴を移す</div>
+      <div style="font-size:13px; color:#475569; margin-bottom:10px;">PCとiPadで履歴は別々に保存されます。同期するには「コピー」→ メール/LINE/メモで送る → 別の端末で「貼り付け」してください。</div>
+      <div style="display:flex; gap:10px; flex-wrap:wrap;">
+        <button id="export-data" style="padding:8px 16px; background:#3b82f6; color:white; border:none; border-radius:8px; cursor:pointer; font-size:14px; font-weight:bold;">📋 履歴をコピー</button>
+        <button id="import-data" style="padding:8px 16px; background:#16a34a; color:white; border:none; border-radius:8px; cursor:pointer; font-size:14px; font-weight:bold;">📥 履歴を貼り付け</button>
+        <button id="show-data" style="padding:8px 16px; background:white; color:#475569; border:1px solid #cbd5e1; border-radius:8px; cursor:pointer; font-size:14px;">🔍 履歴を表示</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="sticker-section">
+    <h3>⚪ コモン（ふつう）</h3>
+    <div class="sticker-book" id="book-c"></div>
+  </div>
+  <div class="sticker-section">
+    <h3 style="color:#2563eb;">🔵 レア</h3>
+    <div class="sticker-book" id="book-r"></div>
+  </div>
+  <div class="sticker-section">
+    <h3 style="color:#d97706;">🟡 スーパーレア</h3>
+    <div class="sticker-book" id="book-sr"></div>
+  </div>
+  <div class="sticker-section">
+    <h3 style="color:#db2777;">🌈 ウルトラレア</h3>
+    <div class="sticker-book" id="book-ur"></div>
+  </div>
+</div>
+
+<!-- シール獲得ポップアップ -->
+<div class="sticker-pop-overlay" id="sticker-pop-overlay">
+  <div class="sticker-pop">
+    <h3>🎉 シールゲット！</h3>
+    <div id="pop-card"></div>
+    <button onclick="document.getElementById('sticker-pop-overlay').classList.remove('show')">やった！</button>
+  </div>
+</div>
+
+<script>
+  // タブ切り替え
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById(tab.dataset.target).classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+
+  // チェックボックス機能
+  const STORAGE_KEY = 'manabie_check_state_v1';
+  const state = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+
+  function saveState() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  }
+
+  function applyState(qEl, qid) {
+    const s = state[qid];
+    qEl.classList.remove('q-solved', 'q-redo');
+    qEl.querySelectorAll('.check-btn').forEach(b => b.classList.remove('active'));
+    if (s === 'solved') {
+      qEl.classList.add('q-solved');
+      qEl.querySelector('.check-btn.solved').classList.add('active');
+    } else if (s === 'redo') {
+      qEl.classList.add('q-redo');
+      qEl.querySelector('.check-btn.redo').classList.add('active');
+    }
+  }
+
+  function updateProgress(panel) {
+    const questions = panel.querySelectorAll('.question');
+    let solved = 0, redo = 0;
+    questions.forEach(q => {
+      if (q.classList.contains('q-solved')) solved++;
+      else if (q.classList.contains('q-redo')) redo++;
+    });
+    const total = questions.length;
+    const untouched = total - solved - redo;
+    const prog = panel.querySelector('.progress');
+    if (!prog) return;
+    prog.querySelector('.num.total-num').textContent = total;
+    prog.querySelector('.num.solved-num').textContent = solved;
+    prog.querySelector('.num.redo-num').textContent = redo;
+    prog.querySelector('.num.untouched-num').textContent = untouched;
+    const solvedPct = (solved / total * 100) || 0;
+    const redoPct = (redo / total * 100) || 0;
+    prog.querySelector('.seg-solved').style.width = solvedPct + '%';
+    prog.querySelector('.seg-redo').style.width = redoPct + '%';
+  }
+
+  // 各パネルに進捗バーを挿入＆各問題にチェックボタンを挿入
+  document.querySelectorAll('.panel').forEach((panel, panelIdx) => {
+    const panelId = panel.id;
+    // 進捗バー
+    const progBar = document.createElement('div');
+    progBar.className = 'progress';
+    progBar.innerHTML = `
+      <div class="stat total">📋 全問<span class="num total-num">0</span></div>
+      <div class="stat solved">✅ 解けた<span class="num solved-num">0</span></div>
+      <div class="stat redo">🔁 解きなおし<span class="num redo-num">0</span></div>
+      <div class="stat untouched">⬜ 未<span class="num untouched-num">0</span></div>
+      <div class="bar">
+        <div class="seg-solved" style="width:0%"></div>
+        <div class="seg-redo" style="width:0%"></div>
+      </div>
+      <button class="reset-btn">このタブをリセット</button>
+    `;
+    // 一番上（toc の前）に挿入
+    const firstChild = panel.firstElementChild;
+    panel.insertBefore(progBar, firstChild);
+
+    // リセットボタン
+    progBar.querySelector('.reset-btn').addEventListener('click', () => {
+      if (!confirm('このタブの解答状況をリセットしますか？')) return;
+      panel.querySelectorAll('.question').forEach(q => {
+        delete state[q.dataset.qid];
+        applyState(q, q.dataset.qid);
+      });
+      saveState();
+      updateProgress(panel);
+    });
+
+    // 各問題にIDとチェックボタン
+    panel.querySelectorAll('.question').forEach((q, qIdx) => {
+      const qid = `${panelId}-q${qIdx}`;
+      q.dataset.qid = qid;
+      q.id = qid;
+
+      // 答えを見るボタンを挿入（calc/answer の前）
+      const firstHidden = q.querySelector('.calc, .answer');
+      if (firstHidden) {
+        const revealBtn = document.createElement('button');
+        revealBtn.className = 'reveal-btn';
+        revealBtn.innerHTML = '👀 答えと考え方を見る';
+        const hint = document.createElement('div');
+        hint.className = 'reveal-hint';
+        hint.textContent = '↑ まずは自分で考えてから、ボタンをタップしよう！';
+        firstHidden.parentNode.insertBefore(hint, firstHidden);
+        firstHidden.parentNode.insertBefore(revealBtn, firstHidden);
+        revealBtn.addEventListener('click', () => {
+          q.classList.add('revealed');
+        });
+      }
+
+      const bar = document.createElement('div');
+      bar.className = 'check-bar';
+      bar.innerHTML = `
+        <span class="label">この問題は…</span>
+        <button class="check-btn solved" data-status="solved">✅ 解けた</button>
+        <button class="check-btn redo" data-status="redo">🔁 解きなおし</button>
+      `;
+      q.appendChild(bar);
+      bar.querySelectorAll('.check-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const newStatus = btn.dataset.status;
+          const prevStatus = state[qid];
+          if (state[qid] === newStatus) {
+            delete state[qid];
+          } else {
+            state[qid] = newStatus;
+            // 「解けた」初回のときだけシール獲得！
+            if (newStatus === 'solved' && !solvedHistory[qid]) {
+              solvedHistory[qid] = true;
+              saveSolvedHistory();
+              gachaSticker();
+            }
+          }
+          applyState(q, qid);
+          saveState();
+          updateProgress(panel);
+        });
+      });
+      applyState(q, qid);
+    });
+
+    updateProgress(panel);
+
+    // ============================================================
+    // 📑 各問題への目次を自動生成
+    // ============================================================
+    if (panelId !== 't-sticker-book') {
+      const qlist = document.createElement('div');
+      qlist.className = 'qlist';
+      qlist.innerHTML = '<h3>📌 問題ジャンプ ── 見たい問題をタップ</h3>';
+
+      panel.querySelectorAll('section.daimon').forEach(section => {
+        const qs = section.querySelectorAll('.question');
+        if (qs.length === 0) return;
+        const sectionTitle = (section.querySelector('h2')?.textContent || '').replace(/^[🔢🧪📝📖🌱]\s*/, '').trim();
+        const sec = document.createElement('div');
+        sec.className = 'ql-section';
+        sec.innerHTML = `<div class="ql-title">📂 ${sectionTitle}</div><div class="ql-grid"></div>`;
+        const grid = sec.querySelector('.ql-grid');
+        qs.forEach(q => {
+          const h3 = q.querySelector('h3');
+          if (!h3) return;
+          const qnumEl = h3.querySelector('.qnum');
+          const qnum = qnumEl ? qnumEl.textContent : '問';
+          // h3全体テキストからqnum部分を抜いた残りをタイトルに
+          const titleText = h3.textContent.replace(qnum, '').trim();
+          const a = document.createElement('a');
+          a.href = '#' + q.id;
+          a.dataset.qid = q.id;
+          a.innerHTML = `<span class="ql-num">${qnum}</span><span>${titleText.length > 38 ? titleText.slice(0,38)+'…' : titleText}</span>`;
+          a.addEventListener('click', (e) => {
+            // クリック時に最新の状態を反映するため何もしない（CSS scrollで自動）
+          });
+          grid.appendChild(a);
+        });
+        qlist.appendChild(sec);
+      });
+
+      // 既存の.tocの直後に挿入
+      const existingToc = panel.querySelector('.toc');
+      if (existingToc) {
+        existingToc.parentNode.insertBefore(qlist, existingToc.nextSibling);
+      } else {
+        panel.insertBefore(qlist, panel.firstElementChild.nextSibling);
+      }
+    }
+  });
+
+  // 目次の解答状況を更新する関数
+  function updateQlistStatus() {
+    document.querySelectorAll('.qlist a').forEach(a => {
+      const q = document.getElementById(a.dataset.qid);
+      a.classList.remove('q-solved-link', 'q-redo-link');
+      if (q?.classList.contains('q-solved')) a.classList.add('q-solved-link');
+      else if (q?.classList.contains('q-redo')) a.classList.add('q-redo-link');
+    });
+  }
+  // チェック状態が変わるたびに更新
+  document.addEventListener('click', e => {
+    if (e.target.closest('.check-btn')) {
+      setTimeout(updateQlistStatus, 50);
+    }
+  });
+  updateQlistStatus();
+
+  // ============================================================
+  // 🎟 シールちょう機能
+  // ============================================================
+  // 🍭 ボンボンドロップ風シール（全100種）
+  const STICKERS = [
+    // ===== コモン 50種 =====
+    // スイーツ系（25）
+    {id:'c1', e:'🍭', n:'ペロペロキャンディ', r:'c'},
+    {id:'c2', e:'🍬', n:'キャンディ', r:'c'},
+    {id:'c3', e:'🧁', n:'カップケーキ', r:'c'},
+    {id:'c4', e:'🍰', n:'ショートケーキ', r:'c'},
+    {id:'c5', e:'🍩', n:'ドーナツ', r:'c'},
+    {id:'c6', e:'🍪', n:'クッキー', r:'c'},
+    {id:'c7', e:'🍫', n:'チョコレート', r:'c'},
+    {id:'c8', e:'🥨', n:'プレッツェル', r:'c'},
+    {id:'c9', e:'🥐', n:'クロワッサン', r:'c'},
+    {id:'c10', e:'🍮', n:'プリン', r:'c'},
+    {id:'c11', e:'🍡', n:'だんご', r:'c'},
+    {id:'c12', e:'🍢', n:'おでん', r:'c'},
+    {id:'c13', e:'🍦', n:'ソフトクリーム', r:'c'},
+    {id:'c14', e:'🍨', n:'アイスクリーム', r:'c'},
+    {id:'c15', e:'🥞', n:'パンケーキ', r:'c'},
+    {id:'c16', e:'🧇', n:'ワッフル', r:'c'},
+    {id:'c17', e:'🥧', n:'パイ', r:'c'},
+    {id:'c18', e:'🥮', n:'げっぺい', r:'c'},
+    {id:'c19', e:'🍯', n:'はちみつ', r:'c'},
+    {id:'c20', e:'🍿', n:'ポップコーン', r:'c'},
+    {id:'c21', e:'🧊', n:'こおり', r:'c'},
+    {id:'c22', e:'🥤', n:'ジュース', r:'c'},
+    {id:'c23', e:'🧃', n:'ジュースパック', r:'c'},
+    {id:'c24', e:'🍹', n:'トロピカル', r:'c'},
+    {id:'c25', e:'🍞', n:'パン', r:'c'},
+    // フルーツ系（15）
+    {id:'c26', e:'🍎', n:'りんご', r:'c'},
+    {id:'c27', e:'🍊', n:'みかん', r:'c'},
+    {id:'c28', e:'🍋', n:'レモン', r:'c'},
+    {id:'c29', e:'🍌', n:'バナナ', r:'c'},
+    {id:'c30', e:'🍉', n:'すいか', r:'c'},
+    {id:'c31', e:'🍇', n:'ぶどう', r:'c'},
+    {id:'c32', e:'🍓', n:'いちご', r:'c'},
+    {id:'c33', e:'🍑', n:'もも', r:'c'},
+    {id:'c34', e:'🍒', n:'さくらんぼ', r:'c'},
+    {id:'c35', e:'🥝', n:'キウイ', r:'c'},
+    {id:'c36', e:'🥥', n:'ココナッツ', r:'c'},
+    {id:'c37', e:'🍍', n:'パイナップル', r:'c'},
+    {id:'c38', e:'🥭', n:'マンゴー', r:'c'},
+    {id:'c39', e:'🍐', n:'ナシ', r:'c'},
+    {id:'c40', e:'🍈', n:'メロン', r:'c'},
+    // かわいい系（10）
+    {id:'c41', e:'🌸', n:'さくら', r:'c'},
+    {id:'c42', e:'🌺', n:'ハイビスカス', r:'c'},
+    {id:'c43', e:'🌻', n:'ひまわり', r:'c'},
+    {id:'c44', e:'🌷', n:'チューリップ', r:'c'},
+    {id:'c45', e:'🌹', n:'バラ', r:'c'},
+    {id:'c46', e:'🎈', n:'ふうせん', r:'c'},
+    {id:'c47', e:'🎀', n:'リボン', r:'c'},
+    {id:'c48', e:'⭐', n:'ほし', r:'c'},
+    {id:'c49', e:'🌟', n:'きらほし', r:'c'},
+    {id:'c50', e:'🌈', n:'にじ', r:'c'},
+
+    // ===== レア 30種 =====
+    // 陸の動物（20）
+    {id:'r1', e:'🐰', n:'うさぎ', r:'r'},
+    {id:'r2', e:'🐱', n:'ねこ', r:'r'},
+    {id:'r3', e:'🐶', n:'いぬ', r:'r'},
+    {id:'r4', e:'🦊', n:'きつね', r:'r'},
+    {id:'r5', e:'🐻', n:'くま', r:'r'},
+    {id:'r6', e:'🐼', n:'パンダ', r:'r'},
+    {id:'r7', e:'🐨', n:'コアラ', r:'r'},
+    {id:'r8', e:'🐯', n:'とら', r:'r'},
+    {id:'r9', e:'🦁', n:'ライオン', r:'r'},
+    {id:'r10', e:'🐮', n:'うし', r:'r'},
+    {id:'r11', e:'🐸', n:'カエル', r:'r'},
+    {id:'r12', e:'🐵', n:'さる', r:'r'},
+    {id:'r13', e:'🐹', n:'ハムスター', r:'r'},
+    {id:'r14', e:'🐭', n:'ねずみ', r:'r'},
+    {id:'r15', e:'🦝', n:'アライグマ', r:'r'},
+    {id:'r16', e:'🦔', n:'ハリネズミ', r:'r'},
+    {id:'r17', e:'🐧', n:'ペンギン', r:'r'},
+    {id:'r18', e:'🦉', n:'ふくろう', r:'r'},
+    {id:'r19', e:'🦋', n:'ちょうちょ', r:'r'},
+    {id:'r20', e:'🐢', n:'カメ', r:'r'},
+    // 海の生き物（10）
+    {id:'r21', e:'🐬', n:'イルカ', r:'r'},
+    {id:'r22', e:'🐠', n:'ねったいぎょ', r:'r'},
+    {id:'r23', e:'🐟', n:'さかな', r:'r'},
+    {id:'r24', e:'🐳', n:'クジラ', r:'r'},
+    {id:'r25', e:'🦈', n:'サメ', r:'r'},
+    {id:'r26', e:'🐙', n:'タコ', r:'r'},
+    {id:'r27', e:'🦑', n:'イカ', r:'r'},
+    {id:'r28', e:'🦀', n:'カニ', r:'r'},
+    {id:'r29', e:'🐡', n:'フグ', r:'r'},
+    {id:'r30', e:'🦞', n:'ロブスター', r:'r'},
+
+    // ===== スーパーレア 15種 =====
+    // ファンタジー系（10）
+    {id:'sr1', e:'🦄', n:'ユニコーン', r:'sr'},
+    {id:'sr2', e:'🐉', n:'りゅう', r:'sr'},
+    {id:'sr3', e:'🐲', n:'ドラゴンの顔', r:'sr'},
+    {id:'sr4', e:'🧚', n:'ようせい', r:'sr'},
+    {id:'sr5', e:'🧜', n:'にんぎょ', r:'sr'},
+    {id:'sr6', e:'🧙', n:'まほうつかい', r:'sr'},
+    {id:'sr7', e:'🦖', n:'ティラノサウルス', r:'sr'},
+    {id:'sr8', e:'🦕', n:'ブラキオサウルス', r:'sr'},
+    {id:'sr9', e:'🐊', n:'ワニ', r:'sr'},
+    {id:'sr10', e:'🦅', n:'ワシ', r:'sr'},
+    // 強い系（5）
+    {id:'sr11', e:'👑', n:'おうかん', r:'sr'},
+    {id:'sr12', e:'🏆', n:'トロフィー', r:'sr'},
+    {id:'sr13', e:'🥇', n:'きんメダル', r:'sr'},
+    {id:'sr14', e:'🎖️', n:'くんしょう', r:'sr'},
+    {id:'sr15', e:'🪄', n:'まほうのつえ', r:'sr'},
+
+    // ===== ウルトラレア 5種 =====
+    {id:'ur1', e:'💎', n:'ダイヤモンド', r:'ur'},
+    {id:'ur2', e:'🌌', n:'うちゅう', r:'ur'},
+    {id:'ur3', e:'🪐', n:'わくせい', r:'ur'},
+    {id:'ur4', e:'🌠', n:'ながれぼし', r:'ur'},
+    {id:'ur5', e:'💖', n:'スーパーハート', r:'ur'},
+  ];
+
+  const RARITY_LABEL = {c:'コモン', r:'レア', sr:'スーパーレア', ur:'ウルトラレア'};
+  const RARITY_RATES = {c:0.65, r:0.25, sr:0.08, ur:0.02};
+
+  const STICKER_KEY = 'manabie_stickers_v1';
+  const SOLVED_HIST_KEY = 'manabie_solved_history_v1';
+  const PLAYER_KEY = 'manabie_player_v1';
+
+  let stickerInventory = JSON.parse(localStorage.getItem(STICKER_KEY) || '{}');
+  let solvedHistory = JSON.parse(localStorage.getItem(SOLVED_HIST_KEY) || '{}');
+  let player = JSON.parse(localStorage.getItem(PLAYER_KEY) || '{"level":1,"totalStickers":0}');
+
+  function saveSticker() { localStorage.setItem(STICKER_KEY, JSON.stringify(stickerInventory)); }
+  function saveSolvedHistory() { localStorage.setItem(SOLVED_HIST_KEY, JSON.stringify(solvedHistory)); }
+  function savePlayer() { localStorage.setItem(PLAYER_KEY, JSON.stringify(player)); }
+
+  // レベル計算（シール5枚で1レベル）
+  function levelFromStickers(n) {
+    return Math.floor(n / 5) + 1;
+  }
+  function xpForNext(n) {
+    const next = (Math.floor(n / 5) + 1) * 5;
+    return { now: n % 5, max: 5, until: next - n };
+  }
+
+  function updatePlayerBar() {
+    const total = player.totalStickers;
+    const lv = levelFromStickers(total);
+    const xp = xpForNext(total);
+    document.getElementById('player-level').textContent = lv;
+    document.getElementById('player-stickers').textContent = total;
+    document.getElementById('xp-fill').style.width = (xp.now / xp.max * 100) + '%';
+    document.getElementById('next-level').textContent = `次のLvまで ${xp.until} 枚`;
+    if (lv > player.level) {
+      const oldLv = player.level;
+      player.level = lv;
+      savePlayer();
+      showLevelUp(lv);
+    }
+  }
+
+  function showLevelUp(lv) {
+    const div = document.createElement('div');
+    div.className = 'levelup';
+    div.innerHTML = `🎊 LEVEL UP! 🎊<br>Lv.${lv} になった！`;
+    document.body.appendChild(div);
+    setTimeout(() => div.remove(), 2500);
+    spawnConfetti(40);
+  }
+
+  function spawnConfetti(n) {
+    const wrap = document.createElement('div');
+    wrap.className = 'confetti';
+    const emojis = ['🎉','🎊','⭐','✨','🌟','💫','🎈','🎀'];
+    for (let i = 0; i < n; i++) {
+      const sp = document.createElement('span');
+      sp.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      sp.style.left = Math.random() * 100 + '%';
+      sp.style.animationDelay = (Math.random() * 0.5) + 's';
+      sp.style.animationDuration = (1.2 + Math.random()) + 's';
+      wrap.appendChild(sp);
+    }
+    document.body.appendChild(wrap);
+    setTimeout(() => wrap.remove(), 2500);
+  }
+
+  function pickRarity() {
+    const r = Math.random();
+    let acc = 0;
+    for (const [k, v] of Object.entries(RARITY_RATES)) {
+      acc += v;
+      if (r < acc) return k;
+    }
+    return 'c';
+  }
+
+  function gachaSticker() {
+    const rarity = pickRarity();
+    const pool = STICKERS.filter(s => s.r === rarity);
+    const sticker = pool[Math.floor(Math.random() * pool.length)];
+    const isNew = !stickerInventory[sticker.id];
+    stickerInventory[sticker.id] = (stickerInventory[sticker.id] || 0) + 1;
+    saveSticker();
+    player.totalStickers = (player.totalStickers || 0) + 1;
+    savePlayer();
+    showStickerPop(sticker, isNew);
+    updatePlayerBar();
+    renderStickerBook();
+  }
+
+  function showStickerPop(sticker, isNew) {
+    const card = document.getElementById('pop-card');
+    card.innerHTML = `
+      <div class="sticker-card rarity-${sticker.r}" style="margin:0 auto;">
+        <span class="rarity-badge">${RARITY_LABEL[sticker.r]}</span>
+        <span class="emoji">${sticker.e}</span>
+        <span class="name">${sticker.n}</span>
+      </div>
+      <div class="label">${sticker.n}</div>
+      <div class="rarity">${RARITY_LABEL[sticker.r]}${isNew ? '　🆕 はじめて！' : '　（だぶり）'}</div>
+    `;
+    document.getElementById('sticker-pop-overlay').classList.add('show');
+    spawnConfetti(sticker.r === 'ur' ? 60 : sticker.r === 'sr' ? 40 : sticker.r === 'r' ? 20 : 10);
+  }
+
+  function renderStickerBook() {
+    const groups = {c: [], r: [], sr: [], ur: []};
+    STICKERS.forEach(s => groups[s.r].push(s));
+    let collected = 0;
+    Object.entries(groups).forEach(([r, list]) => {
+      const el = document.getElementById('book-' + r);
+      if (!el) return;
+      el.innerHTML = '';
+      list.forEach(s => {
+        const owned = stickerInventory[s.id] > 0;
+        if (owned) collected++;
+        const card = document.createElement('div');
+        card.className = `sticker-card rarity-${s.r}` + (owned ? '' : ' locked');
+        card.innerHTML = `
+          <span class="rarity-badge">${RARITY_LABEL[s.r]}</span>
+          <span class="emoji">${owned ? s.e : '？'}</span>
+          <span class="name">${owned ? s.n : '？？？'}</span>
+          ${owned && stickerInventory[s.id] > 1 ? `<span style="position:absolute;bottom:4px;right:6px;font-size:10px;background:white;padding:1px 5px;border-radius:999px;">×${stickerInventory[s.id]}</span>` : ''}
+        `;
+        el.appendChild(card);
+      });
+    });
+    const total = STICKERS.length;
+    const pct = Math.round(collected / total * 100);
+    const cEl = document.getElementById('book-collected');
+    const tEl = document.getElementById('book-total');
+    const pEl = document.getElementById('book-pct');
+    if (cEl) cEl.textContent = collected;
+    if (tEl) tEl.textContent = total;
+    if (pEl) pEl.textContent = pct + '%';
+  }
+
+  // リセットボタン
+  const resetBtn = document.getElementById('reset-stickers');
+  if (resetBtn) {
+    resetBtn.addEventListener('click', () => {
+      if (!confirm('シールコレクションをぜんぶリセットしますか？\n（解いた問題の記録もリセットされます）')) return;
+      stickerInventory = {};
+      solvedHistory = {};
+      player = {level: 1, totalStickers: 0};
+      saveSticker(); saveSolvedHistory(); savePlayer();
+      updatePlayerBar();
+      renderStickerBook();
+    });
+  }
+
+  // ============================================================
+  // 📲 履歴のエクスポート/インポート（PC⇄iPad移行用）
+  // ============================================================
+  function buildExportData() {
+    return JSON.stringify({
+      v: 1,
+      stickers: stickerInventory,
+      history: solvedHistory,
+      player: player,
+      state: state,
+    });
+  }
+
+  function applyImportData(json) {
+    const data = JSON.parse(json);
+    if (data.stickers) { stickerInventory = data.stickers; saveSticker(); }
+    if (data.history) { solvedHistory = data.history; saveSolvedHistory(); }
+    if (data.player) { player = data.player; savePlayer(); }
+    if (data.state) {
+      Object.keys(state).forEach(k => delete state[k]);
+      Object.assign(state, data.state);
+      saveState();
+    }
+  }
+
+  const exportBtn = document.getElementById('export-data');
+  if (exportBtn) {
+    exportBtn.addEventListener('click', async () => {
+      const json = buildExportData();
+      try {
+        await navigator.clipboard.writeText(json);
+        alert('✅ 履歴をクリップボードにコピーしました！\n\nメール/LINE/メモなどで別の端末に送り、そちらで「履歴を貼り付け」を押してください。');
+      } catch (e) {
+        // フォールバック：textareaで表示
+        const ta = document.createElement('textarea');
+        ta.value = json;
+        ta.style.cssText = 'position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); width:80vw; height:60vh; padding:12px; z-index:200; box-shadow:0 8px 32px rgba(0,0,0,0.3); border-radius:12px;';
+        document.body.appendChild(ta);
+        ta.select();
+        alert('テキストを長押し→「すべて選択」→「コピー」してください。\n（コピーしたら下のテキスト欄をタップで消えます）');
+        ta.addEventListener('blur', () => ta.remove());
+      }
+    });
+  }
+
+  const importBtn = document.getElementById('import-data');
+  if (importBtn) {
+    importBtn.addEventListener('click', () => {
+      const json = prompt('別の端末でコピーした履歴を貼り付けてください：');
+      if (!json) return;
+      try {
+        applyImportData(json.trim());
+        alert('✅ 履歴を読み込みました！ページを再読み込みします。');
+        location.reload();
+      } catch (e) {
+        alert('❌ うまく読み込めません。コピーした文字列をそのまま貼り付けてください。\n\n' + e.message);
+      }
+    });
+  }
+
+  const showBtn = document.getElementById('show-data');
+  if (showBtn) {
+    showBtn.addEventListener('click', () => {
+      const json = buildExportData();
+      const ta = document.createElement('textarea');
+      ta.value = json;
+      ta.readOnly = true;
+      ta.style.cssText = 'position:fixed; top:10vh; left:5vw; width:90vw; height:70vh; padding:14px; z-index:200; box-shadow:0 8px 32px rgba(0,0,0,0.4); border-radius:12px; font-size:13px; font-family:monospace; border:2px solid #3b82f6;';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      const close = document.createElement('button');
+      close.textContent = '✕ 閉じる';
+      close.style.cssText = 'position:fixed; top:6vh; right:5vw; padding:8px 16px; z-index:201; background:#dc2626; color:white; border:none; border-radius:8px; font-weight:bold; cursor:pointer;';
+      close.onclick = () => { ta.remove(); close.remove(); };
+      document.body.appendChild(close);
+    });
+  }
+
+  // 初期化
+  updatePlayerBar();
+  renderStickerBook();
+</script>
+
+</body>
+</html>
