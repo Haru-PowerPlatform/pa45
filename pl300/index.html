@@ -47,10 +47,6 @@ header p{font-size:.9rem;opacity:.9}
 .cat{display:inline-block;font-size:.65rem;padding:3px 8px;border-radius:10px;background:rgba(255,255,255,.15);margin-bottom:6px;align-self:flex-start;margin-left:6px}
 .q{font-weight:700;font-size:1rem;margin:6px 0 8px;color:var(--text);flex:0 0 auto}
 .hint{font-size:.78rem;color:var(--muted);margin-top:auto;text-align:right}
-.mark-btn{position:absolute;top:8px;right:8px;background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.3);color:#94a3b8;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;z-index:5;transition:all .15s}
-.mark-btn:active{transform:scale(.85)}
-.mark-btn.marked{background:#f59e0b;border-color:#f59e0b;color:#0f172a}
-.card.is-marked .front{border-color:#f59e0b;box-shadow:0 0 0 2px rgba(245,158,11,.4),var(--shadow)}
 .a-title{font-weight:700;margin-bottom:6px;font-size:.95rem;color:#fde68a}
 .a-body{flex:1}
 .a-body strong{color:#fde68a}
@@ -89,14 +85,13 @@ footer a{color:var(--accent);text-decoration:none}
 <div class="stats">
   <div class="stat"><span class="num" id="total">0</span><span class="lbl">総カード数</span></div>
   <div class="stat"><span class="num" id="critical">0</span><span class="lbl">最重要🚨</span></div>
-  <div class="stat"><span class="num" id="markedCount">0</span><span class="lbl">📌 マーク済み</span></div>
+  <div class="stat"><span class="num" id="mastered">0</span><span class="lbl">確認済み</span></div>
 </div>
 
 <div class="controls">
   <input id="search" class="search" type="search" placeholder="🔍 キーワード検索（例：DAX, RLS, ALL）">
   <div class="filters" id="filters">
     <button class="filter active" data-filter="all">全て</button>
-    <button class="filter" data-filter="marked">📌 マーク済み</button>
     <button class="filter" data-filter="critical">🚨 最重要</button>
     <button class="filter" data-filter="DAX">DAX</button>
     <button class="filter" data-filter="モデル">モデル</button>
@@ -110,7 +105,7 @@ footer a{color:var(--accent);text-decoration:none}
 <div class="cards" id="cards"></div>
 
 <footer>
-  <p>更新日: 2026-05-03 / カードをタップで答え表示・📌でマーク</p>
+  <p>更新日: 2026-05-10（107問目まで） / カードをタップで答え表示</p>
   <p><a href="https://github.com/Haru-PowerPlatform/pa45/blob/main/docs/pl300-mistakes.md" target="_blank">📝 ミス記録の元データ</a></p>
 </footer>
 
@@ -266,6 +261,18 @@ const data = [
   {lvl:2,cat:"PowerQuery",q:"Query Folding の確認方法",a:"<strong>右クリック →「ネイティブクエリの表示」</strong>",body:"ステップを右クリックしてメニューに表示されればフォールディング成功（SQL生成済）。<br>フォールディング可能：列選択/行フィルター/グループ化/結合<br>切れる：カスタムM/インデックス列/例から列。ランダム61。"},
   {lvl:2,cat:"PowerQuery",q:"if-then-else をGUIで",a:"<strong>条件付き列（Conditional Column）</strong>",body:"列の追加タブ → 条件付き列。GUIで if-then-else 構築。M知識不要。<br>類似機能：「例から列を作成」（複雑な文字列加工をAI推論）／カスタム列（Mコード手書き）。ランダム67/87。"},
   {lvl:2,cat:"視覚化",q:"折れ線に目標線・予測線を追加",a:"<strong>分析（Analytics）ペイン</strong>",body:"・定数線（任意の固定値）<br>・最小/最大/平均/中央値線<br>・予測（折れ線・面のみ）<br>・推移線・エラーバー・異常検出<br>反射：「グラフに線追加」「予測表示」→ 分析ペイン（書式ペインではない）。ランダム69。"},
+
+  // === バッチ98〜107 追加（2026-05-10） ===
+  {lvl:2,cat:"PowerQuery",q:"巨大データセットの更新時間短縮",a:"<strong>増分更新（Incremental Refresh）</strong>",body:"直近N日分だけ更新、過去履歴は保持。Power Query パラメーター <code>RangeStart / RangeEnd</code> が必須要素。Pro/Premium両対応。<br>反射：「履歴保持」「更新時間短縮」「直近Nヶ月のみ」→ 増分更新。ランダム98。"},
+  {lvl:3,cat:"DAX",q:"行ごとに掛け算・割り算してから合計",a:"<strong>SUMX</strong>",body:"<code>SUMX(Sales, Sales[Quantity] * Sales[UnitPrice])</code><br>SUM(Q) × SUM(P) は値が爆発（合計同士の掛け算）。<br>SUM = 列をそのまま合計（軽量）／SUMX = 行ごとに評価して合計（柔軟）。AVERAGEX, COUNTX も同様。ランダム99ミス。"},
+  {lvl:3,cat:"視覚化",q:"データを文章で動的に説明",a:"<strong>スマートナラティブ</strong>",body:"5つのAI機能：<br>・<strong>スマートナラティブ</strong>：説明する（テキスト生成）<br>・Q&amp;A：質問する（能動）<br>・クイックインサイト：発見する（自動）<br>・主要なインフルエンサー：要因分析<br>・分解ツリー：階層分解<br>反射：「文章で説明」「動的テキスト」「ナラティブ」→ スマートナラティブ。ランダム100ミス。"},
+  {lvl:3,cat:"配布",q:"OneDrive上のExcelを自動更新",a:"<strong>OneDrive連携で約1時間おきに自動同期</strong>",body:"OneDrive / SharePoint Online → Power BI の標準連携でゲートウェイ不要・スケジュール手動構成不要。<br>反射：「OneDrive / SharePoint Online」→ 自動同期／「オンプレミスExcel」→ ゲートウェイ必須。クラウド⇄クラウドはゲートウェイ不要。ランダム101ミス。"},
+  {lvl:2,cat:"DAX",q:"順位（ランキング）を計算列で",a:"<strong>RANKX(ALL(テーブル), 式)</strong>",body:"<code>順位 = RANKX(ALL(Product), [Total Sales])</code><br>ALL がないと現在のフィルター行のみで順位（=1ばかり）。<br>反射：「順位」「ランキング」→ RANKX(ALL(...))／「上位N件抽出」→ TOPN／「累計」→ TOTALYTD。ランダム102。"},
+  {lvl:2,cat:"視覚化",q:"期初→期末の差分要因分析",a:"<strong>ウォーターフォールチャート</strong>",body:"+/− の寄与度を棒の上下移動で積上的に見せる。利益増減・在庫変動・予算差異の定番。<br>反射：<br>・「期初→期末の推移」「+/−寄与度」→ ウォーターフォール<br>・「構成比100%」→ 円/ドーナツ<br>・「順位の時系列変化」→ リボンチャート<br>・「階層構造の面積比較」→ ツリーマップ<br>・「ステップ別離脱率」→ ファネル。ランダム103。"},
+  {lvl:1,cat:"PowerQuery",q:"先頭の不要メタデータをスキップ",a:"<strong>上位N行の削除 → 1行目をヘッダー</strong>",body:"ホームタブ → 行の削除 → 上位N行の削除 / 下位N行の削除 / 空白行の削除 / 重複の削除。<br>反射：「先頭メタデータ」「上のN行を捨てる」→ 上位N行の削除／「合計行など最後のN行」→ 下位N行の削除。ランダム104。"},
+  {lvl:3,cat:"配布",q:"レポートのアクセス回数・利用状況",a:"<strong>使用状況メトリクス（Usage Metrics）</strong>",body:"レポート右上「…」→ 使用状況メトリクスを表示。閲覧者・回数・ページ別アクセスなど自動集計レポート。<br>反射：<br>・「誰がいつ見た？」「アクセス回数」→ 使用状況メトリクス<br>・「レポートが遅い」→ パフォーマンスアナライザー<br>・「依存関係」→ リネージビュー<br>・「セキュリティ監査」→ 監査ログ。ランダム105ミス。"},
+  {lvl:2,cat:"視覚化",q:"複数カテゴリのグラフを格子状に",a:"<strong>小さい複数（Small multiples）</strong>",body:"折れ線・棒・面など対応ビジュアル → 「小さい複数」フィールドにディメンションをドラッグ → 自動グリッド分割。<br>反射：「複数カテゴリを並べて比較」「ミニチャート群」「12地域を一望」→ 小さい複数。書式タブで列数・行数調整可。ランダム106。"},
+  {lvl:3,cat:"DAX",q:"DAXでエラー時に代替値を返す",a:"<strong>IFERROR(式, 代替値)</strong>",body:"<code>IFERROR(SUM(...) / SUM(...), &quot;N/A&quot;)</code><br>DAX に <code>ERROR</code> 値や <code>TRY</code> 関数は存在しない（M言語の機能と混同しない）。<br>反射：<br>・「エラー時に代替値」→ IFERROR<br>・「ゼロ除算回避（数値結果）」→ DIVIDE<br>・「BLANK判定」→ ISBLANK<br>・「Power Query (M) のエラー処理」→ try ... otherwise。ランダム107ミス。"},
 ];
 
 const cardsEl = document.getElementById("cards");
@@ -273,26 +280,11 @@ const searchEl = document.getElementById("search");
 const filtersEl = document.getElementById("filters");
 let currentFilter = "all";
 
-function getMarked(){
-  try{return new Set(JSON.parse(localStorage.getItem("pl300_marked")||"[]"))}catch(e){return new Set()}
-}
-function setMarked(set){
-  localStorage.setItem("pl300_marked", JSON.stringify([...set]));
-}
-function toggleMark(q){
-  const set = getMarked();
-  if(set.has(q)) set.delete(q); else set.add(q);
-  setMarked(set);
-  render();
-}
-
 function render(){
   const kw = searchEl.value.trim().toLowerCase();
-  const marked = getMarked();
   let list = data.filter(d=>{
-    if(currentFilter==="marked" && !marked.has(d.q)) return false;
     if(currentFilter==="critical" && !d.critical) return false;
-    if(currentFilter!=="all" && currentFilter!=="critical" && currentFilter!=="marked" && d.cat!==currentFilter) return false;
+    if(currentFilter!=="all" && currentFilter!=="critical" && d.cat!==currentFilter) return false;
     if(kw){
       const text = (d.q+d.a+d.body+d.cat).toLowerCase();
       if(!text.includes(kw)) return false;
@@ -302,25 +294,24 @@ function render(){
   list.sort((a,b)=>b.lvl-a.lvl);
   cardsEl.innerHTML = list.length===0
     ? '<div class="no-result">該当するカードがありません</div>'
-    : list.map((d,i)=>cardHTML(d,i,marked)).join("");
+    : list.map((d,i)=>cardHTML(d,i)).join("");
   document.getElementById("total").textContent = data.length;
   document.getElementById("critical").textContent = data.filter(d=>d.critical).length;
-  document.getElementById("markedCount").textContent = marked.size;
+  document.getElementById("mastered").textContent = countMastered();
 }
-function cardHTML(d,i,marked){
+function countMastered(){
+  try{return JSON.parse(localStorage.getItem("pl300_mastered")||"[]").length}catch(e){return 0}
+}
+function cardHTML(d,i){
   const lvlText = {4:"🚨 最重要",3:"⚠️ 重要",2:"📌 頻出",1:"📖 基本"}[d.lvl];
-  const isMarked = marked.has(d.q);
-  const safeQ = d.q.replace(/'/g, "\\'").replace(/"/g, '&quot;');
-  return `<div class="card${isMarked?' is-marked':''}" data-idx="${i}" onclick="this.classList.toggle('flipped')">
+  return `<div class="card" data-idx="${i}" onclick="this.classList.toggle('flipped')">
     <div class="card-inner">
       <div class="face front">
-        <button class="mark-btn${isMarked?' marked':''}" onclick="event.stopPropagation();toggleMark('${safeQ}')" title="${isMarked?'マーク解除':'マークして後でまとめて見る'}">📌</button>
         <div><span class="lvl lvl-${d.lvl}">${lvlText}</span><span class="cat">${d.cat}</span></div>
         <div class="q">Q. ${d.q}</div>
         <div class="hint">タップで答えを見る →</div>
       </div>
       <div class="face back">
-        <button class="mark-btn${isMarked?' marked':''}" onclick="event.stopPropagation();toggleMark('${safeQ}')" title="${isMarked?'マーク解除':'マークして後でまとめて見る'}">📌</button>
         <div class="a-title">A. ${d.a}</div>
         <div class="a-body">${d.body}</div>
       </div>
