@@ -47,6 +47,10 @@ header p{font-size:.9rem;opacity:.9}
 .cat{display:inline-block;font-size:.65rem;padding:3px 8px;border-radius:10px;background:rgba(255,255,255,.15);margin-bottom:6px;align-self:flex-start;margin-left:6px}
 .q{font-weight:700;font-size:1rem;margin:6px 0 8px;color:var(--text);flex:0 0 auto}
 .hint{font-size:.78rem;color:var(--muted);margin-top:auto;text-align:right}
+.mark-btn{position:absolute;top:8px;right:8px;background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.3);color:#94a3b8;width:32px;height:32px;border-radius:50%;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;z-index:5;transition:all .15s}
+.mark-btn:active{transform:scale(.85)}
+.mark-btn.marked{background:#f59e0b;border-color:#f59e0b;color:#0f172a}
+.card.is-marked .front{border-color:#f59e0b;box-shadow:0 0 0 2px rgba(245,158,11,.4),var(--shadow)}
 .a-title{font-weight:700;margin-bottom:6px;font-size:.95rem;color:#fde68a}
 .a-body{flex:1}
 .a-body strong{color:#fde68a}
@@ -85,13 +89,14 @@ footer a{color:var(--accent);text-decoration:none}
 <div class="stats">
   <div class="stat"><span class="num" id="total">0</span><span class="lbl">総カード数</span></div>
   <div class="stat"><span class="num" id="critical">0</span><span class="lbl">最重要🚨</span></div>
-  <div class="stat"><span class="num" id="mastered">0</span><span class="lbl">確認済み</span></div>
+  <div class="stat"><span class="num" id="markedCount">0</span><span class="lbl">📌 マーク済み</span></div>
 </div>
 
 <div class="controls">
   <input id="search" class="search" type="search" placeholder="🔍 キーワード検索（例：DAX, RLS, ALL）">
   <div class="filters" id="filters">
     <button class="filter active" data-filter="all">全て</button>
+    <button class="filter" data-filter="marked">📌 マーク済み</button>
     <button class="filter" data-filter="critical">🚨 最重要</button>
     <button class="filter" data-filter="DAX">DAX</button>
     <button class="filter" data-filter="モデル">モデル</button>
@@ -280,11 +285,26 @@ const searchEl = document.getElementById("search");
 const filtersEl = document.getElementById("filters");
 let currentFilter = "all";
 
+function getMarked(){
+  try{return new Set(JSON.parse(localStorage.getItem("pl300_marked")||"[]"))}catch(e){return new Set()}
+}
+function setMarked(set){
+  localStorage.setItem("pl300_marked", JSON.stringify([...set]));
+}
+function toggleMark(q){
+  const set = getMarked();
+  if(set.has(q)) set.delete(q); else set.add(q);
+  setMarked(set);
+  render();
+}
+
 function render(){
   const kw = searchEl.value.trim().toLowerCase();
+  const marked = getMarked();
   let list = data.filter(d=>{
+    if(currentFilter==="marked" && !marked.has(d.q)) return false;
     if(currentFilter==="critical" && !d.critical) return false;
-    if(currentFilter!=="all" && currentFilter!=="critical" && d.cat!==currentFilter) return false;
+    if(currentFilter!=="all" && currentFilter!=="critical" && currentFilter!=="marked" && d.cat!==currentFilter) return false;
     if(kw){
       const text = (d.q+d.a+d.body+d.cat).toLowerCase();
       if(!text.includes(kw)) return false;
@@ -294,24 +314,25 @@ function render(){
   list.sort((a,b)=>b.lvl-a.lvl);
   cardsEl.innerHTML = list.length===0
     ? '<div class="no-result">該当するカードがありません</div>'
-    : list.map((d,i)=>cardHTML(d,i)).join("");
+    : list.map((d,i)=>cardHTML(d,i,marked)).join("");
   document.getElementById("total").textContent = data.length;
   document.getElementById("critical").textContent = data.filter(d=>d.critical).length;
-  document.getElementById("mastered").textContent = countMastered();
+  document.getElementById("markedCount").textContent = marked.size;
 }
-function countMastered(){
-  try{return JSON.parse(localStorage.getItem("pl300_mastered")||"[]").length}catch(e){return 0}
-}
-function cardHTML(d,i){
+function cardHTML(d,i,marked){
   const lvlText = {4:"🚨 最重要",3:"⚠️ 重要",2:"📌 頻出",1:"📖 基本"}[d.lvl];
-  return `<div class="card" data-idx="${i}" onclick="this.classList.toggle('flipped')">
+  const isMarked = marked.has(d.q);
+  const safeQ = d.q.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+  return `<div class="card${isMarked?' is-marked':''}" data-idx="${i}" onclick="this.classList.toggle('flipped')">
     <div class="card-inner">
       <div class="face front">
+        <button class="mark-btn${isMarked?' marked':''}" onclick="event.stopPropagation();toggleMark('${safeQ}')" title="${isMarked?'マーク解除':'マークして後でまとめて見る'}">📌</button>
         <div><span class="lvl lvl-${d.lvl}">${lvlText}</span><span class="cat">${d.cat}</span></div>
         <div class="q">Q. ${d.q}</div>
         <div class="hint">タップで答えを見る →</div>
       </div>
       <div class="face back">
+        <button class="mark-btn${isMarked?' marked':''}" onclick="event.stopPropagation();toggleMark('${safeQ}')" title="${isMarked?'マーク解除':'マークして後でまとめて見る'}">📌</button>
         <div class="a-title">A. ${d.a}</div>
         <div class="a-body">${d.body}</div>
       </div>
