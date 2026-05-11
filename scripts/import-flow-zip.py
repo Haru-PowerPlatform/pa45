@@ -31,6 +31,7 @@ VOL_TOPIC = {
     7: 'FormsSPTeams',
     8: 'ApprovalFlow',
     9: 'SharePointUpdate',
+    10: 'BizReview',
 }
 
 
@@ -65,7 +66,7 @@ def import_zip(zip_path: Path) -> tuple[int, Path]:
     dest_name = f'PA45-Vol{vol:02d}-{topic}.zip'
     dest = vol_dir / dest_name
     shutil.copy2(zip_path, dest)
-    print(f'  ✓ {zip_path.name} → {dest.relative_to(REPO)}')
+    print(f'  OK {zip_path.name} -> {dest.relative_to(REPO)}')
     return vol, dest
 
 
@@ -83,9 +84,9 @@ def update_sessions_html(vol: int, dest: Path) -> bool:
     new_text, n = pattern.subn(rel_url, text)
     if n > 0:
         html_path.write_text(new_text, encoding='utf-8')
-        print(f'  ✓ sessions/index.html の {n} 箇所を更新')
+        print(f'  OK sessions/index.html updated {n} link(s)')
         return True
-    print(f'  ⚠ sessions/index.html に Vol{vol} のリンクが見つからない（手動追加が必要かも）')
+    print(f'  WARN no Vol{vol} link found in sessions/index.html (manual add maybe needed)')
     return False
 
 
