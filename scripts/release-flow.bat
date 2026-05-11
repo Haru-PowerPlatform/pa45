@@ -42,6 +42,7 @@ if "%VOL%"=="6" set SOLUTION=PA45No6FormsMail
 if "%VOL%"=="7" set SOLUTION=PA45No7FormsSPTeams
 if "%VOL%"=="8" set SOLUTION=PA45No8Approval
 if "%VOL%"=="9" set SOLUTION=PA45No9SharePointUpdate
+if "%VOL%"=="10" set SOLUTION=PA45No10BizReview
 
 if "%VOL%"=="all" goto ALL
 
@@ -74,7 +75,7 @@ goto COMMIT
 
 :ALL
 echo === All Vols Release ===
-for %%S in (PA45No1Initialize PA45No2SetVariable PA45No3Condition PA45No4ApplyToEach PA45No5Review PA45No6FormsMail PA45No7FormsSPTeams PA45No8Approval PA45No9SharePointUpdate) do (
+for %%S in (PA45No1Initialize PA45No2SetVariable PA45No3Condition PA45No4ApplyToEach PA45No5Review PA45No6FormsMail PA45No7FormsSPTeams PA45No8Approval PA45No9SharePointUpdate PA45No10BizReview) do (
     echo.
     echo --- %%S ---
     pac solution export --name %%S --path "%EXPORT_DIR%" --managed --overwrite
