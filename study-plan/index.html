@@ -889,6 +889,7 @@
   <button class="btn btn-collapse" onclick="collapseAll()">全部閉じる</button>
   <button class="btn btn-reset" onclick="resetAll()">チェックリセット</button>
   <button class="btn btn-past" id="btn-past" onclick="togglePastDays()" style="display:none">📁 過去N日を表示</button>
+  <button class="btn btn-skip-today" id="btn-skip-today" onclick="skipToday()">⏭ 今日は終わり：明日に振替</button>
 </div>
 
 <div id="schedule"></div>
@@ -1528,6 +1529,30 @@ function saveDone(state) {
 
 let doneState = loadDone();
 
+// 「今日は終わり」フラグを考慮した過去判定カットオフ
+// di < pastCutoff の日は過去扱い（非表示・カウントのみ）
+function getPastCutoff() {
+  const todayDi = getTodayDi();
+  if (todayDi < 0) return 0;
+  const t = new Date();
+  const todayKey = `${t.getMonth()+1}-${t.getDate()}`;
+  const skippedDate = localStorage.getItem(STORAGE_KEY + "-skipped-date");
+  return skippedDate === todayKey ? todayDi + 1 : todayDi;
+}
+
+// 「今日は終わり」ボタン: 今日のタスクを翌日以降へ振替
+function skipToday() {
+  const t = new Date();
+  const todayKey = `${t.getMonth()+1}-${t.getDate()}`;
+  const cur = localStorage.getItem(STORAGE_KEY + "-skipped-date");
+  if (cur === todayKey) {
+    localStorage.removeItem(STORAGE_KEY + "-skipped-date");
+  } else {
+    localStorage.setItem(STORAGE_KEY + "-skipped-date", todayKey);
+  }
+  render();
+}
+
 // 今日に該当するschedule indexを取得（日付動的判定）
 function getTodayDi() {
   const t = new Date();
@@ -1539,12 +1564,12 @@ function getTodayDi() {
   return -1;
 }
 
-// 過去日の未完タスクを集める（今日より前の通常タスクのみ）
+// 過去日の未完タスクを集める（pastCutoff より前。「今日は終わり」が押されたら今日も含む）
 function collectCarryover() {
-  const todayDi = getTodayDi();
+  const cutoff = getPastCutoff();
   const result = [];
-  if (todayDi < 0) return result; // 今日がscheduleにない場合は持越なし
-  for (let di = 0; di < todayDi; di++) {
+  if (cutoff <= 0) return result;
+  for (let di = 0; di < cutoff; di++) {
     const day = schedule[di];
     day.tasks.forEach((task, ti) => {
       if (task.t === 0) return; // 休み・テストの0分タスクは除外
@@ -1566,10 +1591,11 @@ function distributeCarryover() {
   const carry = collectCarryover();
   if (carry.length === 0) return result;
 
-  // 配分先候補: 明日〜末日のうち、完全休み日（time:"—"）を除外（今日も除外）
+  // 配分先候補: pastCutoff（今日 or 今日が「終わり」なら明日）以降、完全休み日（time:"—"）除外
   // テスト日も5時間まで使える前提で含める（最終日 5/22 は time:"—" で除外される）
   const targets = [];
-  for (let di = todayDi + 1; di < schedule.length; di++) {
+  const startDi = Math.max(todayDi + 1, getPastCutoff());
+  for (let di = startDi; di < schedule.length; di++) {
     const day = schedule[di];
     if (day.time === "—") continue;
     targets.push(di);
@@ -1625,9 +1651,10 @@ function render() {
   // 過去日表示モード（"過去日を表示" ボタンで切替）
   const showPast = localStorage.getItem(STORAGE_KEY + "-show-past") === "1";
 
+  const pastCutoff = getPastCutoff();
   schedule.forEach((day, di) => {
-    const isPast = todayDi >= 0 && di < todayDi;
-    const isToday = di === todayDi;
+    const isPast = todayDi >= 0 && di < pastCutoff;
+    const isToday = di === todayDi && di >= pastCutoff; // 「今日は終わり」されていれば今日扱いしない
 
     // 過去日は非表示モードならカウントだけして描画スキップ
     if (isPast) {
@@ -1714,6 +1741,20 @@ function render() {
       btnPast.textContent = showPast ? `📁 過去${pastHiddenCount}日を隠す` : `📁 過去${pastHiddenCount}日を表示`;
     } else {
       btnPast.style.display = "none";
+    }
+  }
+
+  // 「今日は終わり」ボタンのラベル更新
+  const btnSkip = document.getElementById("btn-skip-today");
+  if (btnSkip) {
+    if (todayDi < 0) {
+      btnSkip.style.display = "none";
+    } else {
+      btnSkip.style.display = "";
+      const t = new Date();
+      const todayKey = `${t.getMonth()+1}-${t.getDate()}`;
+      const skippedDate = localStorage.getItem(STORAGE_KEY + "-skipped-date");
+      btnSkip.textContent = skippedDate === todayKey ? "↩️ 今日の予定に戻す" : "⏭ 今日は終わり：明日に振替";
     }
   }
 
