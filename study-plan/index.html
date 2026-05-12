@@ -1668,14 +1668,12 @@ function render() {
 
     // この日に割り振られた持越タスクを先頭に表示（カウントは元日に既に含まれているので加算しない）
     const carryItems = distribution.get(di) || [];
-    carryItems.forEach(({key, day: srcDay, task}) => {
+    carryItems.forEach(({key, task}) => {
       const isDone = !!doneState[key];
-      const srcLabel = srcDay.date.split(' ')[0];
       tasksHtml += `
-        <div class="task carry-virtual ${isDone ? "done" : ""}" onclick="toggleTask('${key}')">
+        <div class="task ${isDone ? "done" : ""}" onclick="toggleTask('${key}')">
           <div class="checkbox"><span class="check-icon">✓</span></div>
           <div class="task-content">
-            <span class="carry-date-badge">${srcLabel} 繰越</span>
             <span class="task-subject ${task.c}">${task.s}</span>
             ${task.t > 0 ? `<span class="task-time">${task.t}分</span>` : ""}
             <div class="task-text">${task.txt}</div>
@@ -1703,7 +1701,8 @@ function render() {
 
     const carryCount = carryItems.length;
     const carryMin = carryItems.reduce((s, x) => s + (x.task.t || 0), 0);
-    const metaText = `${day.tasks.length}タスク` + (carryCount > 0 ? ` ＋繰越${carryCount}件(${carryMin}分)` : "");
+    const totalCount = day.tasks.length + carryCount;
+    const metaText = `${totalCount}タスク`;
 
     dayEl.innerHTML = `
       <div class="day-header" onclick="toggleDay(${di})">
