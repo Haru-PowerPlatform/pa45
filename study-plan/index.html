@@ -1695,6 +1695,19 @@ function render() {
     const carryCount = carryItems.length;
     const carryMin = carryItems.reduce((s, x) => s + (x.task.t || 0), 0);
     const totalCount = day.tasks.length + carryCount;
+    const ownMin = day.tasks.reduce((s, t) => s + (t.t || 0), 0);
+    const totalMin = ownMin + carryMin;
+    // 合計分数を「○h」表記に。元のtimeが"—"なら維持（休み・テスト最終日など）
+    let dayTimeLabel;
+    if (day.time === "—" && totalMin === 0) {
+      dayTimeLabel = "—";
+    } else if (totalMin === 0) {
+      dayTimeLabel = "0h";
+    } else if (totalMin % 60 === 0) {
+      dayTimeLabel = `${totalMin / 60}h`;
+    } else {
+      dayTimeLabel = `${(totalMin / 60).toFixed(1)}h`;
+    }
     const metaText = `${totalCount}タスク`;
 
     dayEl.innerHTML = `
@@ -1704,7 +1717,7 @@ function render() {
           <div class="day-meta">${metaText}</div>
         </div>
         <div style="display:flex;align-items:center">
-          <span class="day-time ${day.type}">${day.time}</span>
+          <span class="day-time ${day.type}">${dayTimeLabel}</span>
           <span class="arrow">▼</span>
         </div>
       </div>
