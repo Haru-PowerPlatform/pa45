@@ -650,43 +650,15 @@
   .cal-legend span { display: inline-flex; align-items: center; gap: 4px; }
   .cal-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; }
 
-  /* 持越タスクバナー */
-  .carryover-banner {
-    background: linear-gradient(135deg, #fef3c7, #fde68a);
-    border: 2px solid #f59e0b;
-    border-radius: 14px;
-    padding: 14px 16px;
-    margin-bottom: 14px;
-    box-shadow: 0 4px 12px rgba(245,158,11,0.2);
+  /* 持越タスク（各日に分散配置） */
+  .task.carry-virtual { background: linear-gradient(90deg, #fff7ed, #ffffff); border-left: 3px solid #f59e0b; }
+  .carry-date-badge {
+    display: inline-block;
+    font-size: 10px; font-weight: 800;
+    background: #ef4444; color: white;
+    padding: 1px 6px; border-radius: 4px;
+    margin-right: 6px;
   }
-  .carryover-title { font-size: 15px; font-weight: 800; color: #92400e; margin-bottom: 4px; }
-  .carryover-hint { font-size: 11px; color: #78350f; margin-bottom: 10px; }
-  .carry-task {
-    background: #fff;
-    border: 1px solid #fcd34d;
-    border-radius: 8px;
-    padding: 8px 10px;
-    margin-bottom: 6px;
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-    cursor: pointer;
-    transition: transform 0.1s;
-  }
-  .carry-task:active { transform: scale(0.98); }
-  .carry-task.done { opacity: 0.5; }
-  .carry-task.done .carry-text { text-decoration: line-through; }
-  .carry-checkbox {
-    width: 22px; height: 22px; border-radius: 6px;
-    background: #fff; border: 2px solid #f59e0b;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0; font-size: 14px; color: transparent;
-  }
-  .carry-task.done .carry-checkbox { background: #10b981; border-color: #10b981; color: white; }
-  .carry-body { flex: 1; min-width: 0; }
-  .carry-meta { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin-bottom: 3px; }
-  .carry-date { font-size: 10px; font-weight: 800; background: #ef4444; color: white; padding: 1px 6px; border-radius: 4px; }
-  .carry-text { font-size: 12px; color: #1e293b; line-height: 1.4; }
 
   /* 試験範囲タブ */
   .range-card { background: #fff; border-radius: 14px; padding: 16px; margin-bottom: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
@@ -916,12 +888,6 @@
   <button class="btn btn-expand" onclick="expandAll()">全部開く</button>
   <button class="btn btn-collapse" onclick="collapseAll()">全部閉じる</button>
   <button class="btn btn-reset" onclick="resetAll()">チェックリセット</button>
-</div>
-
-<div id="carryover-banner" class="carryover-banner" style="display:none">
-  <div class="carryover-title">⚡ 持越し未完タスク <span id="carryover-count">0</span>件</div>
-  <div class="carryover-hint">過ぎた日に終わらなかった課題。今日以降に消化しよう。タップで完了マークが付きます。</div>
-  <div id="carryover-list"></div>
 </div>
 
 <div id="schedule"></div>
@@ -1590,37 +1556,54 @@ function collectCarryover() {
   return result;
 }
 
-function renderCarryover() {
-  const banner = document.getElementById("carryover-banner");
-  const list = document.getElementById("carryover-list");
-  const countEl = document.getElementById("carryover-count");
-  if (!banner) return;
+// 持越タスクを今日以降の各日に負荷バランスで分散配置
+function distributeCarryover() {
+  const todayDi = getTodayDi();
+  const result = new Map();
+  if (todayDi < 0) return result;
+
   const carry = collectCarryover();
-  if (carry.length === 0) {
-    banner.style.display = "none";
-    return;
+  if (carry.length === 0) return result;
+
+  // 配分先候補: 今日〜末日のうち、テスト日と完全休み日（time:"—"）を除外
+  const targets = [];
+  for (let di = todayDi; di < schedule.length; di++) {
+    const day = schedule[di];
+    if (day.type === "test") continue;
+    if (day.time === "—") continue;
+    targets.push(di);
   }
-  banner.style.display = "block";
-  countEl.textContent = carry.length;
-  list.innerHTML = "";
-  carry.forEach(({di, ti, key, day, task}) => {
-    const item = document.createElement("div");
-    item.className = "carry-task";
-    item.onclick = () => toggleTask(key);
-    const dateLabel = day.date.split(' ')[0]; // "5/4" 部分のみ
-    item.innerHTML = `
-      <div class="carry-checkbox"><span>✓</span></div>
-      <div class="carry-body">
-        <div class="carry-meta">
-          <span class="carry-date">${dateLabel}</span>
-          <span class="task-subject ${task.c}">${task.s}</span>
-          <span class="task-time">${task.t}分</span>
-        </div>
-        <div class="carry-text">${task.txt}</div>
-      </div>
-    `;
-    list.appendChild(item);
+  if (targets.length === 0) {
+    // 候補なし → 今日に全部つける（fallback）
+    if (todayDi >= 0) {
+      result.set(todayDi, carry);
+    }
+    return result;
+  }
+
+  // 各日の現在の総分数（既存タスク合計）
+  const load = new Map();
+  targets.forEach(di => {
+    const sum = schedule[di].tasks.reduce((s, t) => s + (t.t || 0), 0);
+    load.set(di, sum);
+    result.set(di, []);
   });
+
+  // 大きいタスクから配分。負荷最小の日に割り当て
+  [...carry].sort((a, b) => b.task.t - a.task.t).forEach(item => {
+    let bestDi = targets[0];
+    let bestLoad = load.get(bestDi);
+    targets.forEach(di => {
+      if (load.get(di) < bestLoad) {
+        bestDi = di;
+        bestLoad = load.get(di);
+      }
+    });
+    result.get(bestDi).push(item);
+    load.set(bestDi, bestLoad + item.task.t);
+  });
+
+  return result;
 }
 
 function render() {
@@ -1635,6 +1618,7 @@ function render() {
   let totalTasks = 0;
   let doneTasks = 0;
   const todayDi = getTodayDi();
+  const distribution = distributeCarryover();
 
   schedule.forEach((day, di) => {
     const dayEl = document.createElement("div");
@@ -1648,6 +1632,25 @@ function render() {
     const allDone = day.tasks.every((_, ti) => doneState[`${di}-${ti}`]);
 
     let tasksHtml = "";
+
+    // この日に割り振られた持越タスクを先頭に表示（カウントは元日に既に含まれているので加算しない）
+    const carryItems = distribution.get(di) || [];
+    carryItems.forEach(({key, day: srcDay, task}) => {
+      const isDone = !!doneState[key];
+      const srcLabel = srcDay.date.split(' ')[0];
+      tasksHtml += `
+        <div class="task carry-virtual ${isDone ? "done" : ""}" onclick="toggleTask('${key}')">
+          <div class="checkbox"><span class="check-icon">✓</span></div>
+          <div class="task-content">
+            <span class="carry-date-badge">${srcLabel} 繰越</span>
+            <span class="task-subject ${task.c}">${task.s}</span>
+            ${task.t > 0 ? `<span class="task-time">${task.t}分</span>` : ""}
+            <div class="task-text">${task.txt}</div>
+          </div>
+        </div>
+      `;
+    });
+
     day.tasks.forEach((task, ti) => {
       const key = `${di}-${ti}`;
       const isDone = !!doneState[key];
@@ -1665,11 +1668,15 @@ function render() {
       `;
     });
 
+    const carryCount = carryItems.length;
+    const carryMin = carryItems.reduce((s, x) => s + (x.task.t || 0), 0);
+    const metaText = `${day.tasks.length}タスク` + (carryCount > 0 ? ` ＋繰越${carryCount}件(${carryMin}分)` : "");
+
     dayEl.innerHTML = `
       <div class="day-header" onclick="toggleDay(${di})">
         <div>
           <div class="day-title">${allDone ? "✅ " : ""}${day.date}</div>
-          <div class="day-meta">${day.tasks.length}タスク</div>
+          <div class="day-meta">${metaText}</div>
         </div>
         <div style="display:flex;align-items:center">
           <span class="day-time ${day.type}">${day.time}</span>
@@ -1718,7 +1725,6 @@ function render() {
   renderFriends();
   renderAquarium();
   renderSubjects();
-  renderCarryover();
 }
 
 function loadDropped() {
