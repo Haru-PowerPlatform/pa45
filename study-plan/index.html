@@ -1608,6 +1608,13 @@ function distributeCarryover() {
     return result;
   }
 
+  // 各日の容量（分）: テスト日=5h／休日=5.5h／平日・部活=4h
+  function capacity(day) {
+    if (day.type === "test") return 300;
+    if (day.type === "holiday") return 330;
+    return 240; // normal / bukatsu
+  }
+
   // 各日の現在の総分数（既存タスク合計）
   const load = new Map();
   targets.forEach(di => {
@@ -1616,18 +1623,19 @@ function distributeCarryover() {
     result.set(di, []);
   });
 
-  // 大きいタスクから配分。負荷最小の日に割り当て
+  // 大きいタスクから配分。残容量（capacity - load）が最大の日に割り当て
   [...carry].sort((a, b) => b.task.t - a.task.t).forEach(item => {
     let bestDi = targets[0];
-    let bestLoad = load.get(bestDi);
+    let bestRoom = capacity(schedule[bestDi]) - load.get(bestDi);
     targets.forEach(di => {
-      if (load.get(di) < bestLoad) {
+      const room = capacity(schedule[di]) - load.get(di);
+      if (room > bestRoom) {
         bestDi = di;
-        bestLoad = load.get(di);
+        bestRoom = room;
       }
     });
     result.get(bestDi).push(item);
-    load.set(bestDi, bestLoad + item.task.t);
+    load.set(bestDi, load.get(bestDi) + item.task.t);
   });
 
   return result;
