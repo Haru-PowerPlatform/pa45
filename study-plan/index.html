@@ -1566,11 +1566,11 @@ function distributeCarryover() {
   const carry = collectCarryover();
   if (carry.length === 0) return result;
 
-  // 配分先候補: 今日〜末日のうち、テスト日と完全休み日（time:"—"）を除外
+  // 配分先候補: 明日〜末日のうち、完全休み日（time:"—"）を除外（今日も除外）
+  // テスト日も5時間まで使える前提で含める（最終日 5/22 は time:"—" で除外される）
   const targets = [];
-  for (let di = todayDi; di < schedule.length; di++) {
+  for (let di = todayDi + 1; di < schedule.length; di++) {
     const day = schedule[di];
-    if (day.type === "test") continue;
     if (day.time === "—") continue;
     targets.push(di);
   }
