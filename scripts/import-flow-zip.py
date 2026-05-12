@@ -32,6 +32,7 @@ VOL_TOPIC = {
     8: 'ApprovalFlow',
     9: 'SharePointUpdate',
     10: 'BizReview',
+    11: 'RunHistory',
 }
 
 
