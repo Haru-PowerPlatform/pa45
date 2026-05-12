@@ -570,18 +570,21 @@
     border-radius: 14px;
     backdrop-filter: blur(8px);
     box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
   .tab-btn {
-    flex: 1;
-    padding: 12px 16px;
+    flex: 1 0 auto;
+    padding: 12px 14px;
     border: none;
     background: transparent;
     border-radius: 10px;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 700;
     color: #64748b;
     cursor: pointer;
     transition: all 0.2s;
+    white-space: nowrap;
   }
   .tab-btn.active {
     background: linear-gradient(135deg, #4f46e5, #7c3aed);
@@ -591,6 +594,73 @@
   .tab-content { display: none; }
   .tab-content.active { display: block; animation: tab-fade 0.3s ease; }
   @keyframes tab-fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* 更新ボタン */
+  .top-actions { position: absolute; top: 14px; right: 14px; }
+  .refresh-btn {
+    background: rgba(255,255,255,0.95);
+    border: 2px solid #4f46e5;
+    color: #4f46e5;
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(79,70,229,0.18);
+    transition: transform 0.15s;
+  }
+  .refresh-btn:active { transform: scale(0.95) rotate(-15deg); }
+
+  /* カレンダータブ */
+  .cal-wrap { background: #fff; padding: 16px; border-radius: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+  .cal-hint { font-size: 12px; color: #64748b; margin-bottom: 10px; text-align: center; }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+  .cal-head { font-size: 11px; font-weight: 700; text-align: center; padding: 6px 0; color: #64748b; }
+  .cal-head.sun { color: #ef4444; }
+  .cal-head.sat { color: #3b82f6; }
+  .cal-cell {
+    aspect-ratio: 1 / 1.05;
+    border-radius: 10px;
+    border: 2px solid #e2e8f0;
+    padding: 4px 3px;
+    font-size: 11px;
+    line-height: 1.2;
+    cursor: pointer;
+    background: #f8fafc;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    transition: transform 0.15s;
+    overflow: hidden;
+  }
+  .cal-cell:active { transform: scale(0.95); }
+  .cal-cell.empty { background: transparent; border: none; cursor: default; }
+  .cal-cell .cal-date { font-size: 16px; font-weight: 800; margin-top: 2px; }
+  .cal-cell .cal-tag { font-size: 9px; font-weight: 700; margin-top: 2px; padding: 1px 4px; border-radius: 4px; }
+  .cal-cell .cal-meta { font-size: 9px; color: #475569; margin-top: 2px; text-align: center; }
+  .cal-cell.today { border-color: #4f46e5; background: linear-gradient(135deg, #ede9fe, #ddd6fe); box-shadow: 0 0 8px rgba(79,70,229,0.4); }
+  .cal-cell.test { background: linear-gradient(135deg, #fee2e2, #fecaca); border-color: #ef4444; }
+  .cal-cell.holiday { background: linear-gradient(135deg, #d1fae5, #a7f3d0); border-color: #10b981; }
+  .cal-cell.bukatsu { background: linear-gradient(135deg, #fef3c7, #fde68a); border-color: #f59e0b; }
+  .cal-cell.normal { background: #f8fafc; border-color: #cbd5e1; }
+  .cal-cell.done { opacity: 0.5; }
+  .cal-cell .cal-check { font-size: 10px; color: #10b981; }
+  .cal-legend { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; font-size: 10px; color: #475569; justify-content: center; }
+  .cal-legend span { display: inline-flex; align-items: center; gap: 4px; }
+  .cal-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; }
+
+  /* 試験範囲タブ */
+  .range-card { background: #fff; border-radius: 14px; padding: 16px; margin-bottom: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+  .range-day {
+    font-size: 16px; font-weight: 800; padding: 8px 12px;
+    background: linear-gradient(135deg, #ef4444, #f97316);
+    color: white; border-radius: 8px; margin-bottom: 10px;
+  }
+  .range-subject { margin-bottom: 12px; padding: 10px 12px; background: #f8fafc; border-radius: 8px; border-left: 4px solid #4f46e5; }
+  .range-subject-name { font-size: 13px; font-weight: 800; color: #1e293b; margin-bottom: 4px; }
+  .range-subject-detail { font-size: 12px; color: #475569; line-height: 1.6; }
+  .range-note { font-size: 11px; color: #ef4444; margin-top: 4px; font-weight: 700; }
 
   @media (max-width: 480px) {
     body { padding: 10px; }
@@ -615,7 +685,10 @@
 
 <div class="container">
 
-<header>
+<header style="position:relative">
+  <div class="top-actions">
+    <button class="refresh-btn" onclick="window.location.reload(true)" title="ページを更新">🔄 更新</button>
+  </div>
   <h1>📘 上田晴生 中2 1学期中間テスト計画</h1>
   <div class="sub">広島城北中学校 / 2026-05-19（火）〜05-22（金）</div>
   <div class="goal">🎯 目標：学年10番以内 ／ 学習サイクル：解く優先（W → 答え合わせ → ×だけT → 再度W）</div>
@@ -628,7 +701,106 @@
 
 <div class="tabs-nav">
   <button class="tab-btn active" data-tab="tasks" onclick="switchTab('tasks')">📅 やること</button>
-  <button class="tab-btn" data-tab="achievement" onclick="switchTab('achievement')">🏆 達成度・アイテム</button>
+  <button class="tab-btn" data-tab="calendar" onclick="switchTab('calendar')">🗓 カレンダー</button>
+  <button class="tab-btn" data-tab="range" onclick="switchTab('range')">📋 試験範囲</button>
+  <button class="tab-btn" data-tab="achievement" onclick="switchTab('achievement')">🏆 達成度</button>
+</div>
+
+<div class="tab-content" id="tab-calendar">
+  <div class="cal-wrap">
+    <div class="cal-hint">日付をタップするとその日の「やること」に飛びます</div>
+    <div class="cal-grid" id="cal-grid"></div>
+    <div class="cal-legend">
+      <span><i style="background:#a7f3d0"></i>休日</span>
+      <span><i style="background:#fde68a"></i>部活/旅行</span>
+      <span><i style="background:#f8fafc;border:1px solid #cbd5e1"></i>平日</span>
+      <span><i style="background:#fecaca"></i>テスト</span>
+      <span><i style="background:#ddd6fe;border:1px solid #4f46e5"></i>今日</span>
+    </div>
+  </div>
+</div>
+
+<div class="tab-content" id="tab-range">
+  <div class="range-card">
+    <div class="range-day">5/19 (火) テスト1日目</div>
+    <div class="range-subject">
+      <div class="range-subject-name">① 地理</div>
+      <div class="range-subject-detail">
+        T 教科書 P118〜P139<br>
+        W 地理の学習(1) P64〜P67・P70〜P71・P80（オセアニア）<br>
+        W 地理の学習(2) P2〜P5
+      </div>
+      <div class="range-note">📝 ノートと問題集（2冊）で繰り返し復習！</div>
+    </div>
+    <div class="range-subject">
+      <div class="range-subject-name">② 代数</div>
+      <div class="range-subject-detail">T 体系数学2 代数編 P6〜P29</div>
+      <div class="range-note">📝 展開・因数分解の練習を繰り返し！</div>
+    </div>
+  </div>
+
+  <div class="range-card">
+    <div class="range-day">5/20 (水) テスト2日目</div>
+    <div class="range-subject">
+      <div class="range-subject-name">① 英語A</div>
+      <div class="range-subject-detail">T BLUE SKY Unit 1／Read & Think／Let's Talk 1／Unit 2／Let's Talk 2</div>
+    </div>
+    <div class="range-subject">
+      <div class="range-subject-name">② 理科II（生物）</div>
+      <div class="range-subject-detail">
+        T 教科書「未来へ広がるサイエンス2」P.2〜32<br>
+        授業プリント No.1〜5<br>
+        1章「生物の体をつくるもの」〜2章「植物の体のつくりとはたらき」<br>
+        W 中学の理科（生物・地学）生物 P.48〜77
+      </div>
+      <div class="range-note">📝 タマネギ細胞観察実験もチェック！</div>
+    </div>
+    <div class="range-subject">
+      <div class="range-subject-name">③ 国語B</div>
+      <div class="range-subject-detail">W スパ国 P52〜P59「動詞の活用」</div>
+      <div class="range-note">📝 演習を丁寧にやっておこう！</div>
+    </div>
+  </div>
+
+  <div class="range-card">
+    <div class="range-day">5/21 (木) テスト3日目</div>
+    <div class="range-subject">
+      <div class="range-subject-name">① 歴史</div>
+      <div class="range-subject-detail">T 歴史教科書 P98〜109（織田信長まで）</div>
+    </div>
+    <div class="range-subject">
+      <div class="range-subject-name">② 幾何</div>
+      <div class="range-subject-detail">春休み & GW課題テキスト 全て</div>
+      <div class="range-note">📝 コンパスを用意すること！</div>
+    </div>
+  </div>
+
+  <div class="range-card">
+    <div class="range-day">5/22 (金) テスト最終日</div>
+    <div class="range-subject">
+      <div class="range-subject-name">① 英語B</div>
+      <div class="range-subject-detail">
+        <b>瞬トレ：</b>7 will(単純未来)、8 will(意志未来)、9 will(依頼)、10 be going to〜、32 that節、15 不定詞(名詞的用法)、16 不定詞(副詞的用法・目的)、17 不定詞(副詞的用法・感情の原因)、18 不定詞(形容詞的用法)、5 形式主語のit<br>
+        <b>新中問：</b>3, 6, 4, 12, 13, 14<br>
+        <b>補講：</b>② 不定詞発展・B（形式主語it）
+      </div>
+    </div>
+    <div class="range-subject">
+      <div class="range-subject-name">② 国語A</div>
+      <div class="range-subject-detail">
+        漢字3級 ①〜⑤<br>
+        T 教科書『宇宙に行くための素材』『セミロングホームルーム』
+      </div>
+    </div>
+    <div class="range-subject">
+      <div class="range-subject-name">③ 理科I（化学）</div>
+      <div class="range-subject-detail">
+        T 教科書 P134（ガスバーナー）、P140〜151<br>
+        W 化学 P6〜7（ガスバーナー）、P21〜22（酸素・二酸化炭素・水素）、P66〜71（実験①〜④）<br>
+        <b>実験：</b>① 炭酸水素ナトリウムの加熱／② 酸化銀の加熱／③ 水の電気分解／④ 塩化銅の電気分解
+      </div>
+    </div>
+  </div>
 </div>
 
 <div class="tab-content" id="tab-achievement">
@@ -888,111 +1060,139 @@ const schedule = [
     ]
   },
   {
-    date: "5/12 (火・平)", time: "3h", type: "normal",
+    date: "5/12 (火・平) ⭐試験範囲確定", time: "3h", type: "normal",
     tasks: [
       { s: "宿題", c: "s-hw", t: 30, txt: "学校の宿題" },
-      { s: "地理", c: "s-geo", t: 20, txt: "W わかるって楽しい ×だけ2周目" },
-      { s: "地理", c: "s-geo", t: 15, txt: "オセアニア完全暗記テスト" },
-      { s: "地理", c: "s-geo", t: 30, txt: "縮尺計算 スピード演習（10問）" },
-      { s: "理科1", c: "s-sci1", t: 20, txt: "W 物理化学 ×だけ2周目" },
-      { s: "理科1", c: "s-sci1", t: 15, txt: "化学反応式の白紙テスト" },
-      { s: "理科1", c: "s-sci1", t: 30, txt: "実験操作・装置を図とセットで再確認" }
+      { s: "地理", c: "s-geo", t: 25, txt: "T 教科書 P118〜139 を読みながらノート整理" },
+      { s: "地理", c: "s-geo", t: 25, txt: "W 地理の学習(1) P64〜67 オセアニア を解く＋答合" },
+      { s: "数学(代数)", c: "s-math", t: 45, txt: "T 体系数学2 代数編 P6〜P10 を解く（展開）" },
+      { s: "数学(代数)", c: "s-math", t: 15, txt: "答え合わせ → ×だけ復習" },
+      { s: "漢字", c: "s-kanji", t: 20, txt: "W 漢字3級① を解く（書き＋意味）" },
+      { s: "国語A", c: "s-jpn-a", t: 20, txt: "T「宇宙に行くための素材」初回精読＋線引き" }
     ]
   },
   {
     date: "5/13 (水・平)", time: "3h", type: "normal",
     tasks: [
       { s: "宿題", c: "s-hw", t: 30, txt: "学校の宿題" },
-      { s: "理科2", c: "s-sci2", t: 20, txt: "W 生物地学「茎・根のつくり」を解く" },
-      { s: "理科2", c: "s-sci2", t: 5, txt: "茎・根 答え合わせ" },
-      { s: "理科2", c: "s-sci2", t: 15, txt: "×T確認＋道管・師管の位置を図で再現" },
-      { s: "理科2", c: "s-sci2", t: 20, txt: "W ×だけ2周目（細胞〜根まで）" },
-      { s: "歴史", c: "s-his", t: 25, txt: "【5/1から移動】W 歴史の学習 P8〜P9 を解く" },
-      { s: "歴史", c: "s-his", t: 5, txt: "P8〜P9 答え合わせ" },
-      { s: "理科2", c: "s-sci2", t: 30, txt: "細胞・葉・茎・根の図を白紙に再現" },
-      { s: "理科2", c: "s-sci2", t: 30, txt: "用語チェック＋応用問題" },
-      { s: "理科2", c: "s-sci2", t: 15, txt: "蒸散の計算問題3つ" }
+      { s: "理科2", c: "s-sci2", t: 25, txt: "T 未来へ広がるサイエンス2 P.2〜32 1章「生物の体をつくるもの」読＋ノート" },
+      { s: "理科2", c: "s-sci2", t: 30, txt: "W 中学の理科（生物・地学）生物 P.48〜57 を解く" },
+      { s: "理科2", c: "s-sci2", t: 15, txt: "答合＋×T確認（タマネギ細胞観察実験もチェック）" },
+      { s: "理科2", c: "s-sci2", t: 30, txt: "W 生物 P.58〜67 を解く" },
+      { s: "理科2", c: "s-sci2", t: 10, txt: "P.58〜67 答合" },
+      { s: "英語B", c: "s-eng", t: 15, txt: "W 瞬トレ 7 will(単純未来) を解く＋例文暗唱" },
+      { s: "漢字", c: "s-kanji", t: 20, txt: "W 漢字3級② を解く" },
+      { s: "国語A", c: "s-jpn-a", t: 5, txt: "授業プリントNo.1〜5 ざっと目を通す" }
     ]
   },
   {
     date: "5/14 (木・平)", time: "3h", type: "normal",
     tasks: [
       { s: "宿題", c: "s-hw", t: 30, txt: "学校の宿題" },
-      { s: "数学", c: "s-math", t: 15, txt: "W 体系問題集 ×だけ3周目 P1〜P5（レベルA）" },
-      { s: "数学", c: "s-math", t: 15, txt: "W ×だけ3周目 P6〜P10" },
-      { s: "数学", c: "s-math", t: 15, txt: "W ×だけ3周目 P11〜P17" },
-      { s: "数学", c: "s-math", t: 15, txt: "因数分解の公式を白紙テスト" },
-      { s: "数学", c: "s-math", t: 30, txt: "時間計測スピード演習（30分でできる範囲）" },
-      { s: "数学", c: "s-math", t: 15, txt: "残り×をリスト化＋計算ミスゼロ確認" },
-      { s: "英語", c: "s-eng", t: 10, txt: "【5/1から平準化】W 必修 Unit2 読解・英作文問題" },
-      { s: "英語", c: "s-eng", t: 5, txt: "読解英作 答え合わせ" }
+      { s: "数学(代数)", c: "s-math", t: 45, txt: "T 体系数学2 P11〜P15 を解く（展開・因数分解）" },
+      { s: "数学(代数)", c: "s-math", t: 15, txt: "答合 → ×だけ復習" },
+      { s: "英語B", c: "s-eng", t: 15, txt: "W 瞬トレ 8 will(意志未来) + 9 will(依頼) を解く＋暗唱" },
+      { s: "英語B", c: "s-eng", t: 10, txt: "W 瞬トレ 10 be going to を解く＋暗唱" },
+      { s: "英語B", c: "s-eng", t: 30, txt: "W 新中問 第3章 を解く" },
+      { s: "英語B", c: "s-eng", t: 15, txt: "新中問3章 答合＋×を確認" },
+      { s: "漢字", c: "s-kanji", t: 20, txt: "W 漢字3級③ を解く" }
     ]
   },
   {
     date: "5/15 (金・平)", time: "3h", type: "normal",
     tasks: [
       { s: "宿題", c: "s-hw", t: 30, txt: "学校の宿題" },
-      { s: "英語", c: "s-eng", t: 15, txt: "T 教科書本文 Unit1 暗唱テスト" },
-      { s: "英語", c: "s-eng", t: 15, txt: "T 教科書本文 Unit2 暗唱テスト" },
-      { s: "英語", c: "s-eng", t: 30, txt: "W 不定詞並べ替え＋ライティング5題" },
-      { s: "英語", c: "s-eng", t: 15, txt: "Unit1〜2 単語 白紙テスト" },
-      { s: "国語A", c: "s-jpn-a", t: 30, txt: "T 小説 心情変化箇所を読み返す" },
-      { s: "国語A", c: "s-jpn-a", t: 30, txt: "漢字 P60〜P67 最終白紙テスト" },
-      { s: "国語A", c: "s-jpn-a", t: 15, txt: "T 説明文「宇宙にいくための素材」要旨確認" }
+      { s: "歴史", c: "s-his", t: 25, txt: "T 歴史教科書 P98〜103 を読む＋ノート整理" },
+      { s: "歴史", c: "s-his", t: 25, txt: "W 該当範囲 を解く＋答合" },
+      { s: "国語A", c: "s-jpn-a", t: 25, txt: "T「セミロングホームルーム」初回精読＋心情マーカー" },
+      { s: "国語A", c: "s-jpn-a", t: 20, txt: "T「宇宙に行くための素材」要旨整理" },
+      { s: "国語B", c: "s-jpn-b", t: 25, txt: "W スパ国 P52〜P55「動詞の活用」を解く" },
+      { s: "国語B", c: "s-jpn-b", t: 10, txt: "P52〜P55 答合＋×直し" },
+      { s: "漢字", c: "s-kanji", t: 20, txt: "W 漢字3級④ を解く" }
     ]
   },
   {
     date: "5/16 (土・休)", time: "4h", type: "holiday",
     tasks: [
-      { s: "総合", c: "s-misc", t: 60, txt: "苦手科目①：×が多い問題集を1時間集中" },
-      { s: "総合", c: "s-misc", t: 60, txt: "苦手科目②：×が多い問題集を1時間集中" },
-      { s: "総合", c: "s-misc", t: 60, txt: "苦手科目③：×が多い問題集を1時間集中" },
-      { s: "総合", c: "s-misc", t: 60, txt: "苦手科目④：間違いノートで残り×を全部潰す" }
+      { s: "数学(代数)", c: "s-math", t: 45, txt: "T 体系数学2 P16〜P20 を解く" },
+      { s: "数学(代数)", c: "s-math", t: 15, txt: "答合＋×直し" },
+      { s: "数学(幾何)", c: "s-math", t: 45, txt: "T 春休み&GW課題テキスト 前半 を解く（コンパス用意）" },
+      { s: "数学(幾何)", c: "s-math", t: 15, txt: "答合＋×直し" },
+      { s: "地理", c: "s-geo", t: 25, txt: "W 地理の学習(1) P70〜71 + P80 を解く＋答合" },
+      { s: "理科2", c: "s-sci2", t: 30, txt: "W 中学の理科 生物 P.68〜77 を解く" },
+      { s: "理科2", c: "s-sci2", t: 15, txt: "答合＋×T確認" },
+      { s: "英語A", c: "s-eng", t: 20, txt: "T BLUE SKY Unit1 Read & Think 音読＋本文書き写し" },
+      { s: "国語B", c: "s-jpn-b", t: 25, txt: "W スパ国 P56〜P59 動詞の活用 を解く＋答合" }
     ]
   },
   {
-    date: "5/17 (日・休)", time: "4h", type: "holiday",
+    date: "5/17 (日・休)", time: "4.5h", type: "holiday",
     tasks: [
-      { s: "数学", c: "s-math", t: 30, txt: "総復習：×だけ最終確認" },
-      { s: "英語", c: "s-eng", t: 30, txt: "総復習：本文＋不定詞＋単語" },
-      { s: "国語A", c: "s-jpn-a", t: 30, txt: "総復習：漢字＋本文" },
-      { s: "国語B", c: "s-jpn-b", t: 30, txt: "総復習：活用表" },
-      { s: "理科1", c: "s-sci1", t: 30, txt: "総復習：実験＋反応式" },
-      { s: "理科2", c: "s-sci2", t: 30, txt: "総復習：細胞＋植物のからだ" },
-      { s: "歴史", c: "s-his", t: 30, txt: "総復習：年号＋人物＋出来事" },
-      { s: "地理", c: "s-geo", t: 30, txt: "総復習：オセアニア＋縮尺" }
+      { s: "数学(代数)", c: "s-math", t: 45, txt: "T 体系数学2 P21〜P25 を解く" },
+      { s: "数学(代数)", c: "s-math", t: 15, txt: "答合＋×直し" },
+      { s: "数学(幾何)", c: "s-math", t: 45, txt: "T 春休み&GW課題テキスト 後半 を解く" },
+      { s: "数学(幾何)", c: "s-math", t: 15, txt: "答合＋×直し" },
+      { s: "歴史", c: "s-his", t: 25, txt: "T 教科書 P104〜109（織田信長まで）読＋ノート" },
+      { s: "歴史", c: "s-his", t: 20, txt: "W ×だけ復習＋年号語呂合わせ" },
+      { s: "理科1", c: "s-sci1", t: 25, txt: "T 教科書 P134（ガスバーナー）＋ P140〜146（炭酸水素Na）を読む" },
+      { s: "理科1", c: "s-sci1", t: 20, txt: "W 化学 P6〜P7（ガスバーナー）を解く＋答合" },
+      { s: "理科1", c: "s-sci1", t: 20, txt: "W 化学 P21〜P22（酸素・二酸化炭素・水素）を解く＋答合" },
+      { s: "英語B", c: "s-eng", t: 30, txt: "W 新中問 第6章 を解く＋答合" },
+      { s: "漢字", c: "s-kanji", t: 10, txt: "W 漢字3級⑤ を解く" }
     ]
   },
   {
-    date: "5/18 (月・平)", time: "2.5h", type: "normal",
+    date: "5/18 (月・平) 🌟明日テスト1日目（地理・代数）", time: "2.7h", type: "normal",
     tasks: [
-      { s: "宿題", c: "s-hw", t: 30, txt: "学校の宿題" },
-      { s: "翌日科目", c: "s-misc", t: 60, txt: "テスト時間割を見て翌日科目①の最終確認" },
-      { s: "翌日科目", c: "s-misc", t: 60, txt: "翌日科目②の最終確認＋暗記詰め込み" }
+      { s: "宿題", c: "s-hw", t: 30, txt: "学校の宿題（最小限）" },
+      { s: "地理", c: "s-geo", t: 25, txt: "T 教科書 P118〜139＋地理学習(1)(2) ×だけ最終確認" },
+      { s: "地理", c: "s-geo", t: 15, txt: "オセアニア白地図テスト" },
+      { s: "数学(代数)", c: "s-math", t: 30, txt: "T 体系数学2 P26〜P29 を解く（最終）" },
+      { s: "数学(代数)", c: "s-math", t: 20, txt: "×だけ最終確認＋計算ミスゼロチェック" },
+      { s: "数学(代数)", c: "s-math", t: 15, txt: "因数分解の公式を白紙テスト" },
+      { s: "漢字", c: "s-kanji", t: 10, txt: "漢字3級①〜⑤ さらっと見直し" },
+      { s: "テスト", c: "s-misc", t: 5, txt: "📋 持ち物：筆記具・コンパス・定規" }
     ]
   },
   {
-    date: "5/19 (火) テスト1日目", time: "—", type: "test",
+    date: "5/19 (火) テスト1日目 📝地理・代数", time: "2h", type: "test",
     tasks: [
-      { s: "テスト", c: "s-misc", t: 0, txt: "朝に最終チェック／前日夜に翌日科目を仕上げる" }
+      { s: "テスト", c: "s-misc", t: 0, txt: "🌅 朝：地理(教科書P118-139)＋代数(P6-P29)を朝食前にざっと見直し" },
+      { s: "英語A", c: "s-eng", t: 30, txt: "夜：T BLUE SKY Unit1+Unit2 本文音読＋暗唱テスト" },
+      { s: "英語A", c: "s-eng", t: 25, txt: "夜：Read & Think / Let's Talk 1・2 を読み返す" },
+      { s: "理科2", c: "s-sci2", t: 30, txt: "夜：W 中学の理科 生物 P.48〜77 ×だけ最終確認" },
+      { s: "理科2", c: "s-sci2", t: 15, txt: "夜：タマネギ細胞観察実験の手順を再確認" },
+      { s: "国語B", c: "s-jpn-b", t: 20, txt: "夜：スパ国 P52〜P59 動詞の活用 ×だけ最終確認" }
     ]
   },
   {
-    date: "5/20 (水) テスト2日目", time: "—", type: "test",
+    date: "5/20 (水) テスト2日目 📝英語A・理科II・国語B", time: "2h", type: "test",
     tasks: [
-      { s: "テスト", c: "s-misc", t: 0, txt: "朝に最終チェック／前日夜に翌日科目を仕上げる" }
+      { s: "テスト", c: "s-misc", t: 0, txt: "🌅 朝：英語A本文＋理科II生物用語＋動詞活用表をさっと確認" },
+      { s: "歴史", c: "s-his", t: 30, txt: "夜：T 歴史教科書 P98〜109 を通読" },
+      { s: "歴史", c: "s-his", t: 20, txt: "夜：年号語呂合わせ＋人物名 白紙テスト" },
+      { s: "数学(幾何)", c: "s-math", t: 45, txt: "夜：春休み&GW課題テキスト ×だけ最終確認（コンパス忘れずに）" },
+      { s: "数学(幾何)", c: "s-math", t: 15, txt: "夜：作図問題3つ仕上げ" }
     ]
   },
   {
-    date: "5/21 (木) テスト3日目", time: "—", type: "test",
+    date: "5/21 (木) テスト3日目 📝歴史・幾何", time: "2.5h", type: "test",
     tasks: [
-      { s: "テスト", c: "s-misc", t: 0, txt: "朝に最終チェック／前日夜に翌日科目を仕上げる" }
+      { s: "テスト", c: "s-misc", t: 0, txt: "🌅 朝：歴史年号＋幾何の作図手順をざっと確認" },
+      { s: "英語B", c: "s-eng", t: 30, txt: "夜：W 瞬トレ 15〜18(不定詞)＋5(形式主語)＋32(that節) を見直し" },
+      { s: "英語B", c: "s-eng", t: 25, txt: "夜：W 新中問 3・6・4・12・13・14章 ×だけ最終確認" },
+      { s: "英語B", c: "s-eng", t: 15, txt: "夜：補講② 不定詞発展・B 形式主語it を確認" },
+      { s: "国語A", c: "s-jpn-a", t: 20, txt: "夜：T「宇宙に行くための素材」「セミロングホームルーム」要旨再確認" },
+      { s: "漢字", c: "s-kanji", t: 15, txt: "夜：漢字3級①〜⑤ 最終白紙テスト" },
+      { s: "理科1", c: "s-sci1", t: 25, txt: "夜：T 教科書 P134・P140〜151 を読み返す" },
+      { s: "理科1", c: "s-sci1", t: 20, txt: "夜：実験①〜④（炭酸水素Na・酸化銀・水・塩化銅電気分解）の手順＋反応式を白紙テスト" }
     ]
   },
   {
-    date: "5/22 (金) テスト最終日", time: "—", type: "test",
+    date: "5/22 (金) テスト最終日 📝英語B・国語A・理科I", time: "—", type: "test",
     tasks: [
-      { s: "テスト", c: "s-misc", t: 0, txt: "最後まで気を抜かない！" }
+      { s: "テスト", c: "s-misc", t: 0, txt: "🌅 朝：不定詞表現＋漢字＋実験反応式をサッと確認" },
+      { s: "テスト", c: "s-misc", t: 0, txt: "🎉 全テスト終了！おつかれさま！" }
     ]
   }
 ];
@@ -1425,13 +1625,119 @@ function switchTab(name) {
   document.querySelectorAll(".tab-btn").forEach(b => b.classList.toggle("active", b.dataset.tab === name));
   document.querySelectorAll(".tab-content").forEach(c => c.classList.toggle("active", c.id === "tab-" + name));
   localStorage.setItem(TAB_KEY, name);
+  if (name === "calendar") renderCalendar();
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 // 起動時に前回のタブを復元（デフォルトはやること）
 (function restoreTab() {
   const saved = localStorage.getItem(TAB_KEY);
-  switchTab(saved === "achievement" ? "achievement" : "tasks");
+  const valid = ["tasks", "calendar", "range", "achievement"];
+  switchTab(valid.includes(saved) ? saved : "tasks");
 })();
+
+// 日付文字列「5/19 (火) ...」から月日を抽出して Dateを返す
+function parseScheduleDate(s) {
+  const m = s.match(/^(\d+)\/(\d+)/);
+  if (!m) return null;
+  return { month: parseInt(m[1]), day: parseInt(m[2]) };
+}
+
+// カレンダー描画
+function renderCalendar() {
+  const grid = document.getElementById("cal-grid");
+  if (!grid) return;
+  grid.innerHTML = "";
+  // 曜日ヘッダー
+  const heads = ["日", "月", "火", "水", "木", "金", "土"];
+  heads.forEach((h, i) => {
+    const el = document.createElement("div");
+    el.className = "cal-head" + (i === 0 ? " sun" : i === 6 ? " sat" : "");
+    el.textContent = h;
+    grid.appendChild(el);
+  });
+  // 日付→schedule idx を引けるマップを作る
+  const dateToIdx = {};
+  schedule.forEach((day, di) => {
+    const p = parseScheduleDate(day.date);
+    if (p) dateToIdx[`${p.month}-${p.day}`] = di;
+  });
+  // 表示範囲: scheduleの最初の日が含まれる週の日曜から、最後の日が含まれる週の土曜まで
+  const firstP = parseScheduleDate(schedule[0].date);
+  const lastP = parseScheduleDate(schedule[schedule.length - 1].date);
+  const year = 2026;
+  const firstDate = new Date(year, firstP.month - 1, firstP.day);
+  const lastDate = new Date(year, lastP.month - 1, lastP.day);
+  // 月曜始まりではなく日曜始まり
+  const startDate = new Date(firstDate);
+  startDate.setDate(startDate.getDate() - startDate.getDay());
+  const endDate = new Date(lastDate);
+  endDate.setDate(endDate.getDate() + (6 - endDate.getDay()));
+
+  const today = new Date();
+  const todayKey = `${today.getMonth()+1}-${today.getDate()}`;
+
+  const cur = new Date(startDate);
+  while (cur <= endDate) {
+    const m = cur.getMonth() + 1;
+    const d = cur.getDate();
+    const key = `${m}-${d}`;
+    const di = dateToIdx[key];
+    const cell = document.createElement("div");
+    if (di === undefined) {
+      cell.className = "cal-cell empty";
+    } else {
+      const day = schedule[di];
+      cell.className = "cal-cell " + day.type;
+      if (key === todayKey) cell.classList.add("today");
+      // 完了率
+      const total = day.tasks.length;
+      const done = day.tasks.filter((_, ti) => doneState[`${di}-${ti}`]).length;
+      if (total > 0 && done === total) cell.classList.add("done");
+      // 中身
+      const date = document.createElement("div");
+      date.className = "cal-date";
+      date.textContent = d;
+      cell.appendChild(date);
+      // テスト科目を抽出
+      const tagText = day.type === "test" ? "テスト" : day.type === "holiday" ? "休" : day.type === "bukatsu" ? "部活" : "";
+      if (tagText) {
+        const tag = document.createElement("div");
+        tag.className = "cal-tag";
+        tag.style.background = day.type === "test" ? "#ef4444" : day.type === "holiday" ? "#10b981" : "#f59e0b";
+        tag.style.color = "white";
+        tag.textContent = tagText;
+        cell.appendChild(tag);
+      }
+      const meta = document.createElement("div");
+      meta.className = "cal-meta";
+      if (total > 0) {
+        meta.textContent = `${done}/${total}`;
+      } else {
+        meta.textContent = day.time && day.time !== "—" ? day.time : "";
+      }
+      cell.appendChild(meta);
+      cell.onclick = () => jumpToDay(di);
+    }
+    grid.appendChild(cell);
+    cur.setDate(cur.getDate() + 1);
+  }
+}
+
+// 該当日のカードへジャンプ＋展開
+function jumpToDay(di) {
+  switchTab("tasks");
+  setTimeout(() => {
+    const days = document.querySelectorAll(".day");
+    if (days[di]) {
+      days[di].classList.add("open");
+      days[di].scrollIntoView({ behavior: "smooth", block: "start" });
+      // ハイライト
+      days[di].style.transition = "box-shadow 0.6s";
+      days[di].style.boxShadow = "0 0 0 4px #4f46e5";
+      setTimeout(() => { days[di].style.boxShadow = ""; }, 1500);
+    }
+  }, 200);
+}
 
 function expandAll() {
   document.querySelectorAll(".day").forEach(d => d.classList.add("open"));
