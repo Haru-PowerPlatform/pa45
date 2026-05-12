@@ -1834,8 +1834,9 @@ function toggleTask(key) {
 }
 
 function toggleDay(di) {
-  const days = document.querySelectorAll(".day");
-  days[di].classList.toggle("open");
+  // dataset.diで検索（過去日非表示時のindexズレを回避）
+  const el = document.querySelector(`.day[data-di="${di}"]`);
+  if (el) el.classList.toggle("open");
 }
 
 const TAB_KEY = STORAGE_KEY + "-tab";
@@ -1945,14 +1946,13 @@ function renderCalendar() {
 function jumpToDay(di) {
   switchTab("tasks");
   setTimeout(() => {
-    const days = document.querySelectorAll(".day");
-    if (days[di]) {
-      days[di].classList.add("open");
-      days[di].scrollIntoView({ behavior: "smooth", block: "start" });
-      // ハイライト
-      days[di].style.transition = "box-shadow 0.6s";
-      days[di].style.boxShadow = "0 0 0 4px #4f46e5";
-      setTimeout(() => { days[di].style.boxShadow = ""; }, 1500);
+    const el = document.querySelector(`.day[data-di="${di}"]`);
+    if (el) {
+      el.classList.add("open");
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+      el.style.transition = "box-shadow 0.6s";
+      el.style.boxShadow = "0 0 0 4px #4f46e5";
+      setTimeout(() => { el.style.boxShadow = ""; }, 1500);
     }
   }, 200);
 }
