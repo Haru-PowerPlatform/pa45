@@ -650,6 +650,44 @@
   .cal-legend span { display: inline-flex; align-items: center; gap: 4px; }
   .cal-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; }
 
+  /* 持越タスクバナー */
+  .carryover-banner {
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    border: 2px solid #f59e0b;
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 14px;
+    box-shadow: 0 4px 12px rgba(245,158,11,0.2);
+  }
+  .carryover-title { font-size: 15px; font-weight: 800; color: #92400e; margin-bottom: 4px; }
+  .carryover-hint { font-size: 11px; color: #78350f; margin-bottom: 10px; }
+  .carry-task {
+    background: #fff;
+    border: 1px solid #fcd34d;
+    border-radius: 8px;
+    padding: 8px 10px;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    cursor: pointer;
+    transition: transform 0.1s;
+  }
+  .carry-task:active { transform: scale(0.98); }
+  .carry-task.done { opacity: 0.5; }
+  .carry-task.done .carry-text { text-decoration: line-through; }
+  .carry-checkbox {
+    width: 22px; height: 22px; border-radius: 6px;
+    background: #fff; border: 2px solid #f59e0b;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; font-size: 14px; color: transparent;
+  }
+  .carry-task.done .carry-checkbox { background: #10b981; border-color: #10b981; color: white; }
+  .carry-body { flex: 1; min-width: 0; }
+  .carry-meta { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin-bottom: 3px; }
+  .carry-date { font-size: 10px; font-weight: 800; background: #ef4444; color: white; padding: 1px 6px; border-radius: 4px; }
+  .carry-text { font-size: 12px; color: #1e293b; line-height: 1.4; }
+
   /* 試験範囲タブ */
   .range-card { background: #fff; border-radius: 14px; padding: 16px; margin-bottom: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
   .range-day {
@@ -880,6 +918,12 @@
   <button class="btn btn-reset" onclick="resetAll()">チェックリセット</button>
 </div>
 
+<div id="carryover-banner" class="carryover-banner" style="display:none">
+  <div class="carryover-title">⚡ 持越し未完タスク <span id="carryover-count">0</span>件</div>
+  <div class="carryover-hint">過ぎた日に終わらなかった課題。今日以降に消化しよう。タップで完了マークが付きます。</div>
+  <div id="carryover-list"></div>
+</div>
+
 <div id="schedule"></div>
 
 </div><!-- /tab-tasks -->
@@ -894,7 +938,7 @@
 <script>
 const schedule = [
   {
-    date: "4/29 (水・祝) はじまりの日", time: "2.5h", type: "holiday", today: true,
+    date: "4/29 (水・祝) はじまりの日", time: "2.5h", type: "holiday",
     tasks: [
       { s: "数学", c: "s-math", t: 75, txt: "W 体系問題集 P1〜P5 を解く（5ページ × 15分）" },
       { s: "数学", c: "s-math", t: 15, txt: "答え合わせ → ×だけT体系数学で確認" },
@@ -1517,6 +1561,68 @@ function saveDone(state) {
 
 let doneState = loadDone();
 
+// 今日に該当するschedule indexを取得（日付動的判定）
+function getTodayDi() {
+  const t = new Date();
+  const todayKey = `${t.getMonth()+1}-${t.getDate()}`;
+  for (let i = 0; i < schedule.length; i++) {
+    const p = parseScheduleDate(schedule[i].date);
+    if (p && `${p.month}-${p.day}` === todayKey) return i;
+  }
+  return -1;
+}
+
+// 過去日の未完タスクを集める（今日より前の通常タスクのみ）
+function collectCarryover() {
+  const todayDi = getTodayDi();
+  const result = [];
+  if (todayDi < 0) return result; // 今日がscheduleにない場合は持越なし
+  for (let di = 0; di < todayDi; di++) {
+    const day = schedule[di];
+    day.tasks.forEach((task, ti) => {
+      if (task.t === 0) return; // 休み・テストの0分タスクは除外
+      const key = `${di}-${ti}`;
+      if (!doneState[key]) {
+        result.push({ di, ti, key, day, task });
+      }
+    });
+  }
+  return result;
+}
+
+function renderCarryover() {
+  const banner = document.getElementById("carryover-banner");
+  const list = document.getElementById("carryover-list");
+  const countEl = document.getElementById("carryover-count");
+  if (!banner) return;
+  const carry = collectCarryover();
+  if (carry.length === 0) {
+    banner.style.display = "none";
+    return;
+  }
+  banner.style.display = "block";
+  countEl.textContent = carry.length;
+  list.innerHTML = "";
+  carry.forEach(({di, ti, key, day, task}) => {
+    const item = document.createElement("div");
+    item.className = "carry-task";
+    item.onclick = () => toggleTask(key);
+    const dateLabel = day.date.split(' ')[0]; // "5/4" 部分のみ
+    item.innerHTML = `
+      <div class="carry-checkbox"><span>✓</span></div>
+      <div class="carry-body">
+        <div class="carry-meta">
+          <span class="carry-date">${dateLabel}</span>
+          <span class="task-subject ${task.c}">${task.s}</span>
+          <span class="task-time">${task.t}分</span>
+        </div>
+        <div class="carry-text">${task.txt}</div>
+      </div>
+    `;
+    list.appendChild(item);
+  });
+}
+
 function render() {
   const container = document.getElementById("schedule");
   // 再描画前に開いていた日付を記憶（チェック時に閉じないように）
@@ -1528,12 +1634,16 @@ function render() {
   container.innerHTML = "";
   let totalTasks = 0;
   let doneTasks = 0;
+  const todayDi = getTodayDi();
 
   schedule.forEach((day, di) => {
     const dayEl = document.createElement("div");
     dayEl.className = "day " + day.type;
     dayEl.dataset.di = di;
-    if (day.today || openIdx.has(di)) dayEl.classList.add("open");
+    const isPast = todayDi >= 0 && di < todayDi;
+    const isToday = di === todayDi;
+    // 過去日は強制的に折りたたみ（ユーザーがタップで個別に開けるのは可）
+    if (!isPast && (isToday || openIdx.has(di))) dayEl.classList.add("open");
 
     const allDone = day.tasks.every((_, ti) => doneState[`${di}-${ti}`]);
 
@@ -1608,6 +1718,7 @@ function render() {
   renderFriends();
   renderAquarium();
   renderSubjects();
+  renderCarryover();
 }
 
 function loadDropped() {
@@ -1796,6 +1907,27 @@ function resetAll() {
 
 render();
 renderStreak();
+
+// 毎晩0時に自動で再描画（持越タスクと過去日折りたたみを更新）
+function scheduleMidnightRefresh() {
+  const now = new Date();
+  const next = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 5); // 翌日0:00:05
+  const msUntil = next - now;
+  setTimeout(() => {
+    render();
+    renderStreak();
+    scheduleMidnightRefresh(); // 次の0時を予約
+  }, msUntil);
+}
+scheduleMidnightRefresh();
+
+// タブに戻ってきたとき・PWA起動時にも再描画（日付が変わってる場合の保険）
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible") {
+    render();
+    renderStreak();
+  }
+});
 </script>
 </body>
 </html>
