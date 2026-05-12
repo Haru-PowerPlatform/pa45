@@ -888,6 +888,7 @@
   <button class="btn btn-expand" onclick="expandAll()">全部開く</button>
   <button class="btn btn-collapse" onclick="collapseAll()">全部閉じる</button>
   <button class="btn btn-reset" onclick="resetAll()">チェックリセット</button>
+  <button class="btn btn-past" id="btn-past" onclick="togglePastDays()" style="display:none">📁 過去N日を表示</button>
 </div>
 
 <div id="schedule"></div>
@@ -1619,14 +1620,31 @@ function render() {
   let doneTasks = 0;
   const todayDi = getTodayDi();
   const distribution = distributeCarryover();
+  let pastHiddenCount = 0;
+
+  // 過去日表示モード（"過去日を表示" ボタンで切替）
+  const showPast = localStorage.getItem(STORAGE_KEY + "-show-past") === "1";
 
   schedule.forEach((day, di) => {
+    const isPast = todayDi >= 0 && di < todayDi;
+    const isToday = di === todayDi;
+
+    // 過去日は非表示モードならカウントだけして描画スキップ
+    if (isPast) {
+      pastHiddenCount++;
+      if (!showPast) {
+        day.tasks.forEach((task, ti) => {
+          totalTasks++;
+          if (doneState[`${di}-${ti}`]) doneTasks++;
+        });
+        return;
+      }
+    }
+
     const dayEl = document.createElement("div");
     dayEl.className = "day " + day.type;
     dayEl.dataset.di = di;
-    const isPast = todayDi >= 0 && di < todayDi;
-    const isToday = di === todayDi;
-    // 過去日は強制的に折りたたみ（ユーザーがタップで個別に開けるのは可）
+    // 表示モードで過去日を出す場合は折りたたみ。今日・openIdxの日は開く
     if (!isPast && (isToday || openIdx.has(di))) dayEl.classList.add("open");
 
     const allDone = day.tasks.every((_, ti) => doneState[`${di}-${ti}`]);
@@ -1687,6 +1705,17 @@ function render() {
     `;
     container.appendChild(dayEl);
   });
+
+  // 過去日トグルボタンのラベル更新
+  const btnPast = document.getElementById("btn-past");
+  if (btnPast) {
+    if (pastHiddenCount > 0) {
+      btnPast.style.display = "";
+      btnPast.textContent = showPast ? `📁 過去${pastHiddenCount}日を隠す` : `📁 過去${pastHiddenCount}日を表示`;
+    } else {
+      btnPast.style.display = "none";
+    }
+  }
 
   const pct = totalTasks > 0 ? Math.round((doneTasks / totalTasks) * 100) : 0;
   document.getElementById("progress-text").textContent = `${doneTasks} / ${totalTasks}`;
@@ -1877,6 +1906,13 @@ function jumpToDay(di) {
       setTimeout(() => { days[di].style.boxShadow = ""; }, 1500);
     }
   }, 200);
+}
+
+function togglePastDays() {
+  const key = STORAGE_KEY + "-show-past";
+  const cur = localStorage.getItem(key) === "1";
+  localStorage.setItem(key, cur ? "0" : "1");
+  render();
 }
 
 function expandAll() {
