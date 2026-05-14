@@ -2772,16 +2772,26 @@
 </div>
 
 <script>
-  // 🛠 panel構造修復：HTMLパースで孤児になった section/.question/.qlist/.toc/.progress/.panel-h2 を
-  //   直前の .panel 内に取り込む（タブ非表示が効くようにする）
+  // 🛠 panel構造修復：HTMLパースで panel の外に出てしまった section/.question 等を
+  //   直前の .panel 内に取り込み直す（タブ非表示が効くようにする）
   (function fixOrphanedContent(){
-    const container = document.querySelector('.container') || document.body;
+    // 1. body直下の孤児を「直前のpanel」に移動
     let lastPanel = null;
-    Array.from(container.children).forEach(el => {
+    Array.from(document.body.children).forEach(el => {
       if (el.classList && el.classList.contains('panel')) {
         lastPanel = el;
-      } else if (lastPanel && el.matches && el.matches('section, .question, .qlist, .toc, .progress, .panel-h2, figure.fig')) {
+      } else if (lastPanel && el.matches && el.matches('section, .question, .qlist, .toc, .progress, .panel-h2, figure.fig, div.tip, div.michibiki, table')) {
         lastPanel.appendChild(el);
+      }
+    });
+    // 2. ネストして孤児になった .question を、適切な .panel に再吸収
+    //    （sectionの中に潜ったままの .question を、最近の祖先 panel に直接ぶら下げる）
+    document.querySelectorAll('.question').forEach(q => {
+      if (!q.closest('.panel')) {
+        // panel直下に挿入できる相手を探す
+        let prev = q.previousElementSibling;
+        while (prev && !prev.matches('.panel')) prev = prev.previousElementSibling;
+        if (prev) prev.appendChild(q);
       }
     });
   })();
