@@ -926,6 +926,109 @@
   <button onclick="location.href = location.pathname + '?t=' + Date.now()" style="position:absolute; top:20px; right:20px; background:rgba(255,255,255,0.2); color:white; border:1px solid rgba(255,255,255,0.5); padding:8px 14px; border-radius:8px; cursor:pointer; font-size:13px; font-weight:bold; backdrop-filter:blur(4px);">🔄 更新</button>
 </header>
 
+<!-- 試験までのカウントダウン -->
+<style>
+  .countdown-banner {
+    background: linear-gradient(135deg, #fef3c7, #fde68a 50%, #fbbf24);
+    border: 2px solid #d97706;
+    border-radius: 14px;
+    padding: 14px 18px;
+    margin: 12px 0;
+    box-shadow: 0 4px 12px rgba(217,119,6,0.18);
+    text-align: center;
+  }
+  .cd-title {
+    font-size: 13px; font-weight: bold;
+    color: #92400e; margin-bottom: 6px;
+  }
+  .cd-numbers {
+    display: flex; justify-content: center; gap: 18px; flex-wrap: wrap;
+    margin: 6px 0;
+  }
+  .cd-num-box {
+    background: white;
+    padding: 8px 16px;
+    border-radius: 10px;
+    border: 2px solid #fbbf24;
+    min-width: 92px;
+  }
+  .cd-num {
+    font-size: 32px; font-weight: bold;
+    color: #b45309; line-height: 1;
+  }
+  .cd-label {
+    font-size: 11px; color: #78350f; margin-top: 3px;
+  }
+  .cd-encourage {
+    font-size: 14px; font-weight: bold; color: #7c2d12;
+    margin-top: 8px; font-style: italic;
+  }
+</style>
+<div class="countdown-banner" id="countdown-banner">
+  <div class="cd-title">📅 中学入試（2027年1月14日）まで</div>
+  <div class="cd-numbers">
+    <div class="cd-num-box">
+      <div class="cd-num" id="cd-days">—</div>
+      <div class="cd-label">日</div>
+    </div>
+    <div class="cd-num-box">
+      <div class="cd-num" id="cd-weeks">—</div>
+      <div class="cd-label">週間</div>
+    </div>
+  </div>
+  <div class="cd-encourage" id="cd-encourage">📚 きょうも一歩前へ！</div>
+</div>
+<script>
+  (function() {
+    const exam = new Date(2027, 0, 14); // 2027-01-14
+    const now = new Date();
+    const msDay = 24 * 60 * 60 * 1000;
+    const days = Math.max(0, Math.ceil((exam - now) / msDay));
+    const weeks = Math.floor(days / 7);
+    const dEl = document.getElementById('cd-days');
+    const wEl = document.getElementById('cd-weeks');
+    if (dEl) dEl.textContent = days;
+    if (wEl) wEl.textContent = weeks;
+
+    // 残り日数で励ましメッセージを変える
+    const msgs = (
+      days > 200 ? [
+        "📚 まだまだ時間あり。毎日コツコツでいこう！",
+        "🌱 今からの積み重ねが、本番でいちばん力になるよ。",
+        "🐢 一日1問でも、1年で365問。すごい力になる！",
+        "🌟 焦らず楽しく。基礎をしっかり！",
+      ] : days > 100 ? [
+        "🔥 残り半年ちょっと。ペースを保とう！",
+        "🌈 今までの努力は必ず身についてるよ。",
+        "💪 苦手を1つずつ。あせらず確実に！",
+        "🎯 毎日の小さな積み重ねが、本番で大きな力になる。",
+      ] : days > 50 ? [
+        "🌸 残り3ヶ月切った！過去問にチャレンジしてみよう。",
+        "🚀 ラストスパート前の調整期間。基礎を仕上げよう！",
+        "✨ 苦手分野こそ、丁寧に。あなたなら大丈夫。",
+        "💫 努力は裏切らない。自分を信じて！",
+      ] : days > 14 ? [
+        "🔥 ラストスパート！今までの自分を信じて！",
+        "🌟 ここまで頑張ってきたあなたは強い！",
+        "💪 最後まで諦めない。1問1問ていねいに。",
+        "🎊 もうすぐ本番。体調を大切にしてね。",
+      ] : days > 0 ? [
+        "🏆 もうすぐ本番！深呼吸して、自分の力を信じて。",
+        "⭐ 今まで頑張ってきた自分を信じよう！",
+        "🌟 落ち着いて、ていねいに。きっとできる！",
+      ] : [
+        "🎓 本番おつかれさま！自分を誇りに思って！",
+      ]
+    );
+    const encEl = document.getElementById('cd-encourage');
+    if (encEl) {
+      // 日付ベースで選ぶ（同じ日に開いたら同じメッセージが安定）
+      const seed = (now.getFullYear()*373 + (now.getMonth()+1)*31 + now.getDate()) % msgs.length;
+      encEl.textContent = msgs[seed];
+    }
+  })();
+</script>
+
 <div class="player-bar" id="player-bar">
   <span>🏆</span>
   <span class="level">Lv.<span id="player-level">1</span></span>
