@@ -2772,6 +2772,20 @@
 </div>
 
 <script>
+  // 🛠 panel構造修復：HTMLパースで孤児になった section/.question/.qlist/.toc/.progress/.panel-h2 を
+  //   直前の .panel 内に取り込む（タブ非表示が効くようにする）
+  (function fixOrphanedContent(){
+    const container = document.querySelector('.container') || document.body;
+    let lastPanel = null;
+    Array.from(container.children).forEach(el => {
+      if (el.classList && el.classList.contains('panel')) {
+        lastPanel = el;
+      } else if (lastPanel && el.matches && el.matches('section, .question, .qlist, .toc, .progress, .panel-h2, figure.fig')) {
+        lastPanel.appendChild(el);
+      }
+    });
+  })();
+
   // タブ切り替え
   document.querySelectorAll('.tab').forEach(tab => {
     tab.addEventListener('click', () => {
