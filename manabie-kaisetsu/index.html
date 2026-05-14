@@ -387,26 +387,26 @@
   .panel.science .q-text { border-left-color: #047857; }
   .panel.science .q-text::before { color: #047857; }
 
-  /* 問題以外を全部隠す（h3 と q-text 以外は最初は見えない） */
-  .question > figure.fig,
-  .question > .intro,
-  .question > .dialog,
-  .question > .calc,
-  .question > .answer,
-  .question > .check-bar {
-    display: none;
+  /* 問題以外を全部隠す（h3 と q-text・reveal-btn・reveal-hint 以外は最初は見えない） */
+  .question:not(.revealed) > figure.fig,
+  .question:not(.revealed) > .intro,
+  .question:not(.revealed) > .dialog,
+  .question:not(.revealed) > .calc,
+  .question:not(.revealed) > .answer,
+  .question:not(.revealed) > .check-bar {
+    display: none !important;
   }
   .question.revealed > figure.fig,
   .question.revealed > .intro,
   .question.revealed > .dialog,
   .question.revealed > .calc,
-  .question.revealed > .answer,
-  .question.revealed > .check-bar {
-    display: block;
+  .question.revealed > .answer {
+    display: block !important;
     animation: fadeIn 0.4s;
   }
   .question.revealed > .check-bar {
-    display: flex;
+    display: flex !important;
+    animation: fadeIn 0.4s;
   }
   /* 会話の後に「正式な解き方」ラベルを自動表示 */
   #t-wariai62 .calc::before {
@@ -3107,18 +3107,19 @@
       q.dataset.qid = qid;
       q.id = qid;
 
-      // 答えを見るボタンを挿入（q-text の直後＝図/会話/式/答えの前）
+      // 答えを見るボタンを挿入（q-text または h3 の直後）
       const qText = q.querySelector('.q-text');
-      if (qText) {
+      const h3 = q.querySelector('h3');
+      const anchor = qText || h3;
+      if (anchor) {
         const revealBtn = document.createElement('button');
         revealBtn.className = 'reveal-btn';
         revealBtn.innerHTML = '👀 答えを見る';
         const hint = document.createElement('div');
         hint.className = 'reveal-hint';
         hint.textContent = '↑ まずは自分で考えてから、ボタンをタップしよう！';
-        // q-textの直後に挿入
-        qText.parentNode.insertBefore(revealBtn, qText.nextSibling);
-        qText.parentNode.insertBefore(hint, revealBtn.nextSibling);
+        anchor.parentNode.insertBefore(revealBtn, anchor.nextSibling);
+        anchor.parentNode.insertBefore(hint, revealBtn.nextSibling);
         revealBtn.addEventListener('click', () => {
           q.classList.add('revealed');
         });
