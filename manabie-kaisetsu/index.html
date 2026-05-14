@@ -3147,6 +3147,16 @@
   // 初期化
   updatePlayerBar();
   renderStickerBook();
+
+  // 🔄 更新ボタンで ?t=... 付きで来たら、全画像にもキャッシュバスターを付けて再取得
+  if (location.search.includes('t=')) {
+    document.querySelectorAll('img').forEach(img => {
+      const src = img.getAttribute('src');
+      if (src && !src.startsWith('data:')) {
+        img.src = src.split('?')[0] + '?t=' + Date.now();
+      }
+    });
+  }
 </script>
 
 </body>
