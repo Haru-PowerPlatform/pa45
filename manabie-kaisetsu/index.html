@@ -2922,15 +2922,29 @@
     const totalCntEl = document.getElementById('nb-total-count');
     if (!catEl) return;
 
-    // タブを「カテゴリ → サブグループ（回・単元）」にマッピング
+    // タブを「カテゴリ → サブグループ（単元名・ページ）」にマッピング
     const TABS = [
-      { panelId: 't-rika-5',      cat: 'rika',   subLabel: '前期 第5回' },
-      { panelId: 't-math-5',      cat: 'sansu',  subLabel: '前期 第5回' },
-      { panelId: 't-math-4',      cat: 'sansu',  subLabel: '前期 第4回' },
-      { panelId: 't-text-hayasa', cat: 'sansu',  subLabel: 'MANABIE 速さ' },
-      { panelId: 't-attack',      cat: 'sansu',  subLabel: 'アタック 第6単元' },
-      { panelId: 't-wariai62',    cat: 'sansu',  subLabel: 'まなびー 6-2 割合×割合' },
+      { panelId: 't-rika-5',      cat: 'rika',   subLabel: '前期 第5回（テスト）' },
+      { panelId: 't-math-5',      cat: 'sansu',  subLabel: '前期 第5回（テスト）' },
+      { panelId: 't-math-4',      cat: 'sansu',  subLabel: '前期 第4回（テスト）' },
+      { panelId: 't-text-hayasa', cat: 'sansu',  subLabel: 'MANABIE 要点チェック「速さ」' },
+      { panelId: 't-attack',      cat: 'sansu',  subLabel: 'アタック 第6単元（p.27〜30）' },
+      { panelId: 't-wariai62',    cat: 'sansu',  subLabel: 'まなびー 6-2 割合×割合（p.148〜153）' },
     ];
+    // アタックの各回ごとのページ
+    const ATK_PAGE = {
+      'atk1': 'p.27', 'atk2': 'p.27',
+      'atk3': 'p.28', 'atk4': 'p.29',
+      'atk5': 'p.30', 'atk6': 'p.30',
+    };
+    // まなびー6-2の各問のページ
+    const W62_PAGE = {
+      'w62-rei1': 'p.148', 'w62-rei2': 'p.149', 'w62-concept': 'p.148',
+      'w62-y1': 'p.150', 'w62-y2': 'p.150',
+      'w62-k1': 'p.151', 'w62-k2': 'p.151',
+      'w62-r1': 'p.152', 'w62-r2': 'p.152', 'w62-r3': 'p.152',
+      'w62-r4': 'p.153', 'w62-r5': 'p.153', 'w62-r6': 'p.153',
+    };
     const CATEGORIES = [
       { id: 'rika',   emoji: '🧪', name: '理科' },
       { id: 'sansu',  emoji: '🔢', name: '算数' },
@@ -2952,11 +2966,16 @@
         const qnumEl = h3 ? h3.querySelector('.qnum') : null;
         const qnum = qnumEl ? qnumEl.textContent : '問';
         const title = h3 ? h3.textContent.replace(qnum, '').trim() : '(無題)';
+        // 短縮タイトル（長すぎる場合は最初の意味のある部分だけ）
+        let shortTitle = title;
+        if (shortTitle.length > 30) shortTitle = shortTitle.slice(0, 28) + '…';
+        // ページ番号
+        const page = ATK_PAGE[qid] || W62_PAGE[qid] || '';
         const st = state[qid] || null;
         if (st === 'solved') solvedCount++;
         else if (st === 'redo') redoCount++;
         totalCount++;
-        arr.push({ qid, qnum, title, status: st });
+        arr.push({ qid, qnum, title: shortTitle, page, status: st });
       });
       itemsByTab[t.panelId] = arr;
     });
@@ -2999,9 +3018,11 @@
     a.className = 'nb-item' + (it.status === 'solved' ? ' is-solved' : it.status === 'redo' ? ' is-redo' : '');
     a.href = '#' + it.qid;
     const statusIcon = it.status === 'solved' ? '✅' : it.status === 'redo' ? '🔁' : '';
+    const pageBadge = it.page ? `<span style="font-size:11px;color:#6b7280;background:#f3f4f6;padding:2px 7px;border-radius:999px;flex-shrink:0;">${it.page}</span>` : '';
     a.innerHTML = `
       <span class="nb-qnum">${it.qnum}</span>
       <span class="nb-title">${it.title}</span>
+      ${pageBadge}
       <span class="nb-status">${statusIcon}</span>
       <span class="nb-arrow">→</span>
     `;
