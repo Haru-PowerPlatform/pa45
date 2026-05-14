@@ -2787,18 +2787,42 @@
     border-radius: 10px; border: 2px solid #e5e7eb;
     text-align: center;
   }
-  .nb-stat .nb-stat-num { font-size: 28px; font-weight: bold; }
-  .nb-stat .nb-stat-label { font-size: 13px; color: #6b7280; }
+  .nb-stat .nb-stat-num { font-size: 26px; font-weight: bold; }
+  .nb-stat .nb-stat-label { font-size: 12px; color: #6b7280; }
+
+  /* カテゴリ別目次 */
+  .nb-category { margin: 24px 0; }
+  .nb-category > h3 {
+    font-size: 22px;
+    padding: 14px 18px;
+    border-radius: 12px;
+    margin: 0 0 14px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .nb-cat-rika > h3   { background: #dcfce7; color: #14532d; border-left: 8px solid #16a34a; }
+  .nb-cat-sansu > h3  { background: #dbeafe; color: #1e3a8a; border-left: 8px solid #2563eb; }
+  .nb-cat-shakai > h3 { background: #fef3c7; color: #78350f; border-left: 8px solid #d97706; }
+  .nb-cat-kokugo > h3 { background: #fce7f3; color: #831843; border-left: 8px solid #db2777; }
+
+  .nb-subgroup { margin: 12px 0 18px; }
+  .nb-subgroup h4 {
+    font-size: 14px; color: #4b5563;
+    margin: 0 0 8px; padding: 6px 12px;
+    background: #f3f4f6; border-radius: 8px;
+  }
+  .nb-item.is-solved { background: #f0fdf4; border-color: #86efac; }
+  .nb-item.is-redo   { background: #fff1f2; border-color: #fca5a5; }
+  .nb-item .nb-status { flex-shrink: 0; font-size: 16px; }
 </style>
 <div class="panel" id="t-notebook">
   <div style="margin-bottom:16px;">
-    <h2 style="margin-top:0;">📋 ノート — 解けた問題 / 直し問題</h2>
-    <p style="color:#6b7280; font-size:14px;">今までにチェックした問題が一覧で見られるよ。問題をタップするとその問題にジャンプします。</p>
+    <h2 style="margin-top:0;">📋 ノート — 目次</h2>
+    <p style="color:#6b7280; font-size:14px;">カテゴリ別に全問題が並んでいます。タップでその問題にジャンプ。<br>✅ 解けた・🔁 直し問題はアイコンで表示されます。</p>
   </div>
   <div class="nb-stats">
     <div class="nb-stat" style="border-color:#86efac;">
       <div class="nb-stat-num" style="color:#16a34a;" id="nb-solved-count">0</div>
-      <div class="nb-stat-label">✅ 解けた問題</div>
+      <div class="nb-stat-label">✅ 解けた</div>
     </div>
     <div class="nb-stat" style="border-color:#fca5a5;">
       <div class="nb-stat-num" style="color:#dc2626;" id="nb-redo-count">0</div>
@@ -2809,14 +2833,7 @@
       <div class="nb-stat-label">📚 全問題</div>
     </div>
   </div>
-  <div class="notebook-section nb-solved">
-    <h3>✅ 解けた問題</h3>
-    <div class="nb-list" id="nb-solved-list"></div>
-  </div>
-  <div class="notebook-section nb-redo">
-    <h3>🔁 直し問題</h3>
-    <div class="nb-list" id="nb-redo-list"></div>
-  </div>
+  <div id="nb-categories"></div>
 </div>
 
 <!-- ============================================================= -->
@@ -2897,96 +2914,117 @@
     renderNotebook();
   }
 
-  // 📋 ノートタブ：解けた・直し問題リストを描画
+  // 📋 ノートタブ：カテゴリ別の目次を描画
   function renderNotebook() {
-    const solvedListEl = document.getElementById('nb-solved-list');
-    const redoListEl = document.getElementById('nb-redo-list');
+    const catEl = document.getElementById('nb-categories');
     const solvedCntEl = document.getElementById('nb-solved-count');
     const redoCntEl = document.getElementById('nb-redo-count');
     const totalCntEl = document.getElementById('nb-total-count');
-    if (!solvedListEl) return;
+    if (!catEl) return;
 
-    // 全問題を集める
-    const allQs = document.querySelectorAll('.panel:not(#t-sticker-book):not(#t-notebook) .question');
-    const totalCount = allQs.length;
-    if (totalCntEl) totalCntEl.textContent = totalCount;
+    // タブを「カテゴリ → サブグループ（回・単元）」にマッピング
+    const TABS = [
+      { panelId: 't-rika-5',      cat: 'rika',   subLabel: '前期 第5回' },
+      { panelId: 't-math-5',      cat: 'sansu',  subLabel: '前期 第5回' },
+      { panelId: 't-math-4',      cat: 'sansu',  subLabel: '前期 第4回' },
+      { panelId: 't-text-hayasa', cat: 'sansu',  subLabel: 'MANABIE 速さ' },
+      { panelId: 't-attack',      cat: 'sansu',  subLabel: 'アタック 第6単元' },
+      { panelId: 't-wariai62',    cat: 'sansu',  subLabel: 'まなびー 6-2 割合×割合' },
+    ];
+    const CATEGORIES = [
+      { id: 'rika',   emoji: '🧪', name: '理科' },
+      { id: 'sansu',  emoji: '🔢', name: '算数' },
+      { id: 'shakai', emoji: '🌏', name: '社会' },
+      { id: 'kokugo', emoji: '📖', name: '国語' },
+    ];
 
-    // qid 別の情報 (タブ名・問題タイトル)
-    const tabLabel = {
-      't-rika-5': '理科5回',
-      't-math-5': '算数5回',
-      't-math-4': '算数4回',
-      't-text-hayasa': '速さ',
-      't-attack': 'アタック',
-      't-wariai62': 'まなびー6-2',
-    };
-
-    const solvedItems = [];
-    const redoItems = [];
-    allQs.forEach(q => {
-      const qid = q.id;
-      const st = state[qid];
-      if (!st) return;
-      const h3 = q.querySelector('h3');
-      const qnumEl = h3 ? h3.querySelector('.qnum') : null;
-      const qnum = qnumEl ? qnumEl.textContent : '問';
-      const title = h3 ? h3.textContent.replace(qnum, '').trim() : '(無題)';
-      const panel = q.closest('.panel');
-      const panelId = panel ? panel.id : '';
-      const tag = tabLabel[panelId] || '';
-      const item = { qid, qnum, title, tag };
-      if (st === 'solved') solvedItems.push(item);
-      else if (st === 'redo') redoItems.push(item);
+    // 全問題を集計
+    let totalCount = 0, solvedCount = 0, redoCount = 0;
+    const itemsByTab = {};
+    TABS.forEach(t => {
+      const panel = document.getElementById(t.panelId);
+      if (!panel) return;
+      const qs = panel.querySelectorAll('.question');
+      const arr = [];
+      qs.forEach(q => {
+        const qid = q.id;
+        const h3 = q.querySelector('h3');
+        const qnumEl = h3 ? h3.querySelector('.qnum') : null;
+        const qnum = qnumEl ? qnumEl.textContent : '問';
+        const title = h3 ? h3.textContent.replace(qnum, '').trim() : '(無題)';
+        const st = state[qid] || null;
+        if (st === 'solved') solvedCount++;
+        else if (st === 'redo') redoCount++;
+        totalCount++;
+        arr.push({ qid, qnum, title, status: st });
+      });
+      itemsByTab[t.panelId] = arr;
     });
 
-    if (solvedCntEl) solvedCntEl.textContent = solvedItems.length;
-    if (redoCntEl) redoCntEl.textContent = redoItems.length;
+    if (solvedCntEl) solvedCntEl.textContent = solvedCount;
+    if (redoCntEl) redoCntEl.textContent = redoCount;
+    if (totalCntEl) totalCntEl.textContent = totalCount;
 
-    const buildItem = (it) => {
-      const a = document.createElement('a');
-      a.className = 'nb-item';
-      a.href = '#' + it.qid;
-      a.innerHTML = `
-        <span class="tab-tag">${it.tag}</span>
-        <span class="nb-qnum">${it.qnum}</span>
-        <span class="nb-title">${it.title}</span>
-        <span class="nb-arrow">→</span>
-      `;
-      a.addEventListener('click', (e) => {
-        e.preventDefault();
-        // 該当タブに切替
-        const targetEl = document.getElementById(it.qid);
-        if (!targetEl) return;
-        const panel = targetEl.closest('.panel');
-        if (panel) {
-          document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-          document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-          const tabBtn = document.querySelector(`.tab[data-target="${panel.id}"]`);
-          if (tabBtn) tabBtn.classList.add('active');
-          panel.classList.add('active');
-          setTimeout(() => {
-            targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            targetEl.style.transition = 'background 0.4s';
-            targetEl.style.background = '#fef3c7';
-            setTimeout(() => { targetEl.style.background = ''; }, 1200);
-          }, 50);
-        }
+    // 目次を組み立て
+    catEl.innerHTML = '';
+    CATEGORIES.forEach(cat => {
+      const tabsInCat = TABS.filter(t => t.cat === cat.id);
+      const hasAny = tabsInCat.some(t => (itemsByTab[t.panelId] || []).length > 0);
+      if (!hasAny) return; // そのカテゴリに問題がなければスキップ
+
+      const catDiv = document.createElement('div');
+      catDiv.className = 'nb-category nb-cat-' + cat.id;
+      const totalInCat = tabsInCat.reduce((sum, t) => sum + (itemsByTab[t.panelId] || []).length, 0);
+      catDiv.innerHTML = `<h3>${cat.emoji} ${cat.name} <span style="font-size:14px; font-weight:normal; color:#6b7280;">（${totalInCat}問）</span></h3>`;
+
+      tabsInCat.forEach(t => {
+        const items = itemsByTab[t.panelId] || [];
+        if (items.length === 0) return;
+        const subDiv = document.createElement('div');
+        subDiv.className = 'nb-subgroup';
+        subDiv.innerHTML = `<h4>${t.subLabel} <span style="font-weight:normal; color:#9ca3af;">（${items.length}問）</span></h4>`;
+        const listDiv = document.createElement('div');
+        listDiv.className = 'nb-list';
+        items.forEach(it => listDiv.appendChild(buildNbItem(it)));
+        subDiv.appendChild(listDiv);
+        catDiv.appendChild(subDiv);
       });
-      return a;
-    };
 
-    solvedListEl.innerHTML = '';
-    redoListEl.innerHTML = '';
-    if (solvedItems.length === 0) {
-      solvedListEl.innerHTML = '<div class="nb-empty">まだ解けた問題はないよ。問題を解いて「✅ 解けた」をタップしてみよう！</div>';
-    } else {
-      solvedItems.forEach(it => solvedListEl.appendChild(buildItem(it)));
-    }
-    if (redoItems.length === 0) {
-      redoListEl.innerHTML = '<div class="nb-empty">直し問題はないよ。すばらしい！</div>';
-    } else {
-      redoItems.forEach(it => redoListEl.appendChild(buildItem(it)));
-    }
+      catEl.appendChild(catDiv);
+    });
+  }
+
+  function buildNbItem(it) {
+    const a = document.createElement('a');
+    a.className = 'nb-item' + (it.status === 'solved' ? ' is-solved' : it.status === 'redo' ? ' is-redo' : '');
+    a.href = '#' + it.qid;
+    const statusIcon = it.status === 'solved' ? '✅' : it.status === 'redo' ? '🔁' : '';
+    a.innerHTML = `
+      <span class="nb-qnum">${it.qnum}</span>
+      <span class="nb-title">${it.title}</span>
+      <span class="nb-status">${statusIcon}</span>
+      <span class="nb-arrow">→</span>
+    `;
+    a.addEventListener('click', (e) => {
+      e.preventDefault();
+      const targetEl = document.getElementById(it.qid);
+      if (!targetEl) return;
+      const panel = targetEl.closest('.panel');
+      if (panel) {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+        const tabBtn = document.querySelector(`.tab[data-target="${panel.id}"]`);
+        if (tabBtn) tabBtn.classList.add('active');
+        panel.classList.add('active');
+        setTimeout(() => {
+          targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          targetEl.style.transition = 'background 0.4s';
+          targetEl.style.background = '#fef3c7';
+          setTimeout(() => { targetEl.style.background = ''; }, 1200);
+        }, 50);
+      }
+    });
+    return a;
   }
 
   function applyState(qEl, qid) {
