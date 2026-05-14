@@ -387,23 +387,26 @@
   .panel.science .q-text { border-left-color: #047857; }
   .panel.science .q-text::before { color: #047857; }
 
-  /* 答えを隠すギミック */
-  .answer, .calc {
+  /* 問題以外を全部隠す（h3 と q-text 以外は最初は見えない） */
+  .question > figure.fig,
+  .question > .intro,
+  .question > .dialog,
+  .question > .calc,
+  .question > .answer,
+  .question > .check-bar {
     display: none;
   }
-  .question.revealed .answer,
-  .question.revealed .calc {
+  .question.revealed > figure.fig,
+  .question.revealed > .intro,
+  .question.revealed > .dialog,
+  .question.revealed > .calc,
+  .question.revealed > .answer,
+  .question.revealed > .check-bar {
     display: block;
     animation: fadeIn 0.4s;
   }
-  /* まなびー6-2 タブは「会話の後に正式な計算と答え」を常に表示（隠さない） */
-  #t-wariai62 .calc,
-  #t-wariai62 .answer {
-    display: block !important;
-  }
-  #t-wariai62 .reveal-btn,
-  #t-wariai62 .reveal-hint {
-    display: none !important;
+  .question.revealed > .check-bar {
+    display: flex;
   }
   /* 会話の後に「正式な解き方」ラベルを自動表示 */
   #t-wariai62 .calc::before {
@@ -958,7 +961,7 @@
   </button>
   <button class="tab" data-target="t-notebook" style="background:linear-gradient(135deg,#dcfce7,#86efac); color:#14532d;">
     📋 ノート
-    <span class="date">解けた・解きなおし</span>
+    <span class="date">解けた・直し問題</span>
   </button>
   <button class="tab" data-target="t-sticker-book" style="background:linear-gradient(135deg,#fef3c7,#fbbf24); color:#78350f;">
     🎟 シールちょう
@@ -2632,7 +2635,7 @@
 </div>
 
 <!-- ============================================================= -->
-<!-- 📋 ノート（解けた・解きなおし一覧）                              -->
+<!-- 📋 ノート（解けた・直し問題一覧）                              -->
 <!-- ============================================================= -->
 <style>
   .notebook-section { margin: 24px 0; }
@@ -2686,7 +2689,7 @@
 </style>
 <div class="panel" id="t-notebook">
   <div style="margin-bottom:16px;">
-    <h2 style="margin-top:0;">📋 ノート — 解けた問題 / 解きなおす問題</h2>
+    <h2 style="margin-top:0;">📋 ノート — 解けた問題 / 直し問題</h2>
     <p style="color:#6b7280; font-size:14px;">今までにチェックした問題が一覧で見られるよ。問題をタップするとその問題にジャンプします。</p>
   </div>
   <div class="nb-stats">
@@ -2696,7 +2699,7 @@
     </div>
     <div class="nb-stat" style="border-color:#fca5a5;">
       <div class="nb-stat-num" style="color:#dc2626;" id="nb-redo-count">0</div>
-      <div class="nb-stat-label">🔁 解きなおす問題</div>
+      <div class="nb-stat-label">🔁 直し問題</div>
     </div>
     <div class="nb-stat" style="border-color:#bfdbfe;">
       <div class="nb-stat-num" style="color:#1e40af;" id="nb-total-count">0</div>
@@ -2708,7 +2711,7 @@
     <div class="nb-list" id="nb-solved-list"></div>
   </div>
   <div class="notebook-section nb-redo">
-    <h3>🔁 解きなおす問題</h3>
+    <h3>🔁 直し問題</h3>
     <div class="nb-list" id="nb-redo-list"></div>
   </div>
 </div>
@@ -2791,7 +2794,7 @@
     renderNotebook();
   }
 
-  // 📋 ノートタブ：解けた・解きなおしリストを描画
+  // 📋 ノートタブ：解けた・直し問題リストを描画
   function renderNotebook() {
     const solvedListEl = document.getElementById('nb-solved-list');
     const redoListEl = document.getElementById('nb-redo-list');
@@ -2877,7 +2880,7 @@
       solvedItems.forEach(it => solvedListEl.appendChild(buildItem(it)));
     }
     if (redoItems.length === 0) {
-      redoListEl.innerHTML = '<div class="nb-empty">解きなおし問題はないよ。すばらしい！</div>';
+      redoListEl.innerHTML = '<div class="nb-empty">直し問題はないよ。すばらしい！</div>';
     } else {
       redoItems.forEach(it => redoListEl.appendChild(buildItem(it)));
     }
@@ -2926,7 +2929,7 @@
     progBar.innerHTML = `
       <div class="stat total">📋 全問<span class="num total-num">0</span></div>
       <div class="stat solved">✅ 解けた<span class="num solved-num">0</span></div>
-      <div class="stat redo">🔁 解きなおし<span class="num redo-num">0</span></div>
+      <div class="stat redo">🔁 直し問題<span class="num redo-num">0</span></div>
       <div class="stat untouched">⬜ 未<span class="num untouched-num">0</span></div>
       <div class="bar">
         <div class="seg-solved" style="width:0%"></div>
@@ -2955,17 +2958,18 @@
       q.dataset.qid = qid;
       q.id = qid;
 
-      // 答えを見るボタンを挿入（calc/answer の前）
-      const firstHidden = q.querySelector('.calc, .answer');
-      if (firstHidden) {
+      // 答えを見るボタンを挿入（q-text の直後＝図/会話/式/答えの前）
+      const qText = q.querySelector('.q-text');
+      if (qText) {
         const revealBtn = document.createElement('button');
         revealBtn.className = 'reveal-btn';
-        revealBtn.innerHTML = '👀 答えと考え方を見る';
+        revealBtn.innerHTML = '👀 答えを見る';
         const hint = document.createElement('div');
         hint.className = 'reveal-hint';
         hint.textContent = '↑ まずは自分で考えてから、ボタンをタップしよう！';
-        firstHidden.parentNode.insertBefore(hint, firstHidden);
-        firstHidden.parentNode.insertBefore(revealBtn, firstHidden);
+        // q-textの直後に挿入
+        qText.parentNode.insertBefore(revealBtn, qText.nextSibling);
+        qText.parentNode.insertBefore(hint, revealBtn.nextSibling);
         revealBtn.addEventListener('click', () => {
           q.classList.add('revealed');
         });
@@ -2976,7 +2980,7 @@
       bar.innerHTML = `
         <span class="label">この問題は…</span>
         <button class="check-btn solved" data-status="solved">✅ 解けた</button>
-        <button class="check-btn redo" data-status="redo">🔁 解きなおし</button>
+        <button class="check-btn redo" data-status="redo">🔁 直し問題にする</button>
       `;
       q.appendChild(bar);
       bar.querySelectorAll('.check-btn').forEach(btn => {
