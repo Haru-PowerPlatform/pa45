@@ -697,6 +697,37 @@
   }
   .rarity-sr .rarity-badge { background: linear-gradient(135deg, #f59e0b, #b45309); }
 
+  /* GOD：最高ランク・虹+金の超キラキラ */
+  .rarity-god {
+    background:
+      radial-gradient(ellipse at 50% 30%, rgba(255,255,255,1) 0%, rgba(255,255,255,0.5) 15%, transparent 40%),
+      conic-gradient(from 0deg, #ef4444, #f59e0b, #eab308, #84cc16, #14b8a6, #3b82f6, #a855f7, #ec4899, #ef4444);
+    animation: spin 6s linear infinite, pulse-glow 1.5s ease-in-out infinite;
+    box-shadow:
+      inset 0 0 20px rgba(255,255,255,0.6),
+      0 0 40px rgba(251,191,36,1),
+      0 0 80px rgba(236,72,153,0.6),
+      0 8px 16px rgba(0,0,0,0.3);
+    border: 3px solid #fbbf24;
+  }
+  .rarity-god .rarity-badge {
+    background: linear-gradient(135deg, #7c2d12, #000);
+    color: #fde047;
+    font-weight: bold;
+    text-shadow: 0 0 4px #fbbf24;
+  }
+  .rarity-god .name { color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.8); font-weight: bold; }
+  .rarity-god .emoji { filter: drop-shadow(0 0 8px gold); }
+
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  @keyframes pulse-glow {
+    0%, 100% { box-shadow: inset 0 0 20px rgba(255,255,255,0.6), 0 0 40px rgba(251,191,36,1), 0 0 80px rgba(236,72,153,0.6), 0 8px 16px rgba(0,0,0,0.3); }
+    50% { box-shadow: inset 0 0 30px rgba(255,255,255,0.9), 0 0 60px rgba(251,191,36,1), 0 0 120px rgba(236,72,153,0.9), 0 8px 16px rgba(0,0,0,0.3); }
+  }
+
   /* SUR：金銀虹のキラキラ。SRより派手・URより落ち着いたゴールド寄り */
   .rarity-sur {
     background:
@@ -924,6 +955,10 @@
   <button class="tab math" data-target="t-wariai62" style="background:linear-gradient(135deg,#fdf4ff,#f5d0fe); color:#86198f;">
     <span class="subject">算数</span>まなびー 6-2
     <span class="date">割合×割合</span>
+  </button>
+  <button class="tab" data-target="t-notebook" style="background:linear-gradient(135deg,#dcfce7,#86efac); color:#14532d;">
+    📋 ノート
+    <span class="date">解けた・解きなおし</span>
   </button>
   <button class="tab" data-target="t-sticker-book" style="background:linear-gradient(135deg,#fef3c7,#fbbf24); color:#78350f;">
     🎟 シールちょう
@@ -2597,6 +2632,88 @@
 </div>
 
 <!-- ============================================================= -->
+<!-- 📋 ノート（解けた・解きなおし一覧）                              -->
+<!-- ============================================================= -->
+<style>
+  .notebook-section { margin: 24px 0; }
+  .notebook-section h3 {
+    font-size: 20px;
+    padding: 12px 18px;
+    border-radius: 10px;
+    margin: 0 0 16px;
+  }
+  .nb-solved h3 { background: #dcfce7; color: #14532d; border-left: 6px solid #16a34a; }
+  .nb-redo h3 { background: #fee2e2; color: #7f1d1d; border-left: 6px solid #dc2626; }
+  .nb-list { display: grid; gap: 10px; }
+  .nb-item {
+    display: flex; gap: 12px; align-items: center;
+    padding: 12px 16px;
+    background: white;
+    border: 2px solid #e5e7eb;
+    border-radius: 10px;
+    text-decoration: none;
+    color: #1f2937;
+    transition: transform 0.1s, box-shadow 0.1s;
+  }
+  .nb-item:hover { transform: translateX(4px); box-shadow: 0 3px 8px rgba(0,0,0,0.1); }
+  .nb-item .tab-tag {
+    font-size: 11px; padding: 3px 8px; border-radius: 999px;
+    background: #f3f4f6; color: #4b5563; font-weight: bold; flex-shrink: 0;
+  }
+  .nb-item .nb-qnum {
+    font-size: 13px; padding: 3px 10px; border-radius: 999px;
+    background: #3b82f6; color: white; font-weight: bold; flex-shrink: 0;
+  }
+  .nb-item .nb-title { flex: 1; font-size: 15px; }
+  .nb-item .nb-arrow { color: #9ca3af; font-size: 18px; flex-shrink: 0; }
+  .nb-empty {
+    padding: 24px; text-align: center; color: #9ca3af;
+    background: #f9fafb; border-radius: 10px;
+    border: 2px dashed #d1d5db;
+  }
+  .nb-stats {
+    display: flex; gap: 14px; margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .nb-stat {
+    flex: 1; min-width: 140px;
+    padding: 14px 16px; background: white;
+    border-radius: 10px; border: 2px solid #e5e7eb;
+    text-align: center;
+  }
+  .nb-stat .nb-stat-num { font-size: 28px; font-weight: bold; }
+  .nb-stat .nb-stat-label { font-size: 13px; color: #6b7280; }
+</style>
+<div class="panel" id="t-notebook">
+  <div style="margin-bottom:16px;">
+    <h2 style="margin-top:0;">📋 ノート — 解けた問題 / 解きなおす問題</h2>
+    <p style="color:#6b7280; font-size:14px;">今までにチェックした問題が一覧で見られるよ。問題をタップするとその問題にジャンプします。</p>
+  </div>
+  <div class="nb-stats">
+    <div class="nb-stat" style="border-color:#86efac;">
+      <div class="nb-stat-num" style="color:#16a34a;" id="nb-solved-count">0</div>
+      <div class="nb-stat-label">✅ 解けた問題</div>
+    </div>
+    <div class="nb-stat" style="border-color:#fca5a5;">
+      <div class="nb-stat-num" style="color:#dc2626;" id="nb-redo-count">0</div>
+      <div class="nb-stat-label">🔁 解きなおす問題</div>
+    </div>
+    <div class="nb-stat" style="border-color:#bfdbfe;">
+      <div class="nb-stat-num" style="color:#1e40af;" id="nb-total-count">0</div>
+      <div class="nb-stat-label">📚 全問題</div>
+    </div>
+  </div>
+  <div class="notebook-section nb-solved">
+    <h3>✅ 解けた問題</h3>
+    <div class="nb-list" id="nb-solved-list"></div>
+  </div>
+  <div class="notebook-section nb-redo">
+    <h3>🔁 解きなおす問題</h3>
+    <div class="nb-list" id="nb-redo-list"></div>
+  </div>
+</div>
+
+<!-- ============================================================= -->
 <!-- 🎟 シールちょう                                                 -->
 <!-- ============================================================= -->
 <div class="panel" id="t-sticker-book">
@@ -2635,8 +2752,12 @@
     <div class="sticker-book" id="book-ur"></div>
   </div>
   <div class="sticker-section">
-    <h3 style="color:#dc2626;">🌞 スーパーウルトラレア（最高ランク・出現率0.5％）</h3>
+    <h3 style="color:#dc2626;">🌞 スーパーウルトラレア（激レア・出現率1.5％）</h3>
     <div class="sticker-book" id="book-sur"></div>
+  </div>
+  <div class="sticker-section">
+    <h3 style="background:linear-gradient(90deg,#ef4444,#fbbf24,#ec4899,#a855f7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;font-weight:bold;">👑 ゴッド（最高ランク・出現率0.1％）</h3>
+    <div class="sticker-book" id="book-god"></div>
   </div>
 </div>
 
@@ -2667,6 +2788,99 @@
 
   function saveState() {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    renderNotebook();
+  }
+
+  // 📋 ノートタブ：解けた・解きなおしリストを描画
+  function renderNotebook() {
+    const solvedListEl = document.getElementById('nb-solved-list');
+    const redoListEl = document.getElementById('nb-redo-list');
+    const solvedCntEl = document.getElementById('nb-solved-count');
+    const redoCntEl = document.getElementById('nb-redo-count');
+    const totalCntEl = document.getElementById('nb-total-count');
+    if (!solvedListEl) return;
+
+    // 全問題を集める
+    const allQs = document.querySelectorAll('.panel:not(#t-sticker-book):not(#t-notebook) .question');
+    const totalCount = allQs.length;
+    if (totalCntEl) totalCntEl.textContent = totalCount;
+
+    // qid 別の情報 (タブ名・問題タイトル)
+    const tabLabel = {
+      't-rika-5': '理科5回',
+      't-math-5': '算数5回',
+      't-math-4': '算数4回',
+      't-text-hayasa': '速さ',
+      't-attack': 'アタック',
+      't-wariai62': 'まなびー6-2',
+    };
+
+    const solvedItems = [];
+    const redoItems = [];
+    allQs.forEach(q => {
+      const qid = q.id;
+      const st = state[qid];
+      if (!st) return;
+      const h3 = q.querySelector('h3');
+      const qnumEl = h3 ? h3.querySelector('.qnum') : null;
+      const qnum = qnumEl ? qnumEl.textContent : '問';
+      const title = h3 ? h3.textContent.replace(qnum, '').trim() : '(無題)';
+      const panel = q.closest('.panel');
+      const panelId = panel ? panel.id : '';
+      const tag = tabLabel[panelId] || '';
+      const item = { qid, qnum, title, tag };
+      if (st === 'solved') solvedItems.push(item);
+      else if (st === 'redo') redoItems.push(item);
+    });
+
+    if (solvedCntEl) solvedCntEl.textContent = solvedItems.length;
+    if (redoCntEl) redoCntEl.textContent = redoItems.length;
+
+    const buildItem = (it) => {
+      const a = document.createElement('a');
+      a.className = 'nb-item';
+      a.href = '#' + it.qid;
+      a.innerHTML = `
+        <span class="tab-tag">${it.tag}</span>
+        <span class="nb-qnum">${it.qnum}</span>
+        <span class="nb-title">${it.title}</span>
+        <span class="nb-arrow">→</span>
+      `;
+      a.addEventListener('click', (e) => {
+        e.preventDefault();
+        // 該当タブに切替
+        const targetEl = document.getElementById(it.qid);
+        if (!targetEl) return;
+        const panel = targetEl.closest('.panel');
+        if (panel) {
+          document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+          document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+          const tabBtn = document.querySelector(`.tab[data-target="${panel.id}"]`);
+          if (tabBtn) tabBtn.classList.add('active');
+          panel.classList.add('active');
+          setTimeout(() => {
+            targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            targetEl.style.transition = 'background 0.4s';
+            targetEl.style.background = '#fef3c7';
+            setTimeout(() => { targetEl.style.background = ''; }, 1200);
+          }, 50);
+        }
+      });
+      return a;
+    };
+
+    solvedListEl.innerHTML = '';
+    redoListEl.innerHTML = '';
+    if (solvedItems.length === 0) {
+      solvedListEl.innerHTML = '<div class="nb-empty">まだ解けた問題はないよ。問題を解いて「✅ 解けた」をタップしてみよう！</div>';
+    } else {
+      solvedItems.forEach(it => solvedListEl.appendChild(buildItem(it)));
+    }
+    if (redoItems.length === 0) {
+      redoListEl.innerHTML = '<div class="nb-empty">解きなおし問題はないよ。すばらしい！</div>';
+    } else {
+      redoItems.forEach(it => redoListEl.appendChild(buildItem(it)));
+    }
   }
 
   function applyState(qEl, qid) {
@@ -2855,7 +3069,7 @@
   // ============================================================
   // 🎟 シールちょう機能
   // ============================================================
-  // 🍭 ボンボンドロップ風シール（全151種）
+  // 🍭 ボンボンドロップ風シール（全154種）
   const STICKERS = [
     // ===== コモン 70種 =====
     // スイーツ系（25）
@@ -3025,13 +3239,18 @@
     {id:'ur9', e:'🦸', n:'ヒーロー', r:'ur'},
     {id:'ur10', e:'🪙', n:'でんせつのコイン', r:'ur'},
 
-    // ===== スーパーウルトラレア 1種（最高ランク・超レア） =====
+    // ===== スーパーウルトラレア 3種（最高ランク手前・激レア） =====
     {id:'sur1', e:'🌞', n:'たいようの王', r:'sur'},
+    {id:'sur2', e:'🐉', n:'伝説のドラゴン', r:'sur'},
+    {id:'sur3', e:'🌌', n:'銀河の女神', r:'sur'},
+
+    // ===== ゴッド 1種（最高ランク・超激レア 0.1%） =====
+    {id:'god1', e:'👑', n:'マナビーゴッド', r:'god'},
   ];
 
-  const RARITY_LABEL = {c:'コモン', r:'レア', sr:'スーパーレア', ur:'ウルトラレア', sur:'スーパーウルトラレア'};
-  // SUR は最高レア（0.5%・全レアの中で一番出にくい）
-  const RARITY_RATES = {c:0.65, r:0.24, sr:0.08, ur:0.025, sur:0.005};
+  const RARITY_LABEL = {c:'コモン', r:'レア', sr:'スーパーレア', ur:'ウルトラレア', sur:'スーパーウルトラレア', god:'ゴッド'};
+  // GOD = 最高ランク0.1%、SUR = 0.6%（3種なので少し増やす）、その他は微調整
+  const RARITY_RATES = {c:0.64, r:0.24, sr:0.08, ur:0.024, sur:0.015, god:0.001};
 
   const STICKER_KEY = 'manabie_stickers_v1';
   const SOLVED_HIST_KEY = 'manabie_solved_history_v1';
@@ -3131,7 +3350,7 @@
     card.innerHTML = `
       <div style="font-size:60px; margin:20px 0;">🏆</div>
       <div class="label" style="font-size:22px; color:#b45309;">コンプリート！</div>
-      <div class="rarity" style="margin-top:8px;">151種ぜんぶ集めたよ！すごい！</div>
+      <div class="rarity" style="margin-top:8px;">154種ぜんぶ集めたよ！すごい！</div>
     `;
     document.getElementById('sticker-pop-overlay').classList.add('show');
     spawnConfetti(80);
@@ -3149,11 +3368,11 @@
       <div class="rarity">${RARITY_LABEL[sticker.r]}${isNew ? '　🆕 はじめて！' : '　（だぶり）'}</div>
     `;
     document.getElementById('sticker-pop-overlay').classList.add('show');
-    spawnConfetti(sticker.r === 'sur' ? 100 : sticker.r === 'ur' ? 60 : sticker.r === 'sr' ? 40 : sticker.r === 'r' ? 20 : 10);
+    spawnConfetti(sticker.r === 'god' ? 200 : sticker.r === 'sur' ? 100 : sticker.r === 'ur' ? 60 : sticker.r === 'sr' ? 40 : sticker.r === 'r' ? 20 : 10);
   }
 
   function renderStickerBook() {
-    const groups = {c: [], r: [], sr: [], ur: [], sur: []};
+    const groups = {c: [], r: [], sr: [], ur: [], sur: [], god: []};
     STICKERS.forEach(s => groups[s.r].push(s));
     let collected = 0;
     Object.entries(groups).forEach(([r, list]) => {
@@ -3280,6 +3499,7 @@
   // 初期化
   updatePlayerBar();
   renderStickerBook();
+  renderNotebook();
 
   // 🔄 更新ボタンで ?t=... 付きで来たら、全画像にもキャッシュバスターを付けて再取得
   if (location.search.includes('t=')) {
