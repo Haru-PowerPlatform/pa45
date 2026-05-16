@@ -88,17 +88,38 @@ def load_env():
 # ── 参加者数・開催回数を activities から集計 ─────────────────
 
 def calc_totals():
-    """現在の activities JSON から PA45 の回数・累計参加者を集計"""
-    total_sessions = 0
-    total_participants = 0
+    """現在の activities JSON から PA45 の回数・累計参加者を集計。
+
+    同じ Vol の重複JSON（例: 古い日付プレフィックスのファイルが残っている）が
+    あっても Vol 番号で名寄せして二重カウントしない。
+    """
+    by_vol = {}  # vol番号 -> {"participants", "fname", "canonical"}
     for f in sorted(ACTIVITIES_DIR.glob("*-pa45-vol*.json")):
+        m = re.search(r"pa45-vol(\d+)", f.name)
+        if not m:
+            continue
+        vol = int(m.group(1))
         try:
             data = json.loads(f.read_text(encoding="utf-8"))
-            if data.get("type") == "PA45":
-                total_sessions += 1
-                total_participants += data.get("participants", 0)
         except Exception:
-            pass
+            continue
+        if data.get("type") != "PA45":
+            continue
+        participants = data.get("participants", 0)
+        # ファイル名先頭の日付と JSON 内の date が一致するものを「正」とみなす
+        canonical = (f.name[:10] == data.get("date"))
+        entry = {"participants": participants, "fname": f.name, "canonical": canonical}
+        if vol in by_vol:
+            print(f"  ⚠ Vol.{vol} の重複JSONを検出: {f.name} / {by_vol[vol]['fname']}")
+            # 既存が非正規・今回が正規なら差し替える。それ以外は既存を維持。
+            if canonical and not by_vol[vol]["canonical"]:
+                by_vol[vol] = entry
+        else:
+            by_vol[vol] = entry
+    if not by_vol:
+        return 0, 0
+    total_sessions = max(by_vol)  # 最新 Vol 番号 = 開催回数（欠番があってもズレない）
+    total_participants = sum(e["participants"] for e in by_vol.values())
     return total_sessions, total_participants
 
 
@@ -174,7 +195,50 @@ def build_past_card(vol, date_str, theme, description, participants, connpass_ur
     return card
 
 
-def update_sessions_html(vol, date_str, theme, description, participants, connpass_url):
+def build_next_event_block(vol, next_event):
+    """next-event セクションのHTMLを生成する。
+
+    next_event（dict）に vol が入っていれば次回イベントを実データで表示。
+    無ければ従来どおり「準備中」を表示する。
+    """
+    if next_event and next_event.get("vol"):
+        nv     = next_event["vol"]
+        ndate  = next_event.get("date") or "日程調整中"
+        ntheme = next_event.get("theme", "")
+        ndesc  = next_event.get("description") or ntheme
+        if next_event.get("connpass_url"):
+            nurl = next_event["connpass_url"]
+        elif next_event.get("event_id"):
+            nurl = f"https://powerautomate-create.connpass.com/event/{next_event['event_id']}/"
+        else:
+            nurl = "https://powerautomate-create.connpass.com/"
+        return """<div class="next-event">
+  <div class="next-label">Next Session</div>
+  <div class="next-date">{ndate} 開催</div>
+  <div class="next-title">PA45 第{nv}回：{ntheme}</div>
+  <div class="next-meta">オンライン（Microsoft Teams）· 約45分 · 無料</div>
+  <p>{ndesc}</p>
+  <a href="{nurl}" class="btn-connpass">
+    connpassで参加登録する →
+  </a>
+</div>
+      </div>""".format(nv=nv, ndate=ndate, ntheme=ntheme, ndesc=ndesc, nurl=nurl)
+
+    return """<div class="next-event">
+  <div class="next-label">Next Session — 準備中</div>
+  <div class="next-date">次回日程は調整中です</div>
+  <div class="next-title">PA45 第{next_vol}回（準備中）</div>
+  <div class="next-meta">オンライン（Microsoft Teams）· 約45分 · 無料</div>
+  <p>次回のconnpassイベントが公開されたらここに掲載します。</p>
+  <a href="https://powerautomate-create.connpass.com/" class="btn-connpass">
+    connpassグループをフォローする →
+  </a>
+</div>
+      </div>""".format(next_vol=vol + 1)
+
+
+def update_sessions_html(vol, date_str, theme, description, participants, connpass_url,
+                         next_event=None):
     html = SESSIONS_HTML.read_text(encoding="utf-8")
 
     # 新しいカードを生成
@@ -188,27 +252,20 @@ def update_sessions_html(vol, date_str, theme, description, participants, connpa
     else:
         print("  ⚠ sessions/index.html: 挿入マーカーが見つかりません。手動で追加してください。")
 
-    # next-event セクションを「次回未定」に更新
+    # next-event セクションを更新（次回情報があれば実データ、無ければ準備中）
     next_event_pattern = re.compile(
         r'<div class="next-event">.*?</div>\s*</div>',
         re.DOTALL
     )
-    next_event_replacement = """<div class="next-event">
-  <div class="next-label">Next Session — 準備中</div>
-  <div class="next-date">次回日程は調整中です</div>
-  <div class="next-title">PA45 第{next_vol}回（準備中）</div>
-  <div class="next-meta">オンライン（Microsoft Teams）· 約45分 · 無料</div>
-  <p>次回のconnpassイベントが公開されたらここに掲載します。</p>
-  <a href="https://powerautomate-create.connpass.com/" class="btn-connpass">
-    connpassグループをフォローする →
-  </a>
-</div>
-      </div>""".format(next_vol=vol + 1)
+    next_event_replacement = build_next_event_block(vol, next_event)
 
     m = next_event_pattern.search(html)
     if m:
         html = html[:m.start()] + next_event_replacement + html[m.end():]
-        print(f"  sessions/index.html: next-event を「準備中」に更新")
+        if next_event and next_event.get("vol"):
+            print(f"  sessions/index.html: next-event を第{next_event['vol']}回に更新")
+        else:
+            print(f"  sessions/index.html: next-event を「準備中」に更新")
 
     SESSIONS_HTML.write_text(html, encoding="utf-8")
 
@@ -309,6 +366,7 @@ def main():
     description = config.get("description", theme)
     connpass_url = config.get("connpass_url",
                               f"https://powerautomate-create.connpass.com/event/{event_id}/")
+    next_event = config.get("next_event")  # 次回イベント情報（任意）
 
     print(f"  イベント: 第{vol}回「{theme}」({date_str})")
 
@@ -365,15 +423,24 @@ def main():
     update_index_html(total_sessions, total_participants)
 
     # 7. sessions/index.html 更新
-    update_sessions_html(vol, date_str, theme, description, participants, connpass_url)
+    update_sessions_html(vol, date_str, theme, description, participants, connpass_url,
+                         next_event=next_event)
 
     # 8. WordPress 更新
     print("  WordPress を更新中...")
     update_wp_pa45_page(vol, theme, participants)
 
-    # 9. upcoming-event.json をクリア（次回まで空にする）
-    CONFIG_PATH.write_text(json.dumps({}, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print("  upcoming-event.json をクリア（次回イベント設定待ち）")
+    # 9. upcoming-event.json を更新
+    #    next_event があれば次回イベントへ昇格（来週そのまま自動処理される）。
+    #    無ければクリアして次回設定待ちにする。
+    if next_event and next_event.get("vol"):
+        CONFIG_PATH.write_text(
+            json.dumps(next_event, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        print(f"  upcoming-event.json を次回（第{next_event['vol']}回）に更新")
+    else:
+        CONFIG_PATH.write_text(
+            json.dumps({}, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        print("  upcoming-event.json をクリア（次回イベント設定待ち）")
 
     print(f"\n✅ 完了！第{vol}回（{participants}名）の情報を更新しました。")
     print("  → git commit & push は GitHub Actions が自動実行します。")

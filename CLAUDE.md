@@ -210,6 +210,23 @@ START-HERE.md が PL-300 セッションの**単一情報源**。スタイル変
 connpassの参加者数は `scripts/fetch-connpass-participants.py <event_id>` で自動取得可能。
 全自動は `scripts/post-event.py --vol N --event-id XXXXX --date YYYY-MM-DD --theme "テーマ名"` で実行。
 
+### `data/config/upcoming-event.json`（開催後自動更新の入力）
+
+GitHub Actions（`post-event-auto.yml`・木21:15）が読む設定ファイル。`{vol, event_id, date, theme, description, connpass_url}` を持つ。
+
+**任意の `next_event` ブロック**を入れておくと、開催後処理で：
+- `sessions/index.html` の Next Session を「準備中」ではなく**次回イベントの実データ**で表示する
+- 処理後、`upcoming-event.json` を `next_event` の内容へ自動で昇格させる（翌週そのまま自動処理される）
+
+`next_event` を入れなければ従来どおり「準備中」表示＋ファイルはクリアされる。記入例：
+
+```json
+{
+  "vol": 10, "event_id": 393267, "date": "2026-05-14", "theme": "...",
+  "next_event": { "vol": 11, "event_id": 393999, "date": "2026-05-21", "theme": "実行履歴の読み方", "description": "JSONとパスの見方" }
+}
+```
+
 ---
 
 ## 過去回の情報
@@ -366,6 +383,7 @@ Vol.1〜30（Vol.11・Vol.27除く）の28件：**すべて公開済み**（ID 1
 | `scripts/update-blog-content.py` | X投稿スライドの記事内容を一括更新 |
 | `scripts/parse-survey.py` | SharePointからアンケートExcelを取得・集計・JSON出力 |
 | `scripts/cross-post-qiita.py` | WordPressからQiitaへのクロスポスト |
+| `scripts/prepare-youtube.py --vol N --theme ... --src ...` | Teams録画をffmpegでトリミング＋クロップ→YouTube投稿用mp4＋サムネを一括生成 |
 
 ---
 
