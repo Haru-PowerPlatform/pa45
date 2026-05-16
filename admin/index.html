@@ -252,7 +252,8 @@
     const tb = document.getElementById('today-box');
     let focusLines = '';
     daily.forEach(d => {
-      focusLines += `<div class="today-sub" style="margin-top:6px;"><span class="label">🔁 毎日</span> ${d.title}</div>`;
+      const dt = d.link ? `<a href="${d.link}" target="_blank" rel="noopener" style="color:#fde68a;">${d.title}</a>` : d.title;
+      focusLines += `<div class="today-sub" style="margin-top:6px;"><span class="label">🔁 毎日</span> ${dt}</div>`;
     });
     if (todayR) {
       focusLines += `<div class="today-sub" style="margin-top:6px;"><span class="label">⭐ 固定枠</span> ${todayR.title}</div>`;
@@ -272,7 +273,7 @@
       ? daily.map(d => `
         <div class="week-day is-today">
           <div class="wd-day">毎日 🔁</div>
-          <div class="wd-title">${d.title}</div>
+          <div class="wd-title">${d.link ? `<a href="${d.link}" target="_blank" rel="noopener" style="color:#93c5fd;">${d.title} 🔗</a>` : d.title}</div>
           <div class="wd-note">${d.note || ''}</div>
         </div>`).join('')
       : '<div class="wd-note" style="padding:10px;">（毎日タスクなし）</div>';
