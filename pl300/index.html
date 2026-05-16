@@ -110,7 +110,7 @@ footer a{color:var(--accent);text-decoration:none}
 <div class="cards" id="cards"></div>
 
 <footer>
-  <p>更新日: 2026-05-10（107問目まで） / カードをタップで答え表示</p>
+  <p>更新日: 2026-05-16（118問目まで） / カードをタップで答え表示</p>
   <p><a href="https://github.com/Haru-PowerPlatform/pa45/blob/main/docs/pl300-mistakes.md" target="_blank">📝 ミス記録の元データ</a></p>
 </footer>
 
@@ -278,6 +278,19 @@ const data = [
   {lvl:3,cat:"配布",q:"レポートのアクセス回数・利用状況",a:"<strong>使用状況メトリクス（Usage Metrics）</strong>",body:"レポート右上「…」→ 使用状況メトリクスを表示。閲覧者・回数・ページ別アクセスなど自動集計レポート。<br>反射：<br>・「誰がいつ見た？」「アクセス回数」→ 使用状況メトリクス<br>・「レポートが遅い」→ パフォーマンスアナライザー<br>・「依存関係」→ リネージビュー<br>・「セキュリティ監査」→ 監査ログ。ランダム105ミス。"},
   {lvl:2,cat:"視覚化",q:"複数カテゴリのグラフを格子状に",a:"<strong>小さい複数（Small multiples）</strong>",body:"折れ線・棒・面など対応ビジュアル → 「小さい複数」フィールドにディメンションをドラッグ → 自動グリッド分割。<br>反射：「複数カテゴリを並べて比較」「ミニチャート群」「12地域を一望」→ 小さい複数。書式タブで列数・行数調整可。ランダム106。"},
   {lvl:3,cat:"DAX",q:"DAXでエラー時に代替値を返す",a:"<strong>IFERROR(式, 代替値)</strong>",body:"<code>IFERROR(SUM(...) / SUM(...), &quot;N/A&quot;)</code><br>DAX に <code>ERROR</code> 値や <code>TRY</code> 関数は存在しない（M言語の機能と混同しない）。<br>反射：<br>・「エラー時に代替値」→ IFERROR<br>・「ゼロ除算回避（数値結果）」→ DIVIDE<br>・「BLANK判定」→ ISBLANK<br>・「Power Query (M) のエラー処理」→ try ... otherwise。ランダム107ミス。"},
+
+  // === バッチ108〜118 追加（2026-05-16） ===
+  {lvl:3,cat:"配布",q:"既存のPower BIデータセットに接続",a:"<strong>ライブ接続（Live Connection）</strong>",body:"反射：<br>・「既存のPower BIデータセット/SSASに接続」→ ライブ接続<br>・「SQL等の生データソースに直接」→ DirectQuery<br>・「データをモデルに取り込む」→ インポート<br>ライブ接続は完成済みモデルを流用、データ複製しない。ランダム108ミス。"},
+  {lvl:3,cat:"DAX",q:"2つの日付の差（日数・月数）",a:"<strong>DATEDIFF(開始日, 終了日, 単位)</strong>",body:"引数は<strong>古い日付が先・新しい日付が後</strong>。逆にすると負の値。<br>単位：DAY / MONTH / QUARTER / YEAR<br>例：年齢 = DATEDIFF(誕生日, TODAY(), YEAR)。<br>「日付をNだけシフト」は DATEADD（別物）。ランダム109ミス。"},
+  {lvl:3,cat:"DAX",q:"1側から多側の関連行を取得",a:"<strong>RELATEDTABLE</strong>",body:"・<strong>RELATED</strong>：多→1の値取得（1行返す）例：Salesから製品名<br>・<strong>RELATEDTABLE</strong>：1→多の関連行取得（テーブル返す）例：Customerから注文群<br>「Customer(1側)で注文件数を数える」→ <code>COUNTROWS(RELATEDTABLE(Sales))</code>。ランダム113ミス。"},
+  {lvl:3,cat:"モデル",q:"スタースキーマのクロスフィルター方向",a:"<strong>単方向（ディメンション→ファクト）</strong>",body:"スタースキーマの標準・推奨は<strong>ディメンション（1側）→ ファクト（多側）の単方向</strong>。スライサーでディメンションを選ぶとファクトが絞られる。<br>両方向（Both）はパフォーマンス低下・フィルターの曖昧さの原因 → 多対多・ブリッジテーブル等「本当に必要な時だけ」。ランダム116ミス。"},
+  {lvl:3,cat:"視覚化",q:"テーブルのセル内にミニ折れ線（推移）",a:"<strong>スパークライン（Sparklines）</strong>",body:"テーブル/マトリックスのセル内に月次トレンドなどのミニ折れ線を埋め込む。<br>反射：<br>・「セル内にミニ折れ線」「推移を埋め込む」→ スパークライン<br>・「セル内に値の大小を棒で」→ データバー（条件付き書式）<br>・「チャートを格子状に分割」→ 小さい複数。ランダム117ミス。"},
+  {lvl:2,cat:"視覚化",q:"連続数値を範囲グループに分ける",a:"<strong>ビン化（Binning）</strong>",body:"フィールド右クリック → グループ → ビンのサイズ指定。<br>反射：数値・日付を範囲グループ → <strong>ビン（Bin）</strong>／テキスト・カテゴリをまとめる → <strong>グループ（List）</strong>。散布図で似たもの同士を自動分類 → クラスタリング。ランダム110。"},
+  {lvl:2,cat:"配布",q:"開発・テスト・本番の3環境管理",a:"<strong>展開パイプライン（Deployment Pipelines）</strong>",body:"Dev→Test→Prod の段階的昇格・ステージ間の差分比較・データソースのステージ別切替（デプロイ規則）。<br>Premium / PPU 専用機能。ランダム111。"},
+  {lvl:1,cat:"PowerQuery",q:"姓と名を1列にまとめたい",a:"<strong>列のマージ（Merge Columns）</strong>",body:"同一テーブル内の複数列を1列に結合（区切り文字指定可）。<br>紛らわしい：<strong>列</strong>のマージ＝列を1つに／<strong>クエリ</strong>のマージ＝別テーブルをキーでJOIN。全く別物。ランダム112。"},
+  {lvl:2,cat:"視覚化",q:"スクリーンリーダー対応・読み上げ",a:"<strong>代替テキスト（Alt Text）</strong>",body:"各ビジュアルに説明文を設定 → スクリーンリーダーが読み上げ。<br>反射：「読み上げ」「視覚障害」→ 代替テキスト／「キーボードのみ操作」→ タブオーダー設定。代替テキストはDAXメジャーで動的にも可。ランダム114。"},
+  {lvl:2,cat:"配布",q:"スケジュール更新が失敗したら通知",a:"<strong>スケジュール更新設定の失敗通知</strong>",body:"データセットの「スケジュールされた更新」設定に標準装備。所有者以外も連絡先に追加可。<br>反射：「更新失敗の通知」→ スケジュール更新設定／「KPI閾値超え」→ データアラート／「定期メール配信」→ サブスクリプション。ランダム115。"},
+  {lvl:1,cat:"PowerQuery",q:"型変換でエラーになるセルを残したい",a:"<strong>エラーの置換（→ null など）</strong>",body:"「価格」列に &quot;N/A&quot; が混在 → 数値型に変換 → エラーセルを「エラーの置換」でnull化。<br>反射：「エラーの<strong>置換</strong>」＝値を差し替え（データ保持）／「エラーの<strong>削除</strong>」＝行ごと削除（データ損失）。ランダム118。"},
 ];
 
 const cardsEl = document.getElementById("cards");
