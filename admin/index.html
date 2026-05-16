@@ -128,6 +128,10 @@
 <!-- 今日のフォーカス -->
 <div class="today-box" id="today-box"></div>
 
+<!-- 毎日やること -->
+<h2>🔁 毎日やること</h2>
+<div class="week-strip" id="daily-list"></div>
+
 <!-- 今週の固定枠 -->
 <h2>📅 毎週の固定枠</h2>
 <div class="week-strip" id="week-strip"></div>
@@ -235,6 +239,7 @@
     // 単発タスク（skipped除外・優先度順）
     const open = todo.tasks.filter(t => t.status !== 'skipped').sort((a, b) => a.priority - b.priority);
     const recurring = todo.recurring || [];
+    const daily = todo.daily || [];
 
     // 今日の曜日
     const now = new Date();
@@ -245,20 +250,32 @@
 
     // ===== 今日のフォーカス =====
     const tb = document.getElementById('today-box');
+    let focusLines = '';
+    daily.forEach(d => {
+      focusLines += `<div class="today-sub" style="margin-top:6px;"><span class="label">🔁 毎日</span> ${d.title}</div>`;
+    });
     if (todayR) {
-      tb.innerHTML = `
-        <div class="today-date">今日のフォーカス — ${md}（${todayChar}曜）</div>
-        <div class="today-main">⭐ ${todayR.title}</div>
-        <div class="today-sub"><span class="label">固定枠</span> ${todayR.note || ''}</div>
-        <div class="today-sub" style="margin-top:8px;"><span class="label">単発の最優先 👉</span> ${topTask ? topTask.title : 'なし 🎉'}</div>
-      `;
-    } else {
-      tb.innerHTML = `
-        <div class="today-date">今日のフォーカス — ${md}（${todayChar}曜）／ 固定枠なし</div>
-        <div class="today-main">👉 ${topTask ? topTask.title : 'やることなし 🎉'}</div>
-        <div class="today-sub"><span class="label">${topTask ? '優先度' + topTask.priority : ''}</span> ${topTask && topTask.note ? topTask.note : ''}</div>
-      `;
+      focusLines += `<div class="today-sub" style="margin-top:6px;"><span class="label">⭐ 固定枠</span> ${todayR.title}</div>`;
     }
+    focusLines += `<div class="today-sub" style="margin-top:6px;"><span class="label">👉 単発の最優先</span> ${topTask ? topTask.title : 'なし 🎉'}</div>`;
+    const headline = todayR ? '⭐ ' + todayR.title
+                   : (daily[0] ? '🔁 ' + daily[0].title
+                   : (topTask ? '👉 ' + topTask.title : 'やることなし 🎉'));
+    tb.innerHTML =
+      `<div class="today-date">今日のフォーカス — ${md}（${todayChar}曜）</div>` +
+      `<div class="today-main">${headline}</div>` +
+      focusLines;
+
+    // ===== 毎日やること =====
+    const dl = document.getElementById('daily-list');
+    dl.innerHTML = daily.length
+      ? daily.map(d => `
+        <div class="week-day is-today">
+          <div class="wd-day">毎日 🔁</div>
+          <div class="wd-title">${d.title}</div>
+          <div class="wd-note">${d.note || ''}</div>
+        </div>`).join('')
+      : '<div class="wd-note" style="padding:10px;">（毎日タスクなし）</div>';
 
     // ===== 今週の固定枠 =====
     const ws = document.getElementById('week-strip');
