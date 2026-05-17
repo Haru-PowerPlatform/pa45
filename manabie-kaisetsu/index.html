@@ -395,6 +395,7 @@
   .question:not(.revealed) > .dialog,
   .question:not(.revealed) > .calc,
   .question:not(.revealed) > .answer,
+  .question:not(.revealed) > .collapse-btn,
   .question:not(.revealed) > .check-bar {
     display: none !important;
   }
@@ -406,6 +407,20 @@
     display: block !important;
     animation: fadeIn 0.4s;
   }
+  .question.revealed > .collapse-btn {
+    display: block !important;
+    width: 100%;
+    margin: 14px 0 4px;
+    padding: 11px 14px;
+    background: #f1f5f9;
+    color: #475569;
+    border: 2px solid #cbd5e1;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  .question.revealed > .collapse-btn:active { background: #e2e8f0; }
   .question.revealed > .check-bar {
     display: flex !important;
     animation: fadeIn 0.4s;
@@ -4222,8 +4237,25 @@
         hint.textContent = '↑ まずは自分で考えてから、ボタンをタップしよう！';
         anchor.parentNode.insertBefore(revealBtn, anchor.nextSibling);
         anchor.parentNode.insertBefore(hint, revealBtn.nextSibling);
+        // 答えの下に「折りたたむ」ボタンを追加
+        const collapseBtn = document.createElement('button');
+        collapseBtn.className = 'collapse-btn';
+        collapseBtn.innerHTML = '🔼 答えを閉じる';
+        const ansEl = q.querySelector('.answer');
+        if (ansEl) ansEl.parentNode.insertBefore(collapseBtn, ansEl.nextSibling);
+        else q.appendChild(collapseBtn);
+        // 上のボタン＝トグル（開く／閉じる）
         revealBtn.addEventListener('click', () => {
-          q.classList.add('revealed');
+          const open = q.classList.toggle('revealed');
+          revealBtn.innerHTML = open ? '🔼 答えを閉じる' : '👀 答えを見る';
+          hint.style.display = open ? 'none' : '';
+        });
+        // 下のボタン＝閉じていちばん上に戻す
+        collapseBtn.addEventListener('click', () => {
+          q.classList.remove('revealed');
+          revealBtn.innerHTML = '👀 答えを見る';
+          hint.style.display = '';
+          q.scrollIntoView({ behavior: 'smooth', block: 'start' });
         });
       }
 
