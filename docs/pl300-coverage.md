@@ -28,6 +28,7 @@ MS Learn 公式スキルアウトライン（[PL-300: Microsoft Power BI Data An
 | 88〜97 | 10問 | 8/10 = 80% | リネージビュー・計算テーブルでミス |
 | 98〜107 | 10問 | 5/10 = 50% | SUMX/Smart Narrative/OneDrive/Usage Metrics/IFERROR |
 | 108〜118 | 11問 | 6/11 = 55% | ライブ接続/DATEDIFF/RELATEDTABLE/クロスフィルター/スパークライン |
+| 119〜130 | 12問 | 8/12 = 67% | ピボット/HASONEVALUE/COALESCE でミス。**130問完走🎉** |
 
 > ※ ㉑-㉘ は事前学習で完了済み。本カバレッジは㉙以降で領域タグを付けて新規カウントする。
 
