@@ -475,6 +475,19 @@
   }
   .question.revealed .reveal-hint { display: none; }
 
+  /* 算数：図をかこう注意コメント */
+  .fig-reminder {
+    background: #fff7ed;
+    border: 2px dashed #fb923c;
+    border-radius: 10px;
+    padding: 9px 14px;
+    margin: 10px 0 2px;
+    font-size: 14px;
+    font-weight: bold;
+    color: #c2410c;
+    line-height: 1.7;
+  }
+
   /* チェックボタンUI */
   .check-bar {
     display: flex;
@@ -4250,14 +4263,23 @@
       const h3 = q.querySelector('h3');
       const anchor = qText || h3;
       if (anchor) {
+        let afterEl = anchor;
+        // 算数タブ：問題文の下に「図をかこう」の注意コメント
+        if (panel.classList.contains('math') && qText) {
+          const figRem = document.createElement('div');
+          figRem.className = 'fig-reminder';
+          figRem.innerHTML = '✏️ まずノートに図や線分図をかいてみよう！ 図にすると、ぐっと考えやすくなるよ。';
+          qText.parentNode.insertBefore(figRem, qText.nextSibling);
+          afterEl = figRem;
+        }
         const revealBtn = document.createElement('button');
         revealBtn.className = 'reveal-btn';
         revealBtn.innerHTML = '👀 答えを見る';
         const hint = document.createElement('div');
         hint.className = 'reveal-hint';
         hint.textContent = '↑ まずは自分で考えてから、ボタンをタップしよう！';
-        anchor.parentNode.insertBefore(revealBtn, anchor.nextSibling);
-        anchor.parentNode.insertBefore(hint, revealBtn.nextSibling);
+        afterEl.parentNode.insertBefore(revealBtn, afterEl.nextSibling);
+        afterEl.parentNode.insertBefore(hint, revealBtn.nextSibling);
         // 答えの下に「折りたたむ」ボタンを追加
         const collapseBtn = document.createElement('button');
         collapseBtn.className = 'collapse-btn';
