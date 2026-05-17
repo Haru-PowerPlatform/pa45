@@ -26,22 +26,45 @@
 
   .tabs {
     display: flex;
-    justify-content: center;
-    gap: 8px;
-    padding: 20px 12px 0;
-    flex-wrap: wrap;
+    flex-direction: column;
+    gap: 12px;
+    padding: 16px 12px 14px;
     background: white;
     border-bottom: 2px solid #e5e7eb;
-    position: sticky;
-    top: 0;
-    z-index: 10;
   }
+  /* 教科グループ */
+  .subj-group {
+    border: 2px solid #e5e7eb;
+    border-radius: 14px;
+    padding: 6px 12px 10px;
+    background: #fcfcfd;
+  }
+  .subj-group.sg-math { border-color: #bfdbfe; background: #f7faff; }
+  .subj-group.sg-sci  { border-color: #a7f3d0; background: #f5fdf9; }
+  .subj-head {
+    font-size: 16px; font-weight: bold;
+    padding: 6px 4px 6px;
+  }
+  .sg-math .subj-head { color: #1e40af; }
+  .sg-sci  .subj-head { color: #047857; }
+  .cat-row {
+    display: flex; flex-wrap: wrap; align-items: center;
+    gap: 7px; margin: 5px 0;
+  }
+  .cat-label {
+    flex-shrink: 0;
+    font-size: 11px; font-weight: bold;
+    padding: 5px 11px; border-radius: 999px;
+    background: #dbeafe; color: #1d4ed8;
+    border: 1.5px solid #93c5fd;
+  }
+  .cat-label.cat-atk { background: #fee2e2; color: #991b1b; border-color: #fca5a5; }
+  .tools-row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
   .tab {
-    padding: 12px 22px;
+    padding: 10px 16px;
     background: #f3f4f6;
     border: 2px solid transparent;
-    border-bottom: none;
-    border-radius: 12px 12px 0 0;
+    border-radius: 10px;
     cursor: pointer;
     font-size: 14px;
     font-weight: bold;
@@ -53,8 +76,7 @@
   .tab.active {
     background: white;
     border-color: #1e40af;
-    border-bottom-color: white;
-    margin-bottom: -2px;
+    box-shadow: 0 2px 8px rgba(30,64,175,0.2);
   }
   .tab.science.active { color: #047857; border-color: #047857; }
   .tab.math.active { color: #1e40af; border-color: #1e40af; }
@@ -1082,54 +1104,38 @@
 </div>
 
 <nav class="tabs" id="tabs">
-  <button class="tab science active" data-target="t-rika-5">
-    <span class="subject">理科</span>前期 第5回
-    <span class="date">2026年5月2日 実施</span>
-  </button>
-  <button class="tab math" data-target="t-math-5">
-    <span class="subject">算数</span>前期 第5回
-    <span class="date">2026年5月2日 実施</span>
-  </button>
-  <button class="tab math" data-target="t-math-4">
-    <span class="subject">算数</span>前期 第4回
-    <span class="date">2026年4月18日 実施</span>
-  </button>
-  <button class="tab math" data-target="t-text-hayasa">
-    <span class="subject">算数</span>MANABIE 速さ
-    <span class="date">要点チェック</span>
-  </button>
-  <button class="tab math" data-target="t-attack" style="background:linear-gradient(135deg,#fef2f2,#fecaca); color:#991b1b;">
-    <span class="subject">算数</span>アタック 第6単元
-    <span class="date">第1回〜第6回</span>
-  </button>
-  <button class="tab math" data-target="t-wariai62" style="background:linear-gradient(135deg,#fdf4ff,#f5d0fe); color:#86198f;">
-    <span class="subject">算数</span>まなびー 6-2
-    <span class="date">割合×割合</span>
-  </button>
-  <button class="tab math" data-target="t-baibai63" style="background:linear-gradient(135deg,#ecfeff,#a5f3fc); color:#155e75;">
-    <span class="subject">算数</span>まなびー 6-3
-    <span class="date">売買で使われる割合</span>
-  </button>
-  <button class="tab math" data-target="t-shokuen64" style="background:linear-gradient(135deg,#eff6ff,#bfdbfe); color:#1e40af;">
-    <span class="subject">算数</span>まなびー 6-4
-    <span class="date">食塩水の濃さ</span>
-  </button>
-  <button class="tab math" data-target="t-ganbari65" style="background:linear-gradient(135deg,#fff1f2,#fecdd3); color:#9f1239;">
-    <span class="subject">算数</span>まなびー 6-5
-    <span class="date">がんばりチェック</span>
-  </button>
-  <button class="tab science" data-target="t-attack-rika" style="background:linear-gradient(135deg,#fef2f2,#fecaca); color:#991b1b;">
-    <span class="subject">理科</span>アタック 理科
-    <span class="date">てんびん・もえ方</span>
-  </button>
-  <button class="tab" data-target="t-notebook" style="background:linear-gradient(135deg,#dcfce7,#86efac); color:#14532d;">
-    📋 ノート
-    <span class="date">解けた・直し問題</span>
-  </button>
-  <button class="tab" data-target="t-sticker-book" style="background:linear-gradient(135deg,#fef3c7,#fbbf24); color:#78350f;">
-    🎟 シールちょう
-    <span class="date">コレクション</span>
-  </button>
+  <div class="subj-group sg-math">
+    <div class="subj-head">📐 算数</div>
+    <div class="cat-row">
+      <span class="cat-label">MANABIE</span>
+      <button class="tab math" data-target="t-math-5">前期 第5回<span class="date">5/2 実施</span></button>
+      <button class="tab math" data-target="t-math-4">前期 第4回<span class="date">4/18 実施</span></button>
+      <button class="tab math" data-target="t-text-hayasa">速さ<span class="date">要点チェック</span></button>
+      <button class="tab math" data-target="t-wariai62" style="background:linear-gradient(135deg,#fdf4ff,#f5d0fe); color:#86198f;">6-2 割合×割合</button>
+      <button class="tab math" data-target="t-baibai63" style="background:linear-gradient(135deg,#ecfeff,#a5f3fc); color:#155e75;">6-3 売買で使われる割合</button>
+      <button class="tab math" data-target="t-shokuen64" style="background:linear-gradient(135deg,#eff6ff,#bfdbfe); color:#1e40af;">6-4 食塩水の濃さ</button>
+      <button class="tab math" data-target="t-ganbari65" style="background:linear-gradient(135deg,#fff1f2,#fecdd3); color:#9f1239;">6-5 がんばりチェック</button>
+    </div>
+    <div class="cat-row">
+      <span class="cat-label cat-atk">アタック</span>
+      <button class="tab math" data-target="t-attack" style="background:linear-gradient(135deg,#fef2f2,#fecaca); color:#991b1b;">第6単元<span class="date">第1回〜第6回</span></button>
+    </div>
+  </div>
+  <div class="subj-group sg-sci">
+    <div class="subj-head">🧪 理科</div>
+    <div class="cat-row">
+      <span class="cat-label">MANABIE</span>
+      <button class="tab science active" data-target="t-rika-5">前期 第5回<span class="date">5/2 実施</span></button>
+    </div>
+    <div class="cat-row">
+      <span class="cat-label cat-atk">アタック</span>
+      <button class="tab science" data-target="t-attack-rika" style="background:linear-gradient(135deg,#fef2f2,#fecaca); color:#991b1b;">てんびん・もえ方<span class="date">第15・16回</span></button>
+    </div>
+  </div>
+  <div class="tools-row">
+    <button class="tab" data-target="t-notebook" style="background:linear-gradient(135deg,#dcfce7,#86efac); color:#14532d;">📋 ノート<span class="date">解けた・直し問題</span></button>
+    <button class="tab" data-target="t-sticker-book" style="background:linear-gradient(135deg,#fef3c7,#fbbf24); color:#78350f;">🎟 シールちょう<span class="date">コレクション</span></button>
+  </div>
 </nav>
 
 <div class="container">
