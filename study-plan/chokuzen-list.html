@@ -23,33 +23,40 @@
 
   .back-link { display: inline-block; margin: 13px 0; font-size: 13px; color: #ea580c; text-decoration: none; font-weight: 700; }
 
+  /* 英語A 最優先ボックス */
+  .priority {
+    background: #fef2f2; border: 2px solid #ef4444; border-radius: 14px;
+    padding: 16px; margin: 14px 0; box-shadow: 0 3px 12px rgba(239,68,68,.18);
+  }
+  .priority .ttl { font-size: 16px; font-weight: 800; color: #dc2626; }
+  .priority .deadline {
+    display: inline-block; background: #dc2626; color: #fff; font-size: 13px;
+    font-weight: 800; padding: 3px 12px; border-radius: 999px; margin: 6px 0;
+  }
+  .priority .body { font-size: 14px; margin-top: 2px; }
+
   .next-banner {
     background: #fff; border: 2px solid #f59e0b; border-radius: 14px;
-    padding: 14px 16px; margin: 14px 0; text-align: center;
+    padding: 13px 16px; margin: 14px 0; text-align: center;
     box-shadow: 0 3px 10px rgba(245,158,11,.18);
   }
-  .next-banner .big { font-size: 17px; font-weight: 800; color: #c2410c; }
+  .next-banner .big { font-size: 16px; font-weight: 800; color: #c2410c; }
   .next-banner .small { font-size: 13px; color: #92400e; margin-top: 2px; }
 
   .day {
     background: #fff; border-radius: 16px; margin: 16px 0;
     box-shadow: 0 3px 12px rgba(0,0,0,.08); overflow: hidden;
-    border-top: 6px solid #cbd5e1;
+    border-left: 6px solid #cbd5e1;
   }
-  .day.next { border-top-color: #f97316; box-shadow: 0 4px 18px rgba(249,115,22,.28); }
-  .day-head { padding: 14px 16px 10px; }
+  .day.tonight { border-left-color: #f97316; box-shadow: 0 4px 18px rgba(249,115,22,.28); }
+  .day-head { padding: 13px 16px 8px; }
   .day-head .dt { font-size: 17px; font-weight: 800; }
-  .day-head .sj { display: inline-block; background: #fef3c7; color: #b45309;
-    font-size: 12px; font-weight: 800; padding: 2px 10px; border-radius: 999px; margin-top: 4px; }
+  .day-head .for { font-size: 12.5px; color: #b45309; font-weight: 700; margin-top: 2px; }
   .day-head .cnt { float: right; font-size: 12px; color: #94a3b8; font-weight: 700; }
-  .nextflag { display: none; background: #f97316; color: #fff; font-size: 11px;
+  .nightflag { display: none; background: #f97316; color: #fff; font-size: 11px;
     font-weight: 800; padding: 2px 8px; border-radius: 999px; margin-left: 6px; }
-  .day.next .nextflag { display: inline-block; }
-
-  .sec { padding: 4px 16px 14px; }
-  .sec h3 { font-size: 14px; margin: 10px 0 6px; padding-left: 8px; }
-  .sec.night h3 { border-left: 4px solid #6366f1; color: #4338ca; }
-  .sec.morning h3 { border-left: 4px solid #f59e0b; color: #b45309; }
+  .day.tonight .nightflag { display: inline-block; }
+  .day-body { padding: 2px 16px 14px; }
 
   .ck {
     display: flex; align-items: flex-start; gap: 10px;
@@ -59,21 +66,15 @@
   .ck input { width: 21px; height: 21px; margin-top: 1px; flex: 0 0 auto; accent-color: #f97316; }
   .ck input:checked ~ span { text-decoration: line-through; color: #94a3b8; }
   .ck span { flex: 1; }
+  .subj { display: inline-block; font-weight: 800; color: #b45309; }
+  .note { font-size: 13px; color: #64748b; padding: 4px 12px; }
 
-  .mochimono {
-    background: #ecfdf5; border: 2px solid #6ee7b7; border-radius: 10px;
-    padding: 10px 14px; margin: 8px 16px 14px; font-size: 14px;
-  }
-  .mochimono b { color: #047857; }
-
-  .mind { background: #eef2ff; border: 2px solid #c7d2fe; }
-  .mind h2 { color: #4338ca; }
-  .mind ul { margin: 6px 0 0 20px; }
-  .mind li { margin: 8px 0; font-size: 14.5px; }
-
-  .card-mind { background: #fff; border-radius: 16px; margin: 16px 0; padding: 16px;
+  .card { background: #fff; border-radius: 16px; margin: 16px 0; padding: 16px;
     box-shadow: 0 3px 12px rgba(0,0,0,.08); }
-  .card-mind h2 { font-size: 17px; margin-bottom: 8px; padding-left: 10px; border-left: 5px solid #6366f1; }
+  .card h2 { font-size: 16px; margin-bottom: 8px; padding-left: 10px; border-left: 5px solid #f59e0b; }
+  .card.mind h2 { border-left-color: #8b5cf6; }
+  .card ul { margin: 4px 0 0 20px; }
+  .card li { margin: 7px 0; font-size: 14px; }
 
   footer { text-align: center; font-size: 12px; color: #b59c7a; margin: 22px 0 8px; }
 </style>
@@ -83,138 +84,112 @@
 
 <header>
   <h1>🔥 テスト直前 やることリスト</h1>
-  <div class="sub">上田晴生 中2 ／ 1学期中間テスト 5/19（火）〜5/22（金）</div>
+  <div class="sub">上田晴生 中2 ／ 中間テスト 5/19（火）〜5/22（金）</div>
 </header>
 
 <a class="back-link" href="index.html">← 学習計画ページにもどる</a>
+
+<!-- 英語A 最優先 -->
+<div class="priority">
+  <div class="ttl">⏰ さいゆうせん：英語A</div>
+  <div class="deadline">5/18（月）16:00 までに完璧に！</div>
+  <div class="body">テキストの日本語の文を見て、<b>何も見ずに英語の文を書ける</b>ようにする。書けなかった文は、何回も書いて練習。</div>
+  <label class="ck" data-k="engA" style="margin-top:8px;background:#fff;"><input type="checkbox"><span>英語A、完璧にできた！</span></label>
+</div>
 
 <div class="next-banner" id="next-banner">
   <div class="big">次のテストを確認中…</div>
 </div>
 
-<!-- 5/19 -->
-<div class="day" id="card-1">
+<!-- 5/19夜 -->
+<div class="day" id="card-19">
   <div class="day-head">
-    <span class="cnt" id="cnt-1"></span>
-    <div class="dt">5/19（火）テスト1日目<span class="nextflag">次はここ</span></div>
-    <span class="sj">地理・代数</span>
+    <span class="cnt" id="cnt-19"></span>
+    <div class="dt">5/19（火）の夜<span class="nightflag">今夜はここ</span></div>
+    <div class="for">→ あす 5/20 テスト（英語A・理科II・国語B）の準備</div>
   </div>
-  <div class="sec night">
-    <h3>🌙 前日（5/18）の夜にやること</h3>
-    <label class="ck" data-k="d1n1"><input type="checkbox"><span>地理：教科書 P118〜139 と「地理の学習」の、×がついた問題だけ最終チェック</span></label>
-    <label class="ck" data-k="d1n2"><input type="checkbox"><span>地理：オセアニアの白地図で地名を書けるか確認</span></label>
-    <label class="ck" data-k="d1n3"><input type="checkbox"><span>代数：「体系数学2」P6〜P29 の×がついた問題をもう一度解く</span></label>
-    <label class="ck" data-k="d1n4"><input type="checkbox"><span>代数：式による説明・証明の問題で、書き方（書き出し・結論）を確認</span></label>
-    <label class="ck" data-k="d1n5"><input type="checkbox"><span>代数：計算ミスがないか、もう一度見直す</span></label>
-    <label class="ck" data-k="d1n6"><input type="checkbox"><span>持ち物を準備して、かばんに入れる</span></label>
-  </div>
-  <div class="sec morning">
-    <h3>☀️ 当日の朝（テスト前）</h3>
-    <label class="ck" data-k="d1m1"><input type="checkbox"><span>地理（教科書 P118-139）と代数（P6-P29）をざっと見直し</span></label>
-  </div>
-  <div class="mochimono">🎒 <b>持ち物</b>：筆記具・コンパス・定規</div>
-</div>
-
-<!-- 5/20 -->
-<div class="day" id="card-2">
-  <div class="day-head">
-    <span class="cnt" id="cnt-2"></span>
-    <div class="dt">5/20（水）テスト2日目<span class="nextflag">次はここ</span></div>
-    <span class="sj">英語A・理科II・国語B</span>
-  </div>
-  <div class="sec night">
-    <h3>🌙 前日（5/19・火）の夜にやること</h3>
-    <label class="ck" data-k="d2n1"><input type="checkbox"><span>英語A：テキストの日本語の文を見て、<b>何も見ずに英語の文を書ける</b>ようにする（書けなかった文は何回も書いて練習）</span></label>
-    <label class="ck" data-k="d2n2"><input type="checkbox"><span>理科II：問題集の<b>×がついた問題の2周目</b>を、確実に仕上げる</span></label>
-    <label class="ck" data-k="d2n3"><input type="checkbox"><span>国語B：問題集の<b>2周目</b>をやる ＋ <b>動詞の活用表を何も見ずに書ける</b>ようにする</span></label>
-    <label class="ck" data-k="d2n4"><input type="checkbox"><span>国語B：<b>ノートを見直す</b>（活用のところはノートが大事！）</span></label>
-  </div>
-  <div class="sec morning">
-    <h3>☀️ 当日の朝（テスト前）</h3>
-    <label class="ck" data-k="d2m1"><input type="checkbox"><span>英語A本文＋理科II生物用語＋動詞活用表をさっと確認</span></label>
+  <div class="day-body">
+    <label class="ck" data-k="n19-1"><input type="checkbox"><span><span class="subj">理科II</span>：問題集の<b>×がついた問題の2周目</b>を、確実に仕上げる</span></label>
+    <label class="ck" data-k="n19-2"><input type="checkbox"><span><span class="subj">国語B</span>：問題集の<b>2周目</b>＋<b>動詞の活用表を何も見ずに書ける</b>ようにする</span></label>
+    <label class="ck" data-k="n19-3"><input type="checkbox"><span><span class="subj">国語B</span>：<b>ノートを見直す</b>（活用のところはノートが大事！）</span></label>
+    <div class="note">※英語Aは5/18に完成ずみ。当日の朝にさっと確認するだけでOK。</div>
   </div>
 </div>
 
-<!-- 5/21 -->
-<div class="day" id="card-3">
+<!-- 5/20夜 -->
+<div class="day" id="card-20">
   <div class="day-head">
-    <span class="cnt" id="cnt-3"></span>
-    <div class="dt">5/21（木）テスト3日目<span class="nextflag">次はここ</span></div>
-    <span class="sj">歴史・幾何</span>
+    <span class="cnt" id="cnt-20"></span>
+    <div class="dt">5/20（水）の夜<span class="nightflag">今夜はここ</span></div>
+    <div class="for">→ あす 5/21 テスト（歴史・幾何）の準備　＋　英語B（新中問）の先どり</div>
   </div>
-  <div class="sec night">
-    <h3>🌙 前日（5/20）の夜にやること</h3>
-    <label class="ck" data-k="d3n1"><input type="checkbox"><span>歴史：「歴史の学習」P98〜109 の×をもう一度。<b>とくに範囲の最後のほうを重点的に見直す</b>。年号の語呂合わせ・人物名の暗唱も確認</span></label>
-    <label class="ck" data-k="d3n2"><input type="checkbox"><span>幾何：<b>ゴールデンウィーク課題の直し</b> ──「春休み&amp;GW課題テキスト」のまちがえた問題（作図問題もふくむ）を、もう一度解いてできるようにする</span></label>
+  <div class="day-body">
+    <label class="ck" data-k="n20-1"><input type="checkbox"><span><span class="subj">歴史</span>：「歴史の学習」P98〜109 の×をもう一度。<b>とくに範囲の最後のほうを重点的に見直す</b>。年号の語呂合わせ・人物名も確認</span></label>
+    <label class="ck" data-k="n20-2"><input type="checkbox"><span><span class="subj">幾何</span>：<b>ゴールデンウィーク課題の直し</b> ──「春休み&amp;GW課題テキスト」のまちがえた問題（作図問題もふくむ）をもう一度解く</span></label>
+    <label class="ck" data-k="n20-3"><input type="checkbox"><span><span class="subj">英語B</span>：「新中問」<b>第3・6・4章</b>をやる　<small>（新中問は多いので2日に分けるよ ①）</small></span></label>
   </div>
-  <div class="sec morning">
-    <h3>☀️ 当日の朝（テスト前）</h3>
-    <label class="ck" data-k="d3m1"><input type="checkbox"><span>歴史の年号＋幾何の作図手順をざっと確認</span></label>
-  </div>
-  <div class="mochimono">🎒 <b>持ち物</b>：コンパスを忘れずに！（作図で使うよ）</div>
 </div>
 
-<!-- 5/22 -->
-<div class="day" id="card-4">
+<!-- 5/21夜 -->
+<div class="day" id="card-21">
   <div class="day-head">
-    <span class="cnt" id="cnt-4"></span>
-    <div class="dt">5/22（金）テスト最終日<span class="nextflag">次はここ</span></div>
-    <span class="sj">英語B・国語A・理科I</span>
+    <span class="cnt" id="cnt-21"></span>
+    <div class="dt">5/21（木）の夜<span class="nightflag">今夜はここ</span></div>
+    <div class="for">→ あす 5/22 テスト（英語B・国語A・理科I）の準備</div>
   </div>
-  <div class="sec night">
-    <h3>🌙 前日（5/21）の夜にやること</h3>
-    <label class="ck" data-k="d4n1"><input type="checkbox"><span>英語B：「瞬トレ」15〜18・5・32 を見直し</span></label>
-    <label class="ck" data-k="d4n2"><input type="checkbox"><span>英語B：「新中問」3・6・4・12・13・14章 の×を最終チェック＋「補講」②・B</span></label>
-    <label class="ck" data-k="d4n3"><input type="checkbox"><span>国語A：「宇宙に行くための素材」「セミロングホームルーム」の要旨を再確認</span></label>
-    <label class="ck" data-k="d4n4"><input type="checkbox"><span>漢字：漢字3級①〜⑤ の最終見直し</span></label>
-    <label class="ck" data-k="d4n5"><input type="checkbox"><span>理科I：「化学」の×がついた問題を最終チェック＋実験①〜④の手順・反応式</span></label>
+  <div class="day-body">
+    <label class="ck" data-k="n21-1"><input type="checkbox"><span><span class="subj">英語B</span>：「新中問」<b>第12・13・14章</b>をやる　<small>（新中問は多いので2日に分けるよ ②）</small></span></label>
+    <label class="ck" data-k="n21-2"><input type="checkbox"><span><span class="subj">英語B</span>：「必修テキスト」の<b>2周目</b>をやる</span></label>
+    <label class="ck" data-k="n21-3"><input type="checkbox"><span><span class="subj">英語B</span>：瞬間英作文（「瞬トレ」）を<b>完璧に</b>する</span></label>
+    <label class="ck" data-k="n21-4"><input type="checkbox"><span><span class="subj">国語A</span>：最後にもう一度見直し（要旨・授業プリントを確認）</span></label>
+    <label class="ck" data-k="n21-5"><input type="checkbox"><span><span class="subj">理科I</span>：問題集の<b>2周目</b>（×がついた問題を中心に）</span></label>
   </div>
-  <div class="sec morning">
-    <h3>☀️ 当日の朝（テスト前）</h3>
-    <label class="ck" data-k="d4m1"><input type="checkbox"><span>不定詞の表現＋漢字＋実験の反応式をサッと確認</span></label>
-  </div>
+</div>
+
+<!-- 当日の朝 -->
+<div class="card">
+  <h2>☀️ 各テスト当日の朝（毎日）</h2>
+  <ul>
+    <li>その日のテスト科目を、朝食前にさっとおさらいする</li>
+    <li>持ち物をチェック（筆記具・<b>コンパス</b>・定規）。とくに5/21の幾何はコンパス必須！</li>
+  </ul>
 </div>
 
 <!-- 心がまえ -->
-<div class="card-mind mind">
+<div class="card mind">
   <h2>💪 直前の心がまえ（毎日読もう）</h2>
   <ul>
-    <li><b>新しい問題には手を出さない。</b>できる問題を確実にできるように、見直しを優先。</li>
-    <li><b>夜ふかししない。</b>早めに寝て、頭をすっきりさせるのがいちばんの勉強。</li>
-    <li><b>朝ごはんをしっかり食べる。</b>エネルギー切れだと力が出せない。</li>
-    <li>テストが始まったら、<b>まず名前を書く</b>。</li>
-    <li>わからない問題は<b>とばして、できる問題から</b>。あとでもどってOK。</li>
-    <li><b>5分残して見直し。</b>とくに計算ミス・書き忘れ・単位をチェック。</li>
+    <li>新しい問題には手を出さない。<b>できる問題を確実に</b>、見直しを優先。</li>
+    <li>夜ふかししない。<b>早く寝る</b>のもだいじな勉強。</li>
+    <li>朝ごはんをしっかり食べる。</li>
+    <li>テストが始まったら<b>まず名前を書く</b>。</li>
+    <li>わからない問題はとばして、<b>できる問題から</b>。あとでもどってOK。</li>
+    <li><b>5分残して見直し</b>（計算ミス・書き忘れ・単位）。</li>
   </ul>
 </div>
 
 <a class="back-link" href="index.html">← 学習計画ページにもどる</a>
 
-<footer>上田晴生 中2 ／ テスト直前リスト</footer>
+<footer>上田晴生 中2 ／ テスト直前 やることリスト</footer>
 
 </div>
 
 <script>
 var KEY = "haruki-chokuzen-2026-05";
-
-function load() {
-  try { return JSON.parse(localStorage.getItem(KEY) || "{}"); }
-  catch (e) { return {}; }
-}
+function load() { try { return JSON.parse(localStorage.getItem(KEY) || "{}"); } catch (e) { return {}; } }
 function save(s) { localStorage.setItem(KEY, JSON.stringify(s)); }
-
 var state = load();
 
 function updateCounts() {
-  for (var c = 1; c <= 4; c++) {
-    var card = document.getElementById("card-" + c);
+  ["19", "20", "21"].forEach(function (d) {
+    var card = document.getElementById("card-" + d);
     var boxes = card.querySelectorAll('input[type=checkbox]');
     var done = 0;
     boxes.forEach(function (b) { if (b.checked) done++; });
-    var el = document.getElementById("cnt-" + c);
+    var el = document.getElementById("cnt-" + d);
     el.textContent = "✓ " + done + " / " + boxes.length;
     el.style.color = (done === boxes.length && boxes.length > 0) ? "#16a34a" : "#94a3b8";
-  }
+  });
 }
 
 document.querySelectorAll(".ck").forEach(function (lbl) {
@@ -229,36 +204,45 @@ document.querySelectorAll(".ck").forEach(function (lbl) {
 });
 updateCounts();
 
-// 次のテストを判定
+// 次のテスト＋今夜やるカードを判定
 (function () {
   var tests = [
-    { d: "2026-05-19", name: "5/19（火）", subj: "地理・代数", card: "card-1" },
-    { d: "2026-05-20", name: "5/20（水）", subj: "英語A・理科II・国語B", card: "card-2" },
-    { d: "2026-05-21", name: "5/21（木）", subj: "歴史・幾何", card: "card-3" },
-    { d: "2026-05-22", name: "5/22（金）", subj: "英語B・国語A・理科I", card: "card-4" }
+    { d: "2026-05-19", name: "5/19（火）", subj: "地理・代数" },
+    { d: "2026-05-20", name: "5/20（水）", subj: "英語A・理科II・国語B" },
+    { d: "2026-05-21", name: "5/21（木）", subj: "歴史・幾何" },
+    { d: "2026-05-22", name: "5/22（金）", subj: "英語B・国語A・理科I" }
+  ];
+  var nights = [
+    { d: "2026-05-19", card: "card-19", label: "5/19（火）の夜" },
+    { d: "2026-05-20", card: "card-20", label: "5/20（水）の夜" },
+    { d: "2026-05-21", card: "card-21", label: "5/21（木）の夜" }
   ];
   var now = new Date();
   var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  function toDate(s) { var p = s.split("-"); return new Date(+p[0], +p[1] - 1, +p[2]); }
+
   var banner = document.getElementById("next-banner");
-  var next = null;
+  var nextTest = null;
   for (var i = 0; i < tests.length; i++) {
-    var parts = tests[i].d.split("-");
-    var td = new Date(+parts[0], +parts[1] - 1, +parts[2]);
-    if (td >= today) { next = tests[i]; next._diff = Math.round((td - today) / 86400000); break; }
+    if (toDate(tests[i].d) >= today) { nextTest = tests[i]; nextTest._diff = Math.round((toDate(tests[i].d) - today) / 86400000); break; }
   }
-  if (!next) {
+  var night = null;
+  for (var j = 0; j < nights.length; j++) {
+    if (toDate(nights[j].d) >= today) { night = nights[j]; break; }
+  }
+  if (night) {
+    var c = document.getElementById(night.card);
+    if (c) { c.classList.add("tonight"); }
+  }
+  if (!nextTest) {
     banner.innerHTML = '<div class="big">🎉 ぜんぶのテスト、おつかれさま！</div>' +
       '<div class="small">よくがんばったね。ゆっくり休もう。</div>';
     return;
   }
-  var when = next._diff === 0 ? "今日！" : (next._diff === 1 ? "明日！（あと1日）" : "あと" + next._diff + "日");
-  banner.innerHTML = '<div class="big">🔥 次のテストは ' + next.name + '（' + next.subj + '）</div>' +
-    '<div class="small">' + when + ' ／ 下の「次はここ」のカードをチェック！</div>';
-  var card = document.getElementById(next.card);
-  if (card) {
-    card.classList.add("next");
-    card.scrollIntoView({ block: "start", behavior: "instant" });
-  }
+  var when = nextTest._diff === 0 ? "今日！" : (nextTest._diff === 1 ? "明日！（あと1日）" : "あと" + nextTest._diff + "日");
+  var line2 = night ? '今夜やるのは「' + night.label + '」のカード（オレンジ色）！' : 'がんばろう！';
+  banner.innerHTML = '<div class="big">🔥 次のテストは ' + nextTest.name + '（' + nextTest.subj + '）' + when + '</div>' +
+    '<div class="small">' + line2 + '</div>';
 })();
 </script>
 </body>
