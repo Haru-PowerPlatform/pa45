@@ -42,6 +42,7 @@
   }
   .next-banner .big { font-size: 16px; font-weight: 800; color: #c2410c; }
   .next-banner .small { font-size: 13px; color: #92400e; margin-top: 2px; }
+  .next-banner .today { font-size: 12px; color: #b45309; font-weight: 800; margin-bottom: 4px; }
 
   .day {
     background: #fff; border-radius: 16px; margin: 16px 0;
@@ -103,7 +104,7 @@
   <div class="day-body">
     <div class="priority">
       <div class="ttl">⏰ 最優先：英語A</div>
-      <div class="deadline">5/18（月）16:00 までに完璧に！</div>
+      <div class="deadline">5/19（火）のうちに完璧にする！</div>
       <div class="body">テキストの日本語の文を見て、<b>何も見ずに英語の文を書ける</b>ようにする。書けなかった文は、何回も書いて練習。</div>
       <label class="ck" data-k="engA" style="margin-top:8px;background:#fff;"><input type="checkbox"><span>英語A、完璧にできた！</span></label>
     </div>
@@ -201,7 +202,7 @@ document.querySelectorAll(".ck").forEach(function (lbl) {
 });
 updateCounts();
 
-// 次のテスト＋今夜やるカードを判定
+// 今日の日付・次のテスト・今夜のカードを判定
 (function () {
   var tests = [
     { d: "2026-05-19", name: "5/19（火）", subj: "地理・代数" },
@@ -214,31 +215,51 @@ updateCounts();
     { d: "2026-05-20", card: "card-20", label: "5/20（水）の夜" },
     { d: "2026-05-21", card: "card-21", label: "5/21（木）の夜" }
   ];
+  var WD = ["日", "月", "火", "水", "木", "金", "土"];
   var now = new Date();
   var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   function toDate(s) { var p = s.split("-"); return new Date(+p[0], +p[1] - 1, +p[2]); }
 
   var banner = document.getElementById("next-banner");
-  var nextTest = null;
-  for (var i = 0; i < tests.length; i++) {
-    if (toDate(tests[i].d) >= today) { nextTest = tests[i]; nextTest._diff = Math.round((toDate(tests[i].d) - today) / 86400000); break; }
-  }
+  var todayStr = (today.getMonth() + 1) + "/" + today.getDate() + "（" + WD[today.getDay()] + "）";
+
+  // 今夜のカード＝日付がぴったり今日と一致するものだけ
   var night = null;
   for (var j = 0; j < nights.length; j++) {
-    if (toDate(nights[j].d) >= today) { night = nights[j]; break; }
+    if (toDate(nights[j].d).getTime() === today.getTime()) { night = nights[j]; break; }
   }
   if (night) {
-    var c = document.getElementById(night.card);
-    if (c) { c.classList.add("tonight"); }
+    var nc = document.getElementById(night.card);
+    if (nc) { nc.classList.add("tonight"); }
   }
+
+  // 次のテスト
+  var nextTest = null;
+  for (var i = 0; i < tests.length; i++) {
+    if (toDate(tests[i].d) >= today) {
+      nextTest = tests[i];
+      nextTest._diff = Math.round((toDate(tests[i].d) - today) / 86400000);
+      break;
+    }
+  }
+
+  var html = '<div class="today">📅 今日は ' + todayStr + '</div>';
   if (!nextTest) {
-    banner.innerHTML = '<div class="big">🎉 ぜんぶのテスト、おつかれさま！</div>' +
+    banner.innerHTML = html + '<div class="big">🎉 ぜんぶのテスト、おつかれさま！</div>' +
       '<div class="small">よくがんばったね。ゆっくり休もう。</div>';
     return;
   }
-  var when = nextTest._diff === 0 ? "今日！" : (nextTest._diff === 1 ? "明日！（あと1日）" : "あと" + nextTest._diff + "日");
-  var line2 = night ? '今夜やるのは「' + night.label + '」のカード（オレンジ色）！' : 'がんばろう！';
-  banner.innerHTML = '<div class="big">🔥 次のテストは ' + nextTest.name + '（' + nextTest.subj + '）' + when + '</div>' +
+  var when = nextTest._diff === 0 ? "今日！" : (nextTest._diff === 1 ? "明日（あと1日）" : "あと" + nextTest._diff + "日");
+  var line2;
+  if (night) {
+    line2 = '今夜は「' + night.label + '」のオレンジ色カードをやろう！';
+  } else if (today < toDate(nights[0].d)) {
+    line2 = 'カードは夜ごとに用意してあるよ。あすの夜から順番に！';
+  } else {
+    line2 = 'のこりもうひとふんばり！';
+  }
+  banner.innerHTML = html +
+    '<div class="big">🔥 次のテストは ' + nextTest.name + '（' + nextTest.subj + '）' + when + '</div>' +
     '<div class="small">' + line2 + '</div>';
 })();
 </script>
