@@ -131,8 +131,8 @@ checks = [
 cy = COL_Y + 0.78
 for c in checks:
     txt(0.30, cy-0.03, 0.40, 0.72, [[("✓", 17, True, ENJI)]], anchor=MSO_ANCHOR.MIDDLE)
-    txt(0.70, cy-0.03, 3.08, 0.72, [[(c, 14.5, True, GREYTX)]])
-    cy += 0.82
+    txt(0.70, cy-0.03, 3.08, 0.74, [[(c, 16, True, GREYTX)]])
+    cy += 0.84
 rect(0.40, COL_Y+COL_H-0.84, 3.30, 0.70, WHITE, line=ENJI, lw=1.25, rounded=True, radius=0.1)
 txt(0.52, COL_Y+COL_H-0.80, 3.10, 0.62,
     [[("Point　", 13.5, True, ENJI), ("狙いは“届いた瞬間に仕分け”", 13.5, True, GREYTX)],
@@ -189,9 +189,9 @@ pins = [
 ]
 py = COL_Y + 0.78
 for p in pins:
-    pic(os.path.join(ICON, "icon_check_blue.png"), RX+0.18, py+0.02, h=0.24)
-    txt(RX+0.48, py-0.03, RW-0.62, 0.72, [[(p, 14, True, GREYTX)]])
-    py += 0.78
+    pic(os.path.join(ICON, "icon_check_blue.png"), RX+0.18, py+0.02, h=0.26)
+    txt(RX+0.50, py-0.03, RW-0.64, 0.74, [[(p, 15.5, True, GREYTX)]])
+    py += 0.80
 rect(RX+0.18, COL_Y+COL_H-0.92, RW-0.36, 0.78, GREEN_BG, line=GREEN, lw=1.5, rounded=True, radius=0.1)
 pic(os.path.join(CHARA, "chara_guts.png"), RX+0.16, COL_Y+COL_H-1.06, h=0.98)
 txt(RX+0.92, COL_Y+COL_H-0.94, RW-1.05, 0.82,
@@ -216,7 +216,7 @@ txt(LX, BY+0.56, 7.3, 0.88,
 pic(os.path.join(RIRO, "riro_nod.png"), 7.0, BY+0.12, h=1.34)
 rect(9.05, BY+0.28, 4.05, 0.94, DARK2, line=BLUE, lw=1.25, rounded=True, radius=0.12)
 txt(9.15, BY+0.32, 3.85, 0.86,
-    [[("覚え方", 13, True, BLUE)],
+    [[("覚え方", 14, True, RGBColor(0x9D,0xC2,0xFF))],
      [("「届いたら・選んで・しまう」", 15, True, WHITE)],
      [("の3ステップだけ", 14, True, WHITE)]],
     align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE, space=Pt(1))
