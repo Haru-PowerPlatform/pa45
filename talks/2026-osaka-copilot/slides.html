@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>学びを、成果に変える ── Copilot と Power Platform で進める社内DX</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Yomogi&family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#142A5C;
+    --navy2:#1f3a7a;
+    --accent:#0066FF;
+    --accent2:#4FA8FF;
+    --text:#222;
+    --light:#6b6b6b;
+    --bg:#FAFAF6;
+    --sky:#E6EEF7;
+    --line:#d8d8cf;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;font-family:"Meiryo UI","Hiragino Kaku Gothic ProN","Yu Gothic UI",sans-serif;background:#000;color:var(--text);overflow:hidden}
+  body{display:flex}
+
+  /* === 目次サイドバー === */
+  .toc{
+    width:260px;flex-shrink:0;height:100vh;
+    background:var(--navy);color:#cfd8e8;
+    overflow-y:auto;padding:18px 14px;
+    border-right:3px solid var(--accent);
+    transition:margin-left .2s;
+  }
+  .toc.hidden{margin-left:-260px}
+  .toc h3{
+    color:#fff;font-size:13px;margin-bottom:14px;
+    padding-bottom:10px;border-bottom:1px solid #2a4a8c;
+    letter-spacing:.05em;
+  }
+  .toc ol{list-style:none}
+  .toc li{
+    padding:9px 10px;margin:3px 0;border-radius:6px;
+    cursor:pointer;color:#cfd8e8;font-size:12.5px;
+    line-height:1.4;transition:background .15s;
+    display:flex;gap:8px;align-items:flex-start;
+  }
+  .toc li:hover{background:#2a4a8c;color:#fff}
+  .toc li.current{background:var(--accent);color:#fff;font-weight:700}
+  .toc li .num{
+    display:inline-block;min-width:18px;color:var(--accent);
+    font-weight:700;font-size:11.5px;padding-top:1px;
+  }
+  .toc li.current .num{color:#fff}
+  .toc-foot{
+    margin-top:18px;padding-top:12px;border-top:1px solid #2a4a8c;
+    font-size:10.5px;color:#8da3c2;line-height:1.6;
+  }
+  .toc-foot kbd{
+    display:inline-block;background:#2a4a8c;color:#fff;
+    padding:1px 5px;border-radius:3px;font-size:10px;
+    margin:0 2px;
+  }
+
+  /* === ステージ（スライド領域） === */
+  .stage{flex:1;position:relative;height:100vh;overflow:hidden;container-type:inline-size}
+  .deck{position:relative;width:100%;height:100%}
+  .slide{
+    position:absolute;inset:0;
+    display:none;flex-direction:column;justify-content:center;
+    padding:6cqh 6cqw;
+    background:var(--bg);
+  }
+  .slide.active{display:flex}
+  .slide.navy{background:var(--navy);color:#fff}
+  .slide.sky{background:var(--sky)}
+  .slide h1{font-size:5.5cqw;line-height:1.25;color:var(--navy);letter-spacing:.01em}
+  .slide.navy h1{color:#fff}
+  .slide h2{font-size:3.4cqw;line-height:1.25;color:var(--accent);font-weight:700;margin-bottom:1cqh}
+  .slide.navy h2{color:#fff}
+  .msg{font-size:3.2cqw;line-height:1.35;color:var(--light);font-weight:700;text-align:center;margin:1.5cqh 0 2cqh}
+  .slide.navy .msg{color:#cfd8e8}
+  .msg .accent{color:var(--accent)}
+  .slide .sub{font-size:1.7cqw;color:var(--light);margin-top:2cqh;line-height:1.6}
+  .slide.navy .sub{color:#cfd8e8}
+  .slide .meta{position:absolute;left:6cqw;bottom:4cqh;font-size:1.1cqw;color:var(--light)}
+  .slide.navy .meta{color:#9eafc8}
+  .slide .pageno{position:absolute;right:5cqw;bottom:4cqh;font-size:1.1cqw;color:var(--light)}
+  .slide.navy .pageno{color:#9eafc8}
+  .accent{color:var(--accent)}
+  .slide.navy .accent{color:var(--accent2)}
+  .navy-text{color:var(--navy)}
+  .lead{font-size:2.4cqw;line-height:1.6;margin-top:3cqh}
+  .lead.big{font-size:3.4cqw;font-weight:700;line-height:1.4;color:var(--accent)}
+  .lead.huge{font-size:5cqw;font-weight:700;line-height:1.3;color:var(--accent)}
+  ul.bullets{font-size:1.9cqw;line-height:2;margin-top:3cqh;list-style:none}
+  ul.bullets li{padding-left:2cqw;position:relative;margin:.8cqh 0}
+  ul.bullets li::before{content:"・";position:absolute;left:0;color:var(--accent);font-weight:700}
+  .cards{display:flex;gap:2cqw;margin-top:4cqh}
+  .card{
+    flex:1;background:#fff;border:2px solid var(--navy);border-radius:1cqw;
+    padding:3cqh 2cqw;text-align:center;
+  }
+  .card .tagline{font-size:1.3cqw;color:var(--accent);font-weight:700;margin-bottom:1cqh;letter-spacing:.05em}
+  .card .desc{font-size:1.2cqw;color:var(--light);margin-top:1cqh;line-height:1.5}
+  .steps{display:flex;align-items:center;gap:1.5cqw;margin-top:4cqh}
+  .step{
+    flex:1;background:#fff;border:2px solid var(--navy);border-radius:1cqw;
+    padding:2.5cqh 1.5cqw;text-align:center;
+  }
+  .step .n{font-size:1.4cqw;color:var(--accent);font-weight:700}
+  .step .t{font-size:1.5cqw;font-weight:700;color:var(--navy);margin-top:1cqh;line-height:1.4}
+  .arrow{font-size:2.5cqw;color:var(--accent);font-weight:700}
+  .progress{position:absolute;left:0;top:0;height:4px;background:var(--accent);transition:width .3s;z-index:5}
+  .big-num{font-size:11cqw;color:var(--accent);font-weight:700;line-height:1}
+  .footer-name{position:absolute;left:6cqw;bottom:8cqh;font-size:1.6cqw;color:#fff;line-height:1.7}
+  .badges{display:flex;gap:1.5cqw;flex-wrap:wrap;margin-top:3cqh}
+  .badge{background:#fff;border:2px solid var(--navy);border-radius:.6cqw;padding:1.2cqh 1.5cqw;font-size:1.4cqw;color:var(--navy);font-weight:700}
+  /* 画像テイスト：極太枠＋右上ロゴ */
+  .slide::after{content:'';position:absolute;top:.9cqh;left:.7cqw;right:.7cqw;bottom:.9cqh;border:.45cqw solid var(--accent);border-radius:.9cqw;pointer-events:none;z-index:4}
+  .brand{position:absolute;top:2.4cqh;right:3cqw;font-size:1.3cqw;font-weight:700;color:var(--accent);letter-spacing:.06em;z-index:6}
+  .slide.navy .brand{color:var(--accent2)}
+  /* 各スライド左上の走るタイトル（自動表示） */
+  .sectitle{position:absolute;top:2.4cqh;left:6cqw;max-width:62cqw;font-size:1.25cqw;font-weight:700;color:var(--accent);letter-spacing:.03em;z-index:6;border-left:.35cqw solid var(--accent);padding-left:.8cqw;line-height:1.2}
+  .slide.navy .sectitle{color:var(--accent2);border-left-color:var(--accent2)}
+  /* アジェンダ */
+  .agenda{display:flex;flex-direction:column;gap:1.4cqh;margin-top:3cqh}
+  .agenda .row{display:flex;align-items:center;gap:1.8cqw;background:#fff;border-radius:.8cqw;padding:1.8cqh 2.4cqw;border-left:.6cqw solid var(--accent)}
+  .agenda .no{font-size:2.4cqw;font-weight:700;color:var(--accent);min-width:3cqw}
+  .agenda .tt{font-size:2cqw;font-weight:700;color:var(--navy)}
+  .agenda .ds{font-size:1.3cqw;color:var(--light);margin-left:.6cqw}
+  /* 難易度の階段図（PPEC p16 再現） */
+  .stair{display:flex;align-items:flex-end;justify-content:center;gap:1.4cqw;margin-top:3.5cqh}
+  .stair .col{display:flex;flex-direction:column;align-items:center}
+  .stair .cap{font-size:1.2cqw;font-weight:700;color:var(--accent);margin-bottom:.7cqh;text-align:center;line-height:1.3;min-height:3cqh}
+  .stair .blk{width:15cqw;border-radius:.8cqw .8cqw 0 0;border:2px solid var(--navy);background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+  .stair .blk .n{font-size:2.2cqw;font-weight:700;color:var(--navy)}
+  .stair .blk .sub2{font-size:1.1cqw;color:var(--light);margin-top:.3cqh}
+  .stair .col.hot .blk{border:3px solid var(--accent);background:#eef4ff}
+  .stair .col.hot .blk .n{color:var(--accent)}
+  .stair .gap{align-self:flex-end;display:flex;align-items:center;justify-content:center;text-align:center;font-size:1.2cqw;font-weight:700;color:var(--accent);border:.3cqw dashed var(--accent);border-radius:.6cqw;width:12cqw;height:17cqh;line-height:1.5;background:rgba(0,102,255,.06);padding:0 1cqw}
+  .stair-axis{display:flex;justify-content:center;align-items:center;gap:.8cqw;margin-top:1.2cqh;font-size:1.3cqw;font-weight:700;color:var(--light)}
+  .note{font-size:1.3cqw;line-height:1.7;color:var(--light);margin-top:2.5cqh;max-width:90%}
+  .slide.navy .note{color:#a8b8d0}
+  .note b{color:var(--accent)}
+  .slide.navy .note b{color:var(--accent2)}
+
+  /* === 図解ユーティリティ === */
+  .actlabel{display:inline-block;font-size:1.2cqw;color:#fff;font-weight:700;background:var(--accent);padding:.6cqh 1.4cqw;border-radius:.5cqw;letter-spacing:.08em}
+  .iconrow{display:flex;align-items:center;justify-content:center;gap:1.4cqw;color:var(--accent);margin-top:1cqh}
+  .iconrow .lbl{font-size:1.2cqw;color:var(--light);font-weight:700;margin-top:.4cqh}
+  .iconrow .step{flex:none;background:transparent;border:none;padding:0;text-align:center}
+  .grid4{display:grid;grid-template-columns:1fr 1fr;gap:1.4cqw;margin-top:2.5cqh}
+  .vcard{background:#fff;border-radius:.9cqw;padding:2cqh 1.8cqw;border-left:.6cqw solid var(--accent)}
+  .vcard .h{font-size:1.6cqw;color:var(--navy);font-weight:700}
+  .vcard .d{font-size:1.2cqw;color:var(--text);margin-top:.6cqh;line-height:1.6}
+  .vcard .d b{color:var(--accent)}
+  .callout{margin-top:3cqh;padding:2.6cqh 3cqw;background:var(--accent);border-radius:1cqw;text-align:center}
+  .callout p{color:#fff;font-weight:700}
+  .callout .accent{color:#FFD24D}
+  /* 起点→知能→結末などの3ボックス（再定義） */
+  .flow3{display:flex;align-items:stretch;gap:1.2cqw;margin-top:3cqh}
+  .flow3 .b{flex:1;background:#fff;border:2px solid var(--navy);border-radius:1cqw;padding:2.4cqh 1.4cqw;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .flow3 .b.hot{border-color:var(--accent);background:#eef4ff;border-width:3px}
+  .flow3 .b .k{font-size:1.3cqw;color:var(--light);font-weight:700;letter-spacing:.04em}
+  .flow3 .b .v{font-size:2.1cqw;color:var(--navy);font-weight:700;margin-top:.6cqh;line-height:1.35}
+  .flow3 .b.hot .v{color:var(--accent)}
+  .flow3 .b .d{font-size:1.2cqw;color:var(--light);margin-top:.8cqh;line-height:1.5}
+  .flow3 .ar{display:flex;align-items:center;font-size:2.6cqw;color:var(--accent);font-weight:700;flex:none}
+
+  /* === アイコン（インラインSVG） === */
+  .ic{width:2.2cqw;height:2.2cqw;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;vertical-align:-.4cqw}
+  .ic.fill{fill:currentColor;stroke:none}
+  .iclg{width:4.6cqw;height:4.6cqw}
+  .icxl{width:6cqw;height:6cqw}
+  /* === はるアイコン＋吹き出し === */
+  .speak{display:flex;align-items:center;gap:1.6cqw;margin-top:2.5cqh}
+  .speak.center{justify-content:center}
+  .avatar{position:relative;width:9cqw;height:9cqw;border-radius:50%;flex-shrink:0;border:.35cqw solid var(--accent);background:var(--navy);overflow:hidden;display:flex;align-items:center;justify-content:center}
+  .avatar span{color:#fff;font-size:3.4cqw;font-weight:700}
+  .avatar img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .balloon{position:relative;background:#fff;border:2px solid var(--accent);border-radius:1.2cqw;padding:2cqh 2.6cqw;font-size:1.7cqw;color:var(--navy);line-height:1.6;font-weight:700;max-width:78%}
+  .balloon::before{content:'';position:absolute;left:-1.5cqw;top:50%;margin-top:-.7cqw;border:.75cqw solid transparent;border-right-color:var(--accent)}
+  .balloon::after{content:'';position:absolute;left:-1.1cqw;top:50%;margin-top:-.6cqw;border:.65cqw solid transparent;border-right-color:#fff}
+  .balloon .accent{color:var(--accent)}
+  /* 画像枠 */
+  .imgframe{margin-top:1.2cqh;width:100%;background:#fff;border:2px solid var(--accent);border-radius:1cqw;overflow:hidden;display:flex;align-items:center;justify-content:center}
+  .ph{display:none;flex-direction:column;align-items:center;justify-content:center;color:var(--light);text-align:center;font-size:1.3cqw;line-height:1.7}
+  /* 手作り感：ステッカー風切り抜き・テープ留め写真・マーカー */
+  .cutout{filter:drop-shadow(1.6px 1.6px 0 #fff) drop-shadow(-1.6px 1.6px 0 #fff) drop-shadow(1.6px -1.6px 0 #fff) drop-shadow(-1.6px -1.6px 0 #fff) drop-shadow(0 .9cqh 1.3cqh rgba(0,0,0,.30))}
+  .polaroid{background:#fff;padding:1cqh 1cqw 2.4cqh;border-radius:.4cqw;box-shadow:0 1.2cqh 2.4cqh rgba(0,0,0,.35);position:relative}
+  .polaroid img{display:block;width:100%;height:100%;object-fit:cover;border-radius:.2cqw}
+  .polaroid .cap{position:absolute;left:0;right:0;bottom:.5cqh;text-align:center;font-size:1.15cqw;color:#555;font-weight:700}
+  .tape{position:absolute;width:9cqw;height:2.6cqh;background:rgba(255,221,120,.7);top:-1.2cqh;left:50%;transform:translateX(-50%) rotate(-3deg);box-shadow:0 .3cqh .6cqh rgba(0,0,0,.12)}
+  .marker{background:linear-gradient(transparent 58%, rgba(0,102,255,.26) 58%);padding:0 .2cqw;font-weight:700}
+  .marker.y{background:linear-gradient(transparent 58%, rgba(255,210,80,.55) 58%)}
+  /* === 手作り感：フォント・背景リズム・付箋 === */
+  h1,.slide h2{font-family:"Zen Maru Gothic","Meiryo UI",sans-serif}
+  .agenda .tt,.actlabel,.vcard .h,.flow3 .b .v,.card .lbl{font-family:"Zen Maru Gothic","Meiryo UI",sans-serif}
+  .sectitle,.balloon,.polaroid .cap,.hand{font-family:"Yomogi","Meiryo UI",sans-serif;font-weight:400}
+  /* 背景にうっすらドット（手作り・紙っぽさ）。navyは無地、skyはドット付き水色 */
+  .slide{background:radial-gradient(rgba(20,42,92,.05) 1.1px,transparent 1.1px) 0 0/24px 24px, var(--bg)}
+  .slide.sky{background:radial-gradient(rgba(20,42,92,.05) 1.1px,transparent 1.1px) 0 0/24px 24px, var(--sky)}
+  .slide.navy{background:var(--navy)}
+  /* 付箋 */
+  .sticky{position:absolute;background:#fff3a8;padding:1.4cqh 1.6cqw;font-family:"Yomogi","Meiryo UI",sans-serif;font-size:1.4cqw;color:#6b5800;box-shadow:0 .6cqh 1.4cqh rgba(0,0,0,.22);line-height:1.5;z-index:6;border-radius:.2cqw}
+  .hand-c{position:absolute;pointer-events:none;z-index:5}
+</style>
+</head>
+<body>
+
+<!-- アイコン定義（SVGスプライト） -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M8.5 13h7M8.5 16.5h7"/></symbol>
+  <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 6.5h6l2 2h10V19H3z"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5h16a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H9l-4 4v-4H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z"/><circle cx="9.5" cy="10.5" r="1.3"/><circle cx="14.5" cy="10.5" r="1.3"/></symbol>
+  <symbol id="i-ai" viewBox="0 0 24 24"><rect x="5" y="8" width="14" height="10" rx="2.5"/><path d="M12 8V4.5M9.5 4.5h5"/><circle cx="9.5" cy="13" r="1.2"/><circle cx="14.5" cy="13" r="1.2"/><path d="M3 12v3M21 12v3"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5.2l3.2 2"/></symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2L4 14h6l-1 8 10-13h-7z"/></symbol>
+  <symbol id="i-fish" viewBox="0 0 24 24"><path d="M2.5 12c3.5-5 11-5.5 15-1.5 1.2 1.2 2 1.5 2 1.5s-.8.3-2 1.5C13.5 17.5 6 17 2.5 12z"/><path d="M19.5 10.5L22 7v10l-2.5-3.5"/><circle cx="7.5" cy="11" r=".9"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.2l3 3 5-6"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M3 3v18h18"/><rect x="7" y="11" width="2.6" height="7"/><rect x="12" y="7" width="2.6" height="11"/><rect x="17" y="13" width="2.6" height="5"/></symbol>
+  <symbol id="i-medal" viewBox="0 0 24 24"><circle cx="12" cy="14" r="5"/><path d="M9 9L6 2M15 9l3-7"/><path d="M12 12.2l.9 1.8 2 .3-1.4 1.4.3 2-1.8-1-1.8 1 .3-2L9.1 14.3l2-.3z"/></symbol>
+</svg>
+
+<!-- 目次 -->
+<aside class="toc" id="toc">
+  <h3>目次 / TABLE OF CONTENTS</h3>
+  <ol id="tocList"></ol>
+  <div class="toc-foot">
+    <kbd>←</kbd><kbd>→</kbd> ページ送り<br>
+    <kbd>Space</kbd> 次へ<br>
+    <kbd>F</kbd> フルスクリーン<br>
+    <kbd>T</kbd> 目次の開閉
+  </div>
+</aside>
+
+<!-- ステージ -->
+<div class="stage" id="stage">
+<div class="progress" id="progress"></div>
+<div class="deck" id="deck">
+
+<!-- 1. タイトル -->
+<section class="slide navy active" data-title="タイトル">
+  <div style="position:absolute;left:0;top:43%;width:100%;height:13cqh;background:var(--accent);z-index:0"></div>
+  <div style="position:relative;z-index:2;max-width:52cqw">
+    <div style="display:flex;align-items:center;gap:1.6cqw;margin-bottom:2.5cqh">
+      <div class="avatar" style="width:10cqw;height:10cqw;border-color:var(--accent2)"><span>は</span><img src="assets/haru-icon.png" alt="はる" onerror="this.remove()"></div>
+      <div style="line-height:1.4">
+        <div style="font-size:2cqw;color:#fff;font-weight:700">はる（Haru）</div>
+        <div style="font-size:1.3cqw;color:#9eafc8">PA45 主催 / automate136.com</div>
+      </div>
+    </div>
+    <h1 style="font-size:5cqw;line-height:1.3">学びを、成果に変える</h1>
+    <p style="font-size:2.7cqw;margin-top:1.6cqh;color:#fff;font-weight:700;line-height:1.45">── Copilot と Power Platform で<br>進める社内DX</p>
+    <p style="font-size:1.7cqw;margin-top:2.4cqh;color:#cfd8e8">なんでもCopilot 大阪</p>
+  </div>
+  <!-- 集合写真（大・ポラロイド枠） -->
+  <div class="polaroid" style="position:absolute;right:4cqw;top:48%;transform:translateY(-50%) rotate(-3deg);width:34cqw;height:48cqh;z-index:2">
+    <span class="tape"></span>
+    <img src="assets/photos/plug-group.jpg" alt="PLUG集合写真" style="object-fit:cover" onerror="this.style.display='none'">
+    <div class="cap">仲間と、広島で</div>
+  </div>
+  <!-- 登壇写真（小・重ね） -->
+  <div class="polaroid" style="position:absolute;right:31cqw;bottom:6cqh;transform:rotate(5deg);width:15cqw;height:22cqh;z-index:3">
+    <span class="tape"></span>
+    <img src="assets/photos/haru-speaking.jpg" alt="登壇するはる" style="object-fit:contain;background:#fff" onerror="this.style.display='none'">
+    <div class="cap">登壇のようす</div>
+  </div>
+  <!-- お好み焼き（小・重ね） -->
+  <div class="polaroid" style="position:absolute;right:5cqw;bottom:3cqh;transform:rotate(-6deg);width:13cqw;height:17cqh;z-index:4">
+    <span class="tape"></span>
+    <img src="assets/photos/okonomiyaki.jpg" alt="広島のお好み焼き" style="object-fit:cover" onerror="this.style.display='none'">
+    <div class="cap">広島名物</div>
+  </div>
+</section>
+
+<!-- 自己紹介（タイトル直後＝2ページ目） -->
+<section class="slide" data-title="自己紹介">
+  <h2 style="display:inline-block">自己紹介</h2>
+  <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:3cqw;margin-top:2cqh;align-items:start">
+    <div>
+      <div style="display:flex;align-items:center;gap:1.4cqw">
+        <div class="avatar" style="width:7cqw;height:7cqw"><span>は</span><img src="assets/haru-icon.png" alt="はる" onerror="this.remove()"></div>
+        <div>
+          <div style="font-size:2.2cqw;color:var(--navy);font-weight:700">はる（Haru）</div>
+          <div style="font-size:1.4cqw;color:var(--accent);font-weight:700">X：@isamu_Automate</div>
+        </div>
+      </div>
+      <ul class="bullets" style="margin-top:2.5cqh;font-size:2cqw">
+        <li>メーカー勤務・<b>非IT</b>スタート（製造・生産技術の現場から）</li>
+        <li><b>社内</b>：Power Automate の<b>講座を推進</b>（2023〜）</li>
+        <li><b>社外</b>：connpass で <b>PA45</b> を主催 / automate136.com で発信</li>
+      </ul>
+      <div style="margin-top:2cqh;padding:2cqh 2.4cqw;background:#fff;border-left:.6cqw solid var(--accent);border-radius:.5cqw">
+        <p style="font-size:1.5cqw;color:var(--accent);font-weight:700">今日は所属を脇に置いて、個人の見解でお話します。</p>
+      </div>
+    </div>
+    <div style="position:relative;display:flex;align-items:center;justify-content:center;height:52cqh">
+      <span class="tape" style="top:2cqh;left:38%;transform:rotate(-8deg)"></span>
+      <span class="tape" style="top:2cqh;left:62%;transform:rotate(7deg)"></span>
+      <img class="cutout" src="assets/photos/cutout/haru-speaking-cut.png" alt="登壇するはる" style="max-width:100%;max-height:52cqh;object-fit:contain;transform:rotate(-2deg)" onerror="this.style.display='none'">
+    </div>
+  </div>
+  <div class="meta">なんでもCopilot 大阪 / はる</div>
+  <div class="pageno"></div>
+</section>
+
+<!-- PA45：毎週やっている＋13回の継続（統合スライド） -->
+<section class="slide" data-title="毎週やっているPA45（13回継続）">
+  <h2 style="display:inline-block">毎週やっています ── Power Automate 45（PA45）</h2>
+  <p class="sub" style="margin-top:.3cqh">初心者向け・無料・オンライン。なぜ？ ── 自動化の <b class="accent">「間口」</b> を広げたいから。</p>
+  <div style="display:flex;gap:1.2cqw;flex-wrap:wrap;margin-top:1.6cqh">
+    <span style="background:#eef4ff;border:2px solid var(--accent);border-radius:5cqw;padding:.8cqh 1.8cqw;font-size:1.45cqw;font-weight:700;color:var(--navy)">ねらいは "これから始める人"</span>
+    <span style="background:#eef4ff;border:2px solid var(--accent);border-radius:5cqw;padding:.8cqh 1.8cqw;font-size:1.45cqw;font-weight:700;color:var(--navy)">入門者を "どんどん" 増やす</span>
+    <span style="background:#eef4ff;border:2px solid var(--accent);border-radius:5cqw;padding:.8cqh 1.8cqw;font-size:1.45cqw;font-weight:700;color:var(--navy)">初心者専用・無料・毎週</span>
+  </div>
+  <p style="font-size:1.6cqw;color:var(--navy);font-weight:700;margin-top:2cqh">そして ── <span class="accent">これまで13回</span>、毎週ひとつずつ。続けるほど、入口は広がっていく。</p>
+  <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:.8cqw;margin-top:1.4cqh">
+    <img src="../../assets/connpass-eyecatch/P001_eyecatch.png" style="width:100%;aspect-ratio:1200/630;object-fit:cover;border-radius:.5cqw;border:1px solid #ddd;box-shadow:0 .3cqh 1cqh rgba(0,0,0,.08)" onerror="this.style.visibility='hidden'">
+    <img src="../../assets/connpass-eyecatch/P002_eyecatch.png" style="width:100%;aspect-ratio:1200/630;object-fit:cover;border-radius:.5cqw;border:1px solid #ddd;box-shadow:0 .3cqh 1cqh rgba(0,0,0,.08)" onerror="this.style.visibility='hidden'">
+    <img src="../../assets/connpass-eyecatch/P003_eyecatch.png" style="width:100%;aspect-ratio:1200/630;object-fit:cover;border-radius:.5cqw;border:1px solid #ddd;box-shadow:0 .3cqh 1cqh rgba(0,0,0,.08)" onerror="this.style.visibility='hidden'">
+    <img src="../../assets/connpass-eyecatch/P004_eyecatch.png" style="width:100%;aspect-ratio:1200/630;object-fit:cover;border-radius:.5cqw;border:1px solid #ddd;box-shadow:0 .3cqh 1cqh rgba(0,0,0,.08)" onerror="this.style.visibility='hidden'">
+    <img src="../../assets/connpass-eyecatch/P005_eyecatch.png" style="width:100%;aspect-ratio:1200/630;object-fit:cover;border-radius:.5cqw;border:1px solid #ddd;box-shadow:0 .3cqh 1cqh rgba(0,0,0,.08)" onerror="this.style.visibility='hidden'">
+    <img src="../../assets/connpass-eyecatch/P006_eyecatch.png" style="width:100%;aspect-ratio:1200/630;object-fit:cover;border-radius:.5cqw;border:1px solid #ddd;box-shadow:0 .3cqh 1cqh rgba(0,0,0,.08)" onerror="this.style.visibility='hidden'">
+    <img src="../../assets/connpass-eyecatch/P007_eyecatch.png" style="width:100%;aspect-ratio:1200/630;object-fit:cover;border-radius:.5cqw;border:1px solid #ddd;box-shadow:0 .3cqh 1cqh rgba(0,0,0,.08)" onerror="this.style.visibility='hidden'">
+    <img src="../../assets/connpass-eyecatch/P008_eyecatch.png" style="width:100%;aspect-ratio:1200/630;object-fit:cover;border-radius:.5cqw;border:1px solid #ddd;box-shadow:0 .3cqh 1cqh rgba(0,0,0,.08)" onerror="this.style.visibility='hidden'">
+    <img src="../../assets/connpass-eyecatch/P009_eyecatch.png" style="width:100%;aspect-ratio:1200/630;object-fit:cover;border-radius:.5cqw;border:1px solid #ddd;box-shadow:0 .3cqh 1cqh rgba(0,0,0,.08)" onerror="this.style.visibility='hidden'">
+    <img src="../../assets/connpass-eyecatch/P010_eyecatch.png" style="width:100%;aspect-ratio:1200/630;object-fit:cover;border-radius:.5cqw;border:1px solid #ddd;box-shadow:0 .3cqh 1cqh rgba(0,0,0,.08)" onerror="this.style.visibility='hidden'">
+    <img src="../../assets/connpass-eyecatch/P011_eyecatch.png" style="width:100%;aspect-ratio:1200/630;object-fit:cover;border-radius:.5cqw;border:1px solid #ddd;box-shadow:0 .3cqh 1cqh rgba(0,0,0,.08)" onerror="this.style.visibility='hidden'">
+    <img src="../../assets/connpass-eyecatch/P012_eyecatch.png" style="width:100%;aspect-ratio:1200/630;object-fit:cover;border-radius:.5cqw;border:1px solid #ddd;box-shadow:0 .3cqh 1cqh rgba(0,0,0,.08)" onerror="this.style.visibility='hidden'">
+    <img src="../../assets/connpass-eyecatch/P013_eyecatch.png" style="width:100%;aspect-ratio:1200/630;object-fit:cover;border-radius:.5cqw;border:1px solid #ddd;box-shadow:0 .3cqh 1cqh rgba(0,0,0,.08)" onerror="this.style.visibility='hidden'">
+    <div style="display:flex;align-items:center;justify-content:center;border:.3cqw dashed var(--accent);border-radius:.5cqw;color:var(--accent);font-weight:700;font-size:1.4cqw;text-align:center;line-height:1.3">第14回も<br>今週開催</div>
+  </div>
+  <p class="note" style="margin-top:1.8cqh;text-align:center;max-width:100%">続けるほど、入口は広がっていく。</p>
+  <div class="meta">なんでもCopilot 大阪 / はる</div>
+  <div class="pageno"></div>
+</section>
+
+<!-- 橋渡し：推進担当として感じた2つのこと -->
+<section class="slide" data-title="推進担当として、感じたこと">
+  <h2 style="display:inline-block">少し背景を ── 推進してきて、感じた2つのこと</h2>
+  <div style="display:flex;align-items:center;gap:1.2cqw;margin-top:1.6cqh;font-size:1.5cqw;color:var(--navy);font-weight:700">
+    <span style="background:#eef4ff;border:2px solid var(--accent);border-radius:.6cqw;padding:.7cqh 1.4cqw">2023〜 Power Automate Desktop 推進</span>
+    <span style="color:var(--accent);font-size:1.8cqw">→</span>
+    <span style="background:#eef4ff;border:2px solid var(--accent);border-radius:.6cqw;padding:.7cqh 1.4cqw">2025〜 Power Platform・Copilot 推進</span>
+  </div>
+  <div style="display:flex;gap:2cqw;margin-top:3cqh">
+    <div style="flex:1;background:#fff;border:2px solid var(--navy);border-radius:1cqw;padding:2.6cqh 2cqw;border-top:.6cqh solid var(--accent)">
+      <div style="font-size:1.5cqw;color:var(--accent);font-weight:700">気づき ①</div>
+      <div style="font-size:2cqw;color:var(--navy);font-weight:700;margin-top:.8cqh;line-height:1.4">学ぶ時間が、そもそも無い</div>
+      <div style="font-size:1.4cqw;color:var(--text);margin-top:1cqh;line-height:1.7">みんな日々の<b>事務作業・雑務に忙殺</b>され、Power Platform などを勉強して開発する時間がとれない。</div>
+    </div>
+    <div style="flex:1;background:#fff;border:2px solid var(--navy);border-radius:1cqw;padding:2.6cqh 2cqw;border-top:.6cqh solid var(--accent)">
+      <div style="font-size:1.5cqw;color:var(--accent);font-weight:700">気づき ②</div>
+      <div style="font-size:2cqw;color:var(--navy);font-weight:700;margin-top:.8cqh;line-height:1.4">ローコードでも、学習コストは高い</div>
+      <div style="font-size:1.4cqw;color:var(--text);margin-top:1cqh;line-height:1.7">「作れる」ようになるには <b>多くの学習コスト</b>がかかる。いきなり全員が開発、は難しい。</div>
+    </div>
+  </div>
+  <div class="callout">
+    <p style="font-size:2cqw">だからこそ、一度 立ち止まって考えました ── <span class="accent">そもそも、何のために自動化するのか？</span></p>
+  </div>
+  <div class="meta">なんでもCopilot 大阪 / はる</div>
+  <div class="pageno"></div>
+</section>
+
+<!-- 2. 問題提起：価値を生む仕事とは -->
+<section class="slide" data-title="あなたは実現できていますか？">
+  <h2 style="display:inline-block">ひとつ、質問させてください</h2>
+  <div style="display:grid;grid-template-columns:1fr 1.15fr;gap:2.5cqw;align-items:center;margin-top:1.5cqh">
+    <div>
+      <!-- 面接のあの日 -->
+      <div style="background:#fff;border:2px solid var(--navy);border-radius:1cqw;padding:2.2cqh 2.4cqw">
+        <div style="font-size:1.3cqw;color:var(--accent);font-weight:700;letter-spacing:.05em">入社のとき、面接で</div>
+        <p style="font-size:2.2cqw;color:var(--navy);font-weight:700;margin-top:.8cqh;line-height:1.5">「この会社で、<br><b class="accent">これがやりたい</b>」</p>
+        <p style="font-size:1.4cqw;color:var(--light);margin-top:.8cqh">── と語った、あの仕事 ＝ あなたの "価値を生む仕事"</p>
+      </div>
+      <!-- 矢印 -->
+      <div style="text-align:center;color:var(--accent);font-size:2.6cqw;font-weight:700;line-height:1.2;margin:.6cqh 0">↓</div>
+      <!-- いま -->
+      <div class="callout" style="margin-top:0;background:var(--navy)">
+        <p style="font-size:1.4cqw;color:#cfd8e8;font-weight:700">その仕事、いま ──</p>
+        <p style="font-size:3cqw;margin-top:.4cqh"><span class="accent">実現できていますか？</span></p>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:center;height:68cqh">
+      <img class="cutout" src="assets/photos/cutout/interview.png" alt="面接の様子" style="max-width:100%;max-height:68cqh;object-fit:contain;transform:rotate(-1.5deg)" onerror="this.style.display='none'">
+    </div>
+  </div>
+  <div class="meta">なんでもCopilot 大阪 / はる</div>
+  <div class="pageno"></div>
+</section>
+
+<!-- 3. 意義①（オープニングの信念：AIの目的） -->
+<section class="slide sky" data-title="私が考える、DXの目的">
+  <h2 style="display:inline-block">だから ── 私が考える「DXの目的」</h2>
+  <p style="text-align:center;font-size:3cqw;color:var(--navy);font-weight:700;margin-top:3cqh;line-height:1.5">人が <span class="marker y">"価値を生む仕事"</span> に使える時間を、<span class="marker">確保すること</span>。</p>
+  <p style="text-align:center;font-size:2cqw;color:var(--accent);font-weight:700;margin-top:1.5cqh">── これが、DXの目的だと私は考えています。</p>
+  <p class="note" style="text-align:center;max-width:92%;margin:1.8cqh auto 0;font-size:1.5cqw">DX＝<b>Copilot</b> や <b>Power Platform</b> を活用して、効率化で時間を生むこと。空いた時間を、人にしかできない仕事へ。</p>
+  <div style="display:flex;justify-content:center;margin-top:1.6cqh">
+    <img class="cutout" src="assets/photos/cutout/celebrate-group.png" alt="価値ある仕事で活躍する人たち" style="width:56cqw;max-height:40cqh;object-fit:contain;transform:rotate(-1deg)" onerror="this.style.display='none'">
+  </div>
+  <div class="meta">なんでもCopilot 大阪 / はる</div>
+  <div class="pageno"></div>
+</section>
+
+<!-- 3.5 DXの目的：効率化で時間を生み、価値を生む仕事へシフト -->
+<section class="slide" data-title="時間を取り戻して、やりたい仕事へ">
+  <h2 style="display:inline-block">DX で時間を生み ── "やりたい仕事" へ戻す</h2>
+  <p class="sub" style="margin-top:.3cqh">面接で語った「やりたい仕事」に、もう一度 時間を使えるように。</p>
+  <div class="flow3" style="margin-top:3.5cqh">
+    <div class="b hot">
+      <div style="color:var(--accent)"><svg class="iclg fill" style="width:5.5cqw;height:5.5cqw"><use href="#i-bolt"/></svg></div>
+      <div class="k" style="margin-top:.6cqh">① DXで効率化</div>
+      <div class="v">ムダ・手作業<br>を減らす</div>
+      <div class="d"><b>Copilot ／ Power Platform</b></div>
+    </div>
+    <div class="ar">→</div>
+    <div class="b">
+      <div style="color:var(--navy)"><svg class="iclg" style="width:5.5cqw;height:5.5cqw"><use href="#i-clock"/></svg></div>
+      <div class="k" style="margin-top:.6cqh">② 時間が生まれる</div>
+      <div class="v">空き時間が<br>できる</div>
+    </div>
+    <div class="ar">→</div>
+    <div class="b">
+      <div style="color:var(--accent)"><svg class="iclg" style="width:5.5cqw;height:5.5cqw"><use href="#i-medal"/></svg></div>
+      <div class="k" style="margin-top:.6cqh">③ 価値を生む仕事へ</div>
+      <div class="v">やりたい仕事に<br>時間を注ぐ</div>
+    </div>
+  </div>
+  <div class="callout" style="max-width:64%;margin-left:auto;margin-right:auto">
+    <p style="font-size:2cqw">効率化はゴールじゃない。<span class="accent">生んだ時間を "価値を生む仕事" に回す</span> ── そこまでがDX。</p>
+  </div>
+  <img class="cutout" src="assets/photos/cutout/happy-man.png" alt="楽しく働く人" style="position:absolute;left:2.5cqw;bottom:4.5cqh;width:15cqw;max-height:22cqh;object-fit:contain;transform:rotate(-3deg);z-index:3" onerror="this.style.display='none'">
+  <img class="cutout" src="assets/photos/cutout/happy-woman.png" alt="楽しく働く人" style="position:absolute;right:2.5cqw;bottom:4.5cqh;width:15cqw;max-height:22cqh;object-fit:contain;transform:rotate(3deg);z-index:3" onerror="this.style.display='none'">
+  <div class="meta">なんでもCopilot 大阪 / はる</div>
+  <div class="pageno"></div>
+</section>
+
+<!-- 今日の流れ（アジェンダ） -->
+<section class="slide" data-title="今日の流れ">
+  <h2 style="display:inline-block">今日の流れ</h2>
+  <div class="agenda">
+    <div class="row"><span class="no">1</span><span><span class="tt">なぜやるのか</span><span class="ds">── DXの目的</span></span></div>
+    <div class="row"><span class="no">2</span><span><span class="tt">どう "使ってもらう" か</span><span class="ds">── 教育の工夫（使うだけ）</span></span></div>
+    <div class="row"><span class="no">3</span><span><span class="tt">どう "成果" に変えるか</span><span class="ds">── 全自動で見える化</span></span></div>
+    <div class="row"><span class="no">4</span><span><span class="tt">どう "続けてもらう" か</span><span class="ds">── Copilot・楽しさの仕掛け</span></span></div>
+  </div>
+  <p class="note" style="margin-top:2cqh;text-align:center;max-width:100%">そして最後に ── これからのコミュニティの話を。</p>
+  <div class="meta">なんでもCopilot 大阪 / はる</div>
+  <div class="pageno"></div>
+</section>
+
+<!-- 導入：使ってもらうのが最初の壁（実践パートの入口） -->
+<section class="slide navy" data-title="とはいえ、使ってもらうのが壁">
+  <h2 style="color:#fff">とはいえ ──</h2>
+  <div style="text-align:center;margin-top:2.5cqh">
+    <p style="font-size:3.4cqw;color:#fff;font-weight:700;line-height:1.5">Power Automate も、Copilot も、<br><span class="accent">"使ってもらう"</span> のが最初の壁。</p>
+    <p style="font-size:1.7cqw;color:#cfd8e8;margin-top:3cqh;line-height:1.7">「便利だよ」と言うだけでは、誰も使ってくれない。<br>最初のハードルが、とにかく高い。</p>
+  </div>
+  <div class="callout" style="margin-top:3.5cqh">
+    <p style="font-size:2.2cqw">じゃあ、私は実際に何をやってきたのか。<br>── ここからは、現場の話です。</p>
+  </div>
+  <div class="meta">なんでもCopilot 大阪 / はる</div>
+  <div class="pageno"></div>
+</section>
+
+<!-- 5. つかみ：DX推進の悩み -->
+<section class="slide" data-title="DX推進の悩み">
+  <h2 style="display:inline-block">DXを推進してきて、ぶつかった悩み</h2>
+  <p class="sub" style="margin-top:.3cqh">講座をやればやるほど、こういう壁にぶつかりました。</p>
+  <div style="display:flex;gap:2cqw;align-items:center;margin-top:1.5cqh">
+  <div class="grid4" style="flex:1;margin-top:0">
+    <div class="vcard">
+      <div class="h" style="font-size:1.9cqw">① 教育と効率化が直結しない</div>
+      <div class="d" style="font-size:1.4cqw">講座はやった。でも<b>業務が楽になったか</b>分からない</div>
+    </div>
+    <div class="vcard">
+      <div class="h" style="font-size:1.9cqw">② 作る人が生まれない</div>
+      <div class="d" style="font-size:1.4cqw">市民開発を目指したのに、<b>続けて作る人</b>が育たない</div>
+    </div>
+    <div class="vcard">
+      <div class="h" style="font-size:1.9cqw">③ やらされ感が出る</div>
+      <div class="d" style="font-size:1.4cqw">「業務命令でDX」だと、<b>前向きな熱量</b>が続かない</div>
+    </div>
+    <div class="vcard">
+      <div class="h" style="font-size:1.9cqw">④ 成果が見えない</div>
+      <div class="d" style="font-size:1.4cqw">頑張りが数字にならず、<b>実感</b>を持てない</div>
+    </div>
+  </div>
+  <img class="cutout" src="assets/photos/cutout/worry-man.png" alt="悩む様子" style="width:26cqw;max-height:58cqh;object-fit:contain;transform:rotate(2deg)" onerror="this.style.display='none'">
+  </div>
+  <p class="note" style="margin-top:2cqh;text-align:center;max-width:100%">この中でも今日は ──「<b>教育と効率化が直結しない</b>」と「<b>成果が見えない</b>」をどう解いたか、に絞ります。</p>
+  <div class="meta">なんでもCopilot 大阪 / はる</div>
+  <div class="pageno"></div>
+</section>
+
+<!-- 6. これまでの教育 -->
+<section class="slide" data-title="これまでの教育">
+  <h2 style="display:inline-block">これまでの教育（2023〜）</h2>
+  <div style="display:grid;grid-template-columns:1fr 1.15fr;gap:2.5cqw;align-items:center;margin-top:1.5cqh">
+    <div>
+      <p style="font-size:2.1cqw;color:var(--navy);font-weight:700">目標は <span class="accent">市民開発</span> ── 「自分でフローを作れる人」を増やすこと。</p>
+      <p class="lead big" style="margin-top:3cqh">でも、継続してフローを "作る人" が、なかなか生まれない。</p>
+      <p class="note" style="margin-top:2.5cqh">講座は開く。盛り上がる。…けど、現場で作り続ける人にはつながらなかった。<b>なぜだろう？</b></p>
+    </div>
+    <div style="display:flex;align-items:center;justify-content:center;height:64cqh">
+      <img class="cutout" src="assets/photos/cutout/learners.png" alt="講座を受ける人たち" style="max-width:100%;max-height:64cqh;object-fit:contain;transform:rotate(-2deg)" onerror="this.style.display='none'">
+    </div>
+  </div>
+  <div class="meta">なんでもCopilot 大阪 / はる</div>
+  <div class="pageno"></div>
+</section>
+
+<!-- 7. 理由：忙しすぎる -->
+<section class="slide sky" data-title="理由：忙しすぎる">
+  <h2 style="display:inline-block">理由を考えてみた ── みんな、忙しすぎる</h2>
+  <p class="sub" style="margin-top:.3cqh">受講する人たちの日常は、こんな感じ。</p>
+  <div style="display:grid;grid-template-columns:1.45fr 1fr;gap:2cqw;align-items:center;margin-top:1cqh">
+    <div>
+      <ul class="bullets" style="margin-top:1cqh;font-size:1.8cqw">
+        <li>量産準備・予算申請・設備手配</li>
+        <li>報告資料の作成、データのとりまとめ</li>
+        <li>現場での工事立会、定例会議への参加 … 等々</li>
+      </ul>
+      <div class="callout" style="background:var(--navy);margin-top:2.5cqh">
+        <p style="font-size:2.1cqw">新しいDXスキルを、ゼロから学んで作る ──<br><span class="accent">そんな余裕のある環境じゃない。</span></p>
+      </div>
+    </div>
+    <div style="display:flex;align-items:flex-end;justify-content:center;height:54cqh">
+      <img class="cutout" src="assets/photos/cutout/busy-man.png" alt="忙しくて疲れた様子" style="max-width:100%;max-height:54cqh;object-fit:contain;transform:rotate(2deg)" onerror="this.style.display='none'">
+    </div>
+  </div>
+  <div class="meta">なんでもCopilot 大阪 / はる</div>
+  <div class="pageno"></div>
+</section>
+
+<!-- 8. 気づき：作るの前に段差がある -->
+<section class="slide" data-title="作るの前に段差がある">
+  <h2 style="display:inline-block">「作る」の前に ── まず登る2段がある</h2>
+  <p class="sub" style="margin-top:.3cqh">"使う" と "作る" の間には、大きな段差。だから順番が大事。</p>
+  <div style="position:relative;display:flex;align-items:flex-end;justify-content:center;gap:0;margin-top:4.5cqh;height:57cqh">
+    <!-- 難易度 縦軸 -->
+    <div style="align-self:stretch;display:flex;align-items:center;padding-right:1.2cqw">
+      <span style="writing-mode:vertical-rl;font-size:1.4cqw;font-weight:700;color:var(--light);letter-spacing:.25em">難易度　→</span>
+    </div>
+    <!-- ① 知る -->
+    <div style="position:relative;width:15cqw;height:15cqh;background:linear-gradient(180deg,#dbe4f2,#c3d2ea);border:2px solid #9fb2d0;border-bottom:none;border-radius:1cqw 1cqw 0 0;box-shadow:0 -.3cqh 1cqh rgba(0,0,0,.10);display:flex;flex-direction:column;align-items:center;justify-content:center">
+      <span style="position:absolute;top:1cqh;width:2.8cqw;height:2.8cqw;border-radius:50%;background:#7a8aa6;color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.4cqw;font-weight:700">1</span>
+      <div style="font-size:2cqw;font-weight:700;color:var(--navy);margin-top:2cqh">知る</div>
+    </div>
+    <!-- ② 使う（強調・ゴール） -->
+    <div style="position:relative;width:15cqw;height:25cqh;background:linear-gradient(180deg,#eaf2ff,#cfe0ff);border:3px solid var(--accent);border-bottom:none;border-radius:1cqw 1cqw 0 0;box-shadow:0 -.4cqh 1.4cqh rgba(0,102,255,.18);display:flex;flex-direction:column;align-items:center;justify-content:center">
+      <span style="position:absolute;top:-3.4cqh;background:var(--accent);color:#fff;font-weight:700;font-size:1.2cqw;padding:.5cqh 1.2cqw;border-radius:5cqw;white-space:nowrap">まずは、ここまで！</span>
+      <span style="position:absolute;top:1cqh;width:2.8cqw;height:2.8cqw;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.4cqw;font-weight:700">2</span>
+      <div style="font-size:2.2cqw;font-weight:700;color:var(--accent);margin-top:2cqh">使う</div>
+    </div>
+    <!-- 隔たり -->
+    <div style="align-self:flex-end;height:55cqh;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:0 1.4cqw">
+      <div style="font-size:1.25cqw;font-weight:700;color:#e2562f;text-align:center;line-height:1.4;margin-bottom:.6cqh">大きな段差<br><span style="font-size:1.05cqw">＝ 学習コスト</span></div>
+      <div style="flex:1;border-left:.32cqw dashed #e2562f"></div>
+    </div>
+    <!-- ③ 作る（遠い高み・別ステップ） -->
+    <div style="position:relative;width:15cqw;height:56cqh;background:linear-gradient(180deg,#24407f,#142a5c);border:2px solid #142a5c;border-bottom:none;border-radius:1cqw 1cqw 0 0;box-shadow:0 -.4cqh 1.4cqh rgba(0,0,0,.2);display:flex;flex-direction:column;align-items:center;justify-content:center">
+      <span style="position:absolute;top:1cqh;width:2.8cqw;height:2.8cqw;border-radius:50%;background:#9fb2d0;color:#142a5c;display:flex;align-items:center;justify-content:center;font-size:1.4cqw;font-weight:700">3</span>
+      <div style="font-size:2.2cqw;font-weight:700;color:#fff;margin-top:2cqh">作る</div>
+      <div style="font-size:1.1cqw;color:#cfd8e8;margin-top:.4cqh">市民開発（別ステップ）</div>
+      <!-- 作るバーを登る人 -->
+      <img class="cutout" src="assets/photos/cutout/climber.png" alt="作るへ登る人" style="position:absolute;left:-7.5cqw;bottom:-.5cqh;height:50cqh;object-fit:contain;z-index:4" onerror="this.style.display='none'">
+    </div>
+  </div>
+  <p class="note" style="margin-top:1.6cqh;text-align:center;max-width:100%">これまでは <b>"作る"（ハンズオン）</b> を目指していた。でも、まず <b class="accent">"知る→使う"</b> を社内講座のメインに。<b>"作る"</b> は、また別の階段。</p>
+  <div class="meta">なんでもCopilot 大阪 / はる</div>
+  <div class="pageno"></div>
+</section>
+
+<!-- 9. 講座は「使うだけ」 -->
+<section class="slide" data-title="講座は「使うだけ」">
+  <h2 style="display:inline-block">講座の進め方 ──「使うだけ」</h2>
+  <p class="sub" style="margin-top:.3cqh">ハンズオンなし。受講者はフローを <b>作りません</b>。</p>
+  <div style="display:flex;align-items:stretch;justify-content:center;gap:1.2cqw;margin-top:3cqh">
+    <div style="flex:1;background:#fff;border:2px solid var(--navy);border-radius:1cqw;padding:2.4cqh 1.4cqw;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center">
+      <div style="color:var(--accent)"><svg class="iclg" style="width:5cqw;height:5cqw"><use href="#i-eye"/></svg></div>
+      <div style="font-size:1.3cqw;color:var(--accent);font-weight:700;margin-top:.6cqh">STEP 1</div>
+      <div style="font-size:2cqw;color:var(--navy);font-weight:700;margin-top:.3cqh">知る</div>
+      <div style="font-size:1.2cqw;color:var(--light);margin-top:.6cqh">動画を見る</div>
+    </div>
+    <div class="arrow" style="display:flex;align-items:center">→</div>
+    <div style="flex:1;background:#eef4ff;border:3px solid var(--accent);border-radius:1cqw;padding:2.4cqh 1.4cqw;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center">
+      <div style="color:var(--accent)"><svg class="iclg fill" style="width:5cqw;height:5cqw"><use href="#i-bolt"/></svg></div>
+      <div style="font-size:1.3cqw;color:var(--accent);font-weight:700;margin-top:.6cqh">STEP 2</div>
+      <div style="font-size:2cqw;color:var(--accent);font-weight:700;margin-top:.3cqh">使う</div>
+      <div style="font-size:1.2cqw;color:var(--text);margin-top:.6cqh">配布フローを実行するだけ</div>
+    </div>
+    <div class="arrow" style="display:flex;align-items:center">→</div>
+    <div style="flex:1;background:#fff;border:2px solid var(--navy);border-radius:1cqw;padding:2.4cqh 1.4cqw;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center">
+      <div style="color:var(--navy)"><svg class="iclg" style="width:5cqw;height:5cqw"><use href="#i-chat"/></svg></div>
+      <div style="font-size:1.3cqw;color:var(--accent);font-weight:700;margin-top:.6cqh">STEP 3</div>
+      <div style="font-size:2cqw;color:var(--navy);font-weight:700;margin-top:.3cqh">自動化される</div>
+      <div style="font-size:1.2cqw;color:var(--light);margin-top:.6cqh">結果がTeamsに届く</div>
+    </div>
+  </div>
+  <div class="callout">
+    <p style="font-size:1.9cqw">受講者は受け取ったフローを <span class="accent">"使うだけ"</span>。作らなくていいから、まず <span class="accent">「楽になる体験」</span> を渡せる。</p>
+  </div>
+  <div class="meta">なんでもCopilot 大阪 / はる</div>
+  <div class="pageno"></div>
+</section>
+
+<!-- 10. 問題：教えっぱなし -->
+<section class="slide navy" data-title="問題：教えっぱなし">
+  <h2 style="color:#fff">でも、ここで問題が ──</h2>
+  <div style="text-align:center;margin-top:3cqh">
+    <p style="font-size:4.4cqw;color:#fff;font-weight:700">「教えっぱなし」<br>になっている。</p>
+  </div>
+  <div style="margin-top:4cqh;text-align:center">
+    <p style="font-size:1.9cqw;color:#cfd8e8">配って終わり、では意味がない。本当に必要なのは ──</p>
+    <p style="font-size:2.4cqw;color:var(--accent2);font-weight:700;margin-top:1.5cqh">教育 と 効率化（会社の成果）を、直結させること。<br>＝ 成果を "見える化" すること。</p>
+  </div>
+  <div class="meta">なんでもCopilot 大阪 / はる</div>
+  <div class="pageno"></div>
+</section>
+
+<!-- 11. 解決のしかけ：実行履歴を全自動取得 -->
+<section class="slide" data-title="成果を全自動でためる仕組み">
+  <h2 style="display:inline-block">しかけ ── 成果を "全自動" でためる</h2>
+  <p class="sub" style="margin-top:.3cqh">配るフロー全部に、ひと工夫を仕込みました。</p>
+  <div class="steps" style="margin-top:3.5cqh">
+    <div class="step"><div class="n">STEP 1</div><div class="t">配布フローに<br>実行履歴アクションを仕込む</div></div>
+    <div class="arrow">→</div>
+    <div class="step"><div class="n">STEP 2</div><div class="t">使うたびに<br>実行者・フロー名・部署を記録</div></div>
+    <div class="arrow">→</div>
+    <div class="step"><div class="n">STEP 3</div><div class="t">毎朝・無人で<br>自動集計（人は何もしない）</div></div>
+  </div>
+  <div style="display:flex;gap:2cqw;align-items:center;margin-top:3cqh">
+    <div class="callout" style="flex:1;margin-top:0">
+      <p style="font-size:2cqw">受講者が <span class="accent">"使うたび"</span> に、成果データが勝手にたまっていく。</p>
+    </div>
+    <div class="polaroid" style="width:24cqw;transform:rotate(2.5deg);flex:none">
+      <span class="tape"></span>
+      <img src="assets/photos/source/pexels-laptop-1840479.jpg" alt="ダッシュボードのグラフ" style="width:100%;height:22cqh;object-fit:cover">
+      <div class="cap">データがグラフに</div>
+    </div>
+  </div>
+  <div class="meta">なんでもCopilot 大阪 / はる</div>
+  <div class="pageno"></div>
+</section>
+
+<!-- 12. ダッシュボード（1枚ドン） -->
+<section class="slide" data-title="成果ダッシュボード">
+  <h2 style="display:inline-block;font-size:2.6cqw">使うほど、成果が "自動で" 積み上がる</h2>
+  <div class="sticky" style="right:7cqw;top:4cqh;transform:rotate(4deg)">毎日<br>自動更新！</div>
+  <div class="imgframe" style="height:57cqh">
+    <img src="assets/photos/dashboard.png" alt="効率化効果ダッシュボード" style="width:100%;height:100%;object-fit:contain" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+    <div class="ph">ダッシュボード画像をここに<br>assets/photos/dashboard.png</div>
+  </div>
+  <p style="margin-top:1.4cqh;text-align:center;font-size:1.7cqw;color:var(--navy);font-weight:700">毎日自動更新。<span class="accent">「あなたの自動化が、これだけ会社に貢献しています」</span> が、一人ひとりに見える。</p>
+  <div class="meta">なんでもCopilot 大阪 / はる</div>
+  <div class="pageno"></div>
+</section>
+
+<!-- 13. Copilotで講師の代わりエージェント -->
+<section class="slide sky" data-title="質問できない、を解く">
+  <h2 style="display:inline-block">もうひとつの壁 ──「質問できない」</h2>
+  <div class="speak">
+    <div class="avatar"><span>は</span><img src="assets/haru-icon.png" alt="はる" onerror="this.remove()"></div>
+    <div class="balloon">"使うだけ"でも、つまずくと「これ、誰に聞けば…」で止まっちゃう。<br>でも講師は私ひとり。<span class="accent">気軽に質問できる相手</span>が要る。</div>
+  </div>
+  <div style="display:flex;align-items:center;gap:2cqw;margin-top:3cqh;padding:2.4cqh 3cqw;background:#fff;border:3px solid var(--accent);border-radius:1cqw">
+    <div style="color:var(--accent);flex:none"><svg class="icxl"><use href="#i-ai"/></svg></div>
+    <div>
+      <p style="font-size:1.8cqw;color:var(--accent);font-weight:700">そこで、Copilotで "講師の代わり" エージェントを自作</p>
+      <p style="font-size:1.4cqw;color:var(--text);margin-top:.8cqh;line-height:1.7">私自身がCopilotにPower Automateを質問して "困ったこと" を全部洗い出し、<b>的確に答えるようプロンプトをチューニング</b>。→ 24時間・誰でも・気兼ねなく聞ける。</p>
+    </div>
+  </div>
+  <div class="meta">なんでもCopilot 大阪 / はる</div>
+  <div class="pageno"></div>
+</section>
+
+<!-- 13.5 プロンプト設計ポイント -->
+<section class="slide" data-title="エージェントのプロンプト設計">
+  <h2 style="display:inline-block">"講師の代わり" を支える ── プロンプト設計の勘どころ</h2>
+  <p class="sub" style="margin-top:.3cqh">私がCopilotに質問して "困ったこと" を、ぜんぶ先回りで仕込みました。</p>
+  <div class="grid4" style="grid-template-columns:1fr 1fr 1fr;margin-top:2.2cqh">
+    <div class="vcard"><div class="h">① 役割を固定</div><div class="d">「<b>Power Automate先生</b>」＝失敗しない手順でやさしく案内</div></div>
+    <div class="vcard"><div class="h">② 日本語UI徹底</div><div class="d">英語UI用語は出さない。<b>"どこで・何を選び・どう入力"</b>で書く</div></div>
+    <div class="vcard"><div class="h">③ 目的を毎回明示</div><div class="d">各ステップに<b>「何のため」</b>。動的コンテンツは"階層パス"で指定</div></div>
+    <div class="vcard"><div class="h">④ つまずき先回り</div><div class="d"><b>日時はUTC→JST</b>／型不一致・null・内部名の罠を回避</div></div>
+    <div class="vcard"><div class="h">⑤ 回答型を固定</div><div class="d">概要→構造図→前提→手順→注意→失敗例→<b>テスト</b>→次の一歩</div></div>
+    <div class="vcard"><div class="h">⑥ 最後に励まし</div><div class="d">学びを前向きに ── <b>"貢献コメント"</b>でモチベ設計まで</div></div>
+  </div>
+  <div class="callout">
+    <p style="font-size:1.8cqw">ポイントは <span class="accent">"自分がつまずいた所"</span> を全部、先生に覚えさせること。</p>
+  </div>
+  <div class="meta">なんでもCopilot 大阪 / はる</div>
+  <div class="pageno"></div>
+</section>
+
+<!-- 14. エスカレーター効果 -->
+<section class="slide" data-title="エスカレーター効果">
+  <h2 style="display:inline-block">知らぬ間に、"自動化のエスカレーター" に乗っている</h2>
+  <p class="sub" style="margin-top:.3cqh">階段は自分で登らなくていい。<b>乗るだけ</b>で、勝手に上がっていく ── これが講座の最大のねらい。</p>
+  <div style="display:flex;gap:2.5cqw;align-items:stretch;margin-top:2.2cqh">
+    <!-- エスカレーター写真 -->
+    <div class="polaroid" style="width:23cqw;transform:rotate(-2.5deg);flex:none;align-self:center">
+      <span class="tape"></span>
+      <img src="assets/photos/escalator-crop.jpg" alt="エスカレーターを上る人" style="width:100%;height:46cqh;object-fit:cover">
+      <div class="cap">乗れば、上がっていく</div>
+    </div>
+    <!-- 上昇ステージ（下→上） -->
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:.5cqh">
+      <div style="background:#eef4ff;border:3px solid var(--accent);border-radius:.8cqw;padding:1.2cqh 1.8cqw;display:flex;align-items:center;gap:1.2cqw">
+        <span style="font-size:1.3cqw;font-weight:700;color:#fff;background:var(--accent);border-radius:.4cqw;padding:.2cqh .8cqw;white-space:nowrap">GOAL</span>
+        <span style="font-size:1.7cqw;font-weight:700;color:var(--accent)">自分で作る（市民開発）へ</span>
+      </div>
+      <div style="text-align:center;color:var(--accent);font-size:1.4cqw;font-weight:700;line-height:1">↑</div>
+      <div style="background:#fff;border:2px solid var(--navy);border-radius:.8cqw;padding:1.2cqh 1.8cqw;font-size:1.5cqw;color:var(--navy)"><b>③</b> 成果がダッシュボードに積み上がる → <b class="accent">やる気</b></div>
+      <div style="text-align:center;color:var(--accent);font-size:1.4cqw;font-weight:700;line-height:1">↑</div>
+      <div style="background:#fff;border:2px solid var(--navy);border-radius:.8cqw;padding:1.2cqh 1.8cqw;font-size:1.5cqw;color:var(--navy)"><b>②</b> 翌日から、知らぬ間に <b>自動化が回っている</b></div>
+      <div style="text-align:center;color:var(--accent);font-size:1.4cqw;font-weight:700;line-height:1">↑</div>
+      <div style="background:#fff;border:2px solid var(--navy);border-radius:.8cqw;padding:1.2cqh 1.8cqw;font-size:1.5cqw;color:var(--navy)"><b>①</b> まず <b>"使うだけ"</b>（配布した ZIPフロー）＝ ここに乗るだけ</div>
+    </div>
+  </div>
+  <div class="callout" style="margin-top:1.8cqh">
+    <p style="font-size:1.8cqw">カギは <span class="accent">"使ってもらう" をいかにスムーズにするか</span>。事前に役立つフローをZIPで用意 → 乗った先に成果と市民開発が待つ。</p>
+  </div>
+  <div class="meta">なんでもCopilot 大阪 / はる</div>
+  <div class="pageno"></div>
+</section>
+
+<!-- 16. 意義②（クロージング） -->
+<section class="slide navy" data-title="自動化の意義（まとめ）">
+  <p style="font-size:1.8cqw;color:#cfd8e8">最初の問いに、戻ります ──</p>
+  <div style="text-align:center;margin-top:3cqh">
+    <p style="font-size:3cqw;color:#fff;font-weight:700;line-height:1.5">自動化は、効率化が目的じゃない。</p>
+    <p style="font-size:3cqw;color:var(--accent2);font-weight:700;margin-top:2cqh;line-height:1.5">空いた時間を、<br>人にしかできない "価値を生む仕事" へ。</p>
+  </div>
+  <p class="note" style="margin-top:3.5cqh;text-align:center;max-width:90%;margin-left:auto;margin-right:auto"><b>学びを成果に変え、その成果が見えるから、人は続けたくなる。</b><br>そうやって、現場全体が少しずつ前に進んでいく ── それが私の大事にしていることです。</p>
+  <div class="meta">なんでもCopilot 大阪 / はる</div>
+  <div class="pageno"></div>
+</section>
+
+<!-- 18. 現場の盛り上がり（写真コラージュ） -->
+<section class="slide navy" data-title="現場の盛り上がり">
+  <h2 style="color:#fff;font-size:2.4cqw;display:inline-block">数字の裏には、こんな "盛り上がり" があります</h2>
+  <p style="font-size:1.4cqw;color:#cfd8e8;margin-top:.3cqh">Power Platform コミュニティの現場 ── 学んで、笑って、つながる一日。</p>
+  <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:.6cqw;margin-top:1.6cqh">
+    <img src="assets/photos/PXL_20260314_045816972.jpg" style="width:100%;height:10.4cqh;object-fit:cover;border-radius:.4cqw" onerror="this.style.visibility='hidden'">
+    <img src="assets/photos/PXL_20260314_050106583.jpg" style="width:100%;height:10.4cqh;object-fit:cover;border-radius:.4cqw" onerror="this.style.visibility='hidden'">
+    <img src="assets/photos/PXL_20260314_050305850.jpg" style="width:100%;height:10.4cqh;object-fit:cover;border-radius:.4cqw" onerror="this.style.visibility='hidden'">
+    <img src="assets/photos/PXL_20260314_050324870.jpg" style="width:100%;height:10.4cqh;object-fit:cover;border-radius:.4cqw" onerror="this.style.visibility='hidden'">
+    <img src="assets/photos/PXL_20260314_050917173.jpg" style="width:100%;height:10.4cqh;object-fit:cover;border-radius:.4cqw" onerror="this.style.visibility='hidden'">
+    <img src="assets/photos/PXL_20260314_064158924.jpg" style="width:100%;height:10.4cqh;object-fit:cover;border-radius:.4cqw" onerror="this.style.visibility='hidden'">
+    <img src="assets/photos/PXL_20260314_064753384.jpg" style="width:100%;height:10.4cqh;object-fit:cover;border-radius:.4cqw" onerror="this.style.visibility='hidden'">
+    <img src="assets/photos/PXL_20260314_065525798.jpg" style="width:100%;height:10.4cqh;object-fit:cover;border-radius:.4cqw" onerror="this.style.visibility='hidden'">
+    <img src="assets/photos/PXL_20260314_071159067.jpg" style="width:100%;height:10.4cqh;object-fit:cover;border-radius:.4cqw" onerror="this.style.visibility='hidden'">
+    <img src="assets/photos/PXL_20260314_071219518.jpg" style="width:100%;height:10.4cqh;object-fit:cover;border-radius:.4cqw" onerror="this.style.visibility='hidden'">
+    <img src="assets/photos/PXL_20260314_072009141.jpg" style="width:100%;height:10.4cqh;object-fit:cover;border-radius:.4cqw" onerror="this.style.visibility='hidden'">
+    <img src="assets/photos/PXL_20260314_072040442.jpg" style="width:100%;height:10.4cqh;object-fit:cover;border-radius:.4cqw" onerror="this.style.visibility='hidden'">
+    <img src="assets/photos/PXL_20260314_072045129.jpg" style="width:100%;height:10.4cqh;object-fit:cover;border-radius:.4cqw" onerror="this.style.visibility='hidden'">
+    <img src="assets/photos/PXL_20260314_072552637.jpg" style="width:100%;height:10.4cqh;object-fit:cover;border-radius:.4cqw" onerror="this.style.visibility='hidden'">
+    <img src="assets/photos/PXL_20260314_074933397.jpg" style="width:100%;height:10.4cqh;object-fit:cover;border-radius:.4cqw" onerror="this.style.visibility='hidden'">
+    <img src="assets/photos/PXL_20260314_075611202.jpg" style="width:100%;height:10.4cqh;object-fit:cover;border-radius:.4cqw" onerror="this.style.visibility='hidden'">
+    <img src="assets/photos/PXL_20260314_075642408.jpg" style="width:100%;height:10.4cqh;object-fit:cover;border-radius:.4cqw" onerror="this.style.visibility='hidden'">
+    <img src="assets/photos/PXL_20260314_075746304.jpg" style="width:100%;height:10.4cqh;object-fit:cover;border-radius:.4cqw" onerror="this.style.visibility='hidden'">
+    <img src="assets/photos/PXL_20260314_075911397.jpg" style="width:100%;height:10.4cqh;object-fit:cover;border-radius:.4cqw" onerror="this.style.visibility='hidden'">
+    <img src="assets/photos/PXL_20260314_080008098.jpg" style="width:100%;height:10.4cqh;object-fit:cover;border-radius:.4cqw" onerror="this.style.visibility='hidden'">
+    <img src="assets/photos/PXL_20260314_080103917.jpg" style="width:100%;height:10.4cqh;object-fit:cover;border-radius:.4cqw" onerror="this.style.visibility='hidden'">
+    <img src="assets/photos/PXL_20260314_080216776.jpg" style="width:100%;height:10.4cqh;object-fit:cover;border-radius:.4cqw" onerror="this.style.visibility='hidden'">
+    <img src="assets/photos/PXL_20260314_080404327.jpg" style="width:100%;height:10.4cqh;object-fit:cover;border-radius:.4cqw" onerror="this.style.visibility='hidden'">
+    <img src="assets/photos/PXL_20260314_080710739.jpg" style="width:100%;height:10.4cqh;object-fit:cover;border-radius:.4cqw" onerror="this.style.visibility='hidden'">
+    <img src="assets/photos/PXL_20260314_081333467.jpg" style="width:100%;height:10.4cqh;object-fit:cover;border-radius:.4cqw" onerror="this.style.visibility='hidden'">
+    <img src="assets/photos/PXL_20260314_081635347.jpg" style="width:100%;height:10.4cqh;object-fit:cover;border-radius:.4cqw" onerror="this.style.visibility='hidden'">
+    <img src="assets/photos/PXL_20260314_082222934.jpg" style="width:100%;height:10.4cqh;object-fit:cover;border-radius:.4cqw" onerror="this.style.visibility='hidden'">
+    <img src="assets/photos/unnamed (5).jpg" style="width:100%;height:10.4cqh;object-fit:cover;border-radius:.4cqw" onerror="this.style.visibility='hidden'">
+  </div>
+  <p class="note" style="margin-top:1.6cqh;text-align:center;max-width:100%;color:#cfd8e8">こういう場を、これからも増やしていきたい。</p>
+  <div class="meta">なんでもCopilot 大阪 / はる</div>
+  <div class="pageno"></div>
+</section>
+
+<!-- 19. Thanks -->
+<section class="slide" data-title="Thanks">
+  <div style="text-align:center;margin-top:3cqh">
+    <div class="avatar" style="width:12cqw;height:12cqw;margin:0 auto 2.5cqh"><span>は</span><img src="assets/haru-icon.png" alt="はる" onerror="this.remove()"></div>
+    <h1 style="font-size:6cqw">ありがとうございました。</h1>
+    <p style="font-size:1.8cqw;margin-top:4cqh;color:var(--text)">懇親会で、みなさんの「学びを成果に変える工夫」、<br>ぜひ聞かせてください。</p>
+    <p style="font-size:1.4cqw;margin-top:5cqh;color:var(--light)">はる（Haru）/ PA45 主催 / <b>automate136.com</b></p>
+  </div>
+  <div class="meta">なんでもCopilot 大阪 / はる</div>
+  <div class="pageno"></div>
+</section>
+
+<!-- 20. 次回は広島で -->
+<section class="slide navy" data-title="次回は広島で">
+  <div style="position:absolute;inset:0;z-index:0">
+    <img src="assets/photos/plug-group.jpg" alt="PLUG第1回 集合写真" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none'">
+    <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,42,92,.45) 0%,rgba(20,42,92,.78) 70%,rgba(20,42,92,.9) 100%)"></div>
+  </div>
+  <div style="position:relative;z-index:3;text-align:center">
+    <p style="font-size:1.4cqw;color:#cfd8e8;font-weight:700;letter-spacing:.04em">広島発 Power Platform コミュニティ「PLUG」第1回 集合写真</p>
+    <p style="font-size:3.4cqw;color:#fff;font-weight:700;margin-top:3.5cqh;line-height:1.5">次回はぜひ ──<br><span style="color:var(--accent2)">なんでもCopilot in 広島</span> で<br>お待ちしています。</p>
+  </div>
+  <div style="position:absolute;right:5cqw;bottom:8cqh;z-index:3;text-align:center">
+    <div style="width:13cqw;height:13cqw;border-radius:50%;overflow:hidden;border:.4cqw solid var(--accent2);box-shadow:0 1cqh 2cqh rgba(0,0,0,.35);margin:0 auto;background:var(--navy)">
+      <img src="assets/photos/okonomiyaki.jpg" alt="広島のお好み焼き" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none'">
+    </div>
+    <p style="font-size:1.1cqw;color:#fff;font-weight:700;margin-top:.6cqh">広島名物・お好み焼きも、ぜひ</p>
+  </div>
+  <div class="meta">なんでもCopilot 大阪 / はる</div>
+  <div class="pageno"></div>
+</section>
+
+</div>
+</div>
+
+<script>
+const slides=document.querySelectorAll('.slide');
+const tocList=document.getElementById('tocList');
+const toc=document.getElementById('toc');
+const stage=document.getElementById('stage');
+const progress=document.getElementById('progress');
+let i=0;
+
+slides.forEach((s,idx)=>{
+  const li=document.createElement('li');
+  li.innerHTML='<span class="num">'+(idx+1).toString().padStart(2,'0')+'</span><span class="ttl">'+(s.dataset.title||'')+'</span>';
+  li.addEventListener('click',e=>{e.stopPropagation();show(idx)});
+  tocList.appendChild(li);
+});
+const tocItems=tocList.querySelectorAll('li');
+
+// 背景リズム：navy以外の明るいスライドを cream / 薄青 で交互に
+let _lt=0;
+slides.forEach(s=>{ if(s.classList.contains('navy'))return; _lt++; if(_lt%2===0)s.classList.add('sky'); else s.classList.remove('sky'); });
+
+const total=slides.length;
+slides.forEach((s,idx)=>{
+  const pn=s.querySelector('.pageno');
+  if(pn)pn.textContent=(idx+1)+' / '+total;
+  const b=document.createElement('div');
+  b.className='brand';
+  b.textContent='Haru / PA45';
+  s.appendChild(b);
+  const skip=['タイトル','今日の流れ','Thanks','次回は広島で'];
+  if(!skip.includes(s.dataset.title||'')){
+    const k=document.createElement('div');
+    k.className='sectitle';
+    k.textContent=s.dataset.title||'';
+    s.appendChild(k);
+  }
+});
+
+function show(n){
+  slides[i].classList.remove('active');
+  tocItems[i].classList.remove('current');
+  i=(n+slides.length)%slides.length;
+  slides[i].classList.add('active');
+  tocItems[i].classList.add('current');
+  progress.style.width=((i+1)/slides.length*100)+'%';
+  tocItems[i].scrollIntoView({block:'nearest',behavior:'smooth'});
+}
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){show(i+1);e.preventDefault()}
+  else if(e.key==='ArrowLeft'||e.key==='PageUp')show(i-1);
+  else if(e.key==='Home')show(0);
+  else if(e.key==='End')show(slides.length-1);
+  else if(e.key==='t'||e.key==='T')toc.classList.toggle('hidden');
+  else if(e.key==='f'||e.key==='F'){
+    if(!document.fullscreenElement)document.documentElement.requestFullscreen();
+    else document.exitFullscreen();
+  }
+});
+
+stage.addEventListener('click',e=>{
+  const r=stage.getBoundingClientRect();
+  const x=e.clientX-r.left;
+  if(x>r.width*.6)show(i+1);
+  else if(x<r.width*.4)show(i-1);
+});
+
+show(0);
+</script>
+</body>
+</html>
