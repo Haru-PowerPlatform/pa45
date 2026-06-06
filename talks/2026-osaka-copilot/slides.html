@@ -50,6 +50,11 @@
     font-weight:700;font-size:11.5px;padding-top:1px;
   }
   .toc li.current .num{color:#fff}
+  .toc li .ttlwrap{display:flex;flex-direction:column;gap:1px;min-width:0}
+  .toc li .ttl{font-weight:600}
+  .toc li .sub{font-size:10.5px;line-height:1.35;color:#8497b8;font-weight:400}
+  .toc li:hover .sub{color:#dbe4f2}
+  .toc li.current .sub{color:#eaf2ff;font-weight:400}
   .toc-foot{
     margin-top:18px;padding-top:12px;border-top:1px solid #2a4a8c;
     font-size:10.5px;color:#8da3c2;line-height:1.6;
@@ -881,9 +886,36 @@ const stage=document.getElementById('stage');
 const progress=document.getElementById('progress');
 let i=0;
 
+const tocSummaries=[
+  "「学びを成果に変える社内DX」── 今日のテーマ",
+  "非IT出身。社内で講座＆Copilot推進、社外でPA45・PLUG運営",
+  "初心者の間口を広げる無料勉強会を、毎週13回 継続",
+  "推進して感じた「学ぶ時間がない」「学習コストが高い」2つの壁",
+  "面接で語った\"価値を生む仕事\"、今できていますか？",
+  "DXの目的＝価値を生む仕事に使える時間を確保すること",
+  "効率化で時間を生み、その時間を\"やりたい仕事\"へ戻す",
+  "なぜ／使ってもらう／成果に変える／続けてもらう の4ステップ",
+  "とはいえ、まず\"使ってもらう\"のが一番むずかしい",
+  "直結しない・作る人が育たない・成果が見えない、という悩み",
+  "市民開発を目指したが、作り続ける人が育たなかった",
+  "みんな多忙で、ゼロから学んで作る余裕がない",
+  "\"使う\"と\"作る\"の間にある、学習コストの大きな崖",
+  "フローはZIPで配布。受講者は\"使うだけ・作らない\"",
+  "学びは、会社の\"収益\"に貢献してこそ意味がある",
+  "実行履歴を仕込み、毎朝・無人で成果を自動集計",
+  "貢献が数字で見えると、楽しさ・やる気につながる",
+  "講師は一人。気軽に質問できる相手が必要だった",
+  "Copilotで\"講師の代わり\"を自作する、設計の勘どころ",
+  "心理的ハードルなく、自動化の恩恵に\"乗ってもらう\"",
+  "使うだけ→自動化→成果→市民開発へ、自然に上っていく",
+  "目的は、人が\"価値を生む時間\"を取り戻すこと",
+  "ありがとうございました（このあと懇親会で）",
+  "コミュニティの現場の、リアルな盛り上がり",
+  "次回は\"なんでもCopilot in 広島\"でお待ちしています"
+];
 slides.forEach((s,idx)=>{
   const li=document.createElement('li');
-  li.innerHTML='<span class="num">'+(idx+1).toString().padStart(2,'0')+'</span><span class="ttl">'+(s.dataset.title||'')+'</span>';
+  li.innerHTML='<span class="num">'+(idx+1).toString().padStart(2,'0')+'</span><span class="ttlwrap"><span class="ttl">'+(s.dataset.title||'')+'</span><span class="sub">'+(tocSummaries[idx]||'')+'</span></span>';
   li.addEventListener('click',e=>{e.stopPropagation();show(idx)});
   tocList.appendChild(li);
 });
