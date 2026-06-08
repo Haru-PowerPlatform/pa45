@@ -3,68 +3,70 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=1280, initial-scale=1">
-<title>Vol.35 Copilotでフローの中身を解説させる</title>
+<title>Vol.35 フローの中身をCopilotに解説させる</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
   :root{
     --blue:#2563EB;--blue-bg:#EFF6FF;--green:#16A34A;--green-bg:#ECFDF5;--green-dark:#064E3B;
-    --orange:#EA580C;--ink:#1F2937;--gray:#374151;--weak:#6B7280;--card:#F8F9FA;--line:#E5E7EB;
+    --ink:#1F2937;--gray:#374151;--weak:#6B7280;--card:#F8F9FA;--line:#E5E7EB;
     --cop1:#8661C5;--cop2:#3B82F6;
   }
   *{margin:0;padding:0;box-sizing:border-box;}
   body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
   #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
 
+  /* タイトル・結論（ブランド共通） */
   .titlebar{height:90px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:18px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
   .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:25px;border-radius:999px;padding:7px 20px;white-space:nowrap;flex:0 0 auto;}
   .title-text{color:#fff;font-weight:900;font-size:34px;line-height:1.15;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:150px;}
   .title-chara{position:absolute;right:12px;bottom:-52px;height:146px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+  .concl{margin:9px 18px 0;background:var(--green-bg);border:2px solid var(--green);border-radius:12px;display:flex;align-items:center;gap:14px;padding:11px 20px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{background:linear-gradient(180deg,#2BD06A,#16A34A);color:#fff;font-weight:900;font-size:22px;border-radius:9px;padding:8px 18px;white-space:nowrap;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
+  .concl .txt{font-weight:700;font-size:21px;color:var(--green-dark);line-height:1.4;}
 
-  .concl{margin:9px 18px 0;background:var(--green-bg);border:2px solid var(--green);border-radius:12px;display:flex;align-items:center;gap:14px;padding:10px 20px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
-  .concl .chip{background:linear-gradient(180deg,#2BD06A,#16A34A);color:#fff;font-weight:900;font-size:21px;border-radius:9px;padding:8px 17px;white-space:nowrap;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
-  .concl .txt{font-weight:700;font-size:20px;color:var(--green-dark);line-height:1.4;}
+  /* メイン2パネル */
+  .main{flex:1 1 auto;display:flex;align-items:stretch;gap:12px;padding:11px 18px 9px;min-height:0;}
+  .panel{flex:1;display:flex;flex-direction:column;min-height:0;}
+  .panel.right{flex:1.12;}
+  .phead{align-self:stretch;text-align:center;color:#fff;font-weight:900;font-size:22px;border-radius:10px;padding:9px 14px;margin-bottom:11px;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 4px 7px rgba(0,0,0,.26),inset 0 1px 0 rgba(255,255,255,.5),inset 0 -3px 4px rgba(0,0,0,.16);text-shadow:0 1px 2px rgba(0,0,0,.2);}
+  .ph-blue{background:linear-gradient(180deg,#4A85FF,#2563EB);}
+  .ph-cop{background:linear-gradient(135deg,#8661C5,#3B6FE0);}
+  .phead .bdg{width:30px;height:30px;border-radius:50%;background:rgba(255,255,255,.25);border:2px solid #fff;display:flex;align-items:center;justify-content:center;font-size:17px;flex:0 0 auto;}
+  .pcap{text-align:center;font-weight:700;font-size:14.5px;color:var(--weak);margin-top:9px;line-height:1.4;}
 
-  /* 3ステップ */
-  .steps{flex:0 0 auto;margin:12px 18px 0;display:flex;align-items:stretch;gap:10px;}
-  .stp{flex:1;background:linear-gradient(180deg,#FFFFFF,#EEF1F6);border:2px solid #C2C9D2;border-radius:16px;padding:13px 13px 14px;position:relative;box-shadow:0 6px 14px rgba(0,0,0,.14),inset 0 1px 0 rgba(255,255,255,.95);display:flex;flex-direction:column;}
-  .stp .num{position:absolute;top:-12px;left:14px;width:30px;height:30px;border-radius:50%;background:linear-gradient(180deg,#4A85FF,#2563EB);color:#fff;font-weight:900;font-size:16px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 4px rgba(0,0,0,.3);}
-  .stp .sname{font-weight:900;font-size:19px;color:var(--ink);margin:6px 0 2px;}
-  .stp .ssub{font-weight:600;font-size:12.5px;color:var(--weak);line-height:1.35;margin-bottom:9px;min-height:34px;}
-  .stp .mini{margin-top:auto;}
-  .sarrow{align-self:center;color:var(--blue);font-weight:900;font-size:30px;flex:0 0 auto;}
+  /* 中央コネクタ */
+  .mid{flex:0 0 116px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;}
+  .mid .jbox{background:linear-gradient(180deg,#FFFFFF,#EEF1F6);border:2px solid #C2C9D2;border-radius:12px;padding:9px 8px;text-align:center;font-weight:900;font-size:13px;color:var(--ink);box-shadow:0 4px 9px rgba(0,0,0,.14);line-height:1.4;}
+  .mid .jbox .zip{font-size:22px;}
+  .mid .jbox .lab{color:var(--weak);font-size:11px;font-weight:700;margin-top:2px;}
+  .mid .barrow{color:var(--blue);font-weight:900;font-size:30px;}
 
-  /* mini UI 共通 */
-  .ui{background:#fff;border:1px solid #D1D1D1;border-radius:7px;font-family:'Segoe UI','Noto Sans JP',sans-serif;box-shadow:0 2px 5px rgba(0,0,0,.13);overflow:hidden;}
-  /* メニュー（エクスポート） */
-  .menu .mrow{display:flex;align-items:center;gap:8px;padding:6px 10px;font-size:12px;color:#605E5C;}
-  .menu .mrow.on{background:#EAF2FD;color:#201F1E;font-weight:700;}
-  .menu .mrow .ar{margin-left:auto;color:#8A8886;}
-  .menu .zip{display:flex;align-items:center;gap:7px;padding:7px 10px;border-top:1px solid #EDEBE9;background:#F3F9FF;font-size:12.5px;font-weight:800;color:#1D4ED8;}
-  /* zip→json */
-  .conv{display:flex;align-items:center;gap:8px;justify-content:center;padding:10px 8px;}
-  .conv .pill{background:#F3F4F6;border:1px solid #D1D1D1;border-radius:7px;padding:6px 10px;font-size:12.5px;font-weight:800;color:#323130;}
-  .conv .pill.j{background:#EDE7F8;border-color:#C9B8EC;color:#5B3FA0;}
-  .conv .ar{color:var(--blue);font-weight:900;font-size:16px;}
-  .codebox{margin-top:7px;background:#1E1E1E;border-radius:7px;padding:7px 9px;font-family:Consolas,monospace;font-size:10.5px;line-height:1.5;color:#9CDCFE;}
-  .codebox .k{color:#CE9178;}
-  /* copilot input mini */
-  .cmini{background:#26252B;border:1px solid #3A3942;border-radius:9px;padding:8px 10px;display:flex;align-items:center;gap:8px;}
-  .cmini .spark{font-size:15px;}
-  .cmini .ph{flex:1;font-size:12.5px;color:#C9C7D0;font-weight:600;}
-  .cmini .snd{width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,var(--cop1),var(--cop2));color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;}
+  /* 左：エクスポート画面（忠実再現） */
+  .xwrap{flex:1;display:flex;flex-direction:column;justify-content:center;}
+  .xmenu{background:#fff;border:1px solid #C7C7C7;border-radius:8px;box-shadow:0 6px 16px rgba(0,0,0,.22);font-family:'Segoe UI','Noto Sans JP',sans-serif;overflow:hidden;}
+  .xmenu .r{display:flex;align-items:center;gap:11px;padding:11px 16px;font-size:17px;color:#3B3A39;}
+  .xmenu .r .ic{font-size:16px;width:20px;text-align:center;color:#605E5C;}
+  .xmenu .r.on{background:#EAF2FD;color:#102B57;font-weight:800;}
+  .xmenu .r .ar{margin-left:auto;color:#605E5C;font-weight:900;}
+  .xmenu .sub{display:flex;align-items:center;gap:10px;padding:13px 16px 13px 30px;border-top:1px solid #ECECEC;background:linear-gradient(180deg,#F4F9FF,#E9F2FE);font-size:18px;font-weight:900;color:#1D4ED8;}
+  .xmenu .sub .dl{font-size:20px;}
 
-  /* 下段：Copilotチャット再現 */
-  .chat{flex:1 1 auto;margin:12px 18px 16px;background:linear-gradient(180deg,#2B2A30,#211F25);border-radius:14px;padding:13px 18px;display:flex;flex-direction:column;gap:9px;min-height:0;box-shadow:inset 0 1px 0 rgba(255,255,255,.07);position:relative;}
-  .chat .chead{display:flex;align-items:center;gap:9px;color:#EDEBF2;font-weight:900;font-size:15px;}
-  .chat .chead .logo{width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,var(--cop1),var(--cop2));display:flex;align-items:center;justify-content:center;font-size:12px;}
-  .bubble{max-width:88%;border-radius:13px;padding:9px 14px;font-size:15px;line-height:1.5;font-weight:600;}
+  /* 右：Copilotチャット（忠実再現・グレー寄り） */
+  .copa{flex:1;background:linear-gradient(180deg,#46454D,#3A3941);border:1px solid #565560;border-radius:14px;padding:13px 16px;display:flex;flex-direction:column;gap:9px;min-height:0;box-shadow:0 6px 16px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.08);position:relative;}
+  .copa .chead{display:flex;align-items:center;gap:9px;color:#F2F1F6;font-weight:900;font-size:16px;}
+  .copa .chead .lg{width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,var(--cop1),var(--cop2));display:flex;align-items:center;justify-content:center;font-size:13px;}
+  .bubble{max-width:90%;border-radius:14px;padding:10px 15px;font-size:17.5px;line-height:1.45;font-weight:700;}
   .bubble.user{align-self:flex-end;background:linear-gradient(135deg,#3B6FE0,#2563EB);color:#fff;}
-  .bubble.user .att{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.18);border-radius:6px;padding:2px 8px;font-size:12px;margin-top:5px;}
-  .bubble.ai{align-self:flex-start;background:#3A3942;color:#F1F0F5;border:1px solid #4A4853;}
-  .bubble.ai b{color:#C9B6F2;}
-  .chmascot{position:absolute;right:12px;bottom:0;height:120px;z-index:6;filter:drop-shadow(0 3px 6px rgba(0,0,0,.5));}
+  .bubble.user .att{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.2);border-radius:7px;padding:3px 10px;font-size:14px;font-weight:800;margin-top:7px;}
+  .bubble.ai{align-self:flex-start;background:#56555F;color:#F4F3F8;}
+  .bubble.ai b{color:#D7C6F7;}
+  .copa .inbar{margin-top:auto;background:#2F2E35;border:1px solid #54535D;border-radius:11px;padding:10px 13px;display:flex;align-items:center;gap:10px;}
+  .copa .inbar .ph{flex:1;color:#A7A5B0;font-size:14px;font-weight:600;}
+  .copa .inbar .snd{width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,var(--cop1),var(--cop2));color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;}
+  .copa .speech{position:absolute;right:-6px;top:-14px;background:linear-gradient(180deg,#FFFFFF,#FFF4D6);color:#3B2A00;font-weight:900;font-size:14px;border:2px solid #F59E0B;border-radius:12px;padding:5px 11px;box-shadow:0 3px 6px rgba(0,0,0,.3);z-index:8;}
+  .chmascot{position:absolute;right:-2px;bottom:-2px;height:118px;z-index:9;filter:drop-shadow(0 3px 6px rgba(0,0,0,.45));}
 </style>
 </head>
 <body>
@@ -78,53 +80,53 @@
 
   <div class="concl">
     <div class="chip">結論</div>
-    <div class="txt">複雑なフローも、Zipで書き出して中のJSONをCopilotに貼るだけ。<br>何をしているかを日本語でやさしく解説してくれます。</div>
+    <div class="txt">フローを Zip で書き出し、中の JSON を Copilot に貼るだけ。<br>複雑なフローも、何をしているか日本語でやさしく解説してくれます。</div>
   </div>
 
-  <div class="steps">
-    <!-- 1 -->
-    <div class="stp">
-      <div class="num">1</div>
-      <div class="sname">Zipでエクスポート</div>
-      <div class="ssub">マイフローで ⋮ →エクスポート →パッケージ</div>
-      <div class="mini ui menu">
-        <div class="mrow">コピーの送信</div>
-        <div class="mrow on">エクスポート <span class="ar">▸</span></div>
-        <div class="zip">⤓ パッケージ (.zip)</div>
-      </div>
-    </div>
-    <div class="sarrow">▶</div>
-    <!-- 2 -->
-    <div class="stp">
-      <div class="num">2</div>
-      <div class="sname">JSONを取り出す</div>
-      <div class="ssub">Zipを解凍して、中のフロー定義JSON</div>
-      <div class="mini">
-        <div class="conv"><span class="pill">📦 export.zip</span><span class="ar">▶</span><span class="pill j">{ } definition.json</span></div>
-        <div class="codebox">{ "<span class="k">triggers</span>": {…},<br>&nbsp;&nbsp;"<span class="k">actions</span>": { "条件": {…} } }</div>
-      </div>
-    </div>
-    <div class="sarrow">▶</div>
-    <!-- 3 -->
-    <div class="stp">
-      <div class="num">3</div>
-      <div class="sname">Copilotに貼って質問</div>
-      <div class="ssub">通常のCopilotチャットに貼り付け</div>
-      <div class="mini cmini">
-        <span class="spark">✦</span>
-        <span class="ph">このフローを説明して</span>
-        <span class="snd">➤</span>
-      </div>
-    </div>
-  </div>
+  <div class="main">
 
-  <div class="chat">
-    <div class="chead"><span class="logo">✦</span>Copilot で中身を解説してもらう</div>
-    <div class="bubble user">この definition.json のフローが何をしているか、初心者にもわかるように説明して
-      <span class="att">📄 definition.json</span>
+    <!-- ① エクスポート -->
+    <div class="panel">
+      <div class="phead ph-blue"><span class="bdg">1</span>Power Automate でエクスポート</div>
+      <div class="xwrap">
+        <div class="xmenu">
+          <div class="r"><span class="ic">✎</span>編集</div>
+          <div class="r"><span class="ic">⧉</span>コピーの送信</div>
+          <div class="r on"><span class="ic">⤴</span>エクスポート <span class="ar">▸</span></div>
+          <div class="sub"><span class="dl">⤓</span>パッケージ (.zip)</div>
+          <div class="r"><span class="ic">🕘</span>実行履歴</div>
+        </div>
+      </div>
+      <div class="pcap">マイフロー → ⋮ → エクスポート → パッケージ (.zip)</div>
     </div>
-    <div class="bubble ai">このフローは <b>「SharePointの申請リストに新規項目が入ると、担当者へTeams通知する」</b>自動化です。流れは3つ：①項目作成をトリガーに起動 → ②条件で対象を判定 → ③Teamsにメッセージ投稿。— のように、構造を読み解いて日本語で教えてくれます。</div>
-    <img class="chmascot" src="../../pptx/_assets/chara/chara_guts.png" alt="">
+
+    <!-- 中央：JSON取り出し -->
+    <div class="mid">
+      <div class="barrow">▶</div>
+      <div class="jbox">
+        <div class="zip">📦→{ }</div>
+        解凍して<br>JSONを取り出す
+        <div class="lab">definition.json</div>
+      </div>
+      <div class="barrow">▶</div>
+    </div>
+
+    <!-- ② Copilotに貼る -->
+    <div class="panel right">
+      <div class="phead ph-cop"><span class="bdg">2</span>Copilot に貼って質問</div>
+      <div class="copa">
+        <div class="speech">貼るだけで解説！</div>
+        <div class="chead"><span class="lg">✦</span>Copilot</div>
+        <div class="bubble user">この JSON のフロー、何をしているか説明して
+          <span class="att">📄 definition.json</span>
+        </div>
+        <div class="bubble ai">このフローは <b>SharePointの申請リストに項目が追加されると、担当者へTeams通知する</b>自動化です。①項目作成で起動 → ②条件で判定 → ③Teamsに投稿、という流れになっています。</div>
+        <div class="inbar"><span>＋</span><span class="ph">Copilot にメッセージを送信する</span><span class="snd">➤</span></div>
+        <img class="chmascot" src="../../pptx/_assets/chara/chara_guts.png" alt="">
+      </div>
+      <div class="pcap">通常の Copilot チャットに JSON を貼り付け</div>
+    </div>
+
   </div>
 
 </div>
