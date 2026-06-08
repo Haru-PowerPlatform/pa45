@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PA アクション設定UI 部品ライブラリ（HTML再現）</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  body{margin:0;background:#EEF1F5;font-family:'Noto Sans JP',sans-serif;color:#1F2937;padding:32px 20px 60px;}
+  h1{font-size:20px;font-weight:900;color:#374151;margin:0 0 4px;}
+  .sub{font-size:13px;color:#6B7280;margin:0 0 26px;}
+  .grid{display:flex;flex-wrap:wrap;gap:26px;align-items:flex-start;}
+  .card{background:#F3F4F6;border-radius:14px;padding:16px;box-shadow:0 4px 12px rgba(0,0,0,.08);width:520px;}
+  .cap{font-size:13px;font-weight:900;color:#374151;margin:0 0 3px;}
+  .cid{font-size:11px;color:#9CA3AF;font-family:monospace;margin:0 0 12px;}
+
+  /* ===== 共通：新デザイナー設定パネル ===== */
+  .up{background:#fff;border-radius:8px;padding:12px 14px 14px;box-shadow:0 3px 7px rgba(0,0,0,.18);
+      font-family:'Segoe UI','Noto Sans JP',sans-serif;color:#323130;}
+  .up-head{display:flex;align-items:center;gap:9px;margin-bottom:10px;}
+  .up-head .ic{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;overflow:hidden;flex:0 0 auto;}
+  .up-head .ic img{width:22px;height:22px;object-fit:contain;}
+  .up-head .nm{font-size:14px;font-weight:600;color:#201F1E;}
+  .up-tabs{display:flex;gap:18px;border-bottom:1px solid #EDEBE9;margin-bottom:13px;}
+  .up-tabs span{font-size:12.5px;color:#605E5C;padding-bottom:7px;}
+  .up-tabs span.on{color:#201F1E;font-weight:700;border-bottom:2px solid #2563EB;}
+  .up-lbl{font-size:12.5px;color:#323130;margin:0 0 4px;}
+  .up-lbl .rq{color:#D13438;}
+  .up-ctl{border:1px solid #D1D1D1;border-radius:4px;padding:7px 10px;font-size:12.5px;color:#A19F9D;background:#fff;display:flex;align-items:center;}
+  .up-ctl.dd{justify-content:space-between;}
+  .up-ctl .cv{color:#8A8886;font-size:10px;margin-left:8px;flex:0 0 auto;}
+  .up-ctl .gear{color:#605E5C;margin-left:auto;}
+  .up-row{margin-bottom:12px;}
+  .up-row:last-child{margin-bottom:0;}
+  /* リッチエディタ */
+  .up-rte{border:1px solid #D1D1D1;border-radius:4px;}
+  .up-rte .bar{display:flex;align-items:center;gap:11px;border-bottom:1px solid #EDEBE9;padding:6px 9px;font-size:11px;color:#605E5C;}
+  .up-rte .bar b{color:#323130;}
+  .up-rte .body{padding:9px 10px;font-size:12.5px;color:#A19F9D;min-height:42px;}
+  /* 条件 */
+  .uc .andbox{display:inline-flex;align-items:center;gap:16px;border:1px solid #D1D1D1;border-radius:4px;padding:4px 9px;font-size:12.5px;color:#323130;margin-bottom:8px;}
+  .uc .cv{color:#8A8886;font-size:10px;}
+  .uc .row{display:flex;align-items:center;gap:8px;}
+  .uc .fld{border:1px solid #D1D1D1;border-radius:4px;padding:6px 10px;font-size:12.5px;background:#fff;}
+  .uc .fld.val{flex:1;min-width:0;color:#A19F9D;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .uc .fld.op{flex:0 0 auto;display:flex;align-items:center;gap:14px;color:#323130;}
+  .uc .dots{color:#605E5C;font-weight:700;font-size:14px;}
+  .uc .addrow{margin-top:8px;display:inline-flex;align-items:center;gap:7px;border:1px solid #D1D1D1;border-radius:4px;padding:5px 10px;font-size:12.5px;color:#323130;}
+  /* textarea / 2入力 */
+  .up-ta{border:1px solid #D1D1D1;border-radius:4px;background:#fff;min-height:78px;}
+  .up-two{display:flex;gap:8px;align-items:center;}
+  .up-two .up-ctl{flex:1;}
+  .up-two .swi{color:#605E5C;font-size:15px;flex:0 0 auto;}
+  .up-link{color:#2563EB;font-size:12px;margin-top:7px;display:inline-block;}
+  .up-note{background:#F3F9FD;border:1px solid #D6E8F5;border-radius:4px;padding:9px 11px;font-size:12px;color:#323130;display:flex;gap:8px;align-items:flex-start;}
+  .up-note .i{color:#0F6CBD;font-weight:900;flex:0 0 auto;}
+  /* アイコン色箱 */
+  .ic.purple{background:#E8E0F7;} .ic.purple::after{content:"{}";color:#8661C5;font-weight:900;font-size:12px;}
+  .ic.teams{background:#E8E6FA;} .ic.teams::after{content:"T";color:#5B5FC7;font-weight:900;font-size:13px;}
+  .ic.sched{background:#FCE4D6;} .ic.sched::after{content:"\23F1";font-size:13px;}
+  .ic.forms{background:#F3E1EE;} .ic.forms::after{content:"F";color:#C34A9A;font-weight:900;font-size:13px;}
+  .ic.manual{background:#DCE8FB;} .ic.manual::after{content:"\26A1";color:#2563EB;font-size:12px;}
+  /* セクション見出し */
+  .secthead{width:100%;font-size:15px;font-weight:900;color:#374151;margin:14px 0 -8px;padding-top:8px;border-top:2px solid #D1D5DB;}
+  .uc2 .row{display:flex;align-items:center;gap:8px;}
+  .uc2 .fld{border:1px solid #D1D1D1;border-radius:4px;padding:6px 10px;font-size:12.5px;background:#fff;}
+  .uc2 .fld.val{flex:1;min-width:0;color:#A19F9D;}
+  .uc2 .fld.op{flex:0 0 auto;display:flex;align-items:center;gap:14px;color:#323130;}
+  .uc2 .cv{color:#8A8886;font-size:10px;}
+  .uc2 .lim{margin-top:8px;font-size:11.5px;color:#605E5C;}
+</style>
+</head>
+<body>
+<h1>Power Automate アクション設定UI ─ 部品ライブラリ（HTML再現）</h1>
+<p class="sub">スクショではなくHTML/CSSで実画面を忠実再現。スライドの「つまずき帯」から呼び出して使う。拡大してもくっきり・文言差し替え自由。</p>
+
+<div class="grid">
+
+  <!-- 作成 -->
+  <div class="card">
+    <p class="cap">データ操作 ＞ 作成（Compose）</p>
+    <p class="cid">mock: data-compose</p>
+    <div class="up">
+      <div class="up-head"><span class="ic purple"></span><span class="nm">作成</span></div>
+      <div class="up-tabs"><span class="on">パラメーター</span><span>設定</span><span>コード ビュー</span><span>詳細</span></div>
+      <div class="up-row"><div class="up-lbl">入力 <span class="rq">*</span></div><div class="up-ctl">入力</div></div>
+    </div>
+  </div>
+
+  <!-- 条件 -->
+  <div class="card">
+    <p class="cap">コントロール ＞ 条件（Condition）</p>
+    <p class="cid">mock: control-condition</p>
+    <div class="up uc">
+      <div class="up-head"><span class="ic"><img src="../../pptx/_assets/icons/pa_control.png" alt=""></span><span class="nm">条件</span></div>
+      <div class="up-tabs"><span class="on">パラメーター</span><span>設定</span><span>コード ビュー</span><span>詳細</span></div>
+      <div class="up-lbl">Condition expression <span class="rq">*</span></div>
+      <div class="up-lbl" style="color:#605E5C;font-size:11.5px;margin:1px 0 8px;">比較する値を指定し、使用する演算子を選択します。</div>
+      <div class="andbox">かつ <span class="cv">▼</span></div>
+      <div class="row">
+        <div class="fld val">値を選択します</div>
+        <div class="fld op">等しい <span class="cv">▼</span></div>
+        <div class="fld val">値を選択します</div>
+        <span class="dots">⋯</span>
+      </div>
+      <div class="addrow">＋ 行を追加する <span class="cv">▼</span></div>
+    </div>
+  </div>
+
+  <!-- メールの送信 (V2) -->
+  <div class="card">
+    <p class="cap">Office 365 Outlook ＞ メールの送信 (V2)</p>
+    <p class="cid">mock: outlook-send-email-v2</p>
+    <div class="up">
+      <div class="up-head"><span class="ic"><img src="../../pptx/_assets/icons/pa_outlook.png" alt=""></span><span class="nm">メールの送信 (V2)</span></div>
+      <div class="up-tabs"><span class="on">パラメーター</span><span>設定</span><span>コード ビュー</span><span>テスト</span><span>詳細</span></div>
+      <div class="up-row"><div class="up-lbl">宛先 <span class="rq">*</span></div><div class="up-ctl dd"><span>ユーザーを検索するには、名前またはメール アドレスの一部を入力…</span><span class="cv">▼</span></div></div>
+      <div class="up-row"><div class="up-lbl">件名 <span class="rq">*</span></div><div class="up-ctl">メールの件名を指定します</div></div>
+      <div class="up-row"><div class="up-lbl">本文 <span class="rq">*</span></div>
+        <div class="up-rte"><div class="bar"><span>Normal ▾</span><span>Arial ▾</span><span>15px ▾</span><b>B</b><i>I</i><u>U</u><span>🔗</span><span>&lt;/&gt;</span></div><div class="body">メールの本文を指定します</div></div>
+      </div>
+      <div class="up-row"><div class="up-lbl">秘密度</div><div class="up-ctl dd"><span>秘密度</span><span class="cv">▼</span></div></div>
+    </div>
+  </div>
+
+  <!-- SharePoint 項目の作成 -->
+  <div class="card">
+    <p class="cap">SharePoint ＞ 項目の作成</p>
+    <p class="cid">mock: sharepoint-create-item</p>
+    <div class="up">
+      <div class="up-head"><span class="ic"><img src="../../pptx/_assets/icons/pa_sharepoint.png" alt=""></span><span class="nm">項目の作成</span></div>
+      <div class="up-tabs"><span class="on">パラメーター</span><span>設定</span><span>コード ビュー</span><span>テスト</span><span>詳細</span></div>
+      <div class="up-row"><div class="up-lbl">サイトのアドレス <span class="rq">*</span></div><div class="up-ctl dd"><span>例: https://contoso.sharepoint.com/sites/sitename</span><span class="cv">▼</span></div></div>
+      <div class="up-row"><div class="up-lbl">リスト名 <span class="rq">*</span></div><div class="up-ctl dd"><span>SharePoint リスト名</span><span class="cv">▼</span></div></div>
+    </div>
+  </div>
+
+  <!-- Teams 投稿 -->
+  <div class="card">
+    <p class="cap">Microsoft Teams ＞ チャットまたはチャネルにメッセージを投稿する</p>
+    <p class="cid">mock: teams-post-message</p>
+    <div class="up">
+      <div class="up-head"><span class="ic teams"></span><span class="nm">チャットまたはチャネルでメッセージを投稿する</span></div>
+      <div class="up-tabs"><span class="on">パラメーター</span><span>設定</span><span>コード ビュー</span><span>テスト</span><span>詳細</span></div>
+      <div class="up-row"><div class="up-lbl">投稿者 <span class="rq">*</span></div><div class="up-ctl dd"><span style="color:#201F1E;">フロー ボット</span><span class="cv">▼</span></div></div>
+      <div class="up-row"><div class="up-lbl">投稿先 <span class="rq">*</span></div><div class="up-ctl dd"><span style="color:#201F1E;">Channel</span><span class="cv">▼</span></div></div>
+      <div class="up-row"><div class="up-lbl">Team <span class="rq">*</span></div><div class="up-ctl dd"><span>チームを選択します</span><span class="cv">▼</span></div></div>
+      <div class="up-row"><div class="up-lbl">Channel <span class="rq">*</span></div><div class="up-ctl dd"><span>チャネルを選択します</span><span class="cv">▼</span></div></div>
+      <div class="up-row"><div class="up-lbl">Message <span class="rq">*</span></div>
+        <div class="up-rte"><div class="bar"><span>Normal ▾</span><span>Arial ▾</span><span>15px ▾</span><b>B</b><i>I</i><u>U</u><span>🔗</span></div><div class="body">メッセージを追加する</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- それぞれに適用する -->
+  <div class="card">
+    <p class="cap">コントロール ＞ それぞれに適用する（Apply to each）</p>
+    <p class="cid">mock: control-apply-to-each</p>
+    <div class="up">
+      <div class="up-head"><span class="ic"><img src="../../pptx/_assets/icons/pa_control.png" alt=""></span><span class="nm">それぞれに適用する</span></div>
+      <div class="up-tabs"><span class="on">パラメーター</span><span>設定</span><span>コード ビュー</span><span>詳細</span></div>
+      <div class="up-row"><div class="up-lbl">前のステップから出力を選択します <span class="rq">*</span></div><div class="up-ctl">前のステップから出力を選択します</div></div>
+    </div>
+  </div>
+
+  <!-- JSON の解析 -->
+  <div class="card">
+    <p class="cap">データ操作 ＞ JSON の解析（Parse JSON）</p>
+    <p class="cid">mock: data-parse-json</p>
+    <div class="up">
+      <div class="up-head"><span class="ic purple"></span><span class="nm">JSON の解析</span></div>
+      <div class="up-tabs"><span class="on">パラメーター</span><span>設定</span><span>コード ビュー</span><span>詳細</span></div>
+      <div class="up-row"><div class="up-lbl">Content <span class="rq">*</span></div><div class="up-ctl">Content to create schema from</div></div>
+      <div class="up-row"><div class="up-lbl">Schema <span class="rq">*</span></div><div class="up-ta"></div>
+        <a class="up-link">サンプル ペイロードを使用してスキーマを生成する</a></div>
+    </div>
+  </div>
+
+  <!-- 選択 -->
+  <div class="card">
+    <p class="cap">データ操作 ＞ 選択（Select）</p>
+    <p class="cid">mock: data-select</p>
+    <div class="up">
+      <div class="up-head"><span class="ic purple"></span><span class="nm">選択</span></div>
+      <div class="up-tabs"><span class="on">パラメーター</span><span>設定</span><span>コード ビュー</span><span>詳細</span></div>
+      <div class="up-row"><div class="up-lbl">元 <span class="rq">*</span></div><div class="up-ctl">選択する元の配列</div></div>
+      <div class="up-row"><div class="up-lbl">マップ <span class="rq">*</span></div>
+        <div class="up-two"><div class="up-ctl">キーを入力します</div><div class="up-ctl">値を入力します</div><span class="swi">⇄</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- スコープ -->
+  <div class="card">
+    <p class="cap">コントロール ＞ スコープ（Scope）</p>
+    <p class="cid">mock: control-scope</p>
+    <div class="up">
+      <div class="up-head"><span class="ic"><img src="../../pptx/_assets/icons/pa_control.png" alt=""></span><span class="nm">スコープ</span></div>
+      <div class="up-tabs"><span class="on">パラメーター</span><span>設定</span><span>コード ビュー</span><span>詳細</span></div>
+      <div class="up-note"><span class="i">ⓘ</span><span>このステップに追加情報は必要ありません。この出力は以降のステップで使用できます。</span></div>
+    </div>
+  </div>
+
+  <!-- スイッチ -->
+  <div class="card">
+    <p class="cap">コントロール ＞ スイッチ（Switch）</p>
+    <p class="cid">mock: control-switch</p>
+    <div class="up">
+      <div class="up-head"><span class="ic"><img src="../../pptx/_assets/icons/pa_control.png" alt=""></span><span class="nm">スイッチ</span></div>
+      <div class="up-tabs"><span class="on">パラメーター</span><span>設定</span><span>コード ビュー</span><span>詳細</span></div>
+      <div class="up-row"><div class="up-lbl">オン <span class="rq">*</span></div><div class="up-ctl">値を選択します</div></div>
+    </div>
+  </div>
+
+  <!-- Do until -->
+  <div class="card">
+    <p class="cap">コントロール ＞ Do until</p>
+    <p class="cid">mock: control-do-until</p>
+    <div class="up uc2">
+      <div class="up-head"><span class="ic"><img src="../../pptx/_assets/icons/pa_control.png" alt=""></span><span class="nm">Do until</span></div>
+      <div class="up-tabs"><span class="on">パラメーター</span><span>設定</span><span>コード ビュー</span><span>詳細</span></div>
+      <div class="up-lbl">ループの終了条件 <span class="rq">*</span></div>
+      <div class="row" style="margin-top:4px;">
+        <div class="fld val">値を選択します</div>
+        <div class="fld op">次の値に等しい <span class="cv">▼</span></div>
+        <div class="fld val">値を選択します</div>
+      </div>
+      <div class="lim">上限：カウント <b>60</b> ／ タイムアウト <b>PT1H</b></div>
+    </div>
+  </div>
+
+  <!-- 終了 -->
+  <div class="card">
+    <p class="cap">コントロール ＞ 終了（Terminate）</p>
+    <p class="cid">mock: control-terminate</p>
+    <div class="up">
+      <div class="up-head"><span class="ic"><img src="../../pptx/_assets/icons/pa_control.png" alt=""></span><span class="nm">終了</span></div>
+      <div class="up-tabs"><span class="on">パラメーター</span><span>設定</span><span>コード ビュー</span><span>詳細</span></div>
+      <div class="up-row"><div class="up-lbl">状態 <span class="rq">*</span></div><div class="up-ctl dd"><span style="color:#201F1E;">失敗</span><span class="cv">▼</span></div></div>
+    </div>
+  </div>
+
+  <!-- スケジュール 遅延 -->
+  <div class="card">
+    <p class="cap">スケジュール ＞ 遅延（Delay）</p>
+    <p class="cid">mock: schedule-delay</p>
+    <div class="up">
+      <div class="up-head"><span class="ic sched"></span><span class="nm">遅延</span></div>
+      <div class="up-tabs"><span class="on">パラメーター</span><span>設定</span><span>コード ビュー</span><span>詳細</span></div>
+      <div class="up-row"><div class="up-lbl">カウント <span class="rq">*</span></div><div class="up-ctl">カウント</div></div>
+      <div class="up-row"><div class="up-lbl">単位 <span class="rq">*</span></div><div class="up-ctl dd"><span>単位</span><span class="cv">▼</span></div></div>
+    </div>
+  </div>
+
+  <!-- SharePoint 複数の項目の取得 -->
+  <div class="card">
+    <p class="cap">SharePoint ＞ 複数の項目の取得（Get items）</p>
+    <p class="cid">mock: sharepoint-get-items</p>
+    <div class="up">
+      <div class="up-head"><span class="ic"><img src="../../pptx/_assets/icons/pa_sharepoint.png" alt=""></span><span class="nm">複数の項目の取得</span></div>
+      <div class="up-tabs"><span class="on">パラメーター</span><span>設定</span><span>コード ビュー</span><span>テスト</span><span>詳細</span></div>
+      <div class="up-row"><div class="up-lbl">サイトのアドレス <span class="rq">*</span></div><div class="up-ctl dd"><span>例: https://contoso.sharepoint.com/sites/sitename</span><span class="cv">▼</span></div></div>
+      <div class="up-row"><div class="up-lbl">リスト名 <span class="rq">*</span></div><div class="up-ctl dd"><span>SharePoint リスト名</span><span class="cv">▼</span></div></div>
+    </div>
+  </div>
+
+  <!-- SharePoint ファイルの作成 -->
+  <div class="card">
+    <p class="cap">SharePoint ＞ ファイルの作成（Create file）</p>
+    <p class="cid">mock: sharepoint-create-file</p>
+    <div class="up">
+      <div class="up-head"><span class="ic"><img src="../../pptx/_assets/icons/pa_sharepoint.png" alt=""></span><span class="nm">ファイルの作成</span></div>
+      <div class="up-tabs"><span class="on">パラメーター</span><span>設定</span><span>コード ビュー</span><span>テスト</span><span>詳細</span></div>
+      <div class="up-row"><div class="up-lbl">サイトのアドレス <span class="rq">*</span></div><div class="up-ctl dd"><span>例: https://contoso.sharepoint.com/sites/sitename</span><span class="cv">▼</span></div></div>
+      <div class="up-row"><div class="up-lbl">フォルダーのパス <span class="rq">*</span></div><div class="up-ctl dd"><span>フォルダーのパス</span><span class="cv">▼</span></div></div>
+      <div class="up-row"><div class="up-lbl">ファイル名 <span class="rq">*</span></div><div class="up-ctl">ファイル名（拡張子付き）</div></div>
+      <div class="up-row"><div class="up-lbl">ファイル コンテンツ <span class="rq">*</span></div><div class="up-ctl">ファイル コンテンツ</div></div>
+    </div>
+  </div>
+
+  <p class="secthead">━ トリガー ━</p>
+
+  <!-- トリガー：手動 -->
+  <div class="card">
+    <p class="cap">トリガー ＞ フローを手動でトリガーする</p>
+    <p class="cid">mock: trigger-manual</p>
+    <div class="up">
+      <div class="up-head"><span class="ic manual"></span><span class="nm">フローを手動でトリガーする</span></div>
+      <div class="up-tabs"><span class="on">パラメーター</span><span>設定</span><span>コード ビュー</span><span>詳細</span></div>
+      <div class="up-note"><span class="i">ⓘ</span><span>このトリガーには入力は必要ありません。「＋ 入力の追加」で受け取る値を増やせます。</span></div>
+      <a class="up-link">＋ 入力の追加</a>
+    </div>
+  </div>
+
+  <!-- トリガー：繰り返し -->
+  <div class="card">
+    <p class="cap">トリガー ＞ スケジュール ＞ 繰り返し（Recurrence）</p>
+    <p class="cid">mock: trigger-recurrence</p>
+    <div class="up">
+      <div class="up-head"><span class="ic sched"></span><span class="nm">繰り返し</span></div>
+      <div class="up-tabs"><span class="on">パラメーター</span><span>設定</span><span>コード ビュー</span><span>詳細</span></div>
+      <div class="up-row"><div class="up-lbl">間隔 <span class="rq">*</span></div><div class="up-ctl">間隔を指定します</div></div>
+      <div class="up-row"><div class="up-lbl">頻度 <span class="rq">*</span></div><div class="up-ctl dd"><span>頻度を選択します</span><span class="cv">▼</span></div></div>
+    </div>
+  </div>
+
+  <!-- トリガー：Forms -->
+  <div class="card">
+    <p class="cap">トリガー ＞ Forms ＞ 応答が送信されたとき</p>
+    <p class="cid">mock: trigger-forms-response</p>
+    <div class="up">
+      <div class="up-head"><span class="ic forms"></span><span class="nm">応答が送信されたとき</span></div>
+      <div class="up-tabs"><span class="on">パラメーター</span><span>設定</span><span>コード ビュー</span><span>詳細</span></div>
+      <div class="up-row"><div class="up-lbl">フォーム ID <span class="rq">*</span></div><div class="up-ctl dd"><span>フォームを選択するか、フォーム ID を入力します</span><span class="cv">▼</span></div></div>
+    </div>
+  </div>
+
+  <!-- トリガー：Outlook 新着メール -->
+  <div class="card">
+    <p class="cap">トリガー ＞ Outlook ＞ 新しいメールが届いたとき (V3)</p>
+    <p class="cid">mock: trigger-outlook-newmail</p>
+    <div class="up">
+      <div class="up-head"><span class="ic"><img src="../../pptx/_assets/icons/pa_outlook.png" alt=""></span><span class="nm">新しいメールが届いたとき (V3)</span></div>
+      <div class="up-tabs"><span class="on">パラメーター</span><span>設定</span><span>コード ビュー</span><span>詳細</span></div>
+      <div class="up-row"><div class="up-lbl">フォルダー</div><div class="up-ctl dd"><span style="color:#201F1E;">Inbox</span><span class="cv">▼</span></div></div>
+      <div class="up-row"><div class="up-lbl">詳細パラメーター</div><div class="up-ctl dd"><span>差出人／宛先／重要度／添付ファイルあり…</span><span class="cv">▼</span></div></div>
+    </div>
+  </div>
+
+  <!-- トリガー：SharePoint 項目が作成されたとき -->
+  <div class="card">
+    <p class="cap">トリガー ＞ SharePoint ＞ 項目が作成されたとき</p>
+    <p class="cid">mock: trigger-sp-itemcreated</p>
+    <div class="up">
+      <div class="up-head"><span class="ic"><img src="../../pptx/_assets/icons/pa_sharepoint.png" alt=""></span><span class="nm">項目が作成されたとき</span></div>
+      <div class="up-tabs"><span class="on">パラメーター</span><span>設定</span><span>コード ビュー</span><span>詳細</span></div>
+      <div class="up-row"><div class="up-lbl">サイトのアドレス <span class="rq">*</span></div><div class="up-ctl dd"><span>例: https://contoso.sharepoint.com/sites/sitename</span><span class="cv">▼</span></div></div>
+      <div class="up-row"><div class="up-lbl">リスト名 <span class="rq">*</span></div><div class="up-ctl dd"><span>SharePoint リスト名</span><span class="cv">▼</span></div></div>
+    </div>
+  </div>
+
+  <!-- トリガー：Teams チャネルメッセージ -->
+  <div class="card">
+    <p class="cap">トリガー ＞ Teams ＞ チャネルに新しいメッセージが追加されたとき</p>
+    <p class="cid">mock: trigger-teams-channelmsg</p>
+    <div class="up">
+      <div class="up-head"><span class="ic teams"></span><span class="nm">チャネルに新しいメッセージが追加されたとき</span></div>
+      <div class="up-tabs"><span class="on">パラメーター</span><span>設定</span><span>コード ビュー</span><span>詳細</span></div>
+      <div class="up-row"><div class="up-lbl">Team <span class="rq">*</span></div><div class="up-ctl dd"><span>チームを選択します</span><span class="cv">▼</span></div></div>
+      <div class="up-row"><div class="up-lbl">Channel <span class="rq">*</span></div><div class="up-ctl dd"><span>チャネルを選択します</span><span class="cv">▼</span></div></div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
