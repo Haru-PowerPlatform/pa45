@@ -3,23 +3,22 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=1280, initial-scale=1">
-<title>Vol.36 自動化の効果をSPOリストでDB化＋Power BIで見える化</title>
+<title>Vol.36 自動化の効果をSPOでDB化＋Power BIで見える化</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
   :root{
     --blue:#2563EB;--green:#16A34A;--green-bg:#ECFDF5;--green-dark:#064E3B;
-    --ink:#1F2937;--gray:#374151;--weak:#6B7280;--card:#F8F9FA;--line:#E5E7EB;--sp:#0F6CBD;
+    --ink:#1F2937;--gray:#374151;--weak:#6B7280;--card:#F8F9FA;--line:#E5E7EB;--cop:#7248B9;
   }
   *{margin:0;padding:0;box-sizing:border-box;}
   body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
   #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
 
-  .titlebar{height:104px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:18px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
+  .titlebar{height:104px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:18px;padding:0 26px;position:relative;flex:0 0 auto;z-index:5;}
   .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:26px;border-radius:999px;padding:8px 21px;white-space:nowrap;flex:0 0 auto;}
-  .title-text{color:#fff;font-weight:900;font-size:33px;line-height:1.18;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:140px;}
-  .title-chara{position:absolute;right:12px;bottom:-36px;height:146px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+  .title-text{color:#fff;font-weight:900;font-size:34px;line-height:1.2;text-shadow:0 1px 2px rgba(0,0,0,.18);}
   .concl{margin:9px 18px 0;background:var(--green-bg);border:2px solid var(--green);border-radius:12px;display:flex;align-items:center;gap:14px;padding:10px 20px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
   .concl .chip{background:linear-gradient(180deg,#2BD06A,#16A34A);color:#fff;font-weight:900;font-size:21px;border-radius:9px;padding:7px 17px;white-space:nowrap;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
   .concl .txt{font-weight:700;font-size:20px;color:var(--green-dark);line-height:1.4;}
@@ -36,45 +35,55 @@
   .pcap{text-align:center;font-weight:700;font-size:13px;color:var(--weak);margin-top:8px;line-height:1.4;}
   .body{flex:1;display:flex;flex-direction:column;min-height:0;}
 
-  /* ① 項目の作成 UI */
-  .up{flex:1;background:#fff;border:2px solid #9AA1AA;border-radius:10px;box-shadow:0 5px 12px rgba(0,0,0,.16);font-family:'Segoe UI','Noto Sans JP',sans-serif;padding:10px 12px;display:flex;flex-direction:column;}
-  .up .uh{display:flex;align-items:center;gap:8px;font-weight:800;font-size:15px;color:#201F1E;margin-bottom:8px;}
-  .up .uh .ic{width:22px;height:22px;border-radius:5px;background:var(--sp);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;}
-  .fld{margin-bottom:8px;}
-  .fld .l{font-size:12.5px;color:#323130;font-weight:700;margin-bottom:2px;}
+  /* ① 項目の作成（新デザイナー忠実再現） */
+  .up{flex:1;background:#fff;border:2px solid #C2C9D2;border-radius:9px;box-shadow:0 5px 12px rgba(0,0,0,.14);font-family:'Segoe UI','Noto Sans JP',sans-serif;color:#323130;padding:9px 11px;display:flex;flex-direction:column;}
+  .up .uh{display:flex;align-items:center;gap:8px;margin-bottom:7px;}
+  .up .uh .ic{width:22px;height:22px;border-radius:5px;display:flex;align-items:center;justify-content:center;overflow:hidden;flex:0 0 auto;}
+  .up .uh .ic img{width:20px;height:20px;object-fit:contain;}
+  .up .uh .nm{font-size:14.5px;font-weight:700;color:#201F1E;}
+  .up .tabs{display:flex;gap:12px;border-bottom:1px solid #EDEBE9;margin-bottom:8px;}
+  .up .tabs span{font-size:11.5px;color:#605E5C;padding-bottom:5px;}
+  .up .tabs span.on{color:#201F1E;font-weight:700;border-bottom:2px solid #2563EB;}
+  .fld{margin-bottom:6px;}
+  .fld:last-child{margin-bottom:0;}
+  .fld .l{font-size:11.5px;color:#323130;font-weight:600;margin-bottom:2px;}
   .fld .l .rq{color:#D13438;}
-  .fld .v{border:1.5px solid #C7C7C7;border-radius:5px;padding:6px 9px;font-size:13.5px;color:#1F2937;font-weight:700;background:#fff;}
-  .fld .v.dyn{color:#7A4FB0;background:#F4EFFB;border-color:#D3C2EE;font-family:Consolas,monospace;font-weight:700;}
+  .fld .v{border:1px solid #C7C7C7;border-radius:4px;padding:5px 9px;font-size:13px;color:#1F2937;font-weight:700;background:#fff;display:flex;align-items:center;justify-content:space-between;}
+  .fld .v .cv{color:#8A8886;font-size:9px;}
+  .fld .v.dyn{color:#6E48B0;background:#F3EFFA;border-color:#C9B8EC;font-family:Consolas,monospace;}
 
   /* ② SPOリスト テーブル */
-  .tbl{flex:1;background:#fff;border:2px solid #AEB4BD;border-radius:10px;box-shadow:0 5px 12px rgba(0,0,0,.14);overflow:hidden;display:flex;flex-direction:column;}
-  .tbl .tt{background:#F3F6FA;border-bottom:2px solid #D6DCE4;display:flex;font-weight:900;font-size:12.5px;color:#0F2B57;}
-  .tbl .tt div{padding:8px 6px;}
+  .tbl{flex:1;background:#fff;border:2px solid #AEB4BD;border-radius:9px;box-shadow:0 5px 12px rgba(0,0,0,.14);overflow:hidden;display:flex;flex-direction:column;}
+  .tbl .tt{background:#EEF3F9;border-bottom:2px solid #CBD4DF;display:flex;font-weight:900;font-size:12.5px;color:#0F2B57;}
+  .tbl .tt div{padding:9px 6px;}
   .tbl .row{display:flex;font-size:13px;font-weight:700;color:#2A2930;border-bottom:1px solid #EAEDF1;}
-  .tbl .row:nth-child(even){background:#F8FAFC;}
-  .tbl .row div{padding:8px 6px;}
-  .c1{flex:1.3;} .c2{flex:1.4;} .c3{flex:.8;text-align:center;} .c4{flex:.6;text-align:center;}
-  .tbl .more{padding:6px;text-align:center;color:var(--blue);font-weight:900;font-size:13px;background:#fff;}
+  .tbl .row:nth-child(even){background:#F7FAFD;}
+  .tbl .row div{padding:9px 6px;}
+  .c1{flex:1.3;} .c2{flex:1.4;} .c3{flex:.85;text-align:center;} .c4{flex:.6;text-align:center;}
+  .tbl .more{padding:7px;text-align:center;color:var(--blue);font-weight:900;font-size:13px;background:#fff;margin-top:auto;}
 
   /* ③ Power BI ダッシュボード */
-  .bi{flex:1;background:linear-gradient(180deg,#FBFBF4,#F4F2E6);border:2px solid #D9CE97;border-radius:10px;box-shadow:0 5px 12px rgba(0,0,0,.14);padding:11px;display:flex;flex-direction:column;gap:9px;}
-  .kpi{background:#fff;border:1.5px solid #E6DCA8;border-radius:8px;padding:8px 12px;box-shadow:0 2px 5px rgba(0,0,0,.1);}
+  .bi{flex:1;background:linear-gradient(180deg,#FBFBF4,#F4F2E6);border:2px solid #D9CE97;border-radius:9px;box-shadow:0 5px 12px rgba(0,0,0,.14);padding:11px;display:flex;flex-direction:column;gap:9px;}
+  .kpi{background:#fff;border:1.5px solid #E6DCA8;border-radius:8px;padding:8px 13px;box-shadow:0 2px 5px rgba(0,0,0,.1);}
   .kpi .kl{font-size:12px;font-weight:800;color:#7A5E00;}
-  .kpi .kv{font-size:30px;font-weight:900;color:#1F2937;line-height:1.1;}
+  .kpi .kv{font-size:32px;font-weight:900;color:#1F2937;line-height:1.1;}
   .kpi .kv span{font-size:15px;}
   .chart{flex:1;background:#fff;border:1.5px solid #E6DCA8;border-radius:8px;padding:9px 10px;display:flex;flex-direction:column;box-shadow:0 2px 5px rgba(0,0,0,.1);}
   .chart .ct{font-size:11.5px;font-weight:800;color:#7A5E00;margin-bottom:6px;}
   .bars{flex:1;display:flex;align-items:flex-end;justify-content:space-around;gap:8px;padding-bottom:2px;}
-  .bars .b{width:22px;border-radius:4px 4px 0 0;background:linear-gradient(180deg,#3B82F6,#2563EB);}
-  .bars .bx{display:flex;flex-direction:column;align-items:center;gap:3px;}
-  .bars .bx .bl{font-size:10px;color:#605E5C;font-weight:700;}
+  .bars .bx{display:flex;flex-direction:column;align-items:center;gap:3px;height:100%;justify-content:flex-end;}
+  .bars .b{width:24px;border-radius:4px 4px 0 0;background:linear-gradient(180deg,#3B82F6,#2563EB);}
+  .bars .bl{font-size:10px;color:#605E5C;font-weight:700;}
 
   /* つまずき帯 */
-  .pitfall{flex:0 0 auto;margin:9px 0 0;background:linear-gradient(180deg,#5C636D,#4E545E);color:#fff;min-height:82px;display:flex;align-items:center;gap:16px;padding:11px 22px;box-shadow:inset 0 1px 0 rgba(255,255,255,.12);}
+  .pitfall{flex:0 0 auto;margin:9px 0 0;background:linear-gradient(180deg,#5C636D,#4E545E);color:#fff;min-height:82px;display:flex;align-items:center;gap:16px;padding:11px 150px 11px 22px;box-shadow:inset 0 1px 0 rgba(255,255,255,.12);}
   .pitfall .ptag{flex:0 0 auto;background:linear-gradient(180deg,#F59E0B,#D97706);color:#fff;font-weight:900;font-size:16px;border-radius:9px;padding:8px 14px;white-space:nowrap;box-shadow:0 2px 4px rgba(0,0,0,.3);}
   .pitfall .ptxt{font-weight:800;font-size:18px;color:#F8FAFC;line-height:1.5;}
   .pitfall .ptxt b{color:#FCD34D;}
   .pitfall .ptxt code{background:#3a3f47;color:#FCD34D;border-radius:5px;padding:1px 7px;font-family:Consolas,monospace;font-weight:900;}
+
+  /* 右下キャラ */
+  .botchara{position:absolute;right:6px;bottom:0;height:122px;z-index:40;filter:drop-shadow(0 3px 6px rgba(0,0,0,.4));}
 </style>
 </head>
 <body>
@@ -83,7 +92,6 @@
   <div class="titlebar">
     <div class="vol-pill">Vol.36</div>
     <div class="title-text">自動化の"効果"を見える化！<br>フローが動くたびにSPOへ自動記録→DB化</div>
-    <img class="title-chara" src="../../pptx/_assets/chara/chara_laptop_g.png" alt="">
   </div>
 
   <div class="concl">
@@ -93,16 +101,18 @@
 
   <div class="main">
 
-    <!-- ① 記録を足す -->
+    <!-- ① 記録を足す（忠実UI） -->
     <div class="col">
       <div class="phead ph-blue"><span class="bdg">1</span>フロー末尾に記録を足す</div>
       <div class="body">
         <div class="up">
-          <div class="uh"><span class="ic">S</span>項目の作成（SharePoint）</div>
+          <div class="uh"><span class="ic"><img src="../../pptx/_assets/icons/pa_sharepoint.png" alt=""></span><span class="nm">項目の作成</span></div>
+          <div class="tabs"><span class="on">パラメーター</span><span>設定</span><span>コード ビュー</span><span>詳細</span></div>
+          <div class="fld"><div class="l">サイトのアドレス <span class="rq">*</span></div><div class="v">PA45 サイト <span class="cv">▼</span></div></div>
+          <div class="fld"><div class="l">リスト名 <span class="rq">*</span></div><div class="v">効果ログ <span class="cv">▼</span></div></div>
           <div class="fld"><div class="l">実行日時 <span class="rq">*</span></div><div class="v dyn">utcNow()</div></div>
           <div class="fld"><div class="l">フロー名 <span class="rq">*</span></div><div class="v">経費申請フロー</div></div>
           <div class="fld"><div class="l">削減時間（分） <span class="rq">*</span></div><div class="v">15</div></div>
-          <div class="fld" style="margin-bottom:0;"><div class="l">処理件数</div><div class="v">3</div></div>
         </div>
       </div>
       <div class="pcap">記録したい値を列にして入れる</div>
@@ -153,8 +163,10 @@
   <!-- つまずき帯 -->
   <div class="pitfall">
     <div class="ptag">⚠ つまずき注意</div>
-    <div class="ptxt">削減時間は「手作業なら何分か」を見積もって<b>固定値</b>で入れるのがコツ。日時は <code>utcNow()</code> → <code>convertTimeZone</code> でJSTに直すと読みやすい。</div>
+    <div class="ptxt">削減時間は「手作業なら何分か」を見積もって<b>固定値</b>で入れるのがコツ。<br>日時は <code>utcNow()</code> → <code>convertTimeZone</code> でJSTに直すと読みやすい。</div>
   </div>
+
+  <img class="botchara" src="../../pptx/_assets/chara/chara_guts_g.png" alt="">
 
 </div>
 </body>
