@@ -3,252 +3,191 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=1280, initial-scale=1">
-<title>X技術Tips HTMLテンプレ（Layout A）</title>
+<title>Vol.36 自動化の効果をSPOでDB化＋Power BIで見える化</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
-  /* ===== X技術Tips 1枚スライド・デザインシステム（reference_x_tips_design_system 準拠） ===== */
   :root{
-    --blue:#2563EB; --blue-bg:#EFF6FF; --blue-bg2:#DBEAFE; --blue-dark:#1E40AF;
-    --enji:#A4283C; --enji-dark:#6E1628;
-    --green:#16A34A; --emerald:#059669; --green-bg:#ECFDF5; --green-bg2:#D1FAE5; --green-dark:#064E3B;
-    --orange:#EA580C; --orange-bg:#FFF7ED;
-    --ink:#1F2937; --gray:#374151; --gray2:#4B5563; --weak:#6B7280; --faint:#9CA3AF;
-    --card:#F8F9FA; --card2:#F3F4F6; --line:#E5E7EB; --dark:#111827; --dark2:#1F2937;
+    --blue:#2563EB;--green:#16A34A;--green-bg:#ECFDF5;--green-dark:#064E3B;
+    --ink:#1F2937;--gray:#374151;--weak:#6B7280;--card:#F8F9FA;--line:#E5E7EB;--cop:#7248B9;
   }
   *{margin:0;padding:0;box-sizing:border-box;}
   body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
-  #slide{
-    width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;
-    display:flex;flex-direction:column;color:var(--gray);
-  }
-  .mono{font-family:"Courier New",Consolas,monospace;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
 
-  /* --- タイトルバー --- */
-  .titlebar{
-    height:90px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);
-    box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);
-    display:flex;align-items:center;gap:18px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;
-  }
-  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:25px;border-radius:999px;padding:7px 20px;letter-spacing:.5px;white-space:nowrap;flex:0 0 auto;}
-  .title-text{color:#fff;font-weight:900;font-size:35px;line-height:1.15;letter-spacing:.3px;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:160px;}
-  .title-text .ico{font-size:30px;margin-right:8px;}
-  .title-chara{position:absolute;right:12px;bottom:-56px;height:154px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+  .titlebar{height:104px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:18px;padding:0 26px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:26px;border-radius:999px;padding:8px 21px;white-space:nowrap;flex:0 0 auto;}
+  .title-text{color:#fff;font-weight:900;font-size:34px;line-height:1.2;text-shadow:0 1px 2px rgba(0,0,0,.18);}
+  .titleflow{position:absolute;right:24px;top:50%;transform:translateY(-50%);display:flex;align-items:center;gap:9px;z-index:6;}
+  .titleflow .ti{width:54px;height:54px;border-radius:13px;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 9px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.9);flex:0 0 auto;}
+  .titleflow .ti img,.titleflow .ti svg{width:40px;height:40px;object-fit:contain;display:block;}
+  .titleflow .ar{color:#fff;font-weight:900;font-size:24px;text-shadow:0 1px 2px rgba(0,0,0,.3);}
+  .concl{margin:9px 18px 0;background:var(--green-bg);border:2px solid var(--green);border-radius:12px;display:flex;align-items:center;gap:14px;padding:10px 20px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{background:linear-gradient(180deg,#2BD06A,#16A34A);color:#fff;font-weight:900;font-size:21px;border-radius:9px;padding:7px 17px;white-space:nowrap;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
+  .concl .txt{font-weight:700;font-size:20px;color:var(--green-dark);line-height:1.4;}
 
-  /* --- 結論バー --- */
-  .concl{
-    margin:6px 18px 0;background:var(--green-bg);border:2px solid var(--green);border-radius:12px;
-    display:flex;align-items:center;gap:14px;padding:9px 150px 9px 20px;flex:0 0 auto;
-    box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);
-  }
-  .concl .chip{background:linear-gradient(180deg,rgba(255,255,255,.30),rgba(255,255,255,0) 50%),linear-gradient(180deg,#2BD06A,#16A34A);color:#fff;font-weight:900;font-size:23px;border-radius:9px;padding:8px 19px;white-space:nowrap;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
-  .concl .txt{font-weight:700;font-size:22px;color:var(--green-dark);line-height:1.4;}
+  .main{flex:1 1 auto;display:flex;align-items:stretch;gap:8px;padding:10px 16px 0;min-height:0;}
+  .col{display:flex;flex-direction:column;min-height:0;flex:1;}
+  .arrowcol{flex:0 0 30px;display:flex;align-items:center;justify-content:center;color:var(--blue);font-weight:900;font-size:30px;}
+  .phead{position:relative;align-self:stretch;text-align:center;color:#fff;font-weight:900;font-size:18px;border-radius:10px;padding:7px 38px;margin-bottom:9px;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 7px rgba(0,0,0,.26),inset 0 1px 0 rgba(255,255,255,.5),inset 0 -3px 4px rgba(0,0,0,.16);text-shadow:0 1px 2px rgba(0,0,0,.2);}
+  .phead .pico{position:absolute;right:7px;top:50%;transform:translateY(-50%);width:27px;height:27px;border-radius:7px;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 4px rgba(0,0,0,.25);flex:0 0 auto;}
+  .phead .pico img,.phead .pico svg{width:21px;height:21px;object-fit:contain;display:block;}
+  .ph-blue{background:linear-gradient(180deg,#4A85FF,#2563EB);}
+  .ph-gray{background:linear-gradient(180deg,#6B7280,#4B5563);}
+  .ph-bi{background:linear-gradient(180deg,#F2C811,#E0A800);color:#3A2E00;text-shadow:none;}
+  .phead .bdg{width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.3);border:2px solid #fff;display:flex;align-items:center;justify-content:center;font-size:15px;flex:0 0 auto;}
+  .ph-bi .bdg{background:rgba(0,0,0,.12);border-color:#7A5E00;}
+  .pcap{text-align:center;font-weight:700;font-size:13px;color:var(--weak);margin-top:8px;line-height:1.4;}
+  .body{flex:1;display:flex;flex-direction:column;min-height:0;}
 
-  /* --- 3カラム --- */
-  .cols{flex:1 1 auto;display:flex;gap:14px;padding:6px 18px 0;min-height:0;}
-  .col{flex:1;display:flex;flex-direction:column;min-height:0;}
-  .col.right{flex:1;gap:14px;}
+  /* ① 項目の作成（新デザイナー忠実再現） */
+  .up{flex:1;background:#fff;border:2px solid #C2C9D2;border-radius:9px;box-shadow:0 5px 12px rgba(0,0,0,.14);font-family:'Segoe UI','Noto Sans JP',sans-serif;color:#323130;padding:9px 11px;display:flex;flex-direction:column;}
+  .up .uh{display:flex;align-items:center;gap:8px;margin-bottom:7px;}
+  .up .uh .ic{width:22px;height:22px;border-radius:5px;display:flex;align-items:center;justify-content:center;overflow:hidden;flex:0 0 auto;}
+  .up .uh .ic img{width:20px;height:20px;object-fit:contain;}
+  .up .uh .nm{font-size:14.5px;font-weight:700;color:#201F1E;}
+  .up .tabs{display:flex;gap:12px;border-bottom:1px solid #EDEBE9;margin-bottom:8px;}
+  .up .tabs span{font-size:11.5px;color:#605E5C;padding-bottom:5px;}
+  .up .tabs span.on{color:#201F1E;font-weight:700;border-bottom:2px solid #2563EB;}
+  .fld{margin-bottom:6px;}
+  .fld:last-child{margin-bottom:0;}
+  .fld .l{font-size:11.5px;color:#323130;font-weight:600;margin-bottom:2px;}
+  .fld .l .rq{color:#D13438;}
+  .fld .v{border:1px solid #C7C7C7;border-radius:4px;padding:5px 9px;font-size:13px;color:#1F2937;font-weight:700;background:#fff;display:flex;align-items:center;justify-content:space-between;}
+  .fld .v .cv{color:#8A8886;font-size:9px;}
+  .fld .v.dyn{color:#6E48B0;background:#F3EFFA;border-color:#C9B8EC;font-family:Consolas,monospace;}
 
-  .card{background:var(--card);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;min-height:0;box-shadow:0 6px 15px rgba(0,0,0,.13),inset 0 1px 0 rgba(255,255,255,.75);}
-  .card.blue{border:2px solid var(--blue);flex:1;}
-  .card.orange{border:2px solid var(--orange);flex:1;}
-  .card.green{border:2px solid var(--green);flex:1;}
-  .card.center{border:2px solid var(--line);background:#fff;flex:1;}
+  /* ② Microsoft Lists 忠実再現 */
+  .lst{flex:1;background:#fff;border:2px solid #AEB4BD;border-radius:9px;box-shadow:0 5px 12px rgba(0,0,0,.14);overflow:hidden;display:flex;flex-direction:column;font-family:'Segoe UI','Noto Sans JP',sans-serif;}
+  .lst .lh{display:flex;align-items:center;gap:7px;padding:7px 10px 6px;border-bottom:1px solid #EAEDF1;}
+  .lst .lh .li{width:18px;height:18px;object-fit:contain;}
+  .lst .lh .ln{font-size:12.5px;font-weight:800;color:#242424;}
+  .lst .lh .tab{margin-left:auto;font-size:11px;font-weight:700;color:#A4262C;border-bottom:2px solid #A4262C;padding-bottom:3px;}
+  .lst .ch{display:flex;border-bottom:1px solid #E3E3E3;font-size:11.5px;font-weight:700;color:#605E5C;}
+  .lst .ch div{padding:8px 5px;}
+  .lst .rw{display:flex;align-items:center;font-size:12.5px;color:#242424;font-weight:600;border-bottom:1px solid #F1F1F1;}
+  .lst .rw div{padding:8px 5px;}
+  .lst .sb{flex:0 0 3px;align-self:stretch;}
+  .lst .pill{display:inline-block;border-radius:12px;padding:2px 10px;font-size:11px;font-weight:700;}
+  .pl-b{background:#DEECF9;color:#0F6CBD;} .pl-g{background:#DFF6DD;color:#0B6A0B;} .pl-y{background:#FFF4CE;color:#8A6D00;} .pl-p{background:#FDE7E9;color:#A4262C;}
+  .lc1{flex:1.25;} .lc2{flex:1.5;} .lc3{flex:.9;text-align:center;} .lc4{flex:.55;text-align:center;}
+  .lst .more{padding:7px;text-align:center;color:var(--weak);font-weight:800;font-size:12px;background:#FAFAFA;margin-top:auto;border-top:1px solid #F1F1F1;}
 
-  .card-head{align-self:stretch;text-align:center;color:#fff;font-weight:900;font-size:23px;border-radius:9px;padding:8px 15px;margin-bottom:8px;letter-spacing:.5px;box-shadow:0 4px 7px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.55),inset 0 -3px 4px rgba(0,0,0,.18);text-shadow:0 1px 2px rgba(0,0,0,.22);}
-  .h-blue{background:linear-gradient(180deg,rgba(255,255,255,.28),rgba(255,255,255,0) 48%),linear-gradient(180deg,#4A85FF,#2563EB);} .h-orange{background:linear-gradient(180deg,rgba(255,255,255,.28),rgba(255,255,255,0) 48%),linear-gradient(180deg,#FB8534,#EA580C);} .h-green{background:linear-gradient(180deg,rgba(255,255,255,.28),rgba(255,255,255,0) 48%),linear-gradient(180deg,#2BD06A,#16A34A);} .h-gray{background:linear-gradient(180deg,rgba(255,255,255,.22),rgba(255,255,255,0) 48%),linear-gradient(180deg,#3C4757,#1F2937);}
+  /* ③ Power BI ダッシュボード */
+  .bi{flex:1;background:linear-gradient(180deg,#FBFBF4,#F4F2E6);border:2px solid #D9CE97;border-radius:9px;box-shadow:0 5px 12px rgba(0,0,0,.14);padding:11px;display:flex;flex-direction:column;gap:9px;}
+  .kpi{background:#fff;border:1.5px solid #E6DCA8;border-radius:8px;padding:8px 13px;box-shadow:0 2px 5px rgba(0,0,0,.1);}
+  .kpi .kl{font-size:12px;font-weight:800;color:#7A5E00;}
+  .kpi .kv{font-size:32px;font-weight:900;color:#1F2937;line-height:1.1;}
+  .kpi .kv span{font-size:15px;}
+  .chart{flex:1;background:#fff;border:1.5px solid #E6DCA8;border-radius:8px;padding:9px 10px;display:flex;flex-direction:column;box-shadow:0 2px 5px rgba(0,0,0,.1);}
+  .chart .ct{font-size:11.5px;font-weight:800;color:#7A5E00;margin-bottom:6px;}
+  .bars{flex:1;display:flex;align-items:flex-end;justify-content:space-around;gap:8px;padding-bottom:2px;}
+  .bars .bx{display:flex;flex-direction:column;align-items:center;gap:3px;height:100%;justify-content:flex-end;}
+  .bars .b{width:24px;border-radius:4px 4px 0 0;background:linear-gradient(180deg,#3B82F6,#2563EB);}
+  .bars .bl{font-size:10px;color:#605E5C;font-weight:700;}
 
-  /* チェックリスト（左） */
-  .checklist{display:flex;flex-direction:column;justify-content:space-evenly;flex:1;gap:6px;}
-  .checklist li{list-style:none;display:flex;gap:13px;align-items:center;font-weight:700;font-size:22px;color:var(--gray);line-height:1.4;}
-  .checklist li .ck{flex:0 0 auto;width:30px;height:30px;}
+  /* つまずき帯 */
+  .pitfall{flex:0 0 auto;margin:9px 0 0;background:linear-gradient(180deg,#5C636D,#4E545E);color:#fff;min-height:82px;display:flex;align-items:center;gap:16px;padding:11px 150px 11px 22px;box-shadow:inset 0 1px 0 rgba(255,255,255,.12);}
+  .pitfall .ptag{flex:0 0 auto;background:linear-gradient(180deg,#F59E0B,#D97706);color:#fff;font-weight:900;font-size:16px;border-radius:9px;padding:8px 14px;white-space:nowrap;box-shadow:0 2px 4px rgba(0,0,0,.3);}
+  .pitfall .ptxt{font-weight:800;font-size:18px;color:#F8FAFC;line-height:1.5;}
+  .pitfall .ptxt b{color:#FCD34D;}
+  .pitfall .ptxt code{background:#3a3f47;color:#FCD34D;border-radius:5px;padding:1px 7px;font-family:Consolas,monospace;font-weight:900;}
 
-  /* ステップ（中央） */
-  .steps{display:flex;flex-direction:column;align-items:center;gap:4px;justify-content:space-evenly;flex:1;}
-  .step{
-    width:100%;background:linear-gradient(180deg,#FFFFFF,#EEF1F6);border:2px solid #C2C9D2;border-radius:12px;box-shadow:0 5px 11px rgba(0,0,0,.17),inset 0 1px 0 rgba(255,255,255,.95);
-    display:flex;align-items:center;gap:12px;padding:9px 13px;
-  }
-  .step .icon{flex:0 0 auto;width:44px;height:44px;border-radius:10px;background:var(--blue-bg);box-shadow:inset 0 0 0 1px rgba(37,99,235,.18),0 1px 2px rgba(0,0,0,.12);display:flex;align-items:center;justify-content:center;font-size:25px;overflow:hidden;}
-  .step .icon img{width:32px;height:32px;object-fit:contain;}
-  .step .body{display:flex;flex-direction:column;gap:2px;}
-  .step .name{font-weight:900;font-size:20.5px;color:var(--ink);line-height:1.2;}
-  .step .sub{font-weight:600;font-size:14px;color:var(--weak);}
-  .step .dots{margin-left:auto;color:var(--faint);font-weight:900;font-size:20px;letter-spacing:1px;}
-  .connector{color:var(--blue);font-size:21px;font-weight:900;line-height:1;}
-
-  /* 右カラム本文 */
-  .bullets{display:flex;flex-direction:column;justify-content:space-evenly;flex:1;gap:6px;}
-  .bullets li{list-style:none;display:flex;gap:10px;align-items:center;font-weight:700;font-size:21px;color:var(--gray);line-height:1.4;}
-  .bullets li::before{content:"▸";color:var(--orange);font-weight:900;flex:0 0 auto;font-size:21px;}
-  .card.green .bullets li::before{color:var(--green);}
-  /* 右下キャラと重ならないよう、メリット(右下カード)の本文だけ右に余白 */
-  .card.green .bullets{padding-right:120px;}
-
-  /* --- 下部ダーク帯（濃いグレー） --- */
-  .darkband{
-    margin:9px 0 0;background:linear-gradient(180deg,#565C66,#4A4F58);color:#fff;flex:0 0 auto;position:relative;
-    display:flex;align-items:center;gap:18px;padding:12px 22px;height:114px;overflow:hidden;
-    box-shadow:inset 0 1px 0 rgba(255,255,255,.10);
-  }
-  .flow-box{flex:1.6;}
-  .flow-box .label{font-weight:900;font-size:17px;color:#F1F5F9;margin-bottom:9px;letter-spacing:.5px;}
-  .ba-row{display:flex;align-items:stretch;gap:10px;}
-  .ba-card{flex:1;background:linear-gradient(180deg,#FFFFFF,#EEF1F6);color:var(--ink);font-weight:700;font-size:14.5px;line-height:1.3;border-radius:10px;padding:9px 12px;display:flex;align-items:center;gap:8px;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.9);}
-  .ba-card.before{border:2px solid var(--enji);}
-  .ba-card.after{border:2px solid var(--green);}
-  .ba-tag{flex:0 0 auto;align-self:flex-start;color:#fff;font-weight:900;font-size:12px;border-radius:6px;padding:3px 9px;box-shadow:0 1px 2px rgba(0,0,0,.25);}
-  .tag-before{background:linear-gradient(180deg,#C13350,#A4283C);}
-  .tag-after{background:linear-gradient(180deg,#2BD06A,#16A34A);}
-  .ba-arrow{align-self:center;color:#FCD34D;font-weight:900;font-size:24px;text-shadow:0 1px 2px rgba(0,0,0,.3);}
-  .memo-box{flex:1;background:linear-gradient(180deg,#646A75,#565C66);border:1.5px solid #7A818D;border-radius:11px;padding:11px 16px;margin-right:120px;display:flex;flex-direction:column;justify-content:center;align-self:stretch;box-shadow:inset 0 1px 0 rgba(255,255,255,.12);}
-  .memo-box .label{font-weight:900;font-size:16px;color:#FCD34D;margin-bottom:7px;}
-  .memo-box .txt{font-weight:700;font-size:17px;color:#FFFFFF;line-height:1.4;}
-  .memo-chara{position:absolute;right:10px;bottom:0;height:150px;z-index:50;filter:drop-shadow(0 3px 7px rgba(0,0,0,.45));}
+  /* 右下キャラ */
+  .botchara{position:absolute;right:6px;bottom:0;height:122px;z-index:40;filter:drop-shadow(0 3px 6px rgba(0,0,0,.4));}
 </style>
 </head>
 <body>
-<div id="slide"></div>
+<div id="slide">
 
-<script>
-/* =========================================================================
-   ★ ここだけ書き換えれば新しい回が作れる（config差し替え式・Layout A） ★
-   アイコン: step.img に ../../pptx/_assets/icons/xxx.png（無ければ step.emoji）
-   キャラ:  ../../pptx/_assets/chara/chara_xxx.png ／ riro/riro_xxx.png
-   ⚠️ ルール（はる指示）:
-     - タイトル等に絵文字を入れない（AI感が出る）。titleIcon は "" にする。
-     - steps / flow のアクション名は必ず Power Automate 公式の正確な名称を使う
-       （例: 繰り返し / イベントの取得 (V4) / メールの送信 (V2)）。
-   ========================================================================= */
-const A = "../../pptx/_assets/"; // アセット基点
-const SLIDE = {
-  vol: "Vol.33",
-  title: "もう予定を見落とさない！今日の予定が毎朝メールで届く",
-  titleIcon: "",
-  titleChara: A+"chara/chara_laptop.png",
-  conclusion: "毎朝9時、今日の予定がまとまったメールが自分に届く。Outlookを開かなくても「今日なにがあるか」がひと目で分かります。",
-  leftHead: "こんな時に効く！",
-  left: [
-    "朝バタバタして予定の確認を忘れがち",
-    "会議の直前に「あ、今日だった」となる",
-    "毎朝カレンダーを開く手間をなくしたい",
-  ],
-  steps: [
-    { name:"繰り返し", sub:"トリガー：Schedule（毎朝9:00に起動）", emoji:"⏰" },
-    { name:"イベントの取得 (V4)", sub:"Office 365 Outlook（今日の予定を取得）", img:A+"icons/pa_outlook.png" },
-    { name:"メールの送信 (V2)", sub:"Office 365 Outlook（自分宛にまとめて送信）", img:A+"icons/pa_outlook.png" },
-  ],
-  useHead: "実務でこう使う",
-  use: [
-    "始業前にスマホで今日の予定を確認",
-    "件名に件数を入れ忙しさを把握",
-    "「今日やること」リマインド代わり",
-  ],
-  meritHead: "メリット",
-  merit: [
-    "毎朝の予定確認が自動化",
-    "会議・打合せの見落としが減る",
-  ],
-  // 下段：Before→After（手作業→自動化の価値）＋ ひとことコツ
-  baLabel: "手作業 → 自動化",
-  before: "毎朝Outlookを開いて予定を目視チェック",
-  after: "開かなくてもメールで予定が自動で届く",
-  tipLabel: "ひとことコツ",
-  tip: "「繰り返し」は平日だけ・時刻も自由に設定OK",
-  memoChara: A+"chara/chara_smile.png",
-};
+  <div class="titlebar">
+    <div class="vol-pill">Vol.33</div>
+    <div class="title-text">自動化の"効果"を見える化！<br>フローが動くたびにSPOへ自動記録→DB化</div>
+    <div class="titleflow">
+      <span class="ti"><img src="../../pptx/_assets/icons/pa_logo.png" alt=""></span>
+      <span class="ar">→</span>
+      <span class="ti"><svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="3" width="20" height="26" rx="2.5" fill="#fff" stroke="#C8C6C4" stroke-width="1.2"/><rect x="8" y="8" width="3" height="3" rx="1" fill="#0F6CBD"/><rect x="13" y="8.7" width="8" height="1.7" rx="0.8" fill="#605E5C"/><rect x="8" y="14" width="3" height="3" rx="1" fill="#0F6CBD"/><rect x="13" y="14.7" width="8" height="1.7" rx="0.8" fill="#605E5C"/><rect x="8" y="20" width="3" height="3" rx="1" fill="#0F6CBD"/><rect x="13" y="20.7" width="6" height="1.7" rx="0.8" fill="#605E5C"/><circle cx="23" cy="23" r="7" fill="#107C41"/><path d="M19.7 23.1l2.1 2.1 4-4.3" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      <span class="ar">→</span>
+      <span class="ti"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="10" width="4.4" height="11" rx="1.2" fill="#E6A200"/><rect x="9.8" y="5" width="4.4" height="16" rx="1.2" fill="#F2C811"/><rect x="16.6" y="2" width="4.4" height="19" rx="1.2" fill="#FFD23F"/></svg></span>
+    </div>
+  </div>
 
-/* ---- レンダラ（基本いじらない） ---- */
-const el=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e;};
-const checkIcon = A+"icons/icon_check_blue.png";
+  <div class="concl">
+    <div class="chip">結論</div>
+    <div class="txt">フローの最後に「項目の作成」を1つ足すだけ。実行のたびに記録が1行ずつ溜まり、<br>削減時間などの"効果"がそのままデータベースになります。</div>
+  </div>
 
-function stepIcon(s){
-  const ic=el("div","icon");
-  if(s.img){const im=el("img");im.src=s.img;ic.appendChild(im);}else{ic.textContent=s.emoji||"●";}
-  return ic;
-}
-function render(d){
-  const s=document.getElementById("slide");
+  <div class="main">
 
-  // タイトルバー
-  const tb=el("div","titlebar");
-  tb.appendChild(el("div","vol-pill",d.vol));
-  tb.appendChild(el("div","title-text",`<span class="ico">${d.titleIcon||""}</span>${d.title}`));
-  if(d.titleChara){const c=el("img","title-chara");c.src=d.titleChara;tb.appendChild(c);}
-  s.appendChild(tb);
+    <!-- ① 記録を足す（忠実UI） -->
+    <div class="col">
+      <div class="phead ph-blue"><span class="bdg">1</span>フロー末尾に記録を足す<span class="pico"><img src="../../pptx/_assets/icons/pa_logo.png" alt=""></span></div>
+      <div class="body">
+        <div class="up">
+          <div class="uh"><span class="ic"><img src="../../pptx/_assets/icons/pa_sharepoint.png" alt=""></span><span class="nm">項目の作成</span></div>
+          <div class="tabs"><span class="on">パラメーター</span><span>設定</span><span>コード ビュー</span><span>詳細</span></div>
+          <div class="fld"><div class="l">サイトのアドレス <span class="rq">*</span></div><div class="v">PA45 サイト <span class="cv">▼</span></div></div>
+          <div class="fld"><div class="l">リスト名 <span class="rq">*</span></div><div class="v">効果ログ <span class="cv">▼</span></div></div>
+          <div class="fld"><div class="l">実行日時 <span class="rq">*</span></div><div class="v dyn">utcNow()</div></div>
+          <div class="fld"><div class="l">フロー名 <span class="rq">*</span></div><div class="v">経費申請フロー</div></div>
+          <div class="fld"><div class="l">削減時間（分） <span class="rq">*</span></div><div class="v">15</div></div>
+        </div>
+      </div>
+      <div class="pcap">記録したい値を列にして入れる</div>
+    </div>
 
-  // 結論
-  const cc=el("div","concl");
-  cc.appendChild(el("div","chip","結論"));
-  cc.appendChild(el("div","txt",d.conclusion));
-  s.appendChild(cc);
+    <div class="arrowcol">▶</div>
 
-  // 3カラム
-  const cols=el("div","cols");
+    <!-- ② SPOリストに蓄積 -->
+    <div class="col">
+      <div class="phead ph-gray"><span class="bdg">2</span>SPOリストに蓄積（DB化）<span class="pico"><svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="3" width="20" height="26" rx="2.5" fill="#fff" stroke="#C8C6C4" stroke-width="1.2"/><rect x="8" y="8" width="3" height="3" rx="1" fill="#0F6CBD"/><rect x="13" y="8.7" width="8" height="1.7" rx="0.8" fill="#605E5C"/><rect x="8" y="14" width="3" height="3" rx="1" fill="#0F6CBD"/><rect x="13" y="14.7" width="8" height="1.7" rx="0.8" fill="#605E5C"/><rect x="8" y="20" width="3" height="3" rx="1" fill="#0F6CBD"/><rect x="13" y="20.7" width="6" height="1.7" rx="0.8" fill="#605E5C"/><circle cx="23" cy="23" r="7" fill="#107C41"/><path d="M19.7 23.1l2.1 2.1 4-4.3" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+      <div class="body">
+        <div class="lst">
+          <div class="lh"><svg class="li" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="3" width="20" height="26" rx="2.5" fill="#fff" stroke="#C8C6C4" stroke-width="1.2"/><rect x="8" y="8" width="3" height="3" rx="1" fill="#0F6CBD"/><rect x="13" y="8.7" width="8" height="1.7" rx="0.8" fill="#605E5C"/><rect x="8" y="14" width="3" height="3" rx="1" fill="#0F6CBD"/><rect x="13" y="14.7" width="8" height="1.7" rx="0.8" fill="#605E5C"/><rect x="8" y="20" width="3" height="3" rx="1" fill="#0F6CBD"/><rect x="13" y="20.7" width="6" height="1.7" rx="0.8" fill="#605E5C"/><circle cx="23" cy="23" r="7" fill="#107C41"/><path d="M19.7 23.1l2.1 2.1 4-4.3" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span class="ln">効果ログ</span><span class="tab">すべてのアイテム ▾</span></div>
+          <div class="ch"><div class="sb"></div><div class="lc1">実行日時</div><div class="lc2">フロー名</div><div class="lc3">削減(分)</div><div class="lc4">件数</div></div>
+          <div class="rw"><div class="sb"></div><div class="lc1">6/12 9:00</div><div class="lc2"><span class="pill pl-b">経費申請</span></div><div class="lc3">15</div><div class="lc4">3</div></div>
+          <div class="rw"><div class="sb"></div><div class="lc1">6/12 9:30</div><div class="lc2"><span class="pill pl-g">日報集計</span></div><div class="lc3">10</div><div class="lc4">1</div></div>
+          <div class="rw"><div class="sb"></div><div class="lc1">6/12 10:00</div><div class="lc2"><span class="pill pl-y">承認通知</span></div><div class="lc3">5</div><div class="lc4">2</div></div>
+          <div class="rw"><div class="sb"></div><div class="lc1">6/12 11:20</div><div class="lc2"><span class="pill pl-p">請求書保存</span></div><div class="lc3">8</div><div class="lc4">4</div></div>
+          <div class="more">⋮ 実行のたびに1行ずつ増える</div>
+        </div>
+      </div>
+      <div class="pcap">溜まった行が、そのままデータベースに</div>
+    </div>
 
-  // 左：チェックリスト
-  const left=el("div","col");
-  const lc=el("div","card blue");
-  lc.appendChild(el("div","card-head h-blue",d.leftHead));
-  const ul=el("ul","checklist");
-  d.left.forEach(t=>{const li=el("li");const ck=el("img","ck");ck.src=checkIcon;li.appendChild(ck);li.appendChild(el("span","",t));ul.appendChild(li);});
-  lc.appendChild(ul);left.appendChild(lc);cols.appendChild(left);
+    <div class="arrowcol">▶</div>
 
-  // 中央：ステップ
-  const mid=el("div","col");
-  const mc=el("div","card center");
-  mc.appendChild(el("div","card-head h-gray","作り方の流れ"));
-  const steps=el("div","steps");
-  d.steps.forEach((st,i)=>{
-    const row=el("div","step");
-    row.appendChild(stepIcon(st));
-    const body=el("div","body");
-    body.appendChild(el("div","name",st.name));
-    if(st.sub)body.appendChild(el("div","sub",st.sub));
-    row.appendChild(body);
-    row.appendChild(el("div","dots","⋮"));
-    steps.appendChild(row);
-    if(i<d.steps.length-1)steps.appendChild(el("div","connector","▼"));
-  });
-  mc.appendChild(steps);mid.appendChild(mc);cols.appendChild(mid);
+    <!-- ③ Power BIで見える化 -->
+    <div class="col">
+      <div class="phead ph-bi"><span class="bdg">3</span>Power BIで見える化<span class="pico"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="10" width="4.4" height="11" rx="1.2" fill="#E6A200"/><rect x="9.8" y="5" width="4.4" height="16" rx="1.2" fill="#F2C811"/><rect x="16.6" y="2" width="4.4" height="19" rx="1.2" fill="#FFD23F"/></svg></span></div>
+      <div class="body">
+        <div class="bi">
+          <div class="kpi"><div class="kl">今月の累計削減時間</div><div class="kv">1,240<span> 分</span></div></div>
+          <div class="chart">
+            <div class="ct">フロー別の削減時間</div>
+            <div class="bars">
+              <div class="bx"><div class="b" style="height:62%;"></div><div class="bl">経費</div></div>
+              <div class="bx"><div class="b" style="height:88%;"></div><div class="bl">日報</div></div>
+              <div class="bx"><div class="b" style="height:46%;"></div><div class="bl">承認</div></div>
+              <div class="bx"><div class="b" style="height:70%;"></div><div class="bl">請求</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="pcap">リストと連携してダッシュボード化</div>
+    </div>
 
-  // 右：実務 + メリット
-  const right=el("div","col right");
-  const oc=el("div","card orange");
-  oc.appendChild(el("div","card-head h-orange",d.useHead));
-  const ou=el("ul","bullets");d.use.forEach(t=>ou.appendChild(el("li","",t)));oc.appendChild(ou);
-  right.appendChild(oc);
-  const gc=el("div","card green");
-  gc.appendChild(el("div","card-head h-green",d.meritHead));
-  const gu=el("ul","bullets");d.merit.forEach(t=>gu.appendChild(el("li","",t)));gc.appendChild(gu);
-  right.appendChild(gc);
-  cols.appendChild(right);
-  s.appendChild(cols);
+  </div>
 
-  // 下部ダーク帯：Before → After（手作業→自動化の価値を見せる）＋ ひとことコツ
-  const db=el("div","darkband");
-  const fb=el("div","flow-box");
-  fb.appendChild(el("div","label",d.baLabel));
-  const ba=el("div","ba-row");
-  const bc=el("div","ba-card before");
-  bc.appendChild(el("span","ba-tag tag-before","Before"));
-  bc.appendChild(el("span","",d.before));
-  const ac=el("div","ba-card after");
-  ac.appendChild(el("span","ba-tag tag-after","After"));
-  ac.appendChild(el("span","",d.after));
-  ba.appendChild(bc);ba.appendChild(el("div","ba-arrow","➜"));ba.appendChild(ac);
-  fb.appendChild(ba);db.appendChild(fb);
+  <!-- つまずき帯 -->
+  <div class="pitfall">
+    <div class="ptag">⚠ つまずき注意</div>
+    <div class="ptxt">削減時間は「手作業なら何分か」を見積もって<b>固定値</b>で入れるのがコツ。<br>日時は <code>utcNow()</code> → <code>convertTimeZone</code> でJSTに直すと読みやすい。</div>
+  </div>
 
-  const mb=el("div","memo-box");
-  mb.appendChild(el("div","label",d.tipLabel));
-  mb.appendChild(el("div","txt",d.tip));
-  db.appendChild(mb);
-  s.appendChild(db);
-  // キャラは帯の外（スライド直下）に出して最前面に。帯の overflow:hidden に切られないようにする
-  if(d.memoChara){const mc2=el("img","memo-chara");mc2.src=d.memoChara;s.appendChild(mc2);}
-}
-render(SLIDE);
-</script>
+  <img class="botchara" src="../../pptx/_assets/chara/chara_guts_g.png" alt="">
+
+</div>
 </body>
 </html>
