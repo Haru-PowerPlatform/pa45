@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips HTMLテンプレ（Layout C＝Before/After比較主役）</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  /* ===== Layout C：Before/After比較が主役・キャラ中央・下に作り方3ステップ（月水金ローテの「金」） ===== */
+  :root{
+    --blue:#2563EB; --blue-bg:#EFF6FF; --blue-dark:#1E40AF;
+    --enji:#A4283C; --enji-dark:#6E1628;
+    --green:#16A34A; --green-bg:#ECFDF5; --green-dark:#064E3B;
+    --orange:#EA580C; --ink:#1F2937; --gray:#374151; --weak:#6B7280; --faint:#9CA3AF;
+    --card:#F8F9FA; --line:#E5E7EB;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+
+  /* タイトル・結論（ブランド共通） */
+  .titlebar{height:90px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:18px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:25px;border-radius:999px;padding:7px 20px;white-space:nowrap;flex:0 0 auto;}
+  .title-text{color:#fff;font-weight:900;font-size:35px;line-height:1.15;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:150px;}
+  .title-chara{position:absolute;right:12px;bottom:-52px;height:148px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+  .concl{margin:8px 18px 0;background:var(--green-bg);border:2px solid var(--green);border-radius:12px;display:flex;align-items:center;gap:14px;padding:9px 20px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{background:linear-gradient(180deg,#2BD06A,#16A34A);color:#fff;font-weight:900;font-size:22px;border-radius:9px;padding:8px 18px;white-space:nowrap;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
+  .concl .txt{font-weight:700;font-size:21px;color:var(--green-dark);line-height:1.35;}
+
+  /* ★ Layout C 主役：Before/After 比較 */
+  .compare{flex:1 1 auto;margin:11px 18px 0;display:flex;align-items:stretch;gap:0;min-height:0;}
+  .panel{flex:1;border-radius:16px;padding:13px 18px;display:flex;flex-direction:column;min-height:0;box-shadow:0 6px 15px rgba(0,0,0,.14),inset 0 1px 0 rgba(255,255,255,.8);}
+  .panel.before{border:2px solid var(--enji);background:linear-gradient(180deg,#FFF5F6,#FCEBEE);}
+  .panel.after{border:2px solid var(--green);background:linear-gradient(180deg,#F1FCF5,#E3F8EC);}
+  .phead{align-self:flex-start;color:#fff;font-weight:900;font-size:21px;border-radius:9px;padding:6px 18px;margin-bottom:12px;box-shadow:0 3px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.45);text-shadow:0 1px 1px rgba(0,0,0,.2);}
+  .ph-before{background:linear-gradient(180deg,#C13350,#A4283C);}
+  .ph-after{background:linear-gradient(180deg,#2BD06A,#16A34A);}
+  .plist{display:flex;flex-direction:column;justify-content:space-evenly;flex:1;gap:8px;}
+  .plist li{list-style:none;display:flex;gap:10px;align-items:center;font-weight:700;font-size:18.5px;line-height:1.35;}
+  .panel.before .plist li{color:#7A2233;}
+  .panel.after .plist li{color:#0B5A36;}
+  .plist li .mk{flex:0 0 auto;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:16px;}
+  .panel.before .mk{background:linear-gradient(180deg,#C13350,#A4283C);}
+  .panel.after .mk{background:linear-gradient(180deg,#2BD06A,#16A34A);}
+
+  /* 中央＝大矢印＋マスコット */
+  .mid{flex:0 0 138px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;}
+  .mid .bigarrow{color:var(--blue);font-weight:900;font-size:46px;text-shadow:0 2px 4px rgba(0,0,0,.2);margin-bottom:2px;}
+  .mid .cmascot{height:150px;filter:drop-shadow(0 3px 7px rgba(0,0,0,.45));z-index:40;}
+
+  /* 下＝作り方3ステップ（わかりやすさ確保） */
+  .make{flex:0 0 auto;margin:11px 18px 14px;background:linear-gradient(180deg,#565C66,#4A4F58);border-radius:13px;padding:11px 18px;display:flex;align-items:center;gap:16px;box-shadow:inset 0 1px 0 rgba(255,255,255,.1);}
+  .make .mlabel{flex:0 0 auto;color:#F1F5F9;font-weight:900;font-size:17px;}
+  .mflow{flex:1;display:flex;align-items:center;gap:9px;}
+  .mstep{flex:1;background:#fff;border-radius:10px;padding:9px 12px;display:flex;align-items:center;gap:9px;box-shadow:0 2px 5px rgba(0,0,0,.22);}
+  .mstep .mi{flex:0 0 auto;width:34px;height:34px;border-radius:8px;background:var(--blue-bg);display:flex;align-items:center;justify-content:center;font-size:19px;overflow:hidden;}
+  .mstep .mi img{width:25px;height:25px;object-fit:contain;}
+  .mstep .mn{font-weight:900;font-size:15px;color:var(--ink);line-height:1.2;}
+  .marrow{color:#7CB1FF;font-weight:900;font-size:18px;}
+  /* Copilotプロンプト帯 */
+  .cpilot{display:flex;align-items:center;gap:16px;width:100%;}
+  .cp-left{flex:0 0 auto;display:flex;flex-direction:column;gap:8px;align-items:flex-start;max-width:215px;}
+  .cp-tag{background:linear-gradient(135deg,#8661C5,#6E48B0);color:#fff;font-weight:900;font-size:15px;border-radius:8px;padding:6px 13px;white-space:nowrap;box-shadow:0 2px 4px rgba(0,0,0,.3);}
+  .cp-speech{position:relative;background:linear-gradient(180deg,#FFFFFF,#F3EBFC);color:#3B2A63;font-weight:900;font-size:16px;line-height:1.35;border:2px solid #8661C5;border-radius:14px;padding:8px 12px;box-shadow:0 3px 6px rgba(0,0,0,.3);}
+  .cp-speech::after{content:"";position:absolute;right:-13px;top:50%;transform:translateY(-50%);border:8px solid transparent;border-left-color:#8661C5;}
+  .cp-box{flex:1;background:#fff;border:2px solid #B69CE6;border-radius:14px;padding:12px 15px;display:flex;align-items:center;gap:12px;box-shadow:0 4px 9px rgba(0,0,0,.3);}
+  .cp-box .spark{flex:0 0 auto;font-size:24px;}
+  .cp-box .ptxt{flex:1;font-weight:700;font-size:18px;color:#323130;line-height:1.4;}
+  .cp-box .send{flex:0 0 auto;width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#8661C5,#6E48B0);color:#fff;display:flex;align-items:center;justify-content:center;font-size:17px;box-shadow:0 2px 4px rgba(0,0,0,.3);}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A = "../../pptx/_assets/";
+const SLIDE = {
+  vol: "Vol.35",
+  title: "もう1から作らない！<br>Copilotでフロー作成を爆速にするコツ",
+  titleChara: A+"chara/chara_point.png",
+  conclusion: "Power Automateの右上「Copilot」に日本語でお願いするだけ。<br>ゼロから組むより、フローの叩き台が一瞬ででき上がります。",
+  before: [ "アクションを1つずつ探して追加", "つまずくたびに手が止まる", "完成まで時間がかかる" ],
+  after:  [ "日本語で「〜したい」と書くだけ", "叩き台のフローが自動で生成", "あとは微調整するだけ" ],
+  midChara: A+"chara/chara_guts.png",
+  promptLabel: "上手なプロンプトのコツ",
+  promptSpeech: "具体的に書くほど<br>精度が上がる！",
+  prompt: "「経費申請」リストに項目が追加されたら、上長にTeamsで通知して",
+};
+
+const el=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e;};
+function render(d){
+  const s=document.getElementById("slide");
+  const tb=el("div","titlebar");
+  tb.appendChild(el("div","vol-pill",d.vol));
+  tb.appendChild(el("div","title-text",d.title));
+  if(d.titleChara){const c=el("img","title-chara");c.src=d.titleChara;tb.appendChild(c);}
+  s.appendChild(tb);
+  const cc=el("div","concl");cc.appendChild(el("div","chip","結論"));cc.appendChild(el("div","txt",d.conclusion));s.appendChild(cc);
+
+  const cmp=el("div","compare");
+  // Before
+  const bp=el("div","panel before");
+  bp.appendChild(el("div","phead ph-before","Before"));
+  const bul=el("ul","plist");
+  d.before.forEach(t=>{const li=el("li");li.appendChild(el("span","mk","✕"));li.appendChild(el("span","",t));bul.appendChild(li);});
+  bp.appendChild(bul);cmp.appendChild(bp);
+  // 中央
+  const mid=el("div","mid");
+  mid.appendChild(el("div","bigarrow","▶"));
+  if(d.midChara){const m=el("img","cmascot");m.src=d.midChara;mid.appendChild(m);}
+  cmp.appendChild(mid);
+  // After
+  const ap=el("div","panel after");
+  ap.appendChild(el("div","phead ph-after","After"));
+  const aul=el("ul","plist");
+  d.after.forEach(t=>{const li=el("li");li.appendChild(el("span","mk","✓"));li.appendChild(el("span","",t));aul.appendChild(li);});
+  ap.appendChild(aul);cmp.appendChild(ap);
+  s.appendChild(cmp);
+
+  // Copilotプロンプト帯（上手な頼み方の実例）
+  const mk=el("div","make");
+  const cp=el("div","cpilot");
+  const cl=el("div","cp-left");
+  cl.appendChild(el("div","cp-tag","💡 "+(d.promptLabel||"プロンプトのコツ")));
+  cl.appendChild(el("div","cp-speech",d.promptSpeech||""));
+  cp.appendChild(cl);
+  const box=el("div","cp-box");
+  box.appendChild(el("span","spark","✨"));
+  box.appendChild(el("div","ptxt",d.prompt));
+  box.appendChild(el("div","send","➤"));
+  cp.appendChild(box);
+  mk.appendChild(cp);s.appendChild(mk);
+}
+render(SLIDE);
+</script>
+</body>
+</html>
