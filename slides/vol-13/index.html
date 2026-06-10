@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8">
-<title>PA45 第13回 スライドプレビュー — もう、フローが止まっても焦らない</title>
+<title>PA45 第13回 スライド｜Try-Catch でフロー運用を安心化</title>
 <style>
   :root {
     --blue-bg: #eaf2fc;
@@ -431,6 +431,35 @@
   /* Slide 12 (closing) image inline tight */
   #s12 img[alt*="安心"] { max-height: 100px; width: auto !important; }
 
+  /* ===== Designer-style flow (slide 8) ===== */
+  .dz-card {
+    background: #fff; border: 1px solid #d8dde6; border-radius: 8px;
+    padding: 10px 14px; display: flex; align-items: center; gap: 11px;
+    font-size: 14px; color: var(--text); box-shadow: 0 1px 3px rgba(0,0,0,.07);
+  }
+  .dz-card strong { font-size: 14px; font-weight: 700; line-height: 1.3; }
+  .dz-sub { font-size: 12px; color: var(--muted); margin-top: 2px; line-height: 1.3; }
+  .dz-ico {
+    width: 28px; height: 28px; border-radius: 6px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-weight: 800; font-size: 13px;
+  }
+  .dz-scope {
+    border: 1.5px solid #cbd5e1; border-radius: 10px; padding: 10px 12px 12px;
+    background: #fafbfc;
+  }
+  .dz-scope-head {
+    background: #7c4a2d; color: #fff; border-radius: 7px;
+    padding: 8px 12px; font-size: 14px; font-weight: 800; margin-bottom: 10px;
+  }
+  .dz-scope-head span { font-size: 11.5px; font-weight: 600; opacity: .9; }
+  .dz-conn {
+    width: 2px; min-height: 22px; background: #c4ccd6; margin: 0 auto;
+    position: relative; display: flex; align-items: center; justify-content: center;
+  }
+  .dz-dots { display: flex; gap: 4px; background: #fff; padding: 3px 6px; border-radius: 12px; border: 1px solid #e2e8f0; }
+  .dz-dots i { width: 8px; height: 8px; border-radius: 50%; display: block; }
+
   /* Helper */
   .pull-quote {
     font-size: 22px; font-weight: 700; color: var(--blue-text);
@@ -464,7 +493,7 @@
 <button class="toc-toggle" id="tocToggle" type="button">≡ 目次</button>
 
 <div class="deck-header">
-  <h1>PA45 第13回 スライドプレビュー</h1>
+  <h1>PA45 第13回 スライド</h1>
   <div>2026-06-04（木）20:15〜 ／ もう、フローが止まっても焦らない｜スコープ × 実行条件で作る Try-Catch 入門</div>
 </div>
 
@@ -739,49 +768,53 @@
     <h1 class="slide-title">完成形 <small>── まずはゴールを見ておこう</small></h1>
     <div class="concept-dot">Big Picture</div>
   </div>
-  <div class="slide-body" style="padding-top:14px;">
-    <div style="font-size:16px;color:var(--muted);margin-bottom:10px;">今日作るフローはこの全体図です。細かい中身はあとで一緒に作っていくので、まずは「流れ」だけ眺めてください。</div>
-    <div class="pa-flow-grid">
-      <!-- LEFT column: 入口 -->
-      <div class="pa-col">
-        <div class="pa-col-label">① 入口 → 準備</div>
-        <div class="pa-node trigger"><span class="ico">📥</span><div><strong>新しい応答が送信されるとき</strong><div class="sub">Forms トリガー</div></div></div>
-        <div class="pa-arrow">↓</div>
-        <div class="pa-node forms"><span class="ico">📋</span><div><strong>応答の詳細を取得する</strong><div class="sub">申請内容を取り出す</div></div></div>
-        <div style="margin-top:14px;background:var(--blue-bg);border-radius:10px;padding:14px 16px;border-left:4px solid var(--blue-mid);">
+  <div class="slide-body" style="padding-top:12px;">
+    <div style="font-size:15px;color:var(--muted);margin-bottom:8px;">今日作るフローの実物です。デザイナーの画面と同じ並び。まずは「流れ」だけ眺めてください。</div>
+    <div style="display:grid;grid-template-columns:1fr 0.82fr;gap:24px;align-items:start;">
+
+      <!-- LEFT: actual designer-style vertical flow -->
+      <div style="display:flex;flex-direction:column;align-items:stretch;gap:0;">
+        <!-- trigger -->
+        <div class="dz-card" style="border-left:4px solid #2563eb;"><span class="dz-ico" style="background:#2563eb;">▶</span><strong>フローを手動でトリガーする</strong></div>
+        <div class="dz-conn"></div>
+
+        <!-- Try scope -->
+        <div class="dz-scope">
+          <div class="dz-scope-head">📦 スコープ-Try <span>── 失敗するかもしれない処理をまとめる</span></div>
+          <div class="dz-card dz-in" style="border-left:4px solid #8b5cf6;"><span class="dz-ico" style="background:#8b5cf6;">{/}</span><div><strong>作成-割り算</strong><div class="dz-sub">式 <code style="font-size:11px;">div(1,0)</code> → 必ずエラー</div></div></div>
+        </div>
+        <div class="dz-conn"><span class="dz-dots"><i style="background:#f59e0b;"></i><i style="background:#dc2626;"></i></span></div>
+
+        <!-- Catch scope -->
+        <div class="dz-scope">
+          <div class="dz-scope-head">🚨 スコープ-Catch <span>── 失敗時のエスカレ処理</span></div>
+          <div class="dz-card dz-in" style="border-left:4px solid #5b5fc7;"><span class="dz-ico" style="background:#5b5fc7;">T</span><div><strong>Teams にメッセージ投稿</strong><div class="dz-sub">担当者にエラー通知</div></div></div>
+        </div>
+        <div class="dz-conn"><span class="dz-dots"><i style="background:#16a34a;"></i><i style="background:#f59e0b;"></i><i style="background:#64748b;"></i><i style="background:#dc2626;"></i></span></div>
+
+        <!-- Finally scope -->
+        <div class="dz-scope">
+          <div class="dz-scope-head">🧹 スコープ-Finally <span>── 結果に関係なく必ず実行</span></div>
+          <div class="dz-card dz-in" style="border-left:4px solid #5b5fc7;"><span class="dz-ico" style="background:#5b5fc7;">T</span><div><strong>Teams にメッセージ投稿</strong><div class="dz-sub">完了ログを記録</div></div></div>
+        </div>
+      </div>
+
+      <!-- RIGHT: annotations -->
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div style="background:var(--blue-bg);border-radius:10px;padding:14px 16px;border-left:4px solid var(--blue-mid);">
           <div style="font-size:14px;font-weight:700;color:var(--blue-text);margin-bottom:4px;">🎯 今日のゴール</div>
-          <div style="font-size:13px;color:var(--text);line-height:1.55;">メール送信が失敗してもフローが止まらず、担当者にエスカレ通知が自動で届く「壊れにくいフロー」を作る。</div>
+          <div style="font-size:13px;color:var(--text);line-height:1.6;">処理が失敗してもフローが止まらず、担当者にエスカレ通知が自動で届く「壊れにくいフロー」を作る。</div>
         </div>
-      </div>
-
-      <!-- MIDDLE column: Try -->
-      <div class="pa-col">
-        <div class="pa-col-label">② Try（試す箱）</div>
-        <div class="pa-loop" style="border-color:#16a34a;background:#ecfdf5;">
-          <div class="pa-loop-head" style="background:#15803d;"><span class="ico">📦</span><strong>スコープ「Try」</strong>　<span style="font-size:11px;opacity:.85;">— 失敗しうる処理を囲う</span></div>
-          <div class="pa-node" style="border-left-color:#0284c7;background:#f0f9ff;"><span class="ico">✉️</span><div><strong>メールの送信 (V2)</strong><div class="sub">申請者に受付メールを送る</div></div></div>
+        <div style="background:#fff7ed;border-radius:10px;padding:12px 16px;border-left:4px solid #f59e0b;">
+          <div style="font-size:13px;font-weight:700;color:#92400e;margin-bottom:4px;">🔵🟠 スコープの間の点々＝実行条件</div>
+          <div style="font-size:12.5px;color:var(--text);line-height:1.6;">
+            <span style="color:#dc2626;font-weight:700;">●●</span> Catch＝<strong>失敗・タイムアウト</strong>のときだけ動く<br>
+            <span style="color:#16a34a;font-weight:700;">●●●●</span> Finally＝<strong>4つ全部</strong>＝必ず動く
+          </div>
         </div>
-        <div class="pa-arrow">↓</div>
-        <div style="background:#fff7ed;border:1px dashed #f59e0b;border-radius:8px;padding:10px;font-size:12px;color:#92400e;text-align:center;">
-          <strong>⚙️ 実行条件の構成</strong><br>
-          「<strong>前のが失敗</strong>のとき」だけ動く
-        </div>
-      </div>
-
-      <!-- RIGHT column: Catch + Finally -->
-      <div class="pa-col">
-        <div class="pa-col-label">③ Catch（失敗時）／ Finally（必ず実行）</div>
-        <div class="pa-loop" style="border-color:#dc2626;background:#fef2f2;">
-          <div class="pa-loop-head" style="background:#991b1b;font-size:11px;"><span class="ico">🚨</span><strong>スコープ「Catch」</strong>　<span style="opacity:.85;">— Try 失敗時のみ</span></div>
-          <div class="pa-node teams"><span class="ico">💬</span><div><strong>Teams：担当者にエスカレ</strong><div class="sub">「失敗しました」</div></div></div>
-        </div>
-        <div class="pa-loop" style="border-color:#2563eb;background:#eff6ff;margin-top:6px;">
-          <div class="pa-loop-head" style="background:#1e40af;font-size:11px;"><span class="ico">🧹</span><strong>スコープ「Finally」</strong>　<span style="opacity:.85;">— 必ず実行</span></div>
-          <div class="pa-node teams"><span class="ico">💬</span><div><strong>Teams：完了ログ</strong><div class="sub">成功/失敗どちらも</div></div></div>
-        </div>
-        <div style="margin-top:8px;background:#fef3c7;border-radius:10px;padding:10px 12px;border-left:4px solid #f59e0b;">
-          <div style="font-size:12px;font-weight:700;color:#92400e;margin-bottom:2px;">💡 ここが今日の "1粒"</div>
-          <div style="font-size:11px;color:var(--text);line-height:1.5;">Try-Catch-Finally で「止まらない・気づける・記録される」フローが完成。</div>
+        <div style="background:#f0fdf4;border-radius:10px;padding:12px 16px;border-left:4px solid #16a34a;">
+          <div style="font-size:13px;font-weight:700;color:#15803d;margin-bottom:4px;">💡 今日の "1粒"</div>
+          <div style="font-size:12.5px;color:var(--text);line-height:1.6;">Try-Catch-Finally で「<strong>止まらない・気づける・記録される</strong>」フローが完成。</div>
         </div>
       </div>
     </div>
@@ -873,6 +906,10 @@
           <div style="font-size:13px;font-weight:800;color:#15803d;letter-spacing:.04em;">例</div>
           <div style="font-size:13px;color:var(--muted);margin-top:4px;line-height:1.55;">✉️ メール送信<br>📝 SharePoint登録<br>🌐 API呼び出し</div>
         </div>
+        <div style="background:#fff7ed;border:1px dashed #f59e0b;border-radius:8px;padding:9px 12px;margin-top:8px;">
+          <div style="font-size:12px;font-weight:800;color:#92400e;">🧪 今日のデモは</div>
+          <div style="font-size:12px;color:var(--text);margin-top:3px;line-height:1.5;">作成（Compose）に <code style="font-size:11px;">div(1,0)</code><br>→ ゼロ除算で<strong>確実に失敗</strong></div>
+        </div>
       </div>
 
       <!-- Catch -->
@@ -894,6 +931,10 @@
           <div style="font-size:13px;font-weight:800;color:#991b1b;letter-spacing:.04em;">例</div>
           <div style="font-size:13px;color:var(--muted);margin-top:4px;line-height:1.55;">💬 Teams通知<br>📧 管理者メール<br>📝 失敗ログ保存</div>
         </div>
+        <div style="background:#fff7ed;border:1px dashed #f59e0b;border-radius:8px;padding:9px 12px;margin-top:8px;">
+          <div style="font-size:12px;font-weight:800;color:#92400e;">🧪 今日のデモは</div>
+          <div style="font-size:12px;color:var(--text);margin-top:3px;line-height:1.5;">💬 Teams投稿<br>「<strong>処理が失敗しました</strong>」を担当者へ</div>
+        </div>
       </div>
 
       <!-- Finally -->
@@ -914,6 +955,10 @@
         <div style="background:#fff;border-radius:8px;padding:10px 12px;">
           <div style="font-size:13px;font-weight:800;color:#1e40af;letter-spacing:.04em;">例</div>
           <div style="font-size:13px;color:var(--muted);margin-top:4px;line-height:1.55;">📝 完了ログ記録<br>🧹 一時ファイル削除<br>📊 監査ログ</div>
+        </div>
+        <div style="background:#fff7ed;border:1px dashed #f59e0b;border-radius:8px;padding:9px 12px;margin-top:8px;">
+          <div style="font-size:12px;font-weight:800;color:#92400e;">🧪 今日のデモは</div>
+          <div style="font-size:12px;color:var(--text);margin-top:3px;line-height:1.5;">💬 Teams投稿<br>「<strong>処理が完了しました</strong>」を記録</div>
         </div>
       </div>
     </div>
@@ -940,12 +985,13 @@
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
       <div>
         <div style="font-size:18px;font-weight:700;color:var(--blue-text);margin-bottom:10px;">📝 ステップ概要</div>
-        <ol style="font-size:17px;line-height:2.0;padding-left:24px;margin:0;">
-          <li><strong>Try スコープ</strong> を作って、メール送信を入れる</li>
+        <ol style="font-size:16px;line-height:1.9;padding-left:24px;margin:0;">
+          <li><strong>手動トリガー</strong>「フローを手動でトリガーします」で開始</li>
+          <li><strong>Try スコープ</strong> を作って、<strong>作成（Compose）</strong>を入れる<br><span style="font-size:14px;color:var(--muted);">式に <code>div(1,0)</code> → 必ず失敗する</span></li>
           <li><strong>Catch スコープ</strong> を作って、Teams通知を入れる<br><span style="font-size:14px;color:var(--muted);">実行条件＝失敗・タイムアウト</span></li>
           <li><strong>Finally スコープ</strong> を作って、完了ログを入れる<br><span style="font-size:14px;color:var(--muted);">実行条件＝4つ全部チェック</span></li>
-          <li><strong>成功テスト</strong>：Try ✅ / Catch ⏭️ / Finally ✅</li>
-          <li><strong>失敗テスト</strong>：Try ❌ / Catch ✅ / Finally ✅<br><span style="font-size:14px;color:var(--muted);">宛先を <code>no-such@example.invalid</code> に</span></li>
+          <li><strong>失敗テスト</strong>：Try ❌ / Catch ✅ / Finally ✅</li>
+          <li><strong>成功テスト</strong>：<code>div(10,2)</code> に直すと Try ✅ / Catch ⏭️ / Finally ✅</li>
         </ol>
       </div>
       <div>
@@ -978,17 +1024,17 @@
       <div class="card" style="background:#fff;">
         <h3 style="color:var(--blue-text);font-size:21px;">💼 こんな場面で使えます</h3>
         <ul class="check" style="font-size:17px;">
-          <li><strong>メール送信失敗</strong>を担当者に即通知（今日のテーマ）</li>
-          <li><strong>SharePoint 登録失敗</strong>時に元データを退避＋通知</li>
-          <li><strong>外部 API タイムアウト</strong>時にリトライ用キューへ転送</li>
+          <li><strong>SharePoint 登録失敗</strong>時に元データを退避＋担当者に通知</li>
+          <li><strong>外部 API エラー / タイムアウト</strong>時にリトライ用キューへ転送</li>
           <li><strong>承認フロー失敗</strong>時に上司にエスカレ</li>
+          <li><strong>ファイル取得・変換失敗</strong>時に「失敗しました」を即通知</li>
         </ul>
       </div>
       <div class="card" style="background:#fff;">
         <h3 style="color:var(--red);font-size:21px;">⚠️ うまくいかない時のチェック</h3>
-        <ul class="check cross" style="font-size:16px;">
+        <ul class="check cross" style="font-size:15px;">
           <li><strong>Catch が動かない</strong> → 実行条件の構成で「成功時」のチェックを外したか確認</li>
-          <li><strong>Try が成功しちゃう</strong> → わざと失敗させる宛先（<code>example.invalid</code>）になっているか</li>
+          <li><strong>メール送信では失敗しない</strong> → 宛先が変でも「受領」で成功扱い。不達は後からメールで返るだけ。だから今日は <code>div(1,0)</code> で確実に失敗させる</li>
           <li><strong>Catch が常に動く</strong> → 「失敗時」「タイムアウト」だけにチェック、それ以外は外す</li>
           <li><strong>スコープの名前変更でエラー</strong> → 半角英数推奨。後続の式は再選択で追従</li>
         </ul>
