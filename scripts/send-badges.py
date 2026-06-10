@@ -48,8 +48,9 @@ if _env_path.exists():
             os.environ.setdefault(_k.strip(), _v.strip())
 
 ROOT      = Path(__file__).parent.parent
-SMTP_HOST = "smtp.office365.com"
-SMTP_PORT = 587
+# 既定は Office365。Gmail を使う場合は .env に SMTP_HOST=smtp.gmail.com を設定
+SMTP_HOST = os.environ.get("SMTP_HOST", "smtp.office365.com").strip()
+SMTP_PORT = int(os.environ.get("SMTP_PORT", "587").strip())
 
 # ─── GraphAPIトークン取得 ─────────────────────────
 def get_token():
@@ -232,18 +233,42 @@ def send_email(to_email: str, session_num: int, badge_path: Path):
         print("ERROR: .env に SMTP_USER が設定されていません")
         sys.exit(1)
 
+    # ── X（Twitter）シェア用 Web Intent リンク ──
+    import urllib.parse
+    THEMES_JP = {
+        1: "変数の初期化", 2: "Set variable", 3: "条件分岐", 4: "Apply to each",
+        5: "基礎固めWeek", 6: "Formsで自動お礼メール", 7: "FormsからSharePoint登録",
+        8: "承認フロー（Approvals）", 9: "SharePoint更新をTeams通知", 10: "総復習回",
+        11: "失敗しないフロー設計", 12: "式アレルギー卒業", 13: "Try-Catch",
+        14: "JSONの読み方",
+    }
+    theme = THEMES_JP.get(session_num)
+    theme_part = f"『{theme}』" if theme else ""
+    tweet_text = (f"PA45 第{session_num}回{theme_part}に参加しました！\n"
+                  f"Power Automateを45分でハンズオン、参加バッジをゲットしました🏅")
+    share_url = "https://www.automate136.com/pa45/"
+    x_intent = ("https://twitter.com/intent/tweet?text="
+                + urllib.parse.quote(tweet_text)
+                + "&hashtags=PA45,PowerAutomate,PowerPlatform"
+                + "&url=" + urllib.parse.quote(share_url))
+
     subject   = f"【PA45 第{session_num}回】ご参加ありがとうございました！"
     body_html = f"""\
 <p>こんにちは！</p>
 
-<p>本日は <strong>PA45 第{session_num}回</strong> にご参加いただき、ありがとうございました！<br>
-今日学んだことを、ぜひ明日の業務でひとつ試してみてください。</p>
+<p><strong>PA45 第{session_num}回</strong> にご参加いただき、ありがとうございました！<br>
+学んだことを、ぜひ業務でひとつ試してみてください。</p>
 
 <hr>
 
-<p>🏅 <strong>参加バッジを添付しました</strong><br>
-XなどのSNSでシェアしていただけると嬉しいです！<br>
-ハッシュタグ: <strong>#PA45</strong></p>
+<p>🏅 <strong>参加バッジを添付しました！</strong><br>
+よかったらXでシェアしていただけると嬉しいです✨</p>
+
+<p style="text-align:center;margin:24px 0;">
+<a href="{x_intent}" style="display:inline-block;background:#000;color:#fff;text-decoration:none;padding:12px 28px;border-radius:9999px;font-weight:bold;font-size:15px;">𝕏 でシェアする</a>
+</p>
+
+<p style="font-size:13px;color:#666;">↑ ボタンを押すと、投稿文とハッシュタグ（#PA45 #PowerAutomate #PowerPlatform）が入った状態でXが開きます。</p>
 
 <hr>
 
@@ -254,8 +279,9 @@ XなどのSNSでシェアしていただけると嬉しいです！<br>
 <p>— PA45 運営 Haru</p>
 """
 
+    from email.utils import formataddr
     msg = MIMEMultipart()
-    msg["From"]    = smtp_user
+    msg["From"]    = formataddr(("PA45 運営 Haru", smtp_user))
     msg["To"]      = to_email
     msg["Subject"] = subject
     msg.attach(MIMEText(body_html, "html", "utf-8"))
