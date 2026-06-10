@@ -58,6 +58,9 @@ PALETTES = [
          out_c=(46, 8, 38), accent=GOLD, accent_d=GOLD_D, title=WHITE, sub=(249, 196, 233)),      # Magenta
 ]
 
+# (英語テーマ名, 日付, アイコンキー)
+# ★毎週ルール: アイコンは必ずその週のテーマに合うものにする。
+#   既存キーで合うものが無ければ _icon() に新しい図形を描き足す（"gear" フォールバックで済ませない）。
 SESSIONS = {
     1:  ("Initialize Variable", "2026-03-06", "init"),
     2:  ("Set Variable", "2026-03-12", "set"),
