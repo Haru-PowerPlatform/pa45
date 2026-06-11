@@ -1093,30 +1093,25 @@
     <div class="concept-dot">Extract</div>
   </div>
   <div class="slide-body" style="padding-top:14px;">
-    <div style="font-size:17px;color:var(--text);margin-bottom:10px;line-height:1.65;"><code>name</code> は<strong>動的コンテンツ一覧に出てきません</strong>。そこで <strong>作成 1</strong> が式で取り出し、<strong>作成 2</strong> が <code>concat</code> で文章に組み立てます。</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start;">
-      <div>
-        <div style="font-size:16px;font-weight:700;color:var(--blue-text);margin-bottom:6px;">📝 手順</div>
-        <ol style="font-size:16px;line-height:1.85;padding-left:24px;margin:0;">
-          <li><strong>作成 1</strong> の入力で「式（<code>fx</code>）」を開き、弁当名を取り出す</li>
-          <li><strong>作成 2</strong> で <code>concat</code> を使い、文章を組み立てる</li>
-          <li>実行 → 出力に文章が入る 🎉</li>
-        </ol>
-        <div style="margin-top:10px;background:#fffbeb;border-left:5px solid #f59e0b;border-radius:8px;padding:9px 14px;font-size:13px;color:#78350f;line-height:1.6;">💡 <code>?['…']</code> をつなげて深い階層へ。<code>?</code> で値が無くても安全。名前を変えても参照はPAが自動追従。</div>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:6px;">
-        <div style="background:#f1f5f9;border:2px dashed #cbd5e1;border-radius:10px;padding:9px 13px;font-size:14px;color:var(--muted);">📋 動的コンテンツに <code>name</code> が<strong>無い</strong> <span style="color:var(--red);font-weight:700;">❌</span></div>
-        <div style="text-align:center;font-size:15px;color:var(--hint);">▼ 作成 1：式で取り出す</div>
-        <div class="code-block" style="margin:0;font-size:13px;">outputs('作成（注文データ_JSON）')?['answers']?['name']</div>
-        <div style="text-align:center;font-size:15px;color:var(--hint);">▼ 作成 2：concat で組み立て</div>
-        <div class="code-block" style="margin:0;font-size:13px;">concat(…?['name'], ' を ', …?['amount'], '個 承りました')</div>
-        <div style="text-align:center;font-size:15px;color:var(--hint);">▼</div>
-        <div style="background:#f0fdf4;border:2px solid #6ee7b7;border-radius:10px;padding:11px 14px;font-size:16px;color:#15803d;font-weight:700;line-height:1.5;">✅ 出力「<strong>からあげ弁当 を 2個 承りました</strong>」<span style="font-size:12px;font-weight:400;color:var(--muted);">（実機テスト済み）</span></div>
-      </div>
+    <div style="font-size:18px;color:var(--text);margin-bottom:12px;line-height:1.6;">動的コンテンツに出ない値は、<strong>式で「住所（パス）」を書いて取り出す</strong>。<strong>最後のキーを変えるだけ</strong>で、別の値も同じ要領で取れます。</div>
+
+    <div style="display:grid;grid-template-columns:118px 1fr 158px;gap:10px 14px;align-items:center;">
+      <div style="font-size:18px;font-weight:800;color:#15803d;">① 弁当名<div style="font-size:13px;color:var(--muted);font-weight:400;">キー：name</div></div>
+      <div class="code-block" style="margin:0;font-size:17px;">outputs('作成（注文データ_JSON）')?['answers']?[<span class="hl">'name'</span>]</div>
+      <div style="font-size:19px;font-weight:800;color:#15803d;">→ からあげ弁当</div>
+
+      <div style="font-size:18px;font-weight:800;color:#1e40af;">② 個数<div style="font-size:13px;color:var(--muted);font-weight:400;">キー：amount</div></div>
+      <div class="code-block" style="margin:0;font-size:17px;">outputs('作成（注文データ_JSON）')?['answers']?[<span class="hl">'amount'</span>]</div>
+      <div style="font-size:19px;font-weight:800;color:#1e40af;">→ 2</div>
     </div>
-    <div class="callout" style="margin-top:auto;margin-bottom:0;font-size:17px;">
-      <strong>🔑 これが核心：</strong> 動的コンテンツに無い値も、<strong>JSONの住所（パス）を式で書けば取り出して使える</strong>。読み方さえ分かれば怖くありません。
+
+    <div class="callout" style="margin:12px 0;font-size:17px;background:#eff6ff;border-left-color:#2563eb;color:#1e40af;">
+      <strong>💡 ここがコツ：</strong> 住所は同じまま、最後の <code>['name']</code> を <code>['amount']</code> に<strong>変えるだけ</strong>で「2」が取れます。数値はクォート（" "）不要です。
     </div>
+
+    <div style="font-size:16px;font-weight:700;color:#78350f;margin-bottom:5px;">③ 作成 2：<code>concat</code> で①と②を1つの文章に組み立てる</div>
+    <div class="code-block" style="margin:0;font-size:16px;line-height:1.7;">concat( <span class="hl">①弁当名の式</span>, <span class="str">' を '</span>, <span class="hl">②個数の式</span>, <span class="str">'個 承りました'</span> )</div>
+    <div style="background:#f0fdf4;border:2px solid #6ee7b7;border-radius:10px;padding:12px 16px;font-size:20px;color:#15803d;font-weight:800;margin-top:10px;">✅ 出力「からあげ弁当 を 2個 承りました」 <span style="font-size:12px;font-weight:400;color:var(--muted);">（実機テスト済み）</span></div>
   </div>
   <div class="slide-footer">
     <span>Power Automate for Beginners</span>
