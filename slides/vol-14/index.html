@@ -969,16 +969,22 @@
     <div class="concept-dot">Build</div>
   </div>
   <div class="slide-body" style="padding-top:14px;">
-    <div style="font-size:18px;color:var(--text);margin-bottom:10px;line-height:1.65;">使うのは <strong>手動トリガー</strong> ＋「<strong>作成（Compose）</strong>」<strong>3つ</strong>だけ。コネクタ不要で、その場で動かせます。</div>
+    <div style="background:linear-gradient(135deg,#5b5fc7,#7c4dff);color:#fff;border-radius:12px;padding:12px 18px;margin-bottom:10px;display:flex;align-items:center;gap:14px;box-shadow:0 4px 14px rgba(91,95,199,.3);">
+      <div style="font-size:30px;flex-shrink:0;">🎯</div>
+      <div style="font-size:17px;line-height:1.5;"><strong>ゴール（完成したらこれを送る）</strong><br>Teams に <strong style="font-size:19px;">「からあげ弁当 を 2個 承りました」</strong> を自動で投稿！</div>
+    </div>
+    <div style="font-size:15px;color:var(--text);margin-bottom:8px;line-height:1.5;">使うのは <strong>手動トリガー＋作成（Compose）3つ＋Teams送信</strong>。注文JSONから値を取り出し → 文章にして → Teamsへ。</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start;">
-      <div style="display:flex;flex-direction:column;gap:5px;">
-        <div style="background:#dbeafe;border:2px solid #93c5fd;border-radius:10px;padding:9px 14px;font-size:15px;font-weight:700;color:#1e40af;">① フローを手動でトリガーします</div>
-        <div style="text-align:center;font-size:15px;color:var(--hint);">▼</div>
-        <div style="background:#eff6ff;border:2px solid #93c5fd;border-radius:10px;padding:9px 14px;font-size:15px;font-weight:700;color:#1e40af;">② 作成（注文データ JSON）<div style="font-size:13px;font-weight:400;color:var(--muted);margin-top:2px;">右のJSONを貼る</div></div>
-        <div style="text-align:center;font-size:15px;color:var(--hint);">▼</div>
-        <div style="background:#ecfdf5;border:2px solid #6ee7b7;border-radius:10px;padding:9px 14px;font-size:15px;font-weight:700;color:#15803d;">③ 作成 1（弁当名を取り出す）<div style="font-size:13px;font-weight:400;color:var(--muted);margin-top:2px;">式で answers / name を取得</div></div>
-        <div style="text-align:center;font-size:15px;color:var(--hint);">▼</div>
-        <div style="background:#fffbeb;border:2px solid #fcd34d;border-radius:10px;padding:9px 14px;font-size:15px;font-weight:700;color:#78350f;">④ 作成 2（お礼文を組み立てる）<div style="font-size:13px;font-weight:400;color:var(--muted);margin-top:2px;">concat で文章にする</div></div>
+      <div style="display:flex;flex-direction:column;gap:3px;">
+        <div style="background:#dbeafe;border:1.5px solid #93c5fd;border-radius:9px;padding:7px 13px;font-size:14px;font-weight:700;color:#1e40af;">① フローを手動でトリガーします</div>
+        <div style="text-align:center;font-size:13px;color:var(--hint);">▼</div>
+        <div style="background:#eff6ff;border:1.5px solid #93c5fd;border-radius:9px;padding:7px 13px;font-size:14px;font-weight:700;color:#1e40af;">② 作成（注文データ JSON）<span style="font-size:12px;font-weight:400;color:var(--muted);"> ／ 右のJSONを貼る</span></div>
+        <div style="text-align:center;font-size:13px;color:var(--hint);">▼</div>
+        <div style="background:#ecfdf5;border:1.5px solid #6ee7b7;border-radius:9px;padding:7px 13px;font-size:14px;font-weight:700;color:#15803d;">③ 作成 1（弁当名を取り出す）<span style="font-size:12px;font-weight:400;color:var(--muted);"> ／ 式で取得</span></div>
+        <div style="text-align:center;font-size:13px;color:var(--hint);">▼</div>
+        <div style="background:#fffbeb;border:1.5px solid #fcd34d;border-radius:9px;padding:7px 13px;font-size:14px;font-weight:700;color:#78350f;">④ 作成 2（お礼文を組み立てる）<span style="font-size:12px;font-weight:400;color:var(--muted);"> ／ concat</span></div>
+        <div style="text-align:center;font-size:13px;color:var(--hint);">▼</div>
+        <div style="background:#f3e8ff;border:1.5px solid #c4b5fd;border-radius:9px;padding:7px 13px;font-size:14px;font-weight:700;color:#5b21b6;">⑤ Teams にメッセージを送る<span style="font-size:12px;font-weight:400;color:var(--muted);"> ／ 作成2の文章を投稿</span></div>
       </div>
       <div>
         <div style="font-size:14px;font-weight:700;color:var(--blue-text);margin-bottom:5px;">②「作成（注文データ JSON）」に貼る（コピペOK）</div>
@@ -989,11 +995,8 @@
     <span class="key">"amount"</span>: <span class="str">2</span>
   <span class="br">}</span>
 }</div>
-        <div style="margin-top:8px;font-size:13.5px;color:var(--muted);line-height:1.55;">お弁当の注文フォームのイメージ。③④の式は次のページで作ります。実行 → 緑✓ でOK。</div>
+        <div style="margin-top:8px;font-size:13px;color:var(--muted);line-height:1.55;">お弁当の注文フォームのイメージ。③④⑤は次のページで作ります。最後にTeamsへ届けばゴール！</div>
       </div>
-    </div>
-    <div class="callout" style="margin-top:auto;margin-bottom:0;font-size:17px;">
-      <strong>🎯 ゴール：</strong> 「読むためのJSON」を出し、そこから値を取り出して文章に使うまでを一気に体験します。
     </div>
   </div>
   <div class="slide-footer">
@@ -1160,7 +1163,7 @@
 
     <div style="font-size:16px;font-weight:700;color:#78350f;margin-bottom:5px;">③ 作成 2：<code>concat</code> で①と②を1つの文章に組み立てる</div>
     <div class="code-block" style="margin:0;font-size:16px;line-height:1.7;">concat( <span class="hl">①弁当名の式</span>, <span class="str">' を '</span>, <span class="hl">②個数の式</span>, <span class="str">'個 承りました'</span> )</div>
-    <div style="background:#f0fdf4;border:2px solid #6ee7b7;border-radius:10px;padding:12px 16px;font-size:20px;color:#15803d;font-weight:800;margin-top:10px;">✅ 出力「からあげ弁当 を 2個 承りました」 <span style="font-size:12px;font-weight:400;color:var(--muted);">（実機テスト済み）</span></div>
+    <div style="background:#f0fdf4;border:2px solid #6ee7b7;border-radius:10px;padding:12px 16px;font-size:19px;color:#15803d;font-weight:800;margin-top:10px;">✅ ⑤Teams に「からあげ弁当 を 2個 承りました」を投稿 <span style="font-size:12px;font-weight:400;color:var(--muted);">（実機テスト済み）</span></div>
   </div>
   <div class="slide-footer">
     <span>Power Automate for Beginners</span>
