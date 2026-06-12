@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.38（Layout A）何も起きていないことを検知する</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  /* ===== X技術Tips 1枚スライド・デザインシステム（reference_x_tips_design_system 準拠） ===== */
+  :root{
+    --blue:#2563EB; --blue-bg:#EFF6FF; --blue-bg2:#DBEAFE; --blue-dark:#1E40AF;
+    --enji:#A4283C; --enji-dark:#6E1628;
+    --green:#16A34A; --emerald:#059669; --green-bg:#ECFDF5; --green-bg2:#D1FAE5; --green-dark:#064E3B;
+    --orange:#EA580C; --orange-bg:#FFF7ED;
+    --ink:#1F2937; --gray:#374151; --gray2:#4B5563; --weak:#6B7280; --faint:#9CA3AF;
+    --card:#F8F9FA; --card2:#F3F4F6; --line:#E5E7EB; --dark:#111827; --dark2:#1F2937;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{
+    width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;
+    display:flex;flex-direction:column;color:var(--gray);
+  }
+  .mono{font-family:"Courier New",Consolas,monospace;}
+
+  /* --- タイトルバー --- */
+  .titlebar{
+    height:90px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);
+    box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);
+    display:flex;align-items:center;gap:18px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;
+  }
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:25px;border-radius:999px;padding:7px 20px;letter-spacing:.5px;white-space:nowrap;flex:0 0 auto;}
+  .vol-logo{height:50px;width:50px;object-fit:contain;flex:0 0 auto;background:#fff;border-radius:12px;padding:5px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
+  .title-text{color:#fff;font-weight:900;font-size:41px;line-height:1.1;letter-spacing:.2px;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:150px;white-space:nowrap;}
+  .title-text .ico{font-size:30px;margin-right:8px;}
+  .title-chara{position:absolute;right:14px;bottom:-64px;height:150px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  /* --- 結論バー --- */
+  .concl{
+    margin:6px 18px 0;background:var(--green-bg);border:2px solid var(--green);border-radius:12px;
+    display:flex;align-items:center;gap:14px;padding:9px 150px 9px 20px;flex:0 0 auto;
+    box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);
+  }
+  .concl .chip{background:linear-gradient(180deg,rgba(255,255,255,.30),rgba(255,255,255,0) 50%),linear-gradient(180deg,#2BD06A,#16A34A);color:#fff;font-weight:900;font-size:23px;border-radius:9px;padding:8px 19px;white-space:nowrap;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
+  .concl .txt{font-weight:700;font-size:22px;color:var(--green-dark);line-height:1.4;}
+
+  /* --- 3カラム --- */
+  .cols{flex:1 1 auto;display:flex;gap:14px;padding:6px 18px 0;min-height:0;}
+  .col{flex:1;display:flex;flex-direction:column;min-height:0;}
+  .col.right{flex:1;gap:14px;}
+
+  .card{background:var(--card);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;min-height:0;box-shadow:0 6px 15px rgba(0,0,0,.13),inset 0 1px 0 rgba(255,255,255,.75);}
+  .card.blue{border:2px solid var(--blue);flex:1;}
+  .card.orange{border:2px solid var(--orange);flex:1;}
+  .card.green{border:2px solid var(--green);flex:1;}
+  .card.center{border:2px solid var(--line);background:#fff;flex:1;}
+
+  .card-head{align-self:stretch;text-align:center;color:#fff;font-weight:900;font-size:23px;border-radius:9px;padding:8px 15px;margin-bottom:8px;letter-spacing:.5px;box-shadow:0 4px 7px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.55),inset 0 -3px 4px rgba(0,0,0,.18);text-shadow:0 1px 2px rgba(0,0,0,.22);}
+  .h-blue{background:linear-gradient(180deg,rgba(255,255,255,.28),rgba(255,255,255,0) 48%),linear-gradient(180deg,#4A85FF,#2563EB);} .h-orange{background:linear-gradient(180deg,rgba(255,255,255,.28),rgba(255,255,255,0) 48%),linear-gradient(180deg,#FB8534,#EA580C);} .h-green{background:linear-gradient(180deg,rgba(255,255,255,.28),rgba(255,255,255,0) 48%),linear-gradient(180deg,#2BD06A,#16A34A);} .h-gray{background:linear-gradient(180deg,rgba(255,255,255,.22),rgba(255,255,255,0) 48%),linear-gradient(180deg,#3C4757,#1F2937);}
+
+  /* チェックリスト（左） */
+  .checklist{display:flex;flex-direction:column;justify-content:flex-start;flex:0 0 auto;gap:14px;padding-top:4px;}
+  .checklist li{list-style:none;display:flex;gap:12px;align-items:center;font-weight:700;font-size:25.5px;color:var(--gray);line-height:1.35;}
+  .checklist li .ck{flex:0 0 auto;width:33px;height:33px;}
+  .left-chara{margin:auto auto 0;align-self:center;height:150px;object-fit:contain;filter:drop-shadow(0 3px 6px rgba(0,0,0,.30));}
+
+  /* ステップ（中央） */
+  .steps{display:flex;flex-direction:column;align-items:center;gap:4px;justify-content:space-evenly;flex:1;}
+  .step{
+    width:100%;background:linear-gradient(180deg,#FFFFFF,#EEF1F6);border:2px solid #C2C9D2;border-radius:12px;box-shadow:0 5px 11px rgba(0,0,0,.17),inset 0 1px 0 rgba(255,255,255,.95);
+    display:flex;align-items:center;gap:12px;padding:9px 13px;
+  }
+  .step .icon{flex:0 0 auto;width:44px;height:44px;border-radius:10px;background:var(--blue-bg);box-shadow:inset 0 0 0 1px rgba(37,99,235,.18),0 1px 2px rgba(0,0,0,.12);display:flex;align-items:center;justify-content:center;font-size:25px;overflow:hidden;}
+  .step .icon img{width:32px;height:32px;object-fit:contain;}
+  .step .body{display:flex;flex-direction:column;gap:2px;}
+  .step .name{font-weight:900;font-size:20.5px;color:var(--ink);line-height:1.2;}
+  .step .sub{font-weight:600;font-size:14px;color:var(--weak);}
+  .step .dots{margin-left:auto;color:var(--faint);font-weight:900;font-size:20px;letter-spacing:1px;}
+  .connector{color:var(--blue);font-size:21px;font-weight:900;line-height:1;}
+
+  /* 右カラム本文 */
+  .bullets{display:flex;flex-direction:column;justify-content:space-evenly;flex:1;gap:6px;}
+  .bullets li{list-style:none;display:flex;gap:10px;align-items:center;font-weight:700;font-size:21px;color:var(--gray);line-height:1.4;}
+  .bullets li::before{content:"▸";color:var(--orange);font-weight:900;flex:0 0 auto;font-size:21px;}
+  .card.green .bullets li::before{color:var(--green);}
+  /* 右下キャラと重ならないよう、メリット(右下カード)の本文だけ右に余白 */
+  .card.green .bullets{padding-right:158px;}
+
+  /* --- 下部ダーク帯（濃いグレー） --- */
+  .darkband{
+    margin:9px 0 0;background:linear-gradient(180deg,#565C66,#4A4F58);color:#fff;flex:0 0 auto;position:relative;
+    display:flex;align-items:center;gap:18px;padding:12px 22px;height:114px;overflow:hidden;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.10);
+  }
+  .flow-box{flex:1.6;}
+  .flow-box .label{font-weight:900;font-size:17px;color:#F1F5F9;margin-bottom:9px;letter-spacing:.5px;}
+  .ba-row{display:flex;align-items:stretch;gap:10px;}
+  .ba-card{flex:1;background:linear-gradient(180deg,#FFFFFF,#EEF1F6);color:var(--ink);font-weight:700;font-size:14.5px;line-height:1.3;border-radius:10px;padding:9px 12px;display:flex;align-items:center;gap:8px;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.9);}
+  .ba-card.before{border:2px solid var(--enji);}
+  .ba-card.after{border:2px solid var(--green);}
+  .ba-tag{flex:0 0 auto;align-self:flex-start;color:#fff;font-weight:900;font-size:12px;border-radius:6px;padding:3px 9px;box-shadow:0 1px 2px rgba(0,0,0,.25);}
+  .tag-before{background:linear-gradient(180deg,#C13350,#A4283C);}
+  .tag-after{background:linear-gradient(180deg,#2BD06A,#16A34A);}
+  .ba-arrow{align-self:center;color:#FCD34D;font-weight:900;font-size:24px;text-shadow:0 1px 2px rgba(0,0,0,.3);}
+  .memo-box{flex:1;background:linear-gradient(180deg,#646A75,#565C66);border:1.5px solid #7A818D;border-radius:11px;padding:11px 16px;margin-right:155px;display:flex;flex-direction:column;justify-content:center;align-self:stretch;box-shadow:inset 0 1px 0 rgba(255,255,255,.12);}
+  .memo-box .label{font-weight:900;font-size:16px;color:#FCD34D;margin-bottom:7px;}
+  .memo-box .txt{font-weight:700;font-size:17px;color:#FFFFFF;line-height:1.4;}
+  .memo-chara{position:absolute;right:8px;bottom:0;height:205px;z-index:50;filter:drop-shadow(0 3px 7px rgba(0,0,0,.45));}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+
+<script>
+/* =========================================================================
+   ★ ここだけ書き換えれば新しい回が作れる（config差し替え式・Layout A） ★
+   Vol.38＝ネタ在庫リスト「テスト用フロー#1：何も起きていないことを検知する」
+   ========================================================================= */
+const A = "../../pptx/_assets/"; // アセット基点
+const SLIDE = {
+  vol: "Vol.35",
+  volLogo: A+"icons/pa_logo.png",
+  title: "Power Automateの放置案件あぶり出し術！",
+  titleIcon: "",
+  titleChara: A+"chara/chara_surprise.png",
+  conclusion: "Power Automateは「メールが来たら送る」など、何かが起きたら動くのが普通。<br>でも本当に怖いのは、仕事が「止まったまま放置される」こと。毎朝それを自動で見張る。",
+  leftHead: "こんな時に効く！",
+  left: [
+    "承認が止まって気づけない",
+    "提出物が集まってこない",
+    "ステータスが変わらない",
+  ],
+  leftChara: A+"chara/chara_trouble.png",
+  steps: [
+    { name:"繰り返し", sub:"スケジュール / 毎朝9:00に実行", emoji:"⏰" },
+    { name:"項目の取得 (V2)", sub:"SharePoint / 動きのない行を抽出", img:A+"icons/pa_sharepoint.png" },
+    { name:"メールの送信 (V2)", sub:"Office 365 Outlook / 担当へ通知", img:A+"icons/pa_outlook.png" },
+  ],
+  useHead: "実務でこう使う",
+  use: [ "承認の放置を毎朝チェック", "未提出のままの人を抽出", "滞留した案件を担当へ通知" ],
+  meritHead: "メリット",
+  merit: [ "手遅れになる前に<br>気づける", "催促のし忘れが<br>なくなる" ],
+  // 下段は Before→After（手作業→自動化の価値）＋ ひとことコツ
+  baLabel: "手作業 → 自動化",
+  before: "毎朝リストを見比べて、止まった案件を手で探す",
+  after: "動いていない行を自動で抽出して、そっと通知",
+  tipLabel: "ひとことコツ",
+  tip: "「項目の取得」のフィルターで<br>「更新日が古い行」だけ拾うのがカギ",
+  memoChara: A+"chara/chara_smile.png",
+};
+
+/* ---- レンダラ（基本いじらない） ---- */
+const el=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e;};
+const checkIcon = A+"icons/icon_check_blue.png";
+
+function stepIcon(s){
+  const ic=el("div","icon");
+  if(s.img){const im=el("img");im.src=s.img;ic.appendChild(im);}else{ic.textContent=s.emoji||"●";}
+  return ic;
+}
+function render(d){
+  const s=document.getElementById("slide");
+
+  // タイトルバー
+  const tb=el("div","titlebar");
+  tb.appendChild(el("div","vol-pill",d.vol));
+  if(d.volLogo){const lg=el("img","vol-logo");lg.src=d.volLogo;tb.appendChild(lg);}
+  tb.appendChild(el("div","title-text",`<span class="ico">${d.titleIcon||""}</span>${d.title}`));
+  if(d.titleChara){const c=el("img","title-chara");c.src=d.titleChara;tb.appendChild(c);}
+  s.appendChild(tb);
+
+  // 結論
+  const cc=el("div","concl");
+  cc.appendChild(el("div","chip","結論"));
+  cc.appendChild(el("div","txt",d.conclusion));
+  s.appendChild(cc);
+
+  // 3カラム
+  const cols=el("div","cols");
+
+  // 左：チェックリスト
+  const left=el("div","col");
+  const lc=el("div","card blue");
+  lc.appendChild(el("div","card-head h-blue",d.leftHead));
+  const ul=el("ul","checklist");
+  d.left.forEach(t=>{const li=el("li");const ck=el("img","ck");ck.src=checkIcon;li.appendChild(ck);li.appendChild(el("span","",t));ul.appendChild(li);});
+  lc.appendChild(ul);
+  if(d.leftChara){const lch=el("img","left-chara");lch.src=d.leftChara;lc.appendChild(lch);}
+  left.appendChild(lc);cols.appendChild(left);
+
+  // 中央：ステップ
+  const mid=el("div","col");
+  const mc=el("div","card center");
+  mc.appendChild(el("div","card-head h-gray","作り方の流れ"));
+  const steps=el("div","steps");
+  d.steps.forEach((st,i)=>{
+    const row=el("div","step");
+    row.appendChild(stepIcon(st));
+    const body=el("div","body");
+    body.appendChild(el("div","name",st.name));
+    if(st.sub)body.appendChild(el("div","sub",st.sub));
+    row.appendChild(body);
+    row.appendChild(el("div","dots","⋮"));
+    steps.appendChild(row);
+    if(i<d.steps.length-1)steps.appendChild(el("div","connector","▼"));
+  });
+  mc.appendChild(steps);mid.appendChild(mc);cols.appendChild(mid);
+
+  // 右：実務 + メリット
+  const right=el("div","col right");
+  const oc=el("div","card orange");
+  oc.appendChild(el("div","card-head h-orange",d.useHead));
+  const ou=el("ul","bullets");d.use.forEach(t=>ou.appendChild(el("li","",t)));oc.appendChild(ou);
+  right.appendChild(oc);
+  const gc=el("div","card green");
+  gc.appendChild(el("div","card-head h-green",d.meritHead));
+  const gu=el("ul","bullets");d.merit.forEach(t=>gu.appendChild(el("li","",t)));gc.appendChild(gu);
+  right.appendChild(gc);
+  cols.appendChild(right);
+  s.appendChild(cols);
+
+  // 下部ダーク帯：Before → After（手作業→自動化の価値を見せる）＋ ひとことコツ
+  const db=el("div","darkband");
+  const fb=el("div","flow-box");
+  fb.appendChild(el("div","label",d.baLabel));
+  const ba=el("div","ba-row");
+  const bc=el("div","ba-card before");
+  bc.appendChild(el("span","ba-tag tag-before","Before"));
+  bc.appendChild(el("span","",d.before));
+  const ac=el("div","ba-card after");
+  ac.appendChild(el("span","ba-tag tag-after","After"));
+  ac.appendChild(el("span","",d.after));
+  ba.appendChild(bc);ba.appendChild(el("div","ba-arrow","➜"));ba.appendChild(ac);
+  fb.appendChild(ba);db.appendChild(fb);
+
+  const mb=el("div","memo-box");
+  mb.appendChild(el("div","label",d.tipLabel));
+  mb.appendChild(el("div","txt",d.tip));
+  db.appendChild(mb);
+  s.appendChild(db);
+  // キャラは帯の外（スライド直下）に出して最前面に
+  if(d.memoChara){const mc2=el("img","memo-chara");mc2.src=d.memoChara;s.appendChild(mc2);}
+}
+render(SLIDE);
+</script>
+<script>
+/* プレビュー専用：ペイン幅<1240で縮小フィット（1280幅の書き出し時は1:1＝PNG無影響） */
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>

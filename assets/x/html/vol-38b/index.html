@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.38b 作り方の流れ 詳細（実画面つき）</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB; --blue-bg:#EFF6FF; --blue-dark:#1E40AF;
+    --enji:#A4283C; --green:#16A34A; --green-bg:#ECFDF5; --green-dark:#064E3B;
+    --orange:#EA580C; --orange-bg:#FFF7ED;
+    --ink:#1F2937; --gray:#374151; --weak:#6B7280; --faint:#9CA3AF;
+    --card:#F8F9FA; --line:#E5E7EB;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+
+  /* タイトルバー */
+  .titlebar{height:84px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);
+    box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);
+    display:flex;align-items:center;gap:16px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:24px;border-radius:999px 0 0 999px;padding:6px 8px 6px 18px;flex:0 0 auto;}
+  /* 連番の続きを示すバッジ（Vol.38 と地続きに見せる） */
+  .part-badge{background:linear-gradient(180deg,#FFD874,#FBB024);color:#7A3E00;font-weight:900;font-size:15px;border-radius:0 999px 999px 0;padding:7px 15px 7px 12px;flex:0 0 auto;margin-left:-2px;box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 2px 4px rgba(0,0,0,.2);display:flex;align-items:center;gap:5px;}
+  .part-badge .ar{font-size:13px;}
+  .vol-logo{height:46px;width:46px;object-fit:contain;flex:0 0 auto;background:#fff;border-radius:11px;padding:5px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);margin-left:4px;}
+  .title-text{color:#fff;font-weight:900;font-size:33px;letter-spacing:.2px;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:140px;white-space:nowrap;}
+  .title-chara{position:absolute;right:16px;bottom:-58px;height:148px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  /* サブ説明バー */
+  .subbar{margin:7px 18px 0;background:var(--blue-bg);border:2px solid var(--blue);border-radius:11px;padding:8px 18px;flex:0 0 auto;
+    display:flex;align-items:center;gap:12px;box-shadow:0 4px 10px rgba(0,0,0,.09),inset 0 1px 0 rgba(255,255,255,.7);}
+  .subbar .chip{background:linear-gradient(180deg,#4A85FF,#2563EB);color:#fff;font-weight:900;font-size:18px;border-radius:8px;padding:5px 14px;white-space:nowrap;box-shadow:0 3px 6px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.5);}
+  .subbar .t{font-weight:700;font-size:18px;color:var(--blue-dark);}
+  .subbar .t b{color:#C2410C;}
+
+  /* 3ステップ列 */
+  .steps{flex:1 1 auto;display:flex;align-items:stretch;gap:8px;padding:8px 18px 0;min-height:0;}
+  .arrow{align-self:center;color:var(--blue);font-weight:900;font-size:26px;flex:0 0 auto;filter:drop-shadow(0 1px 1px rgba(0,0,0,.2));}
+  .stepcol{flex:1;display:flex;flex-direction:column;min-width:0;}
+  .sh{display:flex;align-items:center;gap:9px;margin-bottom:6px;}
+  .sh .num{flex:0 0 auto;width:34px;height:34px;border-radius:9px;background:linear-gradient(180deg,#4A85FF,#2563EB);color:#fff;font-weight:900;font-size:19px;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 6px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.5);}
+  .sh .stnm{font-weight:900;font-size:18.5px;color:var(--ink);line-height:1.1;}
+  .sh .stsub{font-weight:700;font-size:12px;color:var(--weak);}
+
+  /* === 実画面パネル（_ui-parts 準拠） === */
+  .up{background:#fff;border-radius:8px;padding:11px 12px 12px;box-shadow:0 4px 10px rgba(0,0,0,.16),inset 0 1px 0 rgba(255,255,255,.8);
+      font-family:'Segoe UI','Noto Sans JP',sans-serif;color:#323130;border:1px solid #E3E3E3;flex:1;display:flex;flex-direction:column;}
+  .up-head{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+  .up-head .ic{width:26px;height:26px;border-radius:6px;display:flex;align-items:center;justify-content:center;overflow:hidden;flex:0 0 auto;}
+  .up-head .ic img{width:22px;height:22px;object-fit:contain;}
+  .up-head .ic.sched{background:#FCE4D6;} .up-head .ic.sched::after{content:"\23F1";font-size:13px;}
+  .up-head .nm{font-size:13.5px;font-weight:700;color:#201F1E;}
+  .up-tabs{display:flex;gap:14px;border-bottom:1px solid #EDEBE9;margin-bottom:10px;}
+  .up-tabs span{font-size:11.5px;color:#605E5C;padding-bottom:6px;}
+  .up-tabs span.on{color:#201F1E;font-weight:700;border-bottom:2px solid #2563EB;}
+  .up-row{margin-bottom:6px;}
+  .up-lbl{font-size:12px;color:#323130;margin:0 0 3px;font-weight:600;}
+  .up-lbl .rq{color:#D13438;}
+  .up-ctl{border:1px solid #D1D1D1;border-radius:4px;padding:6px 9px;font-size:12.5px;color:#A19F9D;background:#fff;display:flex;align-items:center;min-height:31px;}
+  .up-ctl.dd{justify-content:space-between;}
+  .up-ctl.in{color:#201F1E;font-weight:600;}
+  .up-ctl .cv{color:#8A8886;font-size:9px;margin-left:8px;flex:0 0 auto;}
+  .up-ctl .tok{background:#EAF1FE;border:1px solid #C6DAFB;border-radius:4px;color:#1D4ED8;font-weight:700;font-size:11.5px;padding:1px 7px;font-family:'Courier New',monospace;}
+  /* 動的コンテンツ トークン（PA風） */
+  .dyn{display:inline-flex;align-items:center;gap:4px;background:#F2EEFB;border:1px solid #D6C9F0;border-radius:12px;padding:1px 9px 1px 5px;font-size:11.5px;font-weight:700;color:#5B3FA8;vertical-align:middle;}
+  .dyn .di{width:14px;height:14px;border-radius:3px;background:#E8E0F7;color:#8661C5;font-weight:900;font-size:9px;display:inline-flex;align-items:center;justify-content:center;}
+  .up-rte{border:1px solid #D1D1D1;border-radius:4px;}
+  .up-rte .bar{display:flex;align-items:center;gap:9px;border-bottom:1px solid #EDEBE9;padding:5px 8px;font-size:10.5px;color:#605E5C;}
+  .up-rte .bar b{color:#323130;}
+  .up-rte .body{padding:7px 9px;font-size:12px;color:#201F1E;font-weight:600;line-height:1.45;}
+  /* つまずきハイライト行 */
+  .up-row.key{background:#FFF7ED;border:1.5px solid #F4A259;border-radius:7px;padding:7px 8px;margin:0 -2px 9px;}
+  .up-row.key .up-lbl{color:#9A3412;font-weight:900;}
+  .up-row.key .up-ctl{border-color:#F4A259;}
+
+  /* ポイント注記 */
+  .ptip{margin-top:6px;background:linear-gradient(180deg,#FFFDF6,#FFF7E6);border:1.5px solid #F2C879;border-radius:9px;padding:6px 10px;font-size:12px;font-weight:700;color:#7C4A02;line-height:1.35;flex:0 0 auto;box-shadow:0 2px 4px rgba(0,0,0,.08);}
+  .ptip b{color:#B45309;}
+
+  /* 下段：SharePointリスト再現 */
+  .dock{margin:9px 0 0;background:linear-gradient(180deg,#565C66,#4A4F58);flex:0 0 auto;display:flex;align-items:stretch;gap:16px;padding:9px 20px;height:166px;position:relative;box-shadow:inset 0 1px 0 rgba(255,255,255,.1);}
+  .splist{flex:1.7;background:#fff;border-radius:9px;overflow:hidden;box-shadow:0 4px 9px rgba(0,0,0,.3);display:flex;flex-direction:column;}
+  .splist .lh{display:flex;align-items:center;gap:8px;background:#F3F2F1;border-bottom:1px solid #E1DFDD;padding:6px 12px;font-size:14px;font-weight:900;color:#323130;}
+  .splist .lh img{width:19px;height:19px;object-fit:contain;}
+  .sptbl{width:100%;border-collapse:collapse;font-family:'Segoe UI','Noto Sans JP',sans-serif;}
+  .sptbl th{background:#FAF9F8;color:#605E5C;font-size:12.5px;font-weight:700;text-align:left;padding:5px 12px;border-bottom:1px solid #E1DFDD;}
+  .sptbl td{font-size:14px;color:#323130;padding:6px 12px;border-bottom:1px solid #EDEBE9;font-weight:600;}
+  .sptbl tr.stale td{background:#FEF2F2;color:#B91C1C;}
+  .sptbl tr.stale td .flag{display:inline-block;background:#DC2626;color:#fff;font-size:11px;font-weight:900;border-radius:5px;padding:1px 7px;margin-left:6px;}
+  .sptbl tr.fresh td .ok{color:#16A34A;font-weight:900;}
+  .dock-note{flex:1;background:linear-gradient(180deg,#646A75,#565C66);border:1.5px solid #7A818D;border-radius:10px;padding:10px 14px 10px;margin-right:120px;display:flex;flex-direction:column;justify-content:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.12);}
+  .dock-note .lb{font-weight:900;font-size:16px;color:#FCD34D;margin-bottom:6px;}
+  .dock-note .tx{font-weight:700;font-size:15px;color:#fff;line-height:1.45;}
+  .dock-note .tx code{font-family:'Courier New',monospace;background:rgba(255,255,255,.16);border-radius:4px;padding:1px 6px;color:#FDE68A;}
+  .dock-chara{position:absolute;right:8px;bottom:0;height:176px;z-index:50;filter:drop-shadow(0 3px 7px rgba(0,0,0,.45));}
+</style>
+</head>
+<body>
+<div id="slide">
+
+  <!-- タイトル -->
+  <div class="titlebar">
+    <div class="vol-pill">Vol.35</div>
+    <div class="part-badge"><span class="ar">▶</span>つづき・くわしく編</div>
+    <img class="vol-logo" src="../../pptx/_assets/icons/pa_logo.png" alt="">
+    <div class="title-text">作り方の流れを実画面で解説！</div>
+    <img class="title-chara" src="../../pptx/_assets/chara/chara_point.png" alt="">
+  </div>
+
+  <!-- サブ説明 -->
+  <div class="subbar">
+    <div class="chip">前ページの続き</div>
+    <div class="t">Vol.35の<b>「作り方の流れ」</b>を実画面で。毎朝起動 → 動いていない行を抽出 → 担当へメール。</div>
+  </div>
+
+  <!-- 3ステップ -->
+  <div class="steps">
+
+    <!-- STEP1 繰り返し -->
+    <div class="stepcol">
+      <div class="sh"><span class="num">①</span><div><div class="stnm">繰り返し</div><div class="stsub">スケジュール / トリガー</div></div></div>
+      <div class="up">
+        <div class="up-head"><span class="ic sched"></span><span class="nm">繰り返し</span></div>
+        <div class="up-tabs"><span class="on">パラメーター</span><span>設定</span><span>詳細</span></div>
+        <div class="up-row"><div class="up-lbl">間隔 <span class="rq">*</span></div><div class="up-ctl in">1</div></div>
+        <div class="up-row"><div class="up-lbl">頻度 <span class="rq">*</span></div><div class="up-ctl dd in"><span>日</span><span class="cv">▼</span></div></div>
+        <div class="up-row"><div class="up-lbl">設定時刻（詳細）</div><div class="up-ctl dd in"><span>9 時</span><span class="cv">▼</span></div></div>
+      </div>
+      <div class="ptip"><b>毎朝9時</b>に自動で動き出す。<br>人が押さなくても勝手に見回り。</div>
+    </div>
+
+    <div class="arrow">▶</div>
+
+    <!-- STEP2 項目の取得 -->
+    <div class="stepcol">
+      <div class="sh"><span class="num">②</span><div><div class="stnm">複数の項目の取得</div><div class="stsub">SharePoint / アクション</div></div></div>
+      <div class="up">
+        <div class="up-head"><span class="ic"><img src="../../pptx/_assets/icons/pa_sharepoint.png" alt=""></span><span class="nm">複数の項目の取得</span></div>
+        <div class="up-tabs"><span class="on">パラメーター</span><span>設定</span><span>詳細</span></div>
+        <div class="up-row"><div class="up-lbl">サイトのアドレス <span class="rq">*</span></div><div class="up-ctl dd in"><span>/sites/DX推進</span><span class="cv">▼</span></div></div>
+        <div class="up-row"><div class="up-lbl">リスト名 <span class="rq">*</span></div><div class="up-ctl dd in"><span>案件管理</span><span class="cv">▼</span></div></div>
+        <div class="up-row key"><div class="up-lbl">フィルター クエリ（詳細）</div><div class="up-ctl in"><span class="tok">Modified lt '@{addDays(utcNow(),-3)}'</span></div></div>
+      </div>
+      <div class="ptip"><b>ここがキモ：</b>フィルターで<br><b>更新日が3日より前</b>＝放置だけ抽出。</div>
+    </div>
+
+    <div class="arrow">▶</div>
+
+    <!-- STEP3 メールの送信 -->
+    <div class="stepcol">
+      <div class="sh"><span class="num">③</span><div><div class="stnm">メールの送信 (V2)</div><div class="stsub">Office 365 Outlook / アクション</div></div></div>
+      <div class="up">
+        <div class="up-head"><span class="ic"><img src="../../pptx/_assets/icons/pa_outlook.png" alt=""></span><span class="nm">メールの送信 (V2)</span></div>
+        <div class="up-tabs"><span class="on">パラメーター</span><span>設定</span><span>詳細</span></div>
+        <div class="up-row"><div class="up-lbl">宛先 <span class="rq">*</span></div><div class="up-ctl in">tantou@contoso.com</div></div>
+        <div class="up-row"><div class="up-lbl">件名 <span class="rq">*</span></div><div class="up-ctl in">【要確認】止まっている案件があります</div></div>
+        <div class="up-row"><div class="up-lbl">本文 <span class="rq">*</span></div>
+          <div class="up-rte"><div class="bar"><span>Normal ▾</span><b>B</b><i>I</i><u>U</u><span>🔗</span></div>
+          <div class="body">3日以上 動いていない案件が <span class="dyn"><span class="di">{}</span>放置件数</span> 件あります。</div></div>
+        </div>
+      </div>
+      <div class="ptip"><b>担当へ自動でひと声。</b><br>放置に気づける仕組みが完成。</div>
+    </div>
+
+  </div>
+
+  <!-- 下段：データ元のSharePointリスト再現 -->
+  <div class="dock">
+    <div class="splist">
+      <div class="lh"><img src="../../pptx/_assets/icons/pa_sharepoint.png" alt="">SharePointリスト「案件管理」（データの置き場）</div>
+      <table class="sptbl">
+        <tr><th>タイトル</th><th>担当者</th><th>ステータス</th><th>更新日（Modified）</th></tr>
+        <tr class="fresh"><td>A社 見積もり</td><td>田中</td><td>対応中</td><td>6/11 <span class="ok">✓ 最近</span></td></tr>
+        <tr class="stale"><td>B社 契約書</td><td>佐藤</td><td>未対応</td><td>6/6 <span class="flag">3日以上 放置</span></td></tr>
+        <tr class="stale"><td>C社 申請</td><td>鈴木</td><td>承認待ち</td><td>6/5 <span class="flag">3日以上 放置</span></td></tr>
+      </table>
+    </div>
+    <div class="dock-note">
+      <div class="lb">覚え方のコツ</div>
+      <div class="tx">「更新日（<code>Modified</code>）」が古い行＝<br>放置案件。フィルターで一発抽出。</div>
+    </div>
+    <img class="dock-chara" src="../../pptx/_assets/chara/chara_guts.png" alt="">
+  </div>
+
+</div>
+
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>
