@@ -1,9 +1,8 @@
-<!doctype html>
-<html lang="ja">
-<head>
-<meta charset="utf-8">
-<title>PA45 第15回 スライド｜共有フォルダ監視→リンク付き自動メール通知</title>
-<style>
+# -*- coding: utf-8 -*-
+"""PA45 Vol.15 スライド生成（実フロー：トリガー条件→メール送信＋3つの工夫 に沿った版）"""
+import io, os
+
+CSS = r"""
   :root{
     --blue-bg:#eaf2fc;--blue-mid:#2a7dd4;--blue-text:#14528f;--blue-light:#b8d3ef;
     --orange:#e06030;--red:#c03520;--surface:#fff;--bg:#f3f6fa;--text:#1f2937;
@@ -119,58 +118,50 @@
   .steplist li::before{content:counter(s);position:absolute;left:0;top:6px;width:30px;height:30px;border-radius:50%;
     background:var(--blue-mid);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:15px;}
   .steplist li:last-child{border-bottom:none;}
-</style>
-</head>
-<body>
-<nav class="toc" id="toc">
-  <div class="toc-header">
-    <div class="title">📑 目次 — PA45 第15回</div>
-    <div class="sub">クリックでジャンプ</div>
-  </div>
-  <ol>
-    <li><a href="#s1"><span class="n">01</span>20:15 START</a></li>
-    <li><a href="#s2"><span class="n">02</span>事前準備</a></li>
-    <li><a href="#s3"><span class="n">03</span>PA45とは？</a></li>
-    <li><a href="#s4"><span class="n">04</span>講師自己紹介（Haru）</a></li>
-    <li><a href="#s5"><span class="n">05</span>ご参加にあたって</a></li>
-    <li><a href="#s6"><span class="n">06</span>第15回タイトル</a></li>
-    <li><a href="#s7"><span class="n">07</span>今日やること（3つ）</a></li>
-    <li><a href="#s8"><span class="n">08</span>こんな困りごと</a></li>
-    <li><a href="#s9"><span class="n">09</span>今日作るフロー（全体像）</a></li>
-    <li><a href="#s10"><span class="n">10</span>STEP① トリガー</a></li>
-    <li><a href="#s11"><span class="n">11</span>STEP② トリガー条件で絞る</a></li>
-    <li><a href="#s12"><span class="n">12</span>STEP③ メール送信(V2)</a></li>
-    <li><a href="#s13"><span class="n">13</span>工夫①② ファイル名・日本時間</a></li>
-    <li><a href="#s14"><span class="n">14</span>★ クリックできるリンクの作り方</a></li>
-    <li><a href="#s15"><span class="n">15</span>★ いっしょに作ろう（手順）</a></li>
-    <li><a href="#s16"><span class="n">16</span>完成イメージ（届くメール）</a></li>
-    <li><a href="#s17"><span class="n">17</span>実務での活用例</a></li>
-    <li><a href="#s18"><span class="n">18</span>クロージング＆アンケート</a></li>
-  </ol>
-</nav>
-<button class="toc-toggle" id="tocToggle" type="button">≡ 目次</button>
+"""
 
-<div class="deck-header">
-  <h1>PA45 第15回 スライド</h1>
-  <div>2026-06-18（木）20:15〜 ／ 共有フォルダ監視 → トリガー条件で絞る → リンク付き自動メール通知</div>
-</div>
+JS = r"""
+  var toc=document.getElementById('toc');
+  var toggle=document.getElementById('tocToggle');
+  toggle.addEventListener('click',function(){document.body.classList.toggle('toc-collapsed');});
+  var links=Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  var slides=links.map(function(a){return document.querySelector(a.getAttribute('href'));});
+  function onScroll(){var y=window.scrollY+140;var idx=0;
+    for(var i=0;i<slides.length;i++){if(slides[i]&&slides[i].offsetTop<=y)idx=i;}
+    links.forEach(function(a){a.classList.remove('active');});
+    if(links[idx])links[idx].classList.add('active');}
+  window.addEventListener('scroll',onScroll);onScroll();
+  var cur=0;
+  function go(n){cur=Math.max(0,Math.min(slides.length-1,n));
+    if(slides[cur])slides[cur].scrollIntoView({behavior:'smooth'});}
+  document.addEventListener('keydown',function(e){
+    if(['ArrowRight','PageDown',' '].indexOf(e.key)>=0){e.preventDefault();go(cur+1);}
+    else if(['ArrowLeft','PageUp'].indexOf(e.key)>=0){e.preventDefault();go(cur-1);}});
+"""
 
-<!-- ===== S1: 20:15 START ===== -->
-<section class="slide title-slide" id="s1">
-  <span class="slide-num">1 / 18</span>
-  
+CHAT = '<span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span>'
+FOOT = f'<div class="slide-footer"><span>Power Automate for Beginners</span>{CHAT}</div>'
+
+# (id, toc_label, extra_class, inner_html_without_footer)
+slides = []
+
+def head(eyebrow, title, small="", dot=""):
+    s = f'<small>{small}</small>' if small else ''
+    d = f'<div class="concept-dot">{dot}</div>' if dot else ''
+    return f'<div class="slide-head"><div class="slide-eyebrow">{eyebrow}</div><h1 class="slide-title">{title} {s}</h1>{d}</div>'
+
+# S1 オープニング
+slides.append(("s1","20:15 START","title-slide", f'''
   <div class="opening-bar"><span>PA45 — Power Automate 45 ｜ 第15回 / Vol.15</span><span>20:15 START</span></div>
   <div class="slide-body" style="justify-content:center;align-items:center;text-align:center;">
     <div style="font-size:20px;color:var(--blue-mid);font-weight:700;margin-bottom:14px;">まもなく開始します</div>
     <h1 style="font-size:44px;color:var(--blue-text);font-weight:800;line-height:1.25;margin:0 0 18px;">第15回｜共有フォルダ監視 → リンク付き自動メール通知</h1>
     <p style="font-size:21px;color:var(--muted);margin:0;">フォルダに届いたファイルを、担当者へ <strong>クリックできるリンク付き</strong>でお知らせする45分</p>
   </div>
-  <div class="slide-footer"><span>Power Automate for Beginners</span><span style="color:var(--hint);">Copyright © PA45</span></div>
-</section>
-<!-- ===== S2: 事前準備 ===== -->
-<section class="slide" id="s2">
-  <span class="slide-num">2 / 18</span>
-  <div class="slide-head"><div class="slide-eyebrow">PA45｜第15回</div><h1 class="slide-title">事前準備 <small>（サインインだけでOK）</small></h1></div>
+  <div class="slide-footer"><span>Power Automate for Beginners</span><span style="color:var(--hint);">Copyright © PA45</span></div>'''))
+
+# S2 事前準備
+slides.append(("s2","事前準備","", head("PA45｜第15回","事前準備","（サインインだけでOK）") + f'''
   <div class="slide-body">
     <p style="font-size:18px;color:var(--muted);margin:6px 0 14px;">今日は <strong>共有フォルダにファイルが届いたら、担当者へリンク付きでメール通知する</strong>フローを、その場で一緒に作ります。手を動かす方は SharePoint のテスト用フォルダがあると◎。見るだけ参加もOKです。</p>
     <div class="cards-2">
@@ -178,12 +169,10 @@
       <div class="card green"><div class="num">2</div><h3>テスト用の SharePoint フォルダ <span style="font-size:14px;color:var(--muted);">（任意）</span></h3><p>ドキュメント内に <strong>「見積書」フォルダ</strong>を作ると、その場で動かせます。無くても画面を一緒に見ればOK。</p></div>
     </div>
     <div class="callout blue" style="margin-top:14px;"><strong>📥 今日のゴール：</strong> 見積書フォルダにPDFを置く → 担当者に <strong>「ファイル名・日本時間・クリックできるリンク」付き</strong>のメールが自動で飛ぶ仕組みを作る。</div>
-  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span></div>
-</section>
-<!-- ===== S3: PA45とは？ ===== -->
-<section class="slide" id="s3">
-  <span class="slide-num">3 / 18</span>
-  <div class="slide-head"><div class="slide-eyebrow">INTRODUCTION</div><h1 class="slide-title">PA45 とは？ </h1><div class="concept-dot">Concept</div></div>
+  </div>''' + FOOT))
+
+# S3 PA45とは
+slides.append(("s3","PA45とは？","", head("INTRODUCTION","PA45 とは？","",'Concept') + f'''
   <div class="slide-body">
     <div style="text-align:center;color:var(--blue-text);font-weight:800;">忙しい人のための 45分ハンズオン</div>
     <div class="cards-3">
@@ -192,12 +181,10 @@
       <div class="card yellow"><div class="ico">👥</div><h3>一緒に作る</h3><p>ゼロから一緒に作ることで仕組みを理解します。</p></div>
     </div>
     <div style="text-align:center;color:var(--green-text);font-weight:700;margin-top:auto;padding:14px;background:var(--green-bg);border-radius:10px;">✓ Power Automate 未経験・知識ゼロでも大丈夫！</div>
-  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span></div>
-</section>
-<!-- ===== S4: 講師自己紹介（Haru） ===== -->
-<section class="slide" id="s4">
-  <span class="slide-num">4 / 18</span>
-  <div class="slide-head"><div class="slide-eyebrow">SPEAKER</div><h1 class="slide-title">Power Automate 45 (PA45) </h1><div class="concept-dot">Speaker</div></div>
+  </div>''' + FOOT))
+
+# S4 講師自己紹介
+slides.append(("s4","講師自己紹介（Haru）","", head("SPEAKER","Power Automate 45 (PA45)","",'Speaker') + f'''
   <div class="slide-body">
     <div style="display:grid;grid-template-columns:230px 1fr;gap:30px;align-items:center;">
       <img class="haru-img" src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="Haru">
@@ -213,12 +200,10 @@
       </div>
     </div>
     <div class="pull-quote" style="margin-top:auto;">今日も一緒に「できた！」を作っていきましょう 😊</div>
-  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span></div>
-</section>
-<!-- ===== S5: ご参加にあたって ===== -->
-<section class="slide" id="s5">
-  <span class="slide-num">5 / 18</span>
-  <div class="slide-head"><div class="slide-eyebrow">PA45 Online Course</div><h1 class="slide-title">ご参加にあたってのお願い <small>（ルール）</small></h1><div class="concept-dot">Guidelines</div></div>
+  </div>''' + FOOT))
+
+# S5 ご参加にあたって
+slides.append(("s5","ご参加にあたって","", head("PA45 Online Course","ご参加にあたってのお願い","（ルール）",'Guidelines') + f'''
   <div class="slide-body">
     <div class="cards-3">
       <div class="card blue"><div class="ico">🤝</div><h3>気持ちよく学ぶ</h3><ul><li>誹謗中傷・不適切な発言は禁止</li><li>お互いを尊重し合いましょう</li></ul></div>
@@ -229,12 +214,10 @@
       <div class="card"><h3 style="color:var(--blue-text);">🖌️ アウトプットで定着</h3><p><strong>#PA45</strong> をつけて投稿しよう！「気づき」「これ便利！」何でもOK。</p></div>
       <div class="card"><h3 style="color:var(--green-text);">🎓 初心者大歓迎</h3><p>🚫 難しい専門用語は使いません／🚶 置いてけぼりにしないようゆっくり進行。</p></div>
     </div>
-  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span></div>
-</section>
-<!-- ===== S6: 第15回タイトル ===== -->
-<section class="slide title-slide" id="s6">
-  <span class="slide-num">6 / 18</span>
-  <div class="slide-head"><div class="slide-eyebrow">Power Automate 入門講座</div><h1 class="slide-title">Vol.15 </h1></div>
+  </div>''' + FOOT))
+
+# S6 タイトル
+slides.append(("s6","第15回タイトル","title-slide", head("Power Automate 入門講座","Vol.15") + f'''
   <div class="slide-body">
     <div class="badge-row"><span class="pill">SharePoint</span><span class="pill alt">ファイル作成トリガー</span><span class="pill alt">トリガー条件</span><span class="pill alt">クリックできるリンク</span></div>
     <h1>第15回：「更新、気づかなかった…」を もう繰り返さない<br>共有フォルダにファイルが届いたら、担当者へリンク付きで自動メール</h1>
@@ -243,12 +226,10 @@
       <dl><dt>Target</dt><dd>資料の更新に気づくのが遅れがちな方／連絡漏れをなくしたい方（知識ゼロOK）</dd></dl>
       <dl><dt>Time</dt><dd>解説＋その場で一緒に作る 約45分</dd></dl>
     </div>
-  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span></div>
-</section>
-<!-- ===== S7: 今日やること（3つ） ===== -->
-<section class="slide" id="s7">
-  <span class="slide-num">7 / 18</span>
-  <div class="slide-head"><div class="slide-eyebrow">PA45｜第15回</div><h1 class="slide-title">今日やること <small>（3つだけ）</small></h1><div class="concept-dot">Agenda</div></div>
+  </div>''' + FOOT))
+
+# S7 今日やること
+slides.append(("s7","今日やること（3つ）","", head("PA45｜第15回","今日やること","（3つだけ）",'Agenda') + f'''
   <div class="slide-body">
     <div class="cards-3">
       <div class="card blue"><div class="num">1</div><div class="ico">📥</div><h3>フォルダを見張る</h3><p>「ファイルが作成されたとき」で共有フォルダを自動で監視。</p></div>
@@ -256,12 +237,10 @@
       <div class="card green"><div class="num">3</div><div class="ico">🔗</div><h3>リンク付きで知らせる</h3><p>「メールの送信(V2)」で <strong>クリックできるリンク</strong>付きの通知を送る。</p></div>
     </div>
     <div class="callout" style="margin-top:auto;"><strong>🎯 ゴール：</strong> 見積書フォルダにPDFを置く → 数十秒後に担当者へ、ファイル名・日本時間・<strong>青いリンク</strong>付きメールが自動で飛ぶ。</div>
-  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span></div>
-</section>
-<!-- ===== S8: こんな困りごと ===== -->
-<section class="slide" id="s8">
-  <span class="slide-num">8 / 18</span>
-  <div class="slide-head"><div class="slide-eyebrow">PA45｜第15回 ／ はじめに</div><h1 class="slide-title">こんな困りごと、ありませんか？ <small>── 共有フォルダ あるある</small></h1><div class="concept-dot">Why</div></div>
+  </div>''' + FOOT))
+
+# S8 困りごと
+slides.append(("s8","こんな困りごと","", head("PA45｜第15回 ／ はじめに","こんな困りごと、ありませんか？","── 共有フォルダ あるある",'Why') + f'''
   <div class="slide-body">
     <p style="margin:4px 0 12px;color:var(--muted);">共有フォルダに資料を入れてもらったのに、気づいたのは数日後…。「アップしました」の一言を待って、何度もフォルダを開いて確認。その手間、まるごと無くせます。</p>
     <div class="cards-3">
@@ -270,12 +249,10 @@
       <div class="card green"><h3 style="color:#15803d;">だから自動化</h3><p>「届いたら自動で通知」。しかも<strong>リンクから即開ける</strong>。今日それを作ります。</p></div>
     </div>
     <div class="callout blue" style="margin-top:auto;"><strong>🎯 今日のゴール：</strong> 「更新、気づかなかった…」を仕組みでゼロに。45分で動くフローまで持って帰りましょう。</div>
-  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span></div>
-</section>
-<!-- ===== S9: 今日作るフロー（全体像） ===== -->
-<section class="slide" id="s9">
-  <span class="slide-num">9 / 18</span>
-  <div class="slide-head"><div class="slide-eyebrow">PA45｜第15回</div><h1 class="slide-title">今日作るフロー <small>── 3ステップの全体像</small></h1><div class="concept-dot">Overview</div></div>
+  </div>''' + FOOT))
+
+# S9 全体像
+slides.append(("s9","今日作るフロー（全体像）","", head("PA45｜第15回","今日作るフロー","── 3ステップの全体像",'Overview') + f'''
   <div class="slide-body">
     <div class="stepflow">
       <div class="stepbox" style="border-color:#2a7dd4;background:var(--blue-bg);">
@@ -294,12 +271,10 @@
       <div class="card purple"><h3 style="font-size:19px;">💡 今日の山場①：トリガー条件</h3><p>「条件」アクションは動いてから捨てる。<strong>トリガー条件はそもそも起動しない</strong>＝実行回数を節約できる中級ワザ。</p></div>
       <div class="card green"><h3 style="font-size:19px;">💡 今日の山場②：メールにひと工夫</h3><p>本文に<strong>3つの工夫</strong>（ファイル名／日本時間／<strong>クリックできるリンク</strong>）を入れて、実務で使えるメールにします。</p></div>
     </div>
-  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span></div>
-</section>
-<!-- ===== S10: STEP① トリガー ===== -->
-<section class="slide" id="s10">
-  <span class="slide-num">10 / 18</span>
-  <div class="slide-head"><div class="slide-eyebrow">STEP ① TRIGGER</div><h1 class="slide-title">ファイルが作成されたとき <small>（SharePoint・プロパティのみ）</small></h1><div class="concept-dot">SharePoint</div></div>
+  </div>''' + FOOT))
+
+# S10 STEP1 トリガー
+slides.append(("s10","STEP① トリガー","", head("STEP ① TRIGGER","ファイルが作成されたとき","（SharePoint・プロパティのみ）",'SharePoint') + f'''
   <div class="slide-body">
     <div class="cards-2">
       <div class="card"><h3>設定するのはこれだけ</h3>
@@ -314,12 +289,10 @@
       </div>
     </div>
     <div class="callout" style="margin-top:auto;"><strong>ここで取れる値（次のステップで使います）：</strong> ファイル名 ／ フォルダーのパス ／ 作成日時 ／ <strong>リンク</strong>。</div>
-  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span></div>
-</section>
-<!-- ===== S11: STEP② トリガー条件で絞る ===== -->
-<section class="slide" id="s11">
-  <span class="slide-num">11 / 18</span>
-  <div class="slide-head"><div class="slide-eyebrow">STEP ② CONDITION ★</div><h1 class="slide-title">トリガー条件で絞る <small>── 見積書フォルダだけ起動</small></h1><div class="concept-dot">Trigger Condition</div></div>
+  </div>''' + FOOT))
+
+# S11 STEP2 トリガー条件（山場①）
+slides.append(("s11","STEP② トリガー条件で絞る","", head("STEP ② CONDITION ★","トリガー条件で絞る","── 見積書フォルダだけ起動",'Trigger Condition') + f'''
   <div class="slide-body">
     <div class="cards-2">
       <div class="card"><h3>なぜ「条件アクション」じゃないの？</h3>
@@ -327,17 +300,15 @@
       </div>
       <div class="card purple"><h3>設定場所</h3>
         <p>トリガーの <strong>… → 設定 → 「トリガーの条件」</strong> に、次の式を1つ追加するだけ：</p>
-        <div class="code-block"><span class="hl">@</span>contains(triggerOutputs()?[<span class="str">'body/{Path}'</span>],<span class="str">'見積書'</span>)</div>
+        <div class="code-block"><span class="hl">@</span>contains(triggerOutputs()?[<span class="str">'body/{{Path}}'</span>],<span class="str">'見積書'</span>)</div>
         <p style="font-size:14px;">＝ ファイルのパスに「見積書」を含むときだけ起動。</p>
       </div>
     </div>
     <div class="callout blue" style="margin-top:auto;"><strong>効果：</strong> 「見積書」フォルダに置いたファイルだけがフローを動かす。他のフォルダのファイルでは通知が飛びません。<span style="color:var(--muted);">（パスの綴りは実機のフォルダ名に合わせてね）</span></div>
-  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span></div>
-</section>
-<!-- ===== S12: STEP③ メール送信(V2) ===== -->
-<section class="slide" id="s12">
-  <span class="slide-num">12 / 18</span>
-  <div class="slide-head"><div class="slide-eyebrow">STEP ③ ACTION</div><h1 class="slide-title">メールの送信(V2) <small>── 担当者へお知らせ</small></h1><div class="concept-dot">Outlook</div></div>
+  </div>''' + FOOT))
+
+# S12 STEP3 メール送信＋3つの工夫
+slides.append(("s12","STEP③ メール送信(V2)","", head("STEP ③ ACTION","メールの送信(V2)","── 担当者へお知らせ",'Outlook') + f'''
   <div class="slide-body">
     <div class="cards-2">
       <div class="card"><h3>まず3つを入れる</h3>
@@ -356,12 +327,10 @@
       </div>
     </div>
     <div class="callout" style="margin-top:auto;"><strong>このあと：</strong> ①②を次のスライドで、③（リンク）はそのあとの<strong>「今日の山場」</strong>でじっくり作ります。</div>
-  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span></div>
-</section>
-<!-- ===== S13: 工夫①② ファイル名・日本時間 ===== -->
-<section class="slide" id="s13">
-  <span class="slide-num">13 / 18</span>
-  <div class="slide-head"><div class="slide-eyebrow">本文の工夫 ①②</div><h1 class="slide-title">ファイル名 ＆ 日本時間 <small>── まずはこの2つ</small></h1><div class="concept-dot">Dynamic & Expression</div></div>
+  </div>''' + FOOT))
+
+# S13 工夫①②
+slides.append(("s13","工夫①② ファイル名・日本時間","", head("本文の工夫 ①②","ファイル名 ＆ 日本時間","── まずはこの2つ",'Dynamic & Expression') + f'''
   <div class="slide-body">
     <div class="cards-2">
       <div class="card blue"><h3>① ファイル名を差し込む</h3>
@@ -378,12 +347,10 @@
       <div class="arrow">→</div>
       <div class="box good"><span class="lab">After（日本時間）</span>2026/06/18 17:03</div>
     </div>
-  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span></div>
-</section>
-<!-- ===== S14: ★ クリックできるリンクの作り方 ===== -->
-<section class="slide" id="s14">
-  <span class="slide-num">14 / 18</span>
-  <div class="slide-head"><div class="slide-eyebrow">本文の工夫 ③ ★★ 今日の山場</div><h1 class="slide-title">クリックできるリンクの作り方 <small>── 生URLを青リンクに</small></h1><div class="concept-dot">Hyperlink</div></div>
+  </div>''' + FOOT))
+
+# S14 工夫③ リンク（山場）
+slides.append(("s14","★ クリックできるリンクの作り方","", head("本文の工夫 ③ ★★ 今日の山場","クリックできるリンクの作り方","── 生URLを青リンクに",'Hyperlink') + f'''
   <div class="slide-body">
     <div class="cards-2" style="margin-top:8px;">
       <div class="card"><h3>なぜ生URLじゃダメ？</h3>
@@ -406,12 +373,10 @@
       <div class="arrow">→</div>
       <div class="box good"><span class="lab">After</span><span class="maillink">ここを開く</span> ← クリックでファイルが開く！</div>
     </div>
-  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span></div>
-</section>
-<!-- ===== S15: ★ いっしょに作ろう（手順） ===== -->
-<section class="slide" id="s15">
-  <span class="slide-num">15 / 18</span>
-  <div class="slide-head"><div class="slide-eyebrow">★ HANDS-ON</div><h1 class="slide-title">いっしょに作ろう <small>── クリック手順の通し</small></h1><div class="concept-dot">Let's build</div></div>
+  </div>''' + FOOT))
+
+# S15 いっしょに作ろう
+slides.append(("s15","★ いっしょに作ろう（手順）","", head("★ HANDS-ON","いっしょに作ろう","── クリック手順の通し","Let's build") + f'''
   <div class="slide-body">
     <div class="cards-2">
       <div class="card"><ul class="check" style="font-size:16px;">
@@ -428,12 +393,10 @@
       </ul></div>
     </div>
     <div class="callout" style="margin-top:auto;"><strong>⚠️ つまずきポイント：</strong> ①通知が来ない→トリガー条件のフォルダ名（綴り）を確認。②リンクが空→「リンク」動的コンテンツを選べているか。③日時が変→convertTimeZone の項目名を確認。</div>
-  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span></div>
-</section>
-<!-- ===== S16: 完成イメージ（届くメール） ===== -->
-<section class="slide" id="s16">
-  <span class="slide-num">16 / 18</span>
-  <div class="slide-head"><div class="slide-eyebrow">PA45｜第15回</div><h1 class="slide-title">完成イメージ <small>── 届くメールはこうなる</small></h1><div class="concept-dot">Result</div></div>
+  </div>''' + FOOT))
+
+# S16 完成イメージ
+slides.append(("s16","完成イメージ（届くメール）","", head("PA45｜第15回","完成イメージ","── 届くメールはこうなる",'Result') + f'''
   <div class="slide-body">
     <div class="emailcard">
       <div class="sub">件名：【新着】共有フォルダーにファイルが届きました <span class="tag">自動送信</span></div>
@@ -448,12 +411,10 @@
       <div class="card green"><h3 style="font-size:18px;">② 日本時間</h3><p>UTCのズレなし。そのまま読める。</p></div>
       <div class="card yellow"><h3 style="font-size:18px;">③ クリックリンク</h3><p>探さず1クリックで開ける。</p></div>
     </div>
-  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span></div>
-</section>
-<!-- ===== S17: 実務での活用例 ===== -->
-<section class="slide" id="s17">
-  <span class="slide-num">17 / 18</span>
-  <div class="slide-head"><div class="slide-eyebrow">PA45｜第15回</div><h1 class="slide-title">実務での活用例 <small>── このフロー、こう使える</small></h1><div class="concept-dot">Use cases</div></div>
+  </div>''' + FOOT))
+
+# S17 活用例
+slides.append(("s17","実務での活用例","", head("PA45｜第15回","実務での活用例","── このフロー、こう使える",'Use cases') + f'''
   <div class="slide-body">
     <div class="cards-3">
       <div class="card blue"><div class="ico">📑</div><h3 style="font-size:20px;">提出物の受領通知</h3><p>取引先や他部署が資料を入れたら、担当者へ自動連絡。確認漏れを防ぐ。</p></div>
@@ -464,12 +425,10 @@
       <div class="card"><h3 style="font-size:19px;">🔁 ちょい足しアイデア</h3><p>メールの代わりに <strong>Teams 通知</strong>にしたり、<strong>承認フロー</strong>（第8回）につなげたり。今日の3ステップが土台になります。</p></div>
       <div class="card blue"><h3 style="font-size:19px;">🌱 シリーズのつながり</h3><p>第7回・第9回と同じ "きっかけ→処理→通知" の形。今日は<strong>トリガー条件</strong>と<strong>リンク</strong>の引き出しが増えました。</p></div>
     </div>
-  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span></div>
-</section>
-<!-- ===== S18: クロージング＆アンケート ===== -->
-<section class="slide anchor" id="s18">
-  <span class="slide-num">18 / 18</span>
-  
+  </div>''' + FOOT))
+
+# S18 クロージング
+slides.append(("s18","クロージング＆アンケート","anchor", f'''
   <div class="slide-head"><div class="slide-eyebrow">Thank you!</div><h1 class="slide-title">おつかれさまでした！ <small>── アンケートのお願い</small></h1></div>
   <div class="slide-body">
     <div class="pull-quote" style="background:rgba(255,255,255,.6);">📥 共有フォルダ監視 → リンク付き自動メール ── 今日であなたのものになりました！</div>
@@ -479,28 +438,54 @@
     </div>
     <div style="text-align:center;font-size:20px;color:#78350f;font-weight:700;margin-top:auto;">また次回、一緒に「できた！」を作りましょう 😊</div>
   </div>
-  <div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span></div>
-</section>
+  <div class="slide-footer"><span>Power Automate for Beginners</span>{CHAT}</div>'''))
+
+# ---- アセンブル ----
+total = len(slides)
+toc_items = "\n".join(
+    f'    <li><a href="#{sid}"><span class="n">{i+1:02d}</span>{label}</a></li>'
+    for i,(sid,label,_,_) in enumerate(slides))
+
+sections = []
+for i,(sid,label,extra,inner) in enumerate(slides):
+    cls = "slide" + (f" {extra}" if extra else "")
+    num = f'<span class="slide-num">{i+1} / {total}</span>'
+    sections.append(f'<!-- ===== S{i+1}: {label} ===== -->\n<section class="{cls}" id="{sid}">\n  {num}\n  {inner}\n</section>')
+
+html = f'''<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>PA45 第15回 スライド｜共有フォルダ監視→リンク付き自動メール通知</title>
+<style>{CSS}</style>
+</head>
+<body>
+<nav class="toc" id="toc">
+  <div class="toc-header">
+    <div class="title">📑 目次 — PA45 第15回</div>
+    <div class="sub">クリックでジャンプ</div>
+  </div>
+  <ol>
+{toc_items}
+  </ol>
+</nav>
+<button class="toc-toggle" id="tocToggle" type="button">≡ 目次</button>
+
+<div class="deck-header">
+  <h1>PA45 第15回 スライド</h1>
+  <div>2026-06-18（木）20:15〜 ／ 共有フォルダ監視 → トリガー条件で絞る → リンク付き自動メール通知</div>
+</div>
+
+{chr(10).join(sections)}
 
 <script>
-
-  var toc=document.getElementById('toc');
-  var toggle=document.getElementById('tocToggle');
-  toggle.addEventListener('click',function(){document.body.classList.toggle('toc-collapsed');});
-  var links=Array.prototype.slice.call(document.querySelectorAll('.toc a'));
-  var slides=links.map(function(a){return document.querySelector(a.getAttribute('href'));});
-  function onScroll(){var y=window.scrollY+140;var idx=0;
-    for(var i=0;i<slides.length;i++){if(slides[i]&&slides[i].offsetTop<=y)idx=i;}
-    links.forEach(function(a){a.classList.remove('active');});
-    if(links[idx])links[idx].classList.add('active');}
-  window.addEventListener('scroll',onScroll);onScroll();
-  var cur=0;
-  function go(n){cur=Math.max(0,Math.min(slides.length-1,n));
-    if(slides[cur])slides[cur].scrollIntoView({behavior:'smooth'});}
-  document.addEventListener('keydown',function(e){
-    if(['ArrowRight','PageDown',' '].indexOf(e.key)>=0){e.preventDefault();go(cur+1);}
-    else if(['ArrowLeft','PageUp'].indexOf(e.key)>=0){e.preventDefault();go(cur-1);}});
-
+{JS}
 </script>
 </body>
 </html>
+'''
+
+OUT = os.path.join(os.path.dirname(__file__), "index.html")
+with io.open(OUT, "w", encoding="utf-8") as f:
+    f.write(html)
+print("OK:", OUT, "/ slides:", total)
