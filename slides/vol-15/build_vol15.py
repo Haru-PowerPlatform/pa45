@@ -118,6 +118,10 @@ CSS = r"""
   .steplist li::before{content:counter(s);position:absolute;left:0;top:6px;width:30px;height:30px;border-radius:50%;
     background:var(--blue-mid);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:15px;}
   .steplist li:last-child{border-bottom:none;}
+  .deco{position:absolute;pointer-events:none;z-index:1;}
+  .illus{display:block;width:auto;}
+  .introrow{display:grid;grid-template-columns:150px 1fr;gap:24px;align-items:center;margin:6px 0 12px;}
+  .introrow .illus{max-height:140px;margin:0 auto;}
 """
 
 JS = r"""
@@ -163,7 +167,10 @@ slides.append(("s1","20:15 START","title-slide", f'''
 # S2 事前準備
 slides.append(("s2","事前準備","", head("PA45｜第15回","事前準備","（サインインだけでOK）") + f'''
   <div class="slide-body">
-    <p style="font-size:18px;color:var(--muted);margin:6px 0 14px;">今日は <strong>共有フォルダにファイルが届いたら、担当者へリンク付きでメール通知する</strong>フローを、その場で一緒に作ります。手を動かす方は SharePoint のテスト用フォルダがあると◎。見るだけ参加もOKです。</p>
+    <div class="introrow">
+      <img class="illus" src="assets/irasutoya_robot.png" alt="">
+      <p style="font-size:18px;color:var(--muted);margin:0;">今日は <strong>共有フォルダにファイルが届いたら、担当者へリンク付きでメール通知する</strong>フローを、その場で一緒に作ります。手を動かす方は SharePoint のテスト用フォルダがあると◎。見るだけ参加もOKです。</p>
+    </div>
     <div class="cards-2">
       <div class="card blue"><div class="num">1</div><h3>Power Automate にサインイン</h3><p><span class="pathpill">make.powerautomate.com</span> を開いて、サインインできる状態に。</p></div>
       <div class="card green"><div class="num">2</div><h3>テスト用の SharePoint フォルダ <span style="font-size:14px;color:var(--muted);">（任意）</span></h3><p>ドキュメント内に <strong>「見積書」フォルダ</strong>を作ると、その場で動かせます。無くても画面を一緒に見ればOK。</p></div>
@@ -226,6 +233,7 @@ slides.append(("s6","第15回タイトル","title-slide", head("Power Automate �
       <dl><dt>Target</dt><dd>資料の更新に気づくのが遅れがちな方／連絡漏れをなくしたい方（知識ゼロOK）</dd></dl>
       <dl><dt>Time</dt><dd>解説＋その場で一緒に作る 約45分</dd></dl>
     </div>
+    <img class="deco" src="assets/irasutoya_programming.png" alt="" style="right:46px;bottom:34px;height:190px;">
   </div>''' + FOOT))
 
 # S7 今日やること
@@ -242,7 +250,10 @@ slides.append(("s7","今日やること（3つ）","", head("PA45｜第15回","�
 # S8 困りごと
 slides.append(("s8","こんな困りごと","", head("PA45｜第15回 ／ はじめに","こんな困りごと、ありませんか？","── 共有フォルダ あるある",'Why') + f'''
   <div class="slide-body">
-    <p style="margin:4px 0 12px;color:var(--muted);">共有フォルダに資料を入れてもらったのに、気づいたのは数日後…。「アップしました」の一言を待って、何度もフォルダを開いて確認。その手間、まるごと無くせます。</p>
+    <div class="introrow">
+      <img class="illus" src="assets/irasutoya_search.png" alt="">
+      <p style="margin:0;color:var(--muted);">共有フォルダに資料を入れてもらったのに、気づいたのは数日後…。「アップしました」の一言を待って、何度もフォルダを開いて確認。その手間、まるごと無くせます。</p>
+    </div>
     <div class="cards-3">
       <div class="card"><h3 style="color:#991b1b;">気づくのが遅れる</h3><p>通知がないので「いつ更新された？」と何度もフォルダを開いてしまう。</p></div>
       <div class="card"><h3 style="color:#92400e;">連絡が属人的</h3><p>「入れたら連絡してね」が抜ける。連絡する側・される側、どちらの手間にも。</p></div>
@@ -398,13 +409,16 @@ slides.append(("s15","★ いっしょに作ろう（手順）","", head("★ HA
 # S16 完成イメージ
 slides.append(("s16","完成イメージ（届くメール）","", head("PA45｜第15回","完成イメージ","── 届くメールはこうなる",'Result') + f'''
   <div class="slide-body">
-    <div class="emailcard">
-      <div class="sub">件名：【新着】共有フォルダーにファイルが届きました <span class="tag">自動送信</span></div>
-      お疲れさまです。共有フォルダーに新しいファイルが届きました。<br>
-      ファイル名：<strong>見積書_サンプル.pdf</strong><br>
-      作成日時（日本時間）：<strong>2026/06/18 17:03</strong><br>
-      ファイルを開く：<span class="maillink">ここを開く</span><br>
-      ご確認をお願いいたします。
+    <div style="display:grid;grid-template-columns:1fr 170px;gap:22px;align-items:center;">
+      <div class="emailcard">
+        <div class="sub">件名：【新着】共有フォルダーにファイルが届きました <span class="tag">自動送信</span></div>
+        お疲れさまです。共有フォルダーに新しいファイルが届きました。<br>
+        ファイル名：<strong>見積書_サンプル.pdf</strong><br>
+        作成日時（日本時間）：<strong>2026/06/18 17:03</strong><br>
+        ファイルを開く：<span class="maillink">ここを開く</span><br>
+        ご確認をお願いいたします。
+      </div>
+      <img class="illus" src="assets/irasutoya_email.png" alt="" style="max-height:180px;margin:0 auto;">
     </div>
     <div class="cards-3" style="margin-top:16px;">
       <div class="card blue"><h3 style="font-size:18px;">① ファイル名</h3><p>何が届いたか一目で分かる。</p></div>
@@ -438,6 +452,7 @@ slides.append(("s18","クロージング＆アンケート","anchor", f'''
     </div>
     <div style="text-align:center;font-size:20px;color:#78350f;font-weight:700;margin-top:auto;">また次回、一緒に「できた！」を作りましょう 😊</div>
   </div>
+  <img class="deco" src="assets/irasutoya_businessman.png" alt="" style="left:34px;bottom:24px;height:150px;">
   <div class="slide-footer"><span>Power Automate for Beginners</span>{CHAT}</div>'''))
 
 # ---- アセンブル ----
