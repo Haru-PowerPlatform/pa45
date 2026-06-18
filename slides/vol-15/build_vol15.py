@@ -110,7 +110,7 @@ CSS = r"""
   .ba .good{background:var(--green-bg);border:1px solid #86efac;color:#065f46;}
   .ba .lab{font-weight:800;font-size:13px;display:block;margin-bottom:4px;}
   .maillink{color:#1d4ed8;text-decoration:underline;font-weight:700;}
-  .emailcard{background:#f8fafc;border:1px solid var(--border);border-radius:12px;padding:18px 22px;font-size:16px;line-height:1.9;}
+  .emailcard{background:#f8fafc;border:1px solid var(--border);border-radius:12px;padding:22px 26px;font-size:21px;line-height:2.05;}
   .emailcard .sub{font-weight:800;color:#0f172a;border-bottom:1px solid var(--border);padding-bottom:8px;margin-bottom:8px;}
   .emailcard .tag{display:inline-block;background:#dbeafe;color:#1e40af;font-size:12px;font-weight:700;padding:1px 8px;border-radius:8px;margin-left:6px;}
   .steplist{counter-reset:s;list-style:none;padding:0;margin:8px 0 0;}
@@ -156,11 +156,12 @@ def head(eyebrow, title, small="", dot=""):
 
 # S1 オープニング
 slides.append(("s1","20:15 START","title-slide", f'''
-  <div class="opening-bar"><span>PA45 — Power Automate 45 ｜ 第15回 / Vol.15</span><span>20:15 START</span></div>
+  <div class="opening-bar"><span>PA45 — Power Automate 45 ｜ 第15回 / Vol.15</span><span>Online Hands-on</span></div>
   <div class="slide-body" style="justify-content:center;align-items:center;text-align:center;">
-    <div style="font-size:20px;color:var(--blue-mid);font-weight:700;margin-bottom:14px;">まもなく開始します</div>
-    <h1 style="font-size:44px;color:var(--blue-text);font-weight:800;line-height:1.25;margin:0 0 18px;">第15回｜共有フォルダ監視 → リンク付き自動メール通知</h1>
-    <p style="font-size:21px;color:var(--muted);margin:0;">フォルダに届いたファイルを、担当者へ <strong>クリックできるリンク付き</strong>でお知らせする45分</p>
+    <div style="font-size:30px;color:var(--blue-mid);font-weight:800;margin-bottom:4px;">まもなく開始します</div>
+    <div style="font-size:128px;color:var(--blue-text);font-weight:900;line-height:1;margin:8px 0 4px;letter-spacing:.02em;">20:15 <span style="font-size:56px;">START</span></div>
+    <h1 style="font-size:36px;color:var(--text);font-weight:800;line-height:1.3;margin:20px 0 12px;">第15回｜共有フォルダ監視 → リンク付き自動メール通知</h1>
+    <p style="font-size:24px;color:var(--muted);margin:0;">開始まで、もう少しお待ちください ☕</p>
   </div>
   <div class="slide-footer"><span>Power Automate for Beginners</span><span style="color:var(--hint);">Copyright © PA45</span></div>'''))
 
@@ -193,20 +194,20 @@ slides.append(("s3","PA45とは？","", head("INTRODUCTION","PA45 とは？","",
 # S4 講師自己紹介
 slides.append(("s4","講師自己紹介（Haru）","", head("SPEAKER","Power Automate 45 (PA45)","",'Speaker') + f'''
   <div class="slide-body">
-    <div style="display:grid;grid-template-columns:230px 1fr;gap:30px;align-items:center;">
-      <img class="haru-img" src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="Haru">
+    <div style="display:grid;grid-template-columns:280px 1fr;gap:36px;align-items:center;margin-top:8px;">
+      <img class="haru-img" src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="Haru" style="width:280px;height:280px;">
       <div>
-        <div style="font-size:26px;font-weight:800;color:var(--blue-text);">Haru</div>
-        <div style="color:var(--muted);margin:2px 0 14px;">💻 Power Platform / DX 推進</div>
-        <ul class="check" style="font-size:18px;">
-          <li>🏢 社内で PA／Copilot ハンズオン講座を開催し、DXを推進</li>
-          <li>🎤 広島コミュニティ「PLUG」運営・外部コミュニティ登壇</li>
-          <li>📱 X で初心者向け Power Automate チップスを継続発信</li>
+        <div style="font-size:40px;font-weight:800;color:var(--blue-text);line-height:1.1;">Haru</div>
+        <div style="font-size:23px;color:var(--muted);margin:6px 0 18px;">💻 Power Platform / DX 推進</div>
+        <ul class="check" style="font-size:24px;">
+          <li style="margin-bottom:16px;">🏢 社内で PA／Copilot ハンズオン講座を開催し、DXを推進</li>
+          <li style="margin-bottom:16px;">🎤 広島コミュニティ「PLUG」運営・外部コミュニティ登壇</li>
+          <li style="margin-bottom:16px;">📱 X で初心者向け Power Automate チップスを継続発信</li>
           <li>🕐 PA45（45分の "1粒ハンズオン"）を毎週開催・運営</li>
         </ul>
       </div>
     </div>
-    <div class="pull-quote" style="margin-top:auto;">今日も一緒に「できた！」を作っていきましょう 😊</div>
+    <div class="pull-quote" style="margin-top:auto;font-size:26px;padding:18px;">今日も一緒に「できた！」を作っていきましょう 😊</div>
   </div>''' + FOOT))
 
 # S5 ご参加にあたって
@@ -418,12 +419,12 @@ slides.append(("s16","完成イメージ（届くメール）","", head("PA45｜
         ファイルを開く：<span class="maillink">ここを開く</span><br>
         ご確認をお願いいたします。
       </div>
-      <img class="illus" src="assets/irasutoya_email.png" alt="" style="max-height:180px;margin:0 auto;">
+      <img class="illus" src="assets/irasutoya_email.png" alt="" style="max-height:210px;margin:0 auto;">
     </div>
-    <div class="cards-3" style="margin-top:16px;">
-      <div class="card blue"><h3 style="font-size:18px;">① ファイル名</h3><p>何が届いたか一目で分かる。</p></div>
-      <div class="card green"><h3 style="font-size:18px;">② 日本時間</h3><p>UTCのズレなし。そのまま読める。</p></div>
-      <div class="card yellow"><h3 style="font-size:18px;">③ クリックリンク</h3><p>探さず1クリックで開ける。</p></div>
+    <div class="cards-3" style="margin-top:20px;">
+      <div class="card blue"><h3 style="font-size:23px;">① ファイル名</h3><p style="font-size:18px;">何が届いたか一目で分かる。</p></div>
+      <div class="card green"><h3 style="font-size:23px;">② 日本時間</h3><p style="font-size:18px;">UTCのズレなし。そのまま読める。</p></div>
+      <div class="card yellow"><h3 style="font-size:23px;">③ クリックリンク</h3><p style="font-size:18px;">探さず1クリックで開ける。</p></div>
     </div>
   </div>''' + FOOT))
 
