@@ -20,6 +20,7 @@ SOURCES = [
     ("vol-12/PA45-Vol12-Expression.zip", "Vol.12"),
     ("vol-13/PA45-Vol13-TryCatch.zip", "Vol.13"),
     ("vol-14/PA45-Vol14-JsonReading.zip", "Vol.14"),
+    ("vol-15/PA45-Vol15-FolderWatchMail.zip", "Vol.15"),
 ]
 
 WF_RE = re.compile(r'<Workflow\s+WorkflowId="\{([0-9a-fA-F-]+)\}".*?</Workflow>', re.DOTALL)
@@ -80,10 +81,10 @@ solution = f'''<ImportExportXml version="9.2.26043.159" SolutionPackageVersion="
   <SolutionManifest>
     <UniqueName>PA45Handson</UniqueName>
     <LocalizedNames>
-      <LocalizedName description="PA45 Hands-on (Vol.1-14)" languagecode="1041" />
+      <LocalizedName description="PA45 Hands-on (Vol.1-15)" languagecode="1041" />
     </LocalizedNames>
     <Descriptions />
-    <Version>1.0.0.5</Version>
+    <Version>1.0.0.6</Version>
     <Managed>0</Managed>
     <Publisher>
       <UniqueName>pa45</UniqueName>
@@ -108,7 +109,7 @@ solution = f'''<ImportExportXml version="9.2.26043.159" SolutionPackageVersion="
 
 content_types = '<?xml version="1.0" encoding="utf-8"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="xml" ContentType="application/octet-stream" /><Default Extension="json" ContentType="application/octet-stream" /></Types>'
 
-out_path = os.path.join(SCRIPT_DIR, "PA45Handson_1_0_0_5.zip")
+out_path = os.path.join(SCRIPT_DIR, "PA45Handson_1_0_0_6.zip")
 buf = io.BytesIO()
 with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as out:
     out.writestr("customizations.xml", customizations.encode("utf-8"))
