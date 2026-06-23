@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.47-2 メール重複チェックを直す3手｜作り方</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB; --blue-bg:#EFF6FF; --blue-dark:#1E40AF;
+    --green:#16A34A; --green-dark:#064E3B; --purple:#6D28D9;
+    --orange:#EA580C; --ink:#1F2937; --gray:#374151; --weak:#6B7280; --line:#E5E7EB;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+  .ic{display:block;width:100%;height:100%;}
+
+  .titlebar{height:86px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:15px;padding:0 22px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:24px;border-radius:999px;padding:6px 18px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .vol-logo{height:46px;width:46px;object-fit:contain;flex:0 0 auto;background:#fff;border-radius:12px;padding:5px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
+  .title-text{color:#fff;font-weight:900;font-size:29px;line-height:1.12;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:140px;}
+  .title-text .hl{color:#FFE08A;}
+  .title-chara{position:absolute;right:13px;bottom:-42px;height:138px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .concl{margin:8px 15px 0;background:var(--blue-bg);border:2px solid var(--blue);border-radius:11px;display:flex;align-items:center;gap:11px;padding:7px 15px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;width:32px;height:32px;border-radius:9px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;padding:7px;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
+  .concl .txt{font-weight:700;font-size:15px;color:var(--blue-dark);line-height:1.3;padding-right:86px;}
+  .concl .txt b{color:var(--green-dark);}
+  .concl .txt code{font-family:'Consolas',monospace;background:#fff;border:1px solid #BBD0F5;border-radius:4px;padding:0 5px;color:#1E40AF;}
+
+  .cols{flex:1 1 auto;margin:9px 14px 0;display:flex;align-items:stretch;gap:0;min-height:0;}
+  .col{flex:1;display:flex;flex-direction:column;min-height:0;position:relative;}
+  .carrow{flex:0 0 28px;display:flex;align-items:center;justify-content:center;color:#9AA7B8;}
+  .carrow svg{width:24px;height:24px;}
+  .colcard{flex:1;background:#fff;border:1.5px solid #C9D2E0;border-radius:12px;box-shadow:0 5px 13px rgba(0,0,0,.12);overflow:hidden;display:flex;flex-direction:column;}
+  .cnum{position:absolute;top:-9px;left:-9px;width:30px;height:30px;border-radius:50%;background:linear-gradient(180deg,#2BD06A,#16A34A);color:#fff;font-weight:900;font-size:16px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 5px rgba(0,0,0,.3);z-index:5;border:2px solid #fff;}
+  .col.key .cnum{background:linear-gradient(180deg,#A78BFA,#6D28D9);}
+  .ch{display:flex;align-items:center;gap:9px;padding:9px 11px;min-height:58px;background:linear-gradient(180deg,#F7F9FC,#ECF0F6);border-bottom:1px solid #E1E6EF;}
+  .ch .sq{flex:0 0 auto;width:36px;height:36px;border-radius:8px;background:linear-gradient(180deg,#60A5FA,#2563EB);display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.15);color:#fff;}
+  .ch .sq svg{width:21px;height:21px;}
+  .col.key .ch .sq{background:linear-gradient(180deg,#A78BFA,#6D28D9);}
+  .col.key .ch{background:linear-gradient(180deg,#F7F3FF,#EFE7FC);}
+  .ch .nm{font-weight:900;font-size:15.5px;color:var(--ink);line-height:1.18;}
+  .ch .nm small{display:block;font-weight:700;font-size:10.5px;color:var(--weak);margin-top:2px;}
+
+  .cp{flex:1;font-family:'Segoe UI','Noto Sans JP',sans-serif;padding:9px 11px 10px;display:flex;flex-direction:column;gap:9px;}
+  .ptop{flex:0 0 192px;display:flex;flex-direction:column;gap:6px;overflow:hidden;background:#F3F6FB;border:1px solid #DCE4F0;border-radius:9px;padding:8px 10px;margin-top:2px;}
+  .col.key .ptop{background:#FAF7FF;border-color:#E4D9F7;}
+  .sect{display:flex;align-items:center;gap:6px;font-size:11.5px;font-weight:900;color:#5A6B85;}
+  .sect::before{content:"";width:4px;height:13px;border-radius:2px;background:#8FA0BC;}
+  .col.key .sect{color:#6D28D9;} .col.key .sect::before{background:#A78BFA;}
+
+  /* mock: 配列のフィルター */
+  .flt{background:#fff;border:1px solid #D8DEE8;border-radius:6px;overflow:hidden;}
+  .flt .frow{display:flex;align-items:stretch;gap:5px;padding:7px 8px;}
+  .flt .cl{flex:1;border:1px solid #D1D1D1;border-radius:5px;background:#fff;padding:5px 7px;font-size:11px;color:#242424;font-weight:700;display:flex;align-items:center;}
+  .flt .cl.op{flex:0 0 auto;background:#EEF2FF;border-color:#C7D2FE;color:#3730A3;font-weight:800;font-size:10.5px;}
+  .flt .note{padding:6px 9px;border-top:1px solid #EEF1F5;display:flex;align-items:center;gap:6px;background:#F0FBF4;}
+  .flt .note svg{width:13px;height:13px;color:#16A34A;flex:0 0 auto;} .flt .note span{font-size:11px;font-weight:800;color:#0B5E37;}
+
+  /* mock: toLower 揃え */
+  .lower{display:flex;flex-direction:column;gap:5px;}
+  .lrow{display:flex;align-items:center;gap:8px;}
+  .ltag{flex:0 0 auto;width:50px;font-size:10.5px;font-weight:800;color:#6D28D9;}
+  .lbox{flex:1;font-family:'Consolas','Courier New',monospace;font-size:13.5px;font-weight:800;background:#fff;border:1px solid #D8DEE8;border-radius:6px;padding:6px 8px;letter-spacing:.2px;}
+  .lbox .up{color:#DC2626;background:#FEE2E2;border-radius:3px;padding:0 2px;}
+  .lbox .lo{color:#2563EB;background:#DBEAFE;border-radius:3px;padding:0 2px;}
+  .ldown{align-self:center;color:#A78BFA;font-weight:900;font-size:14px;}
+  .lbox.done{border-color:#A7D9BA;background:#F0FBF4;color:#0B5E37;}
+  .leq{margin-top:1px;text-align:center;font-size:11.5px;font-weight:900;color:#0B5E37;}
+
+  /* mock: 式エディタ */
+  .fxb{background:#fff;border:1px solid #D8DEE8;border-radius:6px;overflow:hidden;}
+  .fxtabs{display:flex;border-bottom:1px solid #EAEAEA;}
+  .fxtabs span{font-size:10.5px;font-weight:700;color:#8A8886;padding:5px 9px;}
+  .fxtabs span.on{color:#2563EB;border-bottom:2px solid #2563EB;}
+  .fxin{margin:8px;border:1px solid #C7CBD4;border-radius:5px;background:#1F2937;padding:7px 9px;font-family:'Consolas','Courier New',monospace;font-size:11px;color:#E5E7EB;line-height:1.55;word-break:break-all;}
+  .fxin .k{color:#7DD3FC;} .fxin .s{color:#FCA5A5;} .fxin .f{color:#FCD34D;}
+  .fxok{margin:0 8px 8px;display:flex;justify-content:flex-end;}
+  .fxok span{background:#2563EB;color:#fff;font-size:11px;font-weight:800;border-radius:5px;padding:5px 16px;}
+
+  .howsteps{flex:1;margin-top:2px;background:linear-gradient(180deg,#F5F8FD,#EEF3FA);border:1px solid #D7E1F0;border-radius:9px;padding:9px 11px;display:flex;flex-direction:column;gap:7px;}
+  .col.key .howsteps{background:linear-gradient(180deg,#F8F4FE,#F1EAFB);border-color:#E4D9F7;}
+  .howsteps .hh{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:900;color:#2B3A52;}
+  .howsteps .hh::before{content:"";width:4px;height:14px;border-radius:2px;background:#2563EB;}
+  .col.key .howsteps .hh{color:#4C1D95;} .col.key .howsteps .hh::before{background:#A78BFA;}
+  .howsteps ol{list-style:none;display:flex;flex-direction:column;justify-content:space-evenly;flex:1;gap:6px;}
+  .howsteps li{display:flex;gap:9px;align-items:flex-start;font-size:14.5px;font-weight:700;color:#2F3E57;line-height:1.34;}
+  .howsteps li .sn{flex:0 0 auto;width:21px;height:21px;border-radius:50%;background:#2563EB;color:#fff;font-size:12px;font-weight:900;display:flex;align-items:center;justify-content:center;margin-top:1px;}
+  .howsteps li b{color:#1E40AF;}
+  .howsteps li code{font-family:'Consolas',monospace;background:#fff;border:1px solid #CFE0F5;border-radius:4px;padding:0 4px;color:#1E40AF;font-size:13px;}
+  .col.key .howsteps li.key2{color:#5B21B6;} .col.key .howsteps li.key2 .sn{background:#6D28D9;} .col.key .howsteps li.key2 b{color:#6D28D9;} .col.key .howsteps li.key2 code{color:#6D28D9;border-color:#DDD0F5;}
+
+  .pitfall{flex:0 0 auto;margin:9px 14px 11px;background:linear-gradient(180deg,#FFF7ED,#FFEFD9);border:1.5px solid #FDBA74;border-radius:11px;padding:8px 14px;display:flex;align-items:center;gap:11px;box-shadow:0 2px 6px rgba(0,0,0,.07);position:relative;}
+  .pitfall .pl{flex:0 0 auto;display:flex;align-items:center;gap:6px;background:linear-gradient(180deg,#FB923C,#EA580C);color:#fff;font-weight:900;font-size:13px;border-radius:8px;padding:6px 11px;box-shadow:0 2px 4px rgba(0,0,0,.25);}
+  .pitfall .pl svg{width:15px;height:15px;}
+  .pitfall .px{flex:1;font-weight:800;font-size:13px;color:#7C2D12;line-height:1.34;padding-right:96px;}
+  .pitfall .px b{color:var(--orange);}
+  .pitfall .px code{font-family:'Consolas',monospace;background:#fff;border:1px solid #F1C994;border-radius:4px;padding:0 4px;color:#92400E;}
+  .pit-chara{position:absolute;right:11px;bottom:-2px;height:92px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.4));}
+  .src{position:absolute;left:16px;bottom:3px;font-size:9.5px;color:#AEB6C2;font-weight:700;z-index:3;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const ICON={
+ filter:'<polygon points="22 4 2 4 10 12.5 10 19 14 21 14 12.5 22 4"/>',
+ case:'<path d="M3 18 7 7l4 11M4.3 15h5.4"/><path d="M20 11a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM20 11v6"/>',
+ fx:'<path d="M4 7c0-2 1-3 3-3M4 12h6M4 20c2 0 3-1 3-3V7"/><path d="M13 9l7 7M20 9l-7 7"/>',
+ check:'<path d="M20 6 9 17l-5-5"/>',
+ warn:'<path d="M10.3 3.3 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.3a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>',
+ arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',
+ bulb:'<path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/>'
+};
+const svg=(n)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${ICON[n]}</svg>`;
+const svgF=(n)=>`<svg class="ic" viewBox="0 0 24 24" fill="currentColor" stroke="none">${ICON[n]}</svg>`;
+
+const s=document.getElementById('slide');
+s.innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.47-2</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">解決！<span class="hl">メール重複チェックを正しく直す3手</span></div>
+    <img class="title-chara" src="${A}chara/chara_guts.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svg('bulb')}</div>
+    <div class="txt">ポイントは1つだけ。<b>比べる前に両側を<code>toLower()</code>で小文字に揃える</b>。これで <b>W も w も同じ</b>になり、重複をきちんと拾えます。</div>
+  </div>
+
+  <div class="cols">
+    <div class="col">
+      <div class="cnum">1</div>
+      <div class="colcard">
+        <div class="ch"><span class="sq">${svgF('filter')}</span><span class="nm">配列のフィルターを置く<small>同じメールを絞り込む</small></span></div>
+        <div class="cp">
+          <div class="ptop">
+            <div class="sect">配列のフィルター</div>
+            <div class="flt">
+              <div class="frow">
+                <span class="cl">差出人の一覧</span>
+              </div>
+              <div class="frow" style="padding-top:0">
+                <span class="cl">メール</span>
+                <span class="cl op">等しい</span>
+                <span class="cl">新しいメール</span>
+              </div>
+              <div class="note">${svg('check')}<span>残った件数で「いる／いない」を判定</span></div>
+            </div>
+          </div>
+          <div class="howsteps">
+            <div class="hh">操作手順</div>
+            <ol>
+              <li><span class="sn">1</span><span><b>配列のフィルター</b>を追加</span></li>
+              <li><span class="sn">2</span><span>元＝既存リスト（<b>Get items</b>等）</span></li>
+              <li><span class="sn">3</span><span>条件＝メール「等しい」新しいメール</span></li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="carrow">${svg('arrow')}</div>
+
+    <div class="col key">
+      <div class="cnum">2</div>
+      <div class="colcard">
+        <div class="ch"><span class="sq">${svgF('case')}</span><span class="nm">toLower()で揃える<small>★ここが一番のキモ</small></span></div>
+        <div class="cp">
+          <div class="ptop">
+            <div class="sect">大小をそろえる（W → w）</div>
+            <div class="lower">
+              <div class="lrow"><span class="ltag">既存</span><span class="lbox"><span class="up">W</span>atanabe@…</span></div>
+              <div class="lrow"><span class="ltag">新規</span><span class="lbox"><span class="lo">w</span>atanabe@…</span></div>
+              <div class="ldown">▼ toLower() ▼</div>
+              <div class="lrow"><span class="ltag" style="color:#0B5E37">両方</span><span class="lbox done">watanabe@…</span></div>
+              <div class="leq">→ 完全に一致！</div>
+            </div>
+          </div>
+          <div class="howsteps">
+            <div class="hh">操作手順</div>
+            <ol>
+              <li><span class="sn">1</span><span>条件を「<b>詳細モード</b>」に切替</span></li>
+              <li class="key2"><span class="sn">2</span><span>両側を<code>toLower()</code>で包む</span></li>
+              <li class="key2"><span class="sn">3</span><span>これで<b>W＝w</b>で比較される</span></li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="carrow">${svg('arrow')}</div>
+
+    <div class="col">
+      <div class="cnum">3</div>
+      <div class="colcard">
+        <div class="ch"><span class="sq">${svg('fx')}</span><span class="nm">件数で重複を判定<small>0件なら新規・1件以上は重複</small></span></div>
+        <div class="cp">
+          <div class="ptop">
+            <div class="sect">詳細モードの式</div>
+            <div class="fxb">
+              <div class="fxtabs"><span>基本</span><span class="on">詳細モード</span></div>
+              <div class="fxin">@<span class="k">equals</span>(<span class="f">toLower</span>(item()?[<span class="s">'メール'</span>]),<br>&nbsp;&nbsp;<span class="f">toLower</span>(<span class="k">variables</span>(<span class="s">'新しいメール'</span>)))</div>
+              <div class="fxok"><span>OK</span></div>
+            </div>
+          </div>
+          <div class="howsteps">
+            <div class="hh">操作手順</div>
+            <ol>
+              <li><span class="sn">1</span><span>フィルター結果を<b>条件</b>で受ける</span></li>
+              <li><span class="sn">2</span><span><code>length(body('フィルター'))</code></span></li>
+              <li><span class="sn">3</span><span><b>0＝新規登録</b>／1以上＝<b>重複スキップ</b></span></li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pitfall">
+    <div class="pl">${svg('warn')}つまずき注意</div>
+    <div class="px"><b>toLowerは「片側だけ」だとダメ</b>。必ず<b>両側</b>に掛ける。前後の空白は<code>trim()</code>で除去、全角・半角の混在も別物扱いになるので入力側でそろえると安心。</div>
+    <img class="pit-chara" src="${A}chara/chara_point.png" alt="">
+  </div>
+  <div class="src">出典：Microsoft Learn（toLower / trim / 配列のフィルター）</div>
+`;
+</script>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>
