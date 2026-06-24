@@ -73,6 +73,11 @@
   .ldown{align-self:center;color:#A78BFA;font-weight:900;font-size:14px;}
   .lbox.done{border-color:#A7D9BA;background:#F0FBF4;color:#0B5E37;}
   .leq{margin-top:1px;text-align:center;font-size:11.5px;font-weight:900;color:#0B5E37;}
+  .wresult{margin-top:8px;text-align:center;font-size:13.5px;font-weight:800;color:#3B2A66;line-height:1.5;}
+  .wresult .up{color:#DC2626;background:#FEE2E2;border-radius:3px;padding:0 3px;font-family:'Consolas',monospace;}
+  .wresult .lo{color:#2563EB;background:#DBEAFE;border-radius:3px;padding:0 3px;font-family:'Consolas',monospace;}
+  .wresult b{color:#16A34A;font-family:'Consolas',monospace;}
+  .fxtag{display:inline-block;font-weight:900;font-size:9px;color:#fff;background:#6D28D9;border-radius:3px;padding:1px 4px;margin-right:4px;vertical-align:middle;font-style:italic;}
 
   /* mock: 式エディタ */
   .fxb{background:#fff;border:1px solid #D8DEE8;border-radius:6px;overflow:hidden;}
@@ -176,21 +181,20 @@ s.innerHTML=`
         <div class="ch"><span class="sq">${svgF('case')}</span><span class="nm">toLower()で揃える<small>★ここが一番のキモ</small></span></div>
         <div class="cp">
           <div class="ptop">
-            <div class="sect">大小をそろえる（W → w）</div>
-            <div class="lower">
-              <div class="lrow"><span class="ltag">既存</span><span class="lbox"><span class="up">W</span>atanabe@…</span></div>
-              <div class="lrow"><span class="ltag">新規</span><span class="lbox"><span class="lo">w</span>atanabe@…</span></div>
-              <div class="ldown">▼ toLower() ▼</div>
-              <div class="lrow"><span class="ltag" style="color:#0B5E37">両方</span><span class="lbox done">watanabe@…</span></div>
-              <div class="leq">→ 完全に一致！</div>
+            <div class="sect">各値の枠 →「式(fx)」で入力</div>
+            <div class="fxb">
+              <div class="fxtabs"><span>動的なコンテンツ</span><span class="on">式</span></div>
+              <div class="fxin"><span class="f">toLower</span>(item()?[<span class="s">'メール'</span>])</div>
+              <div class="fxok"><span>OK</span></div>
             </div>
+            <div class="wresult"><span class="up">W</span>atanabe・<span class="lo">w</span>atanabe<br>→ どちらも <b>watanabe</b> で一致！</div>
           </div>
           <div class="howsteps">
             <div class="hh">操作手順</div>
             <ol>
-              <li><span class="sn">1</span><span>条件を「<b>詳細モード</b>」に切替</span></li>
+              <li><span class="sn">1</span><span>各値の枠 →「<b>式</b>」を開く</span></li>
               <li class="key2"><span class="sn">2</span><span>両側を<code>toLower()</code>で包む</span></li>
-              <li class="key2"><span class="sn">3</span><span>これで<b>W＝w</b>で比較される</span></li>
+              <li class="key2"><span class="sn">3</span><span><b>W＝w</b>で比較（詳細モード不要）</span></li>
             </ol>
           </div>
         </div>
@@ -205,19 +209,19 @@ s.innerHTML=`
         <div class="ch"><span class="sq real"><img src="${A}icons/pa_condition.png" alt=""></span><span class="nm">件数で重複を判定<small>0件なら新規・1件以上は重複</small></span></div>
         <div class="cp">
           <div class="ptop">
-            <div class="sect">詳細モードの式</div>
-            <div class="fxb">
-              <div class="fxtabs"><span>基本</span><span class="on">詳細モード</span></div>
-              <div class="fxin">@<span class="k">equals</span>(<span class="f">toLower</span>(item()?[<span class="s">'メール'</span>]),<br>&nbsp;&nbsp;<span class="f">toLower</span>(<span class="k">variables</span>(<span class="s">'新しいメール'</span>)))</div>
-              <div class="fxok"><span>OK</span></div>
+            <div class="sect">条件アクション（基本モード）</div>
+            <div class="flt">
+              <div class="frow"><span class="cl"><span class="fxtag">fx</span> length(body('フィルター'))</span></div>
+              <div class="frow" style="padding-top:0"><span class="cl op">次の値より大きい</span><span class="cl">0</span></div>
+              <div class="note">${svg('check')}<span>真＝重複あり／偽＝新規</span></div>
             </div>
           </div>
           <div class="howsteps">
             <div class="hh">操作手順</div>
             <ol>
-              <li><span class="sn">1</span><span>フィルター結果を<b>条件</b>で受ける</span></li>
-              <li><span class="sn">2</span><span><code>length(body('フィルター'))</code></span></li>
-              <li><span class="sn">3</span><span><b>0＝新規登録</b>／1以上＝<b>重複スキップ</b></span></li>
+              <li><span class="sn">1</span><span><b>条件</b>アクションを追加</span></li>
+              <li><span class="sn">2</span><span>左に式<code>length(body('フィルター'))</code></span></li>
+              <li><span class="sn">3</span><span><b>0より大きい→重複</b>／<b>0→新規</b></span></li>
             </ol>
           </div>
         </div>
@@ -227,7 +231,7 @@ s.innerHTML=`
 
   <div class="pitfall">
     <div class="pl">${svg('warn')}つまずき注意</div>
-    <div class="px"><b>toLowerは「片側だけ」だとダメ</b>。必ず<b>両側</b>に掛ける。前後の空白は<code>trim()</code>で除去、全角・半角の混在も別物扱いになるので入力側でそろえると安心。</div>
+    <div class="px">モダンデザイナーに<b>「詳細モード」は無い</b>。各値の枠で<b>「式(fx)」</b>を開いて<code>toLower()</code>を入れる。必ず<b>両側</b>に掛ける／空白は<code>trim()</code>、全角・半角の混在も別物扱いに注意。</div>
     <img class="pit-chara" src="${A}chara/chara_point.png" alt="">
   </div>
   <div class="src">出典：Microsoft Learn（toLower / trim / 配列のフィルター）</div>
