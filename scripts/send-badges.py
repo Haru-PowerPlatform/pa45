@@ -240,7 +240,8 @@ def send_email(to_email: str, session_num: int, badge_path: Path):
         5: "基礎固めWeek", 6: "Formsで自動お礼メール", 7: "FormsからSharePoint登録",
         8: "承認フロー（Approvals）", 9: "SharePoint更新をTeams通知", 10: "総復習回",
         11: "失敗しないフロー設計", 12: "式アレルギー卒業", 13: "Try-Catch",
-        14: "JSONの読み方",
+        14: "JSONの読み方", 15: "共有フォルダ監視→自動メール通知",
+        16: "Copilotと作るPower Automate",
     }
     theme = THEMES_JP.get(session_num)
     theme_part = f"『{theme}』" if theme else ""

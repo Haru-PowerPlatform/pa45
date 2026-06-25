@@ -76,6 +76,8 @@ SESSIONS = {
     12: ("Expressions", "2026-05-28", "fx"),
     13: ("Try-Catch", "2026-06-04", "trycatch"),
     14: ("Reading JSON", "2026-06-11", "json"),
+    15: ("Folder Watch Mail", "2026-06-18", "foldermail"),
+    16: ("Copilot Assist", "2026-06-25", "copilot"),
 }
 
 
@@ -222,6 +224,36 @@ def _icon(d, key, cx, cy, size, col):
             bb = d.textbbox((0, 0), ch, font=f)
             d.text((cx + h * dx - (bb[2] - bb[0]) / 2 - bb[0], cy - (bb[3] - bb[1]) / 2 - bb[1]), ch, font=f, fill=col)
         d.ellipse([cx - w, cy - w, cx + w, cy + w], fill=col)
+    elif key == "foldermail":
+        # 共有フォルダ監視 → メール通知（フォルダ →矢印→ 封筒 の横並び）
+        ew2 = max(3, int(w * 1.15))               # 封筒・矢印用の太線
+        fx, fh = cx - h * 0.6, h * 0.58           # フォルダ（左・塗り）
+        d.polygon([(fx - fh, cy - fh * 0.5), (fx - fh + fh * 0.18, cy - fh * 0.86),
+                   (fx - fh * 0.02, cy - fh * 0.86), (fx + fh * 0.16, cy - fh * 0.5)], fill=col)
+        d.rounded_rectangle([fx - fh, cy - fh * 0.5, fx + fh, cy + fh * 0.62],
+                            radius=fh * 0.22, fill=col)
+        # 矢印（フォルダ → 封筒）太め
+        d.line([(cx - h * 0.08, cy), (cx + h * 0.14, cy)], fill=col, width=ew2)
+        _arrowhead(d, cx + h * 0.15, cy, 0, h * 0.26, col)
+        ex, ew = cx + h * 0.62, h * 0.5           # 封筒（右・線画）
+        eh = ew * 0.74
+        d.rounded_rectangle([ex - ew, cy - eh, ex + ew, cy + eh], radius=ew * 0.1,
+                            outline=col, width=ew2)
+        d.line([(ex - ew, cy - eh), (ex, cy + eh * 0.18), (ex + ew, cy - eh)],
+               fill=col, width=ew2, joint="curve")
+    elif key == "copilot":
+        # Copilot / AI を象徴する 4点キラキラ（大＋小）
+        def _sparkle(scx, scy, sr):
+            inner = sr * 0.3
+            pts = []
+            for i in range(8):
+                ang = -math.pi / 2 + i * math.pi / 4
+                rad = sr if i % 2 == 0 else inner
+                pts.append((scx + rad * math.cos(ang), scy + rad * math.sin(ang)))
+            d.polygon(pts, fill=col)
+        _sparkle(cx - h * 0.16, cy - h * 0.1, h * 0.74)
+        _sparkle(cx + h * 0.52, cy + h * 0.46, h * 0.3)
+        _sparkle(cx + h * 0.46, cy - h * 0.58, h * 0.2)
     else:
         d.ellipse([cx - h * 0.55, cy - h * 0.55, cx + h * 0.55, cy + h * 0.55], outline=col, width=w)
 
