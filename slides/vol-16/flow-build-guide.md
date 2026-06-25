@@ -38,7 +38,7 @@
 `〔ここ〕` に入れる式（本文内で「式」タブ → 貼り付け → OK）：
 
 ```
-convertTimeZone(utcNow(),'UTC','Tokyo Standard Time','yyyy年M月d日(ddd)')
+convertTimeZone(utcNow(),'UTC','Tokyo Standard Time','yyyy年M月d日')
 ```
 
 ### 5. 保存
@@ -52,8 +52,7 @@ convertTimeZone(utcNow(),'UTC','Tokyo Standard Time','yyyy年M月d日(ddd)')
 | STEP1 | トリガーを1回テスト実行 → 出力JSONをコピー | 呼ばない |
 | STEP2 | その出力JSONをCopilotに「先に見せる」 | ★1回目 |
 | **STEP3** | 本文の `convertTimeZone(...)` の式を **Copilotに書かせる**（上の式がゴール） | ★2回目 |
-| **STEP4** | 式の項目名/関数名をわざと間違え → 赤エラー → 貼って直す | ★3回目 |
-| STEP5 | 完成フローのJSONを貼って「何してる？」と説明させる | ★4回目 |
+| **STEP4** | 完成フローのJSONを貼って「何してる？」と説明させる | ★3回目 |
 
 ---
 
