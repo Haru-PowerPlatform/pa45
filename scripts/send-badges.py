@@ -222,12 +222,29 @@ def save_sent_log(session_num: int, sent_emails: set):
         encoding="utf-8"
     )
 
+# ─── 次回connpassリンク（毎回 Vol.N → Vol.N+1 を自動で）──────────
+def _next_connpass_url():
+    """バッジメールに載せる「次回」リンク。
+    優先: data/config/upcoming-event.json（開催後に次回へ昇格＝常に次の回）
+    → 無ければ .env の NEXT_CONNPASS_URL → グループURL。
+    """
+    here = Path(__file__).resolve().parent.parent
+    cfg = here / "data" / "config" / "upcoming-event.json"
+    try:
+        u = json.loads(cfg.read_text(encoding="utf-8")).get("connpass_url", "").strip()
+        if u:
+            return u
+    except Exception:
+        pass
+    return os.environ.get("NEXT_CONNPASS_URL",
+                          "https://connpass.com/group/powerautomate-create/").strip()
+
+
 # ─── メール送信 ───────────────────────────────────
 def send_email(to_email: str, session_num: int, badge_path: Path):
     smtp_user = os.environ.get("SMTP_USER", "").strip()
     smtp_pass = os.environ.get("SMTP_PASSWORD", "").strip()
-    next_url  = os.environ.get("NEXT_CONNPASS_URL",
-                               "https://connpass.com/group/powerautomate-create/").strip()
+    next_url  = _next_connpass_url()
 
     if not smtp_user or smtp_user.startswith("←"):
         print("ERROR: .env に SMTP_USER が設定されていません")
@@ -320,6 +337,8 @@ def main():
                         help="日付一覧を表示するだけ（送信しない）")
     parser.add_argument("--date",     type=str, default=None,
                         help="対象日 YYYY-MM-DD（--scan なしの場合は必須）")
+    parser.add_argument("--fix",      action="append", default=[],
+                        help='メール訂正 "誤=正"（複数指定可）。例: --fix a@gmal.com=a@gmail.com')
     parser.add_argument("--dry-run",  action="store_true",
                         help="送信先リストを表示するだけ（送信しない）")
     args = parser.parse_args()
@@ -362,6 +381,19 @@ def main():
     print("\n📋 Forms回答を取得中...")
     token   = get_token()
     entries = get_entries_for_date(token, target_date)
+
+    # ── メール訂正（--fix "誤=正"）─────────────────
+    fixes = {}
+    for f in args.fix:
+        if "=" in f:
+            wrong, right = f.split("=", 1)
+            fixes[wrong.strip().lower()] = right.strip()
+    if fixes:
+        for e in entries:
+            r = fixes.get(e["email"].strip().lower())
+            if r:
+                print(f"  ✏️  訂正: {e['email']} → {r}")
+                e["email"] = r
 
     if not entries:
         print(f"\n⚠️  {target_date} のアンケート回答が0件です。")
