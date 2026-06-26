@@ -76,7 +76,7 @@ def text_w(draw, text, font):
     return draw.textlength(text, font=font)
 
 
-def generate(vol, title, sub, sub2, theme_text, target_text, time_text, out):
+def generate(vol, title, sub, sub2, theme_text, target_text, time_text, out, tag=None):
     # ── Canvas ──────────────────────────────────────────────────
     img = Image.new("RGB", (W, H), (232, 238, 252))   # light lavender bg
     draw = ImageDraw.Draw(img)
@@ -129,10 +129,19 @@ def generate(vol, title, sub, sub2, theme_text, target_text, time_text, out):
     kai_font  = load_font(60, bold=True)
 
     pa45_text = "PA45"
-    kai_text  = f"【第{vol}回】"
+    kai_text  = tag if tag else f"【第{vol}回】"
     draw.text((CM + 36, R2Y), pa45_text, font=pa45_font, fill=(37, 99, 235))
     pw = int(text_w(draw, pa45_text, pa45_font))
-    draw.text((CM + 36 + pw + 28, R2Y + 8), kai_text, font=kai_font, fill=(15, 23, 42))
+    # 【】タグは右端に収まるよう自動縮小
+    kai_x = CM + 36 + pw + 28
+    kai_max_w = (W - CM - 36) - kai_x
+    kfs = 60
+    while kfs >= 30:
+        kai_font = load_font(kfs, bold=True)
+        if int(text_w(draw, kai_text, kai_font)) <= kai_max_w:
+            break
+        kfs -= 2
+    draw.text((kai_x, R2Y + 8 + (60 - kfs)), kai_text, font=kai_font, fill=(15, 23, 42))
 
     # ── Main title ───────────────────────────────────────────────
     R3Y = R2Y + 84
@@ -230,6 +239,7 @@ if __name__ == "__main__":
     p.add_argument("--theme-text",  default="Power Automateで業務を自動化する")
     p.add_argument("--target-text", default="はじめての方（プログラミング知識ゼロでOK)")
     p.add_argument("--time-text",   default="約10分ハンズオン")
+    p.add_argument("--tag",         default=None, help="PA45の右の【】タグ（未指定なら【第N回】）")
     p.add_argument("--out",         default="assets/ogp/pa45-connpass.png")
     args = p.parse_args()
 
@@ -242,4 +252,5 @@ if __name__ == "__main__":
         target_text = args.target_text,
         time_text   = args.time_text,
         out         = ROOT_DIR / args.out,
+        tag         = args.tag,
     )

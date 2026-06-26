@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.46-1 Power Automate 無料(標準)とプレミアムの境界</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB; --blue-bg:#EFF6FF; --blue-dark:#1E40AF;
+    --green:#16A34A; --green-dark:#064E3B;
+    --orange:#EA580C; --orange-dark:#9A3412; --amber:#D97706;
+    --ink:#1F2937; --gray:#374151; --weak:#6B7280; --line:#E5E7EB;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+  .ic{display:block;width:100%;height:100%;}
+
+  .titlebar{height:88px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:15px;padding:0 22px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:24px;border-radius:999px;padding:6px 18px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .vol-logo{height:48px;width:48px;object-fit:contain;flex:0 0 auto;background:#fff;border-radius:12px;padding:5px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
+  .title-text{color:#fff;font-weight:900;font-size:26px;line-height:1.18;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:150px;}
+  .title-text .hl{color:#FFE08A;}
+  .title-chara{position:absolute;right:13px;bottom:-42px;height:140px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .concl{margin:8px 15px 0;background:var(--blue-bg);border:2px solid var(--blue);border-radius:11px;display:flex;align-items:center;gap:11px;padding:8px 15px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;width:34px;height:34px;border-radius:9px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;padding:7px;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
+  .concl .txt{font-weight:700;font-size:17px;color:var(--blue-dark);line-height:1.36;padding-right:88px;}
+  .concl .txt b{color:var(--orange-dark);}
+
+  .tatoe{margin:8px 15px 0;background:linear-gradient(180deg,#FFFBEB,#FEF3C7);border:1.5px solid #FAD77A;border-radius:10px;display:flex;align-items:center;gap:10px;padding:7px 14px;flex:0 0 auto;box-shadow:0 2px 6px rgba(0,0,0,.06);}
+  .tatoe .ti{flex:0 0 auto;width:24px;height:24px;color:var(--amber);}
+  .tatoe .tt{font-weight:800;font-size:15.5px;color:#7A4A12;line-height:1.34;}
+  .tatoe .tt b.g{color:var(--green-dark);} .tatoe .tt b.o{color:var(--orange-dark);}
+
+  .compare{flex:1 1 auto;margin:9px 15px 0;display:flex;align-items:stretch;gap:13px;min-height:0;}
+  .panel{flex:1;border-radius:14px;padding:11px 15px 12px;display:flex;flex-direction:column;min-height:0;box-shadow:0 6px 15px rgba(0,0,0,.12),inset 0 1px 0 rgba(255,255,255,.8);}
+  .panel.std{border:2px solid var(--green);background:linear-gradient(180deg,#F1FCF5,#E1F6EA);}
+  .panel.prm{border:2px solid var(--orange);background:linear-gradient(180deg,#FFF7F0,#FDEAD9);}
+  .phead{align-self:stretch;display:flex;align-items:center;gap:9px;color:#fff;font-weight:900;border-radius:10px;padding:7px 14px;margin-bottom:11px;box-shadow:0 3px 5px rgba(0,0,0,.22),inset 0 1px 0 rgba(255,255,255,.45);}
+  .phead .pt{font-size:21px;} .phead .pp{margin-left:auto;font-size:14px;font-weight:800;background:rgba(255,255,255,.25);border-radius:6px;padding:4px 11px;}
+  .ph-std{background:linear-gradient(180deg,#2BD06A,#16A34A);} .ph-prm{background:linear-gradient(180deg,#FB923C,#EA580C);}
+  .ilist{display:flex;flex-direction:column;justify-content:space-evenly;flex:1;gap:8px;}
+  .ilist li{list-style:none;display:flex;align-items:center;gap:11px;font-weight:800;font-size:19px;line-height:1.3;background:#F4F5F7;border:1px solid #E2E5EA;border-radius:11px;padding:9px 12px;box-shadow:0 1px 2px rgba(0,0,0,.05);}
+  .panel.std .ilist li{color:#0B5A36;} .panel.prm .ilist li{color:#7C3A12;}
+  .ilist li .bi{flex:0 0 auto;width:36px;height:36px;border-radius:9px;background:#fff;border:1px solid #E1E6EF;display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.1);}
+  .ilist li .bi img{width:25px;height:25px;object-fit:contain;}
+  .ilist li .bi svg{width:21px;height:21px;}
+  .panel.std .bi svg{color:var(--green);} .panel.prm .bi svg{color:var(--orange);}
+  .foot{margin-top:10px;font-weight:900;font-size:16.5px;border-radius:8px;padding:9px 10px;text-align:center;}
+  .panel.std .foot{background:#DCFCE7;color:#0B5A36;} .panel.prm .foot{background:#FFE8D6;color:#7C3A12;}
+
+  .next{flex:0 0 auto;margin:9px 15px 12px;background:linear-gradient(180deg,#EAF2FF,#DCEAFE);border:2px solid var(--blue);border-radius:11px;padding:10px 16px;display:flex;align-items:center;gap:9px;font-weight:900;font-size:16px;color:var(--blue-dark);box-shadow:0 3px 9px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .next .na{flex:0 0 auto;width:22px;height:22px;color:var(--blue);}
+  .src{position:absolute;left:16px;bottom:3px;font-size:9.5px;color:#AEB6C2;font-weight:700;z-index:3;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const ICON={
+ check:'<path d="M20 6 9 17l-5-5"/>',
+ yen:'<path d="M6 4l6 8 6-8M12 12v8M8 14h8M8 17.5h8"/>',
+ flow:'<rect x="3" y="3" width="6" height="6" rx="1"/><rect x="15" y="15" width="6" height="6" rx="1"/><path d="M9 6h4a2 2 0 0 1 2 2v7"/>',
+ globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/>',
+ db:'<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/>',
+ plug:'<path d="M9 2v6M15 2v6M7 8h10v3a5 5 0 0 1-10 0zM12 16v6"/>',
+ robot:'<rect x="4" y="8" width="16" height="12" rx="2"/><path d="M12 8V4M8 4h8"/><circle cx="9" cy="14" r="1.2"/><circle cx="15" cy="14" r="1.2"/>',
+ wand:'<path d="M15 4V2M15 10V8M9 6h2M19 6h2M17.8 8.2 19 9M3 21l9-9M12.2 8.2 11 7"/>',
+ bulb:'<path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/>',
+ arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>'
+};
+const svg=(n)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICON[n]}</svg>`;
+
+const s=document.getElementById('slide');
+s.innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.46-1</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">Power Automate、どこまで無料？<br><span class="hl">標準(無料)とプレミアム(有料)の境界</span></div>
+    <img class="title-chara" src="${A}chara/chara_point.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svg('bulb')}</div>
+    <div class="txt">Power Automateの多くは<b style="color:#0B5A36">M365付属の“標準”で無料</b>。HTTPやDataverse、RPAなど<b>一部だけ“プレミアム”</b>(約$15/人月)。境界を知れば、ムダな課金も「作れない…」も防げます。</div>
+  </div>
+
+  <div class="tatoe">
+    <span class="ti">${svg('bulb')}</span>
+    <span class="tt">たとえるなら…<b class="g">標準＝M365に“込み”の定食</b>（追加0円）／<b class="o">プレミアム＝別注文の特別メニュー</b>（別ライセンス）。</span>
+  </div>
+
+  <div class="compare">
+    <div class="panel std">
+      <div class="phead ph-std"><span class="pt">標準（無料）でできる</span><span class="pp">追加0円</span></div>
+      <ul class="ilist">
+        <li><span class="bi"><img src="${A}icons/pa_outlook.png" alt=""></span>Outlook／Teams／SharePoint／OneDrive</li>
+        <li><span class="bi"><img src="${A}icons/pa_outlook.png" alt=""></span>Forms・Excel・Planner</li>
+        <li><span class="bi">${svg('check')}</span>承認（Approvals）・通知</li>
+        <li><span class="bi">${svg('flow')}</span>条件・くり返し・変数・式</li>
+        <li><span class="bi">${svg('check')}</span>手動・予定（定期）トリガー</li>
+      </ul>
+      <div class="foot">社内業務の多くは“標準”で足りる</div>
+    </div>
+
+    <div class="panel prm">
+      <div class="phead ph-prm"><span class="pt">プレミアム（有料）が要る</span><span class="pp">約$15/人月</span></div>
+      <ul class="ilist">
+        <li><span class="bi">${svg('globe')}</span>外部サービスを呼ぶ（HTTP＝連携の窓口）</li>
+        <li><span class="bi">${svg('db')}</span>他社クラウド（Salesforce／SQL 等）</li>
+        <li><span class="bi">${svg('plug')}</span>社内サーバー(オンプレ)接続・独自連携</li>
+        <li><span class="bi">${svg('robot')}</span>RPAを<b>クラウドから自動起動</b>（手動のPADは無料）</li>
+        <li><span class="bi">${svg('wand')}</span>AI Builder（AIで読み取り・分類）</li>
+      </ul>
+      <div class="foot">外部サービス・社内サーバー・AI が要るならコレ</div>
+    </div>
+  </div>
+
+  <div class="next"><span class="na">${svg('arrow')}</span>よく使う機能の<b>早見表</b>は <b>2枚目</b>で！迷ったらの判断も解説</div>
+  <div class="src">出典：Microsoft Learn</div>
+`;
+</script>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.43 重い添付を自動で魔法の箱へ保存（Power Automate）</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB; --blue-bg:#EFF6FF; --blue-dark:#1E40AF;
+    --red:#DC2626; --red-dark:#7F1D1D;
+    --green:#16A34A; --green-bg:#ECFDF5; --green-dark:#064E3B;
+    --od:#0364B8; --od-dark:#094a85; --outlook:#0A66C2;
+    --orange:#EA580C; --ink:#1F2937; --gray:#374151; --weak:#6B7280; --line:#E5E7EB;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+  .ic{display:block;width:100%;height:100%;}
+
+  .titlebar{height:86px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:15px;padding:0 22px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:24px;border-radius:999px;padding:6px 18px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .vol-logo{height:46px;width:46px;object-fit:contain;flex:0 0 auto;background:#fff;border-radius:12px;padding:5px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
+  .title-text{color:#fff;font-weight:900;font-size:26px;line-height:1.16;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:146px;}
+  .title-text .hl{color:#FFE08A;}
+  .title-chara{position:absolute;right:13px;bottom:-42px;height:138px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .concl{margin:7px 15px 0;background:var(--blue-bg);border:2px solid var(--blue);border-radius:11px;display:flex;align-items:center;gap:11px;padding:6px 15px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;width:32px;height:32px;border-radius:9px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;padding:7px;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
+  .concl .txt{font-weight:700;font-size:16px;color:var(--blue-dark);line-height:1.32;padding-right:86px;}
+  .concl .txt b{color:var(--od-dark);}
+
+  .def{margin:7px 15px 0;background:linear-gradient(180deg,#EEF5FE,#E3EEFC);border:1.5px solid #BBD3F2;border-radius:10px;display:flex;align-items:center;gap:10px;padding:6px 14px;flex:0 0 auto;box-shadow:0 2px 6px rgba(0,0,0,.06);}
+  .def .di{flex:0 0 auto;width:26px;height:26px;border-radius:7px;background:#fff;border:1px solid #C9DBF3;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+  .def .di img{width:18px;height:18px;object-fit:contain;}
+  .def .dt{font-weight:800;font-size:14.5px;color:#2A3F57;line-height:1.32;}
+  .def .dt b{color:var(--od-dark);}
+
+  .compare{flex:1 1 auto;margin:7px 15px 0;display:flex;align-items:stretch;gap:0;min-height:0;}
+  .panel{flex:1;border-radius:14px;padding:10px 13px;display:flex;flex-direction:column;min-height:0;box-shadow:0 6px 15px rgba(0,0,0,.13),inset 0 1px 0 rgba(255,255,255,.8);}
+  .panel.before{border:2px solid var(--red);background:linear-gradient(180deg,#FFF5F5,#FBE9E9);}
+  .panel.after{flex:1.1;border:2px solid var(--green);background:linear-gradient(180deg,#F1FCF5,#E1F6EA);}
+  .phead{align-self:flex-start;display:flex;align-items:center;gap:8px;color:#fff;font-weight:900;font-size:18px;border-radius:9px;padding:7px 16px;margin-bottom:11px;box-shadow:0 3px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.45);text-shadow:0 1px 1px rgba(0,0,0,.2);}
+  .phead svg{width:17px;height:17px;}
+  .ph-before{background:linear-gradient(180deg,#EF4444,#DC2626);}
+  .ph-after{background:linear-gradient(180deg,#2BD06A,#16A34A);}
+  .blist{display:flex;flex-direction:column;gap:11px;margin-top:14px;}
+  .blist li{list-style:none;display:flex;gap:11px;align-items:flex-start;font-weight:700;font-size:17px;line-height:1.32;}
+  .blist li .mk{flex:0 0 auto;width:26px;height:26px;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;margin-top:1px;}
+  .blist li .mk svg{width:15px;height:15px;}
+  .panel.before .blist li{color:#8A2020;} .panel.before .mk{background:linear-gradient(180deg,#EF4444,#DC2626);}
+  .panel.after .blist li{color:#0B5A36;} .panel.after .mk{background:linear-gradient(180deg,#2BD06A,#16A34A);}
+
+  .mid{flex:0 0 70px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;}
+  .mid .bigarrow{width:34px;height:34px;color:var(--blue);}
+  .mid .cmascot{height:104px;filter:drop-shadow(0 3px 7px rgba(0,0,0,.45));z-index:40;margin-top:2px;}
+
+  .uimock{font-family:'Segoe UI','Noto Sans JP',sans-serif;}
+  /* Outlook メールモック */
+  .mail{background:#fff;border:1px solid #EDEBE9;border-radius:9px;box-shadow:0 5px 12px rgba(0,0,0,.13);overflow:hidden;}
+  .mail-h{display:flex;align-items:center;gap:7px;padding:7px 11px;border-bottom:1px solid #EFEFEF;background:#FAFAFA;}
+  .mail-h img{width:18px;height:18px;object-fit:contain;}
+  .mail-h span{font-weight:800;font-size:11px;color:#0A66C2;}
+  .mail-b{padding:9px 12px 11px;}
+  .mail-from{font-size:12px;color:#605E5C;margin-bottom:4px;}
+  .mail-from b{color:#242424;font-weight:700;}
+  .mail-subj{font-weight:700;font-size:14.5px;color:#242424;margin-bottom:6px;}
+  .mail-snip{font-size:11.5px;color:#605E5C;line-height:1.4;margin-bottom:9px;}
+  .attach{display:inline-flex;align-items:center;gap:9px;background:#F3F2F1;border:1px solid #E1DFDD;border-radius:7px;padding:8px 13px;}
+  .attach .fx{width:28px;height:28px;border-radius:5px;background:#D24726;color:#fff;font-weight:900;font-size:10px;display:flex;align-items:center;justify-content:center;}
+  .attach .fn{font-weight:700;font-size:13px;color:#242424;line-height:1.25;}
+  .attach .fn small{display:block;font-weight:700;font-size:11px;color:#D13438;}
+  .attach .clip{width:14px;height:14px;color:#8A8886;margin-left:2px;}
+
+  /* 魔法の箱（OneDrive）モック */
+  .box{background:#fff;border:1.5px solid #BBD3F2;border-radius:10px;box-shadow:0 4px 11px rgba(0,0,0,.12);overflow:hidden;}
+  .box-h{display:flex;align-items:center;gap:7px;padding:7px 11px;background:linear-gradient(90deg,#0A4FA0,#1573D4);}
+  .box-h img{width:17px;height:17px;object-fit:contain;background:#fff;border-radius:4px;padding:1px;}
+  .box-h span{font-weight:800;font-size:13px;color:#fff;}
+  .box-h .spark{margin-left:auto;width:15px;height:15px;color:#FFE08A;}
+  .box-row{display:flex;align-items:center;gap:9px;padding:8px 11px;}
+  .box-row .fx{flex:0 0 auto;width:26px;height:26px;border-radius:6px;background:#D24726;color:#fff;font-weight:900;font-size:9px;display:flex;align-items:center;justify-content:center;}
+  .box-row .fn{flex:1;font-weight:700;font-size:13px;color:#242424;min-width:0;}
+  .box-row .ok{flex:0 0 auto;display:flex;align-items:center;gap:4px;font-weight:800;font-size:10.5px;color:#16A34A;}
+  .box-row .ok svg{width:13px;height:13px;}
+  .box-link{display:flex;align-items:center;gap:8px;padding:8px 11px;border-top:1px dashed #D6E2F4;background:#F6FAFF;}
+  .box-link .li{width:15px;height:15px;color:var(--od);flex:0 0 auto;}
+  .box-link .lt{flex:1;font-weight:700;font-size:11px;color:#0A4FA0;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .box-link .cp{flex:0 0 auto;font-weight:800;font-size:10px;color:#fff;background:var(--od);border-radius:5px;padding:4px 9px;}
+
+  /* 次へ誘導フッター */
+  .next{flex:0 0 auto;margin:9px 15px 12px;background:linear-gradient(180deg,#EAF2FF,#DCEAFE);border:2px solid var(--blue);border-radius:11px;padding:10px 16px;display:flex;align-items:center;gap:9px;font-weight:900;font-size:16px;color:var(--blue-dark);box-shadow:0 3px 9px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .next .na{flex:0 0 auto;width:22px;height:22px;color:var(--blue);}
+  .next b{color:var(--od-dark);}
+  .src{position:absolute;left:16px;bottom:3px;font-size:9.5px;color:#AEB6C2;font-weight:700;z-index:3;}
+
+  /* 下段：作り方＋つまずき */
+  .bottom{flex:0 0 auto;margin:7px 15px 10px;display:flex;flex-direction:column;gap:7px;}
+  .make{background:linear-gradient(180deg,#565C66,#4A4F58);border-radius:11px;padding:8px 13px;display:flex;align-items:center;gap:11px;box-shadow:inset 0 1px 0 rgba(255,255,255,.1);position:relative;}
+  .make .mlabel{flex:0 0 auto;display:flex;align-items:center;gap:6px;color:#F1F5F9;font-weight:900;font-size:14px;}
+  .make .mlabel svg{width:16px;height:16px;color:#FBBF24;}
+  .mflow{flex:1;display:flex;align-items:stretch;gap:6px;padding-right:88px;}
+  .mstep{flex:1;background:#fff;border-radius:8px;padding:6px 9px;display:flex;align-items:center;gap:7px;box-shadow:0 2px 5px rgba(0,0,0,.22);min-width:0;}
+  .mstep .mnum{flex:0 0 auto;width:18px;height:18px;border-radius:50%;background:var(--blue);color:#fff;font-weight:900;font-size:11px;display:flex;align-items:center;justify-content:center;}
+  .mstep .mi{flex:0 0 auto;width:26px;height:26px;border-radius:7px;background:var(--blue-bg);display:flex;align-items:center;justify-content:center;overflow:hidden;}
+  .mstep .mi img{width:20px;height:20px;object-fit:contain;}
+  .mstep .mi svg{width:16px;height:16px;color:var(--blue);}
+  .mstep .mn{font-weight:900;font-size:11.5px;color:var(--ink);line-height:1.16;min-width:0;}
+  .mstep .mn small{display:block;font-weight:700;font-size:9.5px;color:var(--weak);}
+  .marrow{flex:0 0 auto;align-self:center;width:16px;height:16px;color:#7CB1FF;}
+  .make-chara{position:absolute;right:9px;bottom:-2px;height:86px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.4));}
+
+  .pitfall{background:linear-gradient(180deg,#FFF7ED,#FFEFD9);border:1.5px solid #FDBA74;border-radius:10px;padding:7px 13px;display:flex;align-items:center;gap:10px;box-shadow:0 2px 6px rgba(0,0,0,.07);}
+  .pitfall .pl{flex:0 0 auto;display:flex;align-items:center;gap:6px;background:linear-gradient(180deg,#FB923C,#EA580C);color:#fff;font-weight:900;font-size:12.5px;border-radius:8px;padding:5px 10px;box-shadow:0 2px 4px rgba(0,0,0,.25);}
+  .pitfall .pl svg{width:14px;height:14px;}
+  .pitfall .px{flex:1;font-weight:800;font-size:12px;color:#7C2D12;line-height:1.3;}
+  .pitfall .px b{color:var(--orange);}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const ICON={
+ cross:'<path d="M18 6 6 18M6 6l12 12"/>',
+ check:'<path d="M20 6 9 17l-5-5"/>',
+ arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',
+ clip:'<path d="M21.4 11.05 12.25 20.2a6 6 0 0 1-8.49-8.49l9.2-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>',
+ link:'<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>',
+ mail:'<rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/>',
+ spark:'<path d="M12 3l1.6 4.4L18 9l-4.4 1.6L12 15l-1.6-4.4L6 9l4.4-1.6z"/>',
+ bulb:'<path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/>',
+ warn:'<path d="M10.3 3.3 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.3a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>'
+};
+const svg=(n)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">${ICON[n]}</svg>`;
+const svgF=(n)=>`<svg class="ic" viewBox="0 0 24 24" fill="currentColor" stroke="none">${ICON[n]}</svg>`;
+
+const s=document.getElementById('slide');
+s.innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.43-1</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">重い添付はPCにため込まない。<br>Power Automateで<span class="hl">“魔法の箱”へ自動保存</span>！</div>
+    <img class="title-chara" src="${A}chara/chara_point.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svg('bulb')}</div>
+    <div class="txt">メールの重い添付、毎回DLしてフォルダがパンパン…。届いた瞬間に<b>OneDrive＝“魔法の箱”</b>へ自動保存すれば、PCにため込まず、リンクで開く・共有できます。</div>
+  </div>
+
+  <div class="def">
+    <div class="di"><img src="${A}icons/pa_onedrive.png" alt=""></div>
+    <div class="dt"><b>“魔法の箱”＝OneDrive / SharePoint。</b>　重い添付を放り込むと、PCに置かなくても残り、いつでもリンクで取り出せる“クラウドの保管庫”のこと。</div>
+  </div>
+
+  <div class="compare">
+    <div class="panel before">
+      <div class="phead ph-before">${svg('cross')}Before：手作業で保存</div>
+      <div class="mail uimock">
+        <div class="mail-h"><img src="${A}icons/pa_outlook.png" alt=""><span>受信トレイ</span></div>
+        <div class="mail-b">
+          <div class="mail-from"><b>山田 太郎</b>　ご提案資料の送付について</div>
+          <div class="mail-subj">【ご確認ください】提案書をお送りします</div>
+          <div class="mail-snip">お世話になっております。標記の件、提案書を添付しました。ご確認のほどお願いいたします。</div>
+          <div class="attach"><span class="fx">PPTX</span><span class="fn">提案書_v3.pptx<small>48.2 MB</small></span><span class="clip">${svg('clip')}</span></div>
+        </div>
+      </div>
+      <ul class="blist">
+        <li><span class="mk">${svg('cross')}</span><span>毎回ダウンロードして手で整理</span></li>
+        <li><span class="mk">${svg('cross')}</span><span>フォルダ・PCの容量を圧迫</span></li>
+        <li><span class="mk">${svg('cross')}</span><span>「どのメールの添付？」と探し回る</span></li>
+        <li><span class="mk">${svg('cross')}</span><span>大きすぎてメールで送り返せない</span></li>
+      </ul>
+    </div>
+
+    <div class="mid">
+      <span class="bigarrow">${svg('arrow')}</span>
+      <img class="cmascot" src="${A}chara/chara_guts.png" alt="">
+    </div>
+
+    <div class="panel after">
+      <div class="phead ph-after">${svg('check')}After：自動で“魔法の箱”へ</div>
+      <div class="box uimock">
+        <div class="box-h"><img src="${A}icons/pa_onedrive.png" alt=""><span>魔法の箱（OneDrive / SharePoint）</span><span class="spark">${svgF('spark')}</span></div>
+        <div class="box-row"><span class="fx">PPTX</span><span class="fn">提案書_v3.pptx</span><span class="ok">${svg('check')}保存済</span></div>
+        <div class="box-row" style="border-top:1px solid #EEF2F8;"><span class="fx" style="background:#1F7244;">XLSX</span><span class="fn">見積_0620.xlsx</span><span class="ok">${svg('check')}保存済</span></div>
+        <div class="box-link"><span class="li">${svg('link')}</span><span class="lt">https://…/提案書_v3.pptx</span><span class="cp">リンク</span></div>
+      </div>
+      <ul class="blist">
+        <li><span class="mk">${svg('check')}</span><span>届いた瞬間に自動でクラウド保存</span></li>
+        <li><span class="mk">${svg('check')}</span><span>PCにため込まない・探さない</span></li>
+        <li><span class="mk">${svg('check')}</span><span>リンクで即共有・紛失しない</span></li>
+        <li><span class="mk">${svg('check')}</span><span>チームの誰でも最新版にアクセス</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="next"><span class="na">${svg('arrow')}</span>具体的な<b>作り方</b>は <b>2枚目</b>で、つまずきポイントまで解説！</div>
+  <div class="src">出典：Microsoft Learn</div>
+`;
+</script>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>

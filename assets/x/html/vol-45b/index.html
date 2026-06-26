@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.45-2 動的コンテンツが出ないを直す3手｜作り方</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB; --blue-bg:#EFF6FF; --blue-dark:#1E40AF;
+    --green:#16A34A; --green-dark:#064E3B; --purple:#6D28D9;
+    --orange:#EA580C; --ink:#1F2937; --gray:#374151; --weak:#6B7280; --line:#E5E7EB;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+  .ic{display:block;width:100%;height:100%;}
+
+  .titlebar{height:86px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:15px;padding:0 22px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:24px;border-radius:999px;padding:6px 18px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .vol-logo{height:46px;width:46px;object-fit:contain;flex:0 0 auto;background:#fff;border-radius:12px;padding:5px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
+  .title-text{color:#fff;font-weight:900;font-size:30px;line-height:1.12;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:140px;}
+  .title-text .hl{color:#FFE08A;}
+  .title-chara{position:absolute;right:13px;bottom:-42px;height:138px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .concl{margin:8px 15px 0;background:var(--blue-bg);border:2px solid var(--blue);border-radius:11px;display:flex;align-items:center;gap:11px;padding:7px 15px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;width:32px;height:32px;border-radius:9px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;padding:7px;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
+  .concl .txt{font-weight:700;font-size:15px;color:var(--blue-dark);line-height:1.3;padding-right:86px;}
+  .concl .txt b{color:var(--green-dark);}
+
+  .cols{flex:1 1 auto;margin:9px 14px 0;display:flex;align-items:stretch;gap:0;min-height:0;}
+  .col{flex:1;display:flex;flex-direction:column;min-height:0;position:relative;}
+  .carrow{flex:0 0 28px;display:flex;align-items:center;justify-content:center;color:#9AA7B8;}
+  .carrow svg{width:24px;height:24px;}
+  .colcard{flex:1;background:#fff;border:1.5px solid #C9D2E0;border-radius:12px;box-shadow:0 5px 13px rgba(0,0,0,.12);overflow:hidden;display:flex;flex-direction:column;}
+  .cnum{position:absolute;top:-9px;left:-9px;width:30px;height:30px;border-radius:50%;background:linear-gradient(180deg,#2BD06A,#16A34A);color:#fff;font-weight:900;font-size:16px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 5px rgba(0,0,0,.3);z-index:5;border:2px solid #fff;}
+  .ch{display:flex;align-items:center;gap:9px;padding:9px 11px;min-height:58px;background:linear-gradient(180deg,#F7F9FC,#ECF0F6);border-bottom:1px solid #E1E6EF;}
+  .ch .sq{flex:0 0 auto;width:36px;height:36px;border-radius:8px;background:linear-gradient(180deg,#2BD06A,#16A34A);display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.15);color:#fff;}
+  .ch .sq svg{width:21px;height:21px;}
+  .ch .nm{font-weight:900;font-size:15.5px;color:var(--ink);line-height:1.18;}
+  .ch .nm small{display:block;font-weight:700;font-size:10.5px;color:var(--weak);margin-top:2px;}
+
+  .cp{flex:1;font-family:'Segoe UI','Noto Sans JP',sans-serif;padding:9px 11px 10px;display:flex;flex-direction:column;gap:10px;}
+  .ptop{flex:0 0 178px;display:flex;flex-direction:column;gap:7px;overflow:hidden;background:#F3F6FB;border:1px solid #DCE4F0;border-radius:9px;padding:8px 10px;margin-top:2px;}
+  .sect{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:900;color:#5A6B85;}
+  .sect::before{content:"";width:4px;height:13px;border-radius:2px;background:#8FA0BC;}
+
+  /* mock: 動的コンテンツpicker（実行後） */
+  .pick{background:#fff;border:1px solid #D8DEE8;border-radius:6px;overflow:hidden;}
+  .pick .ps{display:flex;align-items:center;gap:6px;padding:6px 8px;border-bottom:1px solid #EEF1F5;}
+  .pick .ps .si{width:13px;height:13px;color:#8A8886;} .pick .ps span{font-size:11px;color:#A19F9D;}
+  .pick .pi{display:flex;align-items:center;gap:7px;padding:5px 9px;font-size:12px;color:#242424;font-weight:600;}
+  .pick .pi .di{width:16px;height:16px;border-radius:3px;background:#E7ECF7;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+  .pick .pi .di img{width:12px;height:12px;}
+  .pick .pi.hit{background:#ECFDF3;color:#0B5E37;font-weight:800;}
+  .pick .pi.hit .ck{margin-left:auto;color:#16A34A;width:14px;height:14px;}
+
+  /* mock: ミニ縦フロー */
+  .mini{display:flex;flex-direction:column;align-items:center;gap:3px;}
+  .mnode{width:100%;background:#fff;border:1px solid #C8D0DC;border-radius:7px;padding:6px 8px;font-size:11.5px;font-weight:700;color:#242424;display:flex;align-items:center;gap:7px;}
+  .mnode .mi{width:18px;height:18px;border-radius:4px;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#EAF1FE;}
+  .mnode .mi img{width:14px;height:14px;}
+  .mnode.use{border-color:#2563EB;background:#EFF5FF;}
+  .mloop{width:100%;border:1.5px dashed #C4B5E6;border-radius:8px;padding:6px 7px 7px;background:#FAF8FE;display:flex;flex-direction:column;gap:5px;}
+  .mloop .lh{font-size:10px;font-weight:800;color:#6D28D9;}
+  .marr{color:#9AA7B8;font-weight:900;font-size:11px;}
+
+  /* mock: 式エディタ */
+  .fxb{background:#fff;border:1px solid #D8DEE8;border-radius:6px;overflow:hidden;}
+  .fxtabs{display:flex;border-bottom:1px solid #EAEAEA;}
+  .fxtabs span{font-size:10.5px;font-weight:700;color:#8A8886;padding:5px 9px;}
+  .fxtabs span.on{color:#2563EB;border-bottom:2px solid #2563EB;}
+  .fxin{margin:8px;border:1px solid #C7CBD4;border-radius:5px;background:#1F2937;padding:7px 9px;font-family:'Consolas','Courier New',monospace;font-size:11px;color:#E5E7EB;line-height:1.5;}
+  .fxin .k{color:#7DD3FC;} .fxin .s{color:#FCA5A5;}
+  .fxok{margin:0 8px 8px;display:flex;justify-content:flex-end;}
+  .fxok span{background:#2563EB;color:#fff;font-size:11px;font-weight:800;border-radius:5px;padding:5px 16px;}
+
+  .howsteps{flex:1;margin-top:3px;background:linear-gradient(180deg,#F5F8FD,#EEF3FA);border:1px solid #D7E1F0;border-radius:9px;padding:9px 11px;display:flex;flex-direction:column;gap:7px;}
+  .howsteps .hh{display:flex;align-items:center;gap:6px;font-size:13.5px;font-weight:900;color:#2B3A52;}
+  .howsteps .hh::before{content:"";width:4px;height:14px;border-radius:2px;background:#2563EB;}
+  .howsteps ol{list-style:none;display:flex;flex-direction:column;justify-content:space-evenly;flex:1;gap:7px;}
+  .howsteps li{display:flex;gap:9px;align-items:flex-start;font-size:15px;font-weight:700;color:#2F3E57;line-height:1.36;}
+  .howsteps li .sn{flex:0 0 auto;width:21px;height:21px;border-radius:50%;background:#2563EB;color:#fff;font-size:12px;font-weight:900;display:flex;align-items:center;justify-content:center;margin-top:1px;}
+  .howsteps li b{color:#1E40AF;}
+  .howsteps li.key{color:#0B5E37;} .howsteps li.key .sn{background:#16A34A;} .howsteps li.key b{color:#0B5E37;}
+
+  .pitfall{flex:0 0 auto;margin:9px 14px 11px;background:linear-gradient(180deg,#FFF7ED,#FFEFD9);border:1.5px solid #FDBA74;border-radius:11px;padding:8px 14px;display:flex;align-items:center;gap:11px;box-shadow:0 2px 6px rgba(0,0,0,.07);position:relative;}
+  .pitfall .pl{flex:0 0 auto;display:flex;align-items:center;gap:6px;background:linear-gradient(180deg,#FB923C,#EA580C);color:#fff;font-weight:900;font-size:13px;border-radius:8px;padding:6px 11px;box-shadow:0 2px 4px rgba(0,0,0,.25);}
+  .pitfall .pl svg{width:15px;height:15px;}
+  .pitfall .px{flex:1;font-weight:800;font-size:13px;color:#7C2D12;line-height:1.32;padding-right:96px;}
+  .pitfall .px b{color:var(--orange);}
+  .pit-chara{position:absolute;right:11px;bottom:-2px;height:92px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.4));}
+  .src{position:absolute;left:16px;bottom:3px;font-size:9.5px;color:#AEB6C2;font-weight:700;z-index:3;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const ICON={
+ play:'<path d="M6 4l14 8-14 8z"/>',
+ repeat:'<path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/>',
+ fx:'<path d="M4 7c0-2 1-3 3-3M4 12h6M4 20c2 0 3-1 3-3V7"/><path d="M13 9l7 7M20 9l-7 7"/>',
+ search:'<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>',
+ check:'<path d="M20 6 9 17l-5-5"/>',
+ bolt:'<path d="M13 2 3 14h7l-1 8 10-12h-7z"/>',
+ warn:'<path d="M10.3 3.3 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.3a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>',
+ arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',
+ bulb:'<path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/>'
+};
+const svg=(n)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${ICON[n]}</svg>`;
+const svgF=(n)=>`<svg class="ic" viewBox="0 0 24 24" fill="currentColor" stroke="none">${ICON[n]}</svg>`;
+
+const s=document.getElementById('slide');
+s.innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.45-2</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">解決！<span class="hl">“動的コンテンツが出ない”を直す3手</span></div>
+    <img class="title-chara" src="${A}chara/chara_guts.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svg('bulb')}</div>
+    <div class="txt">この順で確認すればOK。<b>①まず1回実行</b>するだけで9割は解決します。</div>
+  </div>
+
+  <div class="cols">
+    <div class="col">
+      <div class="cnum">1</div>
+      <div class="colcard">
+        <div class="ch"><span class="sq">${svgF('play')}</span><span class="nm">まず1回 テスト実行<small>出力を作れば一覧に出る</small></span></div>
+        <div class="cp">
+          <div class="ptop">
+            <div class="sect">実行後の動的コンテンツ</div>
+            <div class="pick">
+              <div class="ps"><span class="si">${svg('search')}</span><span>申請者名</span></div>
+              <div class="pi"><span class="di"><img src="${A}icons/pa_outlook.png" alt=""></span>件名</div>
+              <div class="pi hit"><span class="di"><img src="${A}icons/pa_outlook.png" alt=""></span>申請者名<span class="ck">${svg('check')}</span></div>
+            </div>
+          </div>
+          <div class="howsteps">
+            <div class="hh">操作手順</div>
+            <ol>
+              <li><span class="sn">1</span><span>右上の「<b>テスト</b>」→「手動」</span></li>
+              <li><span class="sn">2</span><span>「保存して実行」で1回動かす</span></li>
+              <li class="key"><span class="sn">3</span><span>もう一度開くと<b>値が出る</b>（9割これ）</span></li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="carrow">${svg('arrow')}</div>
+
+    <div class="col">
+      <div class="cnum">2</div>
+      <div class="colcard">
+        <div class="ch"><span class="sq">${svg('repeat')}</span><span class="nm">正しい場所で開く<small>前のステップ・配列の中</small></span></div>
+        <div class="cp">
+          <div class="ptop">
+            <div class="sect">実際のフロー</div>
+            <div class="mini">
+              <div class="mnode"><span class="mi"><img src="${A}icons/pa_outlook.png" alt=""></span>トリガー（出力あり）</div>
+              <span class="marr">▼</span>
+              <div class="mloop">
+                <span class="lh">↻ Apply to each（配列はこの中）</span>
+                <div class="mnode use"><span class="mi"><img src="${A}icons/pa_sharepoint.png" alt=""></span>アクション ＝ ここで開く</div>
+              </div>
+            </div>
+          </div>
+          <div class="howsteps">
+            <div class="hh">操作手順</div>
+            <ol>
+              <li><span class="sn">1</span><span>使いたい値より<b>後ろ</b>に置く</span></li>
+              <li><span class="sn">2</span><span>配列は「<b>Apply to each</b>」を追加</span></li>
+              <li class="key"><span class="sn">3</span><span>その<b>中</b>でアクションを開く</span></li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="carrow">${svg('arrow')}</div>
+
+    <div class="col">
+      <div class="cnum">3</div>
+      <div class="colcard">
+        <div class="ch"><span class="sq">${svg('fx')}</span><span class="nm">式で取り出す<small>一覧に無い値はコレ</small></span></div>
+        <div class="cp">
+          <div class="ptop">
+            <div class="sect">動的コンテンツ ＞ 式</div>
+            <div class="fxb">
+              <div class="fxtabs"><span>動的なコンテンツ</span><span class="on">式</span></div>
+              <div class="fxin"><span class="k">outputs</span>()?[<span class="s">'body/申請者名'</span>]</div>
+              <div class="fxok"><span>OK</span></div>
+            </div>
+          </div>
+          <div class="howsteps">
+            <div class="hh">操作手順</div>
+            <ol>
+              <li><span class="sn">1</span><span>動的コンテンツの「<b>式</b>」タブ</span></li>
+              <li><span class="sn">2</span><span><b>outputs()?['body/項目名']</b></span></li>
+              <li class="key"><span class="sn">3</span><span>名前は<b>実行履歴の出力</b>で確認</span></li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pitfall">
+    <div class="pl">${svg('warn')}つまずき注意</div>
+    <div class="px"><b>9割は①の「1回実行」</b>で解決。配列の値は必ず<b>Apply to eachの中</b>で開く。式の名前は<b>実行履歴の出力(JSON)</b>で確認（JSONの読み方はVol.14）。</div>
+    <img class="pit-chara" src="${A}chara/chara_smile.png" alt="">
+  </div>
+  <div class="src">出典：Microsoft Learn</div>
+`;
+</script>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>

@@ -2,9 +2,11 @@
 """Vol.32 メール添付ファイル自動保存 1枚スライド
    デザインシステム準拠版（Noto Sans JP / Tailwind配色 / 太字既定 / F8F9FAカード+色枠 / 画像アイコン）
    ※reference_x_tips_design_system.md の仕様に従う。以降の雛形。"""
-import os
+import os, math, random
+random.seed(7)
+HAND = "Zen Kurenaido"   # 手書き風フォント（手作り感）
 from pptx import Presentation
-from pptx.util import Inches, Pt
+from pptx.util import Inches, Pt, Emu
 from pptx.dml.color import RGBColor
 from pptx.enum.text import PP_ALIGN, MSO_ANCHOR
 from pptx.enum.shapes import MSO_SHAPE
@@ -95,9 +97,38 @@ def pic(path, x, y, h=None, w=None):
     if w: kw["width"] = Inches(w)
     return shp.add_picture(path, Inches(x), Inches(y), **kw)
 
+def pic_rot(path, x, y, w, rot):
+    if not os.path.exists(path): return None
+    p = shp.add_picture(path, Inches(x), Inches(y), width=Inches(w)); p.rotation = rot; return p
+
 def chip(x, y, w, h, fill, text, sz=16):
     rect(x, y, w, h, fill, rounded=True, radius=0.28)
     txt(x, y, w, h, [[(text, sz, True, WHITE)]], align=PP_ALIGN.CENTER, anchor=MSO_ANCHOR.MIDDLE)
+
+# ---- 手描き風（freeform）注釈 ----
+def hand_stroke(points, color, lw=3.0, close=False):
+    fb = shp.build_freeform(points[0][0], points[0][1], scale=Emu(914400))
+    fb.add_line_segments(points[1:], close=close)
+    s = fb.convert_to_shape()
+    s.fill.background(); s.line.color.rgb = color; s.line.width = Pt(lw); s.shadow.inherit = False
+    return s
+
+def hand_underline(x0, x1, y, color, lw=3.5, amp=0.028, seg=20):
+    pts=[]
+    for i in range(seg+1):
+        t=i/seg
+        yy=y+math.sin(t*math.pi*3.2)*amp + random.uniform(-0.012,0.012)
+        pts.append((x0+(x1-x0)*t, yy))
+    hand_stroke(pts, color, lw)
+
+def hand_circle(cx, cy, rx, ry, color, lw=3.2, seg=48):
+    start=random.uniform(-0.5,-0.1); pts=[]
+    for i in range(seg+1):
+        t=start+(i/seg)*(2*math.pi+0.55)   # 描き過ぎ＝手書きっぽさ
+        wob=1+0.09*math.sin(t*2.7+1.3)+random.uniform(-0.05,0.05)
+        pts.append((cx+math.cos(t)*rx*wob,
+                    cy+math.sin(t)*ry*wob))
+    hand_stroke(pts, color, lw)
 
 # ===== 1) Title bar (2563EB + white outline) =====
 rect(0, 0, 13.333, 0.92, BLUE, line=WHITE, lw=1.25)
@@ -212,8 +243,6 @@ txt(LX, BY+0.56, 7.3, 0.88,
      [("② 条件：件名に「請求書」を含む 等で絞り込み", 14, True, CODEFG)],
      [("③ 保存：SharePoint / OneDrive にファイル作成", 14, True, CODEFG)]],
     space=Pt(2))
-# 生徒リロ（なるほど・納得）を下部中央に登場
-pic(os.path.join(RIRO, "riro_nod.png"), 7.0, BY+0.12, h=1.34)
 rect(9.05, BY+0.28, 4.05, 0.94, DARK2, line=BLUE, lw=1.25, rounded=True, radius=0.12)
 txt(9.15, BY+0.32, 3.85, 0.86,
     [[("覚え方", 14, True, RGBColor(0x9D,0xC2,0xFF))],

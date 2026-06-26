@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Cowork × Power Automate で、自動化はもう一段遠くまで</title>
+<style>
+  :root{
+    --navy:#142A5C;
+    --navy2:#1f3a7a;
+    --accent:#0066FF;
+    --accent2:#4FA8FF;
+    --text:#222;
+    --light:#6b6b6b;
+    --bg:#FAFAF6;
+    --sky:#E6EEF7;
+    --line:#d8d8cf;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;font-family:"Meiryo UI","Hiragino Kaku Gothic ProN","Yu Gothic UI",sans-serif;background:#000;color:var(--text);overflow:hidden}
+  body{display:flex}
+
+  /* === 目次サイドバー === */
+  .toc{
+    width:260px;flex-shrink:0;height:100vh;
+    background:var(--navy);color:#cfd8e8;
+    overflow-y:auto;padding:18px 14px;
+    border-right:3px solid var(--accent);
+    transition:margin-left .2s;
+  }
+  .toc.hidden{margin-left:-260px}
+  .toc h3{
+    color:#fff;font-size:13px;margin-bottom:14px;
+    padding-bottom:10px;border-bottom:1px solid #2a4a8c;
+    letter-spacing:.05em;
+  }
+  .toc ol{list-style:none}
+  .toc li{
+    padding:9px 10px;margin:3px 0;border-radius:6px;
+    cursor:pointer;color:#cfd8e8;font-size:12.5px;
+    line-height:1.4;transition:background .15s;
+    display:flex;gap:8px;align-items:flex-start;
+  }
+  .toc li:hover{background:#2a4a8c;color:#fff}
+  .toc li.current{background:var(--accent);color:#fff;font-weight:700}
+  .toc li .num{
+    display:inline-block;min-width:18px;color:var(--accent);
+    font-weight:700;font-size:11.5px;padding-top:1px;
+  }
+  .toc li.current .num{color:#fff}
+  .toc-foot{
+    margin-top:18px;padding-top:12px;border-top:1px solid #2a4a8c;
+    font-size:10.5px;color:#8da3c2;line-height:1.6;
+  }
+  .toc-foot kbd{
+    display:inline-block;background:#2a4a8c;color:#fff;
+    padding:1px 5px;border-radius:3px;font-size:10px;
+    margin:0 2px;
+  }
+
+  /* === ステージ（スライド領域） === */
+  .stage{flex:1;position:relative;height:100vh;overflow:hidden;container-type:inline-size}
+  .deck{position:relative;width:100%;height:100%}
+  .slide{
+    position:absolute;inset:0;
+    display:none;flex-direction:column;justify-content:center;
+    padding:6cqh 6cqw;
+    background:var(--bg);
+  }
+  .slide.active{display:flex}
+  .slide.navy{background:var(--navy);color:#fff}
+  .slide.sky{background:var(--sky)}
+  .slide h1{font-size:5.5cqw;line-height:1.25;color:var(--navy);letter-spacing:.01em}
+  .slide.navy h1{color:#fff}
+  .slide h2{font-size:3.4cqw;line-height:1.25;color:var(--accent);font-weight:700;margin-bottom:1cqh}
+  .slide.navy h2{color:#fff}
+  /* office7793テイスト：オレンジ小見出し＋グレー特大メッセージの2層 */
+  .msg{font-size:3.2cqw;line-height:1.35;color:var(--light);font-weight:700;text-align:center;margin:1.5cqh 0 2cqh}
+  .slide.navy .msg{color:#cfd8e8}
+  .msg .accent{color:var(--accent)}
+  .slide .sub{font-size:1.7cqw;color:var(--light);margin-top:2cqh;line-height:1.6}
+  .slide.navy .sub{color:#cfd8e8}
+  .slide .meta{position:absolute;left:6cqw;bottom:4cqh;font-size:1.1cqw;color:var(--light)}
+  .slide.navy .meta{color:#9eafc8}
+  .slide .pageno{position:absolute;right:5cqw;bottom:4cqh;font-size:1.1cqw;color:var(--light)}
+  .slide.navy .pageno{color:#9eafc8}
+  .bar{display:none}
+  .accent{color:var(--accent)}
+  .slide.navy .accent{color:var(--accent2)}
+  .navy-text{color:var(--navy)}
+  .lead{font-size:2.4cqw;line-height:1.6;margin-top:3cqh}
+  .lead.big{font-size:3.4cqw;font-weight:700;line-height:1.4;color:var(--accent)}
+  .lead.huge{font-size:5cqw;font-weight:700;line-height:1.3;color:var(--accent)}
+  .quote{
+    background:#fff;border:2px solid var(--accent);border-radius:1cqw;
+    padding:4cqh 5cqw;font-size:3.6cqw;font-weight:700;text-align:center;
+    color:var(--navy);box-shadow:0 .8cqh 2cqh rgba(0,0,0,.06);margin:3cqh 0;
+  }
+  ul.bullets{font-size:1.9cqw;line-height:2;margin-top:3cqh;list-style:none}
+  ul.bullets li{padding-left:2cqw;position:relative;margin:.8cqh 0}
+  ul.bullets li::before{content:"・";position:absolute;left:0;color:var(--accent);font-weight:700}
+  .cards{display:flex;gap:2cqw;margin-top:4cqh}
+  .card{
+    flex:1;background:#fff;border:2px solid var(--navy);border-radius:1cqw;
+    padding:3cqh 2cqw;text-align:center;
+  }
+  .card .tagline{font-size:1.3cqw;color:var(--accent);font-weight:700;margin-bottom:1cqh;letter-spacing:.05em}
+  .card .lbl{font-size:1.4cqw;color:var(--text);margin-top:1.5cqh;font-weight:700}
+  .card .desc{font-size:1.2cqw;color:var(--light);margin-top:1cqh;line-height:1.5}
+  .split{display:grid;grid-template-columns:1fr 1fr;gap:3cqw;margin-top:3cqh}
+  .split>div{padding:3cqh 2.5cqw;border-radius:1cqw}
+  .split .left{background:#fff;border:2px solid #ccc}
+  .split .right{background:#fff;border:2px solid var(--accent)}
+  .split h3{font-size:2cqw;margin-bottom:2cqh}
+  .split .left h3{color:#999;text-decoration:line-through}
+  .split .right h3{color:var(--accent)}
+  .split p{font-size:1.5cqw;line-height:1.7;color:var(--text)}
+  .steps{display:flex;align-items:center;gap:1.5cqw;margin-top:4cqh}
+  .step{
+    flex:1;background:#fff;border:2px solid var(--navy);border-radius:1cqw;
+    padding:2.5cqh 1.5cqw;text-align:center;
+  }
+  .step .n{font-size:1.4cqw;color:var(--accent);font-weight:700}
+  .step .t{font-size:1.5cqw;font-weight:700;color:var(--navy);margin-top:1cqh;line-height:1.4}
+  .arrow{font-size:2.5cqw;color:var(--accent);font-weight:700}
+  .progress{position:absolute;left:0;top:0;height:4px;background:var(--accent);transition:width .3s;z-index:5}
+  .big-num{font-size:11cqw;color:var(--accent);font-weight:700;line-height:1}
+  .vs{display:grid;grid-template-columns:1fr auto 1fr;gap:2cqw;align-items:center;margin-top:3cqh}
+  .vs .panel{background:#fff;border-radius:1cqw;padding:3cqh 2.5cqw;border:2px solid #ddd}
+  .vs .panel.cowork{border-color:var(--navy)}
+  .vs .panel.pa{border-color:var(--accent)}
+  .vs .panel h3{font-size:2.2cqw;margin-bottom:1.5cqh}
+  .vs .panel.cowork h3{color:var(--navy)}
+  .vs .panel.pa h3{color:var(--accent)}
+  .vs .panel p{font-size:1.4cqw;line-height:1.7;color:var(--text)}
+  .vs .x{font-size:3cqw;color:#999}
+  .footer-name{position:absolute;left:6cqw;bottom:8cqh;font-size:1.6cqw;color:#fff;line-height:1.7}
+  .badges{display:flex;gap:1.5cqw;flex-wrap:wrap;margin-top:3cqh}
+  .badge{background:#fff;border:2px solid var(--navy);border-radius:.6cqw;padding:1.2cqh 1.5cqw;font-size:1.4cqw;color:var(--navy);font-weight:700}
+  .shot{
+    margin-top:2cqh;height:62cqh;width:100%;
+    background:#fff;border:2px dashed var(--accent);border-radius:1cqw;
+    display:flex;align-items:center;justify-content:center;overflow:hidden;
+  }
+  .shot-ph{display:flex;align-items:center;justify-content:center;text-align:center;color:var(--navy);width:100%;height:100%}
+  /* 画像テイスト：極太オレンジ枠＋右上ロゴ */
+  .slide::after{content:'';position:absolute;top:.9cqh;left:.7cqw;right:.7cqw;bottom:.9cqh;border:.45cqw solid var(--accent);border-radius:.9cqw;pointer-events:none;z-index:4}
+  .brand{position:absolute;top:2.4cqh;right:3cqw;font-size:1.3cqw;font-weight:700;color:var(--accent);letter-spacing:.06em;z-index:6}
+  .slide.navy .brand{color:var(--accent2)}
+  .note{font-size:1.3cqw;line-height:1.7;color:var(--light);margin-top:2.5cqh;max-width:90%}
+  .slide.navy .note{color:#a8b8d0}
+  .note b{color:var(--accent)}
+  .slide.navy .note b{color:var(--accent2)}
+
+  /* === 図解ユーティリティ（追加） === */
+  .actlabel{display:inline-block;font-size:1.2cqw;color:#fff;font-weight:700;background:var(--accent);padding:.6cqh 1.4cqw;border-radius:.5cqw;letter-spacing:.08em}
+  /* 起点→知能→結末 の3ボックス */
+  .flow3{display:flex;align-items:stretch;gap:1cqw;margin-top:3cqh}
+  .flow3 .b{flex:1;background:#fff;border:2px solid var(--navy);border-radius:1cqw;padding:2.4cqh 1.4cqw;text-align:center}
+  .flow3 .b.hot{border-color:var(--accent);background:#eef4ff;border-width:3px}
+  .flow3 .b .k{font-size:1.2cqw;color:var(--light);font-weight:700;letter-spacing:.05em}
+  .flow3 .b .v{font-size:2.1cqw;color:var(--navy);font-weight:700;margin-top:.6cqh}
+  .flow3 .b.hot .v{color:var(--accent)}
+  .flow3 .b .d{font-size:1.1cqw;color:var(--light);margin-top:.8cqh;line-height:1.5}
+  .flow3 .ar{display:flex;align-items:center;font-size:2.6cqw;color:var(--accent);font-weight:700}
+  /* できる/できない */
+  .caprow{display:flex;gap:1.4cqw;margin-top:3cqh;align-items:stretch}
+  .can{flex:1;background:#fff;border:2px solid #2e9e5b;border-radius:.9cqw;padding:2.2cqh 1.4cqw}
+  .can .h{font-size:1.5cqw;color:#2e9e5b;font-weight:700}
+  .can .d{font-size:1.15cqw;color:var(--text);margin-top:.8cqh;line-height:1.6}
+  .cannot{flex:1.15;background:var(--navy);border:3px solid var(--accent);border-radius:.9cqw;padding:2.2cqh 1.6cqw}
+  .cannot .h{font-size:1.7cqw;color:var(--accent2);font-weight:700}
+  .cannot .d{font-size:1.25cqw;color:#dfe7f3;margin-top:.8cqh;line-height:1.6}
+  /* 連鎖（ドミノ） */
+  .chain{display:flex;flex-direction:column;gap:.4cqh;align-items:stretch;max-width:62cqw;margin:2cqh auto 0}
+  .chain .ev{background:var(--accent);color:#fff;font-weight:700;border-radius:.7cqw;padding:.85cqh 1.6cqw;font-size:1.45cqw;display:flex;align-items:center;gap:1cqw}
+  .chain .ev .tag{background:#fff;color:var(--accent);font-size:1cqw;border-radius:.4cqw;padding:.15cqh .8cqw;font-weight:700;white-space:nowrap}
+  .chain .st{background:#fff;border:2px solid var(--navy);border-radius:.6cqw;padding:.8cqh 1.6cqw;font-size:1.35cqw;color:var(--navy)}
+  .chain .st b{color:var(--accent)}
+  .chain .dn{color:var(--accent);font-size:1.2cqw;font-weight:700;text-align:center;line-height:1.1}
+  /* 4枚 価値マップ */
+  .grid4{display:grid;grid-template-columns:1fr 1fr;gap:1.4cqw;margin-top:2.5cqh}
+  .vcard{background:#fff;border-radius:.9cqw;padding:2cqh 1.8cqw;border-left:.6cqw solid var(--accent)}
+  .vcard .h{font-size:1.6cqw;color:var(--navy);font-weight:700}
+  .vcard .d{font-size:1.2cqw;color:var(--text);margin-top:.6cqh;line-height:1.6}
+  .vcard .d b{color:var(--accent)}
+
+  /* === アイコン（インラインSVG） === */
+  .ic{width:2.2cqw;height:2.2cqw;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;vertical-align:-.4cqw}
+  .ic.fill{fill:currentColor;stroke:none}
+  .iclg{width:4.6cqw;height:4.6cqw}
+  .icxl{width:6cqw;height:6cqw}
+  .iconrow{display:flex;align-items:center;justify-content:center;gap:1.4cqw;color:var(--accent);margin-top:1cqh}
+  .iconrow .lbl{font-size:1.2cqw;color:var(--light);font-weight:700;margin-top:.4cqh}
+  .iconrow .step{flex:none;background:transparent;border:none;padding:0;text-align:center}
+  /* === はるアイコン＋吹き出し === */
+  .speak{display:flex;align-items:center;gap:1.6cqw;margin-top:2.5cqh}
+  .speak.center{justify-content:center}
+  .avatar{position:relative;width:9cqw;height:9cqw;border-radius:50%;flex-shrink:0;border:.35cqw solid var(--accent);background:var(--navy);overflow:hidden;display:flex;align-items:center;justify-content:center}
+  .avatar span{color:#fff;font-size:3.4cqw;font-weight:700}
+  .avatar img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .balloon{position:relative;background:#fff;border:2px solid var(--accent);border-radius:1.2cqw;padding:2cqh 2.6cqw;font-size:1.7cqw;color:var(--navy);line-height:1.6;font-weight:700;max-width:78%}
+  .balloon::before{content:'';position:absolute;left:-1.5cqw;top:50%;margin-top:-.7cqw;border:.75cqw solid transparent;border-right-color:var(--accent)}
+  .balloon::after{content:'';position:absolute;left:-1.1cqw;top:50%;margin-top:-.6cqw;border:.65cqw solid transparent;border-right-color:#fff}
+  .balloon .accent{color:var(--accent)}
+</style>
+</head>
+<body>
+
+<!-- アイコン定義（SVGスプライト） -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M8.5 13h7M8.5 16.5h7"/></symbol>
+  <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 6.5h6l2 2h10V19H3z"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5h16a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H9l-4 4v-4H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z"/><circle cx="9.5" cy="10.5" r="1.3"/><circle cx="14.5" cy="10.5" r="1.3"/></symbol>
+  <symbol id="i-ai" viewBox="0 0 24 24"><rect x="5" y="8" width="14" height="10" rx="2.5"/><path d="M12 8V4.5M9.5 4.5h5"/><circle cx="9.5" cy="13" r="1.2"/><circle cx="14.5" cy="13" r="1.2"/><path d="M3 12v3M21 12v3"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5.2l3.2 2"/></symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2L4 14h6l-1 8 10-13h-7z"/></symbol>
+  <symbol id="i-fish" viewBox="0 0 24 24"><path d="M2.5 12c3.5-5 11-5.5 15-1.5 1.2 1.2 2 1.5 2 1.5s-.8.3-2 1.5C13.5 17.5 6 17 2.5 12z"/><path d="M19.5 10.5L22 7v10l-2.5-3.5"/><circle cx="7.5" cy="11" r=".9"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.2l3 3 5-6"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24"><path d="M21 3L10.5 13.5M21 3l-6.5 18-4-8-8-4z"/></symbol>
+</svg>
+
+<!-- 目次 -->
+<aside class="toc" id="toc">
+  <h3>目次 / TABLE OF CONTENTS</h3>
+  <ol id="tocList"></ol>
+  <div class="toc-foot">
+    <kbd>←</kbd><kbd>→</kbd> ページ送り<br>
+    <kbd>Space</kbd> 次へ<br>
+    <kbd>F</kbd> フルスクリーン<br>
+    <kbd>T</kbd> 目次の開閉
+  </div>
+</aside>
+
+<!-- ステージ -->
+<div class="stage" id="stage">
+<div class="progress" id="progress"></div>
+<div class="deck" id="deck">
+
+<!-- 1. タイトル -->
+<section class="slide navy active" data-title="タイトル">
+  <div style="position:absolute;left:0;top:42%;width:100%;height:14cqh;background:var(--accent)"></div>
+  <div style="position:relative;z-index:2">
+    <h1 style="font-size:5cqw;line-height:1.3">Cowork × Power Automate で、<br>自動化はもう一段遠くまで</h1>
+    <p style="font-size:1.8cqw;margin-top:2.5cqh;color:#cfd8e8">なんでもCopilot 大阪</p>
+  </div>
+  <div class="footer-name">
+    はる（Haru）<br>
+    <span style="font-size:1.3cqw;color:#cfd8e8">Power Automate ハンズオン勉強会 PA45 主催 / automate136.com</span>
+  </div>
+</section>
+
+<!-- 2. 今日持って帰ってほしいもの -->
+<section class="slide" data-title="今日持って帰ってほしいもの">
+  <h2 style="display:inline-block">今日、持って帰ってほしいもの</h2>
+  <p style="text-align:center;font-size:3cqw;color:var(--light);font-weight:700;margin-top:.5cqh">― この3つだけ ―</p>
+
+  <div style="display:flex;gap:1.5cqw;margin-top:3cqh">
+    <div style="flex:1;background:#fff;border:2px solid var(--accent);border-radius:1cqw;padding:2.5cqh 1.6cqw">
+      <div style="font-size:2.4cqw;color:var(--accent);font-weight:700">①</div>
+      <div style="font-size:1.7cqw;color:var(--navy);font-weight:700;margin-top:.6cqh;line-height:1.4">Cowork と PA は<br>相性がいい</div>
+      <div style="font-size:1.2cqw;color:var(--text);margin-top:1cqh;line-height:1.6">組み合わせると、自動化はもう一段遠くまで行ける</div>
+    </div>
+    <div style="flex:1;background:#fff;border:2px solid var(--accent);border-radius:1cqw;padding:2.5cqh 1.6cqw">
+      <div style="font-size:2.4cqw;color:var(--accent);font-weight:700">②</div>
+      <div style="font-size:1.7cqw;color:var(--navy);font-weight:700;margin-top:.6cqh;line-height:1.4">PAを足すと<br>"起点"が増える</div>
+      <div style="font-size:1.2cqw;color:var(--text);margin-top:1cqh;line-height:1.6">Coworkは人と時刻で動く。そこにPAが"出来事の瞬間"を足す</div>
+    </div>
+    <div style="flex:1;background:#fff;border:2px solid var(--accent);border-radius:1cqw;padding:2.5cqh 1.6cqw">
+      <div style="font-size:2.4cqw;color:var(--accent);font-weight:700">③</div>
+      <div style="font-size:1.7cqw;color:var(--navy);font-weight:700;margin-top:.6cqh;line-height:1.4">PAは連鎖の<br>"最初のドミノ"</div>
+      <div style="font-size:1.2cqw;color:var(--text);margin-top:1cqh;line-height:1.6">PAが倒すから、AIの知能が無人で回り続ける</div>
+    </div>
+  </div>
+
+  <div style="margin-top:3cqh;padding:2.2cqh 3cqw;background:var(--accent);border-radius:1cqw;text-align:center">
+    <p style="font-size:1.4cqw;color:#fff;font-weight:700;letter-spacing:.05em">＼ 聞き終わったあと、あなたはこうなれる ／</p>
+    <p style="font-size:2.2cqw;color:#fff;font-weight:700;margin-top:.8cqh">明日の自分の仕事から「これ、PA化できるかも」を見つけられる。</p>
+  </div>
+
+  <div class="meta">なんでもCopilot 大阪 / はる</div>
+  <div class="pageno"></div>
+</section>
+
+<!-- 3. 自己紹介 -->
+<section class="slide" data-title="自己紹介">
+  <h2 style="display:inline-block">自己紹介</h2>
+  <div style="display:grid;grid-template-columns:1.5fr 1fr;gap:3cqw;margin-top:2cqh;align-items:start">
+    <div>
+      <div style="display:flex;align-items:center;gap:1.4cqw">
+        <div class="avatar" style="width:6.5cqw;height:6.5cqw"><span>は</span><img src="assets/haru-icon.png" alt="はる" onerror="this.remove()"></div>
+        <div>
+          <div style="font-size:2.1cqw;color:var(--navy);font-weight:700">はる（Haru）</div>
+          <div style="font-size:1.3cqw;color:var(--accent);font-weight:700">X：@isamu_Automate</div>
+        </div>
+      </div>
+      <ul class="bullets" style="margin-top:2.5cqh">
+        <li>会社員。社内で有志の <b>Power Automate 講座</b> を運営（5年以上継続）</li>
+        <li>社外で <b>PA45</b>（ハンズオン勉強会）を主催 / connpass <b>Vol.10</b> まで開催</li>
+        <li><b>automate136.com</b> で Tips・実装ノウハウを発信</li>
+      </ul>
+    </div>
+    <div style="background:#fff;border:3px solid var(--accent);border-radius:1cqw;overflow:hidden;height:44cqh;display:flex;align-items:center;justify-content:center">
+      <img src="assets/photos/haru-speaking.jpg" alt="登壇するはる" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none';this.parentNode.querySelector('.ph').style.display='flex'">
+      <div class="ph" style="display:none;flex-direction:column;align-items:center;justify-content:center;color:var(--light);font-size:1.3cqw;text-align:center;padding:2cqw;line-height:1.6">登壇写真をここに<br>assets/photos/<br>haru-speaking.jpg</div>
+    </div>
+  </div>
+  <div style="margin-top:2.5cqh;padding:2.4cqh 3cqw;background:#fff;border-left:.6cqw solid var(--accent);border-radius:.5cqw">
+    <p style="font-size:1.7cqw;color:var(--accent);font-weight:700">今日は所属の話は脇に置いて、個人としての見解でお話します。</p>
+    <p class="note" style="margin-top:.8cqh">非IT職の立場から「自動化を広げる側」と「Cowork時代にPAをどう生かすか」を、現場感覚で。</p>
+  </div>
+  <div class="meta">なんでもCopilot 大阪 / はる</div>
+  <div class="pageno"></div>
+</section>
+
+<!-- 4. ★背骨：通しテーマ（2幕の地図） -->
+<section class="slide navy" data-title="今日の軸は1本だけ">
+  <h2 style="color:#cfd8e8;font-size:2cqw">先に、今日の "軸" をお見せします ──</h2>
+  <div style="text-align:center;margin-top:1.5cqh">
+    <p style="font-size:1.5cqw;color:#cfd8e8">私がずっとやってきたことは、ぜんぶ1本の線でつながっています。</p>
+    <p style="font-size:3.4cqw;color:#fff;font-weight:700;line-height:1.4;margin-top:1.5cqh">自動化を、<span class="accent">より多くの人へ</span>。<br>そして、<span class="accent">もう一段遠くへ</span>。</p>
+  </div>
+
+  <div style="display:flex;gap:2cqw;margin-top:3cqh;align-items:stretch">
+    <div style="flex:1;background:#fff;border-radius:1cqw;padding:2.6cqh 2cqw;border-top:.6cqh solid var(--accent)">
+      <div style="font-size:1.3cqw;color:var(--accent);font-weight:700;letter-spacing:.08em">第1幕 ／ これまで</div>
+      <div style="font-size:2.2cqw;color:var(--navy);font-weight:700;margin-top:1cqh">より多くの "人" へ</div>
+      <div style="font-size:1.3cqw;color:var(--text);margin-top:1cqh;line-height:1.6">社内講座で、未経験者にも自動化を届けてきた話</div>
+    </div>
+    <div style="display:flex;align-items:center;font-size:2.4cqw;color:var(--accent2);font-weight:700">→</div>
+    <div style="flex:1;background:#fff;border-radius:1cqw;padding:2.6cqh 2cqw;border-top:.6cqh solid var(--accent)">
+      <div style="font-size:1.3cqw;color:var(--accent);font-weight:700;letter-spacing:.08em">第2幕 ／ これから</div>
+      <div style="font-size:2.2cqw;color:var(--navy);font-weight:700;margin-top:1cqh">もう一段 "遠く" へ</div>
+      <div style="font-size:1.3cqw;color:var(--text);margin-top:1cqh;line-height:1.6">Cowork × PA で、自動化の射程を伸ばす話</div>
+    </div>
+  </div>
+  <p class="note" style="margin-top:2.5cqh;text-align:center;max-width:90%;margin-left:auto;margin-right:auto">この2つは別の話に聞こえるかもしれません。でも<b>同じ志の、続き</b>です。</p>
+  <div class="meta">なんでもCopilot 大阪 / はる</div>
+  <div class="pageno"></div>
+</section>
+
+<!-- ===== 第1幕：より多くの人へ ===== -->
+<!-- 5. 哲学（第1幕の見出し兼ねる） -->
+<section class="slide" data-title="第1幕：自動化を、より多くの人へ">
+  <div class="actlabel">第1幕 ／ より多くの "人" へ</div>
+  <h2 style="display:block;margin-top:1.4cqh">私が大事にしてること</h2>
+  <div style="margin-top:5cqh;text-align:center">
+    <p class="lead huge">自動化を、より多くの人へ。</p>
+    <p class="lead" style="margin-top:4cqh;color:var(--text)">未経験の人でも、自動化の恩恵が受けられるように。</p>
+    <p class="note" style="margin:3cqh auto 0;text-align:center">ITに詳しい一部の人だけが効率化されても、現場全体は変わらない。<br>「Power Automate を触ったことがない人」が、明日から仕事が変わる ── それが講座を組む上での出発点。</p>
+  </div>
+  <div class="meta">なんでもCopilot 大阪 / はる</div>
+  <div class="pageno"></div>
+</section>
+
+<!-- 6. やってきたこと（3つの工夫・凝縮） -->
+<section class="slide" data-title="やってきたこと：3つの工夫">
+  <h2 style="display:inline-block">「より多くの人へ」のためにやった、3つの工夫</h2>
+  <p class="sub" style="margin-top:.6cqh">未経験者にも自動化を届けるため、順番と仕組みと見せ方を工夫しました。</p>
+
+  <div style="display:flex;gap:1.6cqw;margin-top:3cqh;align-items:stretch">
+    <div style="flex:1;background:#fff;border:2px solid var(--navy);border-radius:1cqw;padding:2.6cqh 1.8cqw">
+      <div style="font-size:1.3cqw;color:var(--accent);font-weight:700"><svg class="ic"><use href="#i-fish"/></svg> ① 魚を、先に渡す</div>
+      <div style="font-size:1.8cqw;color:var(--navy);font-weight:700;margin-top:1cqh;line-height:1.4">作り方より<br>"美味しさ"が先</div>
+      <div style="font-size:1.25cqw;color:var(--text);margin-top:1.2cqh;line-height:1.7"><b>ZIPフローを配布</b>して、まず「楽になる体験」を渡す。"美味しい"を知った人だけが「自分でも作りたい」になる。</div>
+    </div>
+    <div style="flex:1;background:#fff;border:2px solid var(--navy);border-radius:1cqw;padding:2.6cqh 1.8cqw">
+      <div style="font-size:1.3cqw;color:var(--accent);font-weight:700"><svg class="ic"><use href="#i-folder"/></svg> ② 勝手に広がる仕組み</div>
+      <div style="font-size:1.8cqw;color:var(--navy);font-weight:700;margin-top:1cqh;line-height:1.4">置いておくだけで<br>広がる</div>
+      <div style="font-size:1.25cqw;color:var(--text);margin-top:1.2cqh;line-height:1.7">SPOに<b>動画＋スライド＋ZIP</b>を一式。口コミと検索で <b style="color:var(--accent)">480+チーム</b> まで広がった。</div>
+    </div>
+    <div style="flex:1;background:#fff;border:2px solid var(--navy);border-radius:1cqw;padding:2.6cqh 1.8cqw">
+      <div style="font-size:1.3cqw;color:var(--accent);font-weight:700"><svg class="ic"><use href="#i-eye"/></svg> ③ 効果を見える化</div>
+      <div style="font-size:1.8cqw;color:var(--navy);font-weight:700;margin-top:1cqh;line-height:1.4">貢献が見えると<br>次に手が伸びる</div>
+      <div style="font-size:1.25cqw;color:var(--text);margin-top:1.2cqh;line-height:1.7"><b>実行ログ＋Power BI</b>で「あなたはこれだけ貢献してる」を提示。測定じゃなく<b>モチベ設計</b>。</div>
+    </div>
+  </div>
+
+  <div style="margin-top:2.8cqh;padding:1.8cqh 3cqw;background:var(--accent);border-radius:.8cqw;text-align:center">
+    <p style="font-size:1.7cqw;color:#fff;font-weight:700">入口を低く・勝手にスケール・効果が続けて見える ── これで「広がる」が回り出した。</p>
+  </div>
+  <div class="meta">なんでもCopilot 大阪 / はる</div>
+  <div class="pageno"></div>
+</section>
+
+<!-- 7. PAの3強み -->
+<section class="slide" data-title="PAの3つの強み">
+  <h2 style="display:inline-block">Power Automate の本質的な強み</h2>
+  <div class="cards" style="margin-top:5cqh">
+    <div class="card">
+      <div class="tagline">STRENGTH 1</div>
+      <div class="lbl" style="font-size:3cqw;color:var(--accent)">作って</div>
+      <div class="desc" style="margin-top:2cqh">フローという明確な形に</div>
+    </div>
+    <div class="card">
+      <div class="tagline">STRENGTH 2</div>
+      <div class="lbl" style="font-size:3cqw;color:var(--accent)">残せて</div>
+      <div class="desc" style="margin-top:2cqh">明日も来週も来年も<br>同じ手順で動き続ける</div>
+    </div>
+    <div class="card">
+      <div class="tagline">STRENGTH 3</div>
+      <div class="lbl" style="font-size:3cqw;color:var(--accent)">測れる</div>
+      <div class="desc" style="margin-top:2cqh">実行ログで<br>実稼働ベースの効果が見える</div>
+    </div>
+  </div>
+  <p class="sub" style="margin-top:4cqh;text-align:center">この3つが揃ってる自動化ツール、実はそう多くない。</p>
+  <p class="note" style="margin:1.5cqh auto 0;text-align:center;max-width:80%">"作って・残せて・測れる" が揃うから、PAは <b>"資産として蓄積する自動化"</b> を最も自然に組める。</p>
+  <div class="meta">なんでもCopilot 大阪 / はる</div>
+  <div class="pageno"></div>
+</section>
+
+<!-- 8. 反省点 + 仕込み（→第2幕への橋） -->
+<section class="slide sky" data-title="反省点＋仕込んでいた一手">
+  <h2 style="display:inline-block">反省点 ── と、仕込んでいた一手</h2>
+  <div style="margin-top:3cqh;padding:2.5cqh 3cqw;background:#fff;border-left:.5cqw solid #d44;border-radius:.5cqw">
+    <p style="font-size:1.5cqw;color:#d44;font-weight:700">課題</p>
+    <p style="font-size:2.4cqw;color:var(--navy);font-weight:700;margin-top:1cqh">「次の魚、まだ？」状態</p>
+    <p style="font-size:1.3cqw;color:var(--light);margin-top:.8cqh">受講者が"配られる側"に居心地よく留まる</p>
+  </div>
+  <div style="margin-top:3cqh;padding:2.5cqh 3cqw;background:#fff;border-left:.5cqw solid var(--accent);border-radius:.5cqw">
+    <p style="font-size:1.5cqw;color:var(--accent);font-weight:700">仕込んでいた一手</p>
+    <p style="font-size:2cqw;color:var(--navy);font-weight:700;margin-top:1cqh">アンケートで毎回 ──<br><span class="accent">「自分でも開発してみたいですか？」</span></p>
+    <p style="font-size:1.4cqw;color:var(--text);margin-top:1cqh">"はい"の人を自動フィルター → <b>クリエイター候補リストは、すでに手元にある</b></p>
+  </div>
+  <p style="margin-top:3cqh;font-size:2cqw;font-weight:700;color:var(--accent);text-align:center">そして、ちょうどこのタイミングで Cowork が来た。</p>
+  <div class="meta">なんでもCopilot 大阪 / はる</div>
+  <div class="pageno"></div>
+</section>
+
+<!-- ===== 第2幕：もう一段遠くへ ===== -->
+<!-- 9. Cowork来た問題提起 -->
+<section class="slide navy" data-title="第2幕：Cowork来た、PA要らない？">
+  <div class="actlabel">第2幕 ／ もう一段 "遠く" へ</div>
+  <h2 style="color:#cfd8e8;font-size:2cqw;margin-top:1.4cqh">最近、よく聞かれるんです ──</h2>
+  <div style="margin-top:2cqh">
+    <div class="quote" style="background:#fff;border:none;font-size:4cqw;color:var(--navy)">
+      Cowork が来たら、<br>Power Automate ってもう要らなくない？
+    </div>
+  </div>
+  <div class="speak center" style="margin-top:2.5cqh">
+    <div class="avatar"><span>は</span><img src="assets/haru-icon.png" alt="はる" onerror="this.remove()"></div>
+    <div class="balloon">…正直、私もちょっと揺れました。</div>
+  </div>
+  <p class="note" style="margin:2cqh auto 0;text-align:center;max-width:88%"><b>Copilot Cowork</b>＝Microsoft 365 Copilot の機能（Frontierプレビュー）。自然言語で頼むと、メール送信・会議調整・資料作成などを自分で実行してくれる。</p>
+  <div class="meta">なんでもCopilot 大阪 / はる</div>
+  <div class="pageno"></div>
+</section>
+
+<!-- 10. ★正直に認める：Coworkはここまでできる -->
+<section class="slide sky" data-title="正直に：Coworkはここまでできる">
+  <h2 style="display:inline-block">まず正直に ── Cowork、めちゃくちゃ優秀です</h2>
+  <p class="sub" style="margin-top:.5cqh">「AIだから添付が読めない」みたいな話は、もう通用しません。正しく認めます。</p>
+
+  <div class="caprow">
+    <div class="can">
+      <div class="h"><svg class="ic"><use href="#i-eye"/></svg> 読める</div>
+      <div class="d">受信箱もOutlookの<b>添付ファイルも</b>、頼めば中身を読んで要約してくれる（Work IQ＝Graph経由）</div>
+    </div>
+    <div class="can">
+      <div class="h"><svg class="ic"><use href="#i-send"/></svg> 送る・作る</div>
+      <div class="d">メール送信・Teams投稿・Word/Excel/PDF作成まで、<b>実行</b>してくれる</div>
+    </div>
+    <div class="can">
+      <div class="h"><svg class="ic"><use href="#i-clock"/></svg> 定期実行できる</div>
+      <div class="d">「毎朝9時に未読を要約」など<b>スケジュール実行</b>もできる</div>
+    </div>
+    <div class="cannot">
+      <div class="h"><svg class="ic fill"><use href="#i-bolt"/></svg> ＋ ここに PA を足すと…</div>
+      <div class="d">Coworkの定期実行は<b>"時刻"がきっかけ</b>。そこへ<b>"出来事が起きた瞬間に起動する"PA</b>を足すと、届く範囲がもう一歩外まで広がる</div>
+    </div>
+  </div>
+
+  <p class="note" style="margin-top:2.5cqh;text-align:center;max-width:92%;margin-left:auto;margin-right:auto">※ 2026年6月・Frontierプレビュー時点（Microsoft Learn / Support 公式ドキュメントより）。<b>対立じゃなく、ここが PA の "足しどころ" です。</b></p>
+  <div class="meta">なんでもCopilot 大阪 / はる</div>
+  <div class="pageno"></div>
+</section>
+
+<!-- 11. ★差は1つ「起点」 -->
+<section class="slide" data-title="差は1つだけ：起点">
+  <h2 style="display:inline-block">PAは、Coworkに "出来事" という起点を足す</h2>
+  <p class="sub" style="margin-top:.5cqh">どんな自動化も「起点 → 知能 → 結末」の3つでできています。</p>
+
+  <div class="flow3">
+    <div class="b hot">
+      <div class="k">① 起点（気づく）</div>
+      <div class="v">出来事に<br>反応する</div>
+      <div class="d">Coworkの起点に、PAが"出来事"を足せる場所</div>
+    </div>
+    <div class="ar">→</div>
+    <div class="b">
+      <div class="k">② 知能（考える）</div>
+      <div class="v">要約・判断<br>下書き</div>
+      <div class="d">ここはCoworkが最強。AIの仕事</div>
+    </div>
+    <div class="ar">→</div>
+    <div class="b">
+      <div class="k">③ 結末（届ける）</div>
+      <div class="v">送る・残す<br>通知する</div>
+      <div class="d">ここはどちらもできる</div>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:1.6cqw;margin-top:3cqh">
+    <div style="flex:1;background:#fff;border:2px solid var(--navy);border-radius:.8cqw;padding:2cqh 2cqw">
+      <div style="font-size:1.5cqw;color:var(--navy);font-weight:700">Coworkの起点</div>
+      <div style="font-size:1.4cqw;color:var(--text);margin-top:.8cqh;line-height:1.7"><b>人が頼む</b>（「やって」）／ <b>時計</b>（毎朝9時）<br>＝ "人" か "時刻" がアンカー</div>
+    </div>
+    <div style="flex:1;background:#eef4ff;border:3px solid var(--accent);border-radius:.8cqw;padding:2cqh 2cqw">
+      <div style="font-size:1.5cqw;color:var(--accent);font-weight:700">＋ PAが足す起点</div>
+      <div style="font-size:1.4cqw;color:var(--text);margin-top:.8cqh;line-height:1.7"><b>出来事</b>（届いた／置かれた／承認された、その瞬間）<br>＝ "世界の変化" がアンカー。ここが新しく増える</div>
+    </div>
+  </div>
+  <div class="meta">なんでもCopilot 大阪 / はる</div>
+  <div class="pageno"></div>
+</section>
+
+<!-- 12. 事例：出来事の瞬間（シーン設定） -->
+<section class="slide sky" data-title="事例：出来事の瞬間">
+  <h2 style="display:inline-block">じゃあ、実際に組み合わせてみた</h2>
+  <p class="note" style="margin-top:.5cqh;font-size:1.4cqw">※ ここからは、私の<b>個人PC・個人テナントでの検証</b>の話です。会社とは関係ありません。</p>
+
+  <div style="margin-top:2cqh;padding:2cqh 3cqw;background:#fff;border-radius:.8cqw;border:1px solid #ddd">
+    <p style="font-size:1.5cqw;color:var(--navy);font-weight:700">やりたかったこと</p>
+    <p style="font-size:1.7cqw;color:var(--text);margin-top:.6cqh;line-height:1.6"><b>資料が届いた瞬間</b>に、中身をAIが要約して、Teamsに「これ来たよ、要点これだよ」と自動で流したい。</p>
+    <div class="iconrow" style="margin-top:1cqh">
+      <div class="step"><svg class="iclg"><use href="#i-mail"/></svg><div class="lbl">届く</div></div>
+      <span style="font-size:1.8cqw;color:var(--accent);font-weight:700">→</span>
+      <div class="step"><svg class="iclg"><use href="#i-ai"/></svg><div class="lbl">AIが要約</div></div>
+      <span style="font-size:1.8cqw;color:var(--accent);font-weight:700">→</span>
+      <div class="step"><svg class="iclg"><use href="#i-chat"/></svg><div class="lbl">Teamsへ</div></div>
+    </div>
+  </div>
+
+  <div class="speak">
+    <div class="avatar"><span>は</span><img src="assets/haru-icon.png" alt="はる" onerror="this.remove()"></div>
+    <div class="balloon">Coworkでも"頼めば"要約はできる。でも私、ファイルが届く瞬間を<b>24時間は見張ってられない</b>んです。<br><span class="accent">"届いた瞬間に動く" のは、PAが得意なところ。</span></div>
+  </div>
+  <div class="meta">なんでもCopilot 大阪 / はる</div>
+  <div class="pageno"></div>
+</section>
+
+<!-- 13. フロー全体スクショ -->
+<section class="slide" data-title="作ったフロー">
+  <h2 style="display:inline-block">実際に作ったフロー</h2>
+  <p class="sub" style="margin-top:.5cqh">個人テナントで、こう組みました。</p>
+  <div class="shot" style="margin-top:2cqh">
+    <img src="assets/flow-fullflow.png" alt="フロー全体のスクリーンショット"
+         style="max-width:100%;max-height:100%;object-fit:contain;border-radius:.4cqw"
+         onerror="this.style.display='none';this.parentNode.querySelector('.shot-ph').style.display='flex'">
+    <div class="shot-ph">
+      <div>
+        <div style="color:var(--accent)"><svg class="ic fill iclg"><use href="#i-bolt"/></svg></div>
+        <div style="font-size:1.5cqw;margin-top:1cqh;font-weight:700">フロー全体のスクリーンショットをここに</div>
+        <div style="font-size:1.1cqw;margin-top:.6cqh;color:var(--light)">assets/flow-fullflow.png に保存すると自動で表示されます</div>
+      </div>
+    </div>
+  </div>
+  <div class="meta">なんでもCopilot 大阪 / はる</div>
+  <div class="pageno"></div>
+</section>
+
+<!-- 14. 役割分解 -->
+<section class="slide" data-title="どこがPAで、どこがAIか">
+  <h2 style="display:inline-block">どこがPAで、どこがAIか</h2>
+  <div style="display:flex;gap:1.5cqw;margin-top:2.5cqh;align-items:stretch">
+    <div style="flex:1;background:#eef4ff;border:3px solid var(--accent);border-radius:.8cqw;padding:1.8cqh 1.6cqw">
+      <div style="text-align:center;color:var(--accent)"><svg class="iclg"><use href="#i-folder"/></svg></div>
+      <div style="font-size:1.5cqw;color:var(--accent);font-weight:700;margin-top:.6cqh">① PA ＝ 入口（検知）</div>
+      <div style="font-size:1.3cqw;color:var(--text);margin-top:.8cqh;line-height:1.6"><b>ファイルが届いた瞬間</b>を検知。人がいなくても、24時間勝手に発火。</div>
+    </div>
+    <div style="display:flex;align-items:center;font-size:2cqw;color:var(--accent);font-weight:700">→</div>
+    <div style="flex:1;background:#fff;border:2px solid var(--navy);border-radius:.8cqw;padding:1.8cqh 1.6cqw">
+      <div style="text-align:center;color:var(--navy)"><svg class="iclg"><use href="#i-ai"/></svg></div>
+      <div style="font-size:1.5cqw;color:var(--navy);font-weight:700;margin-top:.6cqh">② AI ＝ 頭脳（要約）</div>
+      <div style="font-size:1.3cqw;color:var(--text);margin-top:.8cqh;line-height:1.6">中身を読んで、<b>要点を3行に要約</b>。ここは"知能"の仕事。</div>
+    </div>
+    <div style="display:flex;align-items:center;font-size:2cqw;color:var(--accent);font-weight:700">→</div>
+    <div style="flex:1;background:#eef4ff;border:3px solid var(--accent);border-radius:.8cqw;padding:1.8cqh 1.6cqw">
+      <div style="text-align:center;color:var(--accent)"><svg class="iclg"><use href="#i-chat"/></svg></div>
+      <div style="font-size:1.5cqw;color:var(--accent);font-weight:700;margin-top:.6cqh">③ PA ＝ 出口（配信）</div>
+      <div style="font-size:1.3cqw;color:var(--text);margin-top:.8cqh;line-height:1.6">要約を<b>Teamsに自動投稿</b>。誰も操作してないのに、要点が手元に届く。</div>
+    </div>
+  </div>
+  <div style="margin-top:2.8cqh;padding:2cqh 3cqw;background:var(--accent);border-radius:.8cqw;text-align:center">
+    <p style="font-size:2cqw;color:#fff;font-weight:700">AIの"知能"を、PAの"24時間動く体"に載せる。</p>
+    <p style="font-size:1.4cqw;color:#fff;margin-top:.8cqh">入口と出口をPAが握るから、AIの頭脳が"頼まれなくても"働く。</p>
+  </div>
+  <div class="meta">なんでもCopilot 大阪 / はる</div>
+  <div class="pageno"></div>
+</section>
+
+<!-- 15. ★瞬間が効く場面（価値マップ） -->
+<section class="slide" data-title="なぜ「瞬間」が要るのか">
+  <h2 style="display:inline-block">"毎朝9時" で足りる仕事も多い。＋PAで届く4場面</h2>
+  <p class="sub" style="margin-top:.5cqh">そこへPAを足すと、"届いた瞬間に動く" が効くのは、この4つの場面です。</p>
+  <div class="grid4">
+    <div class="vcard">
+      <div class="h">① 遅れると損する（速さが価値）</div>
+      <div class="d">問い合わせの一次対応・異常通知の即エスカレ。<b>半日放置＝失注・クレーム・被害拡大</b></div>
+    </div>
+    <div class="vcard">
+      <div class="h">② 取りこぼせない（全件捕捉）</div>
+      <div class="d">注文メールを即記録・Teamsの「至急」を拾う。<b>日次まとめだと埋もれる・抜ける</b></div>
+    </div>
+    <div class="vcard">
+      <div class="h">③ いつ来るか読めない</div>
+      <div class="d">来る時刻が不定。<b>「9時にまとめて」では、来たか毎回気にする羽目に</b>なる</div>
+    </div>
+    <div class="vcard">
+      <div class="h">④ 自分がいなくても回る</div>
+      <div class="d">夜間・休日・会議中・担当が辞めた後でも。<b>人の注意・記憶・在席に依存しない</b></div>
+    </div>
+  </div>
+  <p class="note" style="margin-top:2.2cqh;text-align:center;max-width:92%;margin-left:auto;margin-right:auto"><b>「毎朝まとめて」でいい仕事はCoworkで十分。"その瞬間"が要る仕事は、PAが得意です。</b></p>
+  <div class="meta">なんでもCopilot 大阪 / はる</div>
+  <div class="pageno"></div>
+</section>
+
+<!-- 16. ★★クライマックス：起点＋継ぎ目＝連鎖 -->
+<section class="slide" data-title="PAは「起点」と「継ぎ目」を握る">
+  <h2 style="display:inline-block">PAは、連鎖の "起点" と "継ぎ目" を握る</h2>
+  <p class="sub" style="margin-top:.3cqh">本当の自動化は1回で終わらない。途中にも"出来事"があり、そこが人なら止まる。</p>
+
+  <div class="chain">
+    <div class="ev"><span class="tag">出来事①</span> <svg class="ic"><use href="#i-mail"/></svg> 経費の申請フォームが送信される</div>
+    <div class="dn">↓ PA</div>
+    <div class="st">申請を拾って、<b>承認者へ即通知</b>（期限カウント開始）</div>
+    <div class="dn">↓</div>
+    <div class="ev"><span class="tag">出来事②</span> <svg class="ic"><use href="#i-check"/></svg> 承認が下りる　── 人なら「お、承認された」と気づいて次に渡す継ぎ目</div>
+    <div class="dn">↓ AI → PA</div>
+    <div class="st"><b>AI</b>が発注書・通知文を生成 → <b>PA</b>がSharePoint保存＋経理へTeams通知</div>
+    <div class="dn">↓</div>
+    <div class="ev"><span class="tag">出来事③</span> <svg class="ic"><use href="#i-file"/></svg> ファイルが保存される　── ここも継ぎ目</div>
+    <div class="dn">↓ PA</div>
+    <div class="st">台帳に<b>自動記帳</b>・月次集計を更新</div>
+  </div>
+
+  <p class="note" style="margin-top:1.8cqh;text-align:center;max-width:94%;margin-left:auto;margin-right:auto"><b>オレンジ＝出来事（継ぎ目）。人なら毎回ここで止まる。PAは全部の継ぎ目を"出来事"で自動的につなぐ。</b></p>
+  <div class="meta">なんでもCopilot 大阪 / はる</div>
+  <div class="pageno"></div>
+</section>
+
+<!-- 17. ★正直な線引き：会話内の連鎖 vs 出来事をまたぐ連鎖 -->
+<section class="slide" data-title="連鎖の正直な線引き">
+  <h2 style="display:inline-block">PAを足すと、連鎖が "会話の外" まで伸びる</h2>
+  <div class="vs" style="margin-top:3cqh">
+    <div class="panel cowork">
+      <h3>Coworkの連鎖</h3>
+      <p><b>一度の会話の中</b>で完結する。<br>Word作る→メール→Teams投稿 を一気に。<br><br>＝ 同期・その場・<b>1回の起動</b></p>
+    </div>
+    <div class="x">＋</div>
+    <div class="panel pa">
+      <h3>PAの連鎖</h3>
+      <p><b>出来事をまたいで</b>、無人で続く。<br>申請→承認→生成→保存→記帳を、何日またいでも。<br><br>＝ 非同期・<b>無人・継続</b></p>
+    </div>
+  </div>
+  <div style="margin-top:3cqh;padding:2.2cqh 3cqw;background:var(--navy);border-radius:1cqw;text-align:center">
+    <p style="font-size:2.2cqw;color:#fff;font-weight:700">会話の中はCowork、会話の外はPA。<span class="accent">足すほど、自動化の射程が伸びる。</span></p>
+  </div>
+  <div class="meta">なんでもCopilot 大阪 / はる</div>
+  <div class="pageno"></div>
+</section>
+
+<!-- 18. 結論 -->
+<section class="slide navy" data-title="結論：組ませて引き出す">
+  <p style="font-size:1.8cqw;color:#cfd8e8">だから、私の答えはこうです ──</p>
+  <div style="margin-top:3.5cqh;text-align:center">
+    <p style="font-size:3cqw;color:#fff;line-height:1.5;font-weight:700">Cowork は、そのまま活かす。<br>そこに PA を足して、<span class="accent">届く範囲</span>をもう一段広げる。</p>
+  </div>
+  <div style="margin-top:3.5cqh;text-align:center;padding:2.6cqh 3cqw;background:var(--accent);border-radius:1cqw">
+    <p style="font-size:2.6cqw;color:#fff;font-weight:700">PAが連鎖の "起点" と "継ぎ目" を握るから、<br>AIの知能が、無人で・もう一段遠くまで働く。</p>
+  </div>
+  <p class="note" style="margin-top:2.5cqh;text-align:center;max-width:90%;margin-left:auto;margin-right:auto">出来事の瞬間にPAが発火し、Coworkの知能が動き、PAが結果を届け、次の出来事へつなぐ。<br>組み合わせると、Cowork単体では届かなかった範囲まで能力が発揮される。</p>
+  <div class="meta">なんでもCopilot 大阪 / はる</div>
+  <div class="pageno"></div>
+</section>
+
+<!-- 19. PA45 -->
+<section class="slide" data-title="PA45でこれから扱いたい">
+  <h2 style="display:inline-block">PA45 でこれから扱いたいこと</h2>
+  <p class="sub">「PA だけ」じゃ、これからの自動化を学びにくい。</p>
+  <div class="badges" style="margin-top:5cqh;justify-content:center">
+    <span class="badge" style="font-size:2cqw;padding:2cqh 2.5cqw">PA × Cowork</span>
+    <span class="badge" style="font-size:2cqw;padding:2cqh 2.5cqw">PA × Copilot</span>
+    <span class="badge" style="font-size:2cqw;padding:2cqh 2.5cqw">PA × AI</span>
+  </div>
+  <p style="margin-top:4cqh;font-size:2cqw;text-align:center;color:var(--accent);font-weight:700">「Cowork時代の Power Automate」をテーマに、一緒に考えていく場へ。</p>
+  <p class="note" style="margin:2cqh auto 0;text-align:center;max-width:85%">PAだけを単独で教える勉強会は、もう聞き手のニーズと合わない。<b>"何と組み合わせて使うか"</b> を扱う場へ、PA45 自体もアップデートしていきます。</p>
+  <p style="margin-top:2cqh;font-size:1.4cqw;text-align:center;color:var(--light)">connpass で <b>PA45</b> を覗いてみてください</p>
+  <div class="meta">なんでもCopilot 大阪 / はる</div>
+  <div class="pageno"></div>
+</section>
+
+<!-- 20. Copilot愛好者へ -->
+<section class="slide navy" data-title="Copilot愛好者のみなさんへ">
+  <p style="font-size:1.8cqw;color:#cfd8e8">Copilot を愛してるみなさんへ ──</p>
+  <div style="margin-top:5cqh">
+    <p style="font-size:4.2cqw;color:#fff;line-height:1.4;font-weight:700">Power Automate も、<br>ちょっと触ってみてください。</p>
+  </div>
+  <p style="margin-top:5cqh;font-size:2.2cqw;color:#cfd8e8;line-height:1.6">Cowork が "今これやって" を引き受けてくれる時代に、<br>PA は <span class="accent">"出来事の瞬間に起動する実行アーム"</span> になります。</p>
+  <p style="margin-top:3cqh;font-size:2.2cqw;color:var(--accent);font-weight:700">Cowork に PA を少し足すと、もう一段先まで手が届く ── そんな気がしています。</p>
+  <p class="note" style="margin-top:2cqh">「頼むより前に、勝手に動いてほしい定型業務」も意外とあります。そういう時にPAを横に置いておくと、自動化の幅がもう少し広がるかもしれません。</p>
+  <div class="meta">なんでもCopilot 大阪 / はる</div>
+  <div class="pageno"></div>
+</section>
+
+<!-- 20.5 現場の盛り上がり（写真コラージュ） -->
+<section class="slide navy" data-title="現場の盛り上がり">
+  <h2 style="color:#fff;font-size:2.4cqw;display:inline-block">数字の裏には、こんな "盛り上がり" があります</h2>
+  <p style="font-size:1.4cqw;color:#cfd8e8;margin-top:.3cqh">Power Platform コミュニティの現場 ── 学んで、笑って、つながる一日。</p>
+  <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:.6cqw;margin-top:1.6cqh">
+    <img src="assets/photos/PXL_20260314_045816972.jpg" style="width:100%;height:10.4cqh;object-fit:cover;border-radius:.4cqw" onerror="this.style.visibility='hidden'">
+    <img src="assets/photos/PXL_20260314_050106583.jpg" style="width:100%;height:10.4cqh;object-fit:cover;border-radius:.4cqw" onerror="this.style.visibility='hidden'">
+    <img src="assets/photos/PXL_20260314_050305850.jpg" style="width:100%;height:10.4cqh;object-fit:cover;border-radius:.4cqw" onerror="this.style.visibility='hidden'">
+    <img src="assets/photos/PXL_20260314_050324870.jpg" style="width:100%;height:10.4cqh;object-fit:cover;border-radius:.4cqw" onerror="this.style.visibility='hidden'">
+    <img src="assets/photos/PXL_20260314_050917173.jpg" style="width:100%;height:10.4cqh;object-fit:cover;border-radius:.4cqw" onerror="this.style.visibility='hidden'">
+    <img src="assets/photos/PXL_20260314_064158924.jpg" style="width:100%;height:10.4cqh;object-fit:cover;border-radius:.4cqw" onerror="this.style.visibility='hidden'">
+    <img src="assets/photos/PXL_20260314_064753384.jpg" style="width:100%;height:10.4cqh;object-fit:cover;border-radius:.4cqw" onerror="this.style.visibility='hidden'">
+    <img src="assets/photos/PXL_20260314_065525798.jpg" style="width:100%;height:10.4cqh;object-fit:cover;border-radius:.4cqw" onerror="this.style.visibility='hidden'">
+    <img src="assets/photos/PXL_20260314_071159067.jpg" style="width:100%;height:10.4cqh;object-fit:cover;border-radius:.4cqw" onerror="this.style.visibility='hidden'">
+    <img src="assets/photos/PXL_20260314_071219518.jpg" style="width:100%;height:10.4cqh;object-fit:cover;border-radius:.4cqw" onerror="this.style.visibility='hidden'">
+    <img src="assets/photos/PXL_20260314_072009141.jpg" style="width:100%;height:10.4cqh;object-fit:cover;border-radius:.4cqw" onerror="this.style.visibility='hidden'">
+    <img src="assets/photos/PXL_20260314_072040442.jpg" style="width:100%;height:10.4cqh;object-fit:cover;border-radius:.4cqw" onerror="this.style.visibility='hidden'">
+    <img src="assets/photos/PXL_20260314_072045129.jpg" style="width:100%;height:10.4cqh;object-fit:cover;border-radius:.4cqw" onerror="this.style.visibility='hidden'">
+    <img src="assets/photos/PXL_20260314_072552637.jpg" style="width:100%;height:10.4cqh;object-fit:cover;border-radius:.4cqw" onerror="this.style.visibility='hidden'">
+    <img src="assets/photos/PXL_20260314_074933397.jpg" style="width:100%;height:10.4cqh;object-fit:cover;border-radius:.4cqw" onerror="this.style.visibility='hidden'">
+    <img src="assets/photos/PXL_20260314_075611202.jpg" style="width:100%;height:10.4cqh;object-fit:cover;border-radius:.4cqw" onerror="this.style.visibility='hidden'">
+    <img src="assets/photos/PXL_20260314_075642408.jpg" style="width:100%;height:10.4cqh;object-fit:cover;border-radius:.4cqw" onerror="this.style.visibility='hidden'">
+    <img src="assets/photos/PXL_20260314_075746304.jpg" style="width:100%;height:10.4cqh;object-fit:cover;border-radius:.4cqw" onerror="this.style.visibility='hidden'">
+    <img src="assets/photos/PXL_20260314_075911397.jpg" style="width:100%;height:10.4cqh;object-fit:cover;border-radius:.4cqw" onerror="this.style.visibility='hidden'">
+    <img src="assets/photos/PXL_20260314_080008098.jpg" style="width:100%;height:10.4cqh;object-fit:cover;border-radius:.4cqw" onerror="this.style.visibility='hidden'">
+    <img src="assets/photos/PXL_20260314_080103917.jpg" style="width:100%;height:10.4cqh;object-fit:cover;border-radius:.4cqw" onerror="this.style.visibility='hidden'">
+    <img src="assets/photos/PXL_20260314_080216776.jpg" style="width:100%;height:10.4cqh;object-fit:cover;border-radius:.4cqw" onerror="this.style.visibility='hidden'">
+    <img src="assets/photos/PXL_20260314_080404327.jpg" style="width:100%;height:10.4cqh;object-fit:cover;border-radius:.4cqw" onerror="this.style.visibility='hidden'">
+    <img src="assets/photos/PXL_20260314_080710739.jpg" style="width:100%;height:10.4cqh;object-fit:cover;border-radius:.4cqw" onerror="this.style.visibility='hidden'">
+    <img src="assets/photos/PXL_20260314_081333467.jpg" style="width:100%;height:10.4cqh;object-fit:cover;border-radius:.4cqw" onerror="this.style.visibility='hidden'">
+    <img src="assets/photos/PXL_20260314_081635347.jpg" style="width:100%;height:10.4cqh;object-fit:cover;border-radius:.4cqw" onerror="this.style.visibility='hidden'">
+    <img src="assets/photos/PXL_20260314_082222934.jpg" style="width:100%;height:10.4cqh;object-fit:cover;border-radius:.4cqw" onerror="this.style.visibility='hidden'">
+    <img src="assets/photos/unnamed (5).jpg" style="width:100%;height:10.4cqh;object-fit:cover;border-radius:.4cqw" onerror="this.style.visibility='hidden'">
+  </div>
+  <p class="note" style="margin-top:1.6cqh;text-align:center;max-width:100%;color:#cfd8e8">こういう場を、これからも増やしていきたい。</p>
+  <div class="meta">なんでもCopilot 大阪 / はる</div>
+  <div class="pageno"></div>
+</section>
+
+<!-- 21. Thanks -->
+<section class="slide" data-title="Thanks">
+  <div style="text-align:center;margin-top:3cqh">
+    <div class="avatar" style="width:12cqw;height:12cqw;margin:0 auto 2.5cqh"><span>は</span><img src="assets/haru-icon.png" alt="はる" onerror="this.remove()"></div>
+    <h1 style="font-size:6cqw">ありがとうございました。</h1>
+    <p style="font-size:1.8cqw;margin-top:5cqh;color:var(--text)">懇親会で、みなさんの「PAとCoworkの使い分けアイデア」、<br>ぜひ聞かせてください。</p>
+    <p style="font-size:1.4cqw;margin-top:6cqh;color:var(--light)">はる（Haru）/ PA45 主催 / <b>automate136.com</b></p>
+  </div>
+  <div class="meta">なんでもCopilot 大阪 / はる</div>
+  <div class="pageno"></div>
+</section>
+
+<!-- 22. 次回は広島で（PLUG集合写真で締め） -->
+<section class="slide navy" data-title="次回は広島で">
+  <div style="position:absolute;inset:0;z-index:0">
+    <img src="assets/photos/plug-group.jpg" alt="PLUG第1回 集合写真" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none'">
+    <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,42,92,.45) 0%,rgba(20,42,92,.78) 70%,rgba(20,42,92,.9) 100%)"></div>
+  </div>
+  <div style="position:relative;z-index:3;text-align:center">
+    <p style="font-size:1.4cqw;color:#cfd8e8;font-weight:700;letter-spacing:.04em">広島発 Power Platform コミュニティ「PLUG」第1回 集合写真</p>
+    <p style="font-size:3.4cqw;color:#fff;font-weight:700;margin-top:3.5cqh;line-height:1.5">次回はぜひ ──<br><span style="color:var(--accent2)">なんでもCopilot in 広島</span> で<br>お待ちしています。</p>
+  </div>
+  <div style="position:absolute;right:5cqw;bottom:8cqh;z-index:3;text-align:center">
+    <div style="width:13cqw;height:13cqw;border-radius:50%;overflow:hidden;border:.4cqw solid var(--accent2);box-shadow:0 1cqh 2cqh rgba(0,0,0,.35);margin:0 auto;background:var(--navy)">
+      <img src="assets/photos/okonomiyaki.jpg" alt="広島のお好み焼き" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none'">
+    </div>
+    <p style="font-size:1.1cqw;color:#fff;font-weight:700;margin-top:.6cqh">広島名物・お好み焼きも、ぜひ</p>
+  </div>
+  <div class="meta">なんでもCopilot 大阪 / はる</div>
+  <div class="pageno"></div>
+</section>
+
+</div>
+</div>
+
+<script>
+const slides=document.querySelectorAll('.slide');
+const tocList=document.getElementById('tocList');
+const toc=document.getElementById('toc');
+const stage=document.getElementById('stage');
+const progress=document.getElementById('progress');
+let i=0;
+
+// 目次生成
+slides.forEach((s,idx)=>{
+  const li=document.createElement('li');
+  li.innerHTML='<span class="num">'+(idx+1).toString().padStart(2,'0')+'</span><span class="ttl">'+(s.dataset.title||'')+'</span>';
+  li.addEventListener('click',e=>{e.stopPropagation();show(idx)});
+  tocList.appendChild(li);
+});
+const tocItems=tocList.querySelectorAll('li');
+
+// ページ番号を自動採番（手書き不要・追加してもズレない）
+const total=slides.length;
+slides.forEach((s,idx)=>{
+  const pn=s.querySelector('.pageno');
+  if(pn)pn.textContent=(idx+1)+' / '+total;
+  const b=document.createElement('div');
+  b.className='brand';
+  b.textContent='Haru / PA45';
+  s.appendChild(b);
+});
+
+function show(n){
+  slides[i].classList.remove('active');
+  tocItems[i].classList.remove('current');
+  i=(n+slides.length)%slides.length;
+  slides[i].classList.add('active');
+  tocItems[i].classList.add('current');
+  progress.style.width=((i+1)/slides.length*100)+'%';
+  tocItems[i].scrollIntoView({block:'nearest',behavior:'smooth'});
+}
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){show(i+1);e.preventDefault()}
+  else if(e.key==='ArrowLeft'||e.key==='PageUp')show(i-1);
+  else if(e.key==='Home')show(0);
+  else if(e.key==='End')show(slides.length-1);
+  else if(e.key==='t'||e.key==='T')toc.classList.toggle('hidden');
+  else if(e.key==='f'||e.key==='F'){
+    if(!document.fullscreenElement)document.documentElement.requestFullscreen();
+    else document.exitFullscreen();
+  }
+});
+
+stage.addEventListener('click',e=>{
+  const r=stage.getBoundingClientRect();
+  const x=e.clientX-r.left;
+  if(x>r.width*.6)show(i+1);
+  else if(x<r.width*.4)show(i-1);
+});
+
+show(0);
+</script>
+</body>
+</html>

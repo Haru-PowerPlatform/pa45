@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.42 Power AutomateでAdaptive Cardで1クリック回収</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB; --blue-bg:#EFF6FF; --blue-dark:#1E40AF;
+    --red:#DC2626; --red-dark:#7F1D1D;
+    --green:#16A34A; --green-bg:#ECFDF5; --green-dark:#064E3B;
+    --teams:#5B5FC7; --teams-dark:#444791; --forms:#1F8F7A;
+    --orange:#EA580C; --ink:#1F2937; --gray:#374151; --weak:#6B7280; --line:#E5E7EB;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+  .ic{display:block;width:100%;height:100%;}
+
+  .titlebar{height:86px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:15px;padding:0 22px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:24px;border-radius:999px;padding:6px 18px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .vol-logo{height:46px;width:46px;object-fit:contain;flex:0 0 auto;background:#fff;border-radius:12px;padding:5px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
+  .title-text{color:#fff;font-weight:900;font-size:26px;line-height:1.16;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:146px;}
+  .title-text .hl{color:#FFE08A;}
+  .title-chara{position:absolute;right:13px;bottom:-42px;height:138px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .concl{margin:7px 15px 0;background:var(--blue-bg);border:2px solid var(--blue);border-radius:11px;display:flex;align-items:center;gap:11px;padding:6px 15px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;width:32px;height:32px;border-radius:9px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;padding:7px;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
+  .concl .txt{font-weight:700;font-size:14.5px;color:var(--blue-dark);line-height:1.3;padding-right:86px;}
+  .concl .txt b{color:var(--teams-dark);}
+
+  /* アダプティブ カードとは？ 説明 */
+  .def{margin:7px 15px 0;background:linear-gradient(180deg,#F4F3FC,#ECEBF8);border:1.5px solid #C7C5E8;border-radius:10px;display:flex;align-items:center;gap:10px;padding:6px 14px;flex:0 0 auto;box-shadow:0 2px 6px rgba(0,0,0,.06);}
+  .def .di{flex:0 0 auto;width:26px;height:26px;border-radius:7px;background:#fff;border:1px solid #D7D6EC;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+  .def .di img{width:18px;height:18px;object-fit:contain;}
+  .def .dt{font-weight:800;font-size:13.5px;color:#3A3A52;line-height:1.3;}
+  .def .dt b{color:var(--teams-dark);}
+
+  .compare{flex:1 1 auto;margin:7px 15px 0;display:flex;align-items:stretch;gap:0;min-height:0;}
+  .panel{flex:1;border-radius:14px;padding:10px 13px;display:flex;flex-direction:column;min-height:0;box-shadow:0 6px 15px rgba(0,0,0,.13),inset 0 1px 0 rgba(255,255,255,.8);}
+  .panel.before{border:2px solid var(--red);background:linear-gradient(180deg,#FFF5F5,#FBE9E9);}
+  .panel.after{flex:1.16;border:2px solid var(--green);background:linear-gradient(180deg,#F1FCF5,#E1F6EA);}
+  .phead{align-self:flex-start;display:flex;align-items:center;gap:7px;color:#fff;font-weight:900;font-size:15.5px;border-radius:8px;padding:5px 13px;margin-bottom:9px;box-shadow:0 3px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.45);text-shadow:0 1px 1px rgba(0,0,0,.2);}
+  .phead svg{width:15px;height:15px;}
+  .phead .timg{width:17px;height:17px;object-fit:contain;background:#fff;border-radius:4px;padding:1px;}
+  .ph-before{background:linear-gradient(180deg,#EF4444,#DC2626);}
+  .ph-after{background:linear-gradient(180deg,#2BD06A,#16A34A);}
+
+  .pains{display:flex;flex-direction:column;gap:8px;margin-top:11px;}
+  .pains li{list-style:none;display:flex;gap:9px;align-items:flex-start;font-weight:700;font-size:14px;color:#8A2020;line-height:1.3;}
+  .pains li .mk{flex:0 0 auto;width:22px;height:22px;border-radius:50%;background:linear-gradient(180deg,#EF4444,#DC2626);color:#fff;display:flex;align-items:center;justify-content:center;margin-top:1px;}
+  .pains li .mk svg{width:13px;height:13px;}
+
+  .mid{flex:0 0 68px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;}
+  .mid .bigarrow{width:34px;height:34px;color:var(--blue);}
+  .mid .cmascot{height:100px;filter:drop-shadow(0 3px 7px rgba(0,0,0,.45));z-index:40;margin-top:2px;}
+
+  .uimock{font-family:'Segoe UI','Noto Sans JP',sans-serif;}
+  /* Forms */
+  .forms{background:#fff;border:1px solid #EDEBE9;border-radius:9px;box-shadow:0 5px 12px rgba(0,0,0,.13);overflow:hidden;}
+  .forms-bar{height:6px;background:linear-gradient(90deg,#15786A,#23A38E);}
+  .forms-body{padding:9px 12px 11px;position:relative;}
+  .forms-dots{position:absolute;top:7px;right:10px;color:#8A8886;font-weight:900;font-size:14px;letter-spacing:1px;}
+  .forms-title{font-weight:700;font-size:13.5px;color:#242424;margin-bottom:3px;}
+  .forms-desc{font-size:10px;color:#605E5C;line-height:1.35;margin-bottom:6px;padding-right:16px;}
+  .forms-req{font-size:10px;color:#D13438;margin-bottom:8px;}
+  .forms-q{font-size:11px;color:#242424;font-weight:600;margin-bottom:5px;}
+  .forms-q .star{color:#D13438;margin-left:2px;}
+  .forms-input{border:1px solid #D1D1D1;border-bottom:2px solid #23A38E;border-radius:4px;padding:6px 9px;font-size:10px;color:#A19F9D;margin-bottom:9px;background:#fff;}
+  .forms-submit{display:inline-block;background:#15786A;color:#fff;font-weight:700;font-size:11px;border-radius:5px;padding:5px 16px;box-shadow:0 1px 2px rgba(0,0,0,.2);}
+
+  /* Teams 枠＋アダプティブ カード */
+  .tframe{background:#F6F6FB;border:1px solid #E2E0EE;border-radius:11px;padding:8px 9px;box-shadow:0 3px 9px rgba(0,0,0,.10);}
+  .tframe-h{display:flex;align-items:center;gap:6px;margin-bottom:7px;}
+  .tframe-h img{width:18px;height:18px;object-fit:contain;}
+  .tframe-h span{font-weight:800;font-size:11px;color:var(--teams-dark);}
+  .tframe-h .ch{margin-left:auto;font-weight:700;font-size:9.5px;color:#8B8AA3;}
+  .tmsg{display:flex;gap:8px;align-items:flex-start;}
+  .tavatar{width:28px;height:28px;border-radius:50%;background:#fff;border:1px solid #E1DFDD;flex:0 0 auto;display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.12);}
+  .tavatar img{width:20px;height:20px;object-fit:contain;}
+  .tright{flex:1;min-width:0;}
+  .tmeta{font-size:9.5px;color:#616161;margin-bottom:4px;}
+  .tmeta b{color:#242424;font-size:11.5px;font-weight:700;margin-right:6px;}
+  .tcard{background:#fff;border:1px solid #E1DFDD;border-radius:8px;box-shadow:0 2px 7px rgba(0,0,0,.11);padding:9px 11px;}
+  .tcard-acc{width:30px;height:3px;border-radius:2px;background:var(--teams);margin-bottom:7px;}
+  .tcard-title{font-weight:700;font-size:12.5px;color:#242424;margin-bottom:3px;}
+  .tcard-q{font-size:11px;color:#424242;line-height:1.3;margin-bottom:8px;}
+  .tcard-btns{display:flex;gap:8px;}
+  .tbtn{font-weight:600;font-size:11px;border-radius:5px;padding:5px 14px;}
+  .tbtn.primary{background:var(--teams);color:#fff;box-shadow:0 1px 2px rgba(0,0,0,.2);}
+  .tbtn.default{background:#F0F0F0;color:#242424;border:1px solid #D1D1D1;}
+
+  /* カードの作り方 */
+  .howto{margin-top:9px;background:#fff;border:1.5px solid #BBE6CC;border-radius:10px;padding:8px 11px 9px;box-shadow:0 2px 6px rgba(0,0,0,.08);}
+  .howto-h{display:flex;align-items:center;gap:6px;font-weight:900;font-size:12.5px;color:var(--green-dark);margin-bottom:6px;}
+  .howto-h svg{width:14px;height:14px;color:var(--green);}
+  .howto ol{list-style:none;display:flex;flex-direction:column;gap:4px;margin-bottom:7px;}
+  .howto li{display:flex;gap:7px;align-items:flex-start;font-weight:700;font-size:11.5px;color:#1B5E3A;line-height:1.28;}
+  .howto li .n{flex:0 0 auto;width:17px;height:17px;border-radius:50%;background:var(--green);color:#fff;font-weight:900;font-size:10.5px;display:flex;align-items:center;justify-content:center;margin-top:1px;}
+  .howto li b{color:var(--teams-dark);}
+  .code{background:#1F2937;border-radius:7px;padding:7px 10px;font-family:'Consolas','Courier New',monospace;font-size:10.5px;line-height:1.5;color:#E5E7EB;}
+  .code .k{color:#7DD3FC;} .code .s{color:#FCA5A5;} .code .hld{color:#FCD34D;font-weight:700;}
+
+  /* 下段：フローの作り方＋つまずき */
+  .bottom{flex:0 0 auto;margin:7px 15px 10px;display:flex;flex-direction:column;gap:7px;}
+  .make{background:linear-gradient(180deg,#565C66,#4A4F58);border-radius:11px;padding:8px 13px;display:flex;align-items:center;gap:11px;box-shadow:inset 0 1px 0 rgba(255,255,255,.1);position:relative;}
+  .make .mlabel{flex:0 0 auto;display:flex;align-items:center;gap:6px;color:#F1F5F9;font-weight:900;font-size:14px;}
+  .make .mlabel svg{width:16px;height:16px;color:#FBBF24;}
+  .mflow{flex:1;display:flex;align-items:stretch;gap:6px;padding-right:88px;}
+  .mstep{flex:1;background:#fff;border-radius:8px;padding:6px 9px;display:flex;align-items:center;gap:7px;box-shadow:0 2px 5px rgba(0,0,0,.22);min-width:0;}
+  .mstep .mnum{flex:0 0 auto;width:18px;height:18px;border-radius:50%;background:var(--blue);color:#fff;font-weight:900;font-size:11px;display:flex;align-items:center;justify-content:center;}
+  .mstep .mi{flex:0 0 auto;width:26px;height:26px;border-radius:7px;background:var(--blue-bg);display:flex;align-items:center;justify-content:center;overflow:hidden;}
+  .mstep .mi img{width:20px;height:20px;object-fit:contain;}
+  .mstep .mi svg{width:16px;height:16px;color:var(--blue);}
+  .mstep .mn{font-weight:900;font-size:11.5px;color:var(--ink);line-height:1.16;min-width:0;}
+  .mstep .mn small{display:block;font-weight:700;font-size:9.5px;color:var(--weak);}
+  .marrow{flex:0 0 auto;align-self:center;width:16px;height:16px;color:#7CB1FF;}
+  .make-chara{position:absolute;right:9px;bottom:-2px;height:86px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.4));}
+
+  .pitfall{background:linear-gradient(180deg,#FFF7ED,#FFEFD9);border:1.5px solid #FDBA74;border-radius:10px;padding:7px 13px;display:flex;align-items:center;gap:10px;box-shadow:0 2px 6px rgba(0,0,0,.07);}
+  .pitfall .pl{flex:0 0 auto;display:flex;align-items:center;gap:6px;background:linear-gradient(180deg,#FB923C,#EA580C);color:#fff;font-weight:900;font-size:12.5px;border-radius:8px;padding:5px 10px;box-shadow:0 2px 4px rgba(0,0,0,.25);}
+  .pitfall .pl svg{width:14px;height:14px;}
+  .pitfall .px{flex:1;font-weight:800;font-size:12px;color:#7C2D12;line-height:1.3;}
+  .pitfall .px b{color:var(--orange);}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const ICON={
+ cross:'<path d="M18 6 6 18M6 6l12 12"/>',
+ check:'<path d="M20 6 9 17l-5-5"/>',
+ arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',
+ clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+ bulb:'<path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/>',
+ warn:'<path d="M10.3 3.3 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.3a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>',
+ wrench:'<path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18v3h3l6.3-6.3a4 4 0 0 0 5.4-5.4l-2.3 2.3-2.1-.6-.6-2.1z"/>'
+};
+const svg=(n)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">${ICON[n]}</svg>`;
+
+const s=document.getElementById('slide');
+s.innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.42</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">Power Automateで、Formsの代わりに<br>Teamsカードで<span class="hl">1クリック回収</span>！</div>
+    <img class="title-chara" src="${A}chara/chara_point.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svg('bulb')}</div>
+    <div class="txt">Formsリンクは「開く→入力→送信」で放置されがち。Teamsに<b>ボタン付きカード</b>を出せば、1クリックで回答が集まり、そのまま記録まで自動化できます。</div>
+  </div>
+
+  <div class="def">
+    <div class="di"><img src="${A}icons/pa_teams.png" alt=""></div>
+    <div class="dt"><b>アダプティブ カードとは？</b>　Teamsなどに表示できる、ボタンや選択肢が付いた“ミニ画面”。JSONで作り、押した結果をそのままフローで受け取れます。</div>
+  </div>
+
+  <div class="compare">
+    <div class="panel before">
+      <div class="phead ph-before">${svg('cross')}Before：Formsリンク</div>
+      <div class="forms uimock">
+        <div class="forms-bar"></div>
+        <div class="forms-body">
+          <div class="forms-dots">⋯</div>
+          <div class="forms-title">勉強会 出欠フォーム</div>
+          <div class="forms-desc">下記にご記入のうえ送信してください。</div>
+          <div class="forms-req">* 必須</div>
+          <div class="forms-q">1. お名前 <span class="star">*</span></div>
+          <div class="forms-input">回答を入力してください</div>
+          <div class="forms-q">2. 参加の可否 <span class="star">*</span></div>
+          <div class="forms-input">回答を入力してください</div>
+          <span class="forms-submit">送信</span>
+        </div>
+      </div>
+      <ul class="pains">
+        <li><span class="mk">${svg('cross')}</span><span>開く→入力→送信の3手間がいる</span></li>
+        <li><span class="mk">${svg('cross')}</span><span>Teamsを離れて別画面＝そこで離脱</span></li>
+        <li><span class="mk">${svg('cross')}</span><span>放置され、催促や集計が手作業に</span></li>
+      </ul>
+    </div>
+
+    <div class="mid">
+      <span class="bigarrow">${svg('arrow')}</span>
+      <img class="cmascot" src="${A}chara/chara_guts.png" alt="">
+    </div>
+
+    <div class="panel after">
+      <div class="phead ph-after">${svg('check')}After：アダプティブ カード<img class="timg" src="${A}icons/pa_teams.png" alt=""></div>
+      <div class="tframe uimock">
+        <div class="tframe-h"><img src="${A}icons/pa_teams.png" alt=""><span>Microsoft Teams</span><span class="ch"># 勉強会チャネル</span></div>
+        <div class="tmsg">
+          <div class="tavatar"><img src="${A}icons/pa_logo.png" alt=""></div>
+          <div class="tright">
+            <div class="tmeta"><b>Power Automate</b>13:24</div>
+            <div class="tcard">
+              <div class="tcard-acc"></div>
+              <div class="tcard-title">勉強会の出欠確認</div>
+              <div class="tcard-q">来週の回、参加できますか？</div>
+              <div class="tcard-btns"><span class="tbtn primary">参加する</span><span class="tbtn default">欠席</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="howto">
+        <div class="howto-h">${svg('wrench')}アダプティブ カードの作り方</div>
+        <ol>
+          <li><span class="n">1</span><span><b>Adaptive Card Designer</b> でボタンを配置（adaptivecards.io/designer）</span></li>
+          <li><span class="n">2</span><span>JSONをコピー →アクションの「メッセージ」に貼り付け</span></li>
+          <li><span class="n">3</span><span>ボタンは <b>Action.Submit</b>、data の値が回答になる</span></li>
+        </ol>
+        <div class="code"><span class="k">"type"</span>: <span class="s">"Action.Submit"</span>, <span class="k">"title"</span>: <span class="s">"参加する"</span>,<br><span class="hld">"data"</span>: { <span class="k">"answer"</span>: <span class="s">"参加"</span> }</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom">
+    <div class="make">
+      <div class="mlabel">${svg('bulb')}フローの作り方</div>
+      <div class="mflow">
+        <div class="mstep"><span class="mnum">1</span><div class="mi">${svg('clock')}</div><div class="mn">トリガー<small>予定／手動</small></div></div>
+        <span class="marrow">${svg('arrow')}</span>
+        <div class="mstep"><span class="mnum">2</span><div class="mi"><img src="${A}icons/pa_teams.png" alt=""></div><div class="mn">投稿して応答を待機する<small>投稿先＝チャット／チャネル</small></div></div>
+        <span class="marrow">${svg('arrow')}</span>
+        <div class="mstep"><span class="mnum">3</span><div class="mi"><img src="${A}icons/pa_sharepoint.png" alt=""></div><div class="mn">回答を記録<small>項目の作成 (SPO)</small></div></div>
+      </div>
+      <img class="make-chara" src="${A}chara/chara_smile.png" alt="">
+    </div>
+
+    <div class="pitfall">
+      <div class="pl">${svg('warn')}つまずき注意</div>
+      <div class="px">この操作は<b>回答が返るまでフローが一時停止</b>。締切を作るなら応答待ちのタイムアウトを設定。複数人から集めるなら<b>各メンバーに送って Apply to each で待つ</b>か、チャネル投稿にする。</div>
+    </div>
+  </div>
+`;
+</script>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>

@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.44-1 「返信不要」なのに返信が来る理由を見える化</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB; --blue-bg:#EFF6FF; --blue-dark:#1E40AF;
+    --red:#DC2626; --red-dark:#7F1D1D;
+    --green:#16A34A; --green-bg:#ECFDF5; --green-dark:#064E3B;
+    --spo:#0F6CBD; --spo-dark:#0A4F8A; --outlook:#0A66C2;
+    --orange:#EA580C; --ink:#1F2937; --gray:#374151; --weak:#6B7280; --line:#E5E7EB;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+  .ic{display:block;width:100%;height:100%;}
+
+  .titlebar{height:88px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:15px;padding:0 22px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:24px;border-radius:999px;padding:6px 18px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .vol-logo{height:48px;width:48px;object-fit:contain;flex:0 0 auto;background:#fff;border-radius:12px;padding:5px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
+  .title-text{color:#fff;font-weight:900;font-size:27px;line-height:1.18;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:150px;}
+  .title-text .hl{color:#FFE08A;}
+  .title-chara{position:absolute;right:13px;bottom:-42px;height:140px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .concl{margin:8px 15px 0;background:var(--blue-bg);border:2px solid var(--blue);border-radius:11px;display:flex;align-items:center;gap:11px;padding:8px 15px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;width:34px;height:34px;border-radius:9px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;padding:7px;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
+  .concl .txt{font-weight:700;font-size:15.5px;color:var(--blue-dark);line-height:1.34;padding-right:88px;}
+  .concl .txt b{color:var(--spo-dark);}
+
+  .compare{flex:1 1 auto;margin:9px 15px 0;display:flex;align-items:stretch;gap:0;min-height:0;}
+  .panel{flex:1;border-radius:14px;padding:11px 14px 12px;display:flex;flex-direction:column;min-height:0;box-shadow:0 6px 15px rgba(0,0,0,.13),inset 0 1px 0 rgba(255,255,255,.8);}
+  .panel.before{border:2px solid var(--red);background:linear-gradient(180deg,#FFF5F5,#FBE9E9);}
+  .panel.after{flex:1.05;border:2px solid var(--green);background:linear-gradient(180deg,#F1FCF5,#E1F6EA);}
+  .phead{align-self:flex-start;display:flex;align-items:center;gap:8px;color:#fff;font-weight:900;font-size:17px;border-radius:9px;padding:6px 15px;margin-bottom:10px;box-shadow:0 3px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.45);text-shadow:0 1px 1px rgba(0,0,0,.2);}
+  .phead svg{width:16px;height:16px;}
+  .ph-before{background:linear-gradient(180deg,#EF4444,#DC2626);}
+  .ph-after{background:linear-gradient(180deg,#2BD06A,#16A34A);}
+  .blist{display:flex;flex-direction:column;gap:10px;margin-top:12px;}
+  .blist li{list-style:none;display:flex;gap:11px;align-items:flex-start;font-weight:700;font-size:16.5px;line-height:1.32;}
+  .blist li .mk{flex:0 0 auto;width:26px;height:26px;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;margin-top:1px;}
+  .blist li .mk svg{width:15px;height:15px;}
+  .panel.before .blist li{color:#8A2020;} .panel.before .mk{background:linear-gradient(180deg,#EF4444,#DC2626);}
+  .panel.after .blist li{color:#0B5A36;} .panel.after .mk{background:linear-gradient(180deg,#2BD06A,#16A34A);}
+
+  .mid{flex:0 0 70px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;}
+  .mid .bigarrow{width:34px;height:34px;color:var(--blue);}
+  .mid .cmascot{height:104px;filter:drop-shadow(0 3px 7px rgba(0,0,0,.45));z-index:40;margin-top:2px;}
+
+  .uimock{font-family:'Segoe UI','Noto Sans JP',sans-serif;}
+  /* Outlook 受信トレイ */
+  .mail{background:#fff;border:1px solid #EDEBE9;border-radius:9px;box-shadow:0 5px 12px rgba(0,0,0,.13);overflow:hidden;}
+  .mail-h{display:flex;align-items:center;gap:7px;padding:7px 11px;border-bottom:1px solid #EFEFEF;background:#FAFAFA;}
+  .mail-h img{width:18px;height:18px;object-fit:contain;}
+  .mail-h span{font-weight:800;font-size:11.5px;color:#0A66C2;}
+  .mrow{display:flex;align-items:center;gap:9px;padding:7px 11px;border-bottom:1px solid #F1F1F1;}
+  .mrow:last-child{border-bottom:none;}
+  .mrow .av{flex:0 0 auto;width:24px;height:24px;border-radius:50%;background:#C7D7EE;color:#274B7A;font-weight:900;font-size:10px;display:flex;align-items:center;justify-content:center;}
+  .mrow .mc{flex:1;min-width:0;}
+  .mrow .mf{font-weight:700;font-size:11px;color:#242424;}
+  .mrow .ms{font-size:11px;color:#605E5C;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .mrow .ms b{color:#D13438;font-weight:700;}
+
+  /* SharePoint ログ */
+  .spo{background:#fff;border:1px solid #E1E6EF;border-radius:9px;box-shadow:0 5px 12px rgba(0,0,0,.13);overflow:hidden;}
+  .spo-h{display:flex;align-items:center;gap:7px;padding:7px 11px;background:linear-gradient(90deg,#0A4F8A,#1277CE);}
+  .spo-h img{width:17px;height:17px;object-fit:contain;background:#fff;border-radius:4px;padding:1px;}
+  .spo-h span{font-weight:800;font-size:11.5px;color:#fff;}
+  .spo-th,.spo-tr{display:flex;font-size:11px;}
+  .spo-th{background:#F3F7FC;font-weight:800;color:#3A4A63;border-bottom:1px solid #E1E6EF;}
+  .spo-tr{border-bottom:1px solid #F0F3F8;font-weight:700;color:#242424;}
+  .spo-tr:last-child{border-bottom:none;}
+  .spo-c{padding:6px 9px;}
+  .c1{flex:0 0 78px;} .c2{flex:0 0 92px;} .c3{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+
+  .next{flex:0 0 auto;margin:9px 15px 12px;background:linear-gradient(180deg,#EAF2FF,#DCEAFE);border:2px solid var(--blue);border-radius:11px;padding:10px 16px;display:flex;align-items:center;gap:9px;font-weight:900;font-size:16px;color:var(--blue-dark);box-shadow:0 3px 9px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .next .na{flex:0 0 auto;width:22px;height:22px;color:var(--blue);}
+  .next b{color:var(--spo-dark);}
+  .src{position:absolute;left:16px;bottom:3px;font-size:9.5px;color:#AEB6C2;font-weight:700;z-index:3;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const ICON={
+ cross:'<path d="M18 6 6 18M6 6l12 12"/>',
+ check:'<path d="M20 6 9 17l-5-5"/>',
+ arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',
+ bulb:'<path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/>'
+};
+const svg=(n)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">${ICON[n]}</svg>`;
+
+const s=document.getElementById('slide');
+s.innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.44-1</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">「返信不要」なのに返信が来る…<br>Power Automateで<span class="hl">“ムダ返信”を見える化</span></div>
+    <img class="title-chara" src="${A}chara/chara_point.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svg('bulb')}</div>
+    <div class="txt">「返信不要」と書いても、丁寧な人ほど“承知しました”を返しがち。その<b>儀礼返信</b>を自動でSharePointに記録すれば、どの案内文がムダ返信を生むか見えて、文面を直せます。</div>
+  </div>
+
+  <div class="compare">
+    <div class="panel before">
+      <div class="phead ph-before">${svg('cross')}Before：放置で受信箱が膨らむ</div>
+      <div class="mail uimock">
+        <div class="mail-h"><img src="${A}icons/pa_outlook.png" alt="">受信トレイ</div>
+        <div class="mrow"><span class="av">SY</span><span class="mc"><div class="mf">鈴木 陽子</div><div class="ms">Re: 月次レポート提出のお願い　<b>承知しました</b></div></span></div>
+        <div class="mrow"><span class="av">TK</span><span class="mc"><div class="mf">高橋 健</div><div class="ms">Re: 月次レポート提出のお願い　<b>了解です</b></div></span></div>
+        <div class="mrow"><span class="av">YM</span><span class="mc"><div class="mf">山本 みき</div><div class="ms">Re: 月次レポート提出のお願い　<b>確認しました</b></div></span></div>
+      </div>
+      <ul class="blist">
+        <li><span class="mk">${svg('cross')}</span><span>「返信不要」なのに儀礼返信が大量</span></li>
+        <li><span class="mk">${svg('cross')}</span><span>受信箱が埋まり、大事な連絡が埋もれる</span></li>
+        <li><span class="mk">${svg('cross')}</span><span>どの案内文が原因かは分からないまま</span></li>
+      </ul>
+    </div>
+
+    <div class="mid">
+      <span class="bigarrow">${svg('arrow')}</span>
+      <img class="cmascot" src="${A}chara/chara_guts.png" alt="">
+    </div>
+
+    <div class="panel after">
+      <div class="phead ph-after">${svg('check')}After：自動で記録して見える化</div>
+      <div class="spo uimock">
+        <div class="spo-h"><img src="${A}icons/pa_sharepoint.png" alt="">ムダ返信ログ（SharePoint）</div>
+        <div class="spo-th"><span class="spo-c c1">受信日時</span><span class="spo-c c2">差出人</span><span class="spo-c c3">元の案内</span></div>
+        <div class="spo-tr"><span class="spo-c c1">6/20 9:12</span><span class="spo-c c2">鈴木 陽子</span><span class="spo-c c3">月次レポート提出のお願い</span></div>
+        <div class="spo-tr"><span class="spo-c c1">6/20 9:15</span><span class="spo-c c2">高橋 健</span><span class="spo-c c3">月次レポート提出のお願い</span></div>
+      </div>
+      <ul class="blist">
+        <li><span class="mk">${svg('check')}</span><span>儀礼返信を自動でログに記録</span></li>
+        <li><span class="mk">${svg('check')}</span><span>ムダ返信を生む“案内文”が見える</span></li>
+        <li><span class="mk">${svg('check')}</span><span>文面を直せば、お互いの手間が減る</span></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="next"><span class="na">${svg('arrow')}</span>具体的な<b>作り方</b>は <b>2枚目</b>で、つまずきポイントまで解説！</div>
+  <div class="src">出典：Microsoft Learn</div>
+`;
+</script>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>

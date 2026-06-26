@@ -1,0 +1,1275 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>PA45 第12回 スライドプレビュー — 「式」アレルギー卒業</title>
+<style>
+  :root {
+    --blue-bg: #eaf2fc;
+    --blue-mid: #2a7dd4;
+    --blue-text: #14528f;
+    --blue-light: #b8d3ef;
+    --orange: #e06030;
+    --red: #c03520;
+    --surface: #ffffff;
+    --bg: #f3f6fa;
+    --text: #1f2937;
+    --muted: #475569;
+    --hint: #94a3b8;
+    --border: #e2e8f0;
+    --green-bg: #ecfdf5;
+    --green-text: #065f46;
+    --yellow-bg: #fffbeb;
+    --yellow-text: #92400e;
+  }
+  body {
+    margin: 0; padding: 24px 24px 24px 280px;
+    background: #1a2233;
+    font-family: "Meiryo UI", "Yu Gothic UI", "Segoe UI", sans-serif;
+    color: var(--text);
+    font-size: 16px;
+  }
+  .deck-header {
+    color: #fff; max-width: 1280px; margin: 0 auto 24px;
+    font-size: 16px; opacity: .85;
+  }
+  .deck-header h1 { margin: 0 0 4px; font-size: 24px; }
+
+  /* ===== Sidebar TOC ===== */
+  .toc {
+    position: fixed; top: 0; left: 0; bottom: 0;
+    width: 260px; background: #0f172a; color: #cbd5e1;
+    padding: 22px 0; overflow-y: auto;
+    z-index: 100;
+    border-right: 1px solid #1e293b;
+    box-shadow: 4px 0 16px rgba(0,0,0,.3);
+  }
+  .toc-header {
+    padding: 0 22px 14px; border-bottom: 1px solid #1e293b; margin-bottom: 10px;
+  }
+  .toc-header .title { font-size: 14px; font-weight: 800; color: #fff; }
+  .toc-header .sub { font-size: 11px; color: #64748b; margin-top: 4px; }
+  .toc ol {
+    list-style: none; padding: 0; margin: 0;
+  }
+  .toc li a {
+    display: block; padding: 9px 22px 9px 18px;
+    color: #cbd5e1; text-decoration: none; font-size: 13px;
+    line-height: 1.45; border-left: 3px solid transparent;
+    transition: background .15s, border-color .15s, color .15s;
+  }
+  .toc li a:hover {
+    background: #1e293b; color: #fff;
+  }
+  .toc li a.active {
+    background: #1e293b; color: #fff;
+    border-left-color: #2a7dd4;
+  }
+  .toc li a .n {
+    display: inline-block; width: 22px; color: #64748b;
+    font-weight: 700; font-size: 12px;
+  }
+  .toc li a.active .n { color: #2a7dd4; }
+  .toc-toggle {
+    position: fixed; top: 10px; left: 270px; z-index: 101;
+    background: #1e293b; color: #fff; border: none;
+    padding: 8px 14px; border-radius: 6px; cursor: pointer;
+    font-size: 13px; font-weight: 600;
+  }
+  body.toc-collapsed { padding-left: 24px; }
+  body.toc-collapsed .toc { transform: translateX(-100%); }
+  body.toc-collapsed .toc-toggle { left: 10px; }
+  .toc, .toc-toggle { transition: transform .2s, left .2s; }
+  .slide {
+    width: 1280px; height: 720px;
+    margin: 0 auto 28px; background: #fff;
+    box-shadow: 0 12px 40px rgba(0,0,0,.35);
+    border-radius: 6px; overflow: hidden;
+    position: relative;
+    display: flex; flex-direction: column;
+  }
+  .slide-num {
+    position: absolute; top: 10px; right: 14px;
+    font-size: 14px; color: var(--hint);
+    background: rgba(255,255,255,.9); padding: 3px 10px; border-radius: 12px;
+    z-index: 10;
+  }
+  .slide-head {
+    padding: 24px 48px 22px;
+    background: linear-gradient(135deg, #14528f 0%, #2a7dd4 100%);
+    color: #fff;
+    border-bottom: 4px solid #fbbf24;
+  }
+  .slide-eyebrow {
+    font-size: 15px; color: #93c5fd; font-weight: 700;
+    letter-spacing: .04em; text-transform: uppercase;
+  }
+  .slide-title {
+    font-size: 40px; font-weight: 800; line-height: 1.2;
+    margin: 4px 0 0; color: #fff;
+    letter-spacing: -.01em;
+  }
+  .slide-title small { font-size: 24px; color: rgba(255,255,255,.85); font-weight: 600; }
+  .concept-dot {
+    position: absolute; top: 30px; right: 60px;
+    display: flex; align-items: center; gap: 8px;
+    font-size: 15px; color: #fbbf24; font-weight: 700;
+  }
+  .concept-dot::before { content: ''; width: 10px; height: 10px; border-radius: 50%; background: #fbbf24; }
+  /* Title slide & anchor slides keep their original gradient — override the dark bar */
+  .title-slide .slide-head,
+  .anchor .slide-head {
+    background: transparent;
+    color: inherit;
+    border-bottom: none;
+  }
+  .title-slide .slide-eyebrow,
+  .anchor .slide-eyebrow {
+    color: var(--blue-mid);
+    text-transform: none;
+    letter-spacing: 0;
+  }
+  .anchor .slide-eyebrow { color: #92400e; }
+  .title-slide .slide-title,
+  .anchor .slide-title {
+    color: var(--text);
+  }
+  .anchor .slide-title { color: #78350f; }
+  .title-slide .slide-title small,
+  .anchor .slide-title small { color: var(--muted); }
+  .slide-body {
+    flex: 1; padding: 24px 48px 0;
+    display: flex; flex-direction: column;
+    font-size: 18px;
+  }
+  .slide-footer {
+    margin-top: auto; padding: 14px 48px 18px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 14px; color: var(--hint); background: #fff;
+  }
+  .slide-footer .chat-reminder {
+    background: var(--blue-bg); color: var(--blue-text);
+    padding: 7px 16px; border-radius: 20px; font-weight: 600; font-size: 14px;
+  }
+
+  /* Cards */
+  .cards-3 {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 18px;
+  }
+  .cards-2 {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; margin-top: 18px;
+  }
+  .card {
+    background: #fff; border: 1px solid var(--border); border-radius: 14px;
+    padding: 22px 24px; box-shadow: 0 2px 6px rgba(0,0,0,.04);
+  }
+  .card.blue { background: var(--blue-bg); border-color: rgba(42,125,212,.25); }
+  .card.green { background: var(--green-bg); border-color: rgba(6,95,70,.25); }
+  .card.yellow { background: var(--yellow-bg); border-color: rgba(146,64,14,.25); }
+  .card .num {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--blue-mid); color: #fff; font-weight: 800; font-size: 22px;
+    margin-bottom: 14px;
+  }
+  .card .ico {
+    font-size: 38px; margin-bottom: 10px; display: block;
+  }
+  .card h3 {
+    margin: 0 0 10px; font-size: 22px; font-weight: 700; color: var(--text); line-height: 1.35;
+  }
+  .card p, .card ul {
+    font-size: 17px; line-height: 1.75; color: var(--muted); margin: 0;
+  }
+  .card ul { padding-left: 20px; }
+  .card li { margin-bottom: 6px; }
+  code, .code {
+    font-family: "DM Mono", "Consolas", monospace;
+    background: #f1f5f9; padding: 3px 9px; border-radius: 5px;
+    font-size: 0.94em; color: #0f172a;
+  }
+  .code-block {
+    background: #0f172a; color: #e2e8f0;
+    padding: 16px 20px; border-radius: 10px;
+    font-family: "DM Mono", "Consolas", monospace;
+    font-size: 17px; line-height: 1.65;
+    margin: 14px 0; overflow-x: auto;
+    white-space: pre;
+  }
+  .code-block .hl { color: #fbbf24; }
+  .code-block .cm { color: #64748b; font-size: 14px; }
+
+  /* Title slide */
+  .title-slide {
+    background: linear-gradient(135deg, #eaf2fc 0%, #d4e6f7 100%);
+  }
+  .title-slide .badge-row {
+    display: flex; gap: 14px; margin-bottom: 22px;
+  }
+  .title-slide .pill {
+    background: rgba(255,255,255,.85); color: var(--blue-text);
+    padding: 8px 20px; border-radius: 22px; font-size: 16px; font-weight: 700;
+  }
+  .title-slide .pill.alt {
+    background: #fff; color: var(--blue-mid); border: 2px solid var(--blue-mid);
+  }
+  .title-slide h1 {
+    font-size: 58px; font-weight: 800; line-height: 1.18;
+    color: var(--blue-text); margin: 0 0 22px;
+    letter-spacing: -.02em;
+  }
+  .title-slide .lead {
+    font-size: 22px; color: var(--muted); margin: 0 0 24px; line-height: 1.6;
+  }
+  .meta-table {
+    background: rgba(255,255,255,.7); border-left: 5px solid var(--blue-mid);
+    padding: 18px 26px; border-radius: 8px; max-width: 880px;
+  }
+  .meta-table dt {
+    display: inline-block; width: 110px; color: var(--blue-mid);
+    font-weight: 700; font-size: 16px;
+  }
+  .meta-table dd {
+    display: inline; margin: 0; font-size: 18px; color: var(--text);
+  }
+  .meta-table dl { margin: 10px 0; }
+
+  /* Big text slides */
+  .big-points {
+    display: grid; grid-template-columns: 90px 1fr; gap: 18px 28px;
+    align-items: start; margin-top: 8px;
+  }
+  .big-points .pt-n {
+    font-size: 40px; font-weight: 800; color: var(--blue-mid);
+    line-height: 1; padding-top: 4px;
+  }
+  .big-points .pt-t {
+    font-size: 24px; font-weight: 700; color: var(--text); line-height: 1.4;
+    margin-bottom: 6px;
+  }
+  .big-points .pt-d {
+    font-size: 17px; color: var(--muted); line-height: 1.7;
+    margin: 0;
+  }
+
+  /* Calendar */
+  .cal {
+    display: grid; grid-template-columns: repeat(7, 1fr);
+    gap: 8px; margin: 16px 0; max-width: 920px;
+  }
+  .cal .day {
+    background: #fff; border: 1px solid var(--border); border-radius: 10px;
+    padding: 12px 8px; text-align: center; font-size: 16px;
+  }
+  .cal .day .dn { font-size: 14px; color: var(--hint); }
+  .cal .day .dd { font-size: 26px; font-weight: 700; margin-top: 4px; color: var(--text); }
+  .cal .day.today { background: #fde68a; border-color: #f59e0b; }
+  .cal .day.weekend { background: #f1f5f9; color: var(--hint); }
+  .cal .day.weekend .dd { color: var(--hint); }
+  .cal .day.biz1 { background: #dbeafe; border-color: #60a5fa; }
+  .cal .day.biz2 { background: #bfdbfe; border-color: #3b82f6; }
+  .cal .day.biz3 { background: #93c5fd; border-color: var(--blue-mid); color: #fff; }
+  .cal .day.biz3 .dd, .cal .day.biz3 .dn { color: #fff; }
+  .cal .day .lbl {
+    font-size: 13px; margin-top: 6px; font-weight: 700; line-height: 1.3;
+  }
+
+  /* Flow diagram */
+  .flow {
+    display: flex; flex-direction: column; gap: 4px;
+    margin-top: 8px;
+  }
+  .flow .node {
+    background: #fff; border: 2px solid var(--blue-mid); border-radius: 10px;
+    padding: 10px 16px; font-size: 16px; color: var(--text);
+    display: flex; align-items: center; gap: 12px; font-weight: 600;
+  }
+  .flow .node.loop {
+    background: var(--yellow-bg); border-color: #f59e0b;
+    flex-direction: column; align-items: stretch;
+  }
+  .flow .arrow { text-align: center; color: var(--hint); font-size: 18px; line-height: 1; margin: 2px 0; }
+  .flow .ico-cell { font-size: 22px; width: 30px; text-align: center; }
+  .flow .nested {
+    margin: 6px 0 0 30px; display: flex; flex-direction: column; gap: 4px;
+    font-size: 14px; color: var(--muted); font-weight: 500;
+  }
+  .flow .nested .sub {
+    background: #fff; border-radius: 8px; padding: 6px 12px;
+    border-left: 3px solid #f59e0b;
+  }
+
+  ul.check { padding: 0; list-style: none; }
+  ul.check li {
+    padding-left: 32px; position: relative; font-size: 17px; line-height: 1.75;
+    margin-bottom: 10px; color: var(--text);
+  }
+  ul.check li::before {
+    content: '✓'; position: absolute; left: 6px; top: 0;
+    color: var(--blue-mid); font-weight: 800; font-size: 20px;
+  }
+  ul.cross li::before { content: '✕'; color: var(--red); }
+
+  .callout {
+    background: var(--yellow-bg); border-left: 6px solid #f59e0b;
+    padding: 14px 22px; border-radius: 6px;
+    font-size: 17px; line-height: 1.75; color: #78350f;
+    margin: 14px 0;
+  }
+  .callout strong { color: #78350f; }
+
+  /* Anchor closing slide */
+  .anchor {
+    background: linear-gradient(135deg, #fde68a 0%, #fcd34d 100%);
+  }
+  .anchor .slide-title { color: #78350f; }
+
+  /* Haru avatar */
+  .haru-img {
+    width: 240px; height: 240px; border-radius: 50%;
+    object-fit: cover;
+    box-shadow: 0 8px 24px rgba(42,125,212,.3);
+  }
+  .haru-img.small {
+    width: 56px; height: 56px;
+  }
+
+  /* Opening slide */
+  .opening-bar {
+    background: var(--blue-mid); color: #fff;
+    padding: 12px 48px; display: flex; justify-content: space-between;
+    font-size: 16px; font-weight: 700;
+  }
+
+  /* Two column with image */
+  .two-col {
+    display: grid; gap: 28px; margin-top: 14px;
+  }
+  .two-col-img {
+    grid-template-columns: 300px 1fr;
+  }
+  .two-col-flow {
+    grid-template-columns: 1.3fr 1fr;
+  }
+  .two-col-code {
+    grid-template-columns: 1fr 1fr; align-items: stretch;
+  }
+
+  /* ===== PA flow visualization (slide 8 overview) ===== */
+  .pa-flow-grid {
+    display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;
+    align-items: stretch;
+  }
+  .pa-col { display: flex; flex-direction: column; gap: 4px; }
+  .pa-col-label {
+    font-size: 13px; font-weight: 700; color: var(--blue-mid);
+    background: var(--blue-bg); padding: 6px 10px; border-radius: 6px;
+    margin-bottom: 6px; text-align: center;
+  }
+  .pa-node {
+    background: #fff; border: 1px solid #cbd5e1; border-radius: 10px;
+    padding: 8px 12px; display: flex; align-items: center; gap: 10px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.08); font-size: 13px;
+    border-left: 4px solid #94a3b8;
+  }
+  .pa-node strong { font-size: 13px; line-height: 1.25; }
+  .pa-node .sub { font-size: 11px; color: var(--muted); margin-top: 2px; line-height: 1.3; }
+  .pa-node .ico { font-size: 18px; flex-shrink: 0; }
+  .pa-node.trigger { border-left-color: #16a34a; background: #f0fdf4; }
+  .pa-node.forms { border-left-color: #7c3aed; background: #faf5ff; }
+  .pa-node.variable { border-left-color: #ec4899; background: #fdf2f8; }
+  .pa-node.teams { border-left-color: #2563eb; background: #eff6ff; }
+  .pa-arrow {
+    text-align: center; color: var(--hint); font-size: 14px; line-height: 1;
+  }
+  .pa-loop {
+    border: 2px dashed #f59e0b; border-radius: 12px; padding: 10px;
+    background: #fffbeb; display: flex; flex-direction: column; gap: 4px;
+  }
+  .pa-loop-head {
+    background: #92400e; color: #fff; padding: 6px 10px; border-radius: 6px;
+    font-size: 12px; display: flex; align-items: center; gap: 8px;
+    margin-bottom: 4px;
+  }
+  .pa-loop-head .ico { font-size: 16px; }
+  .pa-cond {
+    background: #fff; border: 1px solid #cbd5e1; border-radius: 10px;
+    padding: 8px; display: flex; flex-direction: column; gap: 6px;
+    border-left: 4px solid #6366f1;
+  }
+  .pa-cond-head {
+    font-size: 13px; font-weight: 700;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .pa-cond-row { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .pa-cond-branch {
+    border-radius: 8px; padding: 6px;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .pa-cond-branch.true { background: #ecfdf5; border: 1px solid #6ee7b7; }
+  .pa-cond-branch.false { background: #fef2f2; border: 1px solid #fca5a5; }
+  .pa-cond-branch .branch-label {
+    font-size: 11px; font-weight: 800; padding: 2px 8px; border-radius: 4px;
+    align-self: flex-start;
+  }
+  .pa-cond-branch.true .branch-label { background: #16a34a; color: #fff; }
+  .pa-cond-branch.false .branch-label { background: #dc2626; color: #fff; }
+  .pa-no-action {
+    font-size: 12px; color: var(--hint); text-align: center; padding: 8px;
+    font-style: italic;
+  }
+
+  /* Slide 13 (handson 4 steps) — make compact to fit Teams node */
+  #s14 .slide-body { padding-top: 8px; }
+  #s14 .big-points { gap: 10px 22px; }
+  #s14 .big-points .pt-n { font-size: 34px; }
+  #s14 .big-points .pt-t { font-size: 20px; margin-bottom: 2px; }
+  #s14 .big-points .pt-d { font-size: 15px; line-height: 1.55; }
+  #s14 .flow { gap: 2px; }
+  #s14 .flow .node { padding: 8px 14px; font-size: 14px; }
+  #s14 .flow .arrow { font-size: 14px; margin: 0; line-height: 1; }
+  #s14 .flow .ico-cell { font-size: 18px; width: 26px; }
+  #s14 .flow .node.loop { padding: 8px 14px; }
+  #s14 .flow .nested { margin: 4px 0 0 26px; gap: 3px; }
+  #s14 .flow .nested .sub { padding: 4px 10px; font-size: 13px; }
+
+  /* Helper */
+  .pull-quote {
+    font-size: 22px; font-weight: 700; color: var(--blue-text);
+    text-align: center; background: var(--blue-bg); padding: 14px;
+    border-radius: 12px; margin: 12px 0;
+  }
+</style>
+</head>
+<body>
+
+<nav class="toc" id="toc">
+  <div class="toc-header">
+    <div class="title">📑 目次 — PA45 第12回</div>
+    <div class="sub">クリックでジャンプ</div>
+  </div>
+  <ol>
+    <li><a href="#s1"><span class="n">01</span>20:15 START</a></li>
+    <li><a href="#s2"><span class="n">02</span>事前準備</a></li>
+    <li><a href="#s3"><span class="n">03</span>PA45とは？</a></li>
+    <li><a href="#s4"><span class="n">04</span>講師自己紹介（Haru）</a></li>
+    <li><a href="#s5"><span class="n">05</span>ご参加にあたって</a></li>
+    <li><a href="#s6"><span class="n">06</span>第12回タイトル</a></li>
+    <li><a href="#s7"><span class="n">07</span>今日やること（3つ）</a></li>
+    <li><a href="#s8"><span class="n">08</span>⭐ 完成フロー全体像</a></li>
+    <li><a href="#s9"><span class="n">09</span>テーマ解説(1/2) 式って何？</a></li>
+    <li><a href="#s10"><span class="n">10</span>関数① addDays</a></li>
+    <li><a href="#s11"><span class="n">11</span>関数② formatDateTime</a></li>
+    <li><a href="#s12"><span class="n">12</span>関数③ dayOfWeek</a></li>
+    <li><a href="#s13"><span class="n">13</span>テーマ解説(2/2) 3営業日後</a></li>
+    <li><a href="#s14"><span class="n">14</span>ハンズオン4ステップ</a></li>
+    <li><a href="#s15"><span class="n">15</span>今日のポイント3つ</a></li>
+    <li><a href="#s16"><span class="n">16</span>活用事例＆クロージング</a></li>
+  </ol>
+</nav>
+<button class="toc-toggle" id="tocToggle" type="button">≡ 目次</button>
+
+<div class="deck-header">
+  <h1>PA45 第12回 スライドプレビュー</h1>
+  <div>2026-05-28（木）20:15〜 ／「式」アレルギー、今日で卒業｜申請から3営業日後に自動リマインド</div>
+</div>
+
+<!-- ============ S1: opening ============ -->
+<section class="slide" id="s1">
+  <span class="slide-num">1 / 16</span>
+  <div class="opening-bar">
+    <span>PA45 — Power Automate 45</span><span>第12回 / Vol.12</span>
+  </div>
+  <div class="slide-body" style="text-align:center;align-items:center;justify-content:center;display:flex;">
+    <div>
+      <div style="font-size:28px;color:var(--muted);margin-bottom:16px;">まもなく開始します</div>
+      <div style="font-size:160px;font-weight:900;color:var(--blue-text);line-height:1;margin:20px 0;letter-spacing:-.04em;">20:15 START</div>
+      <div style="font-size:32px;font-weight:700;color:var(--text);margin-bottom:10px;">第12回｜「式」アレルギー、今日で卒業</div>
+      <div style="font-size:22px;color:var(--muted);">申請から3営業日後に自動リマインドを作る45分</div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span>Power Automate 45 | Copyright © PA45</span><span></span>
+  </div>
+</section>
+
+<!-- ============ S2: 事前準備 ============ -->
+<section class="slide" id="s2">
+  <span class="slide-num">2 / 16</span>
+  <div class="slide-head">
+    <div class="slide-eyebrow">PA45｜第12回</div>
+    <h1 class="slide-title">事前準備 <small>（今回はほぼ不要です）</small></h1>
+  </div>
+  <div class="slide-body">
+    <p style="font-size:20px;color:var(--muted);margin:14px 0 22px;">今回のハンズオンは特別な準備が要りません。下の2つだけ確認しておきましょう。</p>
+    <div class="cards-2">
+      <div class="card blue">
+        <div style="font-size:16px;font-weight:700;color:var(--blue-mid);letter-spacing:.05em;margin-bottom:6px;">STEP 1</div>
+        <h3>Power Automate にサインインできる</h3>
+        <p style="font-size:18px;"><code>make.powerautomate.com</code> を開いて、サインインできる状態にしておきます。</p>
+      </div>
+      <div class="card blue">
+        <div style="font-size:16px;font-weight:700;color:var(--blue-mid);letter-spacing:.05em;margin-bottom:6px;">STEP 2</div>
+        <h3>Microsoft Forms が使える</h3>
+        <p style="font-size:18px;">サンプル申請フォームを作ります。難しい質問は出ません。匿名でOK。</p>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:24px;font-size:18px;">
+      <strong>💡 見るだけ参加もOK</strong>　手を動かさず、横で流れを見ているだけでも大丈夫です。録画も後日YouTubeで公開します。
+    </div>
+    <div class="pull-quote" style="margin-top:auto;margin-bottom:0;">
+      📚 今日のテーマは「式」── 怖がる必要なし、関数（値）の形だけ覚えれば書けます
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span>Power Automate for Beginners</span>
+    <span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span>
+  </div>
+</section>
+
+<!-- ============ S3: PA45とは ============ -->
+<section class="slide" id="s3">
+  <span class="slide-num">3 / 16</span>
+  <div class="slide-head">
+    <div class="slide-eyebrow">INTRODUCTION</div>
+    <h1 class="slide-title">PA45<small>とは？</small></h1>
+    <div class="concept-dot">Concept</div>
+  </div>
+  <div class="slide-body" style="align-items:center;">
+    <div style="text-align:center;font-size:38px;font-weight:800;color:var(--blue-text);margin:14px 0 26px;line-height:1.3;">忙しい人のための<br><span style="color:var(--blue-mid);">45分ハンズオン</span></div>
+    <div class="cards-3" style="width:100%;">
+      <div class="card" style="text-align:center;">
+        <div class="ico">⏱️</div><h3>45分完結</h3>
+        <p style="font-size:17px;">長時間の研修は不要。要点だけを凝縮して最短でスキル習得。</p>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div class="ico">💻</div><h3>実践型ハンズオン</h3>
+        <p style="font-size:17px;">座学だけではありません。その場で実際に手を動かし「使える」技術を学びます。</p>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div class="ico">👥</div><h3>一緒に作る</h3>
+        <p style="font-size:17px;">ゼロから一緒に作ることで仕組みを理解します。</p>
+      </div>
+    </div>
+    <div style="margin-top:24px;text-align:center;font-size:20px;font-weight:700;color:var(--blue-text);background:var(--blue-bg);padding:14px 26px;border-radius:30px;display:inline-block;align-self:center;">✓ Power Automate 未経験・知識ゼロでも大丈夫！</div>
+  </div>
+  <div class="slide-footer">
+    <span>Power Automate for Beginners</span>
+    <span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span>
+  </div>
+</section>
+
+<!-- ============ S4: 講師自己紹介 ============ -->
+<section class="slide" id="s4">
+  <span class="slide-num">4 / 16</span>
+  <div class="slide-head">
+    <div class="slide-eyebrow">SPEAKER</div>
+    <h1 class="slide-title">Power Automate 45 <small>(PA45)</small></h1>
+    <div style="font-size:18px;color:var(--muted);margin-top:8px;">今日も一緒に "1粒だけ" 深掘りします！</div>
+  </div>
+  <div class="slide-body">
+    <div class="two-col two-col-img">
+      <div style="text-align:center;">
+        <img src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="Haru" class="haru-img">
+        <div style="background:var(--blue-mid);color:#fff;padding:10px 30px;border-radius:30px;font-size:32px;font-weight:800;display:inline-block;margin-top:14px;">Haru</div>
+        <div style="font-size:17px;color:var(--muted);margin-top:12px;font-weight:700;">💻 Power Platform / DX 推進</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div style="font-size:20px;font-weight:700;color:var(--blue-mid);">⭐ 主な活動・実績</div>
+        <div class="card" style="padding:14px 18px;">
+          <div style="font-size:18px;font-weight:700;margin-bottom:4px;">🏢 社内講座の実施</div>
+          <span style="font-size:16px;color:var(--muted);">PA／Copilot ハンズオン講座などを開催し、社内のDXを推進</span>
+        </div>
+        <div class="card" style="padding:14px 18px;">
+          <div style="font-size:18px;font-weight:700;margin-bottom:4px;">🎤 外部コミュニティ登壇</div>
+          <span style="font-size:16px;color:var(--muted);">広島コミュニティ「PLUG」運営。外部コミュニティ登壇</span>
+        </div>
+        <div class="card" style="padding:14px 18px;">
+          <div style="font-size:18px;font-weight:700;margin-bottom:4px;">📱 X (Twitter) での情報発信</div>
+          <span style="font-size:16px;color:var(--muted);">初心者向けPAチップスを2日に1回継続発信中！</span>
+        </div>
+        <div class="card blue" style="padding:14px 18px;">
+          <div style="font-size:18px;font-weight:700;margin-bottom:4px;color:var(--blue-text);">🕐 Power Automate 45 (PA45)</div>
+          <span style="font-size:16px;color:var(--muted);">45分の "1粒ハンズオン" を毎週開催・運営</span>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:18px;text-align:center;background:var(--blue-bg);color:var(--blue-text);padding:12px 30px;border-radius:30px;font-weight:700;font-size:19px;align-self:center;display:inline-block;">今日は「できた！」を一緒に作っていきましょう 😊</div>
+  </div>
+  <div class="slide-footer">
+    <span>Power Automate for Beginners</span>
+    <span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span>
+  </div>
+</section>
+
+<!-- ============ S5: ご参加にあたっての (rules) ============ -->
+<section class="slide" id="s5">
+  <span class="slide-num">5 / 16</span>
+  <div class="slide-head">
+    <div class="slide-eyebrow">PA45 Online Course</div>
+    <h1 class="slide-title">ご参加にあたっての<small>お願い （ルール）</small></h1>
+    <div class="concept-dot">Guidelines</div>
+  </div>
+  <div class="slide-body">
+    <div class="cards-3">
+      <div class="card">
+        <div class="ico">🤝</div>
+        <h3>みんなで気持ちよく<br>学ぶために</h3>
+        <ul class="check" style="font-size:16px;">
+          <li>誹謗中傷・不適切な発言は<strong>禁止</strong></li>
+          <li>お互いを尊重し合いましょう</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="ico">🎥</div>
+        <h3>講座の録画について</h3>
+        <ul class="check" style="font-size:16px;">
+          <li>後日YouTube公開予定</li>
+          <li>表示名が映る場合があります</li>
+          <li>匿名参加で非表示にできます</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="ico">💬</div>
+        <h3>チャットは気軽に<br>どうぞ</h3>
+        <ul class="check" style="font-size:16px;">
+          <li>「できました！」の声など大歓迎</li>
+          <li>小さな質問でも <strong>OK</strong> です</li>
+          <li>反応があると講師も嬉しいです</li>
+        </ul>
+      </div>
+    </div>
+    <div class="cards-2" style="margin-top:18px;">
+      <div class="card yellow">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:8px;">
+          <div style="font-size:32px;">🖌️</div>
+          <h3 style="color:var(--blue-text);margin:0;">アウトプットで学びが定着</h3>
+        </div>
+        <ul style="font-size:16px;color:var(--muted);">
+          <li># <strong>#PA45</strong> をつけて投稿しよう！</li>
+          <li>「作ったフロー」「気づき」など何でもOK</li>
+          <li>投稿は運営の励みになります！</li>
+        </ul>
+      </div>
+      <div class="card green">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:8px;">
+          <div style="font-size:32px;">🎓</div>
+          <h3 style="color:var(--green-text);margin:0;">初心者大歓迎の講座です</h3>
+        </div>
+        <ul style="font-size:16px;color:var(--muted);">
+          <li>🚫 難しい専門用語は使いません</li>
+          <li>🚶 置いてけぼりにならないようゆっくり進行</li>
+          <li>😊 <strong>安心</strong>してご参加ください</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span>Power Automate for Beginners</span>
+    <span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span>
+  </div>
+</section>
+
+<!-- ============ S6: タイトル （第12回） ============ -->
+<section class="slide title-slide" id="s6">
+  <span class="slide-num">6 / 16</span>
+  <div class="slide-head">
+    <div class="badge-row">
+      <span class="pill">Power Automate 入門講座</span>
+      <span class="pill alt">Vol.12</span>
+    </div>
+    <div style="font-size:18px;color:var(--blue-mid);font-weight:700;margin-bottom:10px;">PA45　【日付の式 × +3営業日 × Teams通知】</div>
+    <h1>第12回：<br>「式」アレルギー、今日で卒業<br>申請から3営業日後にリマインド</h1>
+  </div>
+  <div class="slide-body" style="display:grid;grid-template-columns:1fr 280px;gap:32px;align-items:center;">
+    <div class="meta-table">
+      <dl><dt>Theme</dt><dd>日付の式入門｜addDays・formatDateTime・dayOfWeek を使う</dd></dl>
+      <dl><dt>Target</dt><dd>「式って何書けばいいの？」と思った方／プログラミング知識ゼロでOK</dd></dl>
+      <dl><dt>Time</dt><dd>約25分ハンズオン</dd></dl>
+    </div>
+    <div style="text-align:center;">
+      <img src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="Haru" class="haru-img" style="width:200px;height:200px;">
+      <div style="margin-top:10px;font-size:18px;font-weight:700;color:var(--blue-text);">Haru</div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span>Power Automate for Beginners</span>
+    <span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span>
+  </div>
+</section>
+
+<!-- ============ S7: 今日やること ============ -->
+<section class="slide" id="s7">
+  <span class="slide-num">7 / 16</span>
+  <div class="slide-head">
+    <div class="slide-eyebrow">PA45｜第12回</div>
+    <h1 class="slide-title">今日やること <small>（3つだけ）</small></h1>
+    <div class="concept-dot">Agenda</div>
+  </div>
+  <div class="slide-body">
+    <div class="cards-3" style="margin-top:14px;">
+      <div class="card" style="text-align:center;">
+        <div class="num">1</div>
+        <div class="ico">🧮</div>
+        <h3>式って何？を知る</h3>
+        <p style="font-size:17px;">式は「関数（値）」の形。<br><br>今日使う3つの関数<br>（addDays・formatDateTime・dayOfWeek）<br>を見ます。</p>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div class="num">2</div>
+        <div class="ico">📅</div>
+        <h3>「3営業日後」を数える</h3>
+        <p style="font-size:17px;">今日は含まない。<br>土日もスキップ。<br><br>正しい数え方を絵で<br>理解します。</p>
+      </div>
+      <div class="card" style="text-align:center;">
+        <div class="num">3</div>
+        <div class="ico">🔁</div>
+        <h3>ループで自動計算</h3>
+        <p style="font-size:17px;">Do until で1日ずつ<br>進めて、平日だけ<br>数えるフローを<br>作ります。</p>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:24px;font-size:19px;">
+      <strong>🎯 ゴール：</strong> 申請フォームから3営業日後の日付を計算 → Teams に「いつまでに対応すべきか」を通知するフローが完成します。
+    </div>
+    <div class="pull-quote" style="margin-top:auto;margin-bottom:0;font-size:20px;">
+      💪 今日のキーワードは「<span style="color:var(--red);">関数（値）の形</span>」と「<span style="color:var(--red);">先に+1してから判定</span>」
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span>Power Automate for Beginners</span>
+    <span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span>
+  </div>
+</section>
+
+<!-- ============ S8 NEW: 完成フロー全体像 ============ -->
+<section class="slide" id="s8">
+  <span class="slide-num">8 / 16</span>
+  <div class="slide-head">
+    <div class="slide-eyebrow">PA45｜第12回 ／ 全体像</div>
+    <h1 class="slide-title">完成形 <small>── まずはゴールを見ておこう</small></h1>
+    <div class="concept-dot">Big Picture</div>
+  </div>
+  <div class="slide-body" style="padding-top:14px;">
+    <div style="font-size:16px;color:var(--muted);margin-bottom:10px;">今日作るフローはこの全体図です。細かい中身はあとで一緒に作っていくので、まずは「流れ」だけ眺めてください。</div>
+    <div class="pa-flow-grid">
+      <!-- LEFT column -->
+      <div class="pa-col">
+        <div class="pa-col-label">① 入口 → 準備</div>
+        <div class="pa-node trigger"><span class="ico">📥</span><div><strong>新しい応答が送信されるとき</strong><div class="sub">Forms トリガー</div></div></div>
+        <div class="pa-arrow">↓</div>
+        <div class="pa-node forms"><span class="ico">📋</span><div><strong>応答の詳細を取得する</strong><div class="sub">申請内容を取り出す</div></div></div>
+        <div class="pa-arrow">↓</div>
+        <div class="pa-node variable"><span class="ico">{x}</span><div><strong>変数を初期化する</strong><div class="sub">カウントを 0 からスタート</div></div></div>
+        <div class="pa-arrow">↓</div>
+        <div class="pa-node variable"><span class="ico">{x}</span><div><strong>変数を初期化する</strong><div class="sub">今日の日付を入れる</div></div></div>
+      </div>
+
+      <!-- MIDDLE column: Do until -->
+      <div class="pa-col">
+        <div class="pa-col-label">② 平日だけ3日数える（Do until）</div>
+        <div class="pa-loop">
+          <div class="pa-loop-head"><span class="ico">🔁</span><strong>Do until</strong>　<span style="font-size:11px;opacity:.85;">— count ≧ 3 まで繰り返す</span></div>
+          <div class="pa-node variable"><span class="ico">{x}</span><div><strong>作成</strong><div class="sub">1日進めた日付を作る</div></div></div>
+          <div class="pa-arrow">↓</div>
+          <div class="pa-node variable"><span class="ico">{x}</span><div><strong>変数の設定</strong><div class="sub">現在日を1日後に更新</div></div></div>
+          <div class="pa-arrow">↓</div>
+          <div class="pa-cond">
+            <div class="pa-cond-head"><span class="ico">🔀</span><strong>条件</strong> — 平日かどうか判定</div>
+            <div class="pa-cond-row">
+              <div class="pa-cond-branch true">
+                <div class="branch-label">True</div>
+                <div class="pa-node variable" style="margin:0;"><span class="ico">{x}</span><div><strong>変数の値を増やす</strong><div class="sub">count を +1</div></div></div>
+              </div>
+              <div class="pa-cond-branch false">
+                <div class="branch-label">False</div>
+                <div class="pa-no-action">No Actions</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT column -->
+      <div class="pa-col">
+        <div class="pa-col-label">③ 整形 → 通知</div>
+        <div class="pa-node variable"><span class="ico">{x}</span><div><strong>作成</strong><div class="sub">JST日付に整える（yyyy-MM-dd）</div></div></div>
+        <div class="pa-arrow">↓</div>
+        <div class="pa-node teams"><span class="ico">💬</span><div><strong>チャットまたはチャネルで投稿</strong><div class="sub">3営業日後の期日を Teams へ送る</div></div></div>
+        <div style="margin-top:auto;background:var(--blue-bg);border-radius:10px;padding:14px 16px;border-left:4px solid var(--blue-mid);">
+          <div style="font-size:14px;font-weight:700;color:var(--blue-text);margin-bottom:4px;">🎯 今日のゴール</div>
+          <div style="font-size:13px;color:var(--text);line-height:1.55;">Forms から申請が来たら、土日をスキップして3営業日後の日付を計算し、Teams で「対応期限」を通知する。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span>Power Automate for Beginners</span>
+    <span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span>
+  </div>
+</section>
+
+<!-- ============ S9: テーマ解説1 — 式って何？ ============ -->
+<section class="slide" id="s9">
+  <span class="slide-num">9 / 16</span>
+  <div class="slide-head">
+    <div class="slide-eyebrow">PA45｜第12回</div>
+    <h1 class="slide-title">テーマ解説 <small>(1/2)：式って何？</small></h1>
+    <div class="concept-dot">Concept</div>
+  </div>
+  <div class="slide-body">
+    <div style="font-size:22px;font-weight:700;color:var(--blue-text);margin:6px 0 8px;">① 式は「関数（値）」の形</div>
+    <p style="font-size:18px;color:var(--muted);line-height:1.75;margin:0 0 6px;">
+      関数の名前のあとに、カッコの中に「値」を入れるだけ。怖がる必要はありません。<br>
+      関数も値も、動的コンテンツから選べばOK。
+    </p>
+    <div class="code-block" style="font-size:20px;"><span class="hl">addDays</span>(<span style="color:#7dd3fc;">utcNow()</span>, <span style="color:#a7f3d0;">3</span>)
+<span class="cm">↑関数名      ↑値1（今日）   ↑値2（足す日数）</span></div>
+
+    <div style="font-size:22px;font-weight:700;color:var(--blue-text);margin:14px 0 10px;">② 今日使う関数は3つだけ</div>
+    <div class="cards-3">
+      <div class="card blue" style="padding:16px 18px;">
+        <div style="font-size:18px;font-weight:700;color:var(--blue-text);margin-bottom:8px;"><code style="font-size:17px;">addDays(日付, n)</code></div>
+        <p style="font-size:16px;">日付に <strong>n 日足す</strong>。<br>例：明日の日付がほしい時。</p>
+      </div>
+      <div class="card blue" style="padding:16px 18px;">
+        <div style="font-size:18px;font-weight:700;color:var(--blue-text);margin-bottom:8px;"><code style="font-size:15px;">formatDateTime(日付, 形式)</code></div>
+        <p style="font-size:16px;">表示形式を<strong>整える</strong>。<br>例：<code>yyyy-MM-dd</code> 形式に。</p>
+      </div>
+      <div class="card blue" style="padding:16px 18px;">
+        <div style="font-size:18px;font-weight:700;color:var(--blue-text);margin-bottom:8px;"><code style="font-size:17px;">dayOfWeek(日付)</code></div>
+        <p style="font-size:16px;"><strong>曜日番号</strong>を返す。<br>0=日 〜 6=土。</p>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:auto;margin-bottom:0;font-size:18px;">
+      <strong>💡 怖がらず1個ずつ。</strong>　関数は「名前」と「材料」だけ覚えれば書けます。
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span>Power Automate for Beginners</span>
+    <span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span>
+  </div>
+</section>
+
+<!-- ============ S10: addDays ============ -->
+<section class="slide" id="s10">
+  <span class="slide-num">10 / 16</span>
+  <div class="slide-head">
+    <div class="slide-eyebrow">PA45｜第12回 ／ 関数 1/3</div>
+    <h1 class="slide-title">addDays <small>── 日付に日数を足す</small></h1>
+    <div class="concept-dot">Function</div>
+  </div>
+  <div class="slide-body">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:6px;">
+      <div>
+        <div style="font-size:20px;font-weight:700;color:var(--blue-text);margin-bottom:8px;">📌 何ができる？</div>
+        <p style="font-size:18px;line-height:1.75;margin:0 0 14px;">指定した日付に <strong style="color:var(--red);">n 日</strong> を足した日付が返ります。<br>マイナスを入れれば過去にも戻せます。</p>
+
+        <div style="font-size:18px;font-weight:700;color:var(--blue-text);margin-bottom:6px;">構文</div>
+        <div class="code-block" style="margin:0;font-size:19px;"><span class="hl">addDays</span>(<span style="color:#7dd3fc;">日付</span>, <span style="color:#a7f3d0;">n</span>)</div>
+        <div class="card yellow" style="margin-top:14px;padding:14px 18px;">
+          <div style="font-size:17px;font-weight:700;color:var(--yellow-text);">💼 今日のフローでの使い所</div>
+          <p style="font-size:16px;margin-top:6px;">Do until の中で <code>addDays(currentDate, 1)</code> として、<strong>1日ずつ進める</strong>のに使います。</p>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:18px;font-weight:700;color:var(--blue-text);margin-bottom:8px;">📝 例で見てみる</div>
+
+        <div style="background:var(--blue-bg);padding:12px 16px;border-radius:10px;margin-bottom:10px;">
+          <div style="font-size:16px;font-weight:700;margin-bottom:4px;">明日の日付</div>
+          <div class="code-block" style="margin:0;font-size:17px;">addDays(utcNow(), 1)</div>
+          <div style="font-size:15px;color:var(--muted);margin-top:6px;">→ <code>2026-05-29T...</code></div>
+        </div>
+
+        <div style="background:var(--blue-bg);padding:12px 16px;border-radius:10px;margin-bottom:10px;">
+          <div style="font-size:16px;font-weight:700;margin-bottom:4px;">3日後の日付</div>
+          <div class="code-block" style="margin:0;font-size:17px;">addDays(utcNow(), 3)</div>
+          <div style="font-size:15px;color:var(--muted);margin-top:6px;">→ <code>2026-05-31T...</code></div>
+        </div>
+
+        <div style="background:var(--blue-bg);padding:12px 16px;border-radius:10px;">
+          <div style="font-size:16px;font-weight:700;margin-bottom:4px;">昨日（マイナスもOK）</div>
+          <div class="code-block" style="margin:0;font-size:17px;">addDays(utcNow(), -1)</div>
+          <div style="font-size:15px;color:var(--muted);margin-top:6px;">→ <code>2026-05-27T...</code></div>
+        </div>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:auto;margin-bottom:0;font-size:17px;">
+      <strong>⚠️ 返ってくるのは UTC（協定世界時）。</strong> 日本で使うときは <code>addHours(..., 9)</code> でJST補正すると安心。
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span>Power Automate for Beginners</span>
+    <span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span>
+  </div>
+</section>
+
+<!-- ============ S11: formatDateTime ============ -->
+<section class="slide" id="s11">
+  <span class="slide-num">11 / 16</span>
+  <div class="slide-head">
+    <div class="slide-eyebrow">PA45｜第12回 ／ 関数 2/3</div>
+    <h1 class="slide-title">formatDateTime <small>── 日付の見た目を整える</small></h1>
+    <div class="concept-dot">Function</div>
+  </div>
+  <div class="slide-body">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:6px;">
+      <div>
+        <div style="font-size:20px;font-weight:700;color:var(--blue-text);margin-bottom:8px;">📌 何ができる？</div>
+        <p style="font-size:18px;line-height:1.75;margin:0 0 14px;">日付を「見やすい文字列」に変換します。<br>表示形式は <strong style="color:var(--red);">'yyyy-MM-dd'</strong> のように指定。</p>
+
+        <div style="font-size:18px;font-weight:700;color:var(--blue-text);margin-bottom:6px;">構文</div>
+        <div class="code-block" style="margin:0;font-size:18px;"><span class="hl">formatDateTime</span>(<span style="color:#7dd3fc;">日付</span>, <span style="color:#fbcfe8;">'形式'</span>)</div>
+
+        <div style="font-size:17px;font-weight:700;color:var(--blue-text);margin:14px 0 6px;">🗓️ よく使う形式パターン</div>
+        <table style="width:100%;font-size:15px;border-collapse:collapse;background:var(--bg);border-radius:8px;overflow:hidden;">
+          <tr style="background:var(--blue-bg);"><th style="padding:6px 10px;text-align:left;">形式</th><th style="padding:6px 10px;text-align:left;">結果</th></tr>
+          <tr><td style="padding:6px 10px;"><code>yyyy-MM-dd</code></td><td style="padding:6px 10px;">2026-05-28</td></tr>
+          <tr style="background:rgba(255,255,255,.5);"><td style="padding:6px 10px;"><code>yyyy/MM/dd</code></td><td style="padding:6px 10px;">2026/05/28</td></tr>
+          <tr><td style="padding:6px 10px;"><code>yyyy年M月d日</code></td><td style="padding:6px 10px;">2026年5月28日</td></tr>
+          <tr style="background:rgba(255,255,255,.5);"><td style="padding:6px 10px;"><code>HH:mm</code></td><td style="padding:6px 10px;">14:30</td></tr>
+        </table>
+      </div>
+      <div>
+        <div style="font-size:18px;font-weight:700;color:var(--blue-text);margin-bottom:8px;">📝 例で見てみる</div>
+
+        <div style="background:var(--blue-bg);padding:12px 16px;border-radius:10px;margin-bottom:10px;">
+          <div style="font-size:16px;font-weight:700;margin-bottom:4px;">今日を読みやすい形に</div>
+          <div class="code-block" style="margin:0;font-size:16px;">formatDateTime(utcNow(),
+  'yyyy-MM-dd')</div>
+          <div style="font-size:15px;color:var(--muted);margin-top:6px;">→ <code>2026-05-28</code></div>
+        </div>
+
+        <div style="background:#fef3c7;padding:12px 16px;border-radius:10px;border-left:4px solid #f59e0b;">
+          <div style="font-size:16px;font-weight:700;margin-bottom:4px;color:#92400e;">⭐ 入れ子（ネスト）で組み合わせ</div>
+          <div class="code-block" style="margin:0;font-size:16px;">formatDateTime(
+  addDays(utcNow(), 3),
+  'yyyy-MM-dd'
+)</div>
+          <div style="font-size:15px;color:var(--muted);margin-top:6px;">→ 3日後を整形 → <code>2026-05-31</code></div>
+        </div>
+
+        <div class="card yellow" style="margin-top:12px;padding:14px 18px;">
+          <div style="font-size:17px;font-weight:700;color:var(--yellow-text);">💼 今日のフローでの使い所</div>
+          <p style="font-size:16px;margin-top:6px;">ループ完了後の <code>currentDate</code> を <code>yyyy-MM-dd</code> に整えて、Teams メッセージに埋め込みます。</p>
+        </div>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:auto;margin-bottom:0;font-size:17px;">
+      <strong>💡 ポイント：</strong>「中で計算 → 外で整形」の入れ子が、式を読み解くコツです。
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span>Power Automate for Beginners</span>
+    <span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span>
+  </div>
+</section>
+
+<!-- ============ S12: dayOfWeek ============ -->
+<section class="slide" id="s12">
+  <span class="slide-num">12 / 16</span>
+  <div class="slide-head">
+    <div class="slide-eyebrow">PA45｜第12回 ／ 関数 3/3</div>
+    <h1 class="slide-title">dayOfWeek <small>── 曜日を「数字」で返す</small></h1>
+    <div class="concept-dot">Function</div>
+  </div>
+  <div class="slide-body">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:6px;">
+      <div>
+        <div style="font-size:20px;font-weight:700;color:var(--blue-text);margin-bottom:8px;">📌 何ができる？</div>
+        <p style="font-size:18px;line-height:1.75;margin:0 0 14px;">日付の<strong style="color:var(--red);">曜日</strong>を 0〜6 の数字で返します。<br>「平日かどうか」の判定にめっちゃ便利。</p>
+
+        <div style="font-size:18px;font-weight:700;color:var(--blue-text);margin-bottom:6px;">構文</div>
+        <div class="code-block" style="margin:0;font-size:19px;"><span class="hl">dayOfWeek</span>(<span style="color:#7dd3fc;">日付</span>)</div>
+
+        <div style="background:var(--blue-bg);padding:14px 18px;border-radius:10px;margin-top:14px;">
+          <div style="font-size:17px;font-weight:700;margin-bottom:4px;">📝 例：今日（木曜）の場合</div>
+          <div class="code-block" style="margin:0;font-size:17px;">dayOfWeek(utcNow())</div>
+          <div style="font-size:16px;color:var(--muted);margin-top:6px;">→ <code style="font-size:18px;">4</code>（=木曜）</div>
+        </div>
+      </div>
+      <div>
+        <div class="card yellow" style="padding:18px 22px;">
+          <div style="font-size:20px;font-weight:700;color:var(--yellow-text);margin-bottom:10px;">🗓️ 曜日番号の対応表</div>
+          <table style="width:100%;font-size:18px;border-collapse:collapse;">
+            <tr><td style="padding:5px 8px;"><strong style="color:var(--red);">0</strong></td><td style="padding:5px 8px;">日 🔴 休</td><td style="padding:5px 8px;"><strong>4</strong></td><td style="padding:5px 8px;">木</td></tr>
+            <tr style="background:rgba(255,255,255,.5);"><td style="padding:5px 8px;"><strong>1</strong></td><td style="padding:5px 8px;">月</td><td style="padding:5px 8px;"><strong>5</strong></td><td style="padding:5px 8px;">金</td></tr>
+            <tr><td style="padding:5px 8px;"><strong>2</strong></td><td style="padding:5px 8px;">火</td><td style="padding:5px 8px;"><strong style="color:var(--red);">6</strong></td><td style="padding:5px 8px;">土 🔴 休</td></tr>
+            <tr style="background:rgba(255,255,255,.5);"><td style="padding:5px 8px;"><strong>3</strong></td><td style="padding:5px 8px;">水</td><td style="padding:5px 8px;">&nbsp;</td><td style="padding:5px 8px;">&nbsp;</td></tr>
+          </table>
+          <div style="margin-top:12px;font-size:17px;font-weight:700;background:#fff;padding:8px 14px;border-radius:6px;text-align:center;">
+            ✅ <strong style="color:var(--blue-text);">平日 = 1〜5</strong>　／　🔴 休日 = 0 と 6
+          </div>
+        </div>
+        <div class="card" style="margin-top:14px;padding:14px 18px;">
+          <div style="font-size:17px;font-weight:700;color:var(--blue-text);margin-bottom:6px;">💼 今日のフローでの使い所</div>
+          <p style="font-size:16px;margin:0;">条件アクションで「dayOfWeek が <strong>0でもない</strong> かつ <strong>6でもない</strong>」をチェック → 平日のときだけ count を +1 します。</p>
+        </div>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:auto;margin-bottom:0;font-size:17px;">
+      <strong>🎯 これが3関数の総仕上げ。</strong> addDays で進める → dayOfWeek で判定 → formatDateTime で整える、の3段構え。
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span>Power Automate for Beginners</span>
+    <span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span>
+  </div>
+</section>
+
+<!-- ============ S13: テーマ解説2 — 3営業日後の数え方 ============ -->
+<section class="slide" id="s13">
+  <span class="slide-num">13 / 16</span>
+  <div class="slide-head">
+    <div class="slide-eyebrow">PA45｜第12回</div>
+    <h1 class="slide-title">テーマ解説 <small>(2/2)：「3営業日後」は今日を含まない</small></h1>
+    <div class="concept-dot">Concept</div>
+  </div>
+  <div class="slide-body">
+    <div style="font-size:20px;color:var(--text);margin:8px 0 12px;line-height:1.7;">日本のビジネス慣習では、<strong style="color:var(--red);font-size:22px;">申請日（今日）は数えません。</strong>翌営業日から数えて3営業日目が答えです。</div>
+
+    <div style="background:var(--blue-bg);padding:20px 24px;border-radius:14px;">
+      <div style="font-size:17px;font-weight:700;color:var(--blue-mid);margin-bottom:14px;">📅 例：今日が 5/28（木）に申請した場合</div>
+      <div class="cal">
+        <div class="day today">
+          <div class="dn">木</div><div class="dd">28</div>
+          <div class="lbl" style="color:#92400e;">申請日<br>（含まない）</div>
+        </div>
+        <div class="day biz1">
+          <div class="dn">金</div><div class="dd">29</div>
+          <div class="lbl" style="color:var(--blue-text);">1営業日目</div>
+        </div>
+        <div class="day weekend"><div class="dn">土</div><div class="dd">30</div><div class="lbl">休</div></div>
+        <div class="day weekend"><div class="dn">日</div><div class="dd">31</div><div class="lbl">休</div></div>
+        <div class="day biz2">
+          <div class="dn">月</div><div class="dd">1</div>
+          <div class="lbl" style="color:var(--blue-text);">2営業日目</div>
+        </div>
+        <div class="day biz3">
+          <div class="dn">火</div><div class="dd">2</div>
+          <div class="lbl">3営業日目 ⭐</div>
+        </div>
+        <div class="day"><div class="dn">水</div><div class="dd">3</div></div>
+      </div>
+      <div style="font-size:24px;font-weight:800;color:var(--red);margin-top:10px;">→ 答えは <span style="background:#fef3c7;padding:4px 16px;border-radius:8px;">6/2（火）</span></div>
+    </div>
+
+    <div class="cards-2" style="margin-top:16px;">
+      <div class="card">
+        <div style="font-size:18px;font-weight:700;color:var(--blue-text);margin-bottom:8px;">🔍 ポイント①：今日は数えない</div>
+        <p style="font-size:17px;">「1営業日後 = 翌営業日」が基本。今日を含めると1日ズレます。</p>
+      </div>
+      <div class="card">
+        <div style="font-size:18px;font-weight:700;color:var(--blue-text);margin-bottom:8px;">🔍 ポイント②：土日はスキップ</div>
+        <p style="font-size:17px;"><code>dayOfWeek</code> が 0（日）か 6（土）の日は数えない。それ以外（1〜5）だけカウント。</p>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:auto;margin-bottom:0;font-size:18px;">
+      <strong>🎯 だから順序が大事：</strong> 先に「+1日」して、その日が平日かを判定する。これで今日を含まない数え方ができます。
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span>Power Automate for Beginners</span>
+    <span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span>
+  </div>
+</section>
+
+<!-- ============ S14: ハンズオン4ステップ ============ -->
+<section class="slide" id="s14">
+  <span class="slide-num">14 / 16</span>
+  <div class="slide-head">
+    <div class="slide-eyebrow">PA45｜第12回</div>
+    <h1 class="slide-title">ハンズオン <small>（4ステップ）</small></h1>
+    <div class="concept-dot">Hands-on</div>
+  </div>
+  <div class="slide-body" style="padding-top:14px;">
+    <div class="two-col two-col-flow">
+      <div>
+        <div class="big-points">
+          <div class="pt-n">1</div>
+          <div>
+            <div class="pt-t">変数を2つ用意する</div>
+            <div class="pt-d"><code>count = 0</code>（平日カウンタ）／<code>currentDate = utcNow()</code>（今日からスタート）</div>
+          </div>
+          <div class="pt-n">2</div>
+          <div>
+            <div class="pt-t">Do until で1日ずつ進める</div>
+            <div class="pt-d">作成アクションで <code>addDays(currentDate, 1)</code> を計算 → 変数の設定で <code>currentDate</code> に代入</div>
+          </div>
+          <div class="pt-n">3</div>
+          <div>
+            <div class="pt-t">平日なら count を +1 する</div>
+            <div class="pt-d">条件で <code>dayOfWeek</code> が 0 でも 6 でもない場合だけ、変数の値を増やす</div>
+          </div>
+          <div class="pt-n">4</div>
+          <div>
+            <div class="pt-t">count が 3 になったら抜けて Teams に通知</div>
+            <div class="pt-d"><code>formatDateTime(addHours(currentDate, 9), 'yyyy-MM-dd')</code> で JST 整形 → Teams に「対応期限」として投稿</div>
+          </div>
+        </div>
+      </div>
+      <div class="flow">
+        <div class="node"><span class="ico-cell">📨</span>Forms：新しい応答</div>
+        <div class="arrow">↓</div>
+        <div class="node"><span class="ico-cell">📋</span>応答の詳細を取得</div>
+        <div class="arrow">↓</div>
+        <div class="node"><span class="ico-cell">🔢</span>変数初期化 ×2（count / currentDate）</div>
+        <div class="arrow">↓</div>
+        <div class="node loop">
+          <div style="display:flex;align-items:center;gap:10px;font-weight:700;color:#92400e;font-size:15px;"><span class="ico-cell">🔁</span>Do until（count ≧ 3）</div>
+          <div class="nested">
+            <div class="sub">📝 作成 - 1日進めた日付</div>
+            <div class="sub">📝 変数の設定 - currentDate 更新</div>
+            <div class="sub">🔍 条件 - 平日か → True: count +1</div>
+          </div>
+        </div>
+        <div class="arrow">↓</div>
+        <div class="node"><span class="ico-cell">🕐</span>作成 - JST日付に整える</div>
+        <div class="arrow">↓</div>
+        <div class="node" style="background:#dbeafe;"><span class="ico-cell">💬</span>Teams：リマインドを送る</div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span>Power Automate for Beginners</span>
+    <span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span>
+  </div>
+</section>
+
+<!-- ============ S15: 今日のポイント3つ ============ -->
+<section class="slide" id="s15">
+  <span class="slide-num">15 / 16</span>
+  <div class="slide-head">
+    <div class="slide-eyebrow">PA45｜第12回</div>
+    <h1 class="slide-title">今日のポイント <small>（3つだけ持ち帰る）</small></h1>
+    <div class="concept-dot">Takeaway</div>
+  </div>
+  <div class="slide-body">
+    <div class="cards-3" style="margin-top:14px;">
+      <div class="card blue">
+        <div class="num">1</div>
+        <h3>式は「関数（値）」</h3>
+        <p style="font-size:17px;">関数の名前と「材料」が分かれば書ける。<br><br>動的コンテンツから選べば手打ち不要。<br><br><strong style="color:var(--red);font-size:18px;">怖がる必要なし。</strong></p>
+      </div>
+      <div class="card blue">
+        <div class="num">2</div>
+        <h3>営業日は今日を含まない</h3>
+        <p style="font-size:17px;">「1営業日後 = 翌営業日」が基本。<br><br>だから先に <code>+1</code> してから判定するのが正解。<br><br><strong style="color:var(--red);font-size:18px;">順序が大事。</strong></p>
+      </div>
+      <div class="card blue">
+        <div class="num">3</div>
+        <h3>日付は UTC で返る</h3>
+        <p style="font-size:17px;">Power Automate の日付関数は協定世界時。<br><br>JSTで使うときは <code>addHours(..., 9)</code> で補正する。<br><br><strong style="color:var(--red);font-size:18px;">9時間足す。</strong></p>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:24px;font-size:19px;">
+      <strong>🎯 第11回の伏線回収：</strong>「画面の表示」と「実際の値」は違う ── 日付も同じ。実行履歴の出力を見れば UTC で返っていることが分かります。
+    </div>
+    <div class="pull-quote" style="margin-top:auto;margin-bottom:0;font-size:21px;">
+      🚀 この3つを覚えれば、日付計算は怖くない！
+    </div>
+  </div>
+  <div class="slide-footer">
+    <span>Power Automate for Beginners</span>
+    <span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span>
+  </div>
+</section>
+
+<!-- ============ S16: 活用事例 + チェックポイント + アンケート ============ -->
+<section class="slide anchor" id="s16">
+  <span class="slide-num">16 / 16</span>
+  <div class="slide-head">
+    <div class="slide-eyebrow" style="color:#92400e;">Closing</div>
+    <h1 class="slide-title">活用事例とよくあるつまづき</h1>
+  </div>
+  <div class="slide-body">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:8px;">
+      <div class="card" style="background:#fff;">
+        <h3 style="color:var(--blue-text);font-size:21px;">💼 こんな場面で使えます</h3>
+        <ul class="check" style="font-size:17px;">
+          <li>申請から <strong>3営業日後にリマインド</strong>（今日のテーマ）</li>
+          <li>受注から <strong>5営業日後の納期</strong>を自動計算</li>
+          <li>月末 <strong>3営業日前</strong>に締切通知</li>
+          <li>承認から <strong>翌営業日</strong>に対応開始</li>
+        </ul>
+      </div>
+      <div class="card" style="background:#fff;">
+        <h3 style="color:var(--red);font-size:21px;">⚠️ うまくいかない時のチェック</h3>
+        <ul class="check cross" style="font-size:16px;">
+          <li><strong>"Self reference is not supported"</strong> → 作成を挟むか旧デザイナーへ</li>
+          <li><strong>日付が1日ズレる</strong> → UTC で返っている。<code>addHours(...,9)</code> でJST補正</li>
+          <li><strong>無限ループになる</strong> → count++ が条件のTrue内にあるか確認</li>
+          <li><strong>名前にエラー</strong> → アクション名に <code>/</code> は使えない（<code>-</code>に置換）</li>
+        </ul>
+      </div>
+    </div>
+    <div style="margin-top:auto;background:#fff;border-radius:16px;padding:22px 28px;display:flex;justify-content:space-between;align-items:center;gap:24px;box-shadow:0 6px 20px rgba(146,64,14,.18);">
+      <div style="display:flex;align-items:center;gap:18px;">
+        <img src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="Haru" style="width:80px;height:80px;border-radius:50%;">
+        <div>
+          <div style="font-size:24px;font-weight:800;color:#78350f;margin-bottom:6px;">🎁 ご参加ありがとうございました！</div>
+          <div style="font-size:16px;color:var(--muted);">アンケートに答えてくださった方にバッジをお送りしています。次回もぜひ。</div>
+        </div>
+      </div>
+      <div style="text-align:right;flex-shrink:0;">
+        <a href="https://forms.cloud.microsoft/r/mVzhNWH6JE" target="_blank" rel="noopener" style="background:#f59e0b;color:#fff;padding:14px 30px;border-radius:26px;font-weight:800;font-size:18px;display:inline-block;text-decoration:none;box-shadow:0 4px 12px rgba(245,158,11,.4);transition:transform .15s, box-shadow .15s;">📝 アンケートはこちら →</a>
+        <div style="font-size:14px;color:var(--muted);margin-top:8px;">第12回｜addDays・formatDateTime・dayOfWeek</div>
+      </div>
+    </div>
+  </div>
+  <div class="slide-footer" style="background:transparent;">
+    <span style="color:#78350f;">Power Automate for Beginners</span>
+    <span class="chat-reminder" style="background:rgba(255,255,255,.7);">💬 #PA45 第12回 で投稿してね！</span>
+  </div>
+</section>
+
+<script>
+  // Scroll spy: highlight current slide in TOC
+  (function () {
+    const tocLinks = document.querySelectorAll('.toc a');
+    const slides = document.querySelectorAll('section.slide');
+    const setActive = (id) => {
+      tocLinks.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + id));
+    };
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting && e.intersectionRatio > 0.4) setActive(e.target.id);
+      });
+    }, { threshold: [0.4, 0.6] });
+    slides.forEach(s => io.observe(s));
+    // initial highlight
+    if (slides[0]) setActive(slides[0].id);
+
+    // Toggle sidebar
+    document.getElementById('tocToggle').addEventListener('click', () => {
+      document.body.classList.toggle('toc-collapsed');
+    });
+
+    // Smooth scroll
+    tocLinks.forEach(a => {
+      a.addEventListener('click', (ev) => {
+        ev.preventDefault();
+        const target = document.querySelector(a.getAttribute('href'));
+        if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    });
+
+    // Keyboard navigation: ← / → to move between slides
+    let currentIdx = 0;
+    const idToIdx = new Map([...slides].map((s, i) => [s.id, i]));
+    document.addEventListener('keydown', (ev) => {
+      if (ev.target.matches('input, textarea')) return;
+      const activeLink = document.querySelector('.toc a.active');
+      if (activeLink) currentIdx = idToIdx.get(activeLink.getAttribute('href').slice(1)) ?? currentIdx;
+      if (ev.key === 'ArrowRight' || ev.key === 'PageDown' || ev.key === ' ') {
+        ev.preventDefault();
+        const next = slides[Math.min(currentIdx + 1, slides.length - 1)];
+        next.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      } else if (ev.key === 'ArrowLeft' || ev.key === 'PageUp') {
+        ev.preventDefault();
+        const prev = slides[Math.max(currentIdx - 1, 0)];
+        prev.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  })();
+</script>
+</body>
+</html>

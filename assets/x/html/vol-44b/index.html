@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.44-2 ムダ返信を記録して見える化｜作り方</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB; --blue-bg:#EFF6FF; --blue-dark:#1E40AF;
+    --green:#16A34A; --green-bg:#ECFDF5; --green-dark:#064E3B;
+    --spo:#0F6CBD; --spo-dark:#0A4F8A;
+    --orange:#EA580C; --ink:#1F2937; --gray:#374151; --weak:#6B7280; --line:#E5E7EB;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+  .ic{display:block;width:100%;height:100%;}
+
+  .titlebar{height:86px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:15px;padding:0 22px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:24px;border-radius:999px;padding:6px 18px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .vol-logo{height:46px;width:46px;object-fit:contain;flex:0 0 auto;background:#fff;border-radius:12px;padding:5px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
+  .title-text{color:#fff;font-weight:900;font-size:31px;line-height:1.12;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:140px;}
+  .title-text .hl{color:#FFE08A;}
+  .title-chara{position:absolute;right:13px;bottom:-42px;height:138px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .concl{margin:8px 15px 0;background:var(--blue-bg);border:2px solid var(--blue);border-radius:11px;display:flex;align-items:center;gap:11px;padding:7px 15px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;width:32px;height:32px;border-radius:9px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;padding:7px;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
+  .concl .txt{font-weight:700;font-size:15px;color:var(--blue-dark);line-height:1.3;padding-right:86px;}
+  .concl .txt b{color:var(--spo-dark);}
+
+  .cols{flex:1 1 auto;margin:9px 14px 0;display:flex;align-items:stretch;gap:0;min-height:0;}
+  .col{flex:1;display:flex;flex-direction:column;min-height:0;position:relative;}
+  .carrow{flex:0 0 30px;display:flex;align-items:center;justify-content:center;color:#9AA7B8;}
+  .carrow svg{width:26px;height:26px;}
+  .colcard{flex:1;background:#fff;border:1.5px solid #C9D2E0;border-radius:12px;box-shadow:0 5px 13px rgba(0,0,0,.12);overflow:hidden;display:flex;flex-direction:column;}
+  .cnum{position:absolute;top:-9px;left:-9px;width:30px;height:30px;border-radius:50%;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;font-weight:900;font-size:16px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 5px rgba(0,0,0,.3);z-index:5;border:2px solid #fff;}
+  .ch{display:flex;align-items:center;gap:9px;padding:9px 11px;min-height:58px;background:linear-gradient(180deg,#F7F9FC,#ECF0F6);border-bottom:1px solid #E1E6EF;}
+  .ch .sq{flex:0 0 auto;width:36px;height:36px;border-radius:8px;background:#fff;border:1px solid #E1E6EF;display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.1);}
+  .ch .sq img{width:26px;height:26px;object-fit:contain;}
+  .ch .sq svg{width:23px;height:23px;color:#5B5FC7;}
+  .ch .nm{font-weight:900;font-size:15px;color:var(--ink);line-height:1.18;}
+  .ch .nm small{display:block;font-weight:700;font-size:10.5px;color:var(--weak);margin-top:2px;}
+
+  .cp{flex:1;font-family:'Segoe UI','Noto Sans JP',sans-serif;padding:9px 11px 10px;display:flex;flex-direction:column;gap:10px;}
+  .ptop{flex:0 0 156px;display:flex;flex-direction:column;gap:8px;overflow:hidden;background:#F3F6FB;border:1px solid #DCE4F0;border-radius:9px;padding:8px 10px;margin-top:2px;}
+  .sect{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:900;color:#5A6B85;}
+  .sect::before{content:"";width:4px;height:13px;border-radius:2px;background:#8FA0BC;}
+  .cptab{display:flex;gap:13px;border-bottom:1px solid #EAEAEA;padding-bottom:5px;}
+  .cptab span{font-size:10.5px;color:#8A8886;font-weight:600;}
+  .cptab span.on{color:#2563EB;font-weight:800;border-bottom:2px solid #2563EB;padding-bottom:5px;margin-bottom:-6px;}
+  .fld{display:flex;flex-direction:column;gap:3px;}
+  .fld .l{font-size:12.5px;color:#605E5C;font-weight:700;line-height:1.25;}
+  .fld .l .req{color:#D13438;margin-left:1px;}
+  .fld .v{border:1px solid #D1D1D1;border-radius:5px;padding:7px 10px;font-size:13px;color:#242424;background:#fff;display:flex;align-items:center;justify-content:space-between;gap:8px;}
+  .fld .v .cr{flex:0 0 auto;color:#605E5C;font-weight:900;font-size:10px;}
+  .fld .v .gr{flex:0 0 auto;width:14px;height:14px;color:#8A8886;}
+  .fld .v.ph{color:#A19F9D;}
+  .dyn{display:inline-flex;align-items:center;gap:6px;background:#EAF1FE;border:1px solid #BBD0EE;border-radius:5px;padding:6px 9px;font-size:12px;font-weight:700;color:#1E40AF;align-self:flex-start;}
+  .dyn img{width:14px;height:14px;object-fit:contain;}
+  /* 条件UI */
+  .cond{display:flex;align-items:center;gap:5px;}
+  .cond .cv{flex:1;border:1px solid #D1D1D1;border-radius:5px;padding:6px 7px;font-size:11.5px;color:#242424;background:#fff;text-align:center;min-width:0;}
+  .cond .cop{flex:0 0 auto;border:1px solid #D1D1D1;border-radius:5px;padding:6px 7px;font-size:11px;color:#242424;background:#F7F7F7;white-space:nowrap;}
+
+  .howsteps{flex:1;margin-top:3px;background:linear-gradient(180deg,#F5F8FD,#EEF3FA);border:1px solid #D7E1F0;border-radius:9px;padding:9px 11px;display:flex;flex-direction:column;gap:7px;}
+  .howsteps .hh{display:flex;align-items:center;gap:6px;font-size:13.5px;font-weight:900;color:#2B3A52;}
+  .howsteps .hh::before{content:"";width:4px;height:14px;border-radius:2px;background:#2563EB;}
+  .howsteps ol{list-style:none;display:flex;flex-direction:column;justify-content:space-evenly;flex:1;gap:7px;}
+  .howsteps li{display:flex;gap:9px;align-items:flex-start;font-size:15px;font-weight:700;color:#2F3E57;line-height:1.36;}
+  .howsteps li .sn{flex:0 0 auto;width:21px;height:21px;border-radius:50%;background:#2563EB;color:#fff;font-size:12px;font-weight:900;display:flex;align-items:center;justify-content:center;margin-top:1px;}
+  .howsteps li b{color:#1E40AF;}
+  .howsteps li.key{color:#0B5E37;} .howsteps li.key .sn{background:#16A34A;} .howsteps li.key b{color:#0B5E37;}
+
+  .pitfall{flex:0 0 auto;margin:9px 14px 11px;background:linear-gradient(180deg,#FFF7ED,#FFEFD9);border:1.5px solid #FDBA74;border-radius:11px;padding:8px 14px;display:flex;align-items:center;gap:11px;box-shadow:0 2px 6px rgba(0,0,0,.07);position:relative;}
+  .pitfall .pl{flex:0 0 auto;display:flex;align-items:center;gap:6px;background:linear-gradient(180deg,#FB923C,#EA580C);color:#fff;font-weight:900;font-size:13px;border-radius:8px;padding:6px 11px;box-shadow:0 2px 4px rgba(0,0,0,.25);}
+  .pitfall .pl svg{width:15px;height:15px;}
+  .pitfall .px{flex:1;font-weight:800;font-size:13px;color:#7C2D12;line-height:1.32;padding-right:96px;}
+  .pitfall .px b{color:var(--orange);}
+  .pit-chara{position:absolute;right:11px;bottom:-2px;height:92px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.4));}
+  .src{position:absolute;left:16px;bottom:3px;font-size:9.5px;color:#AEB6C2;font-weight:700;z-index:3;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const ICON={
+ bulb:'<path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/>',
+ warn:'<path d="M10.3 3.3 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.3a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>',
+ arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',
+ cond:'<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><path d="M10 6.5h4a3 3 0 0 1 3 3v4.5M6.5 10v8"/>'
+};
+const svg=(n)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${ICON[n]}</svg>`;
+
+const s=document.getElementById('slide');
+s.innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.44-2</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">作り方｜<span class="hl">ムダ返信を自動で記録</span>して見える化</div>
+    <img class="title-chara" src="${A}chara/chara_laptop.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svg('bulb')}</div>
+    <div class="txt">作るのは3ステップ。コツは②の<b>条件</b>で「承知／了解／確認」などの<b>儀礼返信だけ</b>を拾うこと。</div>
+  </div>
+
+  <div class="cols">
+    <div class="col">
+      <div class="cnum">1</div>
+      <div class="colcard">
+        <div class="ch"><span class="sq"><img src="${A}icons/pa_outlook.png" alt=""></span><span class="nm">新しいメールが届いたとき (V3)<small>Office 365 Outlook</small></span></div>
+        <div class="cp">
+          <div class="ptop">
+            <div class="sect">実際の設定画面</div>
+            <div class="cptab"><span class="on">パラメーター</span><span>設定</span></div>
+            <div class="fld"><span class="l">件名フィルター</span><span class="v"><span>Re:</span></span></div>
+            <div class="fld"><span class="l">フォルダー</span><span class="v"><span>受信トレイ</span><span class="cr">▾</span></span></div>
+          </div>
+          <div class="howsteps">
+            <div class="hh">操作手順</div>
+            <ol>
+              <li><span class="sn">1</span><span>＋ →「<b>Office 365 Outlook</b>」</span></li>
+              <li><span class="sn">2</span><span>「新しいメールが届いたとき (V3)」</span></li>
+              <li><span class="sn">3</span><span>件名フィルターに <b>Re:</b>（返信だけ拾う）</span></li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="carrow">${svg('arrow')}</div>
+
+    <div class="col">
+      <div class="cnum">2</div>
+      <div class="colcard">
+        <div class="ch"><span class="sq">${svg('cond')}</span><span class="nm">条件<small>コントロール ／ 儀礼返信だけ拾う</small></span></div>
+        <div class="cp">
+          <div class="ptop">
+            <div class="sect">実際の設定画面</div>
+            <div class="cptab"><span class="on">パラメーター</span></div>
+            <div class="fld"><span class="l">条件</span>
+              <div class="cond"><span class="cv">本文</span><span class="cop">次を含む ▾</span><span class="cv">承知</span></div>
+            </div>
+            <div class="fld"><span class="l" style="color:#8A8886;">＋ 行を追加（または）で「了解」「確認」も</span></div>
+          </div>
+          <div class="howsteps">
+            <div class="hh">操作手順</div>
+            <ol>
+              <li><span class="sn">1</span><span>＋ →「コントロール」→「<b>条件</b>」</span></li>
+              <li><span class="sn">2</span><span>左＝<b>本文</b>／演算子＝次を含む</span></li>
+              <li class="key"><span class="sn">3</span><span>右＝<b>承知</b>（了解・確認も「または」で）</span></li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="carrow">${svg('arrow')}</div>
+
+    <div class="col">
+      <div class="cnum">3</div>
+      <div class="colcard">
+        <div class="ch"><span class="sq"><img src="${A}icons/pa_sharepoint.png" alt=""></span><span class="nm">項目の作成<small>SharePoint ／ ログに記録</small></span></div>
+        <div class="cp">
+          <div class="ptop">
+            <div class="sect">実際の設定画面</div>
+            <div class="cptab"><span class="on">パラメーター</span><span>設定</span></div>
+            <div class="fld"><span class="l">リスト名 <span class="req">*</span></span><span class="v"><span>ムダ返信ログ</span><span class="cr">▾</span></span></div>
+            <div class="fld"><span class="l">差出人</span><span class="dyn"><img src="${A}icons/pa_outlook.png" alt="">差出人</span></div>
+          </div>
+          <div class="howsteps">
+            <div class="hh">操作手順</div>
+            <ol>
+              <li><span class="sn">1</span><span>「はい」側で ＋ →「<b>SharePoint</b>」</span></li>
+              <li><span class="sn">2</span><span>「項目の作成」を選択</span></li>
+              <li class="key"><span class="sn">3</span><span>差出人・件名・受信日時を<b>記録</b></span></li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pitfall">
+    <div class="pl">${svg('warn')}つまずき注意</div>
+    <div class="px">儀礼返信は<b>件名フィルター「Re:」＋本文「次を含む」</b>で絞る。複数語は<b>条件の「または」</b>で行を追加。集めたログは<b>月1で見て案内文を直す</b>と、ムダ返信が減る。</div>
+    <img class="pit-chara" src="${A}chara/chara_guts.png" alt="">
+  </div>
+  <div class="src">出典：Microsoft Learn</div>
+`;
+</script>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>

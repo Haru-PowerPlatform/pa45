@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.41b 使い分け詳細一覧表＋ライセンス比較</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB; --blue-bg:#EFF6FF; --blue-dark:#1E40AF;
+    --enji:#A4283C; --enji-dark:#6E1628;
+    --green:#16A34A; --purple:#6D28D9; --orange:#EA580C;
+    --ink:#1F2937; --gray:#374151; --weak:#6B7280; --line:#E5E7EB;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+  .ic{display:block;width:100%;height:100%;}
+
+  .titlebar{height:90px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:16px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:25px;border-radius:999px;padding:7px 20px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .vol-logo{height:50px;width:50px;object-fit:contain;flex:0 0 auto;background:#fff;border-radius:12px;padding:5px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
+  .title-text{color:#fff;font-weight:900;font-size:31px;line-height:1.16;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:158px;}
+  .title-chara{position:absolute;right:14px;bottom:-44px;height:148px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  /* 2本柱 */
+  .pillars{flex:0 0 auto;margin:10px 18px 0;display:flex;gap:12px;}
+  .pillar{flex:1;border-radius:12px;padding:8px 14px;display:flex;align-items:center;gap:12px;box-shadow:0 3px 9px rgba(0,0,0,.11),inset 0 1px 0 rgba(255,255,255,.7);}
+  .pillar.p-pa{background:linear-gradient(180deg,#F1F6FF,#DEEAFE);border:2px solid var(--blue);}
+  .pillar.p-co{background:linear-gradient(180deg,#FFF4F6,#FBE3E8);border:2px solid var(--enji);}
+  .pillar .pico{flex:0 0 auto;width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.4);}
+  .pillar .pico svg{width:23px;height:23px;}
+  .p-pa .pico{background:linear-gradient(180deg,#3B82F6,#2563EB);}
+  .p-co .pico{background:linear-gradient(180deg,#C13350,#A4283C);}
+  .pillar .pname{font-weight:900;font-size:19px;}
+  .p-pa .pname{color:var(--blue-dark);} .p-co .pname{color:var(--enji-dark);}
+  .pillar .pdesc{font-weight:700;font-size:13px;line-height:1.25;}
+  .p-pa .pdesc{color:#2B4F94;} .p-co .pdesc{color:#86374A;}
+
+  /* 使い分け一覧表 */
+  .tbl{flex:1 1 auto;margin:10px 18px 0;border-radius:13px;overflow:hidden;border:1.5px solid var(--line);box-shadow:0 5px 13px rgba(0,0,0,.12);display:flex;flex-direction:column;min-height:0;}
+  .trow{display:flex;align-items:stretch;flex:1;border-bottom:1px solid #ECEEF1;min-height:0;}
+  .trow:last-child{border-bottom:none;}
+  .thead{flex:0 0 auto;background:linear-gradient(180deg,#3A4150,#2B313D);}
+  .thead .h{color:#fff;font-weight:900;font-size:15.5px;display:flex;align-items:center;padding:7px 14px;}
+  .ci{flex:0 0 56px;display:flex;align-items:center;justify-content:center;}
+  .ci .box{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;box-shadow:0 2px 4px rgba(0,0,0,.2);}
+  .ci .box svg{width:23px;height:23px;}
+  .scene{flex:1;display:flex;align-items:center;padding:5px 12px 5px 4px;font-weight:800;font-size:20px;color:var(--ink);line-height:1.22;}
+  .who{flex:0 0 184px;display:flex;align-items:center;justify-content:center;padding:5px 6px;border-left:1px solid #ECEEF1;border-right:1px solid #ECEEF1;}
+  .why{flex:0 0 290px;display:flex;align-items:center;padding:5px 14px;font-weight:700;font-size:15.5px;color:var(--weak);line-height:1.26;}
+  .body:nth-child(odd){background:#fff;} .body:nth-child(even){background:#F7F9FC;}
+  .tag{display:flex;align-items:center;gap:6px;font-weight:900;font-size:15.5px;color:#fff;border-radius:8px;padding:7px 12px;white-space:nowrap;box-shadow:0 2px 4px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.4);}
+  .tag svg{width:16px;height:16px;}
+  .tag.t-pa{background:linear-gradient(180deg,#3B82F6,#2563EB);}
+  .tag.t-co{background:linear-gradient(180deg,#C13350,#A4283C);}
+  .tag.t-mix{background:linear-gradient(180deg,#8B5CF6,#6D28D9);font-size:13px;}
+  .box.b-pa{background:linear-gradient(180deg,#3B82F6,#2563EB);}
+  .box.b-co{background:linear-gradient(180deg,#C13350,#A4283C);}
+  .box.b-mix{background:linear-gradient(180deg,#8B5CF6,#6D28D9);}
+
+  /* ライセンス＆コスト比較表 */
+  .lic{flex:0 0 auto;margin:10px 18px 13px;}
+  .lic .lhead{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+  .lic .lhead .li{width:22px;height:22px;color:var(--orange);}
+  .lic .lhead .lt{font-weight:900;font-size:17px;color:var(--ink);}
+  .ltable{display:flex;flex-direction:column;border:1.5px solid var(--line);border-radius:11px;overflow:hidden;box-shadow:0 3px 8px rgba(0,0,0,.09);}
+  .lr{display:flex;align-items:stretch;border-bottom:1px solid #ECEEF1;}
+  .lr:last-child{border-bottom:none;}
+  .lr .rl{flex:0 0 120px;display:flex;align-items:center;padding:7px 12px;font-weight:900;font-size:13.5px;color:#fff;background:linear-gradient(180deg,#5B616B,#4A4F58);}
+  .lc{flex:1;display:flex;flex-direction:column;justify-content:center;padding:7px 13px;border-left:1px solid #ECEEF1;font-weight:700;font-size:13.5px;line-height:1.3;}
+  .lhrow .lc{font-weight:900;font-size:15px;color:#fff;align-items:center;flex-direction:row;gap:7px;}
+  .lhrow .lc svg{width:17px;height:17px;}
+  .lhrow .lc.h-pa{background:linear-gradient(180deg,#3B82F6,#2563EB);}
+  .lhrow .lc.h-pap{background:linear-gradient(180deg,#5B8DEF,#3B6FD4);}
+  .lhrow .lc.h-co{background:linear-gradient(180deg,#C13350,#A4283C);}
+  .lhrow .rl{background:linear-gradient(180deg,#3A4150,#2B313D);}
+  .lc b.free{color:var(--green);} .lc b.meter{color:var(--enji);}
+  .body-lic:nth-child(even){background:#F7F9FC;}
+  .lic-chara{position:absolute;right:12px;bottom:6px;height:120px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const ICON={
+ gear:'<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V15z"/>',
+ ai:'<path d="M12 3l1.6 4.4L18 9l-4.4 1.6L12 15l-1.6-4.4L6 9l4.4-1.6z"/><path d="M19 14l.8 2.2 2.2.8-2.2.8L19 20l-.8-2.2L16 17l2.2-.8z"/>',
+ bell:'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>',
+ calendar:'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
+ link:'<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>',
+ repeat:'<path d="m17 2 4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="m7 22-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/>',
+ doc:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M9 13h6M9 17h4"/>',
+ compare:'<rect x="3" y="4" width="7" height="16" rx="1"/><rect x="14" y="4" width="7" height="16" rx="1"/>',
+ wand:'<path d="M15 4V2M15 16v-2M8 9h2M20 9h2M17.8 11.8 19 13M15 9l.01 0M17.8 6.2 19 5M3 21l9-9M12.2 6.2 11 5"/>',
+ flow:'<rect x="3" y="3" width="6" height="6" rx="1"/><rect x="15" y="15" width="6" height="6" rx="1"/><path d="M9 6h4a2 2 0 0 1 2 2v7"/>',
+ key:'<circle cx="7.5" cy="15.5" r="4.5"/><path d="m10.5 12.5 7.5-7.5 3 3M16 8l2 2"/>'
+};
+const svg=(n,f)=>`<svg class="ic" viewBox="0 0 24 24" fill="${f?'currentColor':'none'}" stroke="${f?'none':'currentColor'}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICON[n]}</svg>`;
+
+const rows=[
+ {ic:'bell',c:'b-pa',scene:'決まった条件での通知・承認・差し戻し',who:['t-pa','gear','Power Automate'],why:'条件分岐が得意。AIは不要'},
+ {ic:'calendar',c:'b-pa',scene:'毎朝の集計・転記・定期レポート配信',who:['t-pa','gear','Power Automate'],why:'スケジュール実行で無人化'},
+ {ic:'link',c:'b-pa',scene:'システム間の連携（SPO↔Teams↔Excel）',who:['t-pa','gear','Power Automate'],why:'標準コネクタで追加0円'},
+ {ic:'repeat',c:'b-pa',scene:'同じ処理を何百件もくり返す',who:['t-pa','gear','Power Automate'],why:'件数が増えても課金は増えない'},
+ {ic:'doc',c:'b-co',scene:'大量の資料を読んで分析・示唆出し',who:['t-co','ai','Cowork'],why:'読解と判断はAIの領域'},
+ {ic:'compare',c:'b-co',scene:'何千ファイルを横断比較して結論',who:['t-co','ai','Cowork'],why:'公式が挙げる得意例'},
+ {ic:'wand',c:'b-co',scene:'あいまいな指示から成果物を最後まで',who:['t-co','ai','Cowork'],why:'長時間・複数手順を自律実行'},
+ {ic:'flow',c:'b-mix',scene:'集めて → AIが分析 → 結果を配る',who:['t-mix','flow','PA＋Cowork'],why:'運搬はPA、考える所だけCowork'}
+];
+
+const s=document.getElementById('slide');
+let trows=rows.map(r=>`
+  <div class="trow body">
+    <div class="ci"><span class="box ${r.c}">${svg(r.ic)}</span></div>
+    <div class="scene">${r.scene}</div>
+    <div class="who"><span class="tag ${r.who[0]}">${svg(r.who[1],r.who[1]==='ai')}${r.who[2]}</span></div>
+    <div class="why">${r.why}</div>
+  </div>`).join('');
+
+s.innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.41</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">どっちに任せる？<br>使い分け 詳細一覧表！</div>
+    <img class="title-chara" src="${A}chara/chara_point.png" alt="">
+  </div>
+
+  <div class="pillars">
+    <div class="pillar p-pa">
+      <div class="pico">${svg('gear')}</div>
+      <div><div class="pname">Power Automate ＝ 土台</div><div class="pdesc">手順が決まった反復作業。標準コネクタなら追加ほぼ0円。</div></div>
+    </div>
+    <div class="pillar p-co">
+      <div class="pico">${svg('ai',true)}</div>
+      <div><div class="pname">Copilot Cowork ＝ ここぞ</div><div class="pdesc">読んで考える・丸ごと任せる仕事。1タスクごとに従量課金。</div></div>
+    </div>
+  </div>
+
+  <div class="tbl">
+    <div class="trow thead">
+      <div class="h" style="flex:0 0 56px;justify-content:center;"></div>
+      <div class="h" style="flex:1;">こういう仕事は…</div>
+      <div class="h" style="flex:0 0 184px;justify-content:center;border-left:1px solid rgba(255,255,255,.15);border-right:1px solid rgba(255,255,255,.15);">担当</div>
+      <div class="h" style="flex:0 0 290px;">理由</div>
+    </div>
+    ${trows}
+  </div>
+
+  <div class="lic">
+    <div class="lhead"><span class="li">${svg('key')}</span><span class="lt">ライセンス＆コスト 比較</span></div>
+    <div class="ltable">
+      <div class="lr lhrow">
+        <div class="rl">区分</div>
+        <div class="lc h-pa">${svg('gear')}Power Automate（標準）</div>
+        <div class="lc h-pap">${svg('gear')}PA Premium</div>
+        <div class="lc h-co">${svg('ai',true)}Copilot Cowork</div>
+      </div>
+      <div class="lr body-lic">
+        <div class="rl">必要ライセンス</div>
+        <div class="lc">M365に同梱（E3/E5/Business）</div>
+        <div class="lc">別ライセンス 約$15／人月</div>
+        <div class="lc">M365 Copilot 必須 約$30／人月</div>
+      </div>
+      <div class="lr body-lic">
+        <div class="rl">追加コスト</div>
+        <div class="lc"><b class="free">ほぼ0円</b>（標準コネクタ）</div>
+        <div class="lc">定額（プレミアム機能）</div>
+        <div class="lc"><b class="meter">従量</b> $0.01/クレジット（軽$1〜3／重$7〜）</div>
+      </div>
+    </div>
+    <img class="lic-chara" src="${A}chara/chara_confident.png" alt="">
+  </div>
+`;
+</script>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>
