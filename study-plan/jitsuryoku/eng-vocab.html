@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>英単語テスト｜BlueSky 実力テスト対策（はるき）</title>
+<style>
+  :root{
+    --bg:#0f1226; --card:#1b2040; --card2:#232a52; --line:#33407a;
+    --txt:#eef1ff; --sub:#aab3e6; --accent:#5b8cff; --good:#27c08a; --bad:#ff6b7d;
+    --warn:#ffce5b;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    background:linear-gradient(160deg,#0f1226,#161a38 60%,#1a1330);
+    color:var(--txt);font-family:-apple-system,"Hiragino Kaku Gothic ProN","Yu Gothic UI","Meiryo",sans-serif;
+    line-height:1.6;min-height:100vh;padding:14px 12px 60px;
+  }
+  .wrap{max-width:680px;margin:0 auto}
+  h1{font-size:1.18rem;margin:.2em 0 .1em;letter-spacing:.02em}
+  .lead{color:var(--sub);font-size:.82rem;margin:0 0 14px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:14px;box-shadow:0 6px 24px rgba(0,0,0,.25)}
+  .modes{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .mode-btn{background:var(--card2);border:1px solid var(--line);border-radius:14px;padding:14px 10px;color:var(--txt);text-align:left;cursor:pointer;transition:.15s;font-size:.92rem}
+  .mode-btn:hover{border-color:var(--accent)}
+  .mode-btn.on{border-color:var(--accent);background:#2b367a;box-shadow:0 0 0 2px rgba(91,140,255,.35) inset}
+  .mode-btn b{display:block;font-size:1rem;margin-bottom:2px}
+  .mode-btn span{color:var(--sub);font-size:.76rem}
+  .row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+  label.chk{display:inline-flex;align-items:center;gap:6px;background:var(--card2);border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:.82rem;cursor:pointer}
+  select,input[type=text]{font-size:1rem;color:var(--txt);background:var(--card2);border:1px solid var(--line);border-radius:10px;padding:10px 12px;width:100%}
+  select{appearance:none}
+  .btn{display:inline-block;background:var(--accent);color:#fff;border:none;border-radius:12px;padding:12px 18px;font-size:1rem;font-weight:700;cursor:pointer}
+  .btn.sub{background:var(--card2);border:1px solid var(--line);color:var(--txt);font-weight:600}
+  .btn.wide{width:100%}
+  .hide{display:none!important}
+  /* quiz */
+  .meta{display:flex;justify-content:space-between;color:var(--sub);font-size:.8rem;margin-bottom:10px}
+  .bar{height:8px;border-radius:6px;background:#2a325f;overflow:hidden;margin-bottom:14px}
+  .bar > i{display:block;height:100%;background:linear-gradient(90deg,#5b8cff,#27c08a);width:0%}
+  .q-word{font-size:2.1rem;font-weight:800;text-align:center;margin:14px 0 4px;word-break:break-word}
+  .q-sub{text-align:center;color:var(--sub);font-size:.86rem;margin-bottom:6px}
+  .q-tag{display:inline-block;font-size:.72rem;color:var(--warn);border:1px solid var(--warn);border-radius:999px;padding:1px 8px;margin-left:6px;vertical-align:middle}
+  .q-word.say{cursor:pointer}
+  .q-word.say::after{content:" 🔊";font-size:1.2rem}
+  .speak-btn{background:var(--card2);border:1px solid var(--line);color:var(--accent);border-radius:999px;padding:7px 18px;font-size:.86rem;cursor:pointer;font-weight:600;margin:2px auto 4px;display:block}
+  .speak-btn:active{transform:scale(.97)}
+  .ans-box.say{cursor:pointer}
+  .ans-box{text-align:center;font-size:1.5rem;font-weight:800;color:var(--good);min-height:1.6em;margin:10px 0}
+  .ans-box small{display:block;font-size:.95rem;color:var(--sub);font-weight:500;margin-top:4px}
+  .inp-grid{display:grid;gap:10px;margin:12px 0}
+  .inp-grid label{font-size:.78rem;color:var(--sub);display:block;margin-bottom:3px}
+  .judge{font-weight:800;text-align:center;font-size:1.05rem;margin:6px 0}
+  .judge.ok{color:var(--good)} .judge.ng{color:var(--bad)}
+  .actions{display:flex;gap:10px;margin-top:6px}
+  .actions .btn{flex:1}
+  .grade{display:flex;gap:10px;margin-top:6px}
+  .grade .btn{flex:1}
+  .btn.good{background:var(--good)} .btn.bad{background:var(--bad)}
+  .done{text-align:center;padding:20px 6px}
+  .done .big{font-size:2.6rem;font-weight:900;margin:.1em 0}
+  .small{font-size:.78rem;color:var(--sub)}
+  .foot{text-align:center;color:var(--sub);font-size:.74rem;margin-top:20px}
+  .pill{font-size:.74rem;color:var(--sub)}
+  a.link{color:var(--accent)}
+  .count-x{color:var(--bad);font-weight:700}
+  kbd{background:#000;border:1px solid var(--line);border-radius:5px;padding:1px 6px;font-size:.8rem}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>📘 英単語テスト <span class="pill">BlueSky 実力テスト対策</span></h1>
+  <p class="lead">6/18 実力テスト・英語は単語がメイン。原形→意味、意味→英語、不規則動詞の3モード。間違えた単語は自動で記録されるよ。</p>
+
+  <!-- セットアップ -->
+  <div class="card" id="setup">
+    <div class="modes" id="modes">
+      <button class="mode-btn on" data-mode="e2j"><b>英 → 日</b><span>単語を見て意味を答える（自己採点）</span></button>
+      <button class="mode-btn" data-mode="j2e"><b>日 → 英</b><span>意味を見て英語を入力（自動判定）</span></button>
+      <button class="mode-btn" data-mode="verb"><b>不規則動詞</b><span>原形→過去形・過去分詞を入力</span></button>
+      <button class="mode-btn" data-mode="review"><b>苦手だけ</b><span>×がついた単語だけ復習</span></button>
+    </div>
+
+    <div style="margin-top:14px" id="rangeWrap">
+      <label class="small" for="range" style="display:block;margin-bottom:6px">出題範囲</label>
+      <select id="range"></select>
+    </div>
+
+    <div class="row" style="margin-top:12px">
+      <label class="chk"><input type="checkbox" id="shuffle" checked> シャッフル出題</label>
+      <span class="pill" id="poolInfo"></span>
+    </div>
+
+    <div style="margin-top:16px">
+      <button class="btn wide" id="startBtn">スタート ▶</button>
+    </div>
+  </div>
+
+  <!-- クイズ -->
+  <div class="card hide" id="quiz">
+    <div class="meta">
+      <span id="progressTxt">0 / 0</span>
+      <span>正解 <b id="okCount">0</b>　<span class="count-x">× <b id="ngCount">0</b></span></span>
+    </div>
+    <div class="bar"><i id="barFill"></i></div>
+
+    <div class="q-word" id="qWord">—</div>
+    <div class="q-sub" id="qSub"></div>
+    <button class="speak-btn hide" id="speakBtn">🔊 発音を聞く</button>
+
+    <!-- 入力モード -->
+    <div id="inputArea" class="hide">
+      <div class="inp-grid" id="inpGrid"></div>
+      <div class="actions">
+        <button class="btn" id="checkBtn">答え合わせ</button>
+        <button class="btn sub" id="skipBtn" style="flex:0 0 auto">パス</button>
+      </div>
+    </div>
+
+    <!-- 自己採点モード -->
+    <div id="revealArea" class="hide">
+      <div class="actions">
+        <button class="btn wide" id="showBtn">答えを見る 👀</button>
+      </div>
+    </div>
+
+    <div class="judge hide" id="judge"></div>
+    <div class="ans-box hide" id="ansBox"></div>
+
+    <div class="grade hide" id="gradeArea">
+      <button class="btn bad" data-g="ng">できなかった ✕</button>
+      <button class="btn good" data-g="ok">できた ◯</button>
+    </div>
+    <div class="actions hide" id="nextArea">
+      <button class="btn wide" id="nextBtn">次へ ▶</button>
+    </div>
+
+    <div style="margin-top:14px;text-align:center">
+      <button class="btn sub" id="quitBtn" style="padding:8px 14px;font-size:.85rem">やめて最初に戻る</button>
+    </div>
+  </div>
+
+  <!-- 結果 -->
+  <div class="card hide" id="result">
+    <div class="done">
+      <div class="small">おつかれさま！</div>
+      <div class="big" id="scorePct">0%</div>
+      <div id="scoreTxt" class="small"></div>
+      <div style="margin-top:18px;display:flex;gap:10px;flex-direction:column">
+        <button class="btn wide" id="againWrongBtn">間違えた単語だけ もう一度 ✕</button>
+        <button class="btn sub wide" id="againAllBtn">同じ範囲を もう一度</button>
+        <button class="btn sub wide" id="homeBtn">最初の画面へ</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot">
+    進捗・苦手リストはこの端末（ブラウザ）に保存されます。<br>
+    覚える単語・不規則動詞の元データ：BlueSky 単語集（番号 0201〜0608）
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   単語データ  BlueSky 単語集（番号 0201〜0608）より
+   w:単語  m:意味  s:セクション  v:不規則動詞フラグ(あれば過去形/過去分詞)
+   ========================================================= */
+const SECTIONS = [
+  "代名詞・be動詞・疑問詞",
+  "学校・天気・時",
+  "日・時間・前後",
+  "前置詞句・食事・動詞①",
+  "動詞②・動詞③",
+  "形容詞・指示",
+  "場所・位置・方向",
+  "頻度・程度・形容詞",
+  "前置詞・名詞①",
+  "名詞②・身近な物",
+  "名詞③・気持ち・あいさつ",
+  "名詞④・行事・締めの語"
+];
+
+// v: [過去形, 過去分詞]  （規則変化の動詞には付けない）
+const WORDS = [
+ // 0 代名詞・be動詞・疑問詞
+ {w:"am",m:"〜です、〜にいる（be動詞）",s:0},
+ {w:"are",m:"〜です、〜にいる（be動詞）",s:0},
+ {w:"be",m:"〜である、〜になる",s:0,v:["was / were","been"]},
+ {w:"I",m:"私は",s:0},
+ {w:"this",m:"これ、この",s:0},
+ {w:"that",m:"あれ、あの",s:0},
+ {w:"what",m:"何、何の",s:0},
+ {w:"when",m:"いつ",s:0},
+ {w:"where",m:"どこに、どこへ",s:0},
+ {w:"whose",m:"だれの",s:0},
+ {w:"which",m:"どちら、どの",s:0},
+ {w:"why",m:"なぜ",s:0},
+ {w:"how",m:"どのようにして、どれくらい",s:0},
+ {w:"my",m:"私の",s:0},
+ {w:"me",m:"私を、私に",s:0},
+ {w:"mine",m:"私のもの",s:0},
+ {w:"you",m:"あなた（たち）は",s:0},
+ {w:"your",m:"あなた（たち）の",s:0},
+ {w:"yours",m:"あなた（たち）のもの",s:0},
+ {w:"he",m:"彼は",s:0},
+ {w:"his",m:"彼の、彼のもの",s:0},
+ {w:"him",m:"彼を、彼に",s:0},
+ {w:"she",m:"彼女は",s:0},
+ {w:"her",m:"彼女の、彼女を",s:0},
+ {w:"hers",m:"彼女のもの",s:0},
+ {w:"it",m:"それは、それを",s:0},
+ {w:"its",m:"その、それの",s:0},
+ {w:"they",m:"彼ら（彼女ら）は",s:0},
+ {w:"their",m:"彼ら（彼女ら）の",s:0},
+ {w:"them",m:"彼ら（彼女ら）を、に",s:0},
+ {w:"theirs",m:"彼ら（彼女ら）のもの",s:0},
+ {w:"we",m:"私たちは",s:0},
+ {w:"our",m:"私たちの",s:0},
+ {w:"us",m:"私たちを、に",s:0},
+ {w:"ours",m:"私たちのもの",s:0},
+ {w:"nothing",m:"何も〜ない",s:0},
+ {w:"all",m:"全部、すべての",s:0},
+ {w:"everyone",m:"みんな、だれでも",s:0},
+ {w:"number",m:"数、番号",s:0},
+ {w:"first",m:"1番目の、最初の",s:0},
+ {w:"second",m:"2番目の",s:0},
+ {w:"third",m:"3番目の",s:0},
+ {w:"hundred",m:"100、100の",s:0},
+ {w:"thousand",m:"1000、1000の",s:0},
+
+ // 1 学校・天気・時
+ {w:"hi",m:"やあ、こんにちは",s:1},
+ {w:"hello",m:"こんにちは、やあ",s:1},
+ {w:"class",m:"クラス、授業",s:1},
+ {w:"classmate",m:"クラスメート、同級生",s:1},
+ {w:"classroom",m:"教室",s:1},
+ {w:"subject",m:"教科、科目",s:1},
+ {w:"art",m:"芸術、美術",s:1},
+ {w:"team",m:"チーム、組",s:1},
+ {w:"student",m:"生徒、学生",s:1},
+ {w:"speech",m:"演説、スピーチ",s:1},
+ {w:"teach",m:"教える",s:1,v:["taught","taught"]},
+ {w:"season",m:"季節",s:1},
+ {w:"rain",m:"雨／雨が降る",s:1},
+ {w:"snow",m:"雪／雪が降る",s:1},
+ {w:"sun",m:"太陽、日",s:1},
+ {w:"warm",m:"暖かい、温かい",s:1},
+ {w:"cool",m:"涼しい、かっこいい",s:1},
+ {w:"cloudy",m:"くもった",s:1},
+ {w:"rainy",m:"雨の",s:1},
+ {w:"sunny",m:"晴れた",s:1},
+ {w:"evening",m:"夕方、晩",s:1},
+ {w:"month",m:"（暦の上での）月、1か月",s:1},
+ {w:"today",m:"今日（は）",s:1},
+ {w:"tomorrow",m:"明日（は）",s:1},
+ {w:"yesterday",m:"昨日（は）",s:1},
+ {w:"week",m:"週、1週間",s:1},
+ {w:"weekend",m:"週末",s:1},
+ {w:"minute",m:"（時間の単位の）分",s:1},
+ {w:"date",m:"日、日付",s:1},
+ {w:"birthday",m:"誕生日",s:1},
+
+ // 2 日・時間・前後
+ {w:"year",m:"年、1年",s:2},
+ {w:"hour",m:"1時間",s:2},
+ {w:"early",m:"早く、早い",s:2},
+ {w:"just",m:"ちょうど、ただ〜だけ",s:2},
+ {w:"now",m:"今、現在では",s:2},
+ {w:"back",m:"戻って、後ろへ",s:2},
+ {w:"out",m:"外へ、外に",s:2},
+ {w:"quickly",m:"すばやく、速く",s:2},
+ {w:"then",m:"そのとき、それから",s:2},
+ {w:"a.m.",m:"午前",s:2},
+ {w:"p.m.",m:"午後",s:2},
+ {w:"fast",m:"速く、速い",s:2},
+ {w:"late",m:"遅れた、遅く",s:2},
+ {w:"last",m:"この前の、最後の",s:2},
+ {w:"every",m:"毎〜、〜ごとに",s:2},
+
+ // 3 前置詞句・食事・動詞①
+ {w:"during",m:"〜の間中ずっと、〜の間に",s:3},
+ {w:"into",m:"〜の中へ（に）",s:3},
+ {w:"after",m:"〜のあとに（で）",s:3},
+ {w:"before",m:"〜より前に（の）",s:3},
+ {w:"from",m:"〜から",s:3},
+ {w:"on",m:"〜の上に、（日付）に",s:3},
+ {w:"dinner",m:"夕食、夕飯",s:3},
+ {w:"lunch",m:"昼食",s:3},
+ {w:"breakfast",m:"朝食",s:3},
+ {w:"party",m:"パーティー、会",s:3},
+ {w:"vegetable",m:"野菜",s:3},
+ {w:"answer",m:"答える／答え",s:3},
+ {w:"ask",m:"たずねる、頼む、質問する",s:3},
+ {w:"bring",m:"持ってくる、連れてくる",s:3,v:["brought","brought"]},
+ {w:"call",m:"電話をかける、呼ぶ／電話",s:3},
+ {w:"catch",m:"捕まえる、とらえる",s:3,v:["caught","caught"]},
+
+ // 4 動詞②
+ {w:"choose",m:"選ぶ",s:4,v:["chose","chosen"]},
+ {w:"come",m:"来る",s:4,v:["came","come"]},
+ {w:"cut",m:"切る",s:4,v:["cut","cut"]},
+ {w:"feel",m:"感じる、気持ちがする",s:4,v:["felt","felt"]},
+ {w:"give",m:"与える、渡す、もたらす",s:4,v:["gave","given"]},
+ {w:"keep",m:"保つ、〜し続ける",s:4,v:["kept","kept"]},
+ {w:"know",m:"知っている、知り合いである",s:4,v:["knew","known"]},
+ {w:"listen",m:"聞く、耳を傾ける",s:4},
+ {w:"love",m:"愛している、大好きである／愛",s:4},
+ {w:"mean",m:"意味する、〜のことを言う",s:4,v:["meant","meant"]},
+ {w:"need",m:"必要とする／必要（なもの）",s:4},
+ {w:"open",m:"開く、開ける／開いた",s:4},
+ {w:"say",m:"言う、話す",s:4,v:["said","said"]},
+ {w:"sleep",m:"眠る／睡眠",s:4,v:["slept","slept"]},
+ {w:"use",m:"使う、利用する／使用",s:4},
+ {w:"wait",m:"待つ",s:4},
+ {w:"wear",m:"着ている、身につけている",s:4,v:["wore","worn"]},
+ {w:"win",m:"勝つ",s:4,v:["won","won"]},
+ {w:"write",m:"書く",s:4,v:["wrote","written"]},
+ {w:"work",m:"働く、勉強する／仕事、作品",s:4},
+ {w:"miss",m:"〜がいないのをさびしく思う、のがす",s:4},
+ {w:"set",m:"準備する、（太陽が）沈む／一式",s:4,v:["set","set"]},
+ {w:"sound",m:"〜に聞こえる／音",s:4},
+ {w:"smile",m:"ほほえむ／ほほえみ",s:4},
+ {w:"touch",m:"触れる、触る／接触",s:4},
+ {w:"excuse",m:"許す",s:4},
+ {w:"buy",m:"買う",s:4,v:["bought","bought"]},
+ {w:"enjoy",m:"楽しむ",s:4},
+ {w:"fly",m:"飛ぶ",s:4,v:["flew","flown"]},
+ {w:"get",m:"得る、買う、手に入れる",s:4,v:["got","got / gotten"]},
+ {w:"live",m:"住む、暮らす、生きる",s:4},
+ {w:"make",m:"作る",s:4,v:["made","made"]},
+ {w:"meet",m:"会う",s:4,v:["met","met"]},
+ {w:"practice",m:"練習する／練習",s:4},
+ {w:"put",m:"置く",s:4,v:["put","put"]},
+ {w:"see",m:"見る、会う、わかる",s:4,v:["saw","seen"]},
+ {w:"speak",m:"話す",s:4,v:["spoke","spoken"]},
+ {w:"take",m:"（写真を）とる、もっていく、（乗り物に）乗る",s:4,v:["took","taken"]},
+ {w:"think",m:"思う、考える",s:4,v:["thought","thought"]},
+ {w:"join",m:"加わる、参加する",s:4},
+ {w:"stand",m:"立つ、立っている",s:4,v:["stood","stood"]},
+ {w:"try",m:"試す、やってみる",s:4},
+ {w:"ski",m:"スキーをする",s:4},
+ {w:"visit",m:"訪問する、訪れる／訪問",s:4},
+ {w:"guess",m:"推測する、思い当たる",s:4},
+ {w:"draw",m:"（絵を）描く、（線を）引く",s:4,v:["drew","drawn"]},
+
+ // 5 形容詞・指示
+ {w:"another",m:"もう1つの、別の",s:5},
+ {w:"any",m:"いくつかの、（否定文で）1つも、どんな〜も",s:5},
+ {w:"some",m:"いくつかの、いくらかの、ある",s:5},
+ {w:"other",m:"ほかの、別の、（2つのうち）残りの",s:5},
+ {w:"same",m:"同じ、同一の",s:5},
+ {w:"different",m:"異なった、いろいろな",s:5},
+ {w:"difficult",m:"難しい、困難な",s:5},
+ {w:"easy",m:"簡単な、やさしい",s:5},
+ {w:"free",m:"自由な、ひまな、無料の",s:5},
+ {w:"interested",m:"興味［関心］を持って",s:5},
+ {w:"bad",m:"悪い",s:5},
+ {w:"sure",m:"確信して／はい、もちろん",s:5},
+ {w:"dear",m:"親愛なる、〜様",s:5},
+ {w:"excited",m:"興奮して、わくわくして",s:5},
+ {w:"surprised",m:"驚いた",s:5},
+ {w:"funny",m:"おかしな、おもしろい",s:5},
+ {w:"these",m:"これらの、これらの人［物］",s:5},
+ {w:"those",m:"あれらの、あれらの人［物］",s:5},
+
+ // 6 場所・位置・方向
+ {w:"home",m:"家庭、自宅／家に［へ］",s:6},
+ {w:"stay",m:"滞在する、泊まる",s:6},
+ {w:"room",m:"部屋",s:6},
+ {w:"store",m:"店",s:6},
+ {w:"office",m:"事務所、会社",s:6},
+ {w:"inside",m:"内側に／〜の内側の",s:6},
+ {w:"front",m:"前、前方、正面",s:6},
+ {w:"behind",m:"〜の後ろに／後ろに［で］",s:6},
+ {w:"next",m:"次の、隣の／次に",s:6},
+ {w:"place",m:"場所、ところ／置く",s:6},
+ {w:"far",m:"遠くに［へ］",s:6},
+ {w:"down",m:"下へ［に］、下って",s:6},
+ {w:"right",m:"正しい、右の／右に",s:6},
+ {w:"left",m:"左の、左に［へ］（leaveの過去形）",s:6},
+ {w:"off",m:"離れて、外して、休んで",s:6},
+ {w:"here",m:"ここに［で、へ］、こちらへ",s:6},
+
+ // 7 頻度・程度・形容詞
+ {w:"near",m:"〜の近くに／近くに",s:7},
+ {w:"up",m:"上へ［に］、（値段・程度が）上がって",s:7},
+ {w:"under",m:"〜の下に、〜のもとに",s:7},
+ {w:"there",m:"そこに［で、へ］",s:7},
+ {w:"around",m:"〜のまわりを、あちらこちらを、くるりと",s:7},
+ {w:"always",m:"いつも、常に",s:7},
+ {w:"much",m:"（量が）多くの／とても",s:7},
+ {w:"many",m:"（数が）多くの、たくさんの",s:7},
+ {w:"still",m:"まだ、今でも、それでも",s:7},
+ {w:"lot",m:"たくさん（a lot of で）",s:7},
+ {w:"usually",m:"たいてい、ふつう、いつもは",s:7},
+ {w:"very",m:"非常に、とても",s:7},
+ {w:"again",m:"もう一度、再び、また",s:7},
+ {w:"sometimes",m:"ときどき、ときには",s:7},
+ {w:"little",m:"小さい、少しの／少し",s:7},
+
+ // 8 前置詞・名詞①
+ {w:"high",m:"高い／高く",s:8},
+ {w:"small",m:"小さい",s:8},
+ {w:"long",m:"長い／長く",s:8},
+ {w:"short",m:"短い、背が低い",s:8},
+ {w:"new",m:"新しい",s:8},
+ {w:"old",m:"古い、年をとった、〜歳の",s:8},
+ {w:"with",m:"〜と、〜といっしょに、〜を持って",s:8},
+ {w:"in",m:"〜の中に［で］、（時間）に",s:8},
+ {w:"to",m:"〜の方へ、〜に向かって、〜まで",s:8},
+ {w:"at",m:"（場所・時刻）に",s:8},
+ {w:"of",m:"〜の（一部・所有・性質）",s:8},
+ {w:"by",m:"〜のそばに、〜によって、〜までに",s:8},
+ {w:"for",m:"〜のために、〜にとって、〜の間",s:8},
+ {w:"like",m:"〜のような、〜に似た／好む",s:8},
+ {w:"about",m:"〜について、約、およそ",s:8},
+ {w:"drum",m:"ドラム、太鼓",s:8},
+
+ // 9 名詞②・身近な物
+ {w:"guitar",m:"ギター",s:9},
+ {w:"player",m:"選手、競技者、演奏する人",s:9},
+ {w:"child",m:"子ども（複数 children）",s:9},
+ {w:"man",m:"男性、男の人（複数 men）",s:9},
+ {w:"woman",m:"女性、女の人（複数 women）",s:9},
+ {w:"uncle",m:"おじ、おじさん",s:9},
+ {w:"people",m:"人々、国民",s:9},
+ {w:"parent",m:"（片方の）親、（複数で）両親",s:9},
+ {w:"person",m:"人、個人",s:9},
+ {w:"mom",m:"お母さん、ママ",s:9},
+ {w:"king",m:"王、国王",s:9},
+ {w:"paper",m:"紙、用紙、（複数で）新聞",s:9},
+ {w:"picture",m:"写真、絵",s:9},
+ {w:"door",m:"ドア、戸",s:9},
+ {w:"phone",m:"電話",s:9},
+ {w:"wall",m:"壁、へい",s:9},
+
+ // 10 名詞③・気持ち・あいさつ
+ {w:"window",m:"窓",s:10},
+ {w:"camera",m:"カメラ",s:10},
+ {w:"watch",m:"腕時計／じっと見る、見守る",s:10},
+ {w:"towel",m:"タオル、手ぬぐい",s:10},
+ {w:"shoe",m:"くつ",s:10},
+ {w:"song",m:"歌",s:10},
+ {w:"movie",m:"映画",s:10},
+ {w:"show",m:"ショー、番組／見せる、案内する",s:10},
+ {w:"talk",m:"話す、しゃべる／話",s:10},
+ {w:"life",m:"生活、暮らし、一生、生命",s:10},
+ {w:"country",m:"国、いなか",s:10},
+ {w:"city",m:"市、都市、都会",s:10},
+ {w:"event",m:"出来事、行事",s:10},
+ {w:"language",m:"言語、言葉",s:10},
+ {w:"fan",m:"ファン、扇、扇風機",s:10},
+ {w:"idea",m:"考え、アイディア",s:10},
+ {w:"question",m:"質問、問題（点）",s:10},
+ {w:"problem",m:"問題",s:10},
+ {w:"thing",m:"もの、こと",s:10},
+ {w:"way",m:"道、方法",s:10},
+ {w:"really",m:"本当に、実際に、とても",s:10},
+ {w:"together",m:"いっしょに、ともに",s:10},
+ {w:"too",m:"〜もまた、そのうえ、あまりに",s:10},
+ {w:"careful",m:"注意深い、慎重な",s:10},
+ {w:"OK",m:"よろしい、元気で、OKで",s:10},
+ {w:"beautiful",m:"美しい、きれいな",s:10},
+ {w:"busy",m:"忙しい",s:10},
+ {w:"well",m:"上手に、うまく／元気で／さあ、ええと",s:10},
+ {w:"clean",m:"きれいな、清潔な／きれいにする",s:10},
+ {w:"cute",m:"かわいい",s:10},
+ {w:"exciting",m:"興奮させる、わくわくさせる",s:10},
+ {w:"famous",m:"有名な",s:10},
+ {w:"favorite",m:"お気に入りの、いちばん好きな",s:10},
+ {w:"fine",m:"すばらしい、元気な、晴れの",s:10},
+ {w:"hungry",m:"空腹の",s:10},
+ {w:"interesting",m:"おもしろい、興味深い",s:10},
+ {w:"strong",m:"強い、じょうぶな",s:10},
+ {w:"tired",m:"疲れた",s:10},
+ {w:"delicious",m:"とてもおいしい",s:10},
+ {w:"quiet",m:"静かな",s:10},
+ {w:"sorry",m:"申し訳なく思って、残念な",s:10},
+ {w:"popular",m:"人気のある",s:10},
+ {w:"full",m:"いっぱいの、満腹の",s:10},
+ {w:"wonderful",m:"すばらしい、すてきな",s:10},
+ {w:"welcome",m:"ようこそ／歓迎する、迎える",s:10},
+
+ // 11 名詞④・行事・締めの語
+ {w:"letter",m:"手紙、文字",s:11},
+ {w:"candy",m:"キャンディー、砂糖菓子",s:11},
+ {w:"heart",m:"心臓、心",s:11},
+ {w:"hair",m:"髪、（動物の）毛",s:11},
+ {w:"world",m:"世界、世界中の人々",s:11},
+ {w:"street",m:"通り、街路",s:11},
+ {w:"festival",m:"祭り、催し物",s:11},
+ {w:"course",m:"進路、コース",s:11},
+ {w:"luck",m:"運、幸運",s:11},
+ {w:"future",m:"未来、将来",s:11},
+ {w:"thank",m:"感謝する／感謝",s:11},
+ {w:"kind",m:"親切な／種類",s:11},
+ {w:"break",m:"壊す、割る／休憩",s:11,v:["broke","broken"]},
+ {w:"dollar",m:"ドル（貨幣単位）",s:11},
+ {w:"yen",m:"円（日本の貨幣単位）",s:11},
+ {w:"jet",m:"ジェット機",s:11},
+ {w:"picnic",m:"ピクニック、遠足",s:11},
+ {w:"concert",m:"コンサート、音楽会、演奏会",s:11},
+ {w:"Mt.",m:"〜山（Mount の略）",s:11},
+ {w:"trip",m:"旅行",s:11},
+ {w:"firework",m:"花火",s:11},
+ {w:"field",m:"野原、（競技の）フィールド",s:11},
+ {w:"hobby",m:"趣味",s:11},
+ {w:"vacation",m:"休暇、休み",s:11},
+ {w:"volunteer",m:"ボランティア／ボランティアをする",s:11},
+ {w:"maybe",m:"たぶん、もしかすると",s:11},
+ {w:"yes",m:"はい、そうです",s:11},
+ {w:"not",m:"〜でない、〜しない",s:11},
+ {w:"please",m:"どうぞ、お願いします",s:11},
+ {w:"hard",m:"一生懸命に、熱心に／難しい、かたい",s:11},
+ {w:"easily",m:"簡単に、楽に",s:11},
+ {w:"straight",m:"まっすぐに／まっすぐな",s:11}
+];
+
+/* ===== 状態 ===== */
+const $ = id => document.getElementById(id);
+const LS_WRONG = "haruki_engvocab_wrong_v1";
+let mode = "e2j";
+let queue = [];      // 出題リスト（WORDS要素の配列）
+let idx = 0;
+let okN = 0, ngN = 0;
+let answered = false;
+let currentWord = "";
+
+/* 発音（Web Speech API・ブラウザ内蔵音声／APIキー不要） */
+function speak(text){
+  try{
+    if(!('speechSynthesis' in window) || !text) return;
+    const t = String(text).replace(/^Mt\.$/,'mount').replace(/\./g,'');
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(t);
+    u.lang = "en-US"; u.rate = 0.9;
+    const vs = window.speechSynthesis.getVoices();
+    const en = vs.find(v=>/en[-_]US/i.test(v.lang)) || vs.find(v=>/^en/i.test(v.lang));
+    if(en) u.voice = en;
+    window.speechSynthesis.speak(u);
+  }catch(e){}
+}
+// 一部ブラウザは voices が非同期で読み込まれる
+if('speechSynthesis' in window){ window.speechSynthesis.onvoiceschanged = ()=>window.speechSynthesis.getVoices(); }
+
+function getWrongSet(){
+  try{ return new Set(JSON.parse(localStorage.getItem(LS_WRONG)||"[]")); }catch(e){ return new Set(); }
+}
+function saveWrongSet(set){ localStorage.setItem(LS_WRONG, JSON.stringify([...set])); }
+function markWrong(w, isWrong){
+  const set = getWrongSet();
+  if(isWrong) set.add(w); else set.delete(w);
+  saveWrongSet(set);
+}
+
+/* ===== セットアップ画面 ===== */
+function buildRangeOptions(){
+  const sel = $("range");
+  sel.innerHTML = "";
+  const optAll = document.createElement("option");
+  optAll.value = "all"; optAll.textContent = "全範囲（約"+WORDS.length+"語）";
+  sel.appendChild(optAll);
+  SECTIONS.forEach((name,i)=>{
+    const n = WORDS.filter(x=>x.s===i).length;
+    const o = document.createElement("option");
+    o.value = String(i); o.textContent = (i+1)+". "+name+"（"+n+"語）";
+    sel.appendChild(o);
+  });
+}
+
+function updatePoolInfo(){
+  const pool = currentPool();
+  let txt = pool.length + " 語";
+  if(mode==="verb") txt = pool.length + " 個の不規則動詞";
+  $("poolInfo").textContent = "出題数：" + txt;
+}
+
+function currentPool(){
+  let pool = WORDS.slice();
+  if(mode==="verb"){
+    pool = pool.filter(x=>x.v);
+  } else if(mode==="review"){
+    const set = getWrongSet();
+    pool = pool.filter(x=>set.has(x.w));
+  } else {
+    const r = $("range").value;
+    if(r!=="all") pool = pool.filter(x=>x.s===Number(r));
+  }
+  return pool;
+}
+
+function setMode(m){
+  mode = m;
+  document.querySelectorAll(".mode-btn").forEach(b=>b.classList.toggle("on", b.dataset.mode===m));
+  // 範囲セレクトは 英→日 / 日→英 のときだけ意味がある
+  $("rangeWrap").style.display = (m==="e2j"||m==="j2e") ? "" : "none";
+  updatePoolInfo();
+}
+
+/* ===== クイズ進行 ===== */
+function shuffle(a){
+  for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+  return a;
+}
+
+function startQuiz(customQueue){
+  let pool = customQueue || currentPool();
+  if(pool.length===0){
+    if(mode==="review"){ alert("間違えた単語はまだありません。まずは英→日や日→英でテストしてみよう！"); return; }
+    alert("出題できる単語がありません。"); return;
+  }
+  queue = pool.slice();
+  if($("shuffle").checked || customQueue) shuffle(queue);
+  idx=0; okN=0; ngN=0;
+  $("setup").classList.add("hide");
+  $("result").classList.add("hide");
+  $("quiz").classList.remove("hide");
+  renderQuestion();
+}
+
+function renderQuestion(){
+  answered=false;
+  const item = queue[idx];
+  // メタ
+  $("progressTxt").textContent = (idx+1)+" / "+queue.length;
+  $("okCount").textContent = okN;
+  $("ngCount").textContent = ngN;
+  $("barFill").style.width = Math.round(idx/queue.length*100)+"%";
+  // リセット
+  $("judge").className="judge hide"; $("judge").textContent="";
+  $("ansBox").className="ans-box hide"; $("ansBox").innerHTML="";
+  $("gradeArea").classList.add("hide");
+  $("nextArea").classList.add("hide");
+  $("inputArea").classList.add("hide");
+  $("revealArea").classList.add("hide");
+
+  if(mode==="e2j"){
+    // 英→日：単語を見せて、答え（意味）を自己採点
+    $("qWord").textContent = item.w;
+    $("qSub").innerHTML = "意味を思い出そう" + (item.v?'<span class="q-tag">不規則動詞</span>':"");
+    $("revealArea").classList.remove("hide");
+  } else if(mode==="j2e"){
+    // 日→英：意味を見せて英語を入力
+    $("qWord").style.fontSize="1.5rem";
+    $("qWord").textContent = item.m;
+    $("qSub").innerHTML = "英語で入力" + (item.v?'<span class="q-tag">不規則動詞</span>':"");
+    buildInputs([{key:"w",label:"英語",ph:"例：apple"}]);
+    $("inputArea").classList.remove("hide");
+  } else if(mode==="verb"){
+    $("qWord").style.fontSize="2.1rem";
+    $("qWord").textContent = item.w;
+    $("qSub").textContent = "意味：" + item.m;
+    buildInputs([
+      {key:"p",label:"過去形",ph:"過去形を入力"},
+      {key:"pp",label:"過去分詞",ph:"過去分詞を入力"}
+    ]);
+    $("inputArea").classList.remove("hide");
+  } else if(mode==="review"){
+    // 苦手：英→日と同じ自己採点方式
+    $("qWord").textContent = item.w;
+    $("qSub").innerHTML = "意味を思い出そう" + (item.v?'<span class="q-tag">不規則動詞</span>':"");
+    $("revealArea").classList.remove("hide");
+  }
+  // 英→日のときフォントを戻す
+  if(mode==="e2j"||mode==="verb"||mode==="review") $("qWord").style.fontSize="2.1rem";
+
+  // 発音ボタン：英語が表示されているモードでは最初から、日→英は答え合わせ後に出す
+  currentWord = item.w;
+  const englishShown = (mode!=="j2e");
+  const qw = $("qWord");
+  qw.classList.toggle("say", englishShown);
+  qw.onclick = englishShown ? (()=>speak(currentWord)) : null;
+  $("speakBtn").classList.toggle("hide", !englishShown);
+}
+
+function buildInputs(fields){
+  const g = $("inpGrid"); g.innerHTML="";
+  fields.forEach((f,i)=>{
+    const wrap=document.createElement("div");
+    wrap.innerHTML = '<label>'+f.label+'</label><input type="text" autocapitalize="off" autocomplete="off" spellcheck="false" data-key="'+f.key+'" placeholder="'+f.ph+'">';
+    g.appendChild(wrap);
+  });
+  const first = g.querySelector("input");
+  if(first) setTimeout(()=>first.focus(), 30);
+  // Enterで答え合わせ
+  g.querySelectorAll("input").forEach((inp,i,arr)=>{
+    inp.addEventListener("keydown",e=>{
+      if(e.key==="Enter"){
+        if(i<arr.length-1){ arr[i+1].focus(); }
+        else { e.preventDefault(); doCheck(); }
+      }
+    });
+  });
+}
+
+function norm(s){ return (s||"").trim().toLowerCase().replace(/\s+/g," ").replace(/\.$/,""); }
+
+// 「got / gotten」のように複数許容を判定
+function matchAns(input, correct){
+  const i = norm(input);
+  const parts = correct.split("/").map(x=>norm(x));
+  return parts.includes(i);
+}
+
+function doCheck(){
+  if(answered) return;
+  const item = queue[idx];
+  const inputs = [...$("inpGrid").querySelectorAll("input")];
+  let allOk = true;
+  let ansHtml = "";
+  if(mode==="j2e"){
+    const v = inputs[0].value;
+    // 単語に「/」区切りは無いので完全一致（大小無視）
+    const ok = norm(v)===norm(item.w) || matchAns(v,item.w);
+    allOk = ok;
+    ansHtml = '<span>'+item.w+'</span><small>'+item.m+'</small>';
+  } else if(mode==="verb"){
+    const okP = matchAns(inputs[0].value, item.v[0]);
+    const okPP = matchAns(inputs[1].value, item.v[1]);
+    allOk = okP && okPP;
+    ansHtml = '<span>'+item.w+' － '+item.v[0]+' － '+item.v[1]+'</span><small>'+item.m+'</small>';
+  }
+  finishJudge(allOk, ansHtml, item);
+}
+
+function finishJudge(isOk, ansHtml, item){
+  answered=true;
+  const j=$("judge");
+  j.className = "judge " + (isOk?"ok":"ng");
+  j.textContent = isOk ? "◯ 正解！" : "✕ おしい！もう一度覚えよう";
+  j.classList.remove("hide");
+  const a=$("ansBox");
+  a.innerHTML = ansHtml;
+  a.classList.remove("hide");
+  if(isOk){ okN++; } else { ngN++; }
+  markWrong(item.w, !isOk);
+  $("okCount").textContent=okN; $("ngCount").textContent=ngN;
+  $("nextArea").classList.remove("hide");
+  $("inputArea").classList.add("hide");
+  // 答え合わせ後：英単語を発音できるように
+  $("speakBtn").classList.remove("hide");
+  const a2=$("ansBox"); a2.classList.add("say"); a2.onclick=()=>speak(item.w);
+  speak(item.w);
+  $("nextBtn").focus();
+}
+
+/* 自己採点（英→日 / 苦手）：答えを見る → できた/できなかった */
+function showAnswer(){
+  const item = queue[idx];
+  let extra = item.v ? '<small>'+item.w+' － '+item.v[0]+' － '+item.v[1]+'（不規則）</small>' : '';
+  $("ansBox").innerHTML = '<span>'+item.m+'</span>'+extra;
+  $("ansBox").classList.remove("hide");
+  $("revealArea").classList.add("hide");
+  $("gradeArea").classList.remove("hide");
+  speak(item.w);
+}
+
+function grade(isOk){
+  const item = queue[idx];
+  answered=true;
+  if(isOk) okN++; else ngN++;
+  markWrong(item.w, !isOk);
+  $("okCount").textContent=okN; $("ngCount").textContent=ngN;
+  $("gradeArea").classList.add("hide");
+  next();
+}
+
+function next(){
+  idx++;
+  if(idx>=queue.length){ showResult(); return; }
+  renderQuestion();
+}
+
+function showResult(){
+  $("quiz").classList.add("hide");
+  $("result").classList.remove("hide");
+  const total = okN+ngN;
+  const pct = total? Math.round(okN/total*100):0;
+  $("scorePct").textContent = pct+"%";
+  $("scorePct").style.color = pct>=80?"var(--good)": pct>=50?"var(--warn)":"var(--bad)";
+  let msg = "正解 "+okN+" ／ "+total+"問　（× "+ngN+"）";
+  if(pct>=90) msg += "<br>すごい！ほぼ完璧 🎉";
+  else if(pct>=70) msg += "<br>いい感じ！×だけ繰り返そう 💪";
+  else msg += "<br>×がついた単語を『苦手だけ』で潰そう 🔁";
+  $("scoreTxt").innerHTML = msg;
+  // 間違えた単語が無ければボタンを隠す
+  $("againWrongBtn").style.display = ngN>0 ? "" : "none";
+}
+
+/* ===== イベント ===== */
+document.querySelectorAll(".mode-btn").forEach(b=>{
+  b.addEventListener("click",()=>setMode(b.dataset.mode));
+});
+$("range").addEventListener("change", updatePoolInfo);
+$("speakBtn").addEventListener("click", ()=>speak(currentWord));
+$("startBtn").addEventListener("click", ()=>startQuiz());
+$("checkBtn").addEventListener("click", doCheck);
+$("skipBtn").addEventListener("click", ()=>{ // パス＝×扱い
+  if(answered) return;
+  const item=queue[idx];
+  let ansHtml = mode==="verb"
+    ? '<span>'+item.w+' － '+item.v[0]+' － '+item.v[1]+'</span><small>'+item.m+'</small>'
+    : '<span>'+item.w+'</span><small>'+item.m+'</small>';
+  finishJudge(false, ansHtml, item);
+});
+$("showBtn").addEventListener("click", showAnswer);
+$("gradeArea").querySelectorAll("button").forEach(b=>{
+  b.addEventListener("click",()=>grade(b.dataset.g==="ok"));
+});
+$("nextBtn").addEventListener("click", next);
+$("quitBtn").addEventListener("click", ()=>{ $("quiz").classList.add("hide"); $("setup").classList.remove("hide"); updatePoolInfo(); });
+$("againWrongBtn").addEventListener("click", ()=>{
+  const wrongItems = queue.filter(it=>getWrongSet().has(it.w));
+  if(wrongItems.length===0){ alert("間違えた単語はありません！"); return; }
+  startQuiz(wrongItems);
+});
+$("againAllBtn").addEventListener("click", ()=>startQuiz(queue.slice()));
+$("homeBtn").addEventListener("click", ()=>{ $("result").classList.add("hide"); $("setup").classList.remove("hide"); updatePoolInfo(); });
+
+/* 初期化 */
+buildRangeOptions();
+setMode("e2j");
+updatePoolInfo();
+</script>
+</body>
+</html>

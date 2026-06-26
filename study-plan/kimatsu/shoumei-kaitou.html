@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>図形の証明 回答・解説（はるき）</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", sans-serif;
+    background: linear-gradient(180deg, #fff7ed 0%, #fed7aa 60%, #fdba74 100%);
+    color: #1a202c; line-height: 1.75; padding: 16px 14px 70px; min-height: 100vh;
+  }
+  .wrap { max-width: 720px; margin: 0 auto; }
+  header {
+    background: linear-gradient(135deg, #ea580c, #dc2626);
+    color: #fff; border-radius: 18px; padding: 22px 18px; text-align: center;
+    box-shadow: 0 6px 20px rgba(234,88,12,.32);
+  }
+  header h1 { font-size: 20px; line-height: 1.5; }
+  header .sub { font-size: 13px; opacity: .95; margin-top: 8px; }
+  .back { display:inline-block; margin: 13px 8px 4px 0; font-size: 13px; color: #c2410c; font-weight: 700; text-decoration: none; }
+
+  .intro {
+    background: #fffbeb; border-left: 5px solid #f59e0b; border-radius: 10px;
+    padding: 13px 16px; margin: 14px 0; font-size: 13.5px; color: #78350f;
+  }
+  .intro b { color: #c2410c; }
+
+  .prog {
+    background: #fff; border: 2px solid #ea580c; border-radius: 14px;
+    padding: 14px 16px; margin: 14px 0; box-shadow: 0 3px 12px rgba(234,88,12,.15);
+  }
+  .prog .lbl { font-size: 13px; color: #9a3412; font-weight: 700; margin-bottom: 7px; }
+  .prog .bar { height: 11px; border-radius: 6px; background: #fde7d0; overflow: hidden; }
+  .prog .bar > i { display:block; height:100%; width:0%; background: linear-gradient(90deg,#fb923c,#16a34a); transition:.3s; }
+
+  .sectionhead {
+    background: linear-gradient(135deg,#9a3412,#c2410c); color:#fff;
+    border-radius: 12px; padding: 11px 16px; margin: 26px 0 8px;
+    font-size: 14.5px; font-weight: 800; box-shadow: 0 3px 10px rgba(154,52,18,.25);
+  }
+  .item {
+    background: #fff; border: 1px solid #fed7aa; border-radius: 16px;
+    padding: 16px; margin: 14px 0; box-shadow: 0 3px 12px rgba(0,0,0,.07); transition:.2s;
+  }
+  .item.done { border-color: #16a34a; background: #f0fdf4; }
+  .badge {
+    display:inline-block; font-size: 11.5px; font-weight: 800; color:#fff;
+    background: #ea580c; border-radius: 8px; padding: 3px 10px; margin-bottom: 9px;
+  }
+  .item.done .badge { background:#16a34a; }
+
+  .also { font-size:11.5px; color:#9a3412; background:#fff7ed; border:1px dashed #fdba74; border-radius:8px; padding:5px 10px; margin:0 0 8px; }
+  .figbox { background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:8px; margin:6px 0 10px; text-align:center; }
+  .figbox svg { width:100%; max-width:360px; height:auto; }
+
+  .q { font-size: 15px; color:#1f2937; margin: 2px 0 8px; }
+  .q .lab { display:block; font-size: 11.5px; color:#9a3412; font-weight:700; margin-bottom:3px; }
+  .cond { font-size: 13px; color:#7c2d12; margin: 6px 0; }
+  .cond b { color:#dc2626; }
+
+  .showbtn {
+    background:#fff7ed; border:1.5px solid #fb923c; color:#c2410c; border-radius:10px;
+    padding:10px 14px; font-size:14px; font-weight:700; cursor:pointer; width:100%; margin-top:8px;
+  }
+  .answer { display:none; margin-top:12px; border-top:1px dashed #fed7aa; padding-top:12px; }
+  .answer.open { display:block; }
+
+  .idea {
+    background:#eff6ff; border-radius:12px; padding:12px 14px; font-size:13.5px; color:#1e3a5f; margin-bottom:12px;
+  }
+  .idea .lab { display:block; color:#2563eb; font-weight:800; margin-bottom:4px; font-size:13px; }
+  .idea b { color:#1d4ed8; }
+
+  .proof {
+    background:#fff7ed; border:1px solid #fed7aa; border-radius:12px;
+    padding: 14px 16px; font-size: 14.5px; line-height: 1.95; color:#1f2937;
+  }
+  .proof .ttl { font-weight:800; color:#9a3412; font-size:13px; margin-bottom:6px; }
+  .proof .ln { white-space:pre-wrap; }
+  .proof .ind { padding-left: 1.3em; }
+  .proof .cong { font-weight:800; color:#dc2626; }
+  .proof .qed { text-align:right; color:#16a34a; font-weight:800; margin-top:4px; }
+
+  .point {
+    margin-top:11px; background:#f0fdf4; border:1px solid #bbf7d0; border-radius:10px; padding:11px 13px;
+    font-size:13px; color:#14532d;
+  }
+  .point .lab { display:block; color:#16a34a; font-weight:700; margin-bottom:3px; font-size:12.5px; }
+
+  .donebtn {
+    margin-top:12px; background:transparent; border:1.5px solid #16a34a; color:#16a34a;
+    border-radius:10px; padding:10px 14px; font-size:14px; font-weight:700; cursor:pointer; width:100%;
+  }
+  .item.done .donebtn { background:#16a34a; color:#fff; }
+
+  .foot { text-align:center; color:#9a3412; font-size:12.5px; margin-top:24px; line-height:1.9; }
+  .reset { background:transparent; border:1px solid #fdba74; color:#9a3412; border-radius:8px; padding:6px 12px; font-size:12px; cursor:pointer; }
+
+  /* === 共通サイドバー === */
+  .navbtn{position:fixed;top:12px;left:12px;z-index:60;background:#b91c1c;color:#fff;border:2px solid #fff;border-radius:10px;width:46px;height:46px;font-size:22px;line-height:1;box-shadow:0 3px 10px rgba(0,0,0,.3);cursor:pointer}
+  .topback{position:fixed;top:12px;right:12px;z-index:60;background:#fff;color:#c2410c;border:2px solid #ea580c;border-radius:10px;height:46px;padding:0 14px;font-size:14px;font-weight:800;box-shadow:0 3px 10px rgba(0,0,0,.2);cursor:pointer}
+  .navmask{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:65;display:none}
+  .navmask.open{display:block}
+  .sidebar{position:fixed;top:0;left:-300px;width:270px;height:100%;background:#fff7ed;z-index:70;box-shadow:2px 0 18px rgba(0,0,0,.25);transition:left .25s;padding:16px 14px;overflow-y:auto}
+  .sidebar.open{left:0}
+  .sidebar .navttl{font-size:15px;color:#9a3412;font-weight:800;margin:2px 0 12px;padding-bottom:10px;border-bottom:2px solid #fdba74}
+  .sidebar .closex{float:right;font-size:18px;color:#9a3412;background:none;border:none;cursor:pointer}
+  .sidebar a{display:block;padding:13px 12px;margin:7px 0;border-radius:10px;text-decoration:none;color:#7c2d12;font-weight:700;font-size:14.5px;background:#fff;border:1px solid #fed7aa}
+  .sidebar a.active{background:linear-gradient(135deg,#ea580c,#dc2626);color:#fff;border-color:#dc2626}
+</style>
+</head>
+<body>
+<button class="navbtn" onclick="toggleNav()" aria-label="メニュー">☰</button>
+<button class="topback" onclick="history.back()">← 戻る</button>
+<div class="navmask" id="navmask" onclick="toggleNav()"></div>
+<nav class="sidebar" id="sidebar">
+  <button class="closex" onclick="toggleNav()">✕</button>
+  <div class="navttl">📚 はるき学習計画メニュー</div>
+  <a href="../index.html">🏠 学習計画トップ</a>
+  <a href="../mainichi.html">📅 毎日タスク</a>
+  <a href="../gacha.html">🎰 がんばりガチャ</a>
+  <a href="index.html">🔥 期末 対策トップ</a>
+  <a href="shoumei-kaitou.html" class="active">📐 図形の証明 解説</a>
+  <a href="../shuukihyou.html">🧪 元素 周期表・覚え方</a>
+  <a href="../jitsuryoku/eng-vocab.html">🔊 英単語テスト</a>
+</nav>
+<script>function toggleNav(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('navmask').classList.toggle('open');}</script>
+<div class="wrap">
+
+  <header>
+    <h1>📐 図形の証明 回答・解説</h1>
+    <div class="sub">中2 数学・三角形の合同／確認テスト＋復習プリント 全15問（図つき）</div>
+  </header>
+
+  <a class="back" href="index.html">← 期末 対策トップへ</a>
+
+  <div class="intro">
+    図を見ながら、まず自分でノートに証明を書いてみよう。それから「<b>考え方と証明を見る</b>」で答え合わせ。書けたら「<b>理解できた</b>」にチェック。<br>
+    📄 <b>プリントごとに整理</b>してあるよ。各問題には<b>プリント名と問題番号</b>を入れたから、あとから「どのプリントのどれ」かすぐ分かる。<br>
+    🔁 マークは<b>同じ（または似た）問題が別のプリントにも載っている</b>という目印。1回解けばOK。<br>
+    ※ 図はプリントの問題図を読み取って描き直したもの（手書きの書き込みは省略）。赤い印＝長さが等しい辺、青い印＝等しい角や角度。
+  </div>
+
+  <div class="prog">
+    <div class="lbl"><span id="doneN">0</span> / <span id="totalN">6</span> 問 クリア</div>
+    <div class="bar"><i id="barFill"></i></div>
+  </div>
+
+  <div id="list"></div>
+
+  <div class="foot">
+    進捗はこの端末（ブラウザ）に保存されます。<br>
+    <button class="reset" id="resetBtn">チェックを全部リセット</button><br>
+    証明は「<b>合同を示す → 対応する辺・角は等しい</b>」の流れが基本だよ💪
+  </div>
+</div>
+
+<script>
+/* ===== 図（SVG）を描くための小道具 ===== */
+const f1=n=>Math.round(n*10)/10;
+const sub=(a,b)=>[a[0]-b[0],a[1]-b[1]];
+const mid=(a,b)=>[(a[0]+b[0])/2,(a[1]+b[1])/2];
+const nrm=v=>{const l=Math.hypot(v[0],v[1])||1;return [v[0]/l,v[1]/l];};
+const perp=v=>[-v[1],v[0]];
+const C_LINE="#334155", C_EQ="#dc2626", C_ANG="#2563eb", C_PAR="#0891b2", C_LBL="#0f172a";
+
+function line(a,b,color,w){return `<line x1="${f1(a[0])}" y1="${f1(a[1])}" x2="${f1(b[0])}" y2="${f1(b[1])}" stroke="${color}" stroke-width="${w||2}" stroke-linecap="round"/>`;}
+function poly(pts,color,w){return `<polyline points="${pts.map(p=>f1(p[0])+','+f1(p[1])).join(' ')}" fill="none" stroke="${color}" stroke-width="${w||2}" stroke-linejoin="round"/>`;}
+function dot(p,color){return `<circle cx="${f1(p[0])}" cy="${f1(p[1])}" r="2.6" fill="${color||C_LINE}"/>`;}
+function lbl(p,t,dx,dy){return `<text x="${f1(p[0]+(dx||0))}" y="${f1(p[1]+(dy||0))}" font-size="14" font-weight="700" fill="${C_LBL}" text-anchor="middle" dominant-baseline="middle">${t}</text>`;}
+
+// 等しい辺の印（n本の短い斜線）
+function ticks(a,b,n){const m=mid(a,b),d=nrm(sub(b,a)),p=perp(d),len=8,gap=4.5;let s='';for(let i=0;i<n;i++){const o=(i-(n-1)/2)*gap;const c=[m[0]+d[0]*o,m[1]+d[1]*o];s+=line([c[0]-p[0]*len/2,c[1]-p[1]*len/2],[c[0]+p[0]*len/2,c[1]+p[1]*len/2],C_EQ,2);}return s;}
+// 平行の印（n個のシェブロン）
+function par(a,b,n){const m=mid(a,b),d=nrm(sub(b,a)),p=perp(d),sz=6,gap=6;let s='';for(let i=0;i<n;i++){const o=(i-(n-1)/2)*gap;const t=[m[0]+d[0]*o,m[1]+d[1]*o];s+=line(t,[t[0]-d[0]*sz+p[0]*sz*0.7,t[1]-d[1]*sz+p[1]*sz*0.7],C_PAR,1.8);s+=line(t,[t[0]-d[0]*sz-p[0]*sz*0.7,t[1]-d[1]*sz-p[1]*sz*0.7],C_PAR,1.8);}return s;}
+// 角の弧（＋ラベル）
+function arc(c,a,b,r,label,color){color=color||C_ANG;const a1=Math.atan2(a[1]-c[1],a[0]-c[0]),a2=Math.atan2(b[1]-c[1],b[0]-c[0]);let d=a2-a1;while(d<=-Math.PI)d+=2*Math.PI;while(d>Math.PI)d-=2*Math.PI;const sweep=d>0?1:0;const x1=c[0]+r*Math.cos(a1),y1=c[1]+r*Math.sin(a1),x2=c[0]+r*Math.cos(a2),y2=c[1]+r*Math.sin(a2);let s=`<path d="M${f1(x1)} ${f1(y1)} A ${r} ${r} 0 0 ${sweep} ${f1(x2)} ${f1(y2)}" fill="none" stroke="${color}" stroke-width="1.8"/>`;if(label){const am=a1+d/2,lr=r+11;s+=`<text x="${f1(c[0]+lr*Math.cos(am))}" y="${f1(c[1]+lr*Math.sin(am))}" font-size="11" font-weight="700" fill="${color}" text-anchor="middle" dominant-baseline="middle">${label}</text>`;}return s;}
+// 直角の印
+function rightAngle(c,a,b,sz){const da=nrm(sub(a,c)),db=nrm(sub(b,c));const p1=[c[0]+da[0]*sz,c[1]+da[1]*sz];const p3=[c[0]+db[0]*sz,c[1]+db[1]*sz];const p2=[p1[0]+db[0]*sz,p1[1]+db[1]*sz];return poly([p1,p2,p3],C_ANG,1.5);}
+function svg(inner,vb){return `<svg viewBox="${vb||'0 0 300 200'}">${inner}</svg>`;}
+function lineIntersect(p1,p2,p3,p4){const a1=p2[1]-p1[1],b1=p1[0]-p2[0],c1=a1*p1[0]+b1*p1[1];const a2=p4[1]-p3[1],b2=p3[0]-p4[0],c2=a2*p3[0]+b2*p3[1];const det=a1*b2-a2*b1;return [ (b2*c1-b1*c2)/det, (a1*c2-a2*c1)/det ];}
+
+/* ===== 各問題の図 ===== */
+const FIGS={
+ no1(){const A=[150,30],B=[55,178],C=[245,178],D=[150,178];
+  return svg(line(A,B,C_LINE)+line(A,C,C_LINE)+line(B,C,C_LINE)+line(A,D,C_LINE)
+   +ticks(A,B,1)+ticks(A,C,1)+ticks(B,D,2)+ticks(D,C,2)
+   +dot(A)+dot(B)+dot(C)+dot(D)
+   +lbl(A,'A',0,-12)+lbl(B,'B',-12,8)+lbl(C,'C',12,8)+lbl(D,'D',0,16));},
+
+ no2(){const A=[45,178],C=[262,178],B=[150,32],D=[103,98],E=[160,178];
+  return svg(line(A,B,C_LINE)+line(A,C,C_LINE)+line(B,C,C_LINE)+line(B,E,C_LINE)+line(C,D,C_LINE)
+   +ticks(A,B,1)+ticks(A,C,1)
+   +arc(B,A,E,20,'')+arc(C,A,D,20,'')
+   +dot(A)+dot(B)+dot(C)+dot(D)+dot(E)
+   +lbl(A,'A',-12,8)+lbl(B,'B',0,-12)+lbl(C,'C',14,6)+lbl(D,'D',-13,0)+lbl(E,'E',0,16));},
+
+ para(){const A=[80,40],D=[262,40],B=[40,176],C=[222,176];
+  return svg(line(A,D,C_LINE)+line(D,C,C_LINE)+line(C,B,C_LINE)+line(B,A,C_LINE)+line(A,C,C_LINE)
+   +par(A,D,1)+par(B,C,1)+par(A,B,2)+par(D,C,2)
+   +dot(A)+dot(B)+dot(C)+dot(D)
+   +lbl(A,'A',-10,-10)+lbl(D,'D',12,-8)+lbl(B,'B',-12,8)+lbl(C,'C',12,10));},
+
+ no202(){const A=[45,45],C=[235,45],D=[45,175],B=[235,175],O=[140,110];
+  return svg(line(A,C,C_LINE)+line(D,B,C_LINE)+line(A,B,C_LINE)+line(C,D,C_LINE)
+   +ticks(O,C,1)+ticks(O,D,1)
+   +arc(C,A,O,20,'')+arc(D,B,O,20,'')
+   +dot(A)+dot(B)+dot(C)+dot(D)+dot(O)
+   +lbl(A,'A',-12,-6)+lbl(C,'C',12,-6)+lbl(D,'D',-12,8)+lbl(B,'B',12,8)+lbl(O,'O',10,-6));},
+
+ no221(){const A=[150,52],B=[51,152],C=[249,152],D=[195,152],E=[249,12];
+  return svg(line(A,B,C_LINE)+line(A,C,C_LINE)+line(B,C,C_LINE)+line(A,D,C_LINE)+line(A,E,C_LINE)+line(D,E,C_LINE)
+   +ticks(A,B,1)+ticks(A,C,1)+ticks(A,D,2)+ticks(A,E,2)
+   +rightAngle(A,B,C,12)+rightAngle(A,D,E,12)
+   +dot(A)+dot(B)+dot(C)+dot(D)+dot(E)
+   +lbl(A,'A',0,-12)+lbl(B,'B',-12,8)+lbl(C,'C',-4,16)+lbl(D,'D',6,16)+lbl(E,'E',13,0));},
+
+ no222(){const B=[45,160],C=[150,160],D=[255,160],A=[98,70],E=[203,70];
+  const K=lineIntersect(A,D,B,E);
+  return svg(line(B,D,C_LINE)+line(A,B,C_LINE)+line(C,A,C_LINE)+line(C,E,C_LINE)+line(D,E,C_LINE)
+   +line(A,D,C_LINE)+line(B,E,C_LINE)
+   +ticks(C,A,1)+ticks(C,B,1)+ticks(C,D,2)+ticks(C,E,2)
+   +arc(C,B,A,18,'60°')+arc(C,E,D,18,'60°')
+   +dot(A)+dot(B)+dot(C)+dot(D)+dot(E)+dot(K,C_ANG)
+   +lbl(A,'A',-12,-6)+lbl(E,'E',12,-6)+lbl(B,'B',-12,8)+lbl(C,'C',0,16)+lbl(D,'D',12,8)+lbl(K,'K',-9,-7));},
+
+ n1pab(){const P=[150,28],A=[55,170],B=[245,170],M=[150,170];
+  return svg(line(P,A,C_LINE)+line(P,B,C_LINE)+line(A,B,C_LINE)+line(P,M,C_LINE)
+   +ticks(A,M,1)+ticks(M,B,1)+rightAngle(M,P,B,12)
+   +dot(P)+dot(A)+dot(B)+dot(M)
+   +lbl(P,'P',0,-12)+lbl(A,'A',-12,8)+lbl(B,'B',12,8)+lbl(M,'M',0,16));},
+
+ nX(){const A=[55,48],C=[235,48],D=[55,168],B=[235,168],O=[145,108];
+  return svg(line(A,B,C_LINE)+line(C,D,C_LINE)+line(A,C,C_LINE)+line(D,B,C_LINE)
+   +ticks(A,O,1)+ticks(O,B,1)+ticks(C,O,2)+ticks(O,D,2)
+   +dot(A)+dot(B)+dot(C)+dot(D)+dot(O)
+   +lbl(A,'A',-12,-4)+lbl(C,'C',12,-4)+lbl(D,'D',-12,8)+lbl(B,'B',12,8)+lbl(O,'O',12,-4));},
+
+ n4par(){const A=[62,52],B=[240,52],C=[62,168],D=[240,168],O=[151,110];
+  return svg(line(A,B,C_LINE)+line(C,D,C_LINE)+line(A,D,C_LINE)+line(B,C,C_LINE)
+   +par(A,B,1)+par(D,C,1)+ticks(A,O,1)+ticks(O,D,1)
+   +dot(A)+dot(B)+dot(C)+dot(D)+dot(O)
+   +lbl(A,'A',-12,-4)+lbl(B,'B',12,-4)+lbl(C,'C',-12,10)+lbl(D,'D',12,10)+lbl(O,'O',12,-2)
+   +lbl([34,52],'ℓ',0,0)+lbl([34,168],'m',0,0));},
+
+ n6quad(){const A=[150,34],B=[52,108],C=[150,184],D=[250,108];
+  return svg(line(A,B,C_LINE)+line(B,C,C_LINE)+line(C,D,C_LINE)+line(D,A,C_LINE)+line(A,C,C_LINE)
+   +ticks(A,D,1)+ticks(C,B,1)+arc(A,C,D,20,'')+arc(C,A,B,20,'')
+   +dot(A)+dot(B)+dot(C)+dot(D)
+   +lbl(A,'A',0,-12)+lbl(B,'B',-12,2)+lbl(C,'C',0,16)+lbl(D,'D',13,2));},
+
+ n7mid(){const A=[70,54],D=[176,54],B=[70,162],C=[176,162],E=[176,108],F=[282,162];
+  return svg(line(A,B,C_LINE)+line(B,F,C_LINE)+line(C,D,C_LINE)+line(D,A,C_LINE)+line(A,F,C_LINE)
+   +ticks(D,E,1)+ticks(E,C,1)+ticks(A,E,2)+ticks(E,F,2)
+   +arc(E,A,D,14,'')+arc(E,F,C,14,'')
+   +dot(A)+dot(B)+dot(C)+dot(D)+dot(E)+dot(F)
+   +lbl(A,'A',-12,-2)+lbl(B,'B',-12,10)+lbl(C,'C',-11,12)+lbl(D,'D',12,-2)+lbl(E,'E',12,2)+lbl(F,'F',10,10));},
+
+ n8trap(){const A=[72,56],D=[228,56],B=[40,166],C=[260,166];
+  return svg(line(A,B,C_LINE)+line(D,C,C_LINE)+line(B,C,C_LINE)+line(A,D,C_LINE)+line(A,C,C_LINE)+line(B,D,C_LINE)
+   +ticks(A,B,1)+ticks(D,C,1)+arc(B,A,C,20,'')+arc(C,D,B,20,'')
+   +dot(A)+dot(B)+dot(C)+dot(D)
+   +lbl(A,'A',-10,-8)+lbl(D,'D',10,-8)+lbl(B,'B',-12,8)+lbl(C,'C',12,8));},
+
+ n9ext(){const A=[110,95],B=[45,160],C=[175,160],D=[200,160],E=[175,5];
+  return svg(line(A,B,C_LINE)+line(B,D,C_LINE)+line(A,C,C_LINE)+line(A,D,C_LINE)+line(A,E,C_LINE)+line(D,E,C_LINE)
+   +ticks(A,B,1)+ticks(A,C,1)+ticks(A,D,2)+ticks(A,E,2)
+   +rightAngle(A,B,C,11)+rightAngle(A,D,E,11)
+   +dot(A)+dot(B)+dot(C)+dot(D)+dot(E)
+   +lbl(A,'A',-6,-10)+lbl(B,'B',-12,8)+lbl(C,'C',-2,14)+lbl(D,'D',10,8)+lbl(E,'E',12,2),'0 0 230 175');},
+
+ n10mid2(){const A=[130,30],B=[50,175],C=[230,175],M=[90,102],D=[180,102],E=[140,175];
+  return svg(line(A,B,C_LINE)+line(A,C,C_LINE)+line(B,C,C_LINE)+line(M,D,C_LINE)+line(M,E,C_LINE)
+   +ticks(A,M,1)+ticks(M,B,1)+par(M,D,1)+par(B,C,1)+par(M,E,2)+par(A,C,2)
+   +dot(A)+dot(B)+dot(C)+dot(M)+dot(D)+dot(E)
+   +lbl(A,'A',0,-12)+lbl(B,'B',-12,8)+lbl(C,'C',12,8)+lbl(M,'M',-13,0)+lbl(D,'D',13,-2)+lbl(E,'E',-2,15));},
+};
+
+/* ===== 問題・考え方・証明 ===== */
+const ITEMS = [
+ {
+  sec:"📄 証明 確認テスト（No.1・No.2・No.3）",
+  src:"証明 確認テスト No.1", fig:"no1",
+  also:"同じ問題 → 4.証明 その1 ③",
+  q:"図で、AB＝AC, BD＝CD ならば ∠ABD＝∠ACD であることを証明しなさい。",
+  cond:"3組の辺がそれぞれ等しい（SSS）",
+  idea:"示したいのは <b>△ABD と △ACD が合同</b>なこと。辺は AB＝AC（仮定）、BD＝CD（仮定）、そして AD は<b>2つの三角形が共有する辺＝共通</b>。辺が3組そろうので SSS（3辺相等）。合同が言えれば、対応する角として ∠ABD＝∠ACD が出る。",
+  proof:[
+   "△ABD と △ACD において",
+   ["i","仮定から　AB＝AC … ①"],
+   ["i","仮定から　BD＝CD … ②"],
+   ["i","共通な辺だから　AD＝AD … ③"],
+   "①②③より、3組の辺がそれぞれ等しいので",
+   ["c","△ABD ≡ △ACD"],
+   "合同な図形の対応する角は等しいから",
+   ["c","∠ABD ＝ ∠ACD"]
+  ],
+  point:"辺が3組わかるとき（辺・辺・共通の辺）は <b>SSS</b>。「共通な辺だから AD＝AD」を書き忘れないこと。"
+ },
+ {
+  src:"証明 確認テスト No.2", fig:"no2",
+  also:"同じ問題 → 数学宿題プリント No.19 ②／5.証明 その2",
+  q:"2点D, Eはそれぞれ辺AB, AC上の点。AB＝AC, ∠ABE＝∠ACD ならば BE＝CD であることを証明しなさい。",
+  cond:"1組の辺とその両端の角（ASA）",
+  idea:"BE と CD を辺にもつ <b>△ABE と △ACD</b> に注目。AB＝AC（仮定）、∠ABE＝∠ACD（仮定・青い印）。残りは<b>頂点Aの角は2つの三角形が共通</b>だから ∠BAE＝∠CAD。1辺＋その両端の角がそろうので ASA。",
+  proof:[
+   "△ABE と △ACD において",
+   ["i","仮定から　AB＝AC … ①"],
+   ["i","仮定から　∠ABE＝∠ACD … ②"],
+   ["i","共通な角だから　∠BAE＝∠CAD（∠Aは共通）… ③"],
+   "①②③より、1組の辺とその両端の角がそれぞれ等しいので",
+   ["c","△ABE ≡ △ACD"],
+   "合同な図形の対応する辺は等しいから",
+   ["c","BE ＝ CD"]
+  ],
+  point:"三角形の<b>頂点の対応</b>（A→A, B→C, E→D）をそろえて書くのがコツ。∠Aは共通の角。"
+ },
+ {
+  src:"証明 確認テスト No.3", fig:"para",
+  also:"同じ問題 → 数学宿題プリント No.20 ①／5.証明 その2",
+  q:"AB∥DC, AD∥BC である四角形ABCDがある。このとき AB＝CD, BC＝DA であることを証明しなさい。",
+  cond:"1組の辺とその両端の角（ASA）＋ 平行線の錯角",
+  idea:"四角形のままでは合同が使えないので、<b>対角線ACを1本ひいて</b>三角形2つに分ける。AB∥DC →錯角で ∠BAC＝∠DCA。AD∥BC →錯角で ∠BCA＝∠DAC。さらに AC は共通の辺。1辺＋両端の角で ASA。これは『平行四辺形の向かい合う辺は等しい』の証明そのもの。",
+  proof:[
+   "対角線ACをひく。",
+   "△ABC と △CDA において",
+   ["i","AB∥DC で、錯角は等しいから　∠BAC＝∠DCA … ①"],
+   ["i","AD∥BC で、錯角は等しいから　∠BCA＝∠DAC … ②"],
+   ["i","共通な辺だから　AC＝CA … ③"],
+   "①②③より、1組の辺とその両端の角がそれぞれ等しいので",
+   ["c","△ABC ≡ △CDA"],
+   "合同な図形の対応する辺は等しいから",
+   ["c","AB ＝ CD,　BC ＝ DA"]
+  ],
+  point:"「平行 → 錯角が等しい」を<b>2回</b>使うのがポイント。最初に「対角線ACをひく」と書くのを忘れずに。"
+ },
+ {
+  sec:"📄 2026年度 中2 DE組 数学宿題プリント No.19",
+  src:"数学宿題プリント No.19 ①（授業より）", fig:"n1pab",
+  also:"同じ問題 → 5.証明 その2 ①",
+  q:"△PABがあり、辺AB上に点Mをとる。AM＝BM, AB⊥PM ならば PA＝PB であることを証明しなさい。",
+  cond:"2組の辺とその間の角（SAS）",
+  idea:"PA, PBを辺にもつ <b>△APM と △BPM</b> に注目。AM＝BM（仮定）、PMは<b>共通の辺</b>、AB⊥PM だから ∠AMP＝∠BMP＝90°。2辺とその間の角がそろうので SAS。",
+  proof:[
+   "△APM と △BPM において",
+   ["i","仮定から　AM＝BM … ①"],
+   ["i","共通な辺だから　PM＝PM … ②"],
+   ["i","AB⊥PM だから　∠AMP＝∠BMP＝90° … ③"],
+   "①②③より、2組の辺とその間の角がそれぞれ等しいので",
+   ["c","△APM ≡ △BPM"],
+   "合同な図形の対応する辺は等しいから",
+   ["c","PA ＝ PB"]
+  ],
+  point:"「垂直だから ∠＝90°」を根拠にハッキリ書く。これは『二等辺三角形になる』ことの証明でもある。"
+ },
+ {
+  src:"数学宿題プリント No.19 ③（中元採点問題）", fig:"n8trap",
+  q:"図で、AB＝DC, ∠ABC＝∠DCB ならば ∠BAC＝∠CDB であることを証明しなさい。",
+  cond:"2組の辺とその間の角（SAS）",
+  idea:"∠BAC と ∠CDB を角にもつ <b>△ABC と △DCB</b> に注目。AB＝DC（仮定）、∠ABC＝∠DCB（仮定）、BCは<b>共通の辺</b>。2辺とその間の角で SAS。",
+  proof:[
+   "△ABC と △DCB において",
+   ["i","仮定から　AB＝DC … ①"],
+   ["i","仮定から　∠ABC＝∠DCB … ②"],
+   ["i","共通な辺だから　BC＝CB … ③"],
+   "①②③より、2組の辺とその間の角がそれぞれ等しいので",
+   ["c","△ABC ≡ △DCB"],
+   "合同な図形の対応する角は等しいから",
+   ["c","∠BAC ＝ ∠CDB"]
+  ],
+  point:"頂点の対応（A↔D, B↔C, C↔B）に注意。共通の辺BCが、等しい2角の<b>間の辺</b>になっている。<br>※ このプリントの ② は「確認テスト No.2（BE＝CD）」と同じ問題です。"
+ },
+ {
+  sec:"📄 2026年度 中2 DE組 数学宿題プリント No.20",
+  src:"数学宿題プリント No.20 ②（中元採点問題）", fig:"no202",
+  q:"2つの線分AB, CDが点Oで交わっている。CO＝DO, ∠ACO＝∠BDO ならば ∠CAO＝∠DBO であることを証明しなさい。",
+  cond:"1組の辺とその両端の角（ASA）＋ 対頂角",
+  idea:"∠CAO と ∠DBO を角にもつ <b>△ACO と △BDO</b> に注目。CO＝DO（仮定）、∠ACO＝∠BDO（仮定）。あと<b>線分が交わる点Oでは対頂角が等しい</b>から ∠AOC＝∠BOD。辺COは2つの角にはさまれているので ASA。",
+  proof:[
+   "△ACO と △BDO において",
+   ["i","仮定から　CO＝DO … ①"],
+   ["i","仮定から　∠ACO＝∠BDO … ②"],
+   ["i","対頂角は等しいから　∠AOC＝∠BOD … ③"],
+   "①②③より、1組の辺とその両端の角がそれぞれ等しいので",
+   ["c","△ACO ≡ △BDO"],
+   "合同な図形の対応する角は等しいから",
+   ["c","∠CAO ＝ ∠DBO"]
+  ],
+  point:"線が交わる点では「<b>対頂角は等しい</b>」が定番の武器。辺CO＝DOが、2つの角（∠ACO と ∠AOC）の<b>間の辺</b>になっている。<br>※ このプリントの ① は「確認テスト No.3（平行四辺形）」と同じ問題です。"
+ },
+ {
+  sec:"📄 2026年度 中2 DE組 数学宿題プリント No.21",
+  src:"数学宿題プリント No.21 ①（授業より）", fig:"nX",
+  also:"同じ問題 → 5.証明 その2 ⑤",
+  q:"2つの線分AB, CDが点Oで交わっている。AO＝BO, CO＝DO ならば AC∥DB であることを証明しなさい。",
+  cond:"2組の辺とその間の角（SAS）＋ 錯角の逆",
+  idea:"図は「4.証明 その1 ②（AC＝BD）」と同じ。まず <b>△AOC≡△BOD</b>（SAS）を示す。合同から ∠OAC＝∠OBD。これは直線ABを横切る<b>錯角</b>だから、AC∥DB。",
+  proof:[
+   "△AOC と △BOD において",
+   ["i","仮定から　AO＝BO … ①"],
+   ["i","仮定から　CO＝DO … ②"],
+   ["i","対頂角は等しいから　∠AOC＝∠BOD … ③"],
+   "①②③より、2組の辺とその間の角がそれぞれ等しいので",
+   ["c","△AOC ≡ △BOD"],
+   "合同な図形の対応する角は等しいから　∠OAC＝∠OBD",
+   "錯角が等しいので",
+   ["c","AC ∥ DB"]
+  ],
+  point:"平行を示す問題は「<b>合同→対応する角が等しい→錯角が等しい→平行</b>」の流れでしめる。"
+ },
+ {
+  src:"数学宿題プリント No.21 ②（授業より）", fig:"n6quad",
+  also:"同じ問題 → 5.証明 その2 ⑥",
+  q:"四角形ABCDで、AD＝BC, ∠CAD＝∠ACB である。このとき AB∥DC であることを証明しなさい。",
+  cond:"2組の辺とその間の角（SAS）＋ 錯角の逆",
+  idea:"対角線ACで分けた <b>△ACD と △CAB</b> に注目。AD＝CB（仮定）、∠DAC＝∠BCA（仮定）、ACは共通。SASで合同。対応する角 ∠DCA＝∠BAC は<b>錯角</b>だから AB∥DC。",
+  proof:[
+   "△ACD と △CAB において",
+   ["i","仮定から　AD＝CB … ①"],
+   ["i","仮定から　∠DAC＝∠BCA … ②"],
+   ["i","共通な辺だから　AC＝CA … ③"],
+   "①②③より、2組の辺とその間の角がそれぞれ等しいので",
+   ["c","△ACD ≡ △CAB"],
+   "合同な図形の対応する角は等しいから　∠DCA＝∠BAC",
+   "錯角が等しいので",
+   ["c","AB ∥ DC"]
+  ],
+  point:"平行を言うために、まず<b>合同→錯角</b>を作る。共通な辺ACを書き忘れないこと。"
+ },
+ {
+  src:"数学宿題プリント No.21 ③（中元採点問題）", fig:"n7mid",
+  q:"四角形ABCDで、辺CDの中点をEとし、直線AEとBCの延長との交点をFとする。AE＝FE ならば AD∥BC であることを証明しなさい。",
+  cond:"2組の辺とその間の角（SAS）＋ 対頂角・錯角の逆",
+  idea:"<b>△ADE と △FCE</b> に注目。Eは中点だから DE＝CE。AE＝FE（仮定）。∠AED＝∠FEC（<b>対頂角</b>）。SASで合同。対応する角 ∠ADE＝∠FCE は<b>錯角</b>だから AD∥BC。",
+  proof:[
+   "△ADE と △FCE において",
+   ["i","Eは辺CDの中点だから　DE＝CE … ①"],
+   ["i","仮定から　AE＝FE … ②"],
+   ["i","対頂角は等しいから　∠AED＝∠FEC … ③"],
+   "①②③より、2組の辺とその間の角がそれぞれ等しいので",
+   ["c","△ADE ≡ △FCE"],
+   "合同な図形の対応する角は等しいから　∠ADE＝∠FCE",
+   "錯角が等しいので",
+   ["c","AD ∥ BC"]
+  ],
+  point:"中点→等しい辺、交点→対頂角。平行は最後に「錯角が等しいので平行」でしめる。"
+ },
+ {
+  sec:"📄 2026年度 中2 DE組 数学宿題プリント No.22",
+  src:"数学宿題プリント No.22 ①（授業より）", fig:"no221",
+  q:"△ABCは AB＝AC, ∠BAC＝90° の直角二等辺三角形。辺BC上に点Dをとり、AD＝AE, ∠DAE＝90° の直角二等辺三角形ADEをつくる。このとき △ABD≡△ACE であることを証明しなさい。",
+  cond:"2組の辺とその間の角（SAS）＋ 角の引き算",
+  idea:"AB＝AC（仮定）、AD＝AE（仮定）はすぐ分かる。あとは<b>間の角 ∠BAD と ∠CAE が等しい</b>ことを言えばSAS。ここで ∠BAC も ∠DAE も<b>どちらも90°</b>。共通の角 ∠DAC を、それぞれの90°から引くと、∠BAD＝90°−∠DAC、∠CAE＝90°−∠DAC で<b>同じ大きさ</b>になる。",
+  proof:[
+   "△ABD と △ACE において",
+   ["i","仮定から　AB＝AC … ①"],
+   ["i","仮定から　AD＝AE … ②"],
+   ["i","∠BAD＝∠BAC−∠DAC＝90°−∠DAC … ③"],
+   ["i","∠CAE＝∠DAE−∠DAC＝90°−∠DAC … ④"],
+   ["i","③④より　∠BAD＝∠CAE … ⑤"],
+   "①②⑤より、2組の辺とその間の角がそれぞれ等しいので",
+   ["c","△ABD ≡ △ACE"]
+  ],
+  point:"90°が2つあるときは「<b>同じ角を引く（足す）と等しくなる</b>」が決め手。∠DAC を文字 x とおいて 90−x と書いてもOK。（Dが<b>延長上</b>のときは「6.証明 その3 ①②」を見よう）"
+ },
+ {
+  src:"数学宿題プリント No.22 ②（中元採点問題）", fig:"no222",
+  q:"△ABCと△DCEは正三角形である（B, C, Dは一直線上）。ADとBEの交点をKとする。このとき △BCE≡△ACD であることを証明しなさい。",
+  cond:"2組の辺とその間の角（SAS）＋ 角の足し算",
+  idea:"正三角形だから<b>辺も角（60°）も全部わかる</b>。AC＝BC（△ABC）、CD＝CE（△DCE）。間の角は、共通の角 ∠ACE に注目すると、∠ACD＝∠ACE＋∠ECD＝∠ACE＋60°、∠BCE＝∠BCA＋∠ACE＝60°＋∠ACE で<b>同じ大きさ</b>。よってSAS。",
+  proof:[
+   "△ACD と △BCE において",
+   ["i","△ABCは正三角形だから　AC＝BC … ①"],
+   ["i","△DCEは正三角形だから　CD＝CE … ②"],
+   ["i","∠ACD＝∠ACE＋∠ECD＝∠ACE＋60° … ③"],
+   ["i","∠BCE＝∠BCA＋∠ACE＝60°＋∠ACE … ④"],
+   ["i","③④より　∠ACD＝∠BCE … ⑤"],
+   "①②⑤より、2組の辺とその間の角がそれぞれ等しいので",
+   ["c","△ACD ≡ △BCE"],
+   "よって",
+   ["c","△BCE ≡ △ACD"]
+  ],
+  point:"共通の角 ∠ACE を x とおくと、∠ACD＝60＋x・∠BCE＝60＋x ですぐ等しいと分かる。回転で重なる形の定番問題。"
+ },
+ {
+  sec:"📄 4. 証明 その1（まとめプリント）",
+  src:"4. 証明 その1 ②", fig:"nX",
+  also:"似た問題（結論ちがい）→ 数学宿題プリント No.21 ①（AC∥DB）",
+  q:"2つの線分AB, CDが点Oで交わっている。AO＝BO, CO＝DO ならば AC＝BD であることを証明しなさい。",
+  cond:"2組の辺とその間の角（SAS）＋ 対頂角",
+  idea:"AC, BDを辺にもつ <b>△AOC と △BOD</b> に注目。AO＝BO（仮定）、CO＝DO（仮定）、∠AOC＝∠BOD（<b>対頂角</b>）。2辺とその間の角で SAS。",
+  proof:[
+   "△AOC と △BOD において",
+   ["i","仮定から　AO＝BO … ①"],
+   ["i","仮定から　CO＝DO … ②"],
+   ["i","対頂角は等しいから　∠AOC＝∠BOD … ③"],
+   "①②③より、2組の辺とその間の角がそれぞれ等しいので",
+   ["c","△AOC ≡ △BOD"],
+   "合同な図形の対応する辺は等しいから",
+   ["c","AC ＝ BD"]
+  ],
+  point:"対頂角＝間の角。No.20②（CO＝DO, ∠ACO＝∠BDO から角を出す）とは仮定が違うので混同しないこと。<br>※「4.証明 その1」の ③ は「確認テスト No.1」と同じ問題です。"
+ },
+ {
+  sec:"📄 5. 証明 その2（まとめプリント）",
+  src:"5. 証明 その2 ④", fig:"n4par",
+  also:"このプリントには ①＝No.19①／②＝確認テストNo.2／③＝確認テストNo.3／⑤＝No.21①／⑥＝No.21② と同じ問題も載っています",
+  q:"平行な2直線ℓ, m があり、ℓ上に2点A, B、m上に2点C, Dがある。ADとBCの交点をOとする。AO＝DO ならば BO＝CO であることを証明しなさい。",
+  cond:"1組の辺とその両端の角（ASA）＋ 平行線の錯角",
+  idea:"ℓ∥m だから<b>錯角が等しい</b>。<b>△OAB と △ODC</b> で、∠OAB＝∠ODC（錯角）、∠OBA＝∠OCD（錯角）、AO＝DO（仮定）。1辺と両端の角で ASA。",
+  proof:[
+   "△OAB と △ODC において",
+   ["i","ℓ∥m で、錯角は等しいから　∠OAB＝∠ODC … ①"],
+   ["i","ℓ∥m で、錯角は等しいから　∠OBA＝∠OCD … ②"],
+   ["i","仮定から　AO＝DO … ③"],
+   "①②③より、1組の辺とその両端の角がそれぞれ等しいので",
+   ["c","△OAB ≡ △ODC"],
+   "合同な図形の対応する辺は等しいから",
+   ["c","BO ＝ CO"]
+  ],
+  point:"平行線にはさまれた砂時計型は「<b>錯角が2組</b>」が定番。"
+ },
+ {
+  sec:"📄 6. 証明 その3（まとめプリント）",
+  src:"6. 証明 その3 ①②", fig:"n9ext",
+  q:"AB＝AC, ∠BAC＝90° の直角二等辺三角形ABCで、辺BCの延長上に点Dをとり、AD＝AE, ∠DAE＝90° の直角二等辺三角形ADEをつくる。このとき △ABD≡△ACE であることを証明しなさい。",
+  cond:"2組の辺とその間の角（SAS）＋ 角の足し算",
+  idea:"AB＝AC・AD＝AE（仮定）。間の角は、∠BAC も ∠DAE も90°で、共通の角 ∠CAD を<b>足す</b>と、∠BAD＝90°＋∠CAD、∠CAE＝∠CAD＋90° で同じ大きさ。SAS。",
+  proof:[
+   "△ABD と △ACE において",
+   ["i","仮定から　AB＝AC … ①"],
+   ["i","仮定から　AD＝AE … ②"],
+   ["i","∠BAD＝∠BAC＋∠CAD＝90°＋∠CAD … ③"],
+   ["i","∠CAE＝∠CAD＋∠DAE＝∠CAD＋90° … ④"],
+   ["i","③④より　∠BAD＝∠CAE … ⑤"],
+   "①②⑤より、2組の辺とその間の角がそれぞれ等しいので",
+   ["c","△ABD ≡ △ACE"]
+  ],
+  point:"前の No.22①（Dが辺BC上）は「90°−共通角」、こちら（Dが<b>延長上</b>）は「90°＋共通角」。Dの位置で足し算・引き算が変わるので要注意！"
+ },
+ {
+  src:"6. 証明 その3 ③", fig:"n10mid2",
+  q:"△ABCで、辺ABの中点をMとする。Mを通り辺BC, ACに平行な直線と、辺AC, BCとの交点をそれぞれD, Eとする。このとき △AMD≡△MBE であることを証明しなさい。",
+  cond:"1組の辺とその両端の角（ASA）＋ 平行線の同位角",
+  idea:"AM＝MB（中点）。MD∥BC だから ∠AMD＝∠MBE（<b>同位角</b>）。ME∥AC だから ∠MAD＝∠BME（<b>同位角</b>）。1辺と両端の角で ASA。",
+  proof:[
+   "△AMD と △MBE において",
+   ["i","Mは辺ABの中点だから　AM＝MB … ①"],
+   ["i","ME∥AC で、同位角は等しいから　∠MAD＝∠BME … ②"],
+   ["i","MD∥BC で、同位角は等しいから　∠AMD＝∠MBE … ③"],
+   "①②③より、1組の辺とその両端の角がそれぞれ等しいので",
+   ["c","△AMD ≡ △MBE"]
+  ],
+  point:"平行から<b>同位角を2組</b>。対応は A↔M, M↔B, D↔E。中点だから AM＝MB が言える。"
+ }
+];
+
+const LS = "haruki_shoumei_kaitou_v2";
+function getDone(){ try{return new Set(JSON.parse(localStorage.getItem(LS)||"[]"));}catch(e){return new Set();} }
+function saveDone(s){ localStorage.setItem(LS, JSON.stringify([...s])); }
+
+function proofHTML(lines){
+  let h = '<div class="proof"><div class="ttl">【証明】</div>';
+  lines.forEach(l=>{
+    if(Array.isArray(l)){
+      if(l[0]==="i") h += '<div class="ln ind">'+l[1]+'</div>';
+      else if(l[0]==="c") h += '<div class="ln ind cong">'+l[1]+'</div>';
+    } else { h += '<div class="ln">'+l+'</div>'; }
+  });
+  h += '<div class="qed">▮</div></div>';
+  return h;
+}
+
+const list = document.getElementById('list');
+ITEMS.forEach((it,i)=>{
+  if(it.sec){ const sh=document.createElement('div'); sh.className='sectionhead'; sh.textContent=it.sec; list.appendChild(sh); }
+  const el = document.createElement('div');
+  el.className = 'item'; el.dataset.i = i;
+  el.innerHTML =
+    '<span class="badge">'+it.src+'</span>'+
+    (it.also?'<div class="also">🔁 '+it.also+'</div>':'')+
+    '<div class="figbox">'+FIGS[it.fig]()+'</div>'+
+    '<div class="q"><span class="lab">問題</span>'+it.q+'</div>'+
+    '<div class="cond">使う合同条件 → <b>'+it.cond+'</b></div>'+
+    '<button class="showbtn">考え方と証明を見る ▼</button>'+
+    '<div class="answer">'+
+      '<div class="idea"><span class="lab">💡 考え方</span>'+it.idea+'</div>'+
+      proofHTML(it.proof)+
+      '<div class="point"><span class="lab">📝 ここに注意</span>'+it.point+'</div>'+
+      '<button class="donebtn">理解できた ✓</button>'+
+    '</div>';
+  list.appendChild(el);
+  el.querySelector('.showbtn').addEventListener('click',e=>{
+    const a = el.querySelector('.answer'); a.classList.toggle('open');
+    e.target.textContent = a.classList.contains('open') ? '閉じる ▲' : '考え方と証明を見る ▼';
+  });
+  el.querySelector('.donebtn').addEventListener('click',()=>{
+    const s = getDone();
+    if(s.has(i)) s.delete(i); else s.add(i);
+    saveDone(s); render();
+  });
+});
+
+function render(){
+  const s = getDone();
+  document.querySelectorAll('.item').forEach(el=>{
+    const i = Number(el.dataset.i);
+    el.classList.toggle('done', s.has(i));
+    el.querySelector('.donebtn').textContent = s.has(i) ? '理解できた！（もう一度押すと戻す）' : '理解できた ✓';
+  });
+  document.getElementById('doneN').textContent = s.size;
+  document.getElementById('totalN').textContent = ITEMS.length;
+  document.getElementById('barFill').style.width = Math.round(s.size/ITEMS.length*100)+'%';
+}
+document.getElementById('resetBtn').addEventListener('click',()=>{
+  if(confirm('チェックを全部消していい？')){ localStorage.removeItem(LS); render(); }
+});
+render();
+</script>
+</body>
+</html>

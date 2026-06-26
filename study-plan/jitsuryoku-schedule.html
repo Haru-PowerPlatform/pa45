@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>実力テスト対策スケジュール | はるき</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", sans-serif;
+    background: linear-gradient(180deg, #ecfeff 0%, #a5f3fc 50%, #67e8f9 100%);
+    color: #1a202c; line-height: 1.7; padding: 16px; min-height: 100vh;
+  }
+  .container { max-width: 760px; margin: 0 auto; }
+  header {
+    background: linear-gradient(135deg, #0891b2, #1e3a8a);
+    color: #fff; border-radius: 18px; padding: 22px 18px; text-align: center;
+    box-shadow: 0 6px 20px rgba(8,145,178,.32);
+  }
+  header h1 { font-size: 20px; line-height: 1.5; }
+  header .sub { font-size: 13px; opacity: .95; margin-top: 6px; }
+  .back-link {
+    display: inline-block; margin: 13px 6px 13px 0; font-size: 13px;
+    color: #0e7490; text-decoration: none; font-weight: 700;
+  }
+
+  .countdown {
+    background: #fff; border: 2px solid #0891b2; border-radius: 14px;
+    padding: 16px; margin: 14px 0; text-align: center;
+    box-shadow: 0 3px 12px rgba(8,145,178,.18);
+  }
+  .countdown .big { font-size: 22px; font-weight: 800; color: #0e7490; }
+  .countdown .small { font-size: 13px; color: #155e75; margin-top: 4px; }
+  .date-edit { font-size: 12px; color: #64748b; margin-top: 6px; }
+  .date-edit input {
+    border: 1px solid #67e8f9; border-radius: 6px; padding: 4px 8px;
+    font-size: 13px; font-family: inherit;
+  }
+
+  .policy {
+    background: #ecfeff; border-left: 5px solid #0891b2;
+    border-radius: 10px; padding: 14px 16px; margin: 14px 0;
+    font-size: 14px;
+  }
+  .policy h3 { color: #155e75; font-size: 15px; margin-bottom: 8px; }
+  .policy ul { margin-left: 20px; }
+  .policy li { margin: 4px 0; }
+
+  .what-is {
+    background: #fffbeb; border-left: 5px solid #f59e0b;
+    border-radius: 10px; padding: 14px 16px; margin: 14px 0;
+    font-size: 14px;
+  }
+  .what-is h3 { color: #92400e; font-size: 15px; margin-bottom: 8px; }
+
+  .week {
+    background: #fff; border-radius: 16px; margin: 14px 0;
+    box-shadow: 0 3px 12px rgba(0,0,0,.08);
+    border-left: 6px solid #06b6d4;
+    overflow: hidden;
+  }
+  .week.this { border-left-color: #1e3a8a; box-shadow: 0 4px 16px rgba(30,58,138,.22); }
+  .week.exam { border-left-color: #1e3a8a; }
+
+  .week-head {
+    padding: 14px 16px; cursor: pointer; user-select: none;
+    display: flex; justify-content: space-between; align-items: center;
+    gap: 10px;
+  }
+  .week-head:hover { background: #ecfeff; }
+  .week-head .title { font-weight: 800; font-size: 15.5px; color: #155e75; }
+  .week-head .meta { font-size: 12.5px; color: #64748b; margin-top: 2px; }
+  .week-head .toggle { font-size: 18px; color: #94a3b8; }
+  .week.open .week-head .toggle { transform: rotate(90deg); }
+
+  .week-body { padding: 0 16px 14px; display: none; }
+  .week.open .week-body { display: block; }
+
+  .task-block {
+    background: #f8fafc; border-radius: 10px; padding: 12px;
+    margin: 8px 0; border-left: 3px solid #cbd5e1;
+  }
+  .task-block .label { font-weight: 800; font-size: 14px; color: #475569; margin-bottom: 6px; }
+
+  .ck {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 7px 8px; margin: 4px 0; background: rgba(255,255,255,.7);
+    border-radius: 8px; cursor: pointer; font-size: 13.5px;
+  }
+  .ck input { width: 20px; height: 20px; margin-top: 1px; flex: 0 0 auto; accent-color: #0891b2; }
+  .ck input:checked ~ span { text-decoration: line-through; color: #94a3b8; }
+  .ck span { flex: 1; }
+
+  .memo-row { display: flex; gap: 8px; align-items: center; margin-top: 6px; }
+  .memo-row label { font-size: 12px; color: #64748b; flex: 0 0 auto; }
+  .memo-row input {
+    flex: 1; border: 1px solid #e2e8f0; border-radius: 6px;
+    padding: 5px 8px; font-size: 13px; font-family: inherit;
+  }
+  .memo-row input:focus { outline: 2px solid #67e8f9; border-color: #06b6d4; }
+
+  .badge {
+    display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 999px;
+    background: #cffafe; color: #155e75; font-weight: 800; margin-left: 6px;
+  }
+
+  footer { text-align: center; font-size: 12px; color: #155e75; margin: 22px 0 8px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <h1>🌊 実力テスト 対策スケジュール</h1>
+  <div class="sub">はるき／中2／既習範囲ぜんぶが対象</div>
+</header>
+
+<a class="back-link" href="index.html">← 学習計画トップへ</a>
+<a class="back-link" href="kimatsu-schedule.html">🔥 期末スケジュールへ</a>
+
+<div class="countdown" id="countdown"><div class="big">日付を入力してね</div></div>
+<div class="date-edit">
+  📅 実力テストの日（仮）：
+  <input type="date" id="exam-date" value="2026-09-01">
+  ※ 学校から発表されたら変更してください
+</div>
+
+<div class="what-is">
+  <h3>📖 実力テストってなに？</h3>
+  <p>定期テストと違って、<b>これまで習った全部の範囲</b>から出る試験。範囲表が配られない＝「直近の単元だけ」では対策できない。日々の復習＋苦手な単元の洗い出しがカギ。</p>
+</div>
+
+<div class="policy">
+  <h3>📌 実力テスト対策の方針</h3>
+  <ul>
+    <li><b>過去の自分のミス</b>を見直す（中間テスト振り返り・問題集の×印）</li>
+    <li>毎日の授業範囲復習に加えて、<b>週末は過去単元を1つずつ復習</b></li>
+    <li>数学：基本問題集を中1範囲から順に1日10分でも回す</li>
+    <li>英語：単語＋本文音読を継続。基本文法（be動詞・一般動詞・過去形・三単現）の総復習</li>
+    <li>理科・社会：問題集の×を全部○に＋教科書の太字・図キャプション</li>
+    <li>国語：漢字＋文法（用言の活用など）</li>
+    <li>苦手単元は<b>「分からない単元リスト」</b>を作って、解決したら消す</li>
+  </ul>
+</div>
+
+<!-- ===== Phase 1：苦手洗い出し（4週間前〜3週間前） ===== -->
+<div class="week" id="p1">
+  <div class="week-head" onclick="togglePhase('p1')">
+    <div>
+      <div class="title">Phase 1：苦手洗い出し週 <span class="badge">4-3週前</span></div>
+      <div class="meta">「分からない単元」を全教科で書き出す。教科書をパラパラめくりながら印をつける</div>
+    </div>
+    <div class="toggle">▶</div>
+  </div>
+  <div class="week-body">
+    <div class="task-block">
+      <div class="label">📋 苦手リスト作成</div>
+      <label class="ck" data-k="p1-eng"><input type="checkbox"><span>英語：これまで習った教科書の各Unitを見て「あやふや」と思う文法・単語を書き出す</span></label>
+      <label class="ck" data-k="p1-math"><input type="checkbox"><span>数学：中1範囲（正負の数・文字式・方程式・比例反比例・平面/空間図形・統計）と中2既習をチェック</span></label>
+      <label class="ck" data-k="p1-rika"><input type="checkbox"><span>理科：中1範囲（光・音・力・物質・植物・地層・火山）と中2既習をチェック</span></label>
+      <label class="ck" data-k="p1-shakai"><input type="checkbox"><span>社会：地理（中1＋中2既習）・歴史（中1＋中2既習）の各単元をチェック</span></label>
+      <label class="ck" data-k="p1-kokugo"><input type="checkbox"><span>国語：漢字（中1＋中2既習）・文法（用言の活用など）</span></label>
+      <div class="memo-row"><label>苦手リスト:</label><input type="text" data-k="p1-list" placeholder="例: 連立方程式の応用、be動詞過去形, 地層, …"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Phase 2：苦手単元つぶし（3-2週前） ===== -->
+<div class="week" id="p2">
+  <div class="week-head" onclick="togglePhase('p2')">
+    <div>
+      <div class="title">Phase 2：苦手単元つぶし <span class="badge">3-2週前</span></div>
+      <div class="meta">毎日「日々の授業復習＋苦手1単元」を回す</div>
+    </div>
+    <div class="toggle">▶</div>
+  </div>
+  <div class="week-body">
+    <div class="task-block">
+      <div class="label">📚 毎日のメニュー</div>
+      <label class="ck" data-k="p2-class"><input type="checkbox"><span>本日の授業範囲：問題集を該当ページ数問ずつ</span></label>
+      <label class="ck" data-k="p2-weak"><input type="checkbox"><span>苦手リストから1単元選んで問題集15分</span></label>
+      <label class="ck" data-k="p2-tango"><input type="checkbox"><span>英単語10分（中1〜中2既習）</span></label>
+    </div>
+    <div class="task-block">
+      <div class="label">📆 週末メニュー（土・日）</div>
+      <label class="ck" data-k="p2-math-week"><input type="checkbox"><span>数学：中1の苦手単元を1つ問題集で1周</span></label>
+      <label class="ck" data-k="p2-rika-week"><input type="checkbox"><span>理科：中1の苦手単元を1つ問題集で1周（×は印つける）</span></label>
+      <div class="memo-row"><label>進捗メモ:</label><input type="text" data-k="p2-memo"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Phase 3：総まとめ（2-1週前） ===== -->
+<div class="week" id="p3">
+  <div class="week-head" onclick="togglePhase('p3')">
+    <div>
+      <div class="title">Phase 3：総まとめ＋ミスつぶし <span class="badge">2-1週前</span></div>
+      <div class="meta">苦手リストの×を全部○に。中間テストの間違いも見直す</div>
+    </div>
+    <div class="toggle">▶</div>
+  </div>
+  <div class="week-body">
+    <div class="task-block">
+      <div class="label">🎯 やること</div>
+      <label class="ck" data-k="p3-mistakes"><input type="checkbox"><span>中間テストで間違えた問題を全教科見直し（保護者の振り返りメモ参照）</span></label>
+      <label class="ck" data-k="p3-weak2"><input type="checkbox"><span>苦手リストの×を全部○に（2周目）</span></label>
+      <label class="ck" data-k="p3-math-speed"><input type="checkbox"><span>数学：時間を計って通し演習（時間切れ対策・代数の中間反省）</span></label>
+      <label class="ck" data-k="p3-eng-onsei"><input type="checkbox"><span>英語：教科書本文の音読（既習Unit全部）</span></label>
+      <label class="ck" data-k="p3-rika-text"><input type="checkbox"><span>理科：問題集が完璧になった単元の教科書の太字・側注・図キャプションを確認</span></label>
+      <div class="memo-row"><label>残った苦手:</label><input type="text" data-k="p3-remain"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Phase 4：直前週（1週前〜前日） ===== -->
+<div class="week" id="p4">
+  <div class="week-head" onclick="togglePhase('p4')">
+    <div>
+      <div class="title">Phase 4：直前週 <span class="badge">1週前〜前日</span></div>
+      <div class="meta">新しい問題に手を出さない。これまでの×を全部○にして自信をつける</div>
+    </div>
+    <div class="toggle">▶</div>
+  </div>
+  <div class="week-body">
+    <div class="task-block">
+      <div class="label">🔥 直前週メニュー</div>
+      <label class="ck" data-k="p4-x"><input type="checkbox"><span>これまで×だった問題を全教科でもう一度解く（全部○まで）</span></label>
+      <label class="ck" data-k="p4-tango"><input type="checkbox"><span>英単語：あやふやな単語だけ最終チェック</span></label>
+      <label class="ck" data-k="p4-kanji"><input type="checkbox"><span>漢字：書けなかった漢字だけ最終チェック</span></label>
+      <label class="ck" data-k="p4-new"><input type="checkbox"><span>新しい問題には手を出さない</span></label>
+    </div>
+    <div class="task-block">
+      <div class="label">🌅 前日</div>
+      <label class="ck" data-k="p4-prev-light"><input type="checkbox"><span>軽め。あやふやな部分だけ確認</span></label>
+      <label class="ck" data-k="p4-prev-bed"><input type="checkbox"><span>早寝（夜更かしNG）</span></label>
+      <label class="ck" data-k="p4-prev-mochi"><input type="checkbox"><span>持ち物確認（鉛筆・消しゴム・腕時計）</span></label>
+    </div>
+    <div class="task-block">
+      <div class="label">🎯 当日</div>
+      <label class="ck" data-k="p4-day-asa"><input type="checkbox"><span>朝食をしっかり食べる</span></label>
+      <label class="ck" data-k="p4-day-light"><input type="checkbox"><span>朝：単語10分だけ確認（新しい問題はやらない）</span></label>
+      <label class="ck" data-k="p4-day-test"><input type="checkbox"><span>試験中：名前と受験番号を最初に書く／時間配分を意識</span></label>
+      <div class="memo-row"><label>手応えメモ:</label><input type="text" data-k="p4-day-memo"></div>
+    </div>
+  </div>
+</div>
+
+<a class="back-link" href="index.html">← 学習計画トップへ</a>
+<footer>はるき ／ 実力テスト 対策スケジュール</footer>
+
+</div>
+
+<script>
+var KEY = "haruki-jitsuryoku-2026";
+var state = (function(){ try { return JSON.parse(localStorage.getItem(KEY)||"{}"); } catch(e){ return {}; } })();
+function save(){ localStorage.setItem(KEY, JSON.stringify(state)); }
+
+// チェックボックス
+document.querySelectorAll(".ck").forEach(function(lbl){
+  var k = lbl.dataset.k;
+  var box = lbl.querySelector("input");
+  if (state[k]) box.checked = true;
+  box.addEventListener("change", function(){ state[k] = box.checked; save(); });
+});
+
+// メモ入力
+document.querySelectorAll('.memo-row input[type=text]').forEach(function(inp){
+  var k = inp.dataset.k;
+  if (state[k]) inp.value = state[k];
+  inp.addEventListener("input", function(){ state[k] = inp.value; save(); });
+});
+
+// 開閉
+function togglePhase(id){
+  var el = document.getElementById(id);
+  el.classList.toggle("open");
+  state["open-"+id] = el.classList.contains("open");
+  save();
+}
+["p1","p2","p3","p4"].forEach(function(id){
+  if (state["open-"+id]) document.getElementById(id).classList.add("open");
+});
+
+// 試験日 & カウントダウン
+var dateInput = document.getElementById("exam-date");
+if (state["exam-date"]) dateInput.value = state["exam-date"];
+function updateCountdown(){
+  var v = dateInput.value || "2026-09-01";
+  var parts = v.split("-").map(Number);
+  var test = new Date(parts[0], parts[1]-1, parts[2]);
+  var now = new Date();
+  var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  var diff = Math.round((test - today) / 86400000);
+  var WD = ["日","月","火","水","木","金","土"];
+  var testStr = (test.getMonth()+1) + "/" + test.getDate() + "（" + WD[test.getDay()] + "）";
+  var cd = document.getElementById("countdown");
+  var msg;
+  if (diff > 1) msg = '<div class="big">📚 実力テストまで あと <span style="color:#1e3a8a">' + diff + '日</span></div><div class="small">試験日：' + testStr + ' （仮）</div>';
+  else if (diff === 1) msg = '<div class="big">🔥 実力テストは明日！</div><div class="small">早く寝て、明日に備える</div>';
+  else if (diff === 0) msg = '<div class="big">🎯 今日が実力テスト本番！</div><div class="small">いつもどおりに。落ち着いて！</div>';
+  else msg = '<div class="big">おつかれさま！</div><div class="small">結果を見て次の振り返りへ</div>';
+  cd.innerHTML = msg;
+
+  // フェーズ自動展開（直近フェーズをハイライト）
+  ["p1","p2","p3","p4"].forEach(function(id){ document.getElementById(id).classList.remove("this"); });
+  var phaseId;
+  if (diff > 21) phaseId = "p1";
+  else if (diff > 14) phaseId = "p1";
+  else if (diff > 7) phaseId = "p2";
+  else phaseId = "p4";
+  if (diff > 21) phaseId = null; // まだ早い
+  if (phaseId) {
+    var el = document.getElementById(phaseId);
+    el.classList.add("this");
+    el.classList.add("open");
+  }
+}
+dateInput.addEventListener("change", function(){
+  state["exam-date"] = dateInput.value;
+  save();
+  updateCountdown();
+});
+updateCountdown();
+</script>
+</body>
+</html>

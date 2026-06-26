@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>数学 日々の20分 | はるき</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", sans-serif;
+    background: linear-gradient(180deg, #ecfdf5 0%, #f0fdfa 100%);
+    color: #1a202c; line-height: 1.85; padding: 16px; min-height: 100vh;
+  }
+  .container { max-width: 720px; margin: 0 auto; }
+  header {
+    background: linear-gradient(135deg, #059669, #0d9488);
+    color: #fff; border-radius: 18px; padding: 22px 18px; text-align: center;
+    box-shadow: 0 6px 20px rgba(5,150,105,.3);
+  }
+  header h1 { font-size: 20px; line-height: 1.5; }
+  header .sub { font-size: 13px; opacity: .92; margin-top: 6px; }
+  .back-link { display: inline-block; margin: 13px 0; font-size: 13px; color: #047857; text-decoration: none; font-weight: 700; }
+
+  .streak {
+    background: #fff; border: 2px solid #10b981; border-radius: 16px;
+    padding: 18px; margin: 14px 0; text-align: center;
+    box-shadow: 0 3px 12px rgba(16,185,129,.18);
+  }
+  .streak .num { font-size: 44px; font-weight: 900; color: #047857; line-height: 1; }
+  .streak .label { font-size: 13px; color: #065f46; margin-top: 4px; font-weight: 700; }
+  .streak .last { font-size: 12px; color: #6b7280; margin-top: 8px; }
+  .stamp-btn {
+    display: inline-block; background: linear-gradient(135deg,#10b981,#059669);
+    color: #fff; font-size: 16px; font-weight: 800; border: none;
+    padding: 12px 28px; border-radius: 999px; cursor: pointer;
+    box-shadow: 0 3px 10px rgba(5,150,105,.35); margin-top: 10px;
+  }
+  .stamp-btn:active { transform: scale(.96); }
+  .stamp-btn.done { background: #d1fae5; color: #065f46; cursor: default; box-shadow: none; }
+
+  .card {
+    background: #fff; border-radius: 16px; padding: 16px 18px; margin: 14px 0;
+    box-shadow: 0 3px 12px rgba(0,0,0,.07); border-left: 6px solid #10b981;
+  }
+  .card h2 { font-size: 16px; color: #047857; margin-bottom: 8px; }
+
+  .flow {
+    background: #ecfdf5; border-radius: 10px; padding: 12px 14px; margin: 8px 0;
+  }
+  .flow-step {
+    display: flex; gap: 10px; align-items: flex-start; margin: 8px 0; font-size: 14.5px;
+  }
+  .flow-step .no {
+    flex: 0 0 28px; height: 28px; background: #059669; color: #fff;
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 13px;
+  }
+  .flow-step .txt b { color: #065f46; }
+  .flow-step .min {
+    display: inline-block; background: #fef3c7; color: #92400e;
+    font-size: 11px; font-weight: 800; padding: 1px 8px; border-radius: 999px; margin-left: 4px;
+  }
+
+  .stamps-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 8px; }
+  .day-cell {
+    aspect-ratio: 1 / 1; background: #f1f5f9; border-radius: 8px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    font-size: 11px; color: #64748b; font-weight: 700; border: 1px solid #e2e8f0;
+    cursor: pointer; line-height: 1.2;
+  }
+  .day-cell.done { background: #d1fae5; color: #065f46; border-color: #6ee7b7; }
+  .day-cell.today { box-shadow: 0 0 0 2px #10b981; }
+  .day-cell .e { font-size: 14px; }
+
+  .tip {
+    background: #fef9c3; border-left: 4px solid #eab308; padding: 10px 14px;
+    border-radius: 8px; margin-top: 10px; font-size: 13.5px;
+  }
+  .tip b { color: #854d0e; }
+
+  .memo {
+    margin-top: 8px; padding: 10px 12px; background: #f8fafc;
+    border-radius: 10px; border-left: 4px solid #06b6d4;
+  }
+  .memo label { display: block; font-size: 13px; color: #475569; font-weight: 700; margin-bottom: 4px; }
+  .memo textarea {
+    width: 100%; min-height: 60px; border: 1px solid #cbd5e1; border-radius: 6px;
+    padding: 6px 8px; font-size: 13.5px; font-family: inherit; resize: vertical;
+  }
+
+  footer { text-align: center; font-size: 12px; color: #94a3b8; margin: 22px 0 8px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <h1>📘 数学 日々の20分</h1>
+  <div class="sub">学校＋αで、毎日コツコツ。問題集を少しずつ積みあげる。</div>
+</header>
+
+<a class="back-link" href="index.html">← 学習計画ページにもどる</a>
+
+<!-- ストリーク -->
+<div class="streak">
+  <div class="num" id="streak-num">0</div>
+  <div class="label" id="streak-label">日連続</div>
+  <button class="stamp-btn" id="stamp-btn">✅ 今日の20分やった！</button>
+  <div class="last" id="last-info"></div>
+</div>
+
+<!-- 1日の流れ -->
+<div class="card">
+  <h2>⏱ 1日20分の流れ</h2>
+  <div class="flow">
+    <div class="flow-step"><div class="no">1</div><div class="txt"><b>前日の×直し</b><span class="min">3分</span><br>前回 × がついた問題をもう一度。サッと終わらせる。</div></div>
+    <div class="flow-step"><div class="no">2</div><div class="txt"><b>新しい問題を解く</b><span class="min">15分</span><br>「体系問題集」の<b>レベルB</b>を<b>大問2題</b>。<b>間違えたら×印</b>を必ずつける。</div></div>
+    <div class="flow-step"><div class="no">3</div><div class="txt"><b>答え合わせ</b><span class="min">2分</span><br>× の問題は教科書のどのページか確認しておく。</div></div>
+  </div>
+  <div class="tip"><b>💡 大事：</b>「終わらない問題」を残してOK。<b>20分でストップ</b>するほうが続く。やる時間（例：宿題の前、夕食後 など）を毎日同じにすると習慣化しやすい。</div>
+</div>
+
+<!-- 週末メニュー -->
+<div class="card">
+  <h2>📅 週末はちょっとだけ</h2>
+  <p style="font-size:14px">平日5日でついた × を、土・日に <b>×だけ2周目</b>。新しい問題はやらない。<br>→ 1週間で <b>解く・直す・もう一度解く</b> の流れが完成する。</p>
+</div>
+
+<!-- 30日カレンダー -->
+<div class="card">
+  <h2>🗓 やった日カレンダー（30日）</h2>
+  <p style="font-size:13px;color:#64748b">タップで「やった」マーク。あとから振り返れる。</p>
+  <div class="stamps-grid" id="grid"></div>
+</div>
+
+<!-- ふりかえりメモ -->
+<div class="card">
+  <h2>📝 今週の「分からなかったこと」メモ</h2>
+  <p style="font-size:13px;color:#64748b">× が多かった単元、わからなかった式などを書いておくと、週末や次のテスト前にすぐ見直せる。</p>
+  <div class="memo">
+    <label>メモ</label>
+    <textarea id="memo" placeholder="例：体系問題集 P○○ 連立方程式の文章題が苦手。式の作り方をもう一度。"></textarea>
+  </div>
+</div>
+
+<a class="back-link" href="index.html">← 学習計画ページにもどる</a>
+<footer>はるき ／ 数学 日々の20分</footer>
+
+</div>
+
+<script>
+var KEY = "haruki-sugaku-nikka";
+var state = (function(){ try { return JSON.parse(localStorage.getItem(KEY)||"{}"); } catch(e){ return {}; } })();
+function save(){ localStorage.setItem(KEY, JSON.stringify(state)); }
+
+function dateKey(d){ return d.getFullYear() + "-" + (d.getMonth()+1) + "-" + d.getDate(); }
+
+// メモ
+var memo = document.getElementById("memo");
+if (state.memo) memo.value = state.memo;
+memo.addEventListener("input", function(){ state.memo = memo.value; save(); });
+
+// 連続日数計算
+function computeStreak(){
+  var done = state.done || {};
+  var s = 0;
+  var d = new Date();
+  d.setHours(0,0,0,0);
+  // 今日がdoneでなければ昨日からカウント
+  if (!done[dateKey(d)]) d.setDate(d.getDate()-1);
+  while (done[dateKey(d)]) {
+    s++;
+    d.setDate(d.getDate()-1);
+  }
+  return s;
+}
+
+function render(){
+  var streak = computeStreak();
+  document.getElementById("streak-num").textContent = streak;
+  var lbl = document.getElementById("streak-label");
+  if (streak === 0) lbl.textContent = "今日からスタート！";
+  else if (streak < 3) lbl.textContent = "日連続 ／ いい感じ！";
+  else if (streak < 7) lbl.textContent = "日連続 ／ 習慣化中！";
+  else if (streak < 14) lbl.textContent = "日連続 ／ すごい！";
+  else lbl.textContent = "日連続 🔥";
+
+  var today = new Date(); today.setHours(0,0,0,0);
+  var todayK = dateKey(today);
+  var done = state.done || {};
+  var btn = document.getElementById("stamp-btn");
+  if (done[todayK]) {
+    btn.textContent = "✓ 今日もできた！";
+    btn.classList.add("done");
+  } else {
+    btn.textContent = "✅ 今日の20分やった！";
+    btn.classList.remove("done");
+  }
+  // 最後の記録
+  var last = "";
+  for (var k in done) { if (!last || k > last) last = k; }
+  document.getElementById("last-info").textContent = last ? "前回：" + last : "まだ記録なし";
+}
+
+document.getElementById("stamp-btn").addEventListener("click", function(){
+  var today = new Date(); today.setHours(0,0,0,0);
+  var k = dateKey(today);
+  if (!state.done) state.done = {};
+  state.done[k] = true;
+  save();
+  render();
+  renderGrid();
+});
+
+// 30日グリッド
+function renderGrid(){
+  var grid = document.getElementById("grid");
+  grid.innerHTML = "";
+  var today = new Date(); today.setHours(0,0,0,0);
+  var todayK = dateKey(today);
+  var done = state.done || {};
+  // 直近30日（今日含む）を新しい順 or 古い順？古い順で表示
+  var start = new Date(today); start.setDate(today.getDate() - 28); // 29日前から今日まで=30日
+  for (var i = 0; i < 30; i++) {
+    var d = new Date(start); d.setDate(start.getDate() + i);
+    var k = dateKey(d);
+    var cell = document.createElement("div");
+    cell.className = "day-cell" + (done[k] ? " done" : "") + (k === todayK ? " today" : "");
+    cell.innerHTML = '<div class="e">' + (done[k] ? "✓" : "·") + '</div><div>' + (d.getMonth()+1) + '/' + d.getDate() + '</div>';
+    cell.addEventListener("click", (function(key){
+      return function(){
+        if (!state.done) state.done = {};
+        state.done[key] = !state.done[key];
+        if (!state.done[key]) delete state.done[key];
+        save();
+        render();
+        renderGrid();
+      };
+    })(k));
+    grid.appendChild(cell);
+  }
+}
+
+render();
+renderGrid();
+</script>
+</body>
+</html>

@@ -1,0 +1,1853 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>1学期期末 日々のスケジュール | はるき</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", sans-serif;
+    background: linear-gradient(180deg, #fff7ed 0%, #fed7aa 55%, #fdba74 100%);
+    color: #1a202c;
+    line-height: 1.6;
+    padding: 16px;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  .container { max-width: 900px; margin: 0 auto; position: relative; z-index: 2; }
+
+  /* 連続達成バッジ */
+  .streak-badge {
+    background: linear-gradient(135deg, #fb923c, #f97316);
+    color: white;
+    padding: 12px 18px;
+    border-radius: 14px;
+    margin-bottom: 16px;
+    text-align: center;
+    box-shadow: 0 4px 14px rgba(249,115,22,0.35);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+  .streak-fire { font-size: 28px; animation: fire-flicker 1.5s ease-in-out infinite; }
+  @keyframes fire-flicker {
+    0%, 100% { transform: scale(1) rotate(-3deg); }
+    50% { transform: scale(1.15) rotate(3deg); }
+  }
+  .streak-num { font-size: 24px; font-weight: 800; }
+  .streak-label { font-size: 12px; opacity: 0.95; }
+  .streak-badge.cold {
+    background: linear-gradient(135deg, #94a3b8, #64748b);
+    box-shadow: 0 4px 14px rgba(100,116,139,0.25);
+  }
+
+  header {
+    background: linear-gradient(135deg, #ea580c, #dc2626);
+    color: white;
+    padding: 24px 20px;
+    border-radius: 16px;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 24px rgba(234,88,12,0.25);
+  }
+  header h1 { font-size: 22px; margin-bottom: 8px; }
+  header .sub { font-size: 14px; opacity: 0.9; }
+  header .goal { margin-top: 12px; padding: 10px 14px; background: rgba(255,255,255,0.15); border-radius: 8px; font-size: 14px; font-weight: 600; }
+
+  .progress-card {
+    background: white;
+    padding: 16px 14px;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    display: flex; flex-direction: column; justify-content: center;
+  }
+  .progress-label { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 12px; color: #475569; }
+  .progress-bar { width: 100%; height: 10px; background: #e2e8f0; border-radius: 999px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, #10b981, #34d399); transition: width 0.4s; }
+  .progress-percent { font-size: 28px; font-weight: 700; color: #059669; text-align: center; margin-top: 8px; }
+
+  .subjects-card {
+    background: white;
+    padding: 14px 16px;
+    border-radius: 16px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  }
+  .subjects-title {
+    font-size: 13px; font-weight: 700; color: #475569; margin-bottom: 12px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .subj-row {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 7px;
+  }
+  .subj-row:last-child { margin-bottom: 0; }
+  .subj-tag {
+    flex-shrink: 0;
+    font-size: 10px; font-weight: 700; color: white;
+    padding: 3px 8px; border-radius: 999px;
+    min-width: 56px; text-align: center;
+  }
+  .subj-bar {
+    flex: 1; height: 10px; background: #e2e8f0; border-radius: 999px; overflow: hidden;
+  }
+  .subj-fill { height: 100%; transition: width 0.4s; opacity: 0.85; }
+  .subj-count {
+    flex-shrink: 0; font-size: 11px; color: #64748b; min-width: 48px; text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .top-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  @media (max-width: 720px) {
+    .top-grid { grid-template-columns: 1fr; }
+  }
+  .top-grid > * { margin-bottom: 0 !important; }
+
+  .pet-card {
+    background: linear-gradient(135deg, #dbeafe 0%, #ede9fe 100%);
+    padding: 16px 14px;
+    border-radius: 16px;
+    text-align: center;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+    position: relative;
+    overflow: hidden;
+  }
+  .pet-card::before {
+    content: ""; position: absolute; top:-30px; right:-30px; width:120px; height:120px;
+    background: radial-gradient(circle, rgba(255,255,255,0.5), transparent);
+    border-radius: 50%;
+  }
+  .pet-emoji {
+    font-size: 56px; line-height: 1; display: inline-block;
+    animation: pet-idle 2.5s ease-in-out infinite;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+  }
+  @keyframes pet-idle {
+    0%, 100% { transform: translateY(0) rotate(0); }
+    50% { transform: translateY(-6px) rotate(-2deg); }
+  }
+  .pet-emoji.celebrate {
+    animation: pet-jump 0.6s ease;
+  }
+  @keyframes pet-jump {
+    0%, 100% { transform: translateY(0) scale(1); }
+    30% { transform: translateY(-30px) scale(1.2) rotate(-10deg); }
+    60% { transform: translateY(-15px) scale(1.1) rotate(10deg); }
+  }
+  .pet-name {
+    font-size: 15px; font-weight: 700; margin-top: 8px; color: #1e293b;
+    position: relative; z-index: 1;
+  }
+  .pet-message {
+    font-size: 11px; color: #475569; margin-top: 4px; min-height: 18px;
+    position: relative; z-index: 1;
+    background: rgba(255,255,255,0.7);
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    backdrop-filter: blur(4px);
+  }
+  .pet-stage-bar {
+    display: flex; justify-content: center; gap: 3px; margin-top: 12px;
+    flex-wrap: wrap;
+  }
+  .pet-stage-dot {
+    width: 7px; height: 7px; border-radius: 50%; background: rgba(0,0,0,0.1);
+    transition: all 0.3s;
+  }
+  .pet-stage-dot.active {
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    transform: scale(1.3);
+  }
+  .pet-stage-label {
+    font-size: 11px; color: #64748b; margin-top: 8px;
+    position: relative; z-index: 1;
+  }
+
+  .confetti {
+    position: fixed; top:50%; left:50%; pointer-events: none; z-index: 9999;
+    font-size: 32px;
+    animation: confetti-pop 1s ease-out forwards;
+  }
+  @keyframes confetti-pop {
+    0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
+    50% { transform: translate(-50%, -150%) scale(1.5); opacity: 1; }
+    100% { transform: translate(-50%, -200%) scale(1); opacity: 0; }
+  }
+
+  .friends-row { margin-top: 14px; min-height: 36px; position: relative; z-index: 1; }
+  .friend-penguin {
+    display: inline-block; font-size: 28px; margin: 0 2px;
+    animation: pet-idle 2s ease-in-out infinite;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+  }
+  .friend-penguin:nth-child(2n) { animation-delay: -0.5s; }
+  .friend-penguin:nth-child(3n) { animation-delay: -1s; }
+
+  .inventory {
+    background: white;
+    padding: 12px 12px;
+    border-radius: 16px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  }
+  .inventory-title {
+    font-size: 11px; font-weight: 700; color: #475569; margin-bottom: 8px;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .inventory-grid {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px;
+  }
+  @media (max-width: 720px) {
+    .inventory-grid { grid-template-columns: repeat(5, 1fr); }
+  }
+  .inv-item {
+    background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+    border: 1.5px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 6px 2px;
+    text-align: center;
+    transition: all 0.2s;
+  }
+  /* レア度ごとの枠（未取得でも分かる） */
+  .inv-item[data-tier="common"]    { border-color: #cbd5e1; }
+  .inv-item[data-tier="uncommon"]  { border-color: #86efac; }
+  .inv-item[data-tier="rare"]      { border-color: #60a5fa; }
+  .inv-item[data-tier="epic"]      { border-color: #c084fc; }
+  .inv-item[data-tier="premium"]   { border-color: #f472b6; }
+  .inv-item[data-tier="legendary"] { border-color: #fbbf24; }
+  .inv-item[data-tier="mythical"]  { border-color: #06b6d4; }
+
+  /* 取得済みは色濃く＋発光 */
+  .inv-item.has[data-tier="common"]    { background: linear-gradient(135deg, #f1f5f9, #e2e8f0); }
+  .inv-item.has[data-tier="uncommon"]  { background: linear-gradient(135deg, #dcfce7, #bbf7d0); }
+  .inv-item.has[data-tier="rare"]      { background: linear-gradient(135deg, #dbeafe, #bfdbfe); box-shadow: 0 0 8px rgba(59,130,246,0.3); }
+  .inv-item.has[data-tier="epic"]      { background: linear-gradient(135deg, #f3e8ff, #e9d5ff); box-shadow: 0 0 10px rgba(168,85,247,0.4); }
+  .inv-item.has[data-tier="premium"]   {
+    background: linear-gradient(135deg, #fce7f3, #fbcfe8);
+    animation: premium-pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes premium-pulse {
+    0%,100% { box-shadow: 0 0 10px rgba(236,72,153,0.5); }
+    50% { box-shadow: 0 0 20px rgba(139,92,246,0.85); }
+  }
+  .inv-item.has[data-tier="legendary"] {
+    background: linear-gradient(135deg, #fef3c7, #fde68a);
+    animation: legendary-pulse 2s ease-in-out infinite;
+  }
+  @keyframes legendary-pulse {
+    0%,100% { box-shadow: 0 0 8px rgba(245,158,11,0.5); }
+    50% { box-shadow: 0 0 18px rgba(245,158,11,0.9); }
+  }
+  .inv-item.has[data-tier="mythical"] {
+    background: linear-gradient(135deg, #cffafe, #a5f3fc);
+    animation: mythical-pulse 2.6s ease-in-out infinite;
+  }
+  @keyframes mythical-pulse {
+    0%,100% { box-shadow: 0 0 10px rgba(6,182,212,0.6); }
+    50% { box-shadow: 0 0 22px rgba(34,211,238,0.95); }
+  }
+
+  /* レア度バッジ */
+  .inv-tier {
+    font-size: 8px; font-weight: 800; letter-spacing: 0.5px;
+    padding: 1px 4px; border-radius: 4px; margin-bottom: 2px;
+    display: inline-block; color: white;
+  }
+  .inv-tier.common    { background: #94a3b8; }
+  .inv-tier.uncommon  { background: #22c55e; }
+  .inv-tier.rare      { background: #3b82f6; }
+  .inv-tier.epic      { background: #a855f7; }
+  .inv-tier.premium   { background: linear-gradient(90deg, #ec4899, #8b5cf6); }
+  .inv-tier.legendary { background: linear-gradient(90deg, #f59e0b, #ef4444); }
+  .inv-tier.mythical  { background: linear-gradient(90deg, #06b6d4, #6366f1); }
+
+  /* 街（コレクション展示） */
+  .town {
+    position: relative;
+    min-height: 210px;
+    background: linear-gradient(180deg, #bfe3ff 0%, #dff0ff 54%, #8fcf6e 54%, #6fae57 100%);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    box-shadow: inset 0 0 30px rgba(0,0,0,0.10), 0 4px 16px rgba(0,0,0,0.08);
+    border: 4px solid #94a3b8;
+  }
+  .town-title {
+    position: absolute; top: 8px; left: 12px; z-index: 5;
+    background: rgba(255,255,255,0.9);
+    padding: 4px 10px; border-radius: 999px;
+    font-size: 11px; font-weight: 700; color: #1e293b;
+  }
+  .town-empty {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    color: #475569; font-size: 13px;
+    text-align: center; padding: 0 20px;
+    z-index: 2;
+  }
+  #town-items {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    min-height: 46%;
+    display: flex; flex-wrap: wrap;
+    align-items: flex-end; justify-content: center;
+    gap: 2px 6px; padding: 8px 10px 10px;
+    z-index: 3;
+  }
+  .town-item { line-height: 1; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.18)); }
+  .inv-emoji { font-size: 20px; line-height: 1; }
+  .inv-count {
+    font-size: 11px; font-weight: 700; margin-top: 2px;
+    color: #94a3b8;
+  }
+  .inv-item.has .inv-count { color: #d97706; }
+  .inv-name { font-size: 9px; color: #64748b; margin-top: 1px; }
+
+  .item-drop {
+    position: fixed; pointer-events: none; z-index: 9999;
+    font-size: 40px;
+    animation: item-drop-anim 1.4s ease-out forwards;
+  }
+  @keyframes item-drop-anim {
+    0% { transform: translate(-50%, -50%) scale(0) rotate(0); opacity: 0; }
+    20% { transform: translate(-50%, -100%) scale(1.4) rotate(-15deg); opacity: 1; }
+    60% { transform: translate(-50%, -100%) scale(1.2) rotate(15deg); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(0.8) rotate(0); opacity: 0; }
+  }
+  .item-toast {
+    position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+    background: linear-gradient(135deg, #fbbf24, #f59e0b);
+    color: white; padding: 12px 24px; border-radius: 999px;
+    font-weight: 700; font-size: 14px; z-index: 9999;
+    box-shadow: 0 8px 24px rgba(245,158,11,0.4);
+    animation: toast-in 2.2s ease forwards;
+  }
+  @keyframes toast-in {
+    0% { transform: translate(-50%, 100px); opacity: 0; }
+    15% { transform: translate(-50%, 0); opacity: 1; }
+    85% { transform: translate(-50%, 0); opacity: 1; }
+    100% { transform: translate(-50%, -20px); opacity: 0; }
+  }
+
+  .legend {
+    background: white;
+    padding: 14px 18px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  }
+  .legend strong { color: #4f46e5; }
+  .legend .row { margin: 4px 0; }
+
+  .day {
+    background: white;
+    margin-bottom: 14px;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    border-left: 6px solid #4f46e5;
+  }
+  .day.holiday { border-left-color: #f59e0b; }
+  .day.bukatsu { border-left-color: #94a3b8; }
+  .day.test { border-left-color: #ef4444; }
+
+  .day-header {
+    padding: 14px 18px;
+    background: #f8fafc;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    user-select: none;
+  }
+  .day-title { font-size: 16px; font-weight: 700; }
+  .day-meta { font-size: 12px; color: #64748b; margin-top: 2px; }
+  .day-time {
+    background: #4f46e5;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .day-time.bukatsu { background: #94a3b8; }
+  .day-time.holiday { background: #f59e0b; }
+  .day-time.test { background: #ef4444; }
+  .arrow { transition: transform 0.3s; font-size: 20px; color: #94a3b8; margin-left: 8px; }
+  .day.open .arrow { transform: rotate(180deg); }
+
+  .day-body {
+    padding: 0 18px;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease, padding 0.3s ease;
+  }
+  .day.open .day-body { padding: 16px 18px 18px; max-height: 3000px; }
+
+  .task {
+    display: flex;
+    align-items: flex-start;
+    padding: 12px 14px;
+    background: #f8fafc;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+  .task:active { transform: scale(0.98); }
+  .task.done { background: #ecfdf5; }
+  .task.done .task-text { text-decoration: line-through; color: #94a3b8; }
+
+  .checkbox {
+    flex-shrink: 0;
+    width: 26px;
+    height: 26px;
+    border: 2px solid #cbd5e1;
+    border-radius: 8px;
+    margin-right: 12px;
+    margin-top: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    transition: all 0.2s;
+  }
+  .task.done .checkbox {
+    background: linear-gradient(135deg, #10b981, #059669);
+    border-color: #059669;
+  }
+  .check-icon { color: white; font-weight: bold; opacity: 0; transition: opacity 0.2s; font-size: 14px; }
+  .task.done .check-icon { opacity: 1; }
+
+  .task-content { flex: 1; }
+  .task-subject {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 999px;
+    margin-bottom: 4px;
+    color: white;
+  }
+  .task-text { font-size: 14px; color: #1e293b; line-height: 1.5; }
+  .task-time { font-size: 11px; color: #64748b; margin-left: 8px; }
+
+  .s-math   { background: #3b82f6; }
+  .s-eng    { background: #8b5cf6; }
+  .s-jpn-a  { background: #ec4899; }
+  .s-jpn-b  { background: #f43f5e; }
+  .s-sci1   { background: #10b981; }
+  .s-sci2   { background: #14b8a6; }
+  .s-his    { background: #f59e0b; }
+  .s-geo    { background: #ea580c; }
+  .s-kanji  { background: #d946ef; }
+  .s-hw     { background: #92400e; }
+  .s-misc   { background: #64748b; }
+  .s-quiz   { background: #0ea5e9; }
+  .s-eiken  { background: #06b6d4; }
+
+  .duolingo {
+    background: linear-gradient(135deg, #58cc02, #43a047);
+    color: white;
+    padding: 16px 20px;
+    border-radius: 14px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  .duolingo h3 { font-size: 16px; margin-bottom: 6px; }
+  .duolingo p { font-size: 13px; opacity: 0.95; }
+
+  .controls {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    flex: 1;
+    min-width: 120px;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-expand { background: #4f46e5; color: white; }
+  .btn-collapse { background: #64748b; color: white; }
+  .btn-reset { background: #fee2e2; color: #b91c1c; }
+  .btn-past { background: #e0e7ff; color: #3730a3; }
+  .btn-skip-today { background: #fef3c7; color: #b45309; }
+  .btn:active { transform: scale(0.96); }
+
+  .footer { text-align: center; margin-top: 30px; padding: 20px; font-size: 12px; color: #64748b; }
+
+  .tabs-nav {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 16px;
+    background: rgba(255,255,255,0.6);
+    padding: 6px;
+    border-radius: 14px;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  .tab-btn {
+    flex: 1 0 auto;
+    padding: 12px 14px;
+    border: none;
+    background: transparent;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 700;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .tab-btn.active {
+    background: linear-gradient(135deg, #ea580c, #dc2626);
+    color: white;
+    box-shadow: 0 4px 12px rgba(234,88,12,0.3);
+  }
+  .tab-content { display: none; }
+  .tab-content.active { display: block; animation: tab-fade 0.3s ease; }
+  @keyframes tab-fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* 更新ボタン */
+  .top-actions { position: absolute; top: 14px; right: 14px; }
+  .refresh-btn {
+    background: rgba(255,255,255,0.95);
+    border: 2px solid #ea580c;
+    color: #c2410c;
+    padding: 8px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(234,88,12,0.18);
+    transition: transform 0.15s;
+  }
+  .refresh-btn:active { transform: scale(0.95) rotate(-15deg); }
+
+  /* カレンダータブ */
+  .cal-wrap { background: #fff; padding: 16px; border-radius: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+  .cal-hint { font-size: 12px; color: #64748b; margin-bottom: 10px; text-align: center; }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+  .cal-head { font-size: 11px; font-weight: 700; text-align: center; padding: 6px 0; color: #64748b; }
+  .cal-head.sun { color: #ef4444; }
+  .cal-head.sat { color: #3b82f6; }
+  .cal-cell {
+    aspect-ratio: 1 / 1.05;
+    border-radius: 10px;
+    border: 2px solid #e2e8f0;
+    padding: 4px 3px;
+    font-size: 11px;
+    line-height: 1.2;
+    cursor: pointer;
+    background: #f8fafc;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    transition: transform 0.15s;
+    overflow: hidden;
+  }
+  .cal-cell:active { transform: scale(0.95); }
+  .cal-cell.empty { background: transparent; border: none; cursor: default; }
+  .cal-cell .cal-date { font-size: 16px; font-weight: 800; margin-top: 2px; }
+  .cal-cell .cal-tag { font-size: 9px; font-weight: 700; margin-top: 2px; padding: 1px 4px; border-radius: 4px; }
+  .cal-cell .cal-meta { font-size: 9px; color: #475569; margin-top: 2px; text-align: center; }
+  .cal-cell.today { border-color: #ea580c; background: linear-gradient(135deg, #ffedd5, #fed7aa); box-shadow: 0 0 8px rgba(234,88,12,0.4); }
+  .cal-cell.test { background: linear-gradient(135deg, #fee2e2, #fecaca); border-color: #ef4444; }
+  .cal-cell.holiday { background: linear-gradient(135deg, #d1fae5, #a7f3d0); border-color: #10b981; }
+  .cal-cell.bukatsu { background: linear-gradient(135deg, #fef3c7, #fde68a); border-color: #f59e0b; }
+  .cal-cell.normal { background: #f8fafc; border-color: #cbd5e1; }
+  .cal-cell.done { opacity: 0.5; }
+  .cal-cell .cal-check { font-size: 10px; color: #10b981; }
+  .cal-legend { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; font-size: 10px; color: #475569; justify-content: center; }
+  .cal-legend span { display: inline-flex; align-items: center; gap: 4px; }
+  .cal-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; }
+
+  /* 持越タスク（各日に分散配置） */
+  .task.carry-virtual { background: linear-gradient(90deg, #fff7ed, #ffffff); border-left: 3px solid #f59e0b; }
+
+  /* 試験範囲タブ */
+  .range-card { background: #fff; border-radius: 14px; padding: 16px; margin-bottom: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.06); }
+  .range-day {
+    font-size: 16px; font-weight: 800; padding: 8px 12px;
+    background: linear-gradient(135deg, #ef4444, #f97316);
+    color: white; border-radius: 8px; margin-bottom: 10px;
+  }
+  .range-subject { margin-bottom: 12px; padding: 10px 12px; background: #f8fafc; border-radius: 8px; border-left: 4px solid #ea580c; }
+  .range-subject-name { font-size: 13px; font-weight: 800; color: #1e293b; margin-bottom: 4px; }
+  .range-subject-detail { font-size: 12px; color: #475569; line-height: 1.6; }
+  .range-note { font-size: 11px; color: #ef4444; margin-top: 4px; font-weight: 700; }
+
+  /* ツールリンク */
+  .tool-card {
+    display: block; color: #fff; padding: 12px 16px; border-radius: 12px;
+    text-decoration: none; margin: 8px 0; font-weight: 800; text-align: center; font-size: 14px;
+    box-shadow: 0 3px 12px rgba(0,0,0,.2);
+  }
+  .back-link { display:inline-block; margin: 0 8px 12px 0; font-size: 13px; color: #fff; text-decoration: underline; font-weight: 700; }
+
+  @media (max-width: 480px) {
+    body { padding: 10px; }
+    header h1 { font-size: 18px; }
+    .day-title { font-size: 15px; }
+    .task-text { font-size: 13px; }
+  }
+
+  /* 共通サイドバー */
+  .navbtn{position:fixed;top:12px;left:12px;z-index:60;background:#b91c1c;color:#fff;border:2px solid #fff;border-radius:10px;width:46px;height:46px;font-size:22px;line-height:1;box-shadow:0 3px 10px rgba(0,0,0,.3);cursor:pointer}
+  .navmask{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:65;display:none}
+  .navmask.open{display:block}
+  .sidebar{position:fixed;top:0;left:-300px;width:270px;height:100%;background:#fff7ed;z-index:70;box-shadow:2px 0 18px rgba(0,0,0,.25);transition:left .25s;padding:16px 14px;overflow-y:auto}
+  .sidebar.open{left:0}
+  .sidebar .navttl{font-size:15px;color:#9a3412;font-weight:800;margin:2px 0 12px;padding-bottom:10px;border-bottom:2px solid #fdba74}
+  .sidebar .closex{float:right;font-size:18px;color:#9a3412;background:none;border:none;cursor:pointer}
+  .sidebar a{display:block;padding:13px 12px;margin:7px 0;border-radius:10px;text-decoration:none;color:#7c2d12;font-weight:700;font-size:14.5px;background:#fff;border:1px solid #fed7aa}
+  .sidebar a.active{background:linear-gradient(135deg,#ea580c,#dc2626);color:#fff;border-color:#dc2626}
+</style>
+</head>
+<body>
+
+<button class="navbtn" onclick="toggleNav()" aria-label="メニュー">☰</button>
+<div class="navmask" id="navmask" onclick="toggleNav()"></div>
+<nav class="sidebar" id="sidebar">
+  <button class="closex" onclick="toggleNav()">✕</button>
+  <div class="navttl">📚 はるき学習計画メニュー</div>
+  <a href="index.html">🏠 学習計画トップ</a>
+  <a href="mainichi.html">📅 毎日タスク</a>
+  <a href="gacha.html">🎰 がんばりガチャ</a>
+  <a href="kimatsu/">🔥 期末 対策トップ</a>
+  <a href="kimatsu-schedule.html" class="active">🗓 期末 日々のスケジュール</a>
+  <a href="kimatsu/shoumei-kaitou.html">📐 図形の証明 解説</a>
+  <a href="shuukihyou.html">🧪 元素 周期表・覚え方</a>
+  <a href="jitsuryoku/eng-vocab.html">🔊 英単語テスト</a>
+</nav>
+<script>function toggleNav(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('navmask').classList.toggle('open');}</script>
+
+<div class="container">
+
+<header style="position:relative">
+  <div class="top-actions">
+    <button class="refresh-btn" onclick="window.location.reload(true)" title="ページを更新">🔄 更新</button>
+  </div>
+  <h1>🔥 1学期期末 日々のスケジュール</h1>
+  <div class="sub">はるき / 中2 / 期末本番 7/6（月）〜7/10（金）</div>
+  <div class="goal" id="cd-goal">📚 期末まで あと —日</div>
+  <div class="goal" style="margin-top:6px;font-size:12px;line-height:1.6">
+    📘 <b>学習サイクル</b>：①問題集を解く → ②答え合わせ（間違えた問題に「×印」を必ずつける）→ ③×の問題を教科書で見直す → ④×の問題だけもう一度解く
+  </div>
+</header>
+
+<div>
+  <a class="back-link" href="kimatsu/">← 期末 対策トップへ</a>
+  <a class="back-link" href="index.html">🏠 学習計画トップ</a>
+</div>
+
+<a class="tool-card" href="kimatsu/shoumei-kaitou.html" style="background:linear-gradient(135deg,#0891b2,#1e3a8a)">📐 図形の証明 全15問の解説を開く →</a>
+<a class="tool-card" href="jitsuryoku/eng-vocab.html" style="background:linear-gradient(135deg,#0d9488,#16a34a)">🔊 英単語テスト（BLUE SKY）を開く →</a>
+<a class="tool-card" href="shuukihyou.html" style="background:linear-gradient(135deg,#7c3aed,#db2777)">🧪 元素 周期表・覚え方を開く（理科I）→</a>
+
+<div class="duolingo">
+  <h3>🦉 Duolingo 毎日15分（時間枠外で継続）</h3>
+  <p>朝・寝る前のすきま時間で。テスト前もやめない。</p>
+</div>
+
+<div class="tabs-nav">
+  <button class="tab-btn active" data-tab="tasks" onclick="switchTab('tasks')">📅 やること</button>
+  <button class="tab-btn" data-tab="calendar" onclick="switchTab('calendar')">🗓 カレンダー</button>
+  <button class="tab-btn" data-tab="range" onclick="switchTab('range')">📋 試験範囲</button>
+  <button class="tab-btn" data-tab="achievement" onclick="switchTab('achievement')">🏆 達成度</button>
+</div>
+
+<div class="tab-content" id="tab-calendar">
+  <div class="cal-wrap">
+    <div class="cal-hint">日付をタップするとその日の「やること」に飛びます</div>
+    <div class="cal-grid" id="cal-grid"></div>
+    <div class="cal-legend">
+      <span><i style="background:#a7f3d0"></i>休日</span>
+      <span><i style="background:#fde68a"></i>部活</span>
+      <span><i style="background:#f8fafc;border:1px solid #cbd5e1"></i>平日</span>
+      <span><i style="background:#fecaca"></i>テスト</span>
+      <span><i style="background:#fed7aa;border:1px solid #ea580c"></i>今日</span>
+    </div>
+  </div>
+</div>
+
+<div class="tab-content" id="tab-range">
+  <div class="range-card">
+    <div class="range-day">📅 期末本番 7/6（月）〜7/10（金）の5日間</div>
+    <div class="range-note" style="color:#475569;font-weight:600;margin-bottom:8px">各日の科目割りが分かったら、前日タスクをその科目に絞って具体化するよ。分かったらパパに教えてね。</div>
+    <div class="range-subject">
+      <div class="range-subject-name">国語A</div>
+      <div class="range-subject-detail">説明文「人間は他の星に住むことができるのか」「味わうだけでは決まらない」「壁に残された伝言」＋演習問題。教科書「現代の国語」／国語便覧。<b>自主学習の演習プリント・GW課題も範囲。</b></div>
+    </div>
+    <div class="range-subject">
+      <div class="range-subject-name">国語B</div>
+      <div class="range-subject-detail">活用する自立語（用言の活用）／古文 枕草子・徒然草／問題演習。「スパッと攻略国語文法」＋補充プリント。</div>
+    </div>
+    <div class="range-subject">
+      <div class="range-subject-name">英語A</div>
+      <div class="range-subject-detail">教科書「BLUE SKY」 Unit3 Part1〜Part3／問題集「必修テキスト」P44〜P62。<b>6/28までに1周！</b></div>
+    </div>
+    <div class="range-subject">
+      <div class="range-subject-name">英語B</div>
+      <div class="range-subject-detail">問題集「新中学問題集」 第4章 助動詞 P44〜P52。</div>
+    </div>
+    <div class="range-subject">
+      <div class="range-subject-name">数学（代数）</div>
+      <div class="range-subject-detail">連立方程式（加減法・代入法・文章題）。実力テスト範囲のうち中間で出ていなかった部分。<b>1問の目安時間を決めて時計を置いて解く（時間切れ対策）。</b></div>
+    </div>
+    <div class="range-subject">
+      <div class="range-subject-name">数学（幾何）</div>
+      <div class="range-subject-detail">三角形の合同 証明 全15問（証明解説ページの全問）＋幾何プリント。<b>最後は何も見ずに証明を書けるように。</b></div>
+    </div>
+    <div class="range-subject">
+      <div class="range-subject-name">理科I</div>
+      <div class="range-subject-detail">教科書「未来へひろがるサイエンス2」P153〜P171（化学変化と原子・分子）。問題集「中学の理科 物理・化学」。<b>教科書の細部（太字・側注・図キャプション）も。</b></div>
+    </div>
+    <div class="range-subject">
+      <div class="range-subject-name">理科II</div>
+      <div class="range-subject-detail">動物の体のつくりとはたらき（栄養分を取り入れる／動物の呼吸／不要な物質の行方／物質を運ぶ）。問題集「中学の理科 生物・地学」。<b>理科資料集（カラー）・小テストのプリントも範囲。</b></div>
+    </div>
+    <div class="range-subject">
+      <div class="range-subject-name">地理</div>
+      <div class="range-subject-detail">第3編「日本のさまざまな地域」第2章「日本の地域的特色」教科書P140〜P166。問題集「地理の学習」＋授業プリント・パワーポイント。</div>
+    </div>
+    <div class="range-subject">
+      <div class="range-subject-name">歴史</div>
+      <div class="range-subject-detail">教科書「未来をひらく」P108「天下統一の歩み」〜P125「身分ごとに異なる暮らし」。問題集「歴史の学習」。<b>教科書の細かい内容まで出る！</b></div>
+    </div>
+  </div>
+</div>
+
+<div class="tab-content" id="tab-achievement">
+
+<div class="streak-badge" id="streak-badge">
+  <div class="streak-fire">🔥</div>
+  <div>
+    <div class="streak-num"><span id="streak-num">0</span>日れんぞく！</div>
+    <div class="streak-label" id="streak-label">毎日チェックして記録をのばそう</div>
+  </div>
+</div>
+
+<div class="top-grid">
+  <div class="pet-card">
+    <div class="pet-emoji" id="pet-emoji">🏞️</div>
+    <div class="pet-name" id="pet-name">さら地</div>
+    <div class="pet-message" id="pet-message">ここから街をつくろう！</div>
+    <div class="pet-stage-bar" id="pet-stage-bar"></div>
+    <div class="pet-stage-label" id="pet-stage-label">レベル 1 / 13</div>
+  </div>
+
+  <div class="inventory">
+    <div class="inventory-title">
+      <span>🎁 アイテム</span>
+      <span onclick="resetItemsOnly()" style="font-size:10px;color:#94a3b8;font-weight:400;cursor:pointer;text-decoration:underline">アイテムだけリセット</span>
+    </div>
+    <div class="inventory-grid" id="inventory-grid"></div>
+  </div>
+
+  <div class="progress-card">
+    <div class="progress-label">
+      <span>全体の進捗</span>
+      <span id="progress-text">0 / 0</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    <div class="progress-percent" id="progress-percent">0%</div>
+  </div>
+</div>
+
+<div class="town" id="town">
+  <div class="town-title">🏙️ ぼくの街</div>
+  <div id="town-items"></div>
+  <div class="town-empty" id="town-empty">タスクを終わらせて道具を集めて<br>自分の街をつくろう！</div>
+</div>
+
+<div class="subjects-card">
+  <div class="subjects-title">
+    <span>📊 教科別の進捗</span>
+    <span style="font-size:10px;color:#94a3b8;font-weight:400">タスクの完了率</span>
+  </div>
+  <div id="subjects-rows"></div>
+</div>
+
+</div><!-- /tab-achievement -->
+
+<div class="tab-content active" id="tab-tasks">
+
+<div class="legend">
+  <div class="row"><strong>学習サイクル</strong>：①問題集を解く → ②答え合わせ（間違いは×印）→ ③×を教科書で見直す → ④×だけもう一度解く</div>
+  <div class="row">⏭「今日は終わり：明日に振替」を押すと、その日の残りを次の日からに自動でふりわけるよ。</div>
+  <div class="row">✅ チェックすると道具やグッズがもらえる！集めて自分の街をつくろう🏙️</div>
+</div>
+
+<div class="controls">
+  <button class="btn btn-expand" onclick="expandAll()">全部開く</button>
+  <button class="btn btn-collapse" onclick="collapseAll()">全部閉じる</button>
+  <button class="btn btn-reset" onclick="resetAll()">チェックリセット</button>
+  <button class="btn btn-past" id="btn-past" onclick="togglePastDays()" style="display:none">📁 過去N日を表示</button>
+  <button class="btn btn-skip-today" id="btn-skip-today" onclick="skipToday()">⏭ 今日は終わり：明日に振替</button>
+</div>
+
+<div id="schedule"></div>
+
+</div><!-- /tab-tasks -->
+
+<div class="footer">
+  ✅ チェックは自動保存されます（同じiPadなら次回も残ります）<br>
+  はるき ／ 1学期期末 日々のスケジュール（2026年6-7月）
+</div>
+
+</div>
+
+<script>
+const schedule = [
+  {
+    date: "6/21 (日) もう終わった日", time: "—", type: "holiday",
+    tasks: [
+      { s: "おつかれ", c: "s-misc", t: 0, txt: "6/21はここまででOK！この日のぶんは6/22以降にふりわけ済み。今日はDuolingo15分だけやって早めに休もう🌙" }
+    ]
+  },
+  {
+    date: "6/22 (月・部活)", time: "2h", type: "bukatsu",
+    tasks: [
+      { s: "授業", c: "s-hw", t: 15, txt: "📚 本日の授業範囲：問題集を該当ページ数問ずつ＋授業ノートと教科書の今日のページを見直し" },
+      { s: "英語A", c: "s-eng", t: 20, txt: "問題集「必修テキスト」P44〜P45を解く→答え合わせ（間違いは×印）→×がついた問題を教科書「BLUE SKY」で見直す" },
+      { s: "英語A", c: "s-eng", t: 20, txt: "問題集「必修テキスト」P46〜P47を解く→答え合わせ（間違いは×印）→×がついた問題を教科書「BLUE SKY」で見直す" },
+      { s: "英語B", c: "s-eng", t: 25, txt: "問題集「新中学問題集」第4章 助動詞 P44〜P46を解く→答え合わせ（間違いは×印）" },
+      { s: "数学(代数)", c: "s-math", t: 30, txt: "連立方程式（加減法）を教科書の例題で確認→問題集を5問解く→答え合わせ（間違いは×印）" }
+    ]
+  },
+  {
+    date: "6/23 (火・部活)", time: "2h", type: "bukatsu",
+    tasks: [
+      { s: "授業", c: "s-hw", t: 15, txt: "📚 本日の授業範囲：問題集を該当ページ数問ずつ＋ノートと教科書を見直し" },
+      { s: "英語A", c: "s-eng", t: 20, txt: "問題集「必修テキスト」P48〜P49を解く→答え合わせ（間違いは×印）→×を教科書「BLUE SKY」で見直す" },
+      { s: "英語A", c: "s-eng", t: 20, txt: "問題集「必修テキスト」P50〜P51を解く→答え合わせ（間違いは×印）→×を教科書「BLUE SKY」で見直す" },
+      { s: "数学(代数)", c: "s-math", t: 30, txt: "連立方程式（代入法）を問題集で5問解く→答え合わせ（間違いは×印）" },
+      { s: "理科I", c: "s-sci1", t: 25, txt: "原子・分子と元素記号を問題集「中学の理科 物理・化学」で解く→答え合わせ（間違いは×印）／周期表ページで元素記号を覚える" }
+    ]
+  },
+  {
+    date: "6/24 (水・部活)", time: "2h", type: "bukatsu",
+    tasks: [
+      { s: "授業", c: "s-hw", t: 15, txt: "📚 本日の授業範囲：問題集を該当ページ数問ずつ＋ノートと教科書を見直し" },
+      { s: "英語A", c: "s-eng", t: 20, txt: "問題集「必修テキスト」P52〜P53を解く→答え合わせ（間違いは×印）→×を教科書「BLUE SKY」で見直す" },
+      { s: "英語A", c: "s-eng", t: 20, txt: "問題集「必修テキスト」P54〜P55を解く→答え合わせ（間違いは×印）→×を教科書「BLUE SKY」で見直す" },
+      { s: "理科II", c: "s-sci2", t: 30, txt: "「栄養分を取り入れる」（消化と吸収）を問題集「中学の理科 生物・地学」で解く→答え合わせ（間違いは×印）" },
+      { s: "国語B", c: "s-jpn-b", t: 25, txt: "問題集「スパッと攻略国語文法」の活用する自立語（動詞の活用）を解く→答え合わせ（間違いは×印）" }
+    ]
+  },
+  {
+    date: "6/25 (木・部活)", time: "2h", type: "bukatsu",
+    tasks: [
+      { s: "授業", c: "s-hw", t: 15, txt: "📚 本日の授業範囲：問題集を該当ページ数問ずつ＋ノートと教科書を見直し" },
+      { s: "英語A", c: "s-eng", t: 20, txt: "問題集「必修テキスト」P56〜P57を解く→答え合わせ（間違いは×印）→×を教科書「BLUE SKY」で見直す" },
+      { s: "英語A", c: "s-eng", t: 20, txt: "問題集「必修テキスト」P58〜P59を解く→答え合わせ（間違いは×印）→×を教科書「BLUE SKY」で見直す" },
+      { s: "地理", c: "s-geo", t: 30, txt: "問題集「地理の学習」日本の地域的特色 前半を解く→答え合わせ（間違いは×印）" },
+      { s: "歴史", c: "s-his", t: 25, txt: "問題集「歴史の学習」天下統一（織田信長・豊臣秀吉）のページを解く→答え合わせ（間違いは×印）" }
+    ]
+  },
+  {
+    date: "6/26 (金・平)", time: "2h", type: "normal",
+    tasks: [
+      { s: "授業", c: "s-hw", t: 15, txt: "📚 本日の授業範囲：問題集を該当ページ数問ずつ＋ノートと教科書を見直し" },
+      { s: "英語A", c: "s-eng", t: 20, txt: "問題集「必修テキスト」P60〜P61を解く→答え合わせ（間違いは×印）→×を教科書「BLUE SKY」で見直す" },
+      { s: "英語A", c: "s-eng", t: 15, txt: "問題集「必修テキスト」P62を解く→答え合わせ（間違いは×印）→×を教科書「BLUE SKY」で見直す" },
+      { s: "数学(幾何)", c: "s-math", t: 35, txt: "図形の証明 No.1・No.2・No.3（確認テスト基本3問）を、まず自分で証明を書く→解説ページで答え合わせ" },
+      { s: "国語B", c: "s-jpn-b", t: 25, txt: "問題集の古文 枕草子・徒然草の問題演習を解く→答え合わせ（間違いは×印）" }
+    ]
+  },
+  {
+    date: "6/27 (土・休)", time: "5h", type: "holiday",
+    tasks: [
+      { s: "英語A", c: "s-eng", t: 30, txt: "問題集「必修テキスト」P44〜P62で、1周目に×だった問題のみ2周目を解く→答え合わせ（間違いは×印）" },
+      { s: "英語A", c: "s-eng", t: 20, txt: "教科書「BLUE SKY」Unit3 Part1〜Part3の本文を音読2回＋新出単語を3回ノートに書く" },
+      { s: "数学(幾何)", c: "s-math", t: 50, txt: "図形の証明 No.19①③・まとめ4・5・6（証明シート）を自分で書く→解説ページで答え合わせ" },
+      { s: "数学(代数)", c: "s-math", t: 40, txt: "連立方程式（文章題）を解く→答え合わせ（間違いは×印）" },
+      { s: "国語A", c: "s-jpn-a", t: 30, txt: "「人間は他の星に住むことができるのか」「味わうだけでは決まらない」の演習問題を解く→答え合わせ（間違いは×印）" },
+      { s: "理科I", c: "s-sci1", t: 30, txt: "化学式・化学反応式（係数合わせ）を問題集「中学の理科 物理・化学」で解く→答え合わせ（間違いは×印）" },
+      { s: "地理", c: "s-geo", t: 30, txt: "教科書P140〜P166を見ながら問題集「地理の学習」後半を解く→答え合わせ（間違いは×印）" },
+      { s: "歴史", c: "s-his", t: 30, txt: "問題集「歴史の学習」桃山文化〜江戸幕府の成立のページを解く→答え合わせ（間違いは×印）" }
+    ]
+  },
+  {
+    date: "6/28 (日・休) ⭐英語A 1周完了の日", time: "5h", type: "holiday",
+    tasks: [
+      { s: "英語A", c: "s-eng", t: 20, txt: "問題集「必修テキスト」P44〜P62で残った×をもう一度解く（これで範囲1周完了！）" },
+      { s: "英語A", c: "s-eng", t: 20, txt: "英単語テストページでBLUE SKY Unit3の単語をチェック→言えない単語を3回ノートに書く" },
+      { s: "理科II", c: "s-sci2", t: 30, txt: "「動物の呼吸」を問題集「中学の理科 生物・地学」で解く→答え合わせ（間違いは×印）" },
+      { s: "理科II", c: "s-sci2", t: 30, txt: "「不要な物質の行方」を問題集「中学の理科 生物・地学」で解く→答え合わせ（間違いは×印）" },
+      { s: "数学(幾何)", c: "s-math", t: 50, txt: "図形の証明 No.21①②③・No.22①②を自分で書く→解説ページで答え合わせ" },
+      { s: "国語B", c: "s-jpn-b", t: 30, txt: "問題集「スパッと攻略国語文法」活用する自立語で、1周目に×だった問題のみ2周目を解く→答え合わせ" },
+      { s: "国語A", c: "s-jpn-a", t: 30, txt: "自主学習の演習プリント・GW課題を解き直す→答え合わせ（間違いは×印）" },
+      { s: "数学(代数)", c: "s-math", t: 40, txt: "連立方程式を1問3分の目安で時計を置いて通し演習→答え合わせ（間違いは×印）※時間切れ対策" }
+    ]
+  },
+  {
+    date: "6/29 (月・部活)", time: "2h", type: "bukatsu",
+    tasks: [
+      { s: "授業", c: "s-hw", t: 15, txt: "📚 本日の授業範囲：問題集を該当ページ数問ずつ＋ノートと教科書を見直し" },
+      { s: "英語A", c: "s-eng", t: 25, txt: "問題集「必修テキスト」と「新中学問題集」助動詞で、1周目に×だった問題のみ2周目を解く→答え合わせ" },
+      { s: "理科I", c: "s-sci1", t: 40, txt: "教科書「未来へひろがるサイエンス2」P153〜P171を読み、問題集に出ていない太字・側注・図キャプションをノートに書き出す" },
+      { s: "数学(代数)", c: "s-math", t: 30, txt: "連立方程式（小数・分数・かっこを含む式）を解く→答え合わせ（間違いは×印）" }
+    ]
+  },
+  {
+    date: "6/30 (火・部活)", time: "2h", type: "bukatsu",
+    tasks: [
+      { s: "授業", c: "s-hw", t: 15, txt: "📚 本日の授業範囲：問題集を該当ページ数問ずつ＋ノートと教科書を見直し" },
+      { s: "理科II", c: "s-sci2", t: 35, txt: "「物質を運ぶ」（血液の循環）を問題集「中学の理科 生物・地学」で解く→答え合わせ（間違いは×印）＋理科資料集の血液・心臓の図を見る" },
+      { s: "数学(幾何)", c: "s-math", t: 35, txt: "図形の証明 全15問のうち前半（No.1〜まとめ6）を何も見ずに書けるか確認→書けない問題だけ解説ページで直す" },
+      { s: "歴史", c: "s-his", t: 30, txt: "教科書「未来をひらく」P108〜P125を読み、太字・側注・図キャプションをノートに書き出す（天下統一〜桃山文化）" }
+    ]
+  },
+  {
+    date: "7/1 (水・部活)", time: "2h", type: "bukatsu",
+    tasks: [
+      { s: "授業", c: "s-hw", t: 15, txt: "📚 本日の授業範囲：問題集を該当ページ数問ずつ＋ノートと教科書を見直し" },
+      { s: "地理", c: "s-geo", t: 30, txt: "地理の授業プリント・パワーポイントを見直し、重要語句を3回ノートに書く" },
+      { s: "理科I", c: "s-sci1", t: 30, txt: "問題集「中学の理科 物理・化学」×だけ2周目を解く→答え合わせ＋周期表ページで元素記号を覚え直す" },
+      { s: "国語A", c: "s-jpn-a", t: 30, txt: "「壁に残された伝言」と演習問題を解く→答え合わせ（間違いは×印）" }
+    ]
+  },
+  {
+    date: "7/2 (木・部活)", time: "2h", type: "bukatsu",
+    tasks: [
+      { s: "授業", c: "s-hw", t: 15, txt: "📚 本日の授業範囲：問題集を該当ページ数問ずつ＋ノートと教科書を見直し" },
+      { s: "数学(幾何)", c: "s-math", t: 35, txt: "図形の証明 全15問のうち後半（No.19〜No.22）を何も見ずに書けるか確認→書けない問題だけ解説ページで直す" },
+      { s: "理科II", c: "s-sci2", t: 35, txt: "動物の体のはたらき全範囲の×だけ2周目を解く→答え合わせ＋小テストで配られたプリントを解き直す" },
+      { s: "歴史", c: "s-his", t: 30, txt: "問題集「歴史の学習」×だけ2周目を解く→答え合わせ＋教科書の身分制度（士農工商）を確認" }
+    ]
+  },
+  {
+    date: "7/3 (金・平)", time: "2h", type: "normal",
+    tasks: [
+      { s: "授業", c: "s-hw", t: 15, txt: "📚 本日の授業範囲：問題集を該当ページ数問ずつ＋ノートと教科書を見直し" },
+      { s: "数学(代数)", c: "s-math", t: 35, txt: "連立方程式（文章題）を時間を計って通し演習→答え合わせ（間違いは×印）" },
+      { s: "地理", c: "s-geo", t: 30, txt: "問題集「地理の学習」×だけ2周目を解く→答え合わせ＋教科書P140〜P166の細部を確認" },
+      { s: "国語B", c: "s-jpn-b", t: 30, txt: "古文 枕草子・徒然草の口語訳・重要古語を確認＋文法×だけ2周目を解く" }
+    ]
+  },
+  {
+    date: "7/4 (土・休)", time: "5h", type: "holiday",
+    tasks: [
+      { s: "数学(幾何)", c: "s-math", t: 40, txt: "図形の証明 全15問を通しで何も見ずに証明→書けなかった問題だけ解説ページで直す" },
+      { s: "数学(代数)", c: "s-math", t: 40, txt: "連立方程式（加減法・代入法・文章題）を時間を計って本番想定で通し1セット→答え合わせ（間違いは×印）" },
+      { s: "理科I", c: "s-sci1", t: 40, txt: "問題集「中学の理科 物理・化学」を全問○まで＋教科書P153〜P171の太字・側注を最終ノート化" },
+      { s: "理科II", c: "s-sci2", t: 40, txt: "動物の体のはたらき全範囲＋理科資料集の図＋小テストプリントを最終確認（×だけ解き直す）" },
+      { s: "国語A", c: "s-jpn-a", t: 30, txt: "説明文3本の演習問題と演習プリント・GW課題の×だけ最終確認" },
+      { s: "地理", c: "s-geo", t: 30, txt: "問題集「地理の学習」＋授業プリント・パワーポイントの重要語句を最終確認" },
+      { s: "歴史", c: "s-his", t: 30, txt: "問題集「歴史の学習」＋教科書P108〜P125の細部を最終確認" }
+    ]
+  },
+  {
+    date: "7/5 (日・休) 🌟明日からテスト", time: "5h", type: "holiday",
+    tasks: [
+      { s: "英語A", c: "s-eng", t: 40, txt: "問題集「必修テキスト」「新中学問題集」助動詞の×を全部○に＋英単語テストページで最終チェック" },
+      { s: "国語B", c: "s-jpn-b", t: 30, txt: "活用する自立語・古文（枕草子・徒然草）の×だけ最終確認" },
+      { s: "理科I", c: "s-sci1", t: 30, txt: "周期表・元素記号・化学反応式（係数合わせ）を最終暗記" },
+      { s: "理科II", c: "s-sci2", t: 30, txt: "消化・呼吸・血液循環の図を理科資料集で最終確認" },
+      { s: "数学(代数)", c: "s-math", t: 40, txt: "連立方程式 ×だけ最終確認＋計算ミスゼロチェック（時計を置いて）" },
+      { s: "数学(幾何)", c: "s-math", t: 30, txt: "図形の証明 書けなかった問題だけ最終確認" },
+      { s: "テスト", c: "s-misc", t: 20, txt: "残った×を見直して早寝（夜更かしNG）" }
+    ]
+  },
+  {
+    date: "7/6 (月) テスト1日目", time: "5h", type: "test",
+    tasks: [
+      { s: "テスト", c: "s-misc", t: 0, txt: "🌅 朝：当日のテスト科目を×だけ最終チェック（新しい問題はやらない）" },
+      { s: "テスト", c: "s-misc", t: 120, txt: "帰宅後：翌日（7/7）のテスト科目に絞って仕上げ。×だけ最終確認" },
+      { s: "テスト", c: "s-misc", t: 0, txt: "早寝（夜更かしNG）" }
+    ]
+  },
+  {
+    date: "7/7 (火) テスト2日目", time: "5h", type: "test",
+    tasks: [
+      { s: "テスト", c: "s-misc", t: 0, txt: "🌅 朝：当日のテスト科目を×だけ最終チェック" },
+      { s: "テスト", c: "s-misc", t: 120, txt: "帰宅後：翌日（7/8）のテスト科目に絞って仕上げ。×だけ最終確認" },
+      { s: "テスト", c: "s-misc", t: 0, txt: "早寝（夜更かしNG）" }
+    ]
+  },
+  {
+    date: "7/8 (水) テスト3日目", time: "5h", type: "test",
+    tasks: [
+      { s: "テスト", c: "s-misc", t: 0, txt: "🌅 朝：当日のテスト科目を×だけ最終チェック" },
+      { s: "テスト", c: "s-misc", t: 120, txt: "帰宅後：翌日（7/9）のテスト科目に絞って仕上げ。×だけ最終確認" },
+      { s: "テスト", c: "s-misc", t: 0, txt: "早寝（夜更かしNG）" }
+    ]
+  },
+  {
+    date: "7/9 (木) テスト4日目", time: "5h", type: "test",
+    tasks: [
+      { s: "テスト", c: "s-misc", t: 0, txt: "🌅 朝：当日のテスト科目を×だけ最終チェック" },
+      { s: "テスト", c: "s-misc", t: 120, txt: "帰宅後：翌日（7/10）のテスト科目に絞って仕上げ。×だけ最終確認" },
+      { s: "テスト", c: "s-misc", t: 0, txt: "早寝（夜更かしNG）" }
+    ]
+  },
+  {
+    date: "7/10 (金) テスト最終日", time: "—", type: "test",
+    tasks: [
+      { s: "テスト", c: "s-misc", t: 0, txt: "🌅 朝：当日のテスト科目を×だけ最終チェック" },
+      { s: "テスト", c: "s-misc", t: 0, txt: "🎉 全テスト終了！おつかれさま！" }
+    ]
+  }
+];
+
+// 毎日の固定タスクを各日に差し込む（宿題・小テスト対策・英検面接5分）
+// 「授業」タスクは「宿題」に置き換える方針なので、元の授業タスクは取り除く
+schedule.forEach(day => {
+  if (day.time === "—") return; // 6/21（もう終わった日）・7/10（最終日）はスキップ
+  const isTest = day.type === "test";
+  day.tasks = day.tasks.filter(t => t.s !== "授業");
+  const daily = [];
+  if (!isTest) {
+    daily.push({ s: "宿題", c: "s-hw", t: 20, txt: "学校の宿題をやる＋わからない所は教科書・ノートで見直す" });
+    daily.push({ s: "小テスト", c: "s-quiz", t: 10, txt: "次の小テストの範囲を確認して、出そうな所を解く→答え合わせ（間違いは×印）" });
+  }
+  daily.push({ s: "英検", c: "s-eiken", t: 5, txt: "英検3級 二次（面接）対策：パッセージの音読＋質問1問を声に出して練習（5分）" });
+  day.tasks = daily.concat(day.tasks);
+});
+
+const STORAGE_KEY = "johoku-chu2-kimatsu-2026-07";
+const STAGE_KEY = STORAGE_KEY + "-stage";
+const INV_KEY = STORAGE_KEY + "-inv";
+const FRIENDS_KEY = STORAGE_KEY + "-friends";
+const DROPPED_KEY = STORAGE_KEY + "-dropped";
+const STREAK_KEY = STORAGE_KEY + "-streak";
+const LAST_DATE_KEY = STORAGE_KEY + "-last";
+
+function todayStr() {
+  const d = new Date();
+  return d.getFullYear() + "-" + (d.getMonth()+1).toString().padStart(2,"0") + "-" + d.getDate().toString().padStart(2,"0");
+}
+function yesterdayStr() {
+  const d = new Date();
+  d.setDate(d.getDate() - 1);
+  return d.getFullYear() + "-" + (d.getMonth()+1).toString().padStart(2,"0") + "-" + d.getDate().toString().padStart(2,"0");
+}
+
+function updateStreak() {
+  const today = todayStr();
+  const lastDate = localStorage.getItem(LAST_DATE_KEY);
+  let streak = parseInt(localStorage.getItem(STREAK_KEY) || "0");
+  if (lastDate === today) {
+  } else if (lastDate === yesterdayStr()) {
+    streak += 1;
+  } else {
+    streak = 1;
+  }
+  localStorage.setItem(STREAK_KEY, String(streak));
+  localStorage.setItem(LAST_DATE_KEY, today);
+  return streak;
+}
+
+function renderStreak() {
+  const today = todayStr();
+  const lastDate = localStorage.getItem(LAST_DATE_KEY);
+  const streak = parseInt(localStorage.getItem(STREAK_KEY) || "0");
+  const numEl = document.getElementById("streak-num");
+  const labelEl = document.getElementById("streak-label");
+  const badge = document.getElementById("streak-badge");
+  numEl.textContent = streak;
+  if (lastDate === today) {
+    badge.classList.remove("cold");
+    if (streak >= 7) labelEl.textContent = `すごい！${streak}日も続いてる！🌟`;
+    else if (streak >= 3) labelEl.textContent = "この調子！明日も続けよう♪";
+    else if (streak >= 1) labelEl.textContent = "今日もよくやった！";
+    else labelEl.textContent = "今日チェックすればスタート！";
+  } else if (lastDate === yesterdayStr()) {
+    badge.classList.remove("cold");
+    labelEl.textContent = "今日もチェックして記録をのばそう！";
+  } else {
+    badge.classList.add("cold");
+    if (streak > 0) labelEl.textContent = "1日サボった…でも気にせず再スタート！";
+    else labelEl.textContent = "毎日チェックして記録をのばそう";
+  }
+}
+
+const ITEMS = [
+  // === コモン（道具・材料・小物）30種 ===
+  { id: "nail",        emoji: "🔩", name: "ねじ・くぎ",   weight: 6, tier: "common" },
+  { id: "wood",        emoji: "🪵", name: "木材",         weight: 6, tier: "common" },
+  { id: "brick",       emoji: "🧱", name: "レンガ",       weight: 6, tier: "common" },
+  { id: "paint",       emoji: "🪣", name: "ペンキ",       weight: 6, tier: "common" },
+  { id: "wrench",      emoji: "🔧", name: "スパナ",       weight: 6, tier: "common" },
+  { id: "broom",       emoji: "🧹", name: "ほうき",       weight: 6, tier: "common" },
+  { id: "ruler",       emoji: "📏", name: "じょうぎ",     weight: 6, tier: "common" },
+  { id: "triruler",    emoji: "📐", name: "三角じょうぎ", weight: 6, tier: "common" },
+  { id: "pencil",      emoji: "✏️", name: "えんぴつ",     weight: 6, tier: "common" },
+  { id: "clip",        emoji: "📎", name: "クリップ",     weight: 6, tier: "common" },
+  { id: "sponge",      emoji: "🧽", name: "スポンジ",     weight: 6, tier: "common" },
+  { id: "bottle",      emoji: "🧴", name: "ボトル",       weight: 6, tier: "common" },
+  { id: "plug",        emoji: "🔌", name: "プラグ",       weight: 6, tier: "common" },
+  { id: "battery",     emoji: "🔋", name: "でんち",       weight: 6, tier: "common" },
+  { id: "bulb",        emoji: "💡", name: "電球",         weight: 6, tier: "common" },
+  { id: "candle",      emoji: "🕯️", name: "ろうそく",     weight: 6, tier: "common" },
+  { id: "thread",      emoji: "🧵", name: "いと",         weight: 6, tier: "common" },
+  { id: "needle",      emoji: "🪡", name: "ぬいばり",     weight: 6, tier: "common" },
+  { id: "cardboard",   emoji: "📦", name: "ダンボール",   weight: 6, tier: "common" },
+  { id: "trashcan",    emoji: "🗑️", name: "ゴミばこ",     weight: 6, tier: "common" },
+  { id: "sign",        emoji: "🪧", name: "立てかんばん", weight: 6, tier: "common" },
+  { id: "safetypin",   emoji: "🧷", name: "安全ピン",     weight: 6, tier: "common" },
+  { id: "key",         emoji: "🔑", name: "かぎ",         weight: 6, tier: "common" },
+  { id: "pushpin",     emoji: "📌", name: "画びょう",     weight: 6, tier: "common" },
+  { id: "screwdriver", emoji: "🪛", name: "ドライバー",   weight: 6, tier: "common" },
+  { id: "magnet",      emoji: "🧲", name: "じしゃく",     weight: 6, tier: "common" },
+  { id: "chain",       emoji: "⛓️", name: "くさり",       weight: 6, tier: "common" },
+  { id: "rope",        emoji: "🪢", name: "ロープ",       weight: 6, tier: "common" },
+  { id: "stone",       emoji: "🪨", name: "いし",         weight: 6, tier: "common" },
+  { id: "window",      emoji: "🪟", name: "まど",         weight: 6, tier: "common" },
+  // === アンコモン（工具・設備）25種 ===
+  { id: "hammer",      emoji: "🔨", name: "ハンマー",     weight: 3, tier: "uncommon" },
+  { id: "saw",         emoji: "🪚", name: "のこぎり",     weight: 3, tier: "uncommon" },
+  { id: "toolbox",     emoji: "🧰", name: "工具箱",       weight: 3, tier: "uncommon" },
+  { id: "ladder",      emoji: "🪜", name: "はしご",       weight: 3, tier: "uncommon" },
+  { id: "gear",        emoji: "⚙️", name: "歯車",         weight: 3, tier: "uncommon" },
+  { id: "door",        emoji: "🚪", name: "ドア",         weight: 3, tier: "uncommon" },
+  { id: "flashlight",  emoji: "🔦", name: "かいちゅう電灯", weight: 3, tier: "uncommon" },
+  { id: "extinguisher",emoji: "🧯", name: "消火器",       weight: 3, tier: "uncommon" },
+  { id: "plunger",     emoji: "🪠", name: "すっぽん",     weight: 3, tier: "uncommon" },
+  { id: "gloves",      emoji: "🧤", name: "作業てぶくろ", weight: 3, tier: "uncommon" },
+  { id: "goggles",     emoji: "🥽", name: "ゴーグル",     weight: 3, tier: "uncommon" },
+  { id: "pickaxe",     emoji: "⛏️", name: "つるはし",     weight: 3, tier: "uncommon" },
+  { id: "axe",         emoji: "🪓", name: "おの",         weight: 3, tier: "uncommon" },
+  { id: "hook",        emoji: "🪝", name: "フック",       weight: 3, tier: "uncommon" },
+  { id: "toolset",     emoji: "🛠️", name: "工具セット",   weight: 3, tier: "uncommon" },
+  { id: "hammerpick",  emoji: "⚒️", name: "つち＆つるはし", weight: 3, tier: "uncommon" },
+  { id: "clamp",       emoji: "🗜️", name: "クランプ",     weight: 3, tier: "uncommon" },
+  { id: "antenna",     emoji: "📡", name: "アンテナ",     weight: 3, tier: "uncommon" },
+  { id: "cart",        emoji: "🛒", name: "カート",       weight: 3, tier: "uncommon" },
+  { id: "barricade",   emoji: "🚧", name: "工事バリケード", weight: 3, tier: "uncommon" },
+  { id: "shower",      emoji: "🚿", name: "シャワー",     weight: 3, tier: "uncommon" },
+  { id: "mirror",      emoji: "🪞", name: "かがみ",       weight: 3, tier: "uncommon" },
+  { id: "bathtub",     emoji: "🛁", name: "バスタブ",     weight: 3, tier: "uncommon" },
+  { id: "toilet",      emoji: "🚽", name: "トイレ",       weight: 3, tier: "uncommon" },
+  { id: "faucet",      emoji: "🚰", name: "すいどう",     weight: 3, tier: "uncommon" },
+  // === レア（街のパーツ・乗り物）18種 ===
+  { id: "bike",        emoji: "🚲", name: "自転車",       weight: 1.5, tier: "rare" },
+  { id: "bench",       emoji: "🪑", name: "ベンチ",       weight: 1.5, tier: "rare" },
+  { id: "signal",      emoji: "🚦", name: "信号機",       weight: 1.5, tier: "rare" },
+  { id: "postbox",     emoji: "📮", name: "ポスト",       weight: 1.5, tier: "rare" },
+  { id: "busstop",     emoji: "🚏", name: "バス停",       weight: 1.5, tier: "rare" },
+  { id: "kickboard",   emoji: "🛴", name: "キックボード", weight: 1.5, tier: "rare" },
+  { id: "scooter",     emoji: "🛵", name: "スクーター",   weight: 1.5, tier: "rare" },
+  { id: "motorbike",   emoji: "🏍️", name: "バイク",       weight: 1.5, tier: "rare" },
+  { id: "car",         emoji: "🚗", name: "車",           weight: 1.5, tier: "rare" },
+  { id: "taxi",        emoji: "🚕", name: "タクシー",     weight: 1.5, tier: "rare" },
+  { id: "tree",        emoji: "🌳", name: "木",           weight: 1.5, tier: "rare" },
+  { id: "pine",        emoji: "🌲", name: "もみの木",     weight: 1.5, tier: "rare" },
+  { id: "flowerbed",   emoji: "🌷", name: "花だん",       weight: 1.5, tier: "rare" },
+  { id: "fountain",    emoji: "⛲", name: "ふんすい",     weight: 1.5, tier: "rare" },
+  { id: "clocktower",  emoji: "🕰️", name: "大時計",       weight: 1.5, tier: "rare" },
+  { id: "statue",      emoji: "🗿", name: "モニュメント", weight: 1.5, tier: "rare" },
+  { id: "atm",         emoji: "🏧", name: "ATM",          weight: 1.5, tier: "rare" },
+  { id: "pedsignal",   emoji: "🚥", name: "歩行者信号",   weight: 1.5, tier: "rare" },
+  // === 超レア（建物・車）12種（シークレット） ===
+  { id: "house",       emoji: "🏠", name: "いえ",         weight: 0.6, tier: "epic" },
+  { id: "house_garden",emoji: "🏡", name: "にわつきの家", weight: 0.6, tier: "epic" },
+  { id: "conveni",     emoji: "🏪", name: "コンビニ",     weight: 0.6, tier: "epic" },
+  { id: "depart",      emoji: "🏬", name: "デパート",     weight: 0.6, tier: "epic" },
+  { id: "hotel",       emoji: "🏨", name: "ホテル",       weight: 0.6, tier: "epic" },
+  { id: "postoffice",  emoji: "🏤", name: "ゆうびんきょく", weight: 0.6, tier: "epic" },
+  { id: "bank",        emoji: "🏦", name: "ぎんこう",     weight: 0.6, tier: "epic" },
+  { id: "bus",         emoji: "🚌", name: "バス",         weight: 0.6, tier: "epic" },
+  { id: "firetruck",   emoji: "🚒", name: "しょうぼう車", weight: 0.6, tier: "epic" },
+  { id: "policecar",   emoji: "🚓", name: "パトカー",     weight: 0.6, tier: "epic" },
+  { id: "ambulance",   emoji: "🚑", name: "きゅうきゅう車", weight: 0.6, tier: "epic" },
+  { id: "church",      emoji: "⛪", name: "きょうかい",   weight: 0.6, tier: "epic" },
+  // === プレミア（大きな施設）8種（シークレット） ===
+  { id: "building",    emoji: "🏢", name: "ビル",         weight: 0.35, tier: "premium" },
+  { id: "school",      emoji: "🏫", name: "がっこう",     weight: 0.35, tier: "premium" },
+  { id: "hospital",    emoji: "🏥", name: "びょういん",   weight: 0.35, tier: "premium" },
+  { id: "cityhall",    emoji: "🏛️", name: "やくしょ",     weight: 0.35, tier: "premium" },
+  { id: "stadium",     emoji: "🏟️", name: "スタジアム",   weight: 0.35, tier: "premium" },
+  { id: "factory",     emoji: "🏭", name: "こうじょう",   weight: 0.35, tier: "premium" },
+  { id: "circus",      emoji: "🎪", name: "サーカス",     weight: 0.35, tier: "premium" },
+  { id: "shrine",      emoji: "⛩️", name: "じんじゃ",     weight: 0.35, tier: "premium" },
+  // === 伝説（ランドマーク）5種（シークレット） ===
+  { id: "station",     emoji: "🚉", name: "えき",         weight: 0.18, tier: "legendary" },
+  { id: "tower",       emoji: "🗼", name: "タワー",       weight: 0.18, tier: "legendary" },
+  { id: "ferris",      emoji: "🎡", name: "かんらんしゃ", weight: 0.18, tier: "legendary" },
+  { id: "castle",      emoji: "🏯", name: "おしろ",       weight: 0.18, tier: "legendary" },
+  { id: "coaster",     emoji: "🎢", name: "ジェットコースター", weight: 0.18, tier: "legendary" },
+  // === 神話（街の宝）2種・最上位（シークレット） ===
+  { id: "bridge",      emoji: "🌉", name: "ゆめの大橋",   weight: 0.1, tier: "mythical" },
+  { id: "fireworks",   emoji: "🎆", name: "だい花火大会", weight: 0.1, tier: "mythical" }
+];
+
+function rollItem() {
+  const total = ITEMS.reduce((s, i) => s + i.weight, 0);
+  let r = Math.random() * total;
+  for (const item of ITEMS) {
+    r -= item.weight;
+    if (r <= 0) return item;
+  }
+  return ITEMS[0];
+}
+
+function loadInv() {
+  try { return JSON.parse(localStorage.getItem(INV_KEY) || "{}"); }
+  catch { return {}; }
+}
+function saveInv(inv) { localStorage.setItem(INV_KEY, JSON.stringify(inv)); }
+function loadFriends() { return parseInt(localStorage.getItem(FRIENDS_KEY) || "0"); }
+function saveFriends(n) { localStorage.setItem(FRIENDS_KEY, String(n)); }
+
+let inventory = loadInv();
+let friendsCount = loadFriends();
+
+function showItemDrop(item) {
+  const el = document.createElement("div");
+  el.className = "item-drop";
+  el.textContent = item.emoji;
+  el.style.left = (50 + (Math.random() - 0.5) * 30) + "vw";
+  el.style.top = "40vh";
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 1500);
+  const toast = document.createElement("div");
+  toast.className = "item-toast";
+  toast.textContent = `${item.emoji} ${item.name}をゲット！`;
+  document.body.appendChild(toast);
+  setTimeout(() => toast.remove(), 2400);
+}
+
+function dropItem() {
+  const item = rollItem();
+  inventory[item.id] = (inventory[item.id] || 0) + 1;
+  saveInv(inventory);
+  showItemDrop(item);
+}
+
+function renderInventory() {
+  const grid = document.getElementById("inventory-grid");
+  grid.innerHTML = "";
+  ITEMS.forEach(item => {
+    const count = inventory[item.id] || 0;
+    const div = document.createElement("div");
+    div.className = "inv-item" + (count > 0 ? " has" : "");
+    div.dataset.tier = item.tier || "common";
+    const tier = item.tier || "common";
+    const tierLabel = { common:"コモン", uncommon:"アンコモン", rare:"レア", epic:"超レア", premium:"プレミア", legendary:"伝説", mythical:"神話" }[tier];
+    // すべてのアイテムは「獲得するまで」シークレット（名前・デザイン非表示）
+    const isSecret = count === 0;
+    const displayEmoji = isSecret ? "❓" : item.emoji;
+    const displayName = isSecret ? "？？？" : item.name;
+    div.innerHTML = `
+      <div class="inv-tier ${tier}">${tierLabel}</div>
+      <div class="inv-emoji">${displayEmoji}</div>
+      <div class="inv-count">×${count}</div>
+      <div class="inv-name">${displayName}</div>
+    `;
+    grid.appendChild(div);
+  });
+}
+
+function renderFriends() {
+  const row = document.getElementById("friends-row");
+  row.innerHTML = "";
+  for (let i = 0; i < friendsCount; i++) {
+    const f = document.createElement("span");
+    f.className = "friend-penguin";
+    f.textContent = "🐧";
+    row.appendChild(f);
+  }
+}
+
+function renderSubjects() {
+  const SUBJECT_COLORS = {
+    "s-math":"#3b82f6","s-eng":"#8b5cf6","s-jpn-a":"#ec4899","s-jpn-b":"#f43f5e",
+    "s-sci1":"#10b981","s-sci2":"#14b8a6","s-his":"#f59e0b","s-geo":"#ea580c",
+    "s-kanji":"#d946ef","s-hw":"#92400e","s-misc":"#64748b",
+    "s-quiz":"#0ea5e9","s-eiken":"#06b6d4"
+  };
+  const counts = {};
+  schedule.forEach((day, di) => {
+    day.tasks.forEach((task, ti) => {
+      if (task.t === 0 || task.s === "休み" || task.s === "テスト" || task.s === "おつかれ") return;
+      const key = `${di}-${ti}`;
+      const subject = task.s;
+      if (!counts[subject]) counts[subject] = { done: 0, total: 0, color: task.c };
+      counts[subject].total++;
+      if (doneState[key]) counts[subject].done++;
+    });
+  });
+  const order = ["宿題","小テスト","英検","英語A","英語B","数学(代数)","数学(幾何)","国語A","国語B","理科I","理科II","地理","歴史"];
+  const rows = order.filter(s => counts[s]).map(s => {
+    const c = counts[s];
+    const pct = c.total > 0 ? Math.round(c.done/c.total*100) : 0;
+    const color = SUBJECT_COLORS[c.color] || "#64748b";
+    return `<div class="subj-row">
+      <span class="subj-tag" style="background:${color}">${s}</span>
+      <div class="subj-bar"><div class="subj-fill" style="width:${pct}%;background:${color}"></div></div>
+      <span class="subj-count">${c.done}/${c.total} (${pct}%)</span>
+    </div>`;
+  }).join('');
+  document.getElementById('subjects-rows').innerHTML = rows;
+}
+
+function renderTown() {
+  const container = document.getElementById("town-items");
+  const empty = document.getElementById("town-empty");
+  if (!container) return;
+  container.innerHTML = "";
+  const CAP = 8;
+  let total = 0;
+  // 大きい建物（神話・伝説…）を先に、道具を後ろに並べて街っぽく見せる
+  const tierOrder = ["mythical","legendary","premium","epic","rare","uncommon","common"];
+  const sorted = [...ITEMS].sort((a, b) => tierOrder.indexOf(a.tier) - tierOrder.indexOf(b.tier));
+  sorted.forEach(item => {
+    const count = Math.min(inventory[item.id] || 0, CAP);
+    for (let i = 0; i < count; i++) {
+      total++;
+      const el = document.createElement("span");
+      el.className = "town-item";
+      el.textContent = item.emoji;
+      const big = ["epic","premium","legendary","mythical"].includes(item.tier);
+      el.style.fontSize = (big ? 34 : 22) + "px";
+      if (["legendary","mythical"].includes(item.tier)) {
+        el.style.filter = "drop-shadow(0 0 6px rgba(255,215,0,0.85))";
+      }
+      container.appendChild(el);
+    }
+  });
+  if (empty) empty.style.display = total > 0 ? "none" : "flex";
+}
+
+const PET_STAGES = [
+  { min: 0,   emoji: "🏞️",     name: "さら地",         msg: "まだ何もない原っぱ。ここから街をつくろう！" },
+  { min: 8,   emoji: "🚧",      name: "工事スタート",   msg: "工事がはじまった！" },
+  { min: 16,  emoji: "🏠",      name: "家が1軒",        msg: "さいしょの家が建った！" },
+  { min: 24,  emoji: "🏡",      name: "小さな村",       msg: "ぽつぽつ家が増えてきた" },
+  { min: 32,  emoji: "🏘️",     name: "村",             msg: "村になってきた！" },
+  { min: 40,  emoji: "🏘️",     name: "にぎやかな村",   msg: "お店もできた！" },
+  { min: 50,  emoji: "🏬",      name: "町",             msg: "町になった！" },
+  { min: 60,  emoji: "🏙️",     name: "中くらいの町",   msg: "ビルが建ちはじめた" },
+  { min: 70,  emoji: "🏙️",     name: "大きな町",       msg: "どんどん発展中！" },
+  { min: 80,  emoji: "🌆",      name: "都市",           msg: "立派な都市になった！" },
+  { min: 88,  emoji: "🌆✨",    name: "かがやく都市",   msg: "夜景がきれい✨" },
+  { min: 95,  emoji: "🌃",      name: "大都市",         msg: "あと少しで完成！" },
+  { min: 100, emoji: "🏰👑",    name: "ハルキ王国",     msg: "街が完成！合格まちがいなし🎉" }
+];
+
+function getStage(pct) {
+  let idx = 0;
+  for (let i = 0; i < PET_STAGES.length; i++) {
+    if (pct >= PET_STAGES[i].min) idx = i;
+  }
+  return idx;
+}
+
+function showConfetti() {
+  const items = ["🎉","✨","⭐","🎊","💫","🌟"];
+  for (let i = 0; i < 8; i++) {
+    setTimeout(() => {
+      const el = document.createElement("div");
+      el.className = "confetti";
+      el.textContent = items[Math.floor(Math.random() * items.length)];
+      const x = (Math.random() - 0.5) * 60;
+      el.style.marginLeft = x + "vw";
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 1200);
+    }, i * 80);
+  }
+}
+
+function loadDone() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}"); }
+  catch { return {}; }
+}
+function saveDone(state) { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+
+let doneState = loadDone();
+
+function getPastCutoff() {
+  const todayDi = getTodayDi();
+  if (todayDi < 0) {
+    // スケジュール期間外。今日より前の日は全部「過去」
+    return getElapsedCutoff();
+  }
+  const t = new Date();
+  const todayKey = `${t.getMonth()+1}-${t.getDate()}`;
+  const skippedDate = localStorage.getItem(STORAGE_KEY + "-skipped-date");
+  return skippedDate === todayKey ? todayDi + 1 : todayDi;
+}
+
+// 今日がスケジュールに無い場合：今日より前の日付を過去としてカウント
+function getElapsedCutoff() {
+  const t = new Date();
+  const today = new Date(t.getFullYear(), t.getMonth(), t.getDate());
+  let cutoff = 0;
+  for (let i = 0; i < schedule.length; i++) {
+    const p = parseScheduleDate(schedule[i].date);
+    if (!p) continue;
+    const d = new Date(2026, p.month - 1, p.day);
+    if (d < today) cutoff = i + 1; else break;
+  }
+  return cutoff;
+}
+
+function skipToday() {
+  const t = new Date();
+  const todayKey = `${t.getMonth()+1}-${t.getDate()}`;
+  const cur = localStorage.getItem(STORAGE_KEY + "-skipped-date");
+  if (cur === todayKey) {
+    localStorage.removeItem(STORAGE_KEY + "-skipped-date");
+  } else {
+    localStorage.setItem(STORAGE_KEY + "-skipped-date", todayKey);
+  }
+  render();
+}
+
+function getTodayDi() {
+  const t = new Date();
+  const todayKey = `${t.getMonth()+1}-${t.getDate()}`;
+  for (let i = 0; i < schedule.length; i++) {
+    const p = parseScheduleDate(schedule[i].date);
+    if (p && `${p.month}-${p.day}` === todayKey) return i;
+  }
+  return -1;
+}
+
+function collectCarryover() {
+  const cutoff = getPastCutoff();
+  const result = [];
+  if (cutoff <= 0) return result;
+  for (let di = 0; di < cutoff; di++) {
+    const day = schedule[di];
+    day.tasks.forEach((task, ti) => {
+      if (task.t === 0) return;
+      const key = `${di}-${ti}`;
+      if (!doneState[key]) {
+        result.push({ di, ti, key, day, task });
+      }
+    });
+  }
+  return result;
+}
+
+function distributeCarryover() {
+  const todayDi = getTodayDi();
+  const result = new Map();
+  const carry = collectCarryover();
+  if (carry.length === 0) return result;
+
+  // 配分先候補：今日（または「今日は終わり」なら明日）以降、完全休み日（time:"—"）除外、土日(holiday)除外
+  const targets = [];
+  const startDi = Math.max(getPastCutoff(), todayDi >= 0 ? todayDi : getElapsedCutoff());
+  for (let di = startDi; di < schedule.length; di++) {
+    const day = schedule[di];
+    if (day.time === "—") continue;
+    if (day.type === "holiday") continue;
+    targets.push(di);
+  }
+  if (targets.length === 0) {
+    // テスト日含めても候補が無いとき：休日も含めて再探索
+    for (let di = startDi; di < schedule.length; di++) {
+      if (schedule[di].time === "—") continue;
+      targets.push(di);
+    }
+  }
+  if (targets.length === 0) return result;
+
+  const load = new Map();
+  targets.forEach(di => {
+    const sum = schedule[di].tasks.reduce((s, t) => s + (t.t || 0), 0);
+    load.set(di, sum);
+    result.set(di, []);
+  });
+
+  [...carry].sort((a, b) => b.task.t - a.task.t).forEach(item => {
+    let bestDi = targets[0];
+    let bestLoad = load.get(bestDi);
+    targets.forEach(di => {
+      if (load.get(di) < bestLoad) {
+        bestDi = di;
+        bestLoad = load.get(di);
+      }
+    });
+    result.get(bestDi).push(item);
+    load.set(bestDi, load.get(bestDi) + item.task.t);
+  });
+  return result;
+}
+
+let _firstRender = true;
+function render() {
+  const container = document.getElementById("schedule");
+  const openIdx = new Set();
+  container.querySelectorAll(".day.open").forEach(d => {
+    const i = parseInt(d.dataset.di);
+    if (!isNaN(i)) openIdx.add(i);
+  });
+  container.innerHTML = "";
+  let totalTasks = 0;
+  let doneTasks = 0;
+  const todayDi = getTodayDi();
+  const distribution = distributeCarryover();
+  let pastHiddenCount = 0;
+
+  const showPast = localStorage.getItem(STORAGE_KEY + "-show-past") === "1";
+  const pastCutoff = getPastCutoff();
+
+  schedule.forEach((day, di) => {
+    const isPast = di < pastCutoff;
+    const isToday = di === todayDi && di >= pastCutoff;
+
+    if (isPast) {
+      pastHiddenCount++;
+      if (!showPast) {
+        day.tasks.forEach((task, ti) => {
+          totalTasks++;
+          if (doneState[`${di}-${ti}`]) doneTasks++;
+        });
+        return;
+      }
+    }
+
+    const dayEl = document.createElement("div");
+    dayEl.className = "day " + day.type;
+    dayEl.dataset.di = di;
+    if (!isPast && ((_firstRender && isToday) || openIdx.has(di))) dayEl.classList.add("open");
+
+    const allDone = day.tasks.every((_, ti) => doneState[`${di}-${ti}`]);
+    let tasksHtml = "";
+
+    const carryItems = distribution.get(di) || [];
+    carryItems.forEach(({key, task}) => {
+      const isDone = !!doneState[key];
+      tasksHtml += `
+        <div class="task carry-virtual ${isDone ? "done" : ""}" onclick="toggleTask('${key}')">
+          <div class="checkbox"><span class="check-icon">✓</span></div>
+          <div class="task-content">
+            <span class="task-subject ${task.c}">${task.s}</span>
+            ${task.t > 0 ? `<span class="task-time">${task.t}分・繰越</span>` : ""}
+            <div class="task-text">${task.txt}</div>
+          </div>
+        </div>
+      `;
+    });
+
+    day.tasks.forEach((task, ti) => {
+      const key = `${di}-${ti}`;
+      const isDone = !!doneState[key];
+      totalTasks++;
+      if (isDone) doneTasks++;
+      tasksHtml += `
+        <div class="task ${isDone ? "done" : ""}" onclick="toggleTask('${key}')">
+          <div class="checkbox"><span class="check-icon">✓</span></div>
+          <div class="task-content">
+            <span class="task-subject ${task.c}">${task.s}</span>
+            ${task.t > 0 ? `<span class="task-time">${task.t}分</span>` : ""}
+            <div class="task-text">${task.txt}</div>
+          </div>
+        </div>
+      `;
+    });
+
+    const carryCount = carryItems.length;
+    const carryMin = carryItems.reduce((s, x) => s + (x.task.t || 0), 0);
+    const totalCount = day.tasks.length + carryCount;
+    const ownMin = day.tasks.reduce((s, t) => s + (t.t || 0), 0);
+    const totalMin = ownMin + carryMin;
+    let dayTimeLabel;
+    if (day.time === "—" && totalMin === 0) dayTimeLabel = "—";
+    else if (totalMin === 0) dayTimeLabel = "0h";
+    else if (totalMin % 60 === 0) dayTimeLabel = `${totalMin / 60}h`;
+    else dayTimeLabel = `${(totalMin / 60).toFixed(1)}h`;
+    const metaText = `${totalCount}タスク` + (carryCount > 0 ? `（うち繰越${carryCount}）` : "");
+
+    dayEl.innerHTML = `
+      <div class="day-header" onclick="toggleDay(${di})">
+        <div>
+          <div class="day-title">${allDone ? "✅ " : ""}${day.date}</div>
+          <div class="day-meta">${metaText}</div>
+        </div>
+        <div style="display:flex;align-items:center">
+          <span class="day-time ${day.type}">${dayTimeLabel}</span>
+          <span class="arrow">▼</span>
+        </div>
+      </div>
+      <div class="day-body">${tasksHtml}</div>
+    `;
+    container.appendChild(dayEl);
+  });
+
+  const btnPast = document.getElementById("btn-past");
+  if (btnPast) {
+    if (pastHiddenCount > 0) {
+      btnPast.style.display = "";
+      btnPast.textContent = showPast ? `📁 過去${pastHiddenCount}日を隠す` : `📁 過去${pastHiddenCount}日を表示`;
+    } else {
+      btnPast.style.display = "none";
+    }
+  }
+
+  const btnSkip = document.getElementById("btn-skip-today");
+  if (btnSkip) {
+    if (todayDi < 0) {
+      btnSkip.style.display = "none";
+    } else {
+      btnSkip.style.display = "";
+      const t = new Date();
+      const todayKey = `${t.getMonth()+1}-${t.getDate()}`;
+      const skippedDate = localStorage.getItem(STORAGE_KEY + "-skipped-date");
+      btnSkip.textContent = skippedDate === todayKey ? "↩️ 今日の予定に戻す" : "⏭ 今日は終わり：明日に振替";
+    }
+  }
+
+  const pct = totalTasks > 0 ? Math.round((doneTasks / totalTasks) * 100) : 0;
+  document.getElementById("progress-text").textContent = `${doneTasks} / ${totalTasks}`;
+  document.getElementById("progress-fill").style.width = pct + "%";
+  document.getElementById("progress-percent").textContent = pct + "%";
+
+  const stageIdx = getStage(pct);
+  const stage = PET_STAGES[stageIdx];
+  const prevStageIdx = parseInt(localStorage.getItem(STAGE_KEY) || "0");
+  document.getElementById("pet-emoji").textContent = stage.emoji;
+  document.getElementById("pet-name").textContent = stage.name;
+  document.getElementById("pet-message").textContent = stage.msg;
+  document.getElementById("pet-stage-label").textContent = `レベル ${stageIdx + 1} / ${PET_STAGES.length}`;
+
+  const dotBar = document.getElementById("pet-stage-bar");
+  dotBar.innerHTML = "";
+  for (let i = 0; i < PET_STAGES.length; i++) {
+    const dot = document.createElement("div");
+    dot.className = "pet-stage-dot" + (i <= stageIdx ? " active" : "");
+    dotBar.appendChild(dot);
+  }
+
+  if (stageIdx > prevStageIdx) {
+    const petEl = document.getElementById("pet-emoji");
+    petEl.classList.add("celebrate");
+    setTimeout(() => petEl.classList.remove("celebrate"), 700);
+    showConfetti();
+  }
+  localStorage.setItem(STAGE_KEY, String(stageIdx));
+
+  renderInventory();
+  renderTown();
+  renderSubjects();
+  renderCountdown();
+  _firstRender = false;
+}
+
+function renderCountdown() {
+  const test = new Date(2026, 6, 6);
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const diff = Math.round((test - today) / 86400000);
+  const el = document.getElementById("cd-goal");
+  if (!el) return;
+  if (diff > 1) el.textContent = `📚 期末まで あと ${diff}日（本番 7/6〜7/10）`;
+  else if (diff === 1) el.textContent = "🔥 期末は明日！明日の科目だけに絞ろう";
+  else if (diff === 0) el.textContent = "🎯 期末初日！落ち着いていこう";
+  else if (diff > -5) el.textContent = "🔥 期末テスト中！帰ったら翌日の科目に絞ろう";
+  else el.textContent = "🎉 期末おつかれさま！";
+}
+
+function loadDropped() {
+  try { return JSON.parse(localStorage.getItem(DROPPED_KEY) || "{}"); }
+  catch { return {}; }
+}
+function saveDropped(d) { localStorage.setItem(DROPPED_KEY, JSON.stringify(d)); }
+
+function toggleTask(key) {
+  const wasOn = !!doneState[key];
+  doneState[key] = !wasOn;
+  saveDone(doneState);
+  if (!wasOn) {
+    const dropped = loadDropped();
+    if (!dropped[key]) {
+      dropItem();
+      setTimeout(() => dropItem(), 200);
+      dropped[key] = true;
+      saveDropped(dropped);
+    }
+    updateStreak();
+    renderStreak();
+  }
+  render();
+}
+
+function toggleDay(di) {
+  const el = document.querySelector(`.day[data-di="${di}"]`);
+  if (el) el.classList.toggle("open");
+}
+
+const TAB_KEY = STORAGE_KEY + "-tab";
+function switchTab(name) {
+  document.querySelectorAll(".tab-btn").forEach(b => b.classList.toggle("active", b.dataset.tab === name));
+  document.querySelectorAll(".tab-content").forEach(c => c.classList.toggle("active", c.id === "tab-" + name));
+  localStorage.setItem(TAB_KEY, name);
+  if (name === "calendar") renderCalendar();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+(function restoreTab() {
+  const saved = localStorage.getItem(TAB_KEY);
+  const valid = ["tasks", "calendar", "range", "achievement"];
+  switchTab(valid.includes(saved) ? saved : "tasks");
+})();
+
+function parseScheduleDate(s) {
+  const m = s.match(/^(\d+)\/(\d+)/);
+  if (!m) return null;
+  return { month: parseInt(m[1]), day: parseInt(m[2]) };
+}
+
+function renderCalendar() {
+  const grid = document.getElementById("cal-grid");
+  if (!grid) return;
+  grid.innerHTML = "";
+  const heads = ["日", "月", "火", "水", "木", "金", "土"];
+  heads.forEach((h, i) => {
+    const el = document.createElement("div");
+    el.className = "cal-head" + (i === 0 ? " sun" : i === 6 ? " sat" : "");
+    el.textContent = h;
+    grid.appendChild(el);
+  });
+  const dateToIdx = {};
+  schedule.forEach((day, di) => {
+    const p = parseScheduleDate(day.date);
+    if (p) dateToIdx[`${p.month}-${p.day}`] = di;
+  });
+  const firstP = parseScheduleDate(schedule[0].date);
+  const lastP = parseScheduleDate(schedule[schedule.length - 1].date);
+  const year = 2026;
+  const firstDate = new Date(year, firstP.month - 1, firstP.day);
+  const lastDate = new Date(year, lastP.month - 1, lastP.day);
+  const startDate = new Date(firstDate);
+  startDate.setDate(startDate.getDate() - startDate.getDay());
+  const endDate = new Date(lastDate);
+  endDate.setDate(endDate.getDate() + (6 - endDate.getDay()));
+
+  const today = new Date();
+  const todayKey = `${today.getMonth()+1}-${today.getDate()}`;
+  const cur = new Date(startDate);
+  while (cur <= endDate) {
+    const m = cur.getMonth() + 1;
+    const d = cur.getDate();
+    const key = `${m}-${d}`;
+    const di = dateToIdx[key];
+    const cell = document.createElement("div");
+    if (di === undefined) {
+      cell.className = "cal-cell empty";
+    } else {
+      const day = schedule[di];
+      cell.className = "cal-cell " + day.type;
+      if (key === todayKey) cell.classList.add("today");
+      const total = day.tasks.length;
+      const done = day.tasks.filter((_, ti) => doneState[`${di}-${ti}`]).length;
+      if (total > 0 && done === total) cell.classList.add("done");
+      const date = document.createElement("div");
+      date.className = "cal-date";
+      date.textContent = d;
+      cell.appendChild(date);
+      const tagText = day.type === "test" ? "テスト" : day.type === "holiday" ? "休" : day.type === "bukatsu" ? "部活" : "";
+      if (tagText) {
+        const tag = document.createElement("div");
+        tag.className = "cal-tag";
+        tag.style.background = day.type === "test" ? "#ef4444" : day.type === "holiday" ? "#10b981" : "#f59e0b";
+        tag.style.color = "white";
+        tag.textContent = tagText;
+        cell.appendChild(tag);
+      }
+      const meta = document.createElement("div");
+      meta.className = "cal-meta";
+      if (total > 0) meta.textContent = `${done}/${total}`;
+      else meta.textContent = day.time && day.time !== "—" ? day.time : "";
+      cell.appendChild(meta);
+      cell.onclick = () => jumpToDay(di);
+    }
+    grid.appendChild(cell);
+    cur.setDate(cur.getDate() + 1);
+  }
+}
+
+function jumpToDay(di) {
+  switchTab("tasks");
+  setTimeout(() => {
+    const el = document.querySelector(`.day[data-di="${di}"]`);
+    if (el) {
+      el.classList.add("open");
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+      el.style.transition = "box-shadow 0.6s";
+      el.style.boxShadow = "0 0 0 4px #ea580c";
+      setTimeout(() => { el.style.boxShadow = ""; }, 1500);
+    }
+  }, 200);
+}
+
+function togglePastDays() {
+  const key = STORAGE_KEY + "-show-past";
+  const cur = localStorage.getItem(key) === "1";
+  localStorage.setItem(key, cur ? "0" : "1");
+  render();
+}
+
+function expandAll() { document.querySelectorAll(".day").forEach(d => d.classList.add("open")); }
+function collapseAll() { document.querySelectorAll(".day").forEach(d => d.classList.remove("open")); }
+
+function resetItemsOnly() {
+  if (!confirm("アイテムとともだちペンギンだけリセットしますか？\n（タスクのチェック・れんぞく日数はのこります）")) return;
+  inventory = {};
+  friendsCount = 0;
+  saveInv(inventory);
+  saveFriends(friendsCount);
+  localStorage.removeItem(DROPPED_KEY);
+  render();
+}
+
+function resetAll() {
+  if (!confirm("すべてのチェックをリセットしますか？\n（ペンギン・アイテム・ともだち・れんぞく日数もリセットされます）")) return;
+  doneState = {};
+  inventory = {};
+  friendsCount = 0;
+  saveDone(doneState);
+  saveInv(inventory);
+  saveFriends(friendsCount);
+  localStorage.removeItem(STAGE_KEY);
+  localStorage.removeItem(STREAK_KEY);
+  localStorage.removeItem(LAST_DATE_KEY);
+  localStorage.removeItem(DROPPED_KEY);
+  render();
+  renderStreak();
+}
+
+render();
+renderStreak();
+
+function scheduleMidnightRefresh() {
+  const now = new Date();
+  const next = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 5);
+  const msUntil = next - now;
+  setTimeout(() => {
+    render();
+    renderStreak();
+    scheduleMidnightRefresh();
+  }, msUntil);
+}
+scheduleMidnightRefresh();
+
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible") {
+    render();
+    renderStreak();
+  }
+});
+</script>
+</body>
+</html>

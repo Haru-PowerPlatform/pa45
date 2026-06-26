@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>はるきの毎日タスク | はるき学習計画</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;background:linear-gradient(180deg,#ecfdf5 0%,#a7f3d0 50%,#6ee7b7 100%);color:#0f172a;line-height:1.7;padding:16px 12px 70px;min-height:100vh}
+  .wrap{max-width:680px;margin:0 auto}
+  header{background:linear-gradient(135deg,#059669,#0d9488);color:#fff;border-radius:18px;padding:22px 18px;text-align:center;box-shadow:0 6px 20px rgba(5,150,105,.3)}
+  header h1{font-size:21px}
+  header .sub{font-size:13px;opacity:.95;margin-top:6px}
+
+  .today{background:#fff;border:2px solid #059669;border-radius:14px;padding:16px;margin:14px 0;text-align:center;box-shadow:0 3px 12px rgba(5,150,105,.15)}
+  .today .date{font-size:22px;font-weight:800;color:#047857}
+  .today .streak{font-size:14px;color:#b45309;font-weight:700;margin-top:6px}
+  .today .allclear{font-size:14px;font-weight:800;color:#059669;margin-top:6px;display:none}
+  .today.done .allclear{display:block}
+
+  .task{background:#fff;border-radius:14px;padding:14px 14px;margin:12px 0;box-shadow:0 3px 12px rgba(0,0,0,.07);border-left:6px solid #34d399}
+  .task.key{border-left-color:#dc2626;background:#fff7f7}
+  .task.org{border-left-color:#2563eb;background:#f5f9ff}
+  .task .ttl{display:flex;align-items:flex-start;gap:12px;cursor:pointer}
+  .task .ttl input{width:26px;height:26px;margin-top:2px;flex:0 0 auto;accent-color:#059669}
+  .task.key .ttl input{accent-color:#dc2626}
+  .task.org .ttl input{accent-color:#2563eb}
+  .task .ttl .name{font-size:16px;font-weight:800;color:#065f46}
+  .task.key .ttl .name{color:#b91c1c}
+  .task.org .ttl .name{color:#1d4ed8}
+  .task .ttl .name .badge{font-size:11px;background:#dc2626;color:#fff;border-radius:6px;padding:1px 7px;margin-left:6px;vertical-align:middle}
+  .task .desc{font-size:13px;color:#475569;margin:6px 0 0 38px}
+  .task.checked .ttl .name{text-decoration:line-through;color:#94a3b8}
+  .memo{display:flex;align-items:center;gap:8px;margin:8px 0 0 38px}
+  .memo label{font-size:12px;color:#64748b;flex:0 0 auto}
+  .memo input{flex:1;border:1px solid #d1fae5;border-radius:8px;padding:6px 9px;font-size:13px;font-family:inherit}
+  .memo input:focus{outline:2px solid #6ee7b7;border-color:#34d399}
+
+  .testcard{background:#fffbeb;border:2px solid #f59e0b;border-radius:14px;padding:14px;margin:14px 0}
+  .testcard h2{font-size:15px;color:#92400e;margin-bottom:4px}
+  .testcard p{font-size:12.5px;color:#b45309;margin-bottom:10px}
+  .trow{display:flex;align-items:center;gap:8px;margin:7px 0}
+  .trow label{font-size:13px;color:#78350f;font-weight:700;flex:0 0 4.5em}
+  .trow input{flex:1;border:1px solid #fde68a;border-radius:8px;padding:7px 9px;font-size:13px;font-family:inherit;background:#fff}
+
+  .coincard{background:linear-gradient(135deg,#7c3aed,#db2777);color:#fff;border-radius:16px;padding:16px;margin:14px 0;text-align:center;box-shadow:0 4px 16px rgba(124,58,237,.3)}
+  .coincard .coins{font-size:16px;font-weight:800;margin-bottom:12px}
+  .coincard .coins .c{font-size:24px}
+  .coincard a{display:inline-block;background:#fff;color:#7c3aed;border-radius:999px;padding:13px 26px;font-size:16px;font-weight:800;text-decoration:none;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+  .coincard .hint{font-size:11.5px;opacity:.92;margin-top:10px;line-height:1.5}
+
+  .week{background:#fff;border-radius:14px;padding:14px;margin:14px 0;box-shadow:0 3px 12px rgba(0,0,0,.07)}
+  .week h2{font-size:15px;color:#047857;margin-bottom:10px}
+  .wgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;text-align:center}
+  .wgrid .wd{font-size:11px;color:#64748b}
+  .wgrid .wc{border-radius:10px;padding:8px 2px;background:#f1f5f9;font-size:13px;font-weight:700;color:#334155}
+  .wgrid .wc.done{background:#d1fae5;color:#047857}
+  .wgrid .wc.today{outline:2px solid #f59e0b}
+  .wgrid .wc .mk{font-size:16px;display:block;line-height:1}
+
+  .foot{text-align:center;color:#047857;font-size:12.5px;margin-top:22px;line-height:1.8}
+  .back{color:#047857;font-weight:700;text-decoration:none}
+  .reset{background:transparent;border:1px solid #6ee7b7;color:#047857;border-radius:8px;padding:6px 12px;font-size:12px;cursor:pointer}
+
+  /* === 共通サイドバー === */
+  .navbtn{position:fixed;top:12px;left:12px;z-index:60;background:#047857;color:#fff;border:2px solid #fff;border-radius:10px;width:46px;height:46px;font-size:22px;line-height:1;box-shadow:0 3px 10px rgba(0,0,0,.3);cursor:pointer}
+  .topback{position:fixed;top:12px;right:12px;z-index:60;background:#fff;color:#047857;border:2px solid #059669;border-radius:10px;height:46px;padding:0 14px;font-size:14px;font-weight:800;box-shadow:0 3px 10px rgba(0,0,0,.2);cursor:pointer}
+  .navmask{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:65;display:none}
+  .navmask.open{display:block}
+  .sidebar{position:fixed;top:0;left:-300px;width:270px;height:100%;background:#f0f9ff;z-index:70;box-shadow:2px 0 18px rgba(0,0,0,.25);transition:left .25s;padding:16px 14px;overflow-y:auto}
+  .sidebar.open{left:0}
+  .sidebar .navttl{font-size:15px;color:#1e3a8a;font-weight:800;margin:2px 0 12px;padding-bottom:10px;border-bottom:2px solid #93c5fd}
+  .sidebar .closex{float:right;font-size:18px;color:#1e3a8a;background:none;border:none;cursor:pointer}
+  .sidebar a{display:block;padding:13px 12px;margin:7px 0;border-radius:10px;text-decoration:none;color:#1e3a8a;font-weight:700;font-size:14.5px;background:#fff;border:1px solid #bfdbfe}
+  .sidebar a.active{background:linear-gradient(135deg,#2563eb,#1e3a8a);color:#fff;border-color:#1e3a8a}
+</style>
+</head>
+<body>
+<button class="navbtn" onclick="toggleNav()" aria-label="メニュー">☰</button>
+<button class="topback" onclick="history.back()">← 戻る</button>
+<div class="navmask" id="navmask" onclick="toggleNav()"></div>
+<nav class="sidebar" id="sidebar">
+  <button class="closex" onclick="toggleNav()">✕</button>
+  <div class="navttl">📚 はるき学習計画メニュー</div>
+  <a href="index.html">🏠 学習計画トップ</a>
+  <a href="mainichi.html" class="active">📅 毎日タスク</a>
+  <a href="gacha.html">🎰 がんばりガチャ</a>
+  <a href="kimatsu/">🔥 期末 対策トップ</a>
+  <a href="kimatsu/shoumei-kaitou.html">📐 図形の証明 解説</a>
+  <a href="shuukihyou.html">🧪 元素 周期表・覚え方</a>
+  <a href="jitsuryoku/eng-vocab.html">🔊 英単語テスト</a>
+</nav>
+<script>function toggleNav(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('navmask').classList.toggle('open');}</script>
+
+<div class="wrap">
+  <header>
+    <h1>📅 はるきの毎日タスク</h1>
+    <div class="sub">毎日コツコツ→コインをためてガチャ→まちが育つ！</div>
+  </header>
+
+  <div class="today" id="today">
+    <div class="date" id="todayDate">―</div>
+    <div class="streak" id="streak"></div>
+    <div class="allclear">🎉 今日のぶん ぜんぶクリア！ボーナスコイン＋2！</div>
+  </div>
+
+  <!-- 毎日のルーティン -->
+  <div class="task" data-k="t1">
+    <label class="ttl"><input type="checkbox"><span class="name">📘 問題集の復習</span></label>
+    <div class="desc">今日、学校の授業でやったところを<b>問題集で解く</b>。まちがえた問題に「×」をつけて、もう一度解く。</div>
+    <div class="memo"><label>今日の範囲:</label><input type="text" data-m="m1" placeholder="例：数学 体系問題集 P◯◯"></div>
+  </div>
+
+  <div class="task" data-k="t2">
+    <label class="ttl"><input type="checkbox"><span class="name">📕 英語の教科書をおぼえる</span></label>
+    <div class="desc">今日の英語の範囲を <b>音読3回</b>。新しい単語・連語を <b>3回ノートに書く</b>。</div>
+    <div class="memo"><label>今日の範囲:</label><input type="text" data-m="m2" placeholder="例：BlueSky Unit◯ 本文"></div>
+  </div>
+
+  <div class="task key" data-k="t3">
+    <label class="ttl"><input type="checkbox"><span class="name">✍️ 小テストの準備<span class="badge">重点</span></span></label>
+    <div class="desc">次の小テストの範囲を見て<b>練習</b>する。<b>前回まちがえたところ</b>を重点的に。下の「次の小テスト」も確認！</div>
+    <div class="memo"><label>今日やった:</label><input type="text" data-m="m3" placeholder="例：英単語20個／漢字10問 など"></div>
+  </div>
+
+  <div class="task org" data-k="t4">
+    <label class="ttl"><input type="checkbox"><span class="name">🗂️ 今日もらったプリントの整理</span></label>
+    <div class="desc">今日もらったプリントを<b>教科ごとにファイルへ</b>。いらない物はすぐ処分。<b>あとで探さなくていいように！</b></div>
+    <div class="memo"><label>メモ:</label><input type="text" data-m="m4" placeholder="例：数学2枚／英語1枚 ファイル済み"></div>
+  </div>
+
+  <!-- 次の小テスト -->
+  <div class="testcard">
+    <h2>📌 次の小テスト（ここを毎日ちょっとずつ）</h2>
+    <p>最近、小テストの点が下がり気味。テスト前日にあわてないように、毎日少しずつ準備しよう！</p>
+    <div class="trow"><label>科目</label><input type="text" data-t="subject" placeholder="例：英語"></div>
+    <div class="trow"><label>範囲</label><input type="text" data-t="range" placeholder="例：単語 No.1〜20"></div>
+    <div class="trow"><label>いつ</label><input type="text" data-t="date" placeholder="例：6/12（金）"></div>
+  </div>
+
+  <!-- コイン→ガチャ導線 -->
+  <div class="coincard">
+    <div class="coins"><span class="c">🪙</span> コイン：<span id="coinN">0</span> 枚 たまってるよ</div>
+    <a href="gacha.html">🎰 がんばりガチャへ →</a>
+    <div class="hint">タスク1つチェック＝🪙1枚／ぜんぶできたら ボーナス🪙＋2！　コインでガチャを回して「まち」を育てよう。</div>
+  </div>
+
+  <!-- 今週のカレンダー -->
+  <div class="week">
+    <h2>🌸 今週のがんばり</h2>
+    <div class="wgrid" id="wgrid"></div>
+    <div style="font-size:11.5px;color:#64748b;margin-top:8px">4つぜんぶチェックできた日に 🌸 がつくよ。連続をのばそう！</div>
+  </div>
+
+  <div class="foot">
+    毎日ちょっとずつが、テストでいちばん効くよ💪<br>
+    <a class="back" href="index.html">← はるき学習計画トップへ</a><br><br>
+    <button class="reset" id="resetToday">今日のチェックをリセット</button>
+  </div>
+</div>
+
+<script>
+const LS='haruki_mainichi_v1';
+let state=(function(){try{return JSON.parse(localStorage.getItem(LS)||'{}');}catch(e){return {};}})();
+if(!state.days)state.days={};
+if(!state.test)state.test={};
+if(typeof state.coins!=='number')state.coins=0;
+if(!state.items)state.items={};
+if(typeof state.pulls!=='number')state.pulls=0;
+function save(){localStorage.setItem(LS,JSON.stringify(state));}
+function ymd(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+const TASKS=['t1','t2','t3','t4'];
+function complete(k){const x=state.days[k];return !!(x&&TASKS.every(function(t){return x[t];}));}
+
+const WD=['日','月','火','水','木','金','土'];
+const now=new Date();
+const today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+const tkey=ymd(today);
+if(!state.days[tkey])state.days[tkey]={};
+const day=state.days[tkey];
+
+document.getElementById('todayDate').textContent=(today.getMonth()+1)+'/'+today.getDate()+'（'+WD[today.getDay()]+'）';
+
+document.querySelectorAll('.task').forEach(function(el){
+  const k=el.dataset.k;
+  const box=el.querySelector('input[type=checkbox]');
+  box.checked=!!day[k];
+  el.classList.toggle('checked',!!day[k]);
+  box.addEventListener('change',function(){
+    day[k]=box.checked;
+    el.classList.toggle('checked',box.checked);
+    if(box.checked && !day[k+'_paid']){day[k+'_paid']=true;state.coins++;}
+    if(complete(tkey) && !day.bonus){day.bonus=true;state.coins+=2;}
+    save();render();
+  });
+  const memo=el.querySelector('input[data-m]');
+  if(memo){const mk=memo.dataset.m;if(day[mk])memo.value=day[mk];memo.addEventListener('input',function(){day[mk]=memo.value;save();});}
+});
+
+document.querySelectorAll('input[data-t]').forEach(function(inp){
+  const k=inp.dataset.t;if(state.test[k])inp.value=state.test[k];
+  inp.addEventListener('input',function(){state.test[k]=inp.value;save();});
+});
+
+function streak(){let s=0;const cur=new Date(today);if(!complete(ymd(cur)))cur.setDate(cur.getDate()-1);while(complete(ymd(cur))){s++;cur.setDate(cur.getDate()-1);}return s;}
+
+function render(){
+  document.getElementById('today').classList.toggle('done',complete(tkey));
+  const s=streak();
+  document.getElementById('streak').textContent=s>0?('🔥 '+s+'日 連続クリア中！'):'今日のぶんをチェックしよう';
+  document.getElementById('coinN').textContent=state.coins;
+  const wd=(today.getDay()+6)%7;const mon=new Date(today);mon.setDate(today.getDate()-wd);
+  const g=document.getElementById('wgrid');g.innerHTML='';
+  ['月','火','水','木','金','土','日'].forEach(function(w){const e=document.createElement('div');e.className='wd';e.textContent=w;g.appendChild(e);});
+  for(let i=0;i<7;i++){const d=new Date(mon);d.setDate(mon.getDate()+i);const k=ymd(d);const c=document.createElement('div');c.className='wc'+(complete(k)?' done':'')+(k===tkey?' today':'');c.innerHTML='<span class="mk">'+(complete(k)?'🌸':'・')+'</span>'+d.getDate();g.appendChild(c);}
+}
+
+document.getElementById('resetToday').addEventListener('click',function(){
+  if(confirm('今日のチェックを消していい？（コイン・アイテムは消えないよ）')){TASKS.forEach(function(t){day[t]=false;});save();location.reload();}
+});
+render();
+</script>
+</body>
+</html>

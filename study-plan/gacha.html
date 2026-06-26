@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>がんばりガチャ＆まち育成 | はるき学習計画</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif;background:linear-gradient(180deg,#f5f3ff 0%,#ddd6fe 50%,#c4b5fd 100%);color:#0f172a;line-height:1.7;padding:16px 12px 70px;min-height:100vh}
+  .wrap{max-width:680px;margin:0 auto}
+  header{background:linear-gradient(135deg,#7c3aed,#db2777);color:#fff;border-radius:18px;padding:22px 18px;text-align:center;box-shadow:0 6px 20px rgba(124,58,237,.3)}
+  header h1{font-size:21px}
+  header .sub{font-size:13px;opacity:.95;margin-top:6px}
+
+  .gacha{background:linear-gradient(135deg,#7c3aed,#db2777);color:#fff;border-radius:16px;padding:18px;margin:14px 0;text-align:center;box-shadow:0 4px 16px rgba(124,58,237,.3)}
+  .gacha .coins{font-size:16px;font-weight:800;margin:2px 0 14px}
+  .gacha .coins .c{font-size:24px}
+  .gbtn{background:#fff;color:#7c3aed;border:none;border-radius:999px;padding:15px 30px;font-size:18px;font-weight:800;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+  .gbtn:active{transform:scale(.97)}
+  .gbtn:disabled{opacity:.5;cursor:default}
+  .ghint{font-size:12px;opacity:.92;margin-top:11px;line-height:1.5}
+  .ghint a{color:#fff;font-weight:800}
+
+  .grow{background:#fff;border-radius:16px;padding:14px;margin:14px 0;box-shadow:0 3px 12px rgba(0,0,0,.08)}
+  .grow h2{font-size:16px;color:#6d28d9;margin-bottom:2px}
+  .grow .lv{font-size:13px;color:#b45309;font-weight:800;margin-bottom:8px}
+  .town{position:relative;background:linear-gradient(180deg,#bae6fd 0%,#7dd3fc 52%,#86efac 52%,#4ade80 100%);border-radius:14px;min-height:180px;overflow:hidden}
+  .town .sun{position:absolute;top:8px;right:12px;font-size:26px}
+  .town .cl{position:absolute;font-size:20px;opacity:.9}
+  .town .scene{position:absolute;left:0;right:0;bottom:8px;display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:center;gap:2px 4px;padding:0 8px}
+  .town .scene .big{font-size:46px;line-height:1}
+  .town .scene span{font-size:24px;line-height:1}
+  .town .more{position:absolute;right:8px;bottom:6px;background:rgba(255,255,255,.85);border-radius:8px;padding:1px 7px;font-size:11px;font-weight:700;color:#047857}
+  .pbar{height:12px;border-radius:6px;background:#e2e8f0;overflow:hidden;margin-top:10px}
+  .pbar > i{display:block;height:100%;width:0;background:linear-gradient(90deg,#a78bfa,#7c3aed);transition:.4s}
+  .pnote{font-size:11.5px;color:#64748b;margin-top:5px;text-align:center}
+
+  .coll{background:#fff;border-radius:16px;padding:14px;margin:14px 0;box-shadow:0 3px 12px rgba(0,0,0,.08)}
+  .coll h2{font-size:16px;color:#6d28d9;margin-bottom:4px}
+  .coll .stat{font-size:12.5px;color:#64748b;margin-bottom:10px}
+  .cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(64px,1fr));gap:8px}
+  .ci{border-radius:10px;padding:8px 2px;text-align:center;background:#f8fafc;border:1px solid #e2e8f0;position:relative}
+  .ci .e{font-size:28px;line-height:1}
+  .ci .n{font-size:9.5px;color:#475569;margin-top:2px}
+  .ci .ct{position:absolute;top:2px;right:4px;font-size:10px;font-weight:800;color:#7c3aed}
+  .ci.t1{border-color:#93c5fd}.ci.t2{border-color:#d8b4fe;background:#faf5ff}.ci.t3{border-color:#fcd34d;background:#fffbeb}
+  .ci.locked .e{filter:grayscale(1);opacity:.25}
+  .ci.locked .n{color:#cbd5e1}
+
+  .foot{text-align:center;color:#6d28d9;font-size:12.5px;margin-top:22px;line-height:1.8}
+  .back{color:#6d28d9;font-weight:700;text-decoration:none}
+
+  .gov{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:80;display:none;align-items:center;justify-content:center;padding:20px}
+  .gov.open{display:flex}
+  .gbox{background:#fff;border-radius:22px;padding:26px 22px;text-align:center;max-width:300px;width:88%;box-shadow:0 12px 44px rgba(0,0,0,.45)}
+  .machine{font-size:46px}
+  .capsule{font-size:88px;display:inline-block;animation:shake .45s infinite}
+  @keyframes shake{0%,100%{transform:rotate(-13deg) translateY(0)}50%{transform:rotate(13deg) translateY(-6px)}}
+  .reveal{display:none}
+  .reveal.show{display:block}
+  .reveal .burst{font-size:22px;letter-spacing:4px}
+  .reveal .it{font-size:96px;display:inline-block;animation:pop .55s}
+  @keyframes pop{0%{transform:scale(.2);opacity:.3}65%{transform:scale(1.3)}100%{transform:scale(1)}}
+  .reveal .nm{font-size:18px;font-weight:800;margin-top:4px;color:#0f172a}
+  .reveal .rar{display:inline-block;padding:3px 14px;border-radius:999px;color:#fff;font-weight:800;font-size:13px;margin-top:8px}
+  .reveal .yay{font-size:13px;color:#475569;margin-top:8px}
+  .okbtn{margin-top:14px;background:linear-gradient(135deg,#7c3aed,#db2777);color:#fff;border:none;border-radius:999px;padding:11px 26px;font-size:15px;font-weight:800;cursor:pointer}
+  .phase{font-size:13px;color:#7c3aed;font-weight:800;margin-top:10px}
+
+  .navbtn{position:fixed;top:12px;left:12px;z-index:60;background:#6d28d9;color:#fff;border:2px solid #fff;border-radius:10px;width:46px;height:46px;font-size:22px;line-height:1;box-shadow:0 3px 10px rgba(0,0,0,.3);cursor:pointer}
+  .topback{position:fixed;top:12px;right:12px;z-index:60;background:#fff;color:#6d28d9;border:2px solid #7c3aed;border-radius:10px;height:46px;padding:0 14px;font-size:14px;font-weight:800;box-shadow:0 3px 10px rgba(0,0,0,.2);cursor:pointer}
+  .navmask{position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:65;display:none}
+  .navmask.open{display:block}
+  .sidebar{position:fixed;top:0;left:-300px;width:270px;height:100%;background:#f0f9ff;z-index:70;box-shadow:2px 0 18px rgba(0,0,0,.25);transition:left .25s;padding:16px 14px;overflow-y:auto}
+  .sidebar.open{left:0}
+  .sidebar .navttl{font-size:15px;color:#1e3a8a;font-weight:800;margin:2px 0 12px;padding-bottom:10px;border-bottom:2px solid #93c5fd}
+  .sidebar .closex{float:right;font-size:18px;color:#1e3a8a;background:none;border:none;cursor:pointer}
+  .sidebar a{display:block;padding:13px 12px;margin:7px 0;border-radius:10px;text-decoration:none;color:#1e3a8a;font-weight:700;font-size:14.5px;background:#fff;border:1px solid #bfdbfe}
+  .sidebar a.active{background:linear-gradient(135deg,#2563eb,#1e3a8a);color:#fff;border-color:#1e3a8a}
+</style>
+</head>
+<body>
+<button class="navbtn" onclick="toggleNav()" aria-label="メニュー">☰</button>
+<button class="topback" onclick="history.back()">← 戻る</button>
+<div class="navmask" id="navmask" onclick="toggleNav()"></div>
+<nav class="sidebar" id="sidebar">
+  <button class="closex" onclick="toggleNav()">✕</button>
+  <div class="navttl">📚 はるき学習計画メニュー</div>
+  <a href="index.html">🏠 学習計画トップ</a>
+  <a href="mainichi.html">📅 毎日タスク</a>
+  <a href="gacha.html" class="active">🎰 がんばりガチャ</a>
+  <a href="kimatsu/">🔥 期末 対策トップ</a>
+  <a href="kimatsu/shoumei-kaitou.html">📐 図形の証明 解説</a>
+  <a href="shuukihyou.html">🧪 元素 周期表・覚え方</a>
+  <a href="jitsuryoku/eng-vocab.html">🔊 英単語テスト</a>
+</nav>
+<script>function toggleNav(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('navmask').classList.toggle('open');}</script>
+
+<div class="wrap">
+  <header>
+    <h1>🎰 がんばりガチャ＆まち育成</h1>
+    <div class="sub">毎日タスクでためたコインでガチャ→アイテムを集めて「まち」を大きくしよう！</div>
+  </header>
+
+  <div class="gacha">
+    <div class="coins"><span class="c">🪙</span> コイン：<span id="coinN">0</span> 枚</div>
+    <button class="gbtn" id="pullBtn" onclick="pull()">ガチャを回す（コイン1）</button>
+    <div id="noCoin" style="display:none;background:rgba(255,255,255,.95);color:#b91c1c;border-radius:10px;padding:9px 12px;margin-top:11px;font-size:13px;font-weight:700">🪙 コインがたりないよ！<br>下の「📅 毎日タスク」をチェックしてコインをためてね。</div>
+    <div class="ghint">コインは <a href="mainichi.html">📅 毎日タスク</a> をチェックするとたまるよ。<br>（タスク1つ＝🪙1枚／ぜんぶできたら ボーナス🪙＋2）</div>
+  </div>
+
+  <div class="grow">
+    <h2>🏡 はるきの まち</h2>
+    <div class="lv" id="townLv">Lv.1　さらち</div>
+    <div class="town">
+      <div class="sun">☀️</div>
+      <div class="cl" style="top:14px;left:16px">☁️</div>
+      <div class="cl" style="top:30px;left:46%;font-size:16px">☁️</div>
+      <div class="scene" id="scene"></div>
+      <div class="more" id="more" style="display:none"></div>
+    </div>
+    <div class="pbar"><i id="pfill"></i></div>
+    <div class="pnote" id="pnote"></div>
+  </div>
+
+  <div class="coll">
+    <h2>📦 コレクション</h2>
+    <div class="stat">あつめた数：<b id="totalN">0</b> 個 ／ ガチャ回数：<b id="pullN">0</b> 回 ／ 種類：<b id="kindN">0</b>/<span id="kindAll">0</span></div>
+    <div class="cgrid" id="cgrid"></div>
+  </div>
+
+  <div class="foot">
+    期末まで、まちを大きく育てよう！🏙️<br>
+    <a class="back" href="mainichi.html">← 毎日タスクへ（コインをためる）</a>
+  </div>
+</div>
+
+<div class="gov" id="gov">
+  <div class="gbox">
+    <div id="spin">
+      <div class="machine">🎰</div>
+      <div class="capsule" id="cap">🥚</div>
+      <div class="phase">カプセル ころころ…</div>
+    </div>
+    <div class="reveal" id="reveal">
+      <div class="burst">✨🎉✨</div>
+      <div class="it" id="revIt">❓</div>
+      <div class="nm" id="revNm">―</div>
+      <div class="rar" id="revRar">―</div>
+      <div class="yay" id="revYay">まちに なかま が ふえた！</div>
+      <button class="okbtn" onclick="closeGacha()">やったー！</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const LS='haruki_mainichi_v1';
+let state=(function(){try{return JSON.parse(localStorage.getItem(LS)||'{}');}catch(e){return {};}})();
+if(typeof state.coins!=='number')state.coins=0;
+if(!state.items)state.items={};
+if(typeof state.pulls!=='number')state.pulls=0;
+function save(){localStorage.setItem(LS,JSON.stringify(state));}
+
+const POOL=[
+ // ふつう（t:0）45種
+ {e:'🌱',n:'たね',t:0},{e:'🌿',n:'わかば',t:0},{e:'🍀',n:'よつば',t:0},{e:'🍃',n:'はっぱ',t:0},{e:'🍂',n:'おちば',t:0},{e:'🍁',n:'もみじ',t:0},{e:'🌾',n:'いね',t:0},{e:'🌵',n:'サボテン',t:0},{e:'🌳',n:'き',t:0},{e:'🌲',n:'まつ',t:0},
+ {e:'🌴',n:'やし',t:0},{e:'🌷',n:'チューリップ',t:0},{e:'🌼',n:'デイジー',t:0},{e:'🌸',n:'さくら',t:0},{e:'🏵️',n:'かざりばな',t:0},{e:'🍄',n:'きのこ',t:0},{e:'🌰',n:'どんぐり',t:0},{e:'🥜',n:'ピーナッツ',t:0},{e:'🪨',n:'いし',t:0},{e:'🪵',n:'まるた',t:0},
+ {e:'🐛',n:'あおむし',t:0},{e:'🐜',n:'あり',t:0},{e:'🪱',n:'みみず',t:0},{e:'🦗',n:'こおろぎ',t:0},{e:'🐌',n:'かたつむり',t:0},{e:'🐚',n:'かい',t:0},{e:'🍓',n:'いちご',t:0},{e:'🍒',n:'さくらんぼ',t:0},{e:'🍎',n:'りんご',t:0},{e:'🍊',n:'みかん',t:0},
+ {e:'🍋',n:'レモン',t:0},{e:'🍐',n:'なし',t:0},{e:'🍑',n:'もも',t:0},{e:'🍇',n:'ぶどう',t:0},{e:'🍌',n:'バナナ',t:0},{e:'🍅',n:'トマト',t:0},{e:'🥕',n:'にんじん',t:0},{e:'🌽',n:'とうもろこし',t:0},{e:'🥔',n:'じゃがいも',t:0},{e:'🥦',n:'ブロッコリー',t:0},
+ {e:'🥬',n:'はくさい',t:0},{e:'🫛',n:'えだまめ',t:0},{e:'🥚',n:'たまご',t:0},{e:'🐣',n:'ひよこ',t:0},{e:'☘️',n:'みつば',t:0},
+ // レア（t:1）33種
+ {e:'🌻',n:'ひまわり',t:1},{e:'🌹',n:'ばら',t:1},{e:'💐',n:'はなたば',t:1},{e:'🪷',n:'はす',t:1},{e:'🌺',n:'ハイビスカス',t:1},{e:'🪻',n:'ブルーベル',t:1},{e:'🦋',n:'ちょうちょ',t:1},{e:'🐝',n:'はち',t:1},{e:'🐞',n:'てんとうむし',t:1},{e:'🐢',n:'かめ',t:1},
+ {e:'🐸',n:'かえる',t:1},{e:'🐦',n:'ことり',t:1},{e:'🐧',n:'ペンギン',t:1},{e:'🦆',n:'あひる',t:1},{e:'🦢',n:'はくちょう',t:1},{e:'🐰',n:'うさぎ',t:1},{e:'🐹',n:'ハムスター',t:1},{e:'🐭',n:'ねずみ',t:1},{e:'🐱',n:'ねこ',t:1},{e:'🐶',n:'いぬ',t:1},
+ {e:'🦔',n:'はりねずみ',t:1},{e:'🐟',n:'さかな',t:1},{e:'🐠',n:'ねったいぎょ',t:1},{e:'🐙',n:'たこ',t:1},{e:'🦀',n:'かに',t:1},{e:'🍰',n:'ケーキ',t:1},{e:'🍩',n:'ドーナツ',t:1},{e:'🍪',n:'クッキー',t:1},{e:'🍦',n:'アイス',t:1},{e:'🧁',n:'カップケーキ',t:1},
+ {e:'🍭',n:'キャンディ',t:1},{e:'☔',n:'かさ',t:1},{e:'🍯',n:'はちみつ',t:1},
+ // 激レア（t:2）16種
+ {e:'🦊',n:'きつね',t:2},{e:'🦉',n:'ふくろう',t:2},{e:'🦌',n:'しか',t:2},{e:'🦁',n:'ライオン',t:2},{e:'🐯',n:'とら',t:2},{e:'🐻',n:'くま',t:2},{e:'🐼',n:'パンダ',t:2},{e:'🐨',n:'コアラ',t:2},
+ {e:'🦒',n:'キリン',t:2},{e:'🐘',n:'ぞう',t:2},{e:'🦜',n:'オウム',t:2},{e:'🦚',n:'くじゃく',t:2},{e:'🌟',n:'きんのほし',t:2},{e:'🎁',n:'たからばこ',t:2},{e:'💎',n:'ダイヤ',t:2},{e:'🔮',n:'すいしょうだま',t:2},
+ // でんせつ（t:3）8種
+ {e:'🐉',n:'ドラゴン',t:3},{e:'🦄',n:'ユニコーン',t:3},{e:'🦕',n:'きょうりゅう',t:3},{e:'🧚',n:'ようせい',t:3},{e:'🧜',n:'にんぎょ',t:3},{e:'🏰',n:'おしろ',t:3},{e:'👑',n:'おうかん',t:3},{e:'🌠',n:'ながれぼし',t:3}
+];
+const TIER=[{n:'ふつう',c:'#64748b',w:60},{n:'レア',c:'#2563eb',w:28},{n:'激レア',c:'#9333ea',w:10},{n:'でんせつ',c:'#f59e0b',w:2}];
+document.getElementById('kindAll').textContent=POOL.length;
+
+function rollTier(){let r=Math.random()*TIER.reduce(function(a,b){return a+b.w;},0);for(let i=0;i<TIER.length;i++){if(r<TIER[i].w)return i;r-=TIER[i].w;}return 0;}
+function rollItem(){let ti=rollTier();let cand=POOL.filter(function(p){return p.t===ti;});if(!cand.length)cand=POOL;return cand[Math.floor(Math.random()*cand.length)];}
+
+const TH=[0,3,7,13,22,35,55];
+const LVNAME=['さらち','め が でた','ちいさな にわ','にぎやかな にわ','ちいさな まち','おおきな まち','ゆめの まち✨'];
+const BIG=['🌱','🌿','🪴','🌳','🌳','🌳','🌳'];
+function totalItems(){let s=0;for(const k in state.items)s+=state.items[k];return s;}
+function townLevel(t){let lv=1;for(let i=0;i<TH.length;i++){if(t>=TH[i])lv=i+1;}return Math.min(lv,7);}
+
+let revealTimer=null;
+function pull(){
+  if(state.coins<1){
+    var nc=document.getElementById('noCoin');nc.style.display='block';
+    clearTimeout(window._ncT);window._ncT=setTimeout(function(){nc.style.display='none';},3500);
+    return;
+  }
+  document.getElementById('noCoin').style.display='none';
+  state.coins--;state.pulls++;
+  const it=rollItem();
+  state.items[it.e]=(state.items[it.e]||0)+1;
+  save();
+  document.getElementById('spin').style.display='block';
+  document.getElementById('reveal').classList.remove('show');
+  document.getElementById('cap').textContent='🥚';
+  document.getElementById('gov').classList.add('open');
+  clearTimeout(revealTimer);
+  revealTimer=setTimeout(function(){
+    document.getElementById('spin').style.display='none';
+    document.getElementById('reveal').classList.add('show');
+    document.getElementById('revIt').textContent=it.e;
+    document.getElementById('revNm').textContent=it.n;
+    const rar=document.getElementById('revRar');rar.textContent=TIER[it.t].n;rar.style.background=TIER[it.t].c;
+    document.getElementById('revYay').textContent = it.t>=3?'でんせつ級！すごい！🎆': it.t>=2?'激レアGET！✨':'まちに なかま が ふえた！';
+  },1200);
+  render();
+}
+function closeGacha(){document.getElementById('gov').classList.remove('open');}
+
+function render(){
+  document.getElementById('coinN').textContent=state.coins;
+  const tot=totalItems();
+  const lv=townLevel(tot);
+  document.getElementById('townLv').textContent='Lv.'+lv+'　'+LVNAME[lv-1];
+  const scene=document.getElementById('scene');scene.innerHTML='';
+  const big=document.createElement('span');big.className='big';big.textContent=BIG[lv-1];scene.appendChild(big);
+  const flat=[];for(const k in state.items){for(let i=0;i<state.items[k];i++)flat.push(k);}
+  const CAP=30;
+  flat.slice(0,CAP).forEach(function(e){const sp=document.createElement('span');sp.textContent=e;scene.appendChild(sp);});
+  const more=document.getElementById('more');
+  if(flat.length>CAP){more.style.display='block';more.textContent='ほか +'+(flat.length-CAP);}else{more.style.display='none';}
+  const cur=TH[lv-1], next=(lv<7?TH[lv]:TH[6]);
+  const pct=lv<7?Math.min(100,Math.round((tot-cur)/(next-cur)*100)):100;
+  document.getElementById('pfill').style.width=pct+'%';
+  document.getElementById('pnote').textContent=lv<7?('つぎのレベルまで あと '+Math.max(0,next-tot)+' 個'):'まちが かんせい！すごい！🎉';
+  document.getElementById('totalN').textContent=tot;
+  document.getElementById('pullN').textContent=state.pulls;
+  const kinds=Object.keys(state.items).filter(function(k){return state.items[k]>0;}).length;
+  document.getElementById('kindN').textContent=kinds;
+  const cg=document.getElementById('cgrid');cg.innerHTML='';
+  POOL.forEach(function(p){
+    const cnt=state.items[p.e]||0;
+    const d=document.createElement('div');d.className='ci t'+p.t+(cnt?'':' locked');
+    d.innerHTML=(cnt?'<span class="ct">×'+cnt+'</span>':'')+'<div class="e">'+(cnt?p.e:'❓')+'</div><div class="n">'+(cnt?p.n:'？？？')+'</div>';
+    cg.appendChild(d);
+  });
+}
+render();
+</script>
+</body>
+</html>

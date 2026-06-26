@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>テスト直前 やることリスト | はるき 中2</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", sans-serif;
+    background: linear-gradient(180deg, #fff7ed 0%, #fffbeb 100%);
+    color: #1a202c; line-height: 1.85; padding: 16px; min-height: 100vh;
+  }
+  .container { max-width: 700px; margin: 0 auto; }
+
+  header {
+    background: linear-gradient(135deg, #f97316, #f59e0b);
+    color: #fff; border-radius: 18px; padding: 22px 18px; text-align: center;
+    box-shadow: 0 6px 20px rgba(249,115,22,.32);
+  }
+  header h1 { font-size: 21px; line-height: 1.5; }
+  header .sub { font-size: 13px; opacity: .95; margin-top: 6px; }
+
+  .back-link { display: inline-block; margin: 13px 0; font-size: 13px; color: #ea580c; text-decoration: none; font-weight: 700; }
+
+  /* 英語A 最優先ボックス */
+  .priority {
+    background: #fef2f2; border: 2px solid #ef4444; border-radius: 14px;
+    padding: 14px; margin: 2px 0 12px; box-shadow: 0 3px 12px rgba(239,68,68,.18);
+  }
+  .priority .ttl { font-size: 16px; font-weight: 800; color: #dc2626; }
+  .priority .deadline {
+    display: inline-block; background: #dc2626; color: #fff; font-size: 13px;
+    font-weight: 800; padding: 3px 12px; border-radius: 999px; margin: 6px 0;
+  }
+  .priority .body { font-size: 14px; margin-top: 2px; }
+
+  .next-banner {
+    background: #fff; border: 2px solid #f59e0b; border-radius: 14px;
+    padding: 13px 16px; margin: 14px 0; text-align: center;
+    box-shadow: 0 3px 10px rgba(245,158,11,.18);
+  }
+  .next-banner .big { font-size: 16px; font-weight: 800; color: #c2410c; }
+  .next-banner .small { font-size: 13px; color: #92400e; margin-top: 2px; }
+  .next-banner .today { font-size: 12px; color: #b45309; font-weight: 800; margin-bottom: 4px; }
+
+  .day {
+    background: #fff; border-radius: 16px; margin: 16px 0;
+    box-shadow: 0 3px 12px rgba(0,0,0,.08); overflow: hidden;
+    border-left: 6px solid #cbd5e1;
+  }
+  .day.tonight { border-left-color: #f97316; box-shadow: 0 4px 18px rgba(249,115,22,.28); }
+  .day-head { padding: 13px 16px 8px; }
+  .day-head .dt { font-size: 17px; font-weight: 800; }
+  .day-head .nextsubj { display: inline-block; background: #fef3c7; color: #b45309;
+    font-size: 12px; font-weight: 800; padding: 1px 10px; border-radius: 999px; margin-left: 4px; }
+  .day-head .cnt { float: right; font-size: 12px; color: #94a3b8; font-weight: 700; }
+  .nightflag { display: none; background: #f97316; color: #fff; font-size: 11px;
+    font-weight: 800; padding: 2px 8px; border-radius: 999px; margin-left: 6px; }
+  .day.tonight .nightflag { display: inline-block; }
+  .day-body { padding: 2px 16px 14px; }
+
+  .ck {
+    display: flex; align-items: flex-start; gap: 10px;
+    padding: 9px 10px; margin: 5px 0; background: #f8fafc;
+    border-radius: 10px; cursor: pointer; font-size: 14.5px;
+  }
+  .ck input { width: 21px; height: 21px; margin-top: 1px; flex: 0 0 auto; accent-color: #f97316; }
+  .ck input:checked ~ span { text-decoration: line-through; color: #94a3b8; }
+  .ck span { flex: 1; }
+  .subj { display: inline-block; font-weight: 800; color: #b45309; }
+  .note { font-size: 13px; color: #64748b; padding: 4px 12px; }
+
+  .card { background: #fff; border-radius: 16px; margin: 16px 0; padding: 16px;
+    box-shadow: 0 3px 12px rgba(0,0,0,.08); }
+  .card h2 { font-size: 16px; margin-bottom: 8px; padding-left: 10px; border-left: 5px solid #f59e0b; }
+  .card.mind h2 { border-left-color: #8b5cf6; }
+  .card ul { margin: 4px 0 0 20px; }
+  .card li { margin: 7px 0; font-size: 14px; }
+
+  footer { text-align: center; font-size: 12px; color: #b59c7a; margin: 22px 0 8px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <h1>🔥 テスト直前 やることリスト</h1>
+  <div class="sub">はるき 中2 ／ 中間テスト 5/19（火）〜5/22（金）</div>
+</header>
+
+<a class="back-link" href="index.html">← 学習計画ページにもどる</a>
+
+<div class="next-banner" id="next-banner">
+  <div class="big">次のテストを確認中…</div>
+</div>
+
+<!-- 5/19夜 -->
+<div class="day" id="card-19">
+  <div class="day-head">
+    <span class="cnt" id="cnt-19"></span>
+    <div class="dt">5/19（火） 学校から帰ったら<span class="nightflag">今日はここ</span> <span class="nextsubj">📝 5/20テスト：英語A・理科II・国語B</span></div>
+  </div>
+  <div class="day-body">
+    <div class="priority">
+      <div class="ttl">⏰ 最優先：英語A</div>
+      <div class="deadline">5/19（火）のうちに完璧にする！</div>
+      <div class="body">テキストの日本語の文を見て、<b>何も見ずに英語の文を書ける</b>ようにする。書けなかった文は、何回も書いて練習。</div>
+      <label class="ck" data-k="engA" style="margin-top:8px;background:#fff;"><input type="checkbox"><span>英語A、完璧にできた！</span></label>
+    </div>
+    <label class="ck" data-k="n19-1"><input type="checkbox"><span><span class="subj">理科II</span>：問題集の<b>×がついた問題の2周目</b>を、確実に仕上げる</span></label>
+    <label class="ck" data-k="n19-2"><input type="checkbox"><span><span class="subj">国語B</span>：問題集の<b>2周目</b>＋<b>動詞の活用表を何も見ずに書ける</b>ようにする</span></label>
+    <label class="ck" data-k="n19-3"><input type="checkbox"><span><span class="subj">国語B</span>：<b>ノートを見直す</b>（活用のところはノートが大事！）</span></label>
+    <label class="ck" data-k="n19-4"><input type="checkbox"><span><span class="subj">英語B</span>：「瞬トレ」（瞬間英作文）を練習する　<small>（英語Bは量が多いので毎日コツコツ）</small></span></label>
+  </div>
+</div>
+
+<!-- 5/20夜 -->
+<div class="day" id="card-20">
+  <div class="day-head">
+    <span class="cnt" id="cnt-20"></span>
+    <div class="dt">5/20（水） 学校から帰ったら<span class="nightflag">今日はここ</span> <span class="nextsubj">📝 5/21テスト：歴史・幾何</span></div>
+  </div>
+  <div class="day-body">
+    <label class="ck" data-k="n20-1"><input type="checkbox"><span><span class="subj">歴史</span>：「歴史の学習」P98〜109 の×をもう一度。<b>とくに範囲の最後のほうを重点的に見直す</b>。年号の語呂合わせ・人物名も確認</span></label>
+    <label class="ck" data-k="n20-2"><input type="checkbox"><span><span class="subj">幾何</span>：<b>ゴールデンウィーク課題の直し</b> ──「春休み&amp;GW課題テキスト」のまちがえた問題（作図問題もふくむ）をもう一度解く</span></label>
+    <label class="ck" data-k="n20-3"><input type="checkbox"><span><span class="subj">英語B</span>：「新中問」<b>第3・6・4章</b>をやる　<small>（新中問は多いので2日に分けるよ ①）</small></span></label>
+  </div>
+</div>
+
+<!-- 5/21夜 -->
+<div class="day" id="card-21">
+  <div class="day-head">
+    <span class="cnt" id="cnt-21"></span>
+    <div class="dt">5/21（木） 学校から帰ったら<span class="nightflag">今日はここ</span> <span class="nextsubj">📝 5/22テスト：英語B・国語A・理科I</span></div>
+  </div>
+  <div class="day-body">
+    <label class="ck" data-k="n21-1"><input type="checkbox"><span><span class="subj">英語B</span>：「新中問」<b>第12・13・14章</b>をやる　<small>（新中問は多いので2日に分けるよ ②）</small></span></label>
+    <label class="ck" data-k="n21-2"><input type="checkbox"><span><span class="subj">英語B</span>：「必修テキスト」の<b>2周目</b>をやる</span></label>
+    <label class="ck" data-k="n21-3"><input type="checkbox"><span><span class="subj">英語B</span>：瞬間英作文（「瞬トレ」）を<b>完璧に</b>する</span></label>
+    <label class="ck" data-k="n21-4"><input type="checkbox"><span><span class="subj">国語A</span>：最後にもう一度見直し（要旨・授業プリントを確認）</span></label>
+    <label class="ck" data-k="n21-5"><input type="checkbox"><span><span class="subj">理科I</span>：問題集の<b>2周目</b>（×がついた問題を中心に）</span></label>
+  </div>
+</div>
+
+<a class="back-link" href="index.html">← 学習計画ページにもどる</a>
+
+<footer>はるき 中2 ／ テスト直前 やることリスト</footer>
+
+</div>
+
+<script>
+var KEY = "haruki-chokuzen-2026-05";
+function load() { try { return JSON.parse(localStorage.getItem(KEY) || "{}"); } catch (e) { return {}; } }
+function save(s) { localStorage.setItem(KEY, JSON.stringify(s)); }
+var state = load();
+
+function updateCounts() {
+  ["19", "20", "21"].forEach(function (d) {
+    var card = document.getElementById("card-" + d);
+    var boxes = card.querySelectorAll('input[type=checkbox]');
+    var done = 0;
+    boxes.forEach(function (b) { if (b.checked) done++; });
+    var el = document.getElementById("cnt-" + d);
+    el.textContent = "✓ " + done + " / " + boxes.length;
+    el.style.color = (done === boxes.length && boxes.length > 0) ? "#16a34a" : "#94a3b8";
+  });
+}
+
+document.querySelectorAll(".ck").forEach(function (lbl) {
+  var k = lbl.dataset.k;
+  var box = lbl.querySelector("input");
+  if (state[k]) box.checked = true;
+  box.addEventListener("change", function () {
+    state[k] = box.checked;
+    save(state);
+    updateCounts();
+  });
+});
+updateCounts();
+
+// 今日の日付・次のテスト・今夜のカードを判定
+(function () {
+  var tests = [
+    { d: "2026-05-19", name: "5/19（火）", subj: "地理・代数" },
+    { d: "2026-05-20", name: "5/20（水）", subj: "英語A・理科II・国語B" },
+    { d: "2026-05-21", name: "5/21（木）", subj: "歴史・幾何" },
+    { d: "2026-05-22", name: "5/22（金）", subj: "英語B・国語A・理科I" }
+  ];
+  var nights = [
+    { d: "2026-05-19", card: "card-19" },
+    { d: "2026-05-20", card: "card-20" },
+    { d: "2026-05-21", card: "card-21" }
+  ];
+  var WD = ["日", "月", "火", "水", "木", "金", "土"];
+  var now = new Date();
+  var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  function toDate(s) { var p = s.split("-"); return new Date(+p[0], +p[1] - 1, +p[2]); }
+
+  var banner = document.getElementById("next-banner");
+  var todayStr = (today.getMonth() + 1) + "/" + today.getDate() + "（" + WD[today.getDay()] + "）";
+
+  // 今日のカード＝日付がぴったり今日と一致するものだけ
+  var night = null;
+  for (var j = 0; j < nights.length; j++) {
+    if (toDate(nights[j].d).getTime() === today.getTime()) { night = nights[j]; break; }
+  }
+  if (night) {
+    var nc = document.getElementById(night.card);
+    if (nc) { nc.classList.add("tonight"); }
+  }
+
+  // 次のテスト
+  var nextTest = null;
+  for (var i = 0; i < tests.length; i++) {
+    if (toDate(tests[i].d) >= today) {
+      nextTest = tests[i];
+      nextTest._diff = Math.round((toDate(tests[i].d) - today) / 86400000);
+      break;
+    }
+  }
+
+  var html = '<div class="today">📅 今日は ' + todayStr + '</div>';
+  if (!nextTest) {
+    banner.innerHTML = html + '<div class="big">🎉 ぜんぶのテスト、おつかれさま！</div>' +
+      '<div class="small">よくがんばったね。ゆっくり休もう。</div>';
+    return;
+  }
+  var when = nextTest._diff === 0 ? "今日！" : (nextTest._diff === 1 ? "明日（あと1日）" : "あと" + nextTest._diff + "日");
+  var line2;
+  if (night) {
+    line2 = '学校から帰ったら、オレンジ色のカードをやろう！';
+  } else if (today < toDate(nights[0].d)) {
+    line2 = 'カードは日ごとに用意してあるよ。学校から帰ったら順番に！';
+  } else {
+    line2 = 'のこりもうひとふんばり！';
+  }
+  banner.innerHTML = html +
+    '<div class="big">🔥 次のテストは ' + nextTest.name + '（' + nextTest.subj + '）' + when + '</div>' +
+    '<div class="small">' + line2 + '</div>';
+})();
+</script>
+</body>
+</html>
