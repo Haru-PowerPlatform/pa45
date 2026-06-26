@@ -242,18 +242,34 @@ def _icon(d, key, cx, cy, size, col):
         d.line([(ex - ew, cy - eh), (ex, cy + eh * 0.18), (ex + ew, cy - eh)],
                fill=col, width=ew2, joint="curve")
     elif key == "copilot":
-        # Copilot / AI を象徴する 4点キラキラ（大＋小）
-        def _sparkle(scx, scy, sr):
-            inner = sr * 0.3
+        # Copilot / AI を想起させる「リボン花びらの渦」（4枚＋小さなきらめき）
+        n = 4
+        A = h * 0.56          # 花びらの半長（放射方向）
+        B = h * 0.27          # 花びらの半幅
+        off = h * 0.58        # 花びら中心の半径位置（中央に小さな穴を残す）
+        swirl = math.radians(22)   # 風車状のひねり
+        for k in range(n):
+            ang = -math.pi / 2 + k * (2 * math.pi / n) + swirl
             pts = []
-            for i in range(8):
-                ang = -math.pi / 2 + i * math.pi / 4
-                rad = sr if i % 2 == 0 else inner
-                pts.append((scx + rad * math.cos(ang), scy + rad * math.sin(ang)))
+            steps = 48
+            for j in range(steps):
+                t = 2 * math.pi * j / steps
+                # ローカル：放射方向(off中心)に長径A、幅は内側へ向けて細く（しずく形）
+                taper = 0.45 + 0.55 * (0.5 + 0.5 * math.cos(t))
+                lx = off + A * math.cos(t)
+                ly = B * taper * math.sin(t)
+                rx = cx + lx * math.cos(ang) - ly * math.sin(ang)
+                ry = cy + lx * math.sin(ang) + ly * math.cos(ang)
+                pts.append((rx, ry))
             d.polygon(pts, fill=col)
-        _sparkle(cx - h * 0.16, cy - h * 0.1, h * 0.74)
-        _sparkle(cx + h * 0.52, cy + h * 0.46, h * 0.3)
-        _sparkle(cx + h * 0.46, cy - h * 0.58, h * 0.2)
+        # AIらしさの小さなきらめき（右上）
+        sp = []
+        scx, scy, sr = cx + h * 0.82, cy - h * 0.78, h * 0.24
+        for i in range(8):
+            a = -math.pi / 2 + i * math.pi / 4
+            rad = sr if i % 2 == 0 else sr * 0.34
+            sp.append((scx + rad * math.cos(a), scy + rad * math.sin(a)))
+        d.polygon(sp, fill=col)
     else:
         d.ellipse([cx - h * 0.55, cy - h * 0.55, cx + h * 0.55, cy + h * 0.55], outline=col, width=w)
 
@@ -266,8 +282,8 @@ def draw_icon(d, key, cx, cy, size, col):
 
 
 # ---- バッジ本体 ----------------------------------------------------------
-def make_badge(vol, theme, date, key, out_path):
-    p = palette_for(vol)
+def make_badge(vol, theme, date, key, out_path, iconimg=None, pal_override=None):
+    p = pal_override or palette_for(vol)
     img = Image.new("RGBA", (S, S), (0, 0, 0, 0))
     cx, cy = S // 2, S // 2
     R = int(S * 0.44)
@@ -313,8 +329,17 @@ def make_badge(vol, theme, date, key, out_path):
     text3d(d, cx, cy - int(ir * 0.68), "POWER AUTOMATE 45", font(FONT_BLACK, 25), p["accent"], 5, light=(255, 255, 255, 60))
     d.line([(cx - ir * 0.46, cy - int(ir * 0.53)), (cx + ir * 0.46, cy - int(ir * 0.53))], fill=(*p["accent"], 180), width=int(S * 0.003))
 
-    # アイコン（陰影付き）
-    draw_icon(d, key, cx, cy - int(ir * 0.08), int(ir * 0.64), p["accent"])
+    # アイコン（陰影付き／SVG画像があればそれを優先）
+    if iconimg:
+        ic = Image.open(iconimg).convert("RGBA")
+        D = int(ir * 0.64 * 2.05)
+        ic = ic.resize((D, D), Image.LANCZOS)
+        icx, icy = cx, cy - int(ir * 0.08)
+        layer = Image.new("RGBA", (S, S), (0, 0, 0, 0))
+        layer.alpha_composite(ic, (icx - D // 2, icy - D // 2))
+        img.alpha_composite(layer)
+    else:
+        draw_icon(d, key, cx, cy - int(ir * 0.08), int(ir * 0.64), p["accent"])
 
     # 英語タイトル（立体・大きめ）
     title = theme.upper()
@@ -336,8 +361,16 @@ def main():
     ap.add_argument("--theme", default=None)
     ap.add_argument("--date", default=None)
     ap.add_argument("--icon", default=None)
+    ap.add_argument("--iconimg", default=None)
+    ap.add_argument("--palette", default=None,
+                    help="emerald/purple/crimson/teal/sunset/magenta/blue")
     ap.add_argument("--out", default=None)
     args = ap.parse_args()
+
+    PAL_NAMES = {"emerald": PALETTES[0], "purple": PALETTES[1], "crimson": PALETTES[2],
+                 "teal": PALETTES[3], "sunset": PALETTES[4], "magenta": PALETTES[5],
+                 "blue": DEFAULT_PAL}
+    pal_override = PAL_NAMES.get(args.palette) if args.palette else None
 
     theme = date = key = None
     if args.vol in SESSIONS:
@@ -350,7 +383,7 @@ def main():
         sys.exit(1)
 
     out = args.out or rf"C:\Users\isamu\Documents\pa45\assets\badges\session-{args.vol:03d}\badge.png"
-    print("OK:", make_badge(args.vol, theme, date, key, out))
+    print("OK:", make_badge(args.vol, theme, date, key, out, iconimg=args.iconimg, pal_override=pal_override))
 
 
 if __name__ == "__main__":
