@@ -127,7 +127,6 @@
 - ブログ：https://www.automate136.com
 - GitHub：https://github.com/Haru-PowerPlatform/pa45
 - 学習中：Microsoft PL-300（Power BI Data Analyst Associate）
-- 目標：（コミュニティ）（Power Platform 枠）取得
 - 会話は日本語、砕けた口調OK
 - 長い説明より反射パターン暗記を好む
 

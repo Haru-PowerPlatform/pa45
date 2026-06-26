@@ -57,6 +57,6 @@ automate136.com 向け単発ブログ記事のメモ・成果物・運用記録�
 6. 1 週間後の反応を見て #3 投稿（架空の声引用は禁止）
 
 ## 関連メモリ
-- [feedback_blog_purpose](../../../.claude/projects/C--Users-isamu-Documents/memory/feedback_blog_purpose.md): automate136.com の記事は MVP 申請の証跡が主目的・SEO は二の次
+- [feedback_blog_purpose](../../../.claude/projects/C--Users-isamu-Documents/memory/feedback_blog_purpose.md): automate136.com の記事は 活動実績の記録が主目的・SEO は二の次
 - [feedback_pa45_blog_no_fabrication](../../../.claude/projects/C--Users-isamu-Documents/memory/feedback_pa45_blog_no_fabrication.md): 架空の体験談・盛り上げ描写は禁止
 - [feedback_pa45_no_affiliate](../../../.claude/projects/C--Users-isamu-Documents/memory/feedback_pa45_no_affiliate.md): X 投稿にアフィリリンクを混ぜない
