@@ -222,6 +222,23 @@ def save_sent_log(session_num: int, sent_emails: set):
         encoding="utf-8"
     )
 
+# ─── 次回イベントが立っているかチェック ──────────────────────
+def check_next_event(session_num):
+    """送ろうとしている Vol.N に対し、次回(Vol.N+1)が設定済みか。
+    戻り: (ok, vol, url, msg)"""
+    here = Path(__file__).resolve().parent.parent
+    cfg = here / "data" / "config" / "upcoming-event.json"
+    try:
+        d = json.loads(cfg.read_text(encoding="utf-8"))
+        vol = int(d.get("vol", 0))
+        url = (d.get("connpass_url") or "").strip()
+    except Exception:
+        return (False, None, "", "upcoming-event.json が読めません")
+    if vol <= session_num or "/event/" not in url:
+        return (False, vol, url, f"次回イベント（Vol.{session_num + 1}）が未設定の可能性")
+    return (True, vol, url, "")
+
+
 # ─── 次回connpassリンク（毎回 Vol.N → Vol.N+1 を自動で）──────────
 def _next_connpass_url():
     """バッジメールに載せる「次回」リンク。
@@ -339,6 +356,8 @@ def main():
                         help="対象日 YYYY-MM-DD（--scan なしの場合は必須）")
     parser.add_argument("--fix",      action="append", default=[],
                         help='メール訂正 "誤=正"（複数指定可）。例: --fix a@gmal.com=a@gmail.com')
+    parser.add_argument("--allow-no-next", action="store_true",
+                        help="次回イベント未設定でも本番送信を強行する（非推奨）")
     parser.add_argument("--dry-run",  action="store_true",
                         help="送信先リストを表示するだけ（送信しない）")
     args = parser.parse_args()
@@ -373,6 +392,19 @@ def main():
     print(f"\n=== PA45 第{session_num}回 バッジ送信 {'[確認モード]' if dry_run else '[本番送信]'} ===")
     print(f"  対象日  : {target_date}")
     print(f"  バッジ  : {badge_path}")
+
+    # ── 次回イベントが立っているか（メールの「次回」リンク）──
+    ok, nvol, nurl, nmsg = check_next_event(session_num)
+    print(f"  次回リンク: {nurl or '(なし)'}" + (f"  ← Vol.{nvol}" if nvol else ""))
+    if not ok:
+        print(f"\n⚠️  {nmsg}")
+        print(f"    → メールの「次回案内」に正しいリンクが入りません。")
+        print(f"    対処: connpassで Vol.{session_num + 1} を作成 →")
+        print(f"          data/config/upcoming-event.json を次回(vol/event_id/connpass_url)に更新")
+        if not dry_run and not args.allow_no_next:
+            print(f"\n⛔ 本番送信を中止しました（古い/誤った次回リンクの送信防止）。")
+            print(f"    次回を設定して再実行、または今すぐ送るなら --allow-no-next を付けてください。")
+            sys.exit(1)
 
     # ── 送信済み確認 ──────────────────────────────
     already_sent = load_sent_log(session_num)
