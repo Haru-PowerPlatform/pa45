@@ -64,6 +64,34 @@
   .back{display:inline-block;margin:14px 6px;font-size:13px;color:#0e7490;font-weight:800;text-decoration:none}
   .foot{text-align:center;color:#0e7490;font-size:12.5px;margin-top:22px;line-height:1.9}
 
+  /* 暗記チェック＆クイズ */
+  .modetabs,.qmode{display:flex;gap:8px;margin:10px 0;flex-wrap:wrap}
+  .mt,.qm{flex:1 1 auto;background:#fff;border:1.5px solid #0891b2;color:#0e7490;border-radius:10px;padding:9px 6px;font-weight:800;font-size:13px;cursor:pointer}
+  .mt.active,.qm.active{background:linear-gradient(135deg,#0891b2,#1e3a8a);color:#fff;border-color:#1e3a8a}
+  .qmode{align-items:center;font-size:12.5px;color:#475569;font-weight:700}
+  .qmode .qm{flex:0 1 auto;padding:7px 12px}
+  .prog{display:flex;align-items:center;gap:10px;margin:10px 0}
+  .prog .bar{flex:1;height:16px;background:#e2e8f0;border-radius:9px;overflow:hidden}
+  .prog .bar span{display:block;height:100%;width:0;background:linear-gradient(90deg,#22c55e,#0891b2);transition:width .25s}
+  #progtxt{font-weight:800;color:#0e7490;font-size:13px;white-space:nowrap}
+  .minibtn{background:#0891b2;color:#fff;border:none;border-radius:8px;padding:7px 11px;font-size:12px;font-weight:800;cursor:pointer;margin-left:6px}
+  .minibtn.danger{background:#ef4444}
+  .clrow{display:flex;align-items:center;gap:10px;padding:9px 10px;border:1.5px solid #e2e8f0;border-radius:10px;margin:6px 0;background:#fff}
+  .clrow.done{background:#ecfdf5;border-color:#34d399}
+  .clrow .ck{width:28px;height:28px;border-radius:7px;border:2px solid #94a3b8;background:#fff;flex-shrink:0;font-size:17px;font-weight:900;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer}
+  .clrow.done .ck{background:#22c55e;border-color:#22c55e}
+  .clrow .nm{flex:1;font-size:13.5px;font-weight:700}
+  .clrow .fm{font-family:"Courier New",monospace;font-weight:800;font-size:15px;color:#0f172a;min-width:78px;text-align:right;cursor:pointer;padding:2px 4px;border-radius:6px}
+  .clrow .fm.hide{color:transparent;background:#e2e8f0}
+  .flash{background:linear-gradient(135deg,#ecfeff,#f0f9ff);border:2px solid #06b6d4;border-radius:14px;padding:22px 14px;text-align:center;margin:10px 0;min-height:118px;display:flex;flex-direction:column;justify-content:center}
+  .flash .fq{font-size:21px;font-weight:800;color:#0e7490}
+  .flash .fa{font-size:27px;font-weight:900;color:#0f172a;margin-top:10px;font-family:"Courier New",monospace}
+  .fbtns{text-align:center;margin:8px 0}
+  .fbtns2{display:flex;gap:10px;margin:8px 0}
+  .jbtn{flex:1;border:none;border-radius:10px;padding:12px;font-size:15px;font-weight:800;cursor:pointer;color:#fff}
+  .jbtn.ok{background:#22c55e}.jbtn.ng{background:#f59e0b}
+  .score{text-align:center;font-weight:800;color:#0e7490;font-size:13px;margin-top:6px}
+
   /* === 共通サイドバー === */
   .navbtn{position:fixed;top:12px;left:12px;z-index:60;background:#1e3a8a;color:#fff;border:2px solid #fff;border-radius:10px;width:46px;height:46px;font-size:22px;line-height:1;box-shadow:0 3px 10px rgba(0,0,0,.3);cursor:pointer}
   .topback{position:fixed;top:12px;right:12px;z-index:60;background:#fff;color:#0e7490;border:2px solid #0891b2;border-radius:10px;height:46px;padding:0 14px;font-size:14px;font-weight:800;box-shadow:0 3px 10px rgba(0,0,0,.2);cursor:pointer}
@@ -107,6 +135,7 @@
     <a href="#eq">③化学反応式</a>
     <a href="#kagakushiki">④化学式の根拠</a>
     <a href="#kakko">⑤( )カッコ</a>
+    <a href="#check">⑥暗記チェック</a>
   </div>
 
   <!-- ============ ① 水の電気分解 ============ -->
@@ -462,6 +491,52 @@
     </div>
   </div>
 
+  <!-- ============ ⑥ 暗記チェック＆問題集 ============ -->
+  <div class="card" id="check">
+    <h2>⑥ 化学式30 暗記チェック ＆ 問題集</h2>
+    <p class="lead">何回でも使えるよ。全部✓になるまで、くり返し覚え直そう！</p>
+
+    <div class="modetabs">
+      <button class="mt active" data-m="list" onclick="setMode('list')">✅ チェックリスト</button>
+      <button class="mt" data-m="quiz" onclick="setMode('quiz')">🃏 一問一答クイズ</button>
+    </div>
+
+    <!-- チェックリスト -->
+    <div id="mode-list">
+      <div class="prog"><div class="bar"><span id="progbar"></span></div><div id="progtxt">0 / 30</div></div>
+      <div style="text-align:right;margin:6px 0">
+        <button class="minibtn" onclick="revealAll()">式を全部 見る／かくす</button>
+        <button class="minibtn danger" onclick="resetCheck()">チェックをリセット</button>
+      </div>
+      <p class="lead" style="margin:4px 2px">右の式は<b>タップでめくれる</b>。名前を見て式を思い出せたら、左の□をタップして✓。</p>
+      <div id="checklist"></div>
+    </div>
+
+    <!-- 一問一答 -->
+    <div id="mode-quiz" style="display:none">
+      <div class="qmode">出題：
+        <button class="qm active" data-q="n2f" onclick="setQMode('n2f')">名前→化学式</button>
+        <button class="qm" data-q="f2n" onclick="setQMode('f2n')">化学式→名前</button>
+      </div>
+      <div class="flash">
+        <div class="fq" id="fq">問題</div>
+        <div class="fa" id="fa" style="display:none"></div>
+      </div>
+      <div class="fbtns">
+        <button class="ansbtn" onclick="flip()">答えを見る</button>
+      </div>
+      <div class="fbtns2" id="fjudge" style="display:none">
+        <button class="jbtn ng" onclick="judge(false)">✕ まだ</button>
+        <button class="jbtn ok" onclick="judge(true)">◯ 覚えた</button>
+      </div>
+      <div class="score" id="score">第1問 / 全30問　◯0 ✕0</div>
+      <div style="text-align:center;margin-top:8px">
+        <button class="minibtn" onclick="reshuffle()">🔀 シャッフルして最初から</button>
+      </div>
+      <p class="lead" style="text-align:center;margin-top:6px">「◯ 覚えた」にするとチェックリストにも自動で✓がつくよ。</p>
+    </div>
+  </div>
+
   <div class="foot">
     まちがえた問題は、答えを見たあとに<b>もう一度自分で書いて</b>みよう✍️<br>
     実験ノートの細かい所（気体の確かめ方・反応前後のちがい）まで覚えると、テストで差がつくよ💪<br>
@@ -483,6 +558,81 @@ document.querySelectorAll('.toc a').forEach(function(el){
     if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth',block:'start'});}
   });
 });
+
+/* ===== 化学式30 暗記チェック＆クイズ ===== */
+var SHIKI=[
+  {n:'水素',f:'H2'},{n:'酸素',f:'O2'},{n:'窒素',f:'N2'},{n:'塩素',f:'Cl2'},{n:'オゾン',f:'O3'},
+  {n:'水',f:'H2O'},{n:'二酸化炭素',f:'CO2'},{n:'アンモニア',f:'NH3'},{n:'硫酸',f:'H2SO4'},{n:'メタン',f:'CH4'},{n:'プロパン',f:'C3H8'},
+  {n:'銀',f:'Ag'},{n:'鉄',f:'Fe'},{n:'カルシウム',f:'Ca'},{n:'ナトリウム',f:'Na'},{n:'黒鉛（炭素）',f:'C'},
+  {n:'塩化ナトリウム',f:'NaCl'},{n:'硫化鉄',f:'FeS'},{n:'酸化マグネシウム',f:'MgO'},{n:'酸化銅',f:'CuO'},{n:'硫化銅',f:'CuS'},
+  {n:'炭酸ナトリウム',f:'Na2CO3'},{n:'炭酸水素ナトリウム',f:'NaHCO3'},{n:'塩化銅',f:'CuCl2'},{n:'塩化バリウム',f:'BaCl2'},{n:'炭酸カルシウム',f:'CaCO3'},
+  {n:'硫酸バリウム',f:'BaSO4'},{n:'酸化銀',f:'Ag2O'},{n:'水酸化バリウム',f:'Ba(OH)2'},{n:'炭酸アンモニウム',f:'(NH4)2CO3'}
+];
+function fmt(s){return s.replace(/(\d+)/g,'<sub>$1</sub>');}
+var CKEY='haruki_kagakushiki30_v1';
+function loadCk(){try{return JSON.parse(localStorage.getItem(CKEY)||'{}');}catch(e){return {};}}
+function saveCk(o){localStorage.setItem(CKEY,JSON.stringify(o));}
+var ckState=loadCk();
+
+function renderChecklist(){
+  var host=document.getElementById('checklist');host.innerHTML='';
+  SHIKI.forEach(function(it,i){
+    var done=!!ckState[i];
+    var row=document.createElement('div');row.className='clrow'+(done?' done':'');
+    row.innerHTML='<div class="ck">'+(done?'✓':'')+'</div><div class="nm">'+(i+1)+'. '+it.n+'</div><div class="fm hide">'+fmt(it.f)+'</div>';
+    row.querySelector('.ck').onclick=function(){ckState[i]=!ckState[i];saveCk(ckState);renderChecklist();};
+    row.querySelector('.fm').onclick=function(){this.classList.toggle('hide');};
+    host.appendChild(row);
+  });
+  updateProg();
+}
+function updateProg(){
+  var c=SHIKI.reduce(function(s,_,i){return s+(ckState[i]?1:0);},0);
+  document.getElementById('progbar').style.width=(c/30*100)+'%';
+  document.getElementById('progtxt').textContent=c+' / 30';
+}
+var allShown=false;
+function revealAll(){allShown=!allShown;document.querySelectorAll('#checklist .fm').forEach(function(e){e.classList.toggle('hide',!allShown);});}
+function resetCheck(){if(confirm('チェックを全部リセットする？')){ckState={};saveCk(ckState);renderChecklist();}}
+
+function setMode(m){
+  document.getElementById('mode-list').style.display=(m==='list')?'block':'none';
+  document.getElementById('mode-quiz').style.display=(m==='quiz')?'block':'none';
+  document.querySelectorAll('.mt').forEach(function(b){b.classList.toggle('active',b.dataset.m===m);});
+  if(m==='list')renderChecklist();
+  if(m==='quiz')startQuiz();
+}
+var qmode='n2f',order=[],qi=0,okc=0,ngc=0;
+function setQMode(q){qmode=q;document.querySelectorAll('.qm').forEach(function(b){b.classList.toggle('active',b.dataset.q===q);});startQuiz();}
+function shuffle(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;}return a;}
+function startQuiz(){order=shuffle(SHIKI.map(function(_,i){return i;}));qi=0;okc=0;ngc=0;showCard();}
+function reshuffle(){startQuiz();}
+function showCard(){
+  document.getElementById('fa').style.display='none';
+  document.getElementById('fjudge').style.display='none';
+  document.querySelector('#mode-quiz .fbtns').style.display='block';
+  if(qi>=order.length){
+    document.getElementById('fq').innerHTML='🎉 おわり！　◯'+okc+'　✕'+ngc;
+    document.getElementById('fa').style.display='none';
+    document.querySelector('#mode-quiz .fbtns').style.display='none';
+    document.getElementById('score').textContent='全30問おわり　◯'+okc+' ✕'+ngc+'　→「🔀シャッフル」でもう一回！';
+    return;
+  }
+  var it=SHIKI[order[qi]];
+  document.getElementById('fq').innerHTML=(qmode==='n2f')?it.n:fmt(it.f);
+  document.getElementById('fa').innerHTML=(qmode==='n2f')?fmt(it.f):it.n;
+  document.getElementById('score').textContent='第'+(qi+1)+'問 / 全30問　◯'+okc+' ✕'+ngc;
+}
+function flip(){
+  document.getElementById('fa').style.display='block';
+  document.querySelector('#mode-quiz .fbtns').style.display='none';
+  document.getElementById('fjudge').style.display='flex';
+}
+function judge(good){
+  if(good){okc++;ckState[order[qi]]=true;saveCk(ckState);}else{ngc++;}
+  qi++;showCard();
+}
+renderChecklist();
 </script>
 </body>
 </html>
