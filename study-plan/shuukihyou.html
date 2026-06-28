@@ -81,7 +81,7 @@
 <div class="wrap">
   <header>
     <h1>🧪 元素の周期表と覚え方</h1>
-    <div class="sub">中学理科／まずは1〜20番を「すいへいりーべ」でおぼえよう</div>
+    <div class="sub">中学理科／今回の範囲は<b>1〜36番</b>まで！「すいへいリーベ…」から順におぼえよう</div>
   </header>
 
   <!-- 覚え方 -->
@@ -100,18 +100,30 @@
       <div class="mnote" style="color:#5b21b6;background:#f5f3ff">👆 11〜20番。語呂のあて方はいろいろあるけど、<b>並ぶ順番</b>を覚えればOK！<br>
       なな(Na)・ま(Mg)・が(Al)・り(Si)・シッ(P)・プス(S)・クラー(Cl)・ク(Ar)・か(K)・(か)Ca</div>
     </div>
+
+    <div class="mnem" style="border-color:#0891b2">
+      <div class="phrase" style="color:#0e7490">スコッチ暴露（ばくろ）マン、鉄（てつ）子（こ）にどうせ会えん</div>
+      <div class="mrow" id="m3"></div>
+      <div class="mnote" style="color:#155e75;background:#ecfeff">👆 21〜30番（遷移金属＝鉄や銅のなかま）。スコ(Sc)・ッチ(Ti)・ば(V)・くろ(Cr)・マン(Mn)・てつ(Fe)・こ(Co)・に(Ni)・どう(Cu)・あえん(Zn)。※「せ」は語呂のつなぎ。</div>
+    </div>
+
+    <div class="mnem" style="border-color:#16a34a">
+      <div class="phrase" style="color:#15803d">ガリゲ ヒ素 セレン、臭（くさ）いクリプトン</div>
+      <div class="mrow" id="m4"></div>
+      <div class="mnote" style="color:#166534;background:#f0fdf4">👆 31〜36番。ガリ(Ga)・ゲ(Ge)・ヒ(As)・セ(Se)・くさい(Br)・クリ(Kr)。<b>ここまでが今回のテスト範囲！</b></div>
+    </div>
   </div>
 
   <!-- 周期表 -->
   <div class="card">
     <h2>📋 周期表（ぜんぶで118個）</h2>
-    <p style="font-size:12.5px;color:#475569;margin-bottom:10px">金色のわく＝覚える1〜20番。よこにスクロールできるよ →</p>
+    <p style="font-size:12.5px;color:#475569;margin-bottom:10px">金色のわく＝覚える<b>1〜36番</b>（今回の範囲）。よこにスクロールできるよ →</p>
     <div class="scroll"><div class="ptable" id="ptable"></div></div>
     <div class="legend" id="legend"></div>
   </div>
 
   <div class="foot">
-    まずは1〜20番を完璧に！💪　そのあと、鉄(Fe)・銅(Cu)・銀(Ag)・金(Au)・水銀(Hg) など身近なものも覚えると強い。<br>
+    今回の範囲は1〜36番！💪　まず1〜20番を「すいへいリーベ」で固めて、21〜36番（遷移金属＝鉄・銅などのなかま＋ガリゲヒセクリ）まで仕上げよう。<br>
     <a class="back" href="index.html">← はるき学習計画トップへ</a>
   </div>
 </div>
@@ -135,14 +147,16 @@ const EL=[
 
 const kana1=['すい','へい','リー','ベ','ぼ','く','の','お','ふ','ね'];
 const kana2=['なな','ま','が','り','シッ','プス','クラー','ク','か','(か)'];
+const kana3=['スコ','ッチ','ば','くろ','マン','てつ','こ','に','どう','あえん'];
+const kana4=['ガリ','ゲ','ヒ','セ','くさい','クリ'];
 
 const tbl=document.getElementById('ptable');
 EL.forEach(e=>{
   const [n,s,j,cat,col,row]=e;
   const d=document.createElement('div');
-  d.className='el c-'+cat+(n<=20?' key':'');
+  d.className='el c-'+cat+(n<=36?' key':'');
   d.style.gridColumn=col; d.style.gridRow=row;
-  let kana=''; if(n<=10)kana=kana1[n-1]; else if(n<=20)kana=kana2[n-11];
+  let kana=''; if(n<=10)kana=kana1[n-1]; else if(n<=20)kana=kana2[n-11]; else if(n<=30)kana=kana3[n-21]; else if(n<=36)kana=kana4[n-31];
   d.innerHTML='<span class="n">'+n+'</span><span class="s">'+s+'</span><span class="j">'+j+'</span>'+(kana?'<span class="kana">'+kana+'</span>':'');
   tbl.appendChild(d);
 });
@@ -155,6 +169,8 @@ EL.forEach(e=>{
 function mcell(host,sym,jp,kana){const d=document.createElement('div');d.className='mcell';d.innerHTML='<div class="kana">'+kana+'</div><div class="sym">'+sym+'</div><div class="nm">'+jp+'</div>';document.getElementById(host).appendChild(d);}
 EL.filter(e=>e[0]<=10).forEach((e,i)=>mcell('m1',e[1],e[2],kana1[i]));
 EL.filter(e=>e[0]>=11&&e[0]<=20).sort((a,b)=>a[0]-b[0]).forEach((e,i)=>mcell('m2',e[1],e[2],kana2[i]));
+EL.filter(e=>e[0]>=21&&e[0]<=30).sort((a,b)=>a[0]-b[0]).forEach((e,i)=>mcell('m3',e[1],e[2],kana3[i]));
+EL.filter(e=>e[0]>=31&&e[0]<=36).sort((a,b)=>a[0]-b[0]).forEach((e,i)=>mcell('m4',e[1],e[2],kana4[i]));
 
 // 凡例
 const cats=[['c-non','非金属'],['c-metalloid','半金属'],['c-metal','金属'],['c-tm','遷移金属'],['c-alkali','アルカリ金属'],['c-alkaline','アルカリ土類'],['c-halogen','ハロゲン'],['c-noble','貴ガス'],['c-lan','ランタノイド'],['c-act','アクチノイド']];
