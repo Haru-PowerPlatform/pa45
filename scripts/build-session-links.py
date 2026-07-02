@@ -18,7 +18,7 @@ SURVEY = "https://forms.cloud.microsoft/r/mVzhNWH6JE"
 
 EVENT = {1:386395,2:386742,3:387593,4:388691,5:389833,6:390451,7:391508,8:391996,
          9:392423,10:393267,11:393551,12:394484,13:395416,14:395861,15:397133,
-         16:397828,17:398546}
+         16:397828,17:398546,18:399388}
 
 VOL17_EXCEL = "https://github.com/Haru-PowerPlatform/pa45/raw/main/flows/vol-17/タスク一覧.xlsx"
 
@@ -123,8 +123,9 @@ def main():
                     "date":(date_t.group(1).strip() if date_t else ""),
                     "links":classify(hrefs)}
     up=json.load(open(os.path.join(ROOT,"data","config","upcoming-event.json"),encoding="utf-8"))
-    voldata[17]={"title":f"第17回：{up['theme']}","date":up["date"],
-                 "links":classify([f"{SITE}slides/vol-17/"]),"upcoming":True}
+    uv=int(up["vol"])
+    voldata[uv]={"title":f"第{uv}回：{up['theme']}","date":up["date"],
+                 "links":classify([f"{SITE}slides/vol-{uv:02d}/"]),"upcoming":True}
 
     made=[]
     for v,dd in sorted(voldata.items()):
