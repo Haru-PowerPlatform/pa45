@@ -40,6 +40,7 @@ PALETTES = [
 SESSIONS = {
     15: ("Folder Watch Mail", "2026-06-18", "foldermail"),
     16: ("Copilot Assist", "2026-06-25", "copilot"),
+    17: ("Deadline Watch", "2026-07-02", "deadline"),
 }
 
 
@@ -88,7 +89,41 @@ def icon_copilot(g):
   </g>'''
 
 
-ICONS = {"foldermail": icon_foldermail, "copilot": icon_copilot}
+def icon_deadline(g):
+    """期限の見張り番 = 目覚まし時計（締切を見張る）。金のベル＋文字盤＋針。"""
+    gl, gm, gd = g
+    cx, cy, r = 440, 414, 86
+    ticks = ""
+    for i in range(12):
+        a = -math.pi / 2 + i * math.pi / 6
+        ro, ri = r - 7, (r - 20 if i % 3 == 0 else r - 15)
+        w = 6 if i % 3 == 0 else 3
+        ticks += (f'<line x1="{cx+ro*math.cos(a):.1f}" y1="{cy+ro*math.sin(a):.1f}" '
+                  f'x2="{cx+ri*math.cos(a):.1f}" y2="{cy+ri*math.sin(a):.1f}" '
+                  f'stroke="{gd}" stroke-width="{w}" stroke-linecap="round"/>')
+    return f'''
+  <g filter="url(#ishadow)">
+    <!-- 脚 -->
+    <rect x="{cx-70}" y="{cy+r-6}" width="20" height="34" rx="9" fill="{gd}" transform="rotate(24 {cx-60} {cy+r+10})"/>
+    <rect x="{cx+50}" y="{cy+r-6}" width="20" height="34" rx="9" fill="{gd}" transform="rotate(-24 {cx+60} {cy+r+10})"/>
+    <!-- ベル（左右） -->
+    <ellipse cx="{cx-56}" cy="{cy-r-2}" rx="30" ry="27" fill="{gm}" transform="rotate(-30 {cx-56} {cy-r-2})"/>
+    <ellipse cx="{cx+56}" cy="{cy-r-2}" rx="30" ry="27" fill="{gm}" transform="rotate(30 {cx+56} {cy-r-2})"/>
+    <!-- 打棒 -->
+    <rect x="{cx-6}" y="{cy-r-40}" width="12" height="30" rx="6" fill="{gd}"/>
+    <circle cx="{cx}" cy="{cy-r-42}" r="13" fill="{gl}"/>
+    <!-- 文字盤 -->
+    <circle cx="{cx}" cy="{cy}" r="{r}" fill="url(#sparkgrad)"/>
+    <circle cx="{cx}" cy="{cy}" r="{r-13}" fill="#fffaf0"/>
+    {ticks}
+    <!-- 針（締切間近＝10:08あたり） -->
+    <line x1="{cx}" y1="{cy}" x2="{cx-30}" y2="{cy-38}" stroke="{gd}" stroke-width="10" stroke-linecap="round"/>
+    <line x1="{cx}" y1="{cy}" x2="{cx+40}" y2="{cy-20}" stroke="{gd}" stroke-width="7" stroke-linecap="round"/>
+    <circle cx="{cx}" cy="{cy}" r="9" fill="{gd}"/>
+  </g>'''
+
+
+ICONS = {"foldermail": icon_foldermail, "copilot": icon_copilot, "deadline": icon_deadline}
 
 
 def knurl_dots(cx, cy, r, n, color):
