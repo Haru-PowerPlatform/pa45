@@ -165,7 +165,7 @@
     <li><a href="#s10"><span class="n">10</span>★ 部品① スケジュールで起こす</a></li>
     <li><a href="#s11"><span class="n">11</span>★ 部品② Excelの表を読む</a></li>
     <li><a href="#s12"><span class="n">12</span>★ 部品③ 1行ずつ見て条件分岐</a></li>
-    <li><a href="#s13"><span class="n">13</span>★ 「期限が近い」を式で表す</a></li>
+    <li><a href="#s13"><span class="n">13</span>★ 「あと3日」を日本時間で用意</a></li>
     <li><a href="#s14"><span class="n">14</span>★ 部品④ Teamsで知らせる</a></li>
     <li><a href="#s15"><span class="n">15</span>★ いっしょにやってみよう</a></li>
     <li><a href="#s16"><span class="n">16</span>活用事例（応用）</a></li>
@@ -320,7 +320,7 @@
       <div class="arr">→</div>
       <div class="stepbox" style="border-color:#7c3aed;background:#f5f3ff;">
         <div class="badge" style="background:#7c3aed;color:#fff;">③ 選ぶ</div>
-        <h3>🔎 1行ずつ判定</h3><p>期限が3日以内？まだ未完了？</p><span class="act">条件分岐</span></div>
+        <h3>🔎 1行ずつ判定</h3><p>日本時間で「3日後」を出し、期限と比べる。未完了だけ通す</p><span class="act">条件分岐</span></div>
       <div class="arr">→</div>
       <div class="stepbox" style="border-color:#dc2626;background:#fff1f2;">
         <div class="badge" style="background:#dc2626;color:#fff;">④ 知らせる</div>
@@ -403,38 +403,35 @@
       </div>
       <div class="card"><h3>2つの条件（両方を満たす行だけ通す）</h3>
         <div class="ba" style="grid-template-columns:1fr;gap:10px;">
-          <div class="box good"><span class="lab">条件①：締切が近い</span>「期限」 ＜ 今日から3日後</div>
+          <div class="box good"><span class="lab">条件①：締切が近い</span>「期限」 ＜ 3日後（日本時間 ＝ 算出時間）</div>
           <div class="box good"><span class="lab">条件②：まだ終わってない</span>「状態」 ≠ 完了</div>
         </div>
-        <p style="font-size:18px;color:var(--muted);margin-top:10px;">両方 <strong>「はい」</strong> の行＝お知らせ対象。先ほどの表なら <strong>「請求書の提出」</strong>が引っかかります。</p>
+        <p style="font-size:18px;color:var(--muted);margin-top:10px;">両方 <strong>「はい」</strong> の行＝お知らせ対象。<strong>「3日後の日付」の作り方は次のスライド</strong>でくわしく。</p>
       </div>
     </div>
     <div class="callout" style="margin-top:auto;"><strong>ポイント：</strong> 「完了したタスクまで通知しない」ように <strong>状態 ≠ 完了</strong> を足すのが地味だけど大事。通知は <strong>本当に必要なものだけ</strong>に絞ります。</div>
   </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span></div>
 </section>
-<!-- ===== S13: ★ 「期限が近い」を式で表す ===== -->
+<!-- ===== S13: ★ 「あと3日」を日本時間で用意する ===== -->
 <section class="slide" id="s13">
   <span class="slide-num">13 / 18</span>
-  <div class="slide-head"><div class="slide-eyebrow">★ 今日の山場 ／ EXPRESSION</div><h1 class="slide-title">「期限が近い」を式で表す <small>── 日付の足し算</small></h1><div class="concept-dot">For the date</div></div>
+  <div class="slide-head"><div class="slide-eyebrow">★ 今日の山場 ／ 日本時間で判定</div><h1 class="slide-title">「あと3日」を"日本時間"で用意する <small>── 式を書かず、3つのアクションで</small></h1><div class="concept-dot">JST</div></div>
   <div class="slide-body">
-    <div class="cards-2" style="grid-template-columns:1.1fr 1fr;">
-      <div class="card"><h3>たとえ話で理解</h3>
-        <p>「<strong>あと3日以内</strong>」は、<strong>今日に3日を足した日</strong>より前か？で判定できます。カレンダーに付せんを <strong>3日先</strong>に貼って、それより手前の締切を拾うイメージ。</p>
-        <h3 style="margin-top:12px;font-size:19px;">使う関数は2つだけ</h3>
-        <ul class="check" style="font-size:21px;">
-          <li><code>utcNow()</code> … 今この瞬間</li>
-          <li><code>addDays(...)</code> … 日付を足す</li>
-        </ul>
+    <div class="cards-2" style="grid-template-columns:1fr 1.18fr;">
+      <div class="card"><h3>考え方はカンタン</h3>
+        <p>「<strong>あと3日以内</strong>」＝ <strong>今日（日本時間）に3日を足した日</strong>より前か？ で判定します。カレンダーの <strong>3日先</strong>に付せんを貼り、それより手前の締切だけ拾うイメージ。</p>
+        <div class="callout blue" style="font-size:20px;padding:13px 18px;margin:12px 0 0;"><strong>むずかしい式は書きません。</strong>下の3つのアクションを順番に置くだけで「3日後の日付」が作れます。</div>
       </div>
-      <div class="card blue"><h3>条件に入れる式</h3>
-        <p style="font-size:17px;margin:0 0 6px;color:var(--muted);">左辺（その行の期限）：</p>
-        <div class="code-block" style="font-size:18px;">item()?['<span class="key">期限</span>']</div>
-        <p style="font-size:17px;margin:10px 0 6px;color:var(--muted);">右辺（今日から3日後・日付だけ）：</p>
-        <div class="code-block" style="font-size:16px;"><span class="hl">formatDateTime</span>(<span class="hl">addDays</span>(<span class="hl">utcNow</span>(),<span class="str">3</span>),<span class="str">'yyyy-MM-dd'</span>)</div>
-        <p style="font-size:17px;color:var(--muted);margin-top:8px;">条件：<strong>左辺 ＜ 右辺</strong>（期限のほうが3日後より手前なら「近い」）</p>
+      <div class="card blue" style="padding:20px 24px;"><h3 style="margin-bottom:8px;">置くのはこの3つ（上から順に）</h3>
+        <ol class="steplist" style="font-size:18px;">
+          <li style="padding:6px 0 6px 44px;"><strong>現在の時刻</strong><br><span style="color:var(--muted);font-size:15px;">いまの時刻を取る（世界時＝UTC）</span></li>
+          <li style="padding:6px 0 6px 44px;"><strong>タイム ゾーンの変換</strong><br><span style="color:var(--muted);font-size:15px;">UTC →（UTC+9）東京。書式 <code>yyyy-MM-dd</code> で「日本時間の今日」に</span></li>
+          <li style="padding:6px 0 6px 44px;"><strong>時間への追加</strong><br><span style="color:var(--muted);font-size:15px;">変換後の時間 ＋<strong>3日</strong> ＝「3日後」（出力名＝<strong>算出時間</strong>）</span></li>
+        </ol>
+        <p style="font-size:17px;margin:8px 0 0;color:var(--muted);">条件の右辺は、この <strong>「算出時間」</strong>を選ぶだけ。<code>期限 ＜ 算出時間</code></p>
       </div>
     </div>
-    <div class="callout blue" style="margin-top:auto;"><strong>コツ：</strong> 日付を <strong>yyyy-MM-dd の文字</strong>でそろえると、文字のまま大小比較できて分かりやすい。式がむずかしければ <strong>Vol.16でやったCopilot</strong>に「この式作って」と頼んでOK！</div>
+    <div class="callout" style="margin-top:auto;font-size:19px;padding:13px 22px;"><strong>なぜ変換する？：</strong> <code>現在の時刻</code>は <strong>世界時（UTC）</strong>で日本より9時間前。そのまま使うと夜に日付が1日ズレて通知が狂うことがあります。だから <strong>先に「日本時間の今日」に直してから</strong>3日足すのがコツ。<span style="color:var(--muted);">💡 アクション名は「タイム ゾーンの変換_日本時間の今日にする」のように説明を足すと後で分かりやすい。</span></div>
   </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span></div>
 </section>
 <!-- ===== S14: ★ 部品④ Teamsで知らせる ===== -->
@@ -468,17 +465,17 @@
   <div class="slide-head"><div class="slide-eyebrow">★ HANDS-ON</div><h1 class="slide-title">いっしょにやってみよう <small>── 組み立ての通し</small></h1><div class="concept-dot">Let's build</div></div>
   <div class="slide-body">
     <div class="cards-2">
-      <div class="card"><ul class="check" style="font-size:21px;">
+      <div class="card"><ul class="check" style="font-size:20px;">
         <li><strong>①</strong> 新規フロー → トリガー「<strong>繰り返し</strong>」を選ぶ</li>
         <li><strong>②</strong> 1日ごと・東京・<strong>朝8:00</strong>に設定</li>
         <li><strong>③</strong> 「<strong>表内に存在する行を一覧表示</strong>」でExcelを読む</li>
-        <li><strong>④</strong> 「<strong>Apply to each</strong>」で1行ずつ取り出す</li>
+        <li><strong>④</strong> 「<strong>現在の時刻</strong>」→「<strong>タイム ゾーンの変換</strong>」→「<strong>時間への追加(＋3日)</strong>」で<strong>"日本時間の3日後"</strong>を用意</li>
       </ul></div>
-      <div class="card"><ul class="check" style="font-size:21px;">
-        <li><strong>⑤</strong> 中に「<strong>条件</strong>」：期限＜3日後 <strong>かつ</strong> 状態≠完了</li>
-        <li><strong>⑥</strong> 「はい」側に <strong>Teamsへ投稿</strong>（タスク名・期限を差し込み）</li>
-        <li><strong>⑦</strong> 「<strong>テスト</strong>」→手動実行で動作確認🎉</li>
-        <li><strong>⑧</strong> 「これ便利！」を #PA45 に投稿</li>
+      <div class="card"><ul class="check" style="font-size:20px;">
+        <li><strong>⑤</strong> 「<strong>Apply to each</strong>」で1行ずつ取り出す</li>
+        <li><strong>⑥</strong> 中に「<strong>条件</strong>」：期限 ＜ <strong>算出時間</strong> <strong>かつ</strong> 状態≠完了</li>
+        <li><strong>⑦</strong> 「はい」側に <strong>Teamsへ投稿</strong>（タスク名・期限を差し込み）</li>
+        <li><strong>⑧</strong> 「<strong>テスト</strong>」→手動実行で確認🎉 → #PA45 に投稿</li>
       </ul></div>
     </div>
     <div class="callout" style="margin-top:auto;"><strong>⚠️ つまずきポイント：</strong> ①通知が来ない→<strong>テスト時に近い期限の行があるか</strong>確認（無ければ条件を「7日後」に広げて試す）。②時間がズレる→トリガーの<strong>タイムゾーン</strong>を東京に。③Excelが選べない→表を<strong>「テーブル」</strong>にしたか確認。</div>
