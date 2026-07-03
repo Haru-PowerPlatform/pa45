@@ -40,11 +40,22 @@ PALETTES = [
 SESSIONS = {
     15: ("Folder Watch Mail", "2026-06-18", "foldermail"),
     16: ("Copilot Assist", "2026-06-25", "copilot"),
-    17: ("Deadline Watch", "2026-07-02", "deadline"),
+    17: ("Due Date Watch", "2026-07-02", "deadline"),
+}
+
+
+# 回ごとの特別パレット（自動巡回より優先・「かわいい」指定などに対応）
+ROSEGOLD = ("#ffeede", "#f4b58f", "#c07d63")  # rose gold: light, mid, dark
+PALETTE_OVERRIDE = {
+    # Vol.17：かわいいローズピンク × ローズゴールド
+    17: dict(ring=("#ffd9ea", "#9c3568"), disc=("#ff8fc0", "#5e1a3d"),
+             gold=ROSEGOLD, title="#ffffff", sub="#ffe1ef"),
 }
 
 
 def palette_for(vol):
+    if vol in PALETTE_OVERRIDE:
+        return PALETTE_OVERRIDE[vol]
     return DEFAULT_PAL if vol < 14 else PALETTES[(vol - 14) % len(PALETTES)]
 
 
@@ -92,34 +103,34 @@ def icon_copilot(g):
 def icon_deadline(g):
     """期限の見張り番 = 目覚まし時計（締切を見張る）。金のベル＋文字盤＋針。"""
     gl, gm, gd = g
-    cx, cy, r = 440, 414, 86
+    cx, cy, r = 440, 400, 64
     ticks = ""
     for i in range(12):
         a = -math.pi / 2 + i * math.pi / 6
-        ro, ri = r - 7, (r - 20 if i % 3 == 0 else r - 15)
-        w = 6 if i % 3 == 0 else 3
+        ro, ri = r - 6, (r - 17 if i % 3 == 0 else r - 12)
+        w = 5 if i % 3 == 0 else 3
         ticks += (f'<line x1="{cx+ro*math.cos(a):.1f}" y1="{cy+ro*math.sin(a):.1f}" '
                   f'x2="{cx+ri*math.cos(a):.1f}" y2="{cy+ri*math.sin(a):.1f}" '
                   f'stroke="{gd}" stroke-width="{w}" stroke-linecap="round"/>')
     return f'''
   <g filter="url(#ishadow)">
     <!-- 脚 -->
-    <rect x="{cx-70}" y="{cy+r-6}" width="20" height="34" rx="9" fill="{gd}" transform="rotate(24 {cx-60} {cy+r+10})"/>
-    <rect x="{cx+50}" y="{cy+r-6}" width="20" height="34" rx="9" fill="{gd}" transform="rotate(-24 {cx+60} {cy+r+10})"/>
+    <rect x="{cx-60}" y="{cy+r-8}" width="18" height="22" rx="8" fill="{gd}" transform="rotate(24 {cx-51} {cy+r+3})"/>
+    <rect x="{cx+42}" y="{cy+r-8}" width="18" height="22" rx="8" fill="{gd}" transform="rotate(-24 {cx+51} {cy+r+3})"/>
     <!-- ベル（左右） -->
-    <ellipse cx="{cx-56}" cy="{cy-r-2}" rx="30" ry="27" fill="{gm}" transform="rotate(-30 {cx-56} {cy-r-2})"/>
-    <ellipse cx="{cx+56}" cy="{cy-r-2}" rx="30" ry="27" fill="{gm}" transform="rotate(30 {cx+56} {cy-r-2})"/>
+    <ellipse cx="{cx-50}" cy="{cy-r-2}" rx="27" ry="24" fill="{gm}" transform="rotate(-30 {cx-50} {cy-r-2})"/>
+    <ellipse cx="{cx+50}" cy="{cy-r-2}" rx="27" ry="24" fill="{gm}" transform="rotate(30 {cx+50} {cy-r-2})"/>
     <!-- 打棒 -->
-    <rect x="{cx-6}" y="{cy-r-40}" width="12" height="30" rx="6" fill="{gd}"/>
-    <circle cx="{cx}" cy="{cy-r-42}" r="13" fill="{gl}"/>
+    <rect x="{cx-6}" y="{cy-r-28}" width="12" height="24" rx="6" fill="{gd}"/>
+    <circle cx="{cx}" cy="{cy-r-30}" r="11" fill="{gl}"/>
     <!-- 文字盤 -->
     <circle cx="{cx}" cy="{cy}" r="{r}" fill="url(#sparkgrad)"/>
-    <circle cx="{cx}" cy="{cy}" r="{r-13}" fill="#fffaf0"/>
+    <circle cx="{cx}" cy="{cy}" r="{r-12}" fill="#fffaf0"/>
     {ticks}
     <!-- 針（締切間近＝10:08あたり） -->
-    <line x1="{cx}" y1="{cy}" x2="{cx-30}" y2="{cy-38}" stroke="{gd}" stroke-width="10" stroke-linecap="round"/>
-    <line x1="{cx}" y1="{cy}" x2="{cx+40}" y2="{cy-20}" stroke="{gd}" stroke-width="7" stroke-linecap="round"/>
-    <circle cx="{cx}" cy="{cy}" r="9" fill="{gd}"/>
+    <line x1="{cx}" y1="{cy}" x2="{cx-25}" y2="{cy-32}" stroke="{gd}" stroke-width="9" stroke-linecap="round"/>
+    <line x1="{cx}" y1="{cy}" x2="{cx+34}" y2="{cy-17}" stroke="{gd}" stroke-width="6" stroke-linecap="round"/>
+    <circle cx="{cx}" cy="{cy}" r="8" fill="{gd}"/>
   </g>'''
 
 
@@ -133,6 +144,22 @@ def knurl_dots(cx, cy, r, n, color):
         x, y = cx + r * math.cos(a), cy + r * math.sin(a)
         out.append(f'<circle cx="{x:.1f}" cy="{y:.1f}" r="6.5" fill="{color}"/>')
     return "\n".join(out)
+
+
+def text3d(cx, y, size, ls, fill, depth, weight, s, sheen=True):
+    """立体（浮き上がり）テキスト：暗い層を下に数枚重ねて押し出し感＋上に光沢ハイライト。"""
+    fam = "'Noto Sans JP','Segoe UI',sans-serif"
+    base = (f'font-family="{fam}" font-weight="{weight}" '
+            f'font-size="{size}" letter-spacing="{ls}" text-anchor="middle"')
+    layers = ""
+    for d in range(5, 0, -1):
+        op = 0.9 if d <= 2 else 0.5
+        layers += (f'<text x="{cx}" y="{y + d}" fill="{depth}" fill-opacity="{op}" {base}>{s}</text>')
+    # 上端の白ハイライト（ガラス光沢）
+    hi = (f'<text x="{cx}" y="{y - 1.2}" fill="#ffffff" fill-opacity="0.30" {base}>{s}</text>'
+          if sheen else "")
+    top = f'<text x="{cx}" y="{y}" fill="{fill}" {base}>{s}</text>'
+    return layers + top + hi
 
 
 def build_svg(vol, theme, date, key, pal):
@@ -174,10 +201,20 @@ def build_svg(vol, theme, date, key, pal):
       <stop offset="0" stop-color="{gl}"/>
       <stop offset="1" stop-color="{gm}"/>
     </linearGradient>
-    <radialGradient id="gloss" cx="0.5" cy="0.32" r="0.5">
-      <stop offset="0" stop-color="#ffffff" stop-opacity="0.45"/>
+    <radialGradient id="gloss" cx="0.5" cy="0.30" r="0.56">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.60"/>
+      <stop offset="0.55" stop-color="#ffffff" stop-opacity="0.10"/>
       <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
     </radialGradient>
+    <radialGradient id="vign" cx="0.5" cy="0.60" r="0.62">
+      <stop offset="0.55" stop-color="#000000" stop-opacity="0"/>
+      <stop offset="1" stop-color="#000000" stop-opacity="0.30"/>
+    </radialGradient>
+    <linearGradient id="bevel" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.75"/>
+      <stop offset="0.5" stop-color="#ffffff" stop-opacity="0"/>
+      <stop offset="1" stop-color="#000000" stop-opacity="0.35"/>
+    </linearGradient>
     <filter id="dshadow" x="-20%" y="-20%" width="140%" height="140%">
       <feDropShadow dx="0" dy="10" stdDeviation="16" flood-color="#000" flood-opacity="0.45"/>
     </filter>
@@ -198,28 +235,29 @@ def build_svg(vol, theme, date, key, pal):
   <circle cx="{cx}" cy="{cy}" r="{ID}" fill="url(#discgrad)"/>
   <circle cx="{cx}" cy="{cy}" r="{ID}" fill="none" stroke="url(#goldrim)" stroke-width="5"/>
 
-  <!-- ブランド -->
-  <text x="{cx}" y="296" text-anchor="middle" fill="{gm}"
-        font-family="'Noto Sans JP','Segoe UI',sans-serif" font-weight="700"
-        font-size="27" letter-spacing="6">POWER AUTOMATE 45</text>
-  <line x1="{cx-150}" y1="312" x2="{cx+150}" y2="312" stroke="{gm}" stroke-width="2" opacity="0.7"/>
+  <!-- ブランド（立体） -->
+  {text3d(cx, 248, 27, 6, gl, gd, 700, "POWER AUTOMATE 45")}
+  <line x1="{cx-150}" y1="266" x2="{cx+150}" y2="266" stroke="{gm}" stroke-width="2" opacity="0.7"/>
+  <line x1="{cx-150}" y1="267.4" x2="{cx+150}" y2="267.4" stroke="#ffffff" stroke-width="1" opacity="0.35"/>
 
   <!-- アイコン -->
   {icon_svg}
 
-  <!-- テーマ名 -->
-  <text x="{cx}" y="560" text-anchor="middle" fill="{pal['title']}"
-        font-family="'Noto Sans JP','Segoe UI',sans-serif" font-weight="800"
-        font-size="{tsize}" letter-spacing="1">{title}</text>
-  <!-- VOL・日付 -->
-  <text x="{cx}" y="606" text-anchor="middle" fill="{pal['sub']}"
-        font-family="'Noto Sans JP','Segoe UI',sans-serif" font-weight="600"
-        font-size="24" letter-spacing="3">VOL.{vol} · {date}</text>
+  <!-- テーマ名（立体） -->
+  {text3d(cx, 560, tsize, 1, pal['title'], gd, 800, title)}
+  <!-- VOL・日付（立体） -->
+  {text3d(cx, 606, 24, 3, pal['sub'], gd, 600, f"VOL.{vol} · {date}", sheen=False)}
 
-  <!-- 光沢（上半分） -->
+  <!-- 光沢・立体（上半分ハイライト＋下部の陰影＋内周ベベル） -->
   <g clip-path="url(#discclip)">
-    <ellipse cx="{cx}" cy="{cy-110}" rx="280" ry="170" fill="url(#gloss)"/>
+    <ellipse cx="{cx}" cy="{cy-118}" rx="285" ry="180" fill="url(#gloss)"/>
+    <path d="M {cx-232} {cy-92} A 232 232 0 0 1 {cx+232} {cy-92}"
+          fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round" opacity="0.5"/>
+    <circle cx="{cx}" cy="{cy}" r="{ID}" fill="url(#vign)"/>
   </g>
+  <!-- 内周ベベルリング（金属の縁の立体感） -->
+  <circle cx="{cx}" cy="{cy}" r="{ID-3}" fill="none" stroke="url(#bevel)" stroke-width="6" opacity="0.9"/>
+  <circle cx="{cx}" cy="{cy}" r="{rim}" fill="none" stroke="url(#bevel)" stroke-width="4" opacity="0.7"/>
 </svg>'''
 
 
