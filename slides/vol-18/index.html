@@ -2,13 +2,13 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8">
-<title>PA45 第18回 スライド｜承認リマインダー（止まった申請を毎朝そっと催促）</title>
+<title>PA45 第18回 スライド｜承認エスカレーション（放置された承認を、フローが催促して上に上げる）</title>
 <style>
   :root{
     --blue-bg:#eaf2fc;--blue-mid:#2a7dd4;--blue-text:#14528f;--blue-light:#b8d3ef;
     --orange:#e06030;--red:#c03520;--surface:#fff;--bg:#f3f6fa;--text:#1f2937;
     --muted:#475569;--hint:#94a3b8;--border:#e2e8f0;--green-bg:#ecfdf5;--green-text:#065f46;
-    --yellow-bg:#fffbeb;--yellow-text:#92400e;
+    --yellow-bg:#fffbeb;--yellow-text:#92400e;--teal:#0f7b8a;--purple:#7c3aed;
   }
   body{margin:0;padding:24px 24px 24px 280px;background:#1a2233;
     font-family:"Meiryo UI","Yu Gothic UI","Segoe UI",sans-serif;color:var(--text);font-size:16px;}
@@ -79,7 +79,7 @@
   .title-slide .pill.alt{background:#fff;color:var(--blue-mid);border:2px solid var(--blue-mid);}
   .title-slide h1{font-size:42px;font-weight:800;line-height:1.18;color:var(--blue-text);margin:0 0 20px;letter-spacing:-.02em;}
   .title-slide .lead{font-size:21px;color:var(--muted);margin:0 0 22px;line-height:1.6;}
-  .meta-table{background:rgba(255,255,255,.7);border-left:5px solid var(--blue-mid);padding:16px 26px;border-radius:8px;max-width:980px;}
+  .meta-table{background:rgba(255,255,255,.7);border-left:5px solid var(--blue-mid);padding:16px 26px;border-radius:8px;max-width:1040px;}
   .meta-table dt{display:inline-block;width:110px;color:var(--blue-mid);font-weight:700;font-size:18px;}
   .meta-table dd{display:inline;margin:0;font-size:20px;color:var(--text);}
   .meta-table dl{margin:11px 0;}
@@ -122,32 +122,81 @@
   .illus{display:block;width:auto;}
   .introrow{display:grid;grid-template-columns:150px 1fr;gap:24px;align-items:center;margin:6px 0 12px;}
   .introrow .illus{max-height:140px;margin:0 auto;}
-  /* ===== SharePoint風リスト ===== */
-  .sptbl{width:100%;border-collapse:collapse;font-size:18px;margin-top:6px;background:#fff;border:1px solid #cbd5e1;}
-  .sptbl th{background:#0f6cbd;color:#fff;padding:11px 14px;text-align:left;font-weight:700;font-size:17px;border:1px solid #0a5394;}
-  .sptbl td{padding:10px 14px;border:1px solid #d7dde3;color:var(--text);}
-  .sptbl tr:nth-child(even) td{background:#f3f7fb;}
-  .sptbl .hit{background:#fff7ed !important;}
-  .sptbl .st-wait{background:#fde68a;color:#92400e;border-radius:10px;padding:1px 11px;font-size:13px;font-weight:700;}
-  .sptbl .st-done{background:#d1fae5;color:#065f46;border-radius:10px;padding:1px 11px;font-size:13px;font-weight:700;}
+  /* ===== Power Automate アクションカード風 ===== */
+  .paact{background:#fff;border:1px solid #d7dde3;border-radius:10px;box-shadow:0 3px 10px rgba(0,0,0,.08);overflow:hidden;}
+  .paact .pahdr{display:flex;align-items:center;gap:10px;padding:11px 16px;background:#faf9f8;border-bottom:1px solid #e5e7eb;}
+  .paact .paicon{width:30px;height:30px;border-radius:6px;background:linear-gradient(135deg,#0b5cab,#3b82c4);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;flex:0 0 30px;}
+  .paact .patitle{font-size:18px;font-weight:700;color:#242424;}
+  .paact .pabody{padding:12px 16px 16px;}
+  .pafield{margin-bottom:11px;}
+  .pafield .lbl{font-size:14px;font-weight:600;color:#3b3a39;margin-bottom:4px;display:block;}
+  .pafield .lbl b{color:#a4262c;font-weight:700;}
+  .pafield .inp{border:1px solid #b3b0ad;border-bottom:2px solid #0f6cbd;border-radius:2px;padding:8px 12px;font-size:16px;color:#242424;background:#fff;min-height:20px;}
+  .pafield .inp.ph{color:#8a8886;}
+  .pafield .inp.dd{display:flex;justify-content:space-between;align-items:center;}
+  .pafield .inp.dd::after{content:'⌄';color:#605e5c;font-size:20px;line-height:.6;}
+  .pafield .tok{display:inline-block;background:#eef6fc;border:1px solid #b6d7f2;color:#0f6cbd;border-radius:4px;padding:1px 8px;font-size:14px;font-weight:600;}
+  .padrop{border:1px solid #b3b0ad;border-radius:4px;box-shadow:0 6px 18px rgba(0,0,0,.14);overflow:hidden;background:#fff;}
+  .padrop div{padding:9px 14px;font-size:15px;color:#242424;border-bottom:1px solid #f0f0f0;}
+  .padrop div.sel{background:#eef6fc;font-weight:700;color:#0f6cbd;}
+  .padrop div:last-child{border-bottom:none;}
+  /* ===== Teams 承認アダプティブカード風 ===== */
+  .appcard{background:#fff;border:1px solid #e1dfdd;border-radius:10px;box-shadow:0 4px 14px rgba(0,0,0,.10);overflow:hidden;max-width:560px;}
+  .appcard .achdr{display:flex;align-items:center;gap:9px;padding:10px 16px;border-bottom:1px solid #eee;}
+  .appcard .acic{width:26px;height:26px;border-radius:6px;background:#0f7b8a;color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;}
+  .appcard .actag{font-size:14px;font-weight:700;color:#0f7b8a;}
+  .appcard .acname{margin-left:auto;font-size:13px;color:#8a8886;}
+  .appcard .acttl{padding:12px 16px 4px;font-size:19px;font-weight:800;color:#242424;line-height:1.35;}
+  .appcard .acgrid{padding:4px 16px 8px;display:grid;grid-template-columns:auto 1fr;gap:3px 14px;font-size:15px;}
+  .appcard .acgrid .k{color:#8a8886;font-weight:600;}
+  .appcard .acgrid .v{color:#242424;}
+  .appcard .acgrid .v a{color:#0f6cbd;text-decoration:underline;}
+  .appcard .accmt{margin:2px 16px 10px;border:1px solid #c8c6c4;border-radius:4px;padding:8px 10px;font-size:14px;color:#a19f9d;}
+  .appcard .acbtns{display:flex;gap:10px;padding:0 16px 16px;}
+  .appcard .acbtn{border-radius:4px;padding:9px 0;font-size:16px;font-weight:700;text-align:center;flex:1;}
+  .appcard .acbtn.ok{background:#0f7b8a;color:#fff;}
+  .appcard .acbtn.no{background:#fff;color:#a4262c;border:1px solid #a4262c;}
+  .appcard .acbtn.info{background:#fff;color:#8a5a00;border:1px solid #caa04a;}
   /* ===== メール風カード ===== */
   .mail{background:#fff;border:1px solid var(--border);border-radius:14px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06);}
   .mail .mhdr{background:#f3f6fb;padding:11px 18px;border-bottom:1px solid var(--border);font-size:16px;color:var(--muted);}
   .mail .mhdr .mfrom{font-weight:800;color:#0f172a;}
   .mail .msub{padding:12px 18px 4px;font-size:20px;font-weight:800;color:#9f1239;}
   .mail .mbody{padding:6px 18px 16px;font-size:19px;line-height:1.75;color:var(--text);}
-  /* ===== Teams風カード ===== */
-  .teams{background:#f5f6fa;border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-top:12px;}
-  .teams .tmsg{display:flex;gap:10px;align-items:flex-start;margin-top:4px;}
-  .teams .tav{flex:0 0 44px;width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#5b5fc7,#7b83eb);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:19px;}
-  .teams .tbody{background:#fff;border:1px solid var(--border);border-left:4px solid #f59e0b;border-radius:8px;padding:12px 16px;font-size:18px;line-height:1.65;flex:1;}
-  .teams .tname{font-size:16px;font-weight:700;color:#5b5fc7;margin-bottom:2px;}
-  /* 密なスライドの微調整 */
-  #s16 .card{padding:15px 20px;}
-  #s16 .card .ico{font-size:33px;margin-bottom:5px;}
-  #s16 .card h3{font-size:22px;margin-bottom:7px;}
-  #s16 .card p{font-size:17px;line-height:1.55;}
-  #s14 .code-block{font-size:16px;}
+  /* ===== 並列分岐図 ===== */
+  .par{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:12px;}
+  .parcol{border:2px solid;border-radius:14px;padding:14px 16px;}
+  .parcol .ph{font-size:17px;font-weight:800;padding:3px 12px;border-radius:12px;display:inline-block;margin-bottom:8px;color:#fff;}
+  .parcol .st{background:#fff;border:1px solid #e2e8f0;border-radius:8px;padding:8px 12px;margin-bottom:8px;font-size:16px;line-height:1.4;}
+  .parcol .st b{color:#0f172a;}
+  .parcol .st .a{font-family:"DM Mono","Consolas",monospace;font-size:12px;color:#0f6cbd;display:block;}
+  .parcol .dn{text-align:center;color:#94a3b8;font-size:15px;margin:-2px 0 6px;}
+  /* 密なスライド微調整 */
+  #s2 .introrow{margin:2px 0 8px;}
+  #s2 .introrow .illus{max-height:114px;}
+  #s2 .introrow p{font-size:20px;line-height:1.7;}
+  #s2 .cards-2{margin-top:12px;}
+  #s2 .card{padding:15px 24px;}
+  #s2 .callout{margin-top:10px;padding:13px 22px;}
+  #s11 .cards-2{margin-top:12px;}
+  #s11 .card{padding:14px 20px;}
+  #s11 .paact .pabody{padding:10px 14px 12px;}
+  #s11 .pafield{margin-bottom:9px;}
+  #s11 .callout{margin-top:12px;padding:13px 22px;}
+  #s14 .code-block{font-size:14px;margin:6px 0;}
+  #s14 .callout{padding:10px 18px;font-size:18px;line-height:1.6;}
+  #s14 .cards-2{margin-top:8px;}
+  #s14 .card{padding:13px 18px;}
+  #s14 .card h3{font-size:22px;margin-bottom:6px;}
+  #s14 .card p{font-size:15px;}
+  #s14 .padrop{margin:6px 0;}
+  #s14 .padrop div{padding:7px 12px;font-size:14px;}
+  #s16 .cards-3{margin-top:10px;gap:16px;}
+  #s16 .card{padding:13px 18px;}
+  #s16 .card .ico{font-size:32px;margin-bottom:4px;}
+  #s16 .card h3{margin-bottom:6px;}
+  #s16 .card p{font-size:16px;line-height:1.5;}
+  #s16 .callout{margin-top:12px;padding:13px 22px;}
 </style>
 </head>
 <body>
@@ -166,11 +215,11 @@
     <li><a href="#s7"><span class="n">07</span>今日やること（3つ）</a></li>
     <li><a href="#s8"><span class="n">08</span>こんな困りごと</a></li>
     <li><a href="#s9"><span class="n">09</span>仕組みの全体像</a></li>
-    <li><a href="#s10"><span class="n">10</span>★ 部品① 毎朝かってに起こす</a></li>
-    <li><a href="#s11"><span class="n">11</span>★ 部品② 申請リストを作って読む</a></li>
-    <li><a href="#s12"><span class="n">12</span>★ 部品③ 1件ずつ見て条件分岐</a></li>
-    <li><a href="#s13"><span class="n">13</span>★ 部品④ メールで催促</a></li>
-    <li><a href="#s14"><span class="n">14</span>★ 発展形（もっと賢く）</a></li>
+    <li><a href="#s10"><span class="n">10</span>★ 承認アクションって？</a></li>
+    <li><a href="#s11"><span class="n">11</span>★ 依頼と待機を「分ける」</a></li>
+    <li><a href="#s12"><span class="n">12</span>★ 並列でリマインド</a></li>
+    <li><a href="#s13"><span class="n">13</span>★ 結果で分岐＆上長へ</a></li>
+    <li><a href="#s14"><span class="n">14</span>★ 発展（もっと賢く）</a></li>
     <li><a href="#s15"><span class="n">15</span>★ いっしょにやってみよう</a></li>
     <li><a href="#s16"><span class="n">16</span>活用事例（応用）</a></li>
     <li><a href="#s17"><span class="n">17</span>⚠️ 使うときの注意</a></li>
@@ -181,7 +230,7 @@
 
 <div class="deck-header">
   <h1>PA45 第18回 スライド</h1>
-  <div>2026-07-09（木）20:15〜 ／ 承認リマインダー ── 止まった申請を、毎朝かってにメールで催促</div>
+  <div>2026-07-09（木）20:15〜 ／ 承認エスカレーション ── 放置された承認を、フローが催促して上に上げる</div>
 </div>
 
 <!-- ===== S1: 20:15 START ===== -->
@@ -191,7 +240,7 @@
   <div class="slide-body" style="justify-content:center;align-items:center;text-align:center;">
     <div style="font-size:30px;color:var(--blue-mid);font-weight:800;margin-bottom:4px;">まもなく開始します</div>
     <div style="font-size:128px;color:var(--blue-text);font-weight:900;line-height:1;margin:8px 0 4px;letter-spacing:.02em;">20:15 <span style="font-size:56px;">START</span></div>
-    <h1 style="font-size:36px;color:var(--text);font-weight:800;line-height:1.3;margin:20px 0 12px;">第18回｜承認リマインダー 🔔</h1>
+    <h1 style="font-size:36px;color:var(--text);font-weight:800;line-height:1.3;margin:20px 0 12px;">第18回｜承認エスカレーション ✅🔔</h1>
     <p style="font-size:24px;color:var(--muted);margin:0;">開始まで、もう少しお待ちください ☕</p>
   </div>
   <div class="slide-footer"><span>Power Automate for Beginners</span><span style="color:var(--hint);">Copyright © PA45</span></div>
@@ -203,13 +252,13 @@
   <div class="slide-body">
     <div class="introrow">
       <img class="illus" src="assets/irasutoya_businessman.png" alt="">
-      <p style="font-size:21px;color:var(--muted);margin:0;line-height:1.75;">今日は <strong>「毎朝かってに動くフロー」</strong>を一緒に作ります。承認待ちのまま止まっている申請を見つけて、<strong>担当者にメールで催促</strong>する仕組みです。題材の <strong>リストも今日その場で作る</strong>ので、何も準備がなくても大丈夫。<strong>プレミアム不要・標準コネクタだけ</strong>で作れます。</p>
+      <p style="font-size:21px;color:var(--muted);margin:0;line-height:1.75;">今日は <strong>「承認フロー」</strong>を一緒に作ります。申請に <strong>承認／却下ボタン</strong>を出して、放置されたら <strong>自動で催促し、それでも止まっていたら上長へエスカレーション</strong>する仕組みです。題材の <strong>申請リストも今日その場で作る</strong>ので準備は不要。承認は <strong>標準コネクタ＝プレミアム不要</strong>で作れます。</p>
     </div>
     <div class="cards-2">
-      <div class="card blue"><div class="num">1</div><h3>Power Automate にサインイン</h3><p><span class="pathpill">make.powerautomate.com</span> を開いて、サインインできる状態に。今日は <strong>ゼロから1本</strong>作ります。</p></div>
-      <div class="card green"><div class="num">2</div><h3>SharePoint が使えるアカウント</h3><p>申請をためる <strong>SharePointリストは今日いっしょに新規作成</strong>します。事前のリストは <strong>不要</strong>。見るだけ参加もOK。</p></div>
+      <div class="card blue"><div class="num">1</div><h3>Power Automate にサインイン</h3><p><span class="pathpill">make.powerautomate.com</span> を開いてサインイン。今日は <strong>ゼロから1本</strong>作ります。</p></div>
+      <div class="card green"><div class="num">2</div><h3>承認はそのまま使えます</h3><p>承認は <strong>標準コネクタ</strong>。既定環境なら <strong>下準備なし</strong>で使えます。見るだけ参加もOK。</p></div>
     </div>
-    <div class="callout blue" style="margin-top:14px;"><strong>📥 今日のゴール：</strong> 「<strong>承認待ちのまま止まっている申請</strong>を、毎朝かってに担当者へメールで催促」── これを自分の手で1本完成させる。</div>
+    <div class="callout blue" style="margin-top:14px;"><strong>📥 今日のゴール：</strong> 「<strong>承認待ちで止まった申請</strong>を、フローが催促して、放置が続けば上長へ回す」── これを自分の手で1本完成させる。</div>
   </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span></div>
 </section>
 <!-- ===== S3: PA45とは？ ===== -->
@@ -268,14 +317,14 @@
   <span class="slide-num">6 / 18</span>
   <div class="slide-head"><div class="slide-eyebrow">Power Automate 入門講座</div><h1 class="slide-title">Vol.18 </h1></div>
   <div class="slide-body">
-    <div class="badge-row"><span class="pill">スケジュール実行</span><span class="pill alt">SharePoint</span><span class="pill alt">メール通知</span><span class="pill alt">プレミアム不要</span></div>
-    <h1>第18回：承認リマインダー<br>「承認、まだですか？」を、毎朝フローがそっと催促</h1>
+    <div class="badge-row"><span class="pill">承認アクション</span><span class="pill alt">並列分岐</span><span class="pill alt">エスカレーション</span><span class="pill alt">プレミアム不要</span></div>
+    <h1>第18回：承認エスカレーション<br>放置された承認を、フローが催促して "上に上げる"</h1>
     <div class="meta-table">
-      <dl><dt>Theme</dt><dd>スケジュール実行 × SharePoint × メール ── 承認待ちのまま止まった申請を毎朝かってに催促</dd></dl>
-      <dl><dt>Target</dt><dd>申請・承認のやり取りが「放置で止まる」のに困っている方／催促が気まずい方（知識ゼロOK）</dd></dl>
+      <dl><dt>Theme</dt><dd>承認アクション × 並列分岐 ── 承認依頼を出し、放置されたら自動で催促、それでも止まれば上長へ回す</dd></dl>
+      <dl><dt>Target</dt><dd>承認が「放置で止まる」に困っている方／基礎の承認/却下から一歩進めたい方（知識ゼロOK）</dd></dl>
       <dl><dt>Time</dt><dd>解説＋その場で一緒に作る 約45分</dd></dl>
     </div>
-    <img class="deco" src="assets/irasutoya_email.png" alt="" style="right:46px;bottom:24px;height:190px;">
+    <img class="deco" src="assets/irasutoya_robot.png" alt="" style="right:46px;bottom:20px;height:190px;">
   </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span></div>
 </section>
 <!-- ===== S7: 今日やること（3つ） ===== -->
@@ -284,11 +333,11 @@
   <div class="slide-head"><div class="slide-eyebrow">PA45｜第18回</div><h1 class="slide-title">今日やること <small>（3つだけ）</small></h1><div class="concept-dot">Agenda</div></div>
   <div class="slide-body">
     <div class="cards-3">
-      <div class="card blue"><div class="num">1</div><div class="ico">⏰</div><h3>毎朝かってに起こす</h3><p><strong>スケジュール（繰り返し）</strong>トリガーで、毎朝9時にフローを自動スタート。あなたが何もしなくても動きます。</p></div>
-      <div class="card purple"><div class="num">2</div><div class="ico">🔎</div><h3>止まった申請を見つける</h3><p><strong>申請リスト</strong>を1件ずつ見て、<strong>ステータスが「申請中」</strong>のものだけ拾う。承認済みは通知しません。</p></div>
-      <div class="card green"><div class="num">3</div><div class="ico">📣</div><h3>担当者に催促する</h3><p>見つかったら <strong>「承認待ちです」</strong>と担当者へ自動メール。申請者の名前も一緒に届きます。</p></div>
+      <div class="card blue"><div class="num">1</div><div class="ico">✅</div><h3>承認ボタンを出す</h3><p><strong>承認アクション</strong>で、承認者のTeams／Outlookに <strong>「承認・却下」ボタン</strong>を自動で届けます。</p></div>
+      <div class="card purple"><div class="num">2</div><div class="ico">🔀</div><h3>依頼と待機を分ける</h3><p><strong>「承認を作成」→「承認を待機」</strong>に分けると、<strong>待っている間に別ルート</strong>を走らせられます。</p></div>
+      <div class="card green"><div class="num">3</div><div class="ico">🔔</div><h3>放置を催促→上へ</h3><p><strong>並列</strong>で「◯日たっても未応答？」を見張り、<strong>催促 → それでも放置なら上長へ</strong>。</p></div>
     </div>
-    <div class="callout" style="margin-top:auto;"><strong>🎯 今日の合言葉：</strong> 「<strong>催促、もう気まずくない。</strong>」── 自分から言いづらいひと言を、フローが毎朝かわりに伝えてくれる。</div>
+    <div class="callout" style="margin-top:auto;"><strong>🎯 今日の合言葉：</strong> 「<strong>承認、止まらせない。</strong>」── 押してもらう仕組みと、押されなかったときの逃げ道まで、フローに持たせます。</div>
   </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span></div>
 </section>
 <!-- ===== S8: こんな困りごと ===== -->
@@ -298,167 +347,179 @@
   <div class="slide-body">
     <div class="introrow">
       <img class="illus" src="assets/irasutoya_search.png" alt="">
-      <p style="margin:0;color:var(--muted);">「あの申請、承認してもらえてる？」「催促するの、なんか気まずい…」。申請したのに <strong>承認者が忘れて止まったまま</strong>。──その <strong>"催促"の気まずさ</strong>、フローに肩代わりしてもらいましょう。</p>
+      <p style="margin:0;color:var(--muted);">「あの稟議、承認まだ…？」「催促するの気まずい…」。承認者が忙しくて <strong>申請が何日も止まったまま</strong>。基礎の <strong>承認/却下</strong>は作れても、<strong>"放置されたとき"は手つかず</strong>── そこを今日フローに任せます。</p>
     </div>
     <div class="cards-3">
-      <div class="card"><h3 style="color:#991b1b;">気づかれず止まる</h3><p>申請は出したのに、承認者が見落として何日も放置される。</p></div>
-      <div class="card"><h3 style="color:#92400e;">自分から催促しづらい</h3><p>「まだですか？」と上司や他部署に言うのは、地味に気をつかう。</p></div>
-      <div class="card green"><h3 style="color:#15803d;">だから自動で催促</h3><p><strong>毎朝かってに</strong>止まった申請を見つけて、担当者へそっとメール。</p></div>
+      <div class="card"><h3 style="color:#991b1b;">承認者が忘れて放置</h3><p>依頼は届いたのに、他の仕事に埋もれて何日も止まる。</p></div>
+      <div class="card"><h3 style="color:#92400e;">催促も"上げる"も気まずい</h3><p>「まだですか？」も「上司に相談」も、人間がやると角が立つ。</p></div>
+      <div class="card green"><h3 style="color:#15803d;">だから自動で催促＆エスカレ</h3><p><strong>フローが</strong>そっと催促し、それでも止まれば <strong>上長へ回す</strong>。</p></div>
     </div>
-    <div class="callout blue" style="margin-top:auto;"><strong>🎯 今日のゴール：</strong> 「<strong>言いづらい</strong>」を「<strong>フローが代わりに言ってくれる</strong>」へ。45分で <strong>毎朝動く催促係</strong>を持って帰りましょう。</div>
+    <div class="callout blue" style="margin-top:auto;"><strong>🎯 今日のゴール：</strong> 「<strong>承認/却下ボタン</strong>」＋「<strong>放置されたときの催促と逃げ道</strong>」。45分で <strong>止まらない承認</strong>を持ち帰りましょう。</div>
   </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span></div>
 </section>
 <!-- ===== S9: 仕組みの全体像 ===== -->
 <section class="slide" id="s9">
   <span class="slide-num">9 / 18</span>
-  <div class="slide-head"><div class="slide-eyebrow">PA45｜第18回</div><h1 class="slide-title">仕組みの全体像 <small>── 4つの部品でできている</small></h1><div class="concept-dot">Overview</div></div>
+  <div class="slide-head"><div class="slide-eyebrow">PA45｜第18回</div><h1 class="slide-title">仕組みの全体像 <small>── 依頼して、待つ間に見張る</small></h1><div class="concept-dot">Overview</div></div>
   <div class="slide-body">
-    <div class="stepflow">
+    <div class="stepflow" style="grid-template-columns:1fr 26px 1fr 26px 1.25fr 26px 1fr;">
       <div class="stepbox" style="border-color:#2a7dd4;background:var(--blue-bg);">
         <div class="badge" style="background:#2a7dd4;color:#fff;">① きっかけ</div>
-        <h3>⏰ 毎朝9時</h3><p>時間が来たらフローが自動でスタート</p><span class="act">繰り返し</span></div>
+        <h3>📝 申請が届く</h3><p>Formsや申請リストに1件入ったら開始</p><span class="act">トリガー</span></div>
       <div class="arr">→</div>
-      <div class="stepbox" style="border-color:#0f6cbd;background:#eaf3fb;">
-        <div class="badge" style="background:#0f6cbd;color:#fff;">② 読む</div>
-        <h3>📋 申請リスト</h3><p>SharePointの申請を全部まとめて取得</p><span class="act">項目の取得</span></div>
+      <div class="stepbox" style="border-color:#0f7b8a;background:#e6f4f6;">
+        <div class="badge" style="background:#0f7b8a;color:#fff;">② 依頼</div>
+        <h3>✅ 承認を作成</h3><p>上司へ承認依頼。待たずに次へ進む</p><span class="act">承認を作成</span></div>
       <div class="arr">→</div>
       <div class="stepbox" style="border-color:#7c3aed;background:#f5f3ff;">
-        <div class="badge" style="background:#7c3aed;color:#fff;">③ 選ぶ</div>
-        <h3>🔎 1件ずつ判定</h3><p>ステータスが「申請中」のものだけ？</p><span class="act">条件分岐</span></div>
+        <div class="badge" style="background:#7c3aed;color:#fff;">③ 並列で見張る</div>
+        <h3>🔀 待機 ／ 催促</h3><p>片方は結果待ち・もう片方は放置を監視</p><span class="act">並列分岐</span></div>
       <div class="arr">→</div>
       <div class="stepbox" style="border-color:#dc2626;background:#fff1f2;">
-        <div class="badge" style="background:#dc2626;color:#fff;">④ 知らせる</div>
-        <h3>📣 メール催促</h3><p>止まった申請だけ担当者へ通知</p><span class="act">メール送信</span></div>
+        <div class="badge" style="background:#dc2626;color:#fff;">④ 仕上げ</div>
+        <h3>🔔 分岐／上へ</h3><p>結果で処理を分岐・放置は上長へ</p><span class="act">条件</span></div>
     </div>
     <div class="cards-3" style="margin-top:14px;">
-      <div class="card blue" style="padding:13px 20px;"><p style="font-size:17px;line-height:1.55;"><strong>🧩 部品はぜんぶ「標準」</strong><br>プレミアム不要。もとから入っているアクションだけで作れます。</p></div>
-      <div class="card green" style="padding:13px 20px;"><p style="font-size:17px;line-height:1.55;"><strong>🔁 一度作れば毎朝動く</strong><br>作るのは1回だけ。あとは毎朝かってに止まった申請を見張ります。</p></div>
-      <div class="card purple" style="padding:13px 20px;"><p style="font-size:17px;line-height:1.55;"><strong>📚 今日の新顔は①だけ</strong><br>③④は Vol.3＋Vol.4 の復習。新しく覚えるのは「毎朝起こす」だけ。</p></div>
+      <div class="card blue" style="padding:13px 20px;"><p style="font-size:17px;line-height:1.55;"><strong>🧩 承認は標準コネクタ</strong><br>プレミアム不要。既定環境ならすぐ使えます。</p></div>
+      <div class="card purple" style="padding:13px 20px;"><p style="font-size:17px;line-height:1.55;"><strong>🔑 キモは②と③</strong><br>依頼(作成)と待機を分けるから、待つ間に催促を走らせられる。</p></div>
+      <div class="card green" style="padding:13px 20px;"><p style="font-size:17px;line-height:1.55;"><strong>🔁 一度作れば毎回動く</strong><br>あとは申請が来るたび、催促も逃げ道も自動です。</p></div>
     </div>
-    <div class="callout blue" style="margin-top:auto;"><strong>難しく見えても、やることは「起こす → 読む → 選ぶ → 知らせる」の4つだけ。</strong> 今日はこの部品を1つずつ組み立て、最後に1本のフローにつなげます。</div>
+    <div class="callout blue" style="margin-top:auto;"><strong>やることは「依頼する → 待つ間に見張る → 仕上げる」。</strong> この③の"並列"が、基礎の承認フローから一段ステップアップするポイントです。</div>
   </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span></div>
 </section>
-<!-- ===== S10: ★ 部品① 毎朝かってに起こす ===== -->
+<!-- ===== S10: ★ 承認アクションって？ ===== -->
 <section class="slide" id="s10">
   <span class="slide-num">10 / 18</span>
-  <div class="slide-head"><div class="slide-eyebrow">★ 部品① TRIGGER</div><h1 class="slide-title">毎朝かってに起こす <small>── スケジュール（繰り返し）</small></h1><div class="concept-dot">Schedule</div></div>
+  <div class="slide-head"><div class="slide-eyebrow">★ 部品① APPROVALS</div><h1 class="slide-title">承認アクションって？ <small>── ボタンが相手に届く</small></h1><div class="concept-dot">Approvals</div></div>
   <div class="slide-body">
-    <div class="cards-2">
-      <div class="card blue"><h3>「繰り返し」トリガーとは</h3>
-        <p>これまでは「Formsが来たら」「ファイルが届いたら」でしたが、今回は <strong>時間そのものがきっかけ</strong>。決めた間隔で <strong>かってに動き出します</strong>。</p>
-        <ul class="check" style="font-size:20px;">
-          <li>トリガー名：<strong>繰り返し（Recurrence）</strong></li>
-          <li>間隔：<strong>1 日ごと</strong></li>
-          <li>時刻：<strong>朝 9:00</strong>（タイムゾーンに注意）</li>
+    <div class="cards-2" style="grid-template-columns:1.05fr 1fr;">
+      <div class="card blue" style="padding:18px 22px;"><h3 style="margin-bottom:8px;">承認アクションでできること</h3>
+        <p style="font-size:19px;">承認依頼を送ると、相手の <strong>Outlookメール・Teams・承認センター</strong>に <strong>「承認／却下」ボタン</strong>が届き、押した結果でフローが分岐します。</p>
+        <ul class="check" style="font-size:18px;margin-top:8px;">
+          <li>アクション：<strong>開始して承認を待機</strong>／<strong>承認を作成</strong></li>
+          <li>承認の種類：<strong>承認/拒否・カスタム応答・順次</strong> など</li>
+          <li><strong>標準コネクタ</strong>（プレミアム不要）</li>
         </ul>
       </div>
-      <div class="card"><h3>設定のイメージ</h3>
-        <div class="code-block" style="font-size:16px;"><span class="cm"># 繰り返し（Recurrence）</span>
-<span class="key">間隔</span>     : <span class="str">1</span>
-<span class="key">頻度</span>     : <span class="str">日</span>
-<span class="key">タイムゾーン</span> : <span class="str">(UTC+09:00) 大阪、札幌、東京</span>
-<span class="key">設定時刻（時）</span> : <span class="str">9</span>
-<span class="key">設定時刻（分）</span> : <span class="str">0</span></div>
-        <p style="font-size:18px;color:var(--muted);margin-top:8px;">💡 デモのときは <strong>「テスト」→手動</strong>で実行すれば、朝を待たずにその場で動かせます。</p>
+      <div>
+        <div style="font-size:14px;color:var(--hint);font-weight:700;margin-bottom:6px;">▼ 承認者のTeamsに届くカード（イメージ）</div>
+        <div class="appcard">
+          <div class="achdr"><span class="acic">✔</span><span class="actag">承認</span><span class="acname">Power Automate</span></div>
+          <div class="acttl">経費申請の承認をお願いします</div>
+          <div class="acgrid">
+            <span class="k">要求者</span><span class="v">田中 太郎</span>
+            <span class="k">詳細</span><span class="v">交通費 12,800円（7月分）</span>
+            <span class="k">項目リンク</span><span class="v"><a>申請の詳細を開く</a></span>
+          </div>
+          <div class="accmt">コメントを追加（任意）</div>
+          <div class="acbtns"><div class="acbtn ok">承認</div><div class="acbtn no">却下</div></div>
+        </div>
       </div>
     </div>
-    <div class="callout" style="margin-top:auto;"><strong>ポイント：</strong> トリガーを「繰り返し」にするだけで、<strong>あなたが寝ていてもフローは毎朝出勤</strong>します。平日だけにしたい時は「曜日」も指定できます。</div>
+    <div class="callout" style="margin-top:auto;"><strong>ポイント：</strong> 承認者は <strong>アプリを開かなくても</strong>、メールやTeamsのカードで <strong>その場でボタンを押すだけ</strong>。押した結果（承認/却下）は、そのままフローに返ってきます。</div>
   </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span></div>
 </section>
-<!-- ===== S11: ★ 部品② 申請リストを作って読む ===== -->
+<!-- ===== S11: ★ 依頼と待機を分ける ===== -->
 <section class="slide" id="s11">
   <span class="slide-num">11 / 18</span>
-  <div class="slide-head"><div class="slide-eyebrow">★ 部品② LIST</div><h1 class="slide-title">申請リストを作って読む <small>── 今日その場で新規作成</small></h1><div class="concept-dot">SharePoint</div></div>
+  <div class="slide-head"><div class="slide-eyebrow">★ 部品② CREATE + WAIT</div><h1 class="slide-title">依頼と待機を「分ける」 <small>── ここが今日のキモ</small></h1><div class="concept-dot">Create / Wait</div></div>
   <div class="slide-body">
-    <div class="cards-2" style="grid-template-columns:1fr 1.15fr;">
-      <div class="card"><h3>① まずリストを作る</h3>
-        <p>SharePointに <strong>「申請リスト」</strong>を新規作成。列はたった2つでOK。</p>
-        <ul class="check" style="font-size:20px;">
-          <li><strong>タイトル</strong>（申請者名／最初からある列）</li>
-          <li><strong>ステータス</strong>（選択肢：申請中／承認済）</li>
-        </ul>
-        <h3 style="margin-top:12px;">② 読むアクション</h3>
-        <p style="margin:0;"><span class="pathpill" style="font-size:16px;">複数の項目の取得</span> で、リストの申請を <strong>まるごと取得</strong>します。</p>
+    <div class="cards-2" style="grid-template-columns:1fr 1.05fr;">
+      <div>
+        <div style="font-size:14px;color:var(--hint);font-weight:700;margin-bottom:6px;">▼ アクション「承認を作成」の設定（イメージ）</div>
+        <div class="paact">
+          <div class="pahdr"><span class="paicon">✔</span><span class="patitle">承認を作成</span></div>
+          <div class="pabody">
+            <div class="pafield"><span class="lbl">承認の種類 <b>*</b></span><div class="inp dd">承認/拒否 - 最初に応答</div></div>
+            <div class="pafield"><span class="lbl">タイトル <b>*</b></span><div class="inp">経費申請の承認をお願いします</div></div>
+            <div class="pafield"><span class="lbl">割り当て先 <b>*</b></span><div class="inp"><span class="tok">上司のメール</span></div></div>
+            <div class="pafield" style="margin-bottom:0;"><span class="lbl">詳細</span><div class="inp ph"><span class="tok">申請者</span> さんの申請です …</div></div>
+          </div>
+        </div>
       </div>
-      <div class="card blue"><h3 style="margin-bottom:6px;">作る「申請リスト」のイメージ</h3>
-        <table class="sptbl">
-          <tr><th>タイトル（申請者）</th><th>ステータス</th></tr>
-          <tr class="hit"><td>田中 太郎</td><td><span class="st-wait">申請中</span></td></tr>
-          <tr class="hit"><td>佐藤 花子</td><td><span class="st-wait">申請中</span></td></tr>
-          <tr><td>鈴木 一郎</td><td><span class="st-done">承認済</span></td></tr>
-        </table>
-        <p style="font-size:17px;color:var(--muted);margin-top:10px;">サンプルを3件入れておきます。色つきの <strong>「申請中」2件</strong>が、あとで催促の対象になります。</p>
+      <div class="card purple" style="padding:18px 22px;"><h3 style="margin-bottom:8px;">なぜ「分ける」の？</h3>
+        <p style="font-size:19px;">基礎の <strong>「開始して承認を待機」</strong>は、結果が来るまで <strong>ただ待つ</strong>だけ。これだと放置されても何もできません。</p>
+        <div class="ba" style="grid-template-columns:1fr;gap:8px;margin-top:10px;">
+          <div class="box good" style="padding:12px 16px;font-size:18px;"><span class="lab">分けると…</span><strong>承認を作成</strong>で依頼だけ先に出し、<strong>承認を待機</strong>で結果を受け取る。その <strong>あいだの時間</strong>に、別ルートで催促を走らせられる。</div>
+        </div>
       </div>
     </div>
-    <div class="callout blue" style="margin-top:auto;"><strong>このアクションが返すのは、リストの全件。</strong> ここから「申請中のものだけ」をふるい分けるのが次のステップです。</div>
+    <div class="callout" style="margin-top:auto;"><strong>覚え方：</strong> 「作成」＝<strong>依頼を投函</strong>／「待機」＝<strong>返事を受け取る</strong>。投函してから返事までの <strong>空き時間</strong>を、次のページで有効活用します。</div>
   </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span></div>
 </section>
-<!-- ===== S12: ★ 部品③ 1件ずつ見て条件分岐 ===== -->
+<!-- ===== S12: ★ 並列でリマインド ===== -->
 <section class="slide" id="s12">
   <span class="slide-num">12 / 18</span>
-  <div class="slide-head"><div class="slide-eyebrow">★ 部品③ LOOP + CONDITION</div><h1 class="slide-title">1件ずつ見て、ふるい分ける <small>── Apply to each ＋ 条件</small></h1><div class="concept-dot">Vol.3 / 4 の復習</div></div>
+  <div class="slide-head"><div class="slide-eyebrow">★ 部品③ PARALLEL</div><h1 class="slide-title">並列でリマインド <small>── 待ちながら、見張る</small></h1><div class="concept-dot">Parallel branch</div></div>
   <div class="slide-body">
-    <div class="cards-2">
-      <div class="card purple"><h3>やること</h3>
-        <p>取得した申請を <strong>Apply to each</strong> で1件ずつ取り出し、<strong>条件</strong>で「催促する相手か？」を判定します。</p>
-        <ul class="check" style="font-size:21px;">
-          <li><strong>Apply to each</strong>：申請を順番に処理</li>
-          <li><strong>条件</strong>：ステータスを見て分ける</li>
-        </ul>
+    <p style="margin:0 0 2px;font-size:19px;color:var(--muted);">「承認を作成」のあとに <strong>並列分岐</strong>を置いて、2本のルートを同時に走らせます。</p>
+    <div class="par">
+      <div class="parcol" style="border-color:#0f7b8a;">
+        <span class="ph" style="background:#0f7b8a;">A ルート：結果を待つ</span>
+        <div class="st"><b>承認を待機</b><span class="a">Wait for an approval</span></div>
+        <div class="dn">↓ 承認/却下が返ってきたら…</div>
+        <div class="st">結果にそって処理（次ページ）</div>
       </div>
-      <div class="card"><h3>たった1つの条件</h3>
-        <div class="ba" style="grid-template-columns:1fr;gap:10px;">
-          <div class="box good"><span class="lab">条件：まだ承認されていない</span>「ステータス」 = 申請中</div>
-        </div>
-        <p style="font-size:18px;color:var(--muted);margin-top:12px;"><strong>「はい」</strong> の申請＝催促の対象。先ほどのリストなら <strong>「田中さん」「佐藤さん」</strong>が引っかかり、承認済みの鈴木さんはスルーされます。</p>
+      <div class="parcol" style="border-color:#dc2626;">
+        <span class="ph" style="background:#dc2626;">B ルート：放置を見張る</span>
+        <div class="st"><b>遅延</b>：3日待つ<span class="a">Delay</span></div>
+        <div class="dn">↓ まだ承認待ちのまま？</div>
+        <div class="st"><b>リマインド送信</b>：承認者へ「まだお済みでないようです」<span class="a">メール / Teams</span></div>
       </div>
     </div>
-    <div class="callout" style="margin-top:auto;"><strong>ポイント：</strong> 「承認済みの人にまで催促しない」ように <strong>ステータス＝申請中</strong> でしっかり絞る。催促は <strong>本当に必要な相手だけ</strong>に届けます。</div>
+    <div class="callout blue" style="margin-top:auto;"><strong>ポイント：</strong> 承認が先に返れば、Bの催促は不要になります。逆にBが「3日放置」を見つけたら、そこから <strong>次ページのエスカレーション</strong>へ。<strong>並列</strong>だからこそ、待ちながら催促できます。</div>
   </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span></div>
 </section>
-<!-- ===== S13: ★ 部品④ メールで催促 ===== -->
+<!-- ===== S13: ★ 結果で分岐＆エスカレーション ===== -->
 <section class="slide" id="s13">
   <span class="slide-num">13 / 18</span>
-  <div class="slide-head"><div class="slide-eyebrow">★ 部品④ NOTIFY</div><h1 class="slide-title">メールで催促する <small>── 申請中のものだけ送る</small></h1><div class="concept-dot">Mail</div></div>
+  <div class="slide-head"><div class="slide-eyebrow">★ 部品④ OUTCOME + ESCALATE</div><h1 class="slide-title">結果で分岐＆上長へ <small>── 承認/却下と、逃げ道</small></h1><div class="concept-dot">Outcome</div></div>
   <div class="slide-body">
-    <div class="cards-2" style="grid-template-columns:1fr 1.1fr;">
-      <div class="card"><h3>使うアクション</h3>
-        <p><strong>Office 365 Outlook</strong> の<br>「<strong>メールを送信する (V2)</strong>」</p>
-        <ul class="check" style="font-size:21px;">
-          <li>宛先：承認の担当者</li>
-          <li>本文に <strong>申請者の名前</strong>を差し込む</li>
-        </ul>
-        <p style="font-size:18px;color:var(--muted);margin-top:8px;">条件の <strong>「はい」</strong>側に置くので、申請中のものだけ飛びます。Teamsへの投稿に差し替えてもOK。</p>
+    <div class="cards-2" style="grid-template-columns:1fr 1fr;">
+      <div class="card"><h3 style="margin-bottom:6px;">結果で処理を分ける</h3>
+        <p style="font-size:18px;">「承認を待機」の <strong>結果（動的コンテンツ）</strong>を <strong>条件</strong>で判定します。</p>
+        <div class="ba" style="grid-template-columns:1fr;gap:9px;margin-top:8px;">
+          <div class="box good" style="padding:11px 15px;font-size:17px;"><span class="lab">結果 = 承認</span>SharePointに記録＋申請者へ「承認されました🎉」</div>
+          <div class="box bad" style="padding:11px 15px;font-size:17px;"><span class="lab">結果 = 却下</span>申請者へ「却下（理由つき）」で差し戻し</div>
+        </div>
+        <p style="font-size:15px;color:var(--muted);margin:8px 0 0;">※ 却下時の <strong>コメント</strong>も結果と一緒に受け取れます。</p>
       </div>
-      <div class="mail">
-        <div class="mhdr"><span class="mfrom">承認リマインダー (Power Automate)</span> ＜flow@contoso.com＞<br>To: 承認担当者</div>
-        <div class="msub">⚠️ 承認待ちの申請があります</div>
-        <div class="mbody"><strong>田中 太郎</strong> さんの申請が、まだ承認待ちのままです。<br>お手すきの際にご確認をお願いします 🙏<br><br>― このメールはフローから自動送信されています ―</div>
+      <div class="card yellow"><h3 style="margin-bottom:6px;">それでも放置なら「上へ」</h3>
+        <p style="font-size:18px;">Bルートで催促してもまだ止まっていたら、<strong>もう一段上へ</strong>。</p>
+        <ul class="check" style="font-size:17px;">
+          <li>上長を <strong>割り当て先</strong>にして再依頼</li>
+          <li>または上長へ <strong>「〇〇の承認が滞っています」</strong>と通知</li>
+        </ul>
+        <div class="callout red" style="margin:10px 0 0;padding:11px 15px;font-size:16px;"><strong>これがエスカレーション。</strong>「言いにくい"上へ上げる"」を、フローが淡々とやってくれます。</div>
       </div>
     </div>
-    <div class="callout" style="margin-top:auto;"><strong>差し込みのコツ：</strong> 本文の「田中 太郎」の部分は、<strong>動的コンテンツ</strong>で申請者（タイトル）の値を入れる。これで <strong>誰の申請が止まっているか</strong>がひと目で分かります。</div>
+    <div class="callout" style="margin-top:auto;"><strong>差し込みのコツ：</strong> 通知本文には <strong>申請者名・詳細・止まっている日数</strong>を動的コンテンツで差し込むと、受け取った上長がひと目で状況をつかめます。</div>
   </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span></div>
 </section>
-<!-- ===== S14: ★ 発展形（もっと賢く） ===== -->
+<!-- ===== S14: ★ 発展形 ===== -->
 <section class="slide" id="s14">
   <span class="slide-num">14 / 18</span>
-  <div class="slide-head"><div class="slide-eyebrow">★ 発展形 ／ NEXT STEP</div><h1 class="slide-title">もっと賢く ── 「◯日以上 放置」だけ催促 <small>（今日は見るだけ）</small></h1><div class="concept-dot">For the future</div></div>
+  <div class="slide-head"><div class="slide-eyebrow">★ 発展 ／ NEXT STEP</div><h1 class="slide-title">もっと賢く <small>── ボタンを増やす／順番に回す（今日は見るだけ）</small></h1><div class="concept-dot">For the future</div></div>
   <div class="slide-body">
-    <div class="callout blue" style="margin-top:0;"><strong>ここからは「次の一歩」。</strong> 今日は手を動かしません。「申請中ぜんぶ」ではなく <strong>「3日以上ほったらかしの申請だけ」</strong>に絞れると、催促がもっと自然になります。</div>
+    <div class="callout blue" style="margin-top:0;"><strong>ここからは「次の一歩」。</strong> 承認の種類を変えるだけで、承認フローはぐっと実務的になります。今日は手を動かさず、引き出しだけ増やしましょう。</div>
     <div class="cards-2" style="margin-top:14px;">
-      <div class="card purple"><h3>① 申請日でしぼる（日付の式）</h3>
-        <p style="font-size:18px;">リストに <strong>「申請日」列（日付）</strong>を足して、こんな条件にします。</p>
-        <div class="code-block" style="font-size:15px;"><span class="cm"># 申請日が「今日の3日前」より古い＝放置</span>
-item()?['<span class="key">申請日</span>'] &lt; <span class="hl">addDays</span>(<span class="hl">utcNow</span>(),<span class="str">-3</span>)</div>
-        <p style="font-size:17px;color:var(--muted);margin:0;"><code>utcNow()</code>＝今／<code>addDays(…,-3)</code>＝3日前。Vol.12でやった「式」の応用です。</p>
+      <div class="card purple" style="padding:18px 22px;"><h3 style="margin-bottom:8px;">① カスタム応答（ボタンを自作）</h3>
+        <p style="font-size:18px;">承認/却下の2択でなく、<strong>自分で決めたボタン</strong>を出せます。</p>
+        <div class="padrop" style="margin:8px 0;">
+          <div class="sel">カスタム応答 - 1 つの応答を待つ</div>
+          <div>承認</div><div>却下</div><div>詳細な情報が必要</div>
+        </div>
+        <p style="font-size:15px;color:var(--muted);margin:0;">「応答オプション項目」に文言を足すだけ。稟議の <strong>"条件付き承認""差し戻し"</strong>が作れます。</p>
       </div>
-      <div class="card"><h3>② 取得の時点でしぼる（フィルター）</h3>
-        <p style="font-size:18px;">「複数の項目の取得」の <strong>フィルタークエリ</strong> に書くと、<strong>取ってくる時点で「申請中」だけ</strong>に絞れます。</p>
-        <div class="code-block" style="font-size:16px;">ステータス <span class="hl">eq</span> <span class="str">'申請中'</span></div>
-        <p style="font-size:17px;color:var(--muted);margin:0;">全件取って回すより速くてきれい。件数が増えてきたら効いてきます。</p>
+      <div class="card" style="padding:18px 22px;"><h3 style="margin-bottom:8px;">② 順次承認（順番に回す）</h3>
+        <p style="font-size:18px;">承認の種類を <strong>「順次承認」</strong>にすると、<strong>課長 → 部長</strong>のように <strong>一人ずつ順番</strong>に回せます。</p>
+        <div class="code-block" style="font-size:15px;margin:8px 0;"><span class="cm"># 承認の種類</span>
+<span class="key">承認の種類</span> : <span class="str">順次承認</span>
+<span class="key">割り当て先</span> : 課長 ; 部長 <span class="cm">（この順で回る）</span></div>
+        <p style="font-size:15px;color:var(--muted);margin:0;">前の人が承認しないと、次の人には回りません。多段の稟議にぴったり。</p>
       </div>
     </div>
-    <div class="callout" style="margin-top:auto;"><strong>今日の基本形が動けば十分です。</strong> 「もっと絞りたい」と思ったときに、この2つを思い出してください。式が難しければ <strong>Vol.16のCopilot</strong>に「この式作って」と頼むのもアリ 👍</div>
+    <div class="callout" style="margin-top:auto;"><strong>今日の基本形が動けば十分です。</strong> 「ボタンを増やしたい」「順番に回したい」と思ったら、<strong>承認の種類</strong>を変えるだけ ── ここを思い出してください 👍</div>
   </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span></div>
 </section>
 <!-- ===== S15: ★ いっしょにやってみよう ===== -->
@@ -468,37 +529,37 @@ item()?['<span class="key">申請日</span>'] &lt; <span class="hl">addDays</spa
   <div class="slide-body">
     <div class="cards-2">
       <div class="card"><ul class="check" style="font-size:21px;">
-        <li><strong>①</strong> SharePointに「<strong>申請リスト</strong>」を作る（ステータス列＋サンプル3件）</li>
-        <li><strong>②</strong> 新規フロー → トリガー「<strong>繰り返し</strong>」を選ぶ</li>
-        <li><strong>③</strong> 1日ごと・東京・<strong>朝9:00</strong>に設定</li>
-        <li><strong>④</strong> 「<strong>複数の項目の取得</strong>」で申請リストを読む</li>
+        <li><strong>①</strong> 新規フロー → トリガーは <strong>手動</strong>（または申請リスト）</li>
+        <li><strong>②</strong> <strong>「承認を作成」</strong>：種類=承認/拒否・タイトル・割り当て先=自分</li>
+        <li><strong>③</strong> 次に <strong>並列分岐</strong>を追加（2本に分ける）</li>
+        <li><strong>④</strong> Aルート：<strong>「承認を待機」</strong>を置く</li>
       </ul></div>
       <div class="card"><ul class="check" style="font-size:21px;">
-        <li><strong>⑤</strong> 「<strong>Apply to each</strong>」で1件ずつ取り出す</li>
-        <li><strong>⑥</strong> 中に「<strong>条件</strong>」：ステータス＝申請中</li>
-        <li><strong>⑦</strong> 「はい」側に <strong>メール送信</strong>（申請者名を差し込み）</li>
-        <li><strong>⑧</strong> 「<strong>テスト</strong>」→手動実行で動作確認🎉 → #PA45 に投稿</li>
+        <li><strong>⑤</strong> Bルート：<strong>遅延</strong>→ <strong>リマインドメール</strong></li>
+        <li><strong>⑥</strong> Aの後に <strong>条件</strong>：<strong>結果 = 承認？</strong></li>
+        <li><strong>⑦</strong> はい=承認メール／いいえ=却下メール</li>
+        <li><strong>⑧</strong> <strong>テスト</strong>→自分で承認ボタンを押して確認🎉 → #PA45へ</li>
       </ul></div>
     </div>
-    <div class="callout" style="margin-top:auto;"><strong>⚠️ つまずきポイント：</strong> ①メールが来ない→<strong>「申請中」の行があるか</strong>確認。②宛先がいない→まずは <strong>自分のメアド</strong>を宛先にしてテスト。③リストが選べない→<strong>サイト／リスト名</strong>を選び直す。</div>
+    <div class="callout" style="margin-top:auto;"><strong>⚠️ つまずきポイント：</strong> ①割り当て先は <strong>メールアドレス</strong>（まずは自分）。②結果の判定は <strong>動的コンテンツの「結果」</strong>＝「承認」で比較。③初回は <strong>データベース準備で少し待つ</strong>ことがあります（既定環境なら基本すぐ）。</div>
   </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span></div>
 </section>
 <!-- ===== S16: 活用事例（応用） ===== -->
 <section class="slide" id="s16">
   <span class="slide-num">16 / 18</span>
-  <div class="slide-head"><div class="slide-eyebrow">PA45｜第18回</div><h1 class="slide-title">活用事例 <small>── "催促係" は何にでも化ける</small></h1><div class="concept-dot">Use cases</div></div>
+  <div class="slide-head"><div class="slide-eyebrow">PA45｜第18回</div><h1 class="slide-title">活用事例 <small>── "止まらない承認" はどこでも効く</small></h1><div class="concept-dot">Use cases</div></div>
   <div class="slide-body">
     <div class="cards-3">
-      <div class="card blue"><div class="ico">📝</div><h3 style="font-size:20px;">提出物の催促</h3><p>未提出の人だけ毎朝拾って、本人にやさしくリマインド。</p></div>
-      <div class="card green"><div class="ico">✅</div><h3 style="font-size:20px;">タスクの督促</h3><p>「未対応」のまま残っているタスクの担当へ自動で一声。</p></div>
-      <div class="card yellow"><div class="ico">📨</div><h3 style="font-size:20px;">返信待ちの催促</h3><p>ステータスが「返信待ち」の案件を毎朝チェックして通知。</p></div>
+      <div class="card blue"><div class="ico">🧾</div><h3 style="font-size:20px;">稟議・購買の承認</h3><p>金額に応じて承認者を変え、放置は上長へ自動エスカレーション。</p></div>
+      <div class="card green"><div class="ico">🏖️</div><h3 style="font-size:20px;">休暇・残業申請</h3><p>上長がボタンひとつで承認。滞留したらリマインド。</p></div>
+      <div class="card yellow"><div class="ico">📄</div><h3 style="font-size:20px;">契約書・文書レビュー</h3><p>「承認/要修正/却下」のカスタム応答で差し戻しまで一気に。</p></div>
     </div>
     <div class="cards-3" style="margin-top:14px;">
-      <div class="card"><div class="ico">💴</div><h3 style="font-size:20px;">入金・請求の確認</h3><p>「未入金」の取引先をリストから抽出して担当へ連絡。</p></div>
-      <div class="card"><div class="ico">📦</div><h3 style="font-size:20px;">棚卸し・点検の未対応</h3><p>「未実施」のままの項目を拾って担当をリマインド。</p></div>
-      <div class="card"><div class="ico">👀</div><h3 style="font-size:20px;">レビュー依頼の催促</h3><p>「レビュー待ち」のドキュメントをレビュアーへお知らせ。</p></div>
+      <div class="card"><div class="ico">🧑‍💼</div><h3 style="font-size:20px;">多段の決裁</h3><p>順次承認で 課長→部長→本部長 と順番に回す。</p></div>
+      <div class="card"><div class="ico">🛠️</div><h3 style="font-size:20px;">作業・変更の承認</h3><p>設備変更や公開前チェックを、記録を残しつつ承認。</p></div>
+      <div class="card"><div class="ico">💳</div><h3 style="font-size:20px;">経費精算</h3><p>承認されたら会計へ自動連絡、却下は理由つきで差し戻し。</p></div>
     </div>
-    <div class="callout blue" style="margin-top:auto;"><strong>共通点は「リストのステータスを毎朝見て、止まっているものだけ知らせる」。</strong> 今日の型を覚えれば、中身を入れ替えるだけで <strong>いろんな催促係</strong>が作れます。</div>
+    <div class="callout blue" style="margin-top:auto;"><strong>共通点は「人の"承認"を挟みつつ、止めない」。</strong> 今日の型（依頼→並列で見張る→結果で分岐）を覚えれば、中身を替えるだけで <strong>いろんな承認フロー</strong>が作れます。</div>
   </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span></div>
 </section>
 <!-- ===== S17: ⚠️ 使うときの注意 ===== -->
@@ -507,11 +568,11 @@ item()?['<span class="key">申請日</span>'] &lt; <span class="hl">addDays</spa
   <div class="slide-head"><div class="slide-eyebrow">PA45｜第18回 ／ 大切なこと</div><h1 class="slide-title">使うときの注意 <small>── ここだけは守ろう</small></h1><div class="concept-dot">Cautions</div></div>
   <div class="slide-body">
     <div class="cards-3">
-      <div class="card"><div class="ico">📨</div><h3 style="font-size:24px;color:#991b1b;">催促しすぎない</h3><p>毎朝ガンガン送ると、かえって嫌がられます。<strong>ステータス＝申請中</strong>に絞り、頻度も <strong>1日1回</strong>まで。発展形の「◯日以上」でさらに優しく。</p></div>
-      <div class="card"><div class="ico">🙇</div><h3 style="font-size:24px;color:#92400e;">文面はやわらかく</h3><p>「まだですか！」ではなく <strong>「お手すきの際に」</strong>。自動でも、受け取る人への気づかいを忘れずに。</p></div>
-      <div class="card green"><div class="ico">🧪</div><h3 style="font-size:24px;color:#15803d;">まず自分宛でテスト</h3><p>いきなり上司や他部署に送らない。<strong>宛先を自分</strong>にして動きを確かめてから、本番の宛先に変えましょう。</p></div>
+      <div class="card"><div class="ico">🙇</div><h3 style="font-size:24px;color:#991b1b;">催促しすぎない</h3><p>リマインドは <strong>◯日たってから1回</strong>に。毎日送ると逆効果。文面も <strong>「お手すきの際に」</strong>とやわらかく。</p></div>
+      <div class="card"><div class="ico">👤</div><h3 style="font-size:24px;color:#92400e;">承認者の不在に備える</h3><p>担当が休みでも止まらないよう、<strong>エスカレーション先</strong>や <strong>代理</strong>を決めておく。</p></div>
+      <div class="card green"><div class="ico">🧪</div><h3 style="font-size:24px;color:#15803d;">まず自分で試す</h3><p>いきなり上司へ送らない。<strong>割り当て先を自分</strong>にして、承認/却下・催促の動きを確かめてから本番へ。</p></div>
     </div>
-    <div class="callout red" style="margin-top:auto;"><strong>合言葉：</strong> 催促は <strong>「少なく・やさしく」</strong>。本当に必要なものだけ、ていねいに届くから、催促係は <strong>みんなの味方</strong>になります。</div>
+    <div class="callout red" style="margin-top:auto;"><strong>合言葉：</strong> 承認フローは <strong>「止めない、でも急かしすぎない」</strong>。人の判断をはさむからこそ、<strong>相手への気づかい</strong>をひとつ添えておきましょう。</div>
   </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span></div>
 </section>
 <!-- ===== S18: クロージング＆アンケート ===== -->
@@ -519,7 +580,7 @@ item()?['<span class="key">申請日</span>'] &lt; <span class="hl">addDays</spa
   <span class="slide-num">18 / 18</span>
   <div class="slide-head"><div class="slide-eyebrow">Thank you!</div><h1 class="slide-title">おつかれさまでした！ <small>── アンケートのお願い</small></h1></div>
   <div class="slide-body">
-    <div class="pull-quote" style="background:rgba(255,255,255,.6);font-size:26px;padding:18px;">🔔 言いづらい催促は、フローにおまかせ ── 今日であなたの「気まずさ」が1つ減りました！</div>
+    <div class="pull-quote" style="background:rgba(255,255,255,.6);font-size:26px;padding:18px;">✅🔔 承認は"止まる"もの ── でも今日から、催促も"上げる"もフローがやってくれます！</div>
     <div class="cards-2" style="margin-top:14px;">
       <div class="card"><h3>📝 アンケートにご協力ください</h3>
         <p style="margin:0 0 12px;">2分で終わります。回答者には<strong>参加バッジ</strong>をお送りします🏅 感想や「ここが分かりにくかった」も大歓迎。次回をもっと良くする力になります。</p>
@@ -532,7 +593,7 @@ item()?['<span class="key">申請日</span>'] &lt; <span class="hl">addDays</spa
       </div>
     </div>
     <div style="text-align:center;color:#78350f;font-weight:700;margin-top:auto;line-height:1.5;">
-      <div style="font-size:25px;">今日のフローは、明日からあなたの代わりに毎朝そっと催促してくれます 🔔</div>
+      <div style="font-size:25px;">今日のフローは、明日からあなたの代わりに承認を追いかけてくれます ✅</div>
       <div style="font-size:22px;margin-top:6px;">また次回、一緒に「できた！」を作りましょう 😊</div>
     </div>
   </div>
