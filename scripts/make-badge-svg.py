@@ -41,6 +41,7 @@ SESSIONS = {
     15: ("Folder Watch Mail", "2026-06-18", "foldermail"),
     16: ("Copilot Assist", "2026-06-25", "copilot"),
     17: ("Due Date Watch", "2026-07-02", "deadline"),
+    18: ("Approval Escalation", "2026-07-09", "approval"),
 }
 
 
@@ -50,6 +51,10 @@ PALETTE_OVERRIDE = {
     # Vol.17：かわいいローズピンク × ローズゴールド
     17: dict(ring=("#ffd9ea", "#9c3568"), disc=("#ff8fc0", "#5e1a3d"),
              gold=ROSEGOLD, title="#ffffff", sub="#ffe1ef"),
+    # Vol.18：高級感のあるサファイア紺 × ゴールド（承認＝信頼の青）。差し色に
+    #          柔らかいペリウィンクルで“かわいさ”を一滴。温色続きからの変化。
+    18: dict(ring=("#aecbff", "#0a1c49"), disc=("#2c50cf", "#060e30"),
+             gold=GOLD, title="#ffffff", sub="#cfe0ff"),
 }
 
 
@@ -134,7 +139,30 @@ def icon_deadline(g):
   </g>'''
 
 
-ICONS = {"foldermail": icon_foldermail, "copilot": icon_copilot, "deadline": icon_deadline}
+def icon_approval(g):
+    """承認エスカレーション = 承認の盾＋チェックに、上へ上げる二段シェブロン。"""
+    gl, gm, gd = g
+    cx = 440
+    return f'''
+  <g filter="url(#ishadow)">
+    <!-- エスカレーション：上へ上げる二段シェブロン -->
+    <path d="M{cx-36} 322 L{cx} 296 L{cx+36} 322" fill="none" stroke="{gl}"
+          stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M{cx-36} 350 L{cx} 324 L{cx+36} 350" fill="none" stroke="{gm}"
+          stroke-width="15" stroke-linecap="round" stroke-linejoin="round" opacity="0.85"/>
+    <!-- 承認の盾 -->
+    <path d="M365 368 Q440 352 515 368 L515 440 Q515 488 440 516 Q365 488 365 440 Z"
+          fill="url(#sparkgrad)" stroke="{gd}" stroke-width="4"/>
+    <!-- 上端ハイライト -->
+    <path d="M368 372 Q440 357 512 372 L512 382 Q440 368 368 382 Z" fill="{gl}" opacity="0.55"/>
+    <!-- チェック（承認済み） -->
+    <path d="M406 438 l24 27 l50 -60" fill="none" stroke="#fffaf0" stroke-width="18"
+          stroke-linecap="round" stroke-linejoin="round"/>
+  </g>'''
+
+
+ICONS = {"foldermail": icon_foldermail, "copilot": icon_copilot,
+         "deadline": icon_deadline, "approval": icon_approval}
 
 
 def knurl_dots(cx, cy, r, n, color):
