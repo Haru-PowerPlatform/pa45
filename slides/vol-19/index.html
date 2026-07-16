@@ -1,0 +1,699 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>PA45 第19回 スライド｜自動化の成果を"見える化"（なぜ見える化するのか＋使うほど自動でたまる仕掛け）</title>
+<style>
+  :root{
+    --blue-bg:#eaf2fc;--blue-mid:#2a7dd4;--blue-text:#14528f;--blue-light:#b8d3ef;
+    --orange:#e06030;--red:#c03520;--surface:#fff;--bg:#f3f6fa;--text:#1f2937;
+    --muted:#475569;--hint:#94a3b8;--border:#e2e8f0;--green-bg:#ecfdf5;--green-text:#065f46;
+    --yellow-bg:#fffbeb;--yellow-text:#92400e;--teal:#0f7b8a;--purple:#7c3aed;
+  }
+  body{margin:0;padding:24px 24px 24px 280px;background:#1a2233;
+    font-family:"Meiryo UI","Yu Gothic UI","Segoe UI",sans-serif;color:var(--text);font-size:16px;}
+  .deck-header{color:#fff;max-width:1280px;margin:0 auto 24px;font-size:16px;opacity:.85;}
+  .deck-header h1{margin:0 0 4px;font-size:24px;}
+  .toc{position:fixed;top:0;left:0;bottom:0;width:260px;background:#0f172a;color:#cbd5e1;
+    padding:22px 0;overflow-y:auto;z-index:100;border-right:1px solid #1e293b;box-shadow:4px 0 16px rgba(0,0,0,.3);}
+  .toc-header{padding:0 22px 14px;border-bottom:1px solid #1e293b;margin-bottom:10px;}
+  .toc-header .title{font-size:14px;font-weight:800;color:#fff;}
+  .toc-header .sub{font-size:11px;color:#64748b;margin-top:4px;}
+  .toc ol{list-style:none;padding:0;margin:0;}
+  .toc li a{display:block;padding:9px 22px 9px 18px;color:#cbd5e1;text-decoration:none;font-size:13px;
+    line-height:1.45;border-left:3px solid transparent;transition:background .15s,border-color .15s,color .15s;}
+  .toc li a:hover{background:#1e293b;color:#fff;}
+  .toc li a.active{background:#1e293b;color:#fff;border-left-color:#2a7dd4;}
+  .toc li a .n{display:inline-block;width:22px;color:#64748b;font-weight:700;font-size:12px;}
+  .toc li a.active .n{color:#2a7dd4;}
+  .toc-toggle{position:fixed;top:10px;left:270px;z-index:101;background:#1e293b;color:#fff;border:none;
+    padding:8px 14px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:600;}
+  body.toc-collapsed{padding-left:24px;}
+  body.toc-collapsed .toc{transform:translateX(-100%);}
+  body.toc-collapsed .toc-toggle{left:10px;}
+  .toc,.toc-toggle{transition:transform .2s,left .2s;}
+  .slide{width:1280px;height:720px;margin:0 auto 28px;background:#fff;box-shadow:0 12px 40px rgba(0,0,0,.35);
+    border-radius:6px;overflow:hidden;position:relative;display:flex;flex-direction:column;}
+  .slide-num{position:absolute;top:10px;right:14px;font-size:14px;color:var(--hint);
+    background:rgba(255,255,255,.9);padding:3px 10px;border-radius:12px;z-index:10;}
+  .slide-head{padding:24px 48px 22px;background:linear-gradient(135deg,#14528f 0%,#2a7dd4 100%);
+    color:#fff;border-bottom:4px solid #fbbf24;}
+  .slide-eyebrow{font-size:15px;color:#93c5fd;font-weight:700;letter-spacing:.04em;text-transform:uppercase;}
+  .slide-title{font-size:38px;font-weight:800;line-height:1.2;margin:4px 0 0;color:#fff;letter-spacing:-.01em;}
+  .slide-title small{font-size:23px;color:rgba(255,255,255,.85);font-weight:600;}
+  .concept-dot{position:absolute;top:30px;right:60px;display:flex;align-items:center;gap:8px;
+    font-size:15px;color:#fbbf24;font-weight:700;}
+  .concept-dot::before{content:'';width:10px;height:10px;border-radius:50%;background:#fbbf24;}
+  .title-slide .slide-head,.anchor .slide-head{background:transparent;color:inherit;border-bottom:none;}
+  .title-slide .slide-eyebrow,.anchor .slide-eyebrow{color:var(--blue-mid);text-transform:none;letter-spacing:0;}
+  .anchor .slide-eyebrow{color:#92400e;}
+  .title-slide .slide-title,.anchor .slide-title{color:var(--text);}
+  .anchor .slide-title{color:#78350f;}
+  .title-slide .slide-title small,.anchor .slide-title small{color:var(--muted);}
+  .slide-body{flex:1;padding:24px 48px 0;display:flex;flex-direction:column;font-size:22px;}
+  .slide-footer{margin-top:auto;padding:14px 48px 18px;display:flex;justify-content:space-between;
+    align-items:center;font-size:14px;color:var(--hint);background:#fff;}
+  .slide-footer .chat-reminder{background:var(--blue-bg);color:var(--blue-text);padding:7px 16px;
+    border-radius:20px;font-weight:600;font-size:14px;}
+  .slide-footer .src{color:#b6becb;font-size:12px;}
+  .cards-3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:20px;}
+  .cards-2{display:grid;grid-template-columns:repeat(2,1fr);gap:26px;margin-top:20px;}
+  .card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:24px 28px;box-shadow:0 2px 6px rgba(0,0,0,.04);}
+  .card.blue{background:var(--blue-bg);border-color:rgba(42,125,212,.25);}
+  .card.green{background:var(--green-bg);border-color:rgba(6,95,70,.25);}
+  .card.yellow{background:var(--yellow-bg);border-color:rgba(146,64,14,.25);}
+  .card.purple{background:#f5f3ff;border-color:rgba(124,58,237,.25);}
+  .card .num{display:inline-flex;align-items:center;justify-content:center;width:50px;height:50px;
+    border-radius:50%;background:var(--blue-mid);color:#fff;font-weight:800;font-size:26px;margin-bottom:12px;}
+  .card .ico{font-size:46px;margin-bottom:10px;display:block;}
+  .card h3{margin:0 0 12px;font-size:26px;font-weight:700;color:var(--text);line-height:1.35;}
+  .card p,.card ul{font-size:21px;line-height:1.8;color:var(--muted);margin:0;}
+  .card ul{padding-left:22px;}.card li{margin-bottom:9px;}
+  code,.code{font-family:"DM Mono","Consolas",monospace;background:#f1f5f9;padding:3px 9px;border-radius:5px;font-size:.94em;color:#0f172a;}
+  .code-block{background:#0f172a;color:#e2e8f0;padding:14px 18px;border-radius:10px;
+    font-family:"DM Mono","Consolas",monospace;font-size:18px;line-height:1.6;margin:12px 0;overflow-x:auto;white-space:pre-wrap;word-break:break-all;}
+  .code-block .hl{color:#fbbf24;}.code-block .key{color:#7dd3fc;}.code-block .str{color:#86efac;}
+  .code-block .br{color:#fca5a5;font-weight:700;}.code-block .cm{color:#64748b;font-size:14px;}
+  .title-slide{background:linear-gradient(135deg,#eaf2fc 0%,#d4e6f7 100%);}
+  .title-slide .badge-row{display:flex;gap:14px;margin-bottom:20px;}
+  .title-slide .pill{background:rgba(255,255,255,.85);color:var(--blue-text);padding:8px 20px;border-radius:22px;font-size:16px;font-weight:700;}
+  .title-slide .pill.alt{background:#fff;color:var(--blue-mid);border:2px solid var(--blue-mid);}
+  .title-slide h1{font-size:42px;font-weight:800;line-height:1.18;color:var(--blue-text);margin:0 0 20px;letter-spacing:-.02em;}
+  .title-slide .lead{font-size:21px;color:var(--muted);margin:0 0 22px;line-height:1.6;}
+  .meta-table{background:rgba(255,255,255,.7);border-left:5px solid var(--blue-mid);padding:16px 26px;border-radius:8px;max-width:1040px;}
+  .meta-table dt{display:inline-block;width:110px;color:var(--blue-mid);font-weight:700;font-size:18px;}
+  .meta-table dd{display:inline;margin:0;font-size:20px;color:var(--text);}
+  .meta-table dl{margin:11px 0;}
+  ul.check{padding:0;list-style:none;}
+  ul.check li{padding-left:34px;position:relative;font-size:22px;line-height:1.8;margin-bottom:12px;color:var(--text);}
+  ul.check li::before{content:'✓';position:absolute;left:4px;top:0;color:var(--blue-mid);font-weight:800;font-size:22px;}
+  ul.cross li::before{content:'✕';color:var(--red);}
+  .callout{background:var(--yellow-bg);border-left:6px solid #f59e0b;padding:18px 26px;border-radius:6px;
+    font-size:22px;line-height:1.75;color:#78350f;margin:12px 0;}
+  .callout strong{color:#78350f;}
+  .callout.blue{background:var(--blue-bg);border-left-color:#2a7dd4;color:#14528f;}
+  .callout.blue strong{color:#14528f;}
+  .callout.green{background:var(--green-bg);border-left-color:#059669;color:#065f46;}
+  .callout.green strong{color:#065f46;}
+  .callout.red{background:#fff1f2;border-left-color:#e11d48;color:#9f1239;}
+  .callout.red strong{color:#9f1239;}
+  .anchor{background:linear-gradient(135deg,#fde68a 0%,#fcd34d 100%);}
+  .haru-img{width:230px;height:230px;border-radius:50%;object-fit:cover;box-shadow:0 8px 24px rgba(42,125,212,.3);}
+  .opening-bar{background:var(--blue-mid);color:#fff;padding:12px 48px;display:flex;justify-content:space-between;font-size:16px;font-weight:700;}
+  .pull-quote{font-size:22px;font-weight:700;color:var(--blue-text);text-align:center;background:var(--blue-bg);padding:14px;border-radius:12px;margin:12px 0;}
+  .pathpill{display:inline-block;background:#0f172a;color:#fbbf24;font-family:"DM Mono","Consolas",monospace;font-weight:700;padding:4px 12px;border-radius:8px;font-size:16px;}
+  .stepflow{display:grid;grid-template-columns:1fr 28px 1fr 28px 1fr 28px 1fr;align-items:stretch;gap:6px;margin-top:16px;}
+  .stepflow .arr{display:flex;align-items:center;justify-content:center;font-size:24px;color:var(--hint);}
+  .stepbox{border-radius:14px;padding:18px 14px;text-align:center;display:flex;flex-direction:column;align-items:center;border:2px solid;}
+  .stepbox .badge{font-size:15px;font-weight:800;letter-spacing:.04em;padding:3px 14px;border-radius:12px;margin-bottom:10px;}
+  .stepbox h3{margin:0 0 8px;font-size:23px;line-height:1.3;}
+  .stepbox p{margin:0;font-size:17px;line-height:1.55;color:var(--muted);}
+  .stepbox .act{font-family:"DM Mono","Consolas",monospace;font-size:14px;background:#0f172a;color:#7dd3fc;padding:4px 11px;border-radius:6px;margin-top:10px;}
+  .ba{display:grid;grid-template-columns:1fr 40px 1fr;align-items:center;gap:8px;margin-top:14px;}
+  .ba .arrow{text-align:center;font-size:28px;color:var(--blue-mid);font-weight:800;}
+  .ba .box{border-radius:12px;padding:16px 20px;font-size:19px;line-height:1.65;}
+  .ba .bad{background:#fff1f2;border:1px solid #fecdd3;color:#9f1239;}
+  .ba .good{background:var(--green-bg);border:1px solid #86efac;color:#065f46;}
+  .ba .lab{font-weight:800;font-size:16px;display:block;margin-bottom:5px;}
+  .maillink{color:#1d4ed8;text-decoration:underline;font-weight:700;}
+  .steplist{counter-reset:s;list-style:none;padding:0;margin:8px 0 0;}
+  .steplist li{counter-increment:s;position:relative;padding:8px 0 8px 44px;font-size:17px;line-height:1.55;border-bottom:1px dashed var(--border);}
+  .steplist li::before{content:counter(s);position:absolute;left:0;top:6px;width:30px;height:30px;border-radius:50%;
+    background:var(--blue-mid);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:15px;}
+  .steplist li:last-child{border-bottom:none;}
+  .deco{position:absolute;pointer-events:none;z-index:1;}
+  .illus{display:block;width:auto;}
+  .introrow{display:grid;grid-template-columns:150px 1fr;gap:24px;align-items:center;margin:6px 0 12px;}
+  .introrow .illus{max-height:140px;margin:0 auto;}
+  /* ===== Power Automate アクションカード風 ===== */
+  .paact{background:#fff;border:1px solid #d7dde3;border-radius:10px;box-shadow:0 3px 10px rgba(0,0,0,.08);overflow:hidden;}
+  .paact .pahdr{display:flex;align-items:center;gap:10px;padding:11px 16px;background:#faf9f8;border-bottom:1px solid #e5e7eb;}
+  .paact .paicon{width:30px;height:30px;border-radius:6px;background:linear-gradient(135deg,#0b5cab,#3b82c4);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;flex:0 0 30px;}
+  .paact .paicon.sp{background:linear-gradient(135deg,#036c70,#12908a);}
+  .paact .paicon.var{background:linear-gradient(135deg,#7719aa,#9b30c9);}
+  .paact .paicon.sch{background:linear-gradient(135deg,#b25a00,#e0851d);}
+  .paact .patitle{font-size:18px;font-weight:700;color:#242424;}
+  .paact .pabody{padding:12px 16px 16px;}
+  .pafield{margin-bottom:11px;}
+  .pafield .lbl{font-size:14px;font-weight:600;color:#3b3a39;margin-bottom:4px;display:block;}
+  .pafield .lbl b{color:#a4262c;font-weight:700;}
+  .pafield .inp{border:1px solid #b3b0ad;border-bottom:2px solid #0f6cbd;border-radius:2px;padding:8px 12px;font-size:16px;color:#242424;background:#fff;min-height:20px;}
+  .pafield .inp.ph{color:#8a8886;}
+  .pafield .inp.dd{display:flex;justify-content:space-between;align-items:center;}
+  .pafield .inp.dd::after{content:'⌄';color:#605e5c;font-size:20px;line-height:.6;}
+  .pafield .tok{display:inline-block;background:#eef6fc;border:1px solid #b6d7f2;color:#0f6cbd;border-radius:4px;padding:1px 8px;font-size:14px;font-weight:600;}
+  .pafield .tok.fx{background:#fdf2e9;border-color:#f3c99a;color:#b25a00;}
+  .padrop{border:1px solid #b3b0ad;border-radius:4px;box-shadow:0 6px 18px rgba(0,0,0,.14);overflow:hidden;background:#fff;}
+  .padrop div{padding:9px 14px;font-size:15px;color:#242424;border-bottom:1px solid #f0f0f0;}
+  .padrop div.sel{background:#eef6fc;font-weight:700;color:#0f6cbd;}
+  .padrop div:last-child{border-bottom:none;}
+  /* ===== SharePoint リスト風テーブル ===== */
+  .sptable{width:100%;border-collapse:collapse;font-size:16px;background:#fff;border:1px solid #e1dfdd;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+  .sptable th{background:#f3f2f1;color:#323130;font-weight:700;text-align:left;padding:10px 16px;border-bottom:1px solid #e1dfdd;font-size:15px;}
+  .sptable td{padding:10px 16px;border-bottom:1px solid #f0f0f0;color:#242424;}
+  .sptable tr:last-child td{border-bottom:none;}
+  .sptable .new td{background:#eef6fc;font-weight:700;}
+  .sptable .num{text-align:right;font-variant-numeric:tabular-nums;}
+  /* ===== KPI 帯（ダッシュボードの作られ方） ===== */
+  .kpirow{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:14px;}
+  .kpibox{border-radius:12px;padding:14px 18px;color:#fff;}
+  .kpibox .kl{font-size:15px;font-weight:700;opacity:.92;}
+  .kpibox .kf{font-family:"DM Mono","Consolas",monospace;font-size:16px;margin-top:8px;background:rgba(255,255,255,.16);padding:6px 10px;border-radius:6px;line-height:1.4;}
+  /* 密なスライド微調整 */
+  #s2 .introrow{margin:2px 0 8px;}
+  #s2 .introrow .illus{max-height:114px;}
+  #s2 .introrow p{font-size:19px;line-height:1.65;}
+  #s2 .cards-2{margin-top:10px;}
+  #s2 .card{padding:13px 24px;}
+  #s2 .callout{margin-top:8px;padding:11px 22px;}
+  #s7 .cards-3{margin-top:14px;}
+  #s7 .card{padding:16px 22px;}
+  #s7 .card p{font-size:18px;line-height:1.65;}
+  #s7 .card .ico{font-size:38px;margin-bottom:6px;}
+  #s7 .callout{margin-top:auto;}
+  #s8 .stepbox{padding:14px 12px;}
+  #s8 .callout{padding:12px 18px;}
+  #s12 .cards-2{margin-top:12px;}
+  #s12 .card{padding:16px 22px;}
+  #s13 .card{padding:16px 22px;}
+  #s13 .code-block{font-size:15px;margin:8px 0;}
+  #s14 .cards-2{margin-top:8px;}
+  #s14 .paact .pabody{padding:9px 14px 10px;}
+  #s14 .pafield{margin-bottom:7px;}
+  #s14 .pafield .inp{padding:6px 12px;}
+  #s14 .sptable th{padding:7px 14px;}
+  #s14 .sptable td{padding:7px 14px;}
+  #s14 .callout{margin-top:8px;padding:10px 18px;font-size:18px;line-height:1.6;}
+  #s14 .callout.green{margin-top:10px;padding:9px 14px;}
+  #s15 .kpirow{gap:7px;}
+  #s15 .kpibox{padding:9px 16px;}
+  #s15 .kpibox .kl{font-size:14px;}
+  #s15 .kpibox .kf{margin-top:5px;padding:5px 9px;font-size:15px;}
+  #s15 h3{font-size:20px !important;margin-bottom:6px !important;}
+  #s15 img{max-height:408px;object-fit:contain;}
+  #s15 .callout{margin-top:9px;padding:9px 18px;font-size:17px;line-height:1.55;}
+  #s16 .cards-2{margin-top:12px;}
+  #s16 .card{padding:16px 22px;}
+  #s17 .check li{font-size:20px;margin-bottom:9px;}
+  #s17 .callout{padding:14px 22px;}
+  #s18 .cards-3{margin-top:10px;gap:16px;}
+  #s18 .card{padding:13px 18px;}
+  #s18 .card .ico{font-size:32px;margin-bottom:4px;}
+  #s18 .card h3{margin-bottom:6px;}
+  #s18 .card p{font-size:16px;line-height:1.5;}
+  #s18 .callout{margin-top:12px;padding:13px 22px;}
+  /* ===== 実機フローノード（デザイナー風） ===== */
+  .flowmap{display:flex;flex-direction:column;align-items:stretch;}
+  .flownode{display:flex;align-items:center;gap:14px;background:#fff;border:1px solid #d7dde3;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,.08);padding:14px 18px;position:relative;overflow:hidden;}
+  .flownode .fnbar{position:absolute;left:0;top:0;bottom:0;width:6px;}
+  .flownode .fnico{width:36px;height:36px;border-radius:7px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;flex:0 0 36px;margin-left:4px;}
+  .flownode .fntitle{font-size:20px;font-weight:700;color:#242424;}
+  .flownode.sel{border:2px solid #2563EB;}
+  .flowarrow{display:flex;flex-direction:column;align-items:center;justify-content:center;height:38px;color:#9aa4b2;}
+  .flowarrow .plus{width:28px;height:28px;border-radius:50%;border:1px solid #c7ccd3;display:flex;align-items:center;justify-content:center;font-size:18px;color:#5b6472;background:#fff;}
+  #s11 .cards-2{margin-top:14px;}
+  #s11 .flownode{padding:11px 16px;}
+  #s11 .flownode .fnico{width:32px;height:32px;flex:0 0 32px;font-size:18px;}
+  #s11 .flownode .fntitle{font-size:18px;}
+  #s11 .flowarrow{height:28px;}
+  #s11 .paact .pabody{padding:9px 14px 11px;}
+  #s11 .pafield{margin-bottom:8px;}
+  #s11 .callout.blue{margin-top:12px;padding:11px 16px;font-size:16px;}
+  #s11 .slide-body>.callout{margin-top:auto;padding:11px 18px;font-size:18px;}
+</style>
+</head>
+<body>
+<nav class="toc" id="toc">
+  <div class="toc-header">
+    <div class="title">📑 目次 — PA45 第19回</div>
+    <div class="sub">クリックでジャンプ</div>
+  </div>
+  <ol>
+    <li><a href="#s1"><span class="n">01</span>20:15 START</a></li>
+    <li><a href="#s2"><span class="n">02</span>事前準備</a></li>
+    <li><a href="#s3"><span class="n">03</span>PA45とは？</a></li>
+    <li><a href="#s4"><span class="n">04</span>講師自己紹介（Haru）</a></li>
+    <li><a href="#s5"><span class="n">05</span>ご参加にあたって</a></li>
+    <li><a href="#s6"><span class="n">06</span>第19回タイトル</a></li>
+    <li><a href="#s7"><span class="n">07</span>なぜ"見える化"するのか</a></li>
+    <li><a href="#s8"><span class="n">08</span>使うほど自動でたまる仕掛け（実例）</a></li>
+    <li><a href="#s9"><span class="n">09</span>今日やること（3つ）</a></li>
+    <li><a href="#s10"><span class="n">10</span>仕組みの全体像</a></li>
+    <li><a href="#s11"><span class="n">11</span>★ 実機のフロー（毎日）</a></li>
+    <li><a href="#s12"><span class="n">12</span>★ ①削減分を"レート"で決める</a></li>
+    <li><a href="#s13"><span class="n">13</span>★ ②実行日時を日本時間で</a></li>
+    <li><a href="#s14"><span class="n">14</span>★ ③リストに1行ためる</a></li>
+    <li><a href="#s15"><span class="n">15</span>★ ④Power BIで見える化</a></li>
+    <li><a href="#s16"><span class="n">16</span>★ 発展（本番運用）</a></li>
+    <li><a href="#s17"><span class="n">17</span>★ いっしょにやってみよう</a></li>
+    <li><a href="#s18"><span class="n">18</span>活用事例</a></li>
+    <li><a href="#s19"><span class="n">19</span>⚠️ 使うときの注意</a></li>
+    <li><a href="#s20"><span class="n">20</span>クロージング＆アンケート</a></li>
+  </ol>
+</nav>
+<button class="toc-toggle" id="tocToggle" type="button">≡ 目次</button>
+
+<div class="deck-header">
+  <h1>PA45 第19回 スライド</h1>
+  <div>2026-07-16（木）20:15〜 ／ 自動化の成果を"見える化" ── なぜ見せるのか、そして「使うほど自動でたまる」仕掛けをつくる</div>
+</div>
+
+<!-- ===== S1: 20:15 START ===== -->
+<section class="slide title-slide" id="s1">
+  <span class="slide-num">1 / 20</span>
+  <div class="opening-bar"><span>PA45 — Power Automate 45 ｜ 第19回 / Vol.19</span><span>Online Hands-on</span></div>
+  <div class="slide-body" style="justify-content:center;align-items:center;text-align:center;">
+    <div style="font-size:30px;color:var(--blue-mid);font-weight:800;margin-bottom:4px;">まもなく開始します</div>
+    <div style="font-size:128px;color:var(--blue-text);font-weight:900;line-height:1;margin:8px 0 4px;letter-spacing:.02em;">20:15 <span style="font-size:56px;">START</span></div>
+    <h1 style="font-size:36px;color:var(--text);font-weight:800;line-height:1.3;margin:20px 0 12px;">第19回｜自動化の成果を "見える化" 📊🪙</h1>
+    <p style="font-size:24px;color:var(--muted);margin:0;">開始まで、もう少しお待ちください ☕</p>
+  </div>
+  <div class="slide-footer"><span>Power Automate for Beginners</span><span style="color:var(--hint);">Copyright © PA45</span></div>
+</section>
+<!-- ===== S2: 事前準備 ===== -->
+<section class="slide" id="s2">
+  <span class="slide-num">2 / 20</span>
+  <div class="slide-head"><div class="slide-eyebrow">PA45｜第19回</div><h1 class="slide-title">事前準備 <small>（サインインだけでOK）</small></h1></div>
+  <div class="slide-body">
+    <div class="introrow">
+      <img class="illus" src="assets/irasutoya_programming.png" alt="">
+      <p style="font-size:21px;color:var(--muted);margin:0;line-height:1.75;">今日は <strong>「簡単な自動化」＋「そのおしりに"記録"を足す」</strong>の2部構成。題材は <strong>Formsの回答を一覧へ自動転記</strong>（手のコピペをゼロにする時短）で、その最後に <strong>"○分ういた"を記録するアクション</strong>を足します。たまった記録は <strong>Power BI で「これだけ時間とコストを減らせた」</strong>に化けます。<strong>フォームもリストも今日その場で作る</strong>ので準備は不要。<strong>標準コネクタ＝プレミアム不要</strong>です。</p>
+    </div>
+    <div class="cards-2">
+      <div class="card blue"><div class="num">1</div><h3>Power Automate にサインイン</h3><p><span class="pathpill">make.powerautomate.com</span> を開いてサインイン。今日は <strong>ゼロから1本</strong>作ります。</p></div>
+      <div class="card green"><div class="num">2</div><h3>Power BI は "見るだけ" でOK</h3><p>記録をためる <strong>フロー作りが主役</strong>。Power BI 側は <strong>完成品をご覧いただく</strong>だけなので、インストール不要です。</p></div>
+    </div>
+    <div class="callout blue" style="margin-top:14px;"><strong>📥 今日のゴール：</strong> 「<strong>自動化が動くたび "○分ういた" が勝手にたまる</strong>」仕組みを自分の手で1本完成させ、<strong>効率化効果が数字になる</strong>を体感する。</div>
+  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span></div>
+</section>
+<!-- ===== S3: PA45とは？ ===== -->
+<section class="slide" id="s3">
+  <span class="slide-num">3 / 20</span>
+  <div class="slide-head"><div class="slide-eyebrow">INTRODUCTION</div><h1 class="slide-title">PA45 とは？ </h1><div class="concept-dot">Concept</div></div>
+  <div class="slide-body">
+    <div style="text-align:center;color:var(--blue-text);font-weight:800;font-size:28px;">忙しい人のための 45分ハンズオン</div>
+    <div class="cards-3">
+      <div class="card blue"><div class="ico">⏱️</div><h3>45分完結</h3><p>長時間の研修は不要。<strong>要点だけ</strong>を凝縮し、最短でスキルを習得。終わったその日から1本使えるようになります。</p></div>
+      <div class="card green"><div class="ico">💻</div><h3>実践型ハンズオン</h3><p>座学だけではありません。<strong>その場で手を動かし</strong>「使える」技術を学びます。見るだけ参加も大歓迎です。</p></div>
+      <div class="card yellow"><div class="ico">👥</div><h3>一緒に作る</h3><p><strong>ゼロから一緒に</strong>作ることで仕組みを理解。「なぜ動くのか」が腑に落ちるので、応用も自分でできます。</p></div>
+    </div>
+    <div style="text-align:center;color:var(--green-text);font-weight:700;margin-top:auto;padding:18px;background:var(--green-bg);border-radius:10px;font-size:23px;">✓ Power Automate 未経験・知識ゼロでも大丈夫！今日も「できた！」をひとつ持ち帰りましょう。</div>
+  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span></div>
+</section>
+<!-- ===== S4: 講師自己紹介（Haru） ===== -->
+<section class="slide" id="s4">
+  <span class="slide-num">4 / 20</span>
+  <div class="slide-head"><div class="slide-eyebrow">SPEAKER</div><h1 class="slide-title">Power Automate 45 (PA45) </h1><div class="concept-dot">Speaker</div></div>
+  <div class="slide-body">
+    <div style="display:grid;grid-template-columns:280px 1fr;gap:36px;align-items:center;margin-top:8px;">
+      <img class="haru-img" src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="Haru" style="width:280px;height:280px;">
+      <div>
+        <div style="font-size:40px;font-weight:800;color:var(--blue-text);line-height:1.1;">Haru</div>
+        <div style="font-size:23px;color:var(--muted);margin:6px 0 18px;">💻 Power Platform / DX 推進</div>
+        <ul class="check" style="font-size:24px;">
+          <li style="margin-bottom:16px;">🏢 社内で PA／Copilot ハンズオン講座を開催し、DXを推進</li>
+          <li style="margin-bottom:16px;">🎤 広島コミュニティ「PLUG」運営・外部コミュニティ登壇</li>
+          <li style="margin-bottom:16px;">📱 X で初心者向け Power Automate チップスを継続発信</li>
+          <li>🕐 PA45（45分の "1粒ハンズオン"）を毎週開催・運営</li>
+        </ul>
+      </div>
+    </div>
+    <div class="pull-quote" style="margin-top:auto;font-size:26px;padding:18px;">今日も一緒に「できた！」を作っていきましょう 😊</div>
+  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span></div>
+</section>
+<!-- ===== S5: ご参加にあたって ===== -->
+<section class="slide" id="s5">
+  <span class="slide-num">5 / 20</span>
+  <div class="slide-head"><div class="slide-eyebrow">PA45 Online Course</div><h1 class="slide-title">ご参加にあたってのお願い <small>（ルール）</small></h1><div class="concept-dot">Guidelines</div></div>
+  <div class="slide-body">
+    <div class="cards-3">
+      <div class="card blue"><div class="ico">🤝</div><h3>気持ちよく学ぶ</h3><ul><li>誹謗中傷・不適切な発言は禁止</li><li>お互いを尊重し合いましょう</li></ul></div>
+      <div class="card green"><div class="ico">🎥</div><h3>録画について</h3><ul><li>後日 YouTube 公開予定</li><li>匿名参加で表示名を隠せます</li></ul></div>
+      <div class="card yellow"><div class="ico">💬</div><h3>チャットは気軽に</h3><ul><li>「できました！」大歓迎</li><li>小さな質問でもOK</li></ul></div>
+    </div>
+    <div class="cards-2" style="margin-top:14px;">
+      <div class="card"><h3 style="color:var(--blue-text);">🖌️ アウトプットで定着</h3><p><strong>#PA45</strong> をつけて投稿しよう！「気づき」「これ便利！」何でもOK。</p></div>
+      <div class="card"><h3 style="color:var(--green-text);">🎓 初心者大歓迎</h3><p>🚫 難しい専門用語は使いません／🚶 置いてけぼりにしないようゆっくり進行。</p></div>
+    </div>
+  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span></div>
+</section>
+<!-- ===== S6: 第19回タイトル ===== -->
+<section class="slide title-slide" id="s6">
+  <span class="slide-num">6 / 20</span>
+  <div class="slide-head"><div class="slide-eyebrow">Power Automate 入門講座</div><h1 class="slide-title">Vol.19 </h1></div>
+  <div class="slide-body">
+    <div class="badge-row"><span class="pill">Forms→自動転記</span><span class="pill alt">変数（レート）</span><span class="pill alt">SharePointに記録</span><span class="pill alt">Power BIで見える化</span><span class="pill alt">プレミアム不要</span></div>
+    <h1>第19回：自動化の成果を "見える化"<br>実行1回で "○分" が貯まる、時間の貯金箱をつくる</h1>
+    <div class="meta-table">
+      <dl><dt>Theme</dt><dd>フローが動くたび "削減した時間" を記録にためて、Power BI で「効率化効果」を見せる</dd></dl>
+      <dl><dt>Target</dt><dd>フローは作れるが「で、どれだけ効果あるの？」を示せずモヤモヤしている方（知識ゼロOK）</dd></dl>
+      <dl><dt>Time</dt><dd>解説＋その場で一緒に作る 約45分</dd></dl>
+    </div>
+    <img class="deco" src="assets/irasutoya_robot.png" alt="" style="right:46px;bottom:20px;height:190px;">
+  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span></div>
+</section>
+<!-- ===== S7: なぜ"見える化"するのか（WHY） ===== -->
+<section class="slide" id="s7">
+  <span class="slide-num">7 / 20</span>
+  <div class="slide-head"><div class="slide-eyebrow">PA45｜第19回 ／ なぜやるのか</div><h1 class="slide-title">なぜ、効率化効果を "見える化" するのか <small>── 「作って終わり」にしないために</small></h1><div class="concept-dot">Why</div></div>
+  <div class="slide-body">
+    <div class="introrow">
+      <img class="illus" src="assets/irasutoya_businessman.png" alt="">
+      <p style="margin:0;color:var(--muted);line-height:1.7;">自動化の本当の目的は、<strong>ムダな時間を減らして、人にしかできない "価値ある仕事" に時間を戻すこと</strong>。でも ── フローを <strong>作って終わり</strong>にすると、せっかく生んだ時間が <strong>"成果" として誰にも見えない</strong>まま。「で、どれだけ役に立ってるの？」に、数字で答えられません。</p>
+    </div>
+    <div class="cards-3">
+      <div class="card blue"><div class="ico">🎯</div><h3 style="font-size:23px;">DXの目的</h3><p>自動化で <strong>時間を生み</strong>、その時間を <strong>価値ある仕事へ戻す</strong>。ここが本当のゴール。</p></div>
+      <div class="card yellow"><div class="ico">🌫️</div><h3 style="font-size:23px;">でも "作って終わり"</h3><p>生んだ時間が <strong>数字にならない</strong>。本人にも周りにも <strong>効果が見えない</strong>ままに。</p></div>
+      <div class="card green"><div class="ico">📊</div><h3 style="font-size:23px;">だから "見える化"</h3><p>成果を数字で示すと <strong>①貢献が伝わり ②やりがいになり ③次の自動化が増える</strong>。</p></div>
+    </div>
+    <div class="callout blue"><strong>「見える化」は、頑張りを "成果" に変える最後のひと工程。</strong> 動かした分をちゃんと数字にして、はじめて自動化は <strong>"語れる成果"</strong> になります。</div>
+  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span></div>
+</section>
+<!-- ===== S8: 使うほど自動でたまる仕掛け（実例・会社は伏せる） ===== -->
+<section class="slide" id="s8">
+  <span class="slide-num">8 / 20</span>
+  <div class="slide-head"><div class="slide-eyebrow">PA45｜第19回 ／ 実例</div><h1 class="slide-title">使うほど、成果が "自動で" たまる仕掛け <small>── 私が現場でやっていること</small></h1><div class="concept-dot">Real example</div></div>
+  <div class="slide-body">
+    <div style="display:grid;grid-template-columns:1.28fr 1fr;gap:24px;align-items:start;">
+      <div>
+        <p style="font-size:19px;color:var(--muted);margin:0 0 10px;line-height:1.7;">実は私も、この "見える化" を現場で回しています。<strong>みんなに使ってもらう自動化フローを作って配り</strong>、それを <strong>使われるほど成果が "ひとりでに" グラフになる</strong>仕組みです。</p>
+        <div class="stepflow" style="grid-template-columns:1fr 22px 1fr 22px 1fr;">
+          <div class="stepbox" style="border-color:#2a7dd4;background:var(--blue-bg);"><div class="badge" style="background:#2a7dd4;color:#fff;">STEP 1</div><h3 style="font-size:19px;">📦 作って配る</h3><p>役立つフローを作り、みんなに配布</p></div>
+          <div class="arr">→</div>
+          <div class="stepbox" style="border-color:#0f7b8a;background:#e6f4f6;"><div class="badge" style="background:#0f7b8a;color:#fff;">STEP 2</div><h3 style="font-size:19px;">🗂️ 勝手に記録</h3><p>使うたび、フロー自身が削減分を記録</p></div>
+          <div class="arr">→</div>
+          <div class="stepbox" style="border-color:#059669;background:var(--green-bg);"><div class="badge" style="background:#059669;color:#fff;">STEP 3</div><h3 style="font-size:19px;">📊 自動でグラフ</h3><p>Power BI が毎日"勝手に"集計・更新</p></div>
+        </div>
+        <div class="callout green" style="margin-top:14px;"><strong>使う人は、いつも通り使うだけ。</strong> 記録も集計も全自動なので、成果データが <strong>ひとりでに積み上がって</strong>いきます。</div>
+      </div>
+      <div>
+        <img src="assets/dashboard.png" alt="効率化効果ダッシュボード（伏字イメージ）" style="width:100%;border-radius:10px;border:1px solid var(--border);box-shadow:0 4px 14px rgba(0,0,0,.12);">
+        <div style="text-align:center;font-size:14px;color:var(--hint);margin-top:6px;">↑ 使われるほど数字が伸びる（毎日自動更新・伏字イメージ）</div>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:auto;"><strong>この仕掛けを、45分の "部品" に分解したのが今日のハンズオン。</strong> 「① 削減レートを決める → ② 1行ためる → ③ 見せる」の順に、一緒に作っていきます。</div>
+  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="src">ダッシュボードは受講生向けの伏字イメージ ／ Power BI</span><span class="chat-reminder">💬 #PA45 へ！</span></div>
+</section>
+<!-- ===== S9: 今日やること（3つ） ===== -->
+<section class="slide" id="s9">
+  <span class="slide-num">9 / 20</span>
+  <div class="slide-head"><div class="slide-eyebrow">PA45｜第19回</div><h1 class="slide-title">今日やること <small>（3つだけ）</small></h1><div class="concept-dot">Agenda</div></div>
+  <div class="slide-body">
+    <div class="cards-3">
+      <div class="card blue"><div class="num">1</div><div class="ico">🤖</div><h3>簡単な自動化を作る</h3><p><strong>Formsの回答を一覧へ自動転記</strong>。手のコピペ（1件○分）がゼロに。<strong>これが時短の実体</strong>。</p></div>
+      <div class="card purple"><div class="num">2</div><div class="ico">🪙</div><h3>おしりに "記録" を足す</h3><p>フローの末尾に <strong>削減分（変数）＋1行記録</strong>を追加。動くたびに貯金箱へ <strong>チャリン</strong>。</p></div>
+      <div class="card green"><div class="num">3</div><div class="ico">📊</div><h3>Power BIで見える化</h3><p>たまった記録を <strong>実行回数 × 削減分</strong>で集計。<strong>効率化時間・削減コスト</strong>が一目に。</p></div>
+    </div>
+    <div class="callout" style="margin-top:auto;"><strong>🎯 今日の合言葉：</strong> 「<strong>動いた分だけ、貯まる。</strong>」── フローを作りっぱなしにせず、<strong>成果が積み上がって見える</strong>ところまで持っていきます。</div>
+  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span></div>
+</section>
+<!-- ===== S10: 仕組みの全体像 ===== -->
+<section class="slide" id="s10">
+  <span class="slide-num">10 / 20</span>
+  <div class="slide-head"><div class="slide-eyebrow">PA45｜第19回</div><h1 class="slide-title">仕組みの全体像 <small>── 記録して、ためて、見せる</small></h1><div class="concept-dot">Overview</div></div>
+  <div class="slide-body">
+    <div class="stepflow" style="grid-template-columns:1fr 26px 1fr 26px 1fr 26px 1.15fr;">
+      <div class="stepbox" style="border-color:#038387;background:#e6f6f5;">
+        <div class="badge" style="background:#038387;color:#fff;">① 自動化</div>
+        <h3>📝 Forms→転記</h3><p>回答が届いたら一覧へ自動転記（時短の実体）</p><span class="act">フォームが送信されたら</span></div>
+      <div class="arr">→</div>
+      <div class="stepbox" style="border-color:#7c3aed;background:#f5f3ff;">
+        <div class="badge" style="background:#7c3aed;color:#fff;">② レート</div>
+        <h3>🪙 削減分を用意</h3><p>「1回で○分うく」を変数に入れておく</p><span class="act">変数の初期化</span></div>
+      <div class="arr">→</div>
+      <div class="stepbox" style="border-color:#0f7b8a;background:#e6f4f6;">
+        <div class="badge" style="background:#0f7b8a;color:#fff;">③ 記録</div>
+        <h3>🗂️ 1行ためる</h3><p>リストへ「名前・日時・削減分」を追加</p><span class="act">項目の作成</span></div>
+      <div class="arr">→</div>
+      <div class="stepbox" style="border-color:#059669;background:var(--green-bg);">
+        <div class="badge" style="background:#059669;color:#fff;">④ 見える化</div>
+        <h3>📊 Power BI</h3><p>実行回数×削減分で効率化効果を集計・表示</p><span class="act">ダッシュボード</span></div>
+    </div>
+    <div class="cards-3" style="margin-top:14px;">
+      <div class="card purple" style="padding:13px 20px;"><p style="font-size:17px;line-height:1.55;"><strong>🪙 キモは②のレート</strong><br>「1回＝○分」を決めておくだけで、あとは回数が勝手に効果に化けます。</p></div>
+      <div class="card blue" style="padding:13px 20px;"><p style="font-size:17px;line-height:1.55;"><strong>🗂️ 記録は標準コネクタ</strong><br>SharePointは既定環境ですぐ使えます。プレミアム不要。</p></div>
+      <div class="card green" style="padding:13px 20px;"><p style="font-size:17px;line-height:1.55;"><strong>🔁 一度足せば毎回貯まる</strong><br>フローが動くたび自動で1行。ほうっておくほど成果が積み上がる。</p></div>
+    </div>
+    <div class="callout blue" style="margin-top:auto;"><strong>やることは「自動化を作る → おしりに記録を足す → 見せる」。</strong> 今日は①の <strong>転記フロー</strong>も一緒に作り、そのおしりに②③の <strong>記録part</strong>を足します。④の Power BI は <strong>完成品をお見せ</strong>して、"ためた記録がこう化ける"を体感します。</div>
+  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span></div>
+</section>
+<!-- ===== S11-NEW: ★ 実機のフロー（毎日スケジュール） ===== -->
+<section class="slide" id="s11">
+  <span class="slide-num">11 / 20</span>
+  <div class="slide-head"><div class="slide-eyebrow">★ 実機フロー</div><h1 class="slide-title">実機のフローはこう見えます <small>── 自動化の "おしり" に記録を足す</small></h1><div class="concept-dot">Real flow</div></div>
+  <div class="slide-body">
+    <div class="cards-2" style="grid-template-columns:1fr 1fr;align-items:start;gap:22px;">
+      <div>
+        <div style="font-size:15px;font-weight:800;color:var(--blue-text);margin-bottom:8px;">STEP1｜本来の自動化 <span style="font-weight:600;color:var(--muted);font-size:13px;">（Forms→転記＝時短の実体）</span></div>
+        <div class="flowmap">
+          <div class="flownode sel"><span class="fnbar" style="background:#038387;"></span><span class="fnico" style="background:linear-gradient(135deg,#038387,#0aa5a0);">📝</span><span class="fntitle">フォームが送信されたら</span></div>
+          <div class="flowarrow"><span class="plus">＋</span></div>
+          <div class="flownode"><span class="fnbar" style="background:#038387;"></span><span class="fnico" style="background:linear-gradient(135deg,#038387,#0aa5a0);">📄</span><span class="fntitle">応答の詳細を取得する</span></div>
+          <div class="flowarrow"><span class="plus">＋</span></div>
+          <div class="flownode"><span class="fnbar" style="background:#036c70;"></span><span class="fnico" style="background:linear-gradient(135deg,#036c70,#12908a);">▦</span><span class="fntitle">項目の作成（回答一覧へ転記）</span></div>
+        </div>
+        <div style="font-size:14px;color:var(--hint);margin-top:8px;">▲ ここまでが「あなたの自動化」＝手のコピペがゼロに</div>
+      </div>
+      <div>
+        <div style="font-size:15px;font-weight:800;color:#92400e;margin-bottom:8px;">STEP2｜記録part <span style="font-weight:600;color:var(--muted);font-size:13px;">（今日の主役・おしりに足す3つ）</span></div>
+        <div class="flowmap">
+          <div class="flownode"><span class="fnbar" style="background:#7719aa;"></span><span class="fnico" style="background:linear-gradient(135deg,#7719aa,#9b30c9);font-family:monospace;">{x}</span><span class="fntitle">変数：削減分 ＝ 15（整数）</span></div>
+          <div class="flowarrow"><span class="plus">＋</span></div>
+          <div class="flownode"><span class="fnbar" style="background:#7719aa;"></span><span class="fnico" style="background:linear-gradient(135deg,#7719aa,#9b30c9);font-family:monospace;">{x}</span><span class="fntitle">変数：フロー名（文字列）</span></div>
+          <div class="flowarrow"><span class="plus">＋</span></div>
+          <div class="flownode"><span class="fnbar" style="background:#036c70;"></span><span class="fnico" style="background:linear-gradient(135deg,#036c70,#12908a);">▦</span><span class="fntitle">項目の作成（自動化ログへ記録）</span></div>
+        </div>
+        <div style="font-size:14px;color:var(--hint);margin-top:8px;">▲ どんなフローの "おしり" にも、この3つを足すだけ</div>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:auto;"><strong>STEP1のあとにSTEP2をつなげるだけ。</strong> 転記が動くたび「フロー名・日時・15分」が自動化ログにたまり、<strong>効率化効果が "数字" になっていきます</strong>。</div>
+  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="src">実機：Power Automate（PA45 Demo 環境）</span><span class="chat-reminder">💬 #PA45 へ！</span></div>
+</section>
+<!-- ===== S11: ★ ①削減分をレートで決める（変数の初期化） ===== -->
+<section class="slide" id="s12">
+  <span class="slide-num">12 / 20</span>
+  <div class="slide-head"><div class="slide-eyebrow">★ 部品① RATE</div><h1 class="slide-title">削減分を "レート" で決める <small>── 変数の初期化</small></h1><div class="concept-dot">Variable</div></div>
+  <div class="slide-body">
+    <div class="cards-2" style="grid-template-columns:1.05fr 1fr;">
+      <div class="card purple" style="padding:18px 22px;"><h3 style="margin-bottom:8px;">"1回でうく時間" を1つ決める</h3>
+        <p style="font-size:19px;">その作業、手でやると何分かかる？ ── その分だけ、フロー1回につき節約できています。この <strong>「1回＝○分」</strong>を <strong>変数</strong>に入れておくのが今日の起点。</p>
+        <div class="ba" style="grid-template-columns:1fr;gap:8px;margin-top:10px;">
+          <div class="box good" style="padding:12px 16px;font-size:18px;"><span class="lab">たとえ話 🪙</span>貯金箱の <strong>「1回で入れるコイン」</strong>を決める作業。コイン＝削減分。フローが動くたび、この分がチャリンと貯まります。</div>
+        </div>
+        <p style="font-size:15px;color:var(--muted);margin:8px 0 0;">※ 見積りは <strong>控えめ</strong >でOK（盛らない）。あとで変えられます。</p>
+      </div>
+      <div>
+        <div style="font-size:14px;color:var(--hint);font-weight:700;margin-bottom:6px;">▼ アクション「変数を初期化する」の設定（イメージ）</div>
+        <div class="paact">
+          <div class="pahdr"><span class="paicon var">𝒙</span><span class="patitle">変数を初期化する</span></div>
+          <div class="pabody">
+            <div class="pafield"><span class="lbl">名前 <b>*</b></span><div class="inp">削減分</div></div>
+            <div class="pafield"><span class="lbl">種類 <b>*</b></span><div class="inp dd">整数</div></div>
+            <div class="pafield" style="margin-bottom:0;"><span class="lbl">値</span><div class="inp">15</div></div>
+          </div>
+        </div>
+        <div class="callout blue" style="margin:12px 0 0;padding:11px 15px;font-size:16px;"><strong>種類は「整数」。</strong>「15」は "手作業なら15分かかる仕事" の意味です。</div>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:auto;"><strong>ポイント：</strong> 難しい計算はしません。<strong>「この作業、手なら何分？」を1つ決めて数字を入れる</strong>だけ。この1つが、あとで効率化時間にも削減コストにも化けます。</div>
+  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span></div>
+</section>
+<!-- ===== S12: ★ ②実行日時を日本時間で ===== -->
+<section class="slide" id="s13">
+  <span class="slide-num">13 / 20</span>
+  <div class="slide-head"><div class="slide-eyebrow">★ 部品② WHEN</div><h1 class="slide-title">実行日時を "日本時間" で <small>── 月別グラフのための1式（Vol.17の復習）</small></h1><div class="concept-dot">JST</div></div>
+  <div class="slide-body">
+    <div class="cards-2" style="grid-template-columns:1fr 1.05fr;">
+      <div class="card" style="padding:18px 22px;"><h3 style="margin-bottom:8px;">なぜ "日時" を記録するの？</h3>
+        <p style="font-size:19px;">ダッシュボードの <strong>「月別の積み上げグラフ」</strong>は、1行ずつに <strong>いつ動いたか</strong>が入っているから描けます。だから記録に <strong>実行日時</strong>を1つ添えます。</p>
+        <ul class="check" style="font-size:18px;margin-top:8px;">
+          <li>そのままだと時刻は <strong>世界標準時（UTC）</strong>＝9時間ズレ</li>
+          <li><strong>1式コピペ</strong>で「日本時間」に直すだけ</li>
+        </ul>
+      </div>
+      <div class="card blue" style="padding:18px 22px;"><h3 style="margin-bottom:8px;">貼りつける式はこれ1つ</h3>
+        <p style="font-size:17px;margin-bottom:6px;">「値」欄の <span class="tok fx">𝑓ₓ 式</span> に貼るだけ（Vol.17でやった変換です）。</p>
+        <div class="code-block" style="font-size:15px;margin:6px 0;"><span class="hl">convertTimeZone(</span>
+  <span class="key">utcNow()</span>,
+  <span class="str">'UTC'</span>,
+  <span class="str">'Tokyo Standard Time'</span>,
+  <span class="str">'yyyy/MM/dd HH:mm'</span>
+<span class="hl">)</span></div>
+        <p style="font-size:15px;color:var(--muted);margin:0;">意味：<strong>今の時刻を、日本時間の "2026/07/16 20:30" の形にする</strong>。</p>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:auto;"><strong>今日は "おまじない" でOK。</strong> 中身は Vol.17「期限の見張り番」で解説済み。ここでは <strong>この1行をコピペする</strong>だけで先に進みます。日付だけでよければ <code>'yyyy/MM/dd'</code> でも大丈夫です。</div>
+  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="src">出典：Microsoft Learn（convertTimeZone 関数）</span><span class="chat-reminder">💬 #PA45 で気づきを投稿しよう！</span></div>
+</section>
+<!-- ===== S13: ★ ③リストに1行ためる ===== -->
+<section class="slide" id="s14">
+  <span class="slide-num">14 / 20</span>
+  <div class="slide-head"><div class="slide-eyebrow">★ 部品③ LOG</div><h1 class="slide-title">リストに1行ためる <small>── SharePoint「項目の作成」</small></h1><div class="concept-dot">Create item</div></div>
+  <div class="slide-body">
+    <div class="cards-2" style="grid-template-columns:1fr 1.05fr;">
+      <div>
+        <div style="font-size:14px;color:var(--hint);font-weight:700;margin-bottom:6px;">▼ アクション「項目の作成」の設定（イメージ）</div>
+        <div class="paact">
+          <div class="pahdr"><span class="paicon sp">▦</span><span class="patitle">項目の作成</span></div>
+          <div class="pabody">
+            <div class="pafield"><span class="lbl">サイトのアドレス <b>*</b></span><div class="inp dd">自動化ログ サイト</div></div>
+            <div class="pafield"><span class="lbl">リスト名 <b>*</b></span><div class="inp dd">自動化ログ</div></div>
+            <div class="pafield"><span class="lbl">タイトル</span><div class="inp"><span class="tok">フロー名</span></div></div>
+            <div class="pafield"><span class="lbl">実行日時</span><div class="inp"><span class="tok fx">𝑓ₓ 実行日時（日本時間）</span></div></div>
+            <div class="pafield" style="margin-bottom:0;"><span class="lbl">削減分</span><div class="inp"><span class="tok">削減分</span></div></div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:14px;color:var(--hint);font-weight:700;margin-bottom:6px;">▼ こうやって "貯まって" いく（自動化ログ）</div>
+        <table class="sptable">
+          <tr><th>タイトル（フロー名）</th><th>実行日時</th><th class="num">削減分</th></tr>
+          <tr><td>Forms→お礼メール</td><td>07/16 09:02</td><td class="num">10</td></tr>
+          <tr><td>承認リマインド</td><td>07/16 12:00</td><td class="num">20</td></tr>
+          <tr><td>アンケート転記</td><td>07/16 18:30</td><td class="num">15</td></tr>
+          <tr class="new"><td>アンケート転記</td><td>07/16 20:30</td><td class="num">15</td></tr>
+        </table>
+        <div class="callout green" style="margin:12px 0 0;padding:11px 15px;font-size:16px;"><strong>動くたびに、いちばん下に1行増える。</strong>これが「貯金箱にチャリン」の正体です。</div>
+      </div>
+    </div>
+    <div class="callout" style="margin-top:auto;"><strong>リストの列は3つだけ：</strong> <strong>タイトル（フロー名）</strong>・<strong>実行日時</strong>・<strong>削減分（数値）</strong>。この3列があれば、Power BI は回数も時間もコストも描けます。</div>
+  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span></div>
+</section>
+<!-- ===== S14: ★ ④Power BIで見える化 ===== -->
+<section class="slide" id="s15">
+  <span class="slide-num">15 / 20</span>
+  <div class="slide-head"><div class="slide-eyebrow">★ 部品④ VISUALIZE</div><h1 class="slide-title">Power BI で見える化 <small>── ためた記録が、こう化ける</small></h1><div class="concept-dot">Dashboard</div></div>
+  <div class="slide-body">
+    <div style="display:grid;grid-template-columns:1.35fr 1fr;gap:22px;align-items:start;">
+      <div>
+        <img src="assets/dashboard.png" alt="効率化効果ダッシュボード（イメージ）" style="width:100%;border-radius:10px;border:1px solid var(--border);box-shadow:0 4px 14px rgba(0,0,0,.12);">
+      </div>
+      <div>
+        <h3 style="font-size:22px;margin:0 0 8px;color:var(--blue-text);">回数 × 削減分 で、こう作る</h3>
+        <div class="kpirow" style="grid-template-columns:1fr;gap:10px;">
+          <div class="kpibox" style="background:linear-gradient(135deg,#0f7b8a,#12908a);"><div class="kl">📈 総実行回数</div><div class="kf">＝ 記録の行数を数える</div></div>
+          <div class="kpibox" style="background:linear-gradient(135deg,#2a7dd4,#14528f);"><div class="kl">⏱️ 効率化時間（h）</div><div class="kf">＝ 削減分の合計 ÷ 60</div></div>
+          <div class="kpibox" style="background:linear-gradient(135deg,#7c3aed,#9b30c9);"><div class="kl">💰 削減コスト（円）</div><div class="kf">＝ 効率化時間 × 時給</div></div>
+        </div>
+        <p style="font-size:16px;color:var(--muted);margin:12px 0 0;line-height:1.6;">記録が増えるほど、この3つが <strong>勝手に伸びていきます</strong>。Power BI は SharePointリストに <strong>つなぐだけ</strong>で、毎日 <strong>自動更新</strong>。</p>
+      </div>
+    </div>
+    <div class="callout blue"><strong>ここが今日のごほうび：</strong> 「あなたの自動化が、これだけ時間とコストを減らしています」が <strong>数字とグラフで一目に</strong>。作りっぱなしだったフローが、<strong>語れる成果</strong>に変わります。</div>
+  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="src">ダッシュボードは受講生向けの伏字イメージ ／ Power BI</span><span class="chat-reminder">💬 #PA45 へ！</span></div>
+</section>
+<!-- ===== S15: ★ 発展（本番運用） ===== -->
+<section class="slide" id="s16">
+  <span class="slide-num">16 / 20</span>
+  <div class="slide-head"><div class="slide-eyebrow">★ 発展 ／ NEXT STEP</div><h1 class="slide-title">本番はどう使う？ <small>── "各フローの最後に足すだけ"（今日は見るだけ）</small></h1><div class="concept-dot">For the future</div></div>
+  <div class="slide-body">
+    <div class="callout blue" style="margin-top:0;"><strong>ここからは「次の一歩」。</strong> 今日は "アンケート転記" に足しましたが、本番は <strong>いま動いている自分のどのフローでも、"最後" に記録partを足すだけ</strong>。トリガーは何でもOK。あとは勝手に貯まります。</div>
+    <div class="cards-3" style="margin-top:14px;">
+      <div class="card purple" style="padding:16px 20px;"><h3 style="font-size:22px;margin-bottom:6px;">① 既存フローに"追記"</h3>
+        <p style="font-size:17px;">お礼メールも、日報通知も、末尾に <strong>「削減分」＋「項目の作成」</strong>を足すだけ。フローごとに削減分を変えればOK。</p></div>
+      <div class="card" style="padding:16px 20px;"><h3 style="font-size:22px;margin-bottom:6px;">② 時給で "円" に</h3>
+        <p style="font-size:17px;">Power BI 側で <strong>効率化時間 × 時給</strong>。時給は <strong>1つ決めておく</strong>だけで、削減コスト（円）に変わります。</p></div>
+      <div class="card green" style="padding:16px 20px;"><h3 style="font-size:22px;margin-bottom:6px;">③ 列を足して "部署別"</h3>
+        <p style="font-size:17px;">リストに <strong>「部署」列</strong>を1つ足せば、ダッシュボードに <strong>部署別グラフ</strong>が増やせます。</p></div>
+    </div>
+    <div class="callout" style="margin-top:auto;"><strong>覚えておくのは1つだけ：</strong> 「<strong>フローの最後に "削減分＋1行記録" を足す</strong>」。これさえ習慣にすれば、チーム全体の成果がひとりでに積み上がっていきます 👍</div>
+  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span></div>
+</section>
+<!-- ===== S16: ★ いっしょにやってみよう ===== -->
+<section class="slide" id="s17">
+  <span class="slide-num">17 / 20</span>
+  <div class="slide-head"><div class="slide-eyebrow">★ HANDS-ON</div><h1 class="slide-title">いっしょにやってみよう <small>── 組み立ての通し</small></h1><div class="concept-dot">Let's build</div></div>
+  <div class="slide-body">
+    <div class="cards-2">
+      <div class="card"><div style="font-weight:800;color:var(--blue-text);font-size:17px;margin-bottom:6px;">STEP1｜本来の自動化（転記）</div><ul class="check" style="font-size:19px;">
+        <li><strong>①</strong> <strong>Forms</strong> で1問アンケートを作成（例：今日の気分）</li>
+        <li><strong>②</strong> リストを2つ用意：<strong>回答一覧</strong>／<strong>自動化ログ</strong>（実行日時・削減分）</li>
+        <li><strong>③</strong> 新規フロー →「<strong>フォームが送信されたら</strong>」＋「<strong>応答の詳細を取得</strong>」</li>
+        <li><strong>④</strong> <strong>「項目の作成」</strong>→ 回答一覧へ転記（＝あなたの自動化）</li>
+      </ul></div>
+      <div class="card"><div style="font-weight:800;color:#92400e;font-size:17px;margin-bottom:6px;">STEP2｜記録part（おしりに足す）</div><ul class="check" style="font-size:19px;">
+        <li><strong>⑤</strong> <strong>変数を2つ</strong>：削減分（整数/<strong>15</strong>）＋フロー名（文字列/<strong>アンケート転記</strong>）</li>
+        <li><strong>⑥</strong> <strong>「項目の作成」</strong>→ 自動化ログ（タイトル←フロー名・実行日時＝<strong>𝑓ₓ式</strong>・削減分←変数）</li>
+        <li><strong>⑦</strong> <strong>フォームを送信</strong>してテスト ▶</li>
+        <li><strong>⑧</strong> <strong>2つのリストに1行ずつ</strong>増えたら成功🎉 → #PA45 へ</li>
+      </ul></div>
+    </div>
+    <div class="callout" style="margin-top:auto;"><strong>⚠️ つまずきポイント：</strong> ①「削減分」列は <strong>数値</strong>で作る。②<strong>フォームとフローは同じアカウント</strong>で（応答の詳細が取れない時はここ）。③実行日時がズレたら <strong>式の 'Tokyo Standard Time'</strong> を確認。</div>
+  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span></div>
+</section>
+<!-- ===== S17: 活用事例 ===== -->
+<section class="slide" id="s18">
+  <span class="slide-num">18 / 20</span>
+  <div class="slide-head"><div class="slide-eyebrow">PA45｜第19回</div><h1 class="slide-title">活用事例 <small>── "成果の見える化" はどこでも効く</small></h1><div class="concept-dot">Use cases</div></div>
+  <div class="slide-body">
+    <div class="cards-3">
+      <div class="card blue"><div class="ico">🏢</div><h3 style="font-size:20px;">チーム全体の効果集計</h3><p>メンバー各自のフローが同じリストに記録。<strong>係・部署の合計</strong>が積み上がる。</p></div>
+      <div class="card green"><div class="ico">📣</div><h3 style="font-size:20px;">上司・経営への報告</h3><p>「今月○時間・○円ぶん削減」を <strong>グラフ1枚</strong>で。稟議や表彰の後押しに。</p></div>
+      <div class="card yellow"><div class="ico">🏆</div><h3 style="font-size:20px;">社内コンテスト</h3><p>削減時間ランキングで <strong>市民開発を盛り上げ</strong>。やらされ感を"楽しさ"に。</p></div>
+    </div>
+    <div class="cards-3" style="margin-top:14px;">
+      <div class="card"><div class="ico">🧾</div><h3 style="font-size:20px;">フロー別の効果比較</h3><p>どの自動化が効いているかが分かり、<strong>次に作る優先順位</strong>が決まる。</p></div>
+      <div class="card"><div class="ico">📅</div><h3 style="font-size:20px;">月次のふりかえり</h3><p>月別グラフで <strong>伸びを実感</strong>。続けるモチベーションになる。</p></div>
+      <div class="card"><div class="ico">💡</div><h3 style="font-size:20px;">エラーも記録</h3><p>削減分と一緒に <strong>成功/失敗</strong>も残せば、安定運用の点検にも。</p></div>
+    </div>
+    <div class="callout blue" style="margin-top:auto;"><strong>共通点は「頑張りを数字にして、見せる」。</strong> 今日の型（レートを決める→1行ためる→見せる）を覚えれば、中身を替えるだけで <strong>いろんな成果</strong>を可視化できます。</div>
+  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span></div>
+</section>
+<!-- ===== S18: ⚠️ 使うときの注意 ===== -->
+<section class="slide" id="s19">
+  <span class="slide-num">19 / 20</span>
+  <div class="slide-head"><div class="slide-eyebrow">PA45｜第19回 ／ 大切なこと</div><h1 class="slide-title">使うときの注意 <small>── ここだけは守ろう</small></h1><div class="concept-dot">Cautions</div></div>
+  <div class="slide-body">
+    <div class="cards-3">
+      <div class="card"><div class="ico">🙅</div><h3 style="font-size:24px;color:#991b1b;">削減分は "盛らない"</h3><p>大きすぎる見積りは信頼を失います。<strong>控えめ・実感ベース</strong>で。根拠を一言メモしておくと安心。</p></div>
+      <div class="card"><div class="ico">🔐</div><h3 style="font-size:24px;color:#92400e;">個人情報は入れない</h3><p>記録するのは <strong>フロー名・日時・削減分</strong>まで。氏名や中身の機密は <strong>ためない</strong>。</p></div>
+      <div class="card green"><div class="ico">🧪</div><h3 style="font-size:24px;color:#15803d;">まず自分で試す</h3><p>いきなり全社共有にしない。<strong>自分のリスト</strong>で数行ためて、グラフの動きを確かめてから広げる。</p></div>
+    </div>
+    <div class="callout red" style="margin-top:auto;"><strong>合言葉：</strong> 見える化は <strong>「正直な数字で、そっと積む」</strong>。盛らず・ためすぎず ── 数字がフェアだからこそ、<strong>成果として信頼</strong>されます。</div>
+  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span></div>
+</section>
+<!-- ===== S19: クロージング＆アンケート ===== -->
+<section class="slide anchor" id="s20">
+  <span class="slide-num">20 / 20</span>
+  <div class="slide-head"><div class="slide-eyebrow">Thank you!</div><h1 class="slide-title">おつかれさまでした！ <small>── アンケートのお願い</small></h1></div>
+  <div class="slide-body">
+    <div class="pull-quote" style="background:rgba(255,255,255,.6);font-size:26px;padding:18px;">🪙📊 フローは作って終わりじゃない ── 今日から、動いた分だけ成果が積み上がって見えます！</div>
+    <div class="cards-2" style="margin-top:14px;">
+      <div class="card"><h3>📝 アンケートにご協力ください</h3>
+        <p style="margin:0 0 12px;">2分で終わります。回答者には<strong>参加バッジ</strong>をお送りします🏅 感想や「ここが分かりにくかった」も大歓迎。次回をもっと良くする力になります。</p>
+        <p style="margin:0;font-size:22px;">▶ <a class="maillink" href="https://forms.cloud.microsoft/r/mVzhNWH6JE" target="_blank">アンケートに回答する</a></p>
+      </div>
+      <div class="card blue"><h3>📚 復習＆次回の予約</h3>
+        <p style="margin:0 0 10px;font-size:20px;">📚 <a class="maillink" href="https://haru-powerplatform.github.io/pa45/" target="_blank">参加者向けサイト（全回スライドまとめ）</a></p>
+        <p style="margin:0 0 10px;font-size:20px;">🌐 <a class="maillink" href="https://haru-powerplatform.github.io/pa45/slides/vol-19/" target="_blank">今日のスライド（復習用）</a></p>
+        <p style="margin:0;font-size:20px;">📅 <a class="maillink" href="https://powerautomate-create.connpass.com/" target="_blank">次回の開催をチェックする</a></p>
+      </div>
+    </div>
+    <div style="text-align:center;color:#78350f;font-weight:700;margin-top:auto;line-height:1.5;">
+      <div style="font-size:25px;">今日のフローは、明日からあなたの成果をこっそり貯金してくれます 🪙</div>
+      <div style="font-size:22px;margin-top:6px;">また次回、一緒に「できた！」を作りましょう 😊</div>
+    </div>
+  </div>
+  <img class="deco" src="assets/irasutoya_businessman.png" alt="" style="left:34px;bottom:24px;height:150px;">
+  <div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span></div>
+</section>
+
+<script>
+  var toc=document.getElementById('toc');
+  var toggle=document.getElementById('tocToggle');
+  toggle.addEventListener('click',function(){document.body.classList.toggle('toc-collapsed');});
+  var links=Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  var slides=links.map(function(a){return document.querySelector(a.getAttribute('href'));});
+  function onScroll(){var y=window.scrollY+140;var idx=0;
+    for(var i=0;i<slides.length;i++){if(slides[i]&&slides[i].offsetTop<=y)idx=i;}
+    links.forEach(function(a){a.classList.remove('active');});
+    if(links[idx])links[idx].classList.add('active');}
+  window.addEventListener('scroll',onScroll);onScroll();
+  var cur=0;
+  function go(n){cur=Math.max(0,Math.min(slides.length-1,n));
+    if(slides[cur])slides[cur].scrollIntoView({behavior:'smooth'});}
+  document.addEventListener('keydown',function(e){
+    if(['ArrowRight','PageDown',' '].indexOf(e.key)>=0){e.preventDefault();go(cur+1);}
+    else if(['ArrowLeft','PageUp'].indexOf(e.key)>=0){e.preventDefault();go(cur-1);}});
+</script>
+</body>
+</html>
