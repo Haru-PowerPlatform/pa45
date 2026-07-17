@@ -585,3 +585,72 @@ img { max-width: 100%; display: block; }
   .hamburger   { display: flex; }
   .footer-grid { grid-template-columns: 1fr; gap: 20px; }
 }
+
+/* =====================================================
+   Modern Motion Layer（2026-07 リスタイル）
+   既存定義へのオーバーライド追記。全ページに適用。
+   ===================================================== */
+:root {
+  --grad-brand: linear-gradient(130deg, #0c2b52 0%, #14528f 48%, #2a7dd4 100%);
+  --shadow-card:  0 2px 10px rgba(15,40,80,.06), 0 0 0 1px rgba(15,40,80,.05);
+  --shadow-hover: 0 14px 34px rgba(15,40,80,.14), 0 0 0 1px rgba(42,125,212,.16);
+}
+
+/* 背景にごく薄いブランドグラデの霞 */
+body {
+  background:
+    radial-gradient(1100px 480px at 88% -120px, rgba(42,125,212,.07), transparent 60%),
+    radial-gradient(900px 420px at -8% 32%, rgba(14,159,110,.05), transparent 55%),
+    var(--c-bg);
+}
+
+/* ガラスヘッダー（スクロールで影） */
+.site-header {
+  background: rgba(255,255,255,.82);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(15,40,80,.08);
+  transition: box-shadow .25s;
+}
+.site-header.scrolled { box-shadow: 0 6px 24px rgba(15,40,80,.10); }
+.header-cta {
+  background: var(--grad-brand);
+  color: #fff;
+  box-shadow: 0 3px 12px rgba(20,82,143,.30);
+  transition: transform .18s, box-shadow .2s;
+}
+.header-cta:hover { background: var(--grad-brand); color: #fff; transform: translateY(-1px); box-shadow: 0 7px 20px rgba(20,82,143,.42); }
+
+/* カード：ホバーで浮く・縁が青く光る */
+.card {
+  border: 1px solid rgba(15,40,80,.06);
+  transition: box-shadow .28s cubic-bezier(.2,.7,.3,1), transform .28s cubic-bezier(.2,.7,.3,1), border-color .28s;
+}
+.card:hover { transform: translateY(-4px); border-color: rgba(42,125,212,.32); }
+
+/* 各ページ上部ヒーロー：薄グラデ＋グロー＋グラデ見出し */
+.page-hero { background: linear-gradient(160deg, #ffffff 0%, #edf4fc 100%); position: relative; overflow: hidden; }
+.page-hero::after {
+  content: ''; position: absolute; right: -130px; top: -150px; width: 400px; height: 400px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(42,125,212,.13), transparent 65%); pointer-events: none;
+}
+.page-hero .container { position: relative; z-index: 1; }
+.page-hero-h1 {
+  background: linear-gradient(120deg, #0b3e72, #2a7dd4);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent; color: transparent;
+}
+
+/* スクロール・リベール（motion.js が .rv を自動付与） */
+.rv {
+  opacity: 0; transform: translateY(22px);
+  transition: opacity .6s ease, transform .6s cubic-bezier(.2,.7,.3,1);
+  transition-delay: var(--rvd, 0s);
+}
+.rv.in { opacity: 1; transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .rv { opacity: 1; transform: none; transition: none; }
+  .fade-up { animation: none; opacity: 1; }
+  .card:hover, .header-cta:hover { transform: none; }
+}

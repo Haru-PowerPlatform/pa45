@@ -9,36 +9,65 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
   <!-- ルート(/)にあるので assets/ と書くだけでOK -->
-  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/style.css?v=20260717">
   <style>
     /* このページだけに必要なスタイル */
     .hero {
-      background: var(--c-surface);
-      border-bottom: 1px solid var(--c-border);
-      padding: 52px 0 44px;
+      background: linear-gradient(130deg, #0c2b52 0%, #14528f 52%, #2a7dd4 100%);
+      position: relative; overflow: hidden;
+      padding: 60px 0 52px;
     }
+    .hero::before, .hero::after {
+      content: ''; position: absolute; border-radius: 50%; pointer-events: none;
+      background: radial-gradient(circle, rgba(156,196,245,.28), transparent 65%);
+    }
+    .hero::before { width: 560px; height: 560px; right: -160px; top: -240px; }
+    .hero::after  { width: 380px; height: 380px; left: -140px; bottom: -190px;
+      background: radial-gradient(circle, rgba(14,159,110,.22), transparent 65%); }
+    .hero .container { position: relative; z-index: 2; }
     .hero-eyebrow {
       display: inline-block;
-      font-size: 11px; font-weight: 500;
-      letter-spacing: .08em; text-transform: uppercase;
-      background: var(--c-blue-bg); color: var(--c-blue-text);
-      padding: 3px 10px; border-radius: 20px; margin-bottom: 16px;
+      font-size: 11px; font-weight: 700;
+      letter-spacing: .1em; text-transform: uppercase;
+      background: rgba(255,255,255,.14); color: #cfe2f8;
+      border: 1px solid rgba(255,255,255,.28);
+      padding: 4px 14px; border-radius: 20px; margin-bottom: 16px;
     }
     .hero-h1 {
-      font-size: clamp(26px, 5vw, 38px);
-      font-weight: 700; line-height: 1.25;
+      font-size: clamp(26px, 5vw, 40px);
+      font-weight: 900; line-height: 1.28; color: #fff;
       letter-spacing: -.02em; margin-bottom: 14px;
+      text-shadow: 0 2px 14px rgba(0,0,0,.18);
     }
     .hero-sub {
-      font-size: 15px; color: var(--c-muted);
-      line-height: 1.7; max-width: 520px; margin-bottom: 28px;
+      font-size: 15px; color: #cfe2f8;
+      line-height: 1.8; max-width: 520px; margin-bottom: 28px;
     }
     .hero-badges { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 32px; }
     .badge {
-      font-size: 12px; padding: 4px 12px;
-      border-radius: 20px; border: 1px solid var(--c-border);
-      color: var(--c-muted); background: var(--c-bg);
+      font-size: 12px; padding: 4px 13px;
+      border-radius: 20px; border: 1px solid rgba(255,255,255,.3);
+      color: #e3eefb; background: rgba(255,255,255,.10);
+      backdrop-filter: blur(2px);
     }
+    /* ヒーロー右カード：ガラス化 */
+    .hero .hero-right-card {
+      background: rgba(255,255,255,.10);
+      border: 1px solid rgba(255,255,255,.24);
+      backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+      box-shadow: 0 18px 44px rgba(4,20,44,.35);
+    }
+    .hero .hero-right-card-label { color: #9cc4f5; }
+    .hero .hero-stat { background: rgba(255,255,255,.10); border: 1px solid rgba(255,255,255,.14); }
+    .hero .hero-stat-n { color: #fff; }
+    .hero .hero-stat-l { color: #bcd6f5; }
+    .hero .hero-next-label { color: #9cc4f5; }
+    .hero .hero-next-title { color: #fff; }
+    .hero .btn-small {
+      background: #fff; color: #14528f; border: none; font-weight: 700;
+      box-shadow: 0 3px 10px rgba(4,20,44,.25);
+    }
+    .hero .btn-small:hover { background: #eaf2fc; }
     .stats-row {
       display: grid;
       grid-template-columns: repeat(4, minmax(0,1fr));
@@ -442,5 +471,6 @@ document.addEventListener('click', function(e) {
   }
 });
 </script>
+<script src="assets/js/motion.js?v=20260717" defer></script>
 </body>
 </html>
