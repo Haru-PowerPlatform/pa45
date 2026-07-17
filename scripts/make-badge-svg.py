@@ -42,6 +42,7 @@ SESSIONS = {
     16: ("Copilot Assist", "2026-06-25", "copilot"),
     17: ("Due Date Watch", "2026-07-02", "deadline"),
     18: ("Approval Escalation", "2026-07-09", "approval"),
+    19: ("Effect Visualization", "2026-07-16", "dashboard"),
 }
 
 
@@ -55,6 +56,10 @@ PALETTE_OVERRIDE = {
     #          柔らかいペリウィンクルで“かわいさ”を一滴。温色続きからの変化。
     18: dict(ring=("#aecbff", "#0a1c49"), disc=("#2c50cf", "#060e30"),
              gold=GOLD, title="#ffffff", sub="#cfe0ff"),
+    # Vol.19：効率化効果の見える化＝成果が積み上がって伸びる。成長のエメラルド×ゴールド。
+    #          サファイア青からの変化で、右肩上がりの棒グラフicon（gold）を主役に。
+    19: dict(ring=("#a7f3d0", "#04331f"), disc=("#0e9f6e", "#022b1a"),
+             gold=GOLD, title="#ffffff", sub="#bbf7d8"),
 }
 
 
@@ -161,8 +166,30 @@ def icon_approval(g):
   </g>'''
 
 
+def icon_dashboard(g):
+    """効率化効果の見える化 = 右肩上がりの棒グラフ（金）＋上昇トレンド矢印。"""
+    gl, gm, gd = g
+    base = 486
+    w = 40
+    bars = [(342, 436), (394, 406), (446, 372), (498, 334)]  # (x, top_y)
+    rects = ""
+    for (x, ty) in bars:
+        rects += (f'    <rect x="{x}" y="{ty}" width="{w}" height="{base-ty}" rx="7" '
+                  f'fill="url(#sparkgrad)" stroke="{gd}" stroke-width="3"/>\n')
+        rects += (f'    <rect x="{x+6}" y="{ty+5}" width="{w-12}" height="8" rx="4" '
+                  f'fill="{gl}" opacity="0.6"/>\n')
+    return f'''
+  <g filter="url(#ishadow)">
+{rects}    <!-- 上昇トレンド矢印 -->
+    <path d="M354 430 L408 402 L460 366 L516 324" fill="none" stroke="#fffaf0"
+          stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M490 320 L524 310 L514 344 Z" fill="#fffaf0"/>
+  </g>'''
+
+
 ICONS = {"foldermail": icon_foldermail, "copilot": icon_copilot,
-         "deadline": icon_deadline, "approval": icon_approval}
+         "deadline": icon_deadline, "approval": icon_approval,
+         "dashboard": icon_dashboard}
 
 
 def knurl_dots(cx, cy, r, n, color):
