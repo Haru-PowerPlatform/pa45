@@ -43,8 +43,42 @@
       to   { transform: translate(-46px, 34px) scale(1.10); }
     }
     .hero .container { position: relative; z-index: 2; }
+    /* 巨大「45」ワイヤーフレーム（redesign-preview移植） */
+    .hero-45 {
+      position: absolute; right: -30px; bottom: -80px; z-index: 1;
+      font-family: var(--font-mono);
+      font-size: clamp(220px, 30vw, 400px);
+      font-weight: 500; line-height: 1;
+      color: transparent;
+      -webkit-text-stroke: 1.5px rgba(255,255,255,.10);
+      user-select: none; pointer-events: none;
+      animation: float45 12s ease-in-out infinite alternate;
+    }
+    @keyframes float45 {
+      from { transform: translateY(0); }
+      to   { transform: translateY(-16px); }
+    }
+    /* eyebrow のパルスドット（RUNNING感） */
+    .hero-eyebrow .dot {
+      display: inline-block; width: 7px; height: 7px; border-radius: 50%;
+      background: #5eead4; margin-right: 8px; vertical-align: 1px;
+      box-shadow: 0 0 0 0 rgba(94,234,212,.6);
+      animation: pulseDot 2.2s ease-out infinite;
+    }
+    @keyframes pulseDot {
+      0%   { box-shadow: 0 0 0 0 rgba(94,234,212,.55); }
+      70%  { box-shadow: 0 0 0 9px rgba(94,234,212,0); }
+      100% { box-shadow: 0 0 0 0 rgba(94,234,212,0); }
+    }
+    /* 見出しのグラデ強調 */
+    .hero-h1 .grad {
+      background: linear-gradient(92deg, #7dd3fc, #5eead4);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: none;
+    }
     @media (prefers-reduced-motion: reduce) {
-      .hero, .hero::after { animation: none; }
+      .hero, .hero::after, .hero-45, .hero-eyebrow .dot { animation: none; }
     }
     .hero-eyebrow {
       display: inline-block;
@@ -259,11 +293,12 @@
 
 <!-- A: ヒーロー -->
 <section class="hero">
+  <div class="hero-45" aria-hidden="true">45</div>
   <div class="container">
     <div class="hero-layout">
       <div class="hero-left">
-        <div class="hero-eyebrow fade-up">Power Automate 45</div>
-        <h1 class="hero-h1 fade-up">Power Automateを、<br>小さく学び、確実に使える力へ。</h1>
+        <div class="hero-eyebrow fade-up"><span class="dot"></span>Power Automate 45 — 毎週開催 45min</div>
+        <h1 class="hero-h1 fade-up">Power Automateを、<br>小さく学び、<span class="grad">確実に使える力へ。</span></h1>
         <p class="hero-sub fade-up">45分ハンズオンPA45を中心に、学び・発信・コミュニティ運営を通じて初心者が自走できるよう伴走しています。</p>
         <div class="hero-badges fade-up">
           <span class="badge">初心者歓迎</span>
