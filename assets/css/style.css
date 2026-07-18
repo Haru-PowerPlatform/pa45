@@ -654,3 +654,70 @@ body {
   .fade-up { animation: none; opacity: 1; }
   .card:hover, .header-cta:hover { transform: none; }
 }
+
+/* =====================================================
+   Modern Layer v2 — さらに動きと質感を（2026-07-17）
+   ===================================================== */
+
+/* スクロール進捗バー（motion.jsが生成・幅を更新） */
+.scroll-progress {
+  position: fixed; top: 0; left: 0; height: 3px; width: 0;
+  background: linear-gradient(90deg, #14528f, #2a7dd4 55%, #0e9f6e);
+  z-index: 999; border-radius: 0 3px 3px 0;
+  box-shadow: 0 0 10px rgba(42,125,212,.55);
+  transition: width .12s linear;
+}
+
+/* ロゴ：グラデ文字 */
+.site-logo {
+  font-weight: 900;
+  background: linear-gradient(120deg, #0b3e72, #2a7dd4 70%, #0e9f6e);
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.site-logo span { -webkit-text-fill-color: var(--c-muted); }
+
+/* ナビ：ホバーでグラデ下線がスッと伸びる */
+.header-nav a { position: relative; background: none !important; }
+.header-nav a::after {
+  content: ''; position: absolute; left: 9px; right: 9px; bottom: 2px; height: 2px;
+  background: linear-gradient(90deg, #2a7dd4, #0e9f6e);
+  border-radius: 2px; transform: scaleX(0); transform-origin: left;
+  transition: transform .25s cubic-bezier(.2,.7,.3,1);
+}
+.header-nav a:hover::after,
+.header-nav a.active::after,
+.header-nav a.current::after { transform: scaleX(1); }
+.header-nav a:hover, .header-nav a.active, .header-nav a.current { color: var(--c-text); }
+
+/* カード：ホバーで光がスッと走る（シャインスイープ） */
+.card { position: relative; overflow: hidden; }
+.card::before {
+  content: ''; position: absolute; top: 0; bottom: 0; left: -80%; width: 55%;
+  background: linear-gradient(105deg, transparent, rgba(255,255,255,.55), transparent);
+  transform: skewX(-18deg); pointer-events: none; z-index: 1;
+  transition: left .0s;
+  opacity: 0;
+}
+.card:hover::before { opacity: 1; left: 130%; transition: left .7s ease; }
+
+/* セクション見出し：グラデアクセントバー */
+.section-label { position: relative; padding-left: 14px; }
+.section-label::before {
+  content: ''; position: absolute; left: 0; top: 50%; transform: translateY(-50%);
+  width: 5px; height: 1.1em; border-radius: 3px;
+  background: linear-gradient(180deg, #2a7dd4, #0e9f6e);
+}
+
+/* フッターを引き締め（ダークネイビー） */
+.site-footer { background: #0c2038; color: #b9c9de; }
+.site-footer a { color: #b9c9de; transition: color .15s; }
+.site-footer a:hover { color: #fff; }
+.site-footer .footer-col-title,
+.site-footer .footer-logo { color: #fff; }
+.site-footer, .site-footer * { border-color: rgba(255,255,255,.10) !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  .card::before { display: none; }
+  .scroll-progress { transition: none; }
+}

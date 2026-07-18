@@ -9,22 +9,43 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
   <!-- ルート(/)にあるので assets/ と書くだけでOK -->
-  <link rel="stylesheet" href="assets/css/style.css?v=20260717">
+  <link rel="stylesheet" href="assets/css/style.css?v=20260718">
   <style>
     /* このページだけに必要なスタイル */
     .hero {
-      background: linear-gradient(130deg, #0c2b52 0%, #14528f 52%, #2a7dd4 100%);
+      background: linear-gradient(130deg, #0c2b52 0%, #14528f 40%, #2a7dd4 72%, #0e9f6e 115%);
+      background-size: 220% 220%;
+      animation: heroShift 14s ease-in-out infinite alternate;
       position: relative; overflow: hidden;
       padding: 60px 0 52px;
     }
-    .hero::before, .hero::after {
-      content: ''; position: absolute; border-radius: 50%; pointer-events: none;
-      background: radial-gradient(circle, rgba(156,196,245,.28), transparent 65%);
+    @keyframes heroShift {
+      0%   { background-position: 0% 0%; }
+      100% { background-position: 100% 60%; }
     }
-    .hero::before { width: 560px; height: 560px; right: -160px; top: -240px; }
-    .hero::after  { width: 380px; height: 380px; left: -140px; bottom: -190px;
-      background: radial-gradient(circle, rgba(14,159,110,.22), transparent 65%); }
+    /* ドットグリッドの質感 */
+    .hero::before {
+      content: ''; position: absolute; inset: 0; pointer-events: none;
+      background-image: radial-gradient(rgba(255,255,255,.13) 1px, transparent 1.6px);
+      background-size: 26px 26px;
+      mask-image: linear-gradient(115deg, rgba(0,0,0,.7), transparent 70%);
+      -webkit-mask-image: linear-gradient(115deg, rgba(0,0,0,.7), transparent 70%);
+    }
+    /* 浮遊する光 */
+    .hero::after {
+      content: ''; position: absolute; width: 560px; height: 560px; right: -160px; top: -240px;
+      border-radius: 50%; pointer-events: none;
+      background: radial-gradient(circle, rgba(156,196,245,.30), transparent 65%);
+      animation: orbFloat 9s ease-in-out infinite alternate;
+    }
+    @keyframes orbFloat {
+      from { transform: translate(0, 0) scale(1); }
+      to   { transform: translate(-46px, 34px) scale(1.10); }
+    }
     .hero .container { position: relative; z-index: 2; }
+    @media (prefers-reduced-motion: reduce) {
+      .hero, .hero::after { animation: none; }
+    }
     .hero-eyebrow {
       display: inline-block;
       font-size: 11px; font-weight: 700;
@@ -215,10 +236,8 @@
   <div class="container header-inner">
     <a href="./" class="site-logo">PA45<span>Power Automate 45</span></a>
     <nav class="header-nav">
-      <a href="start-here/">初めての方へ</a>
       <a href="sessions/">参加する</a>
       <a href="sessions/#archive">講座アーカイブ</a>
-      <a href="learn/">学ぶ</a>
       <a href="achievements/">活動</a>
       <a href="achievements/survey.html">アンケート</a>
       <a href="about/">About</a>
@@ -229,10 +248,8 @@
     </button>
   </div>
   <nav class="mobile-nav" id="mobileNav">
-    <a href="start-here/">初めての方へ（Start Here）</a>
     <a href="sessions/">参加する（Sessions）</a>
     <a href="sessions/#archive">講座アーカイブ（Archive）</a>
-    <a href="learn/">学ぶ（Learn）</a>
     <a href="achievements/">活動（Activity）</a>
     <a href="method/">PA45とは（Method）</a>
     <a href="about/">About</a>
@@ -413,36 +430,18 @@
   </div>
 </section>
 
-<!-- F: タグ横断ナビ -->
-<section class="section">
-  <div class="container">
-    <p class="section-label">テーマで探す</p>
-    <div class="tag-row">
-      <a href="learn/#cond"   class="tag-pill">COND — 条件分岐</a>
-      <a href="learn/#filter" class="tag-pill">FILTER — 絞り込み</a>
-      <a href="learn/#ate"    class="tag-pill">ATE — テキスト</a>
-      <a href="learn/#date"   class="tag-pill">DATE — 日付</a>
-      <a href="learn/#exp"    class="tag-pill">EXP — 数式</a>
-      <a href="learn/#pjson"  class="tag-pill">PJSON — JSON解析</a>
-      <a href="learn/#dbg"    class="tag-pill">DBG — デバッグ</a>
-    </div>
-  </div>
-</section>
-
 <!-- フッター -->
 <footer class="site-footer">
   <div class="container">
     <div class="footer-grid">
       <div class="footer-col">
         <div class="footer-col-title">学ぶ</div>
-        <a href="learn/">Learn（学習ハブ）</a>
         <a href="slides/">Slides（スライド一覧）</a>
         <a href="https://www.automate136.com" target="_blank" rel="noopener">Blog（WordPress）</a>
       </div>
       <div class="footer-col">
         <div class="footer-col-title">参加する</div>
         <a href="sessions/">Sessions（次回・過去回）</a>
-        <a href="start-here/">Start Here（初参加ガイド）</a>
         <a href="https://powerautomate-create.connpass.com/" target="_blank" rel="noopener">connpass（外部）</a>
       </div>
       <div class="footer-col">
@@ -471,6 +470,6 @@ document.addEventListener('click', function(e) {
   }
 });
 </script>
-<script src="assets/js/motion.js?v=20260717" defer></script>
+<script src="assets/js/motion.js?v=20260718" defer></script>
 </body>
 </html>

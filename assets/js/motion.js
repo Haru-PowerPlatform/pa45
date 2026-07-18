@@ -10,6 +10,15 @@
   var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
   var header = document.querySelector('.site-header');
 
+  /* ---- スクロール進捗バー ---- */
+  var progress = document.createElement('div');
+  progress.className = 'scroll-progress';
+  document.body.appendChild(progress);
+  function updateProgress() {
+    var h = document.documentElement.scrollHeight - window.innerHeight;
+    progress.style.width = (h > 0 ? (window.scrollY / h) * 100 : 0) + '%';
+  }
+
   /* ---- リベール対象を自動収集 ---- */
   var SELECTORS = [
     '.card', '.proof-card', '.voice-card', '.event-card', '.fork-card',
@@ -49,6 +58,7 @@
 
   /* ---- スクロールハンドラ ---- */
   function onScroll() {
+    updateProgress();
     if (header) header.classList.toggle('scrolled', window.scrollY > 8);
     var vh = window.innerHeight;
     els.forEach(function (e) {
