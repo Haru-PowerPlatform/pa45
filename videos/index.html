@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="PA45 動画アーカイブ — 過去のPower Automate 45分ハンズオンの録画をテーマ別にまとめて視聴できます。">
+  <title>動画アーカイブ｜PA45 Power Automate 45分ハンズオン</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css?v=20260718">
+
+  <!-- OGP / Twitter -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="PA45 — Power Automate 45">
+  <meta property="og:locale" content="ja_JP">
+  <meta property="og:url" content="https://haru-powerplatform.github.io/pa45/videos/">
+  <meta property="og:title" content="PA45 動画アーカイブ — 45分ハンズオンの録画まとめ">
+  <meta property="og:description" content="Power Automateを45分で学ぶPA45の過去回録画。テーマ別に選んでそのまま視聴できます。">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@isamu_Automate">
+  <link rel="canonical" href="https://haru-powerplatform.github.io/pa45/videos/">
+
+<style>
+  /* ===== ヒーロー ===== */
+  .v-hero {
+    background: linear-gradient(130deg, #0c2b52 0%, #14528f 40%, #2a7dd4 72%, #0e9f6e 115%);
+    background-size: 220% 220%;
+    animation: vShift 14s ease-in-out infinite alternate;
+    position: relative; overflow: hidden; color: #fff;
+    padding: 52px 0 46px;
+  }
+  @keyframes vShift { from{background-position:0% 0%;} to{background-position:100% 60%;} }
+  .v-hero::before {
+    content:''; position:absolute; inset:0; pointer-events:none;
+    background-image: radial-gradient(rgba(255,255,255,.13) 1px, transparent 1.6px);
+    background-size: 26px 26px;
+    -webkit-mask-image: linear-gradient(115deg, rgba(0,0,0,.7), transparent 70%);
+    mask-image: linear-gradient(115deg, rgba(0,0,0,.7), transparent 70%);
+  }
+  .v-45 {
+    position:absolute; right:-20px; bottom:-70px; z-index:0;
+    font-family: var(--font-mono); font-size: clamp(180px, 24vw, 320px);
+    font-weight:500; line-height:1; color:transparent;
+    -webkit-text-stroke: 1.5px rgba(255,255,255,.10);
+    user-select:none; pointer-events:none;
+    animation: v45f 12s ease-in-out infinite alternate;
+  }
+  @keyframes v45f { from{transform:translateY(0);} to{transform:translateY(-14px);} }
+  .v-hero .container { position:relative; z-index:2; }
+  .v-eyebrow {
+    display:inline-flex; align-items:center; gap:8px;
+    font-size:11px; font-weight:700; letter-spacing:.1em; text-transform:uppercase;
+    background:rgba(255,255,255,.14); color:#cfe2f8;
+    border:1px solid rgba(255,255,255,.28);
+    padding:4px 14px; border-radius:20px; margin-bottom:14px;
+  }
+  .v-eyebrow .dot {
+    width:7px; height:7px; border-radius:50%; background:#ff5b5b;
+    box-shadow:0 0 0 0 rgba(255,91,91,.55); animation:vPulse 2.2s ease-out infinite;
+  }
+  @keyframes vPulse { 0%{box-shadow:0 0 0 0 rgba(255,91,91,.5);} 70%{box-shadow:0 0 0 9px rgba(255,91,91,0);} 100%{box-shadow:0 0 0 0 rgba(255,91,91,0);} }
+  .v-h1 { font-size:clamp(25px,4.6vw,38px); font-weight:900; line-height:1.3; letter-spacing:-.01em; text-shadow:0 2px 14px rgba(0,0,0,.18); }
+  .v-h1 .grad { background:linear-gradient(92deg,#7dd3fc,#5eead4); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; }
+  .v-sub { font-size:14px; color:#cfe2f8; margin-top:10px; max-width:560px; line-height:1.8; }
+  .v-count { font-family:var(--font-mono); color:#9cc4f5; font-size:13px; margin-top:14px; }
+  .v-count b { color:#fff; font-size:18px; }
+
+  /* ===== 検索・チップ ===== */
+  .v-controls {
+    position: sticky; top: 56px; z-index: 40;
+    background: rgba(248,247,244,.88); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--c-border);
+    padding: 12px 0;
+  }
+  .v-controls-inner { display:flex; gap:12px; align-items:center; flex-wrap:wrap; }
+  .v-search {
+    flex: 1 1 220px; max-width: 340px; position: relative;
+  }
+  .v-search input {
+    width:100%; font-size:13px; font-family:var(--font-body);
+    padding:9px 14px 9px 36px; border-radius:999px;
+    border:1px solid var(--c-border-md); background:var(--c-surface);
+    outline:none; transition:border-color .2s, box-shadow .2s;
+  }
+  .v-search input:focus { border-color:var(--c-blue-mid); box-shadow:0 0 0 3px rgba(42,125,212,.15); }
+  .v-search::before {
+    content:'🔍'; position:absolute; left:12px; top:50%; transform:translateY(-50%); font-size:13px; opacity:.55;
+  }
+  .v-chips { display:flex; gap:8px; overflow-x:auto; scrollbar-width:none; flex:2 1 auto; }
+  .v-chips::-webkit-scrollbar { display:none; }
+  .v-chip {
+    flex:0 0 auto; font-size:12px; font-weight:700; cursor:pointer;
+    color:var(--c-muted); background:var(--c-surface);
+    border:1px solid var(--c-border-md); border-radius:999px; padding:7px 16px;
+    transition:all .18s;
+  }
+  .v-chip:hover { color:var(--c-blue-mid); border-color:var(--c-blue-mid); transform:translateY(-1px); }
+  .v-chip.on {
+    color:#fff; border-color:transparent;
+    background:linear-gradient(120deg,#14528f,#2a7dd4);
+    box-shadow:0 3px 10px rgba(20,82,143,.3);
+  }
+
+  /* ===== フィーチャー（最新回） ===== */
+  .v-featured {
+    display:grid; grid-template-columns: 1.25fr 1fr; gap:26px;
+    background:var(--c-surface); border-radius:20px; overflow:hidden;
+    box-shadow:var(--shadow-hover); border:1px solid rgba(15,40,80,.07);
+    margin-bottom: 34px;
+  }
+  .v-feat-thumb { position:relative; cursor:pointer; aspect-ratio:16/9; background:#0c2038; }
+  .v-feat-thumb img { width:100%; height:100%; object-fit:cover; transition:transform .5s cubic-bezier(.2,.7,.3,1); }
+  .v-feat-thumb:hover img { transform:scale(1.045); }
+  .v-feat-body { padding:26px 28px 26px 4px; display:flex; flex-direction:column; }
+  .v-feat-label {
+    display:inline-flex; align-self:flex-start; font-size:10px; font-weight:800; letter-spacing:.09em;
+    color:#0b7a4b; background:#e2f7ee; border:1px solid #b5e8d2;
+    padding:3px 12px; border-radius:999px; margin-bottom:12px;
+  }
+  .v-feat-title { font-size:20px; font-weight:900; line-height:1.45; margin-bottom:10px; }
+  .v-feat-desc  { font-size:13px; color:var(--c-muted); line-height:1.8; margin-bottom:16px; }
+  .v-feat-meta  { font-size:12px; color:var(--c-hint); font-family:var(--font-mono); margin-top:auto; }
+
+  /* 再生ボタン */
+  .v-play {
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none;
+  }
+  .v-play span {
+    width:66px; height:66px; border-radius:50%;
+    background:rgba(12,32,56,.72); backdrop-filter:blur(4px);
+    display:flex; align-items:center; justify-content:center;
+    border:1.5px solid rgba(255,255,255,.5);
+    transition:transform .25s, background .25s;
+  }
+  .v-play span::after {
+    content:''; margin-left:5px;
+    border-left:20px solid #fff; border-top:12px solid transparent; border-bottom:12px solid transparent;
+  }
+  .v-feat-thumb:hover .v-play span, .v-card-thumb:hover .v-play span {
+    transform:scale(1.12); background:rgba(42,125,212,.85);
+  }
+  .v-dur {
+    position:absolute; right:10px; bottom:10px;
+    font-family:var(--font-mono); font-size:11px; font-weight:600;
+    color:#fff; background:rgba(0,0,0,.72); padding:2px 8px; border-radius:5px;
+  }
+
+  /* ===== 動画グリッド ===== */
+  .v-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px; }
+  .v-card {
+    background:var(--c-surface); border-radius:16px; overflow:hidden;
+    box-shadow:var(--shadow-card); border:1px solid rgba(15,40,80,.06);
+    transition:box-shadow .28s cubic-bezier(.2,.7,.3,1), transform .28s cubic-bezier(.2,.7,.3,1), border-color .28s;
+    display:flex; flex-direction:column;
+  }
+  .v-card:hover { transform:translateY(-5px); box-shadow:var(--shadow-hover); border-color:rgba(42,125,212,.32); }
+  .v-card.hide { display:none; }
+  .v-card-thumb { position:relative; cursor:pointer; aspect-ratio:16/9; overflow:hidden; background:#0c2038; }
+  .v-card-thumb img { width:100%; height:100%; object-fit:cover; transition:transform .5s cubic-bezier(.2,.7,.3,1); }
+  .v-card-thumb:hover img { transform:scale(1.06); }
+  .v-card-thumb .v-play span { width:50px; height:50px; }
+  .v-card-thumb .v-play span::after { border-left-width:15px; border-top-width:9px; border-bottom-width:9px; margin-left:4px; }
+  .v-vol {
+    position:absolute; left:10px; top:10px;
+    font-size:11px; font-weight:900; letter-spacing:.03em; color:#fff;
+    background:linear-gradient(135deg,#14528f,#2a7dd4);
+    padding:3px 11px; border-radius:999px; box-shadow:0 2px 8px rgba(4,20,44,.35);
+  }
+  .v-card-body { padding:14px 16px 16px; display:flex; flex-direction:column; gap:6px; flex:1; }
+  .v-card-title { font-size:13.5px; font-weight:700; line-height:1.55; }
+  .v-card-tags { display:flex; gap:6px; flex-wrap:wrap; }
+  .v-tag {
+    font-size:10px; font-weight:700; color:var(--c-blue-text);
+    background:var(--c-blue-bg); padding:2px 9px; border-radius:999px;
+  }
+  .v-card-meta { font-size:11px; color:var(--c-hint); font-family:var(--font-mono); margin-top:auto; display:flex; justify-content:space-between; align-items:center; }
+  .v-card-meta a { color:var(--c-blue-mid); font-weight:600; font-family:var(--font-body); }
+  .v-card-meta a:hover { text-decoration:underline; }
+  .v-empty { text-align:center; color:var(--c-hint); padding:50px 0; font-size:14px; display:none; }
+
+  /* ===== モーダルプレイヤー ===== */
+  .v-modal {
+    position:fixed; inset:0; z-index:1000; display:none;
+    align-items:center; justify-content:center; padding:4vw;
+    background:rgba(6,16,30,.82); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+  }
+  .v-modal.open { display:flex; animation:vFade .25s ease; }
+  @keyframes vFade { from{opacity:0;} to{opacity:1;} }
+  .v-modal-box { width:min(960px,100%); animation:vZoom .3s cubic-bezier(.2,.7,.3,1); }
+  @keyframes vZoom { from{transform:scale(.94); opacity:0;} to{transform:none; opacity:1;} }
+  .v-modal-head { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; gap:12px; }
+  .v-modal-title { color:#fff; font-size:14px; font-weight:700; line-height:1.5; }
+  .v-modal-close {
+    flex-shrink:0; width:38px; height:38px; border-radius:50%; border:1px solid rgba(255,255,255,.35);
+    background:rgba(255,255,255,.10); color:#fff; font-size:17px; cursor:pointer;
+    transition:background .2s, transform .2s;
+  }
+  .v-modal-close:hover { background:rgba(255,255,255,.22); transform:rotate(90deg); }
+  .v-frame { aspect-ratio:16/9; width:100%; border-radius:14px; overflow:hidden; background:#000; box-shadow:0 30px 80px rgba(0,0,0,.5); }
+  .v-frame iframe { width:100%; height:100%; border:0; display:block; }
+  .v-modal-foot { margin-top:10px; text-align:right; }
+  .v-modal-foot a { color:#9cc4f5; font-size:12px; }
+  .v-modal-foot a:hover { color:#fff; }
+
+  @media (max-width: 800px) {
+    .v-featured { grid-template-columns:1fr; }
+    .v-feat-body { padding:18px 20px 22px; }
+    .v-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+  }
+  @media (max-width: 560px) {
+    .v-grid { grid-template-columns:1fr; }
+    .v-controls { top:54px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .v-hero, .v-45, .v-eyebrow .dot { animation:none; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="../" class="site-logo">PA45<span>Power Automate 45</span></a>
+    <nav class="header-nav">
+      <a href="../sessions/">参加する</a>
+      <a href="../sessions/#archive">講座アーカイブ</a>
+      <a href="./" class="active">動画</a>
+      <a href="../achievements/">活動</a>
+      <a href="../achievements/survey.html">アンケート</a>
+      <a href="../about/">About</a>
+    </nav>
+    <a href="../sessions/" class="header-cta">次回PA45に参加する →</a>
+    <button class="hamburger" aria-label="メニュー" onclick="document.getElementById('mobileNav').classList.toggle('open')">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+  <nav class="mobile-nav" id="mobileNav">
+    <a href="../sessions/">参加する（Sessions）</a>
+    <a href="../sessions/#archive">講座アーカイブ（Archive）</a>
+    <a href="./">動画（Videos）</a>
+    <a href="../achievements/">活動（Activity）</a>
+    <a href="../achievements/survey.html">アンケート（Survey）</a>
+    <a href="../about/">About</a>
+  </nav>
+</header>
+
+<section class="v-hero">
+  <div class="v-45" aria-hidden="true">45</div>
+  <div class="container">
+    <span class="v-eyebrow"><span class="dot"></span>VIDEO ARCHIVE</span>
+    <h1 class="v-h1">過去回の録画を、<span class="grad">選んですぐ見る。</span></h1>
+    <p class="v-sub">PA45の過去回ハンズオン録画をまとめました。テーマで絞って、気になる回をその場で再生できます。1本45分・倍速視聴もおすすめです。</p>
+    <div class="v-count">全 <b id="vCount">0</b> 本公開中 · YouTube</div>
+  </div>
+</section>
+
+<div class="v-controls">
+  <div class="container v-controls-inner">
+    <div class="v-search"><input type="search" id="vSearch" placeholder="キーワードで探す（例：承認、Forms、式）"></div>
+    <div class="v-chips" id="vChips"></div>
+  </div>
+</div>
+
+<section class="section" style="padding-top:30px;">
+  <div class="container">
+    <div id="vFeatured"></div>
+    <p class="section-label">すべての動画</p>
+    <div class="v-grid" id="vGrid"></div>
+    <p class="v-empty" id="vEmpty">条件に合う動画が見つかりませんでした。キーワードやタグを変えてみてください。</p>
+  </div>
+</section>
+
+<div class="v-modal" id="vModal" role="dialog" aria-modal="true">
+  <div class="v-modal-box">
+    <div class="v-modal-head">
+      <div class="v-modal-title" id="vModalTitle"></div>
+      <button class="v-modal-close" id="vModalClose" aria-label="閉じる">✕</button>
+    </div>
+    <div class="v-frame" id="vFrame"></div>
+    <div class="v-modal-foot"><a id="vModalYt" href="#" target="_blank" rel="noopener">YouTubeで開く ↗</a></div>
+  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container" style="padding:26px 0; text-align:center;">
+    <p style="font-size:12px;">PA45 — Power Automateを45分で学ぶ初心者向けコミュニティ ／ 主催 Haru</p>
+  </div>
+</footer>
+
+<script>
+const VIDEOS = [
+  { vol:18, id:"jwOECxCtUPE", date:"2026-07-09", tags:["承認"],
+    title:"承認エスカレーション｜放置された承認を、フローが催促して“上に上げる”",
+    desc:"承認を「作成」と「待機」に分けて並列分岐に。放置を見張って自動リマインド→止まれば上長へエスカレーション。止まらない承認フローを作ります。" },
+  { vol:16, id:"dVM-WF1A79g", date:"2026-06-25", tags:["AI"],
+    title:"Copilotと作るPower Automate｜AIとフロー作りを加速" },
+  { vol:15, id:"yvzeXB73LFU", date:"2026-06-18", tags:["通知・監視"],
+    title:"共有フォルダ監視→自動メール通知｜「更新、気づかなかった…」をもう繰り返さない" },
+  { vol:14, id:"9fkbQmOR6Fo", date:"2026-06-11", tags:["基礎","運用"],
+    title:"JSONの読み方｜実行履歴の “謎の文字列” が見えるようになる" },
+  { vol:13, id:"2XjY3GWomMA", date:"2026-06-04", tags:["運用"],
+    title:"Try-Catchでフロー運用を安心化｜もう、フローが止まっても焦らない" },
+  { vol:12, id:"QkrYCpP5hCc", date:"2026-05-28", tags:["基礎"],
+    title:"「式」アレルギー、今日で卒業｜申請から3営業日後に自動リマインド" },
+  { vol:11, id:"0Wvv6Bf3n18", date:"2026-05-21", tags:["運用"],
+    title:"失敗しないフロー設計｜実行履歴の読み方" },
+  { vol:9,  id:"MIA3jPT_4YU", date:"2026-05-07", tags:["通知・監視"],
+    title:"SharePointのファイル更新をTeamsに自動通知" },
+  { vol:8,  id:"4QmDeRgGGLk", date:"2026-04-30", tags:["承認"],
+    title:"申請承認フロー（Approvals）｜承認ボタンつきの申請を作る" },
+  { vol:7,  id:"JOOlaiBvYgQ", date:"2026-04-23", tags:["Forms連携"],
+    title:"Formsの申請をSharePointに自動登録して担当者に通知" },
+  { vol:6,  id:"rvSX575fdbo", date:"2026-04-17", tags:["Forms連携","通知・監視"],
+    title:"Forms × Compose × Teams｜回答をきれいに整えて自動通知" },
+  { vol:5,  id:"cltHw91fYm4", date:"2026-04-09", tags:["基礎"],
+    title:"基礎固めWeek｜変数・条件・ループを総ざらい" },
+  { vol:4,  id:"RzHylaoTRrs", date:"2026-04-02", tags:["基礎"],
+    title:"Apply to Eachを使おう｜「繰り返し」を自動化の武器に" },
+  { vol:1,  id:"GEB2zGcmF88", date:"2026-03-05", tags:["基礎"],
+    title:"変数の初期化｜Power Automateの最初の壁を45分で超える" },
+];
+const TAGS = ["すべて","基礎","Forms連携","承認","通知・監視","運用","AI"];
+let activeTag = "すべて", query = "";
+
+const thumb = id => `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
+const thumbHQ = id => `https://i.ytimg.com/vi/${id}/maxresdefault.jpg`;
+const esc = s => (s||"").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+/* ---- フィーチャー（最新回） ---- */
+const feat = VIDEOS[0];
+document.getElementById('vFeatured').innerHTML = `
+  <div class="v-featured">
+    <div class="v-feat-thumb" onclick="openModal(${feat.vol})">
+      <img src="${thumbHQ(feat.id)}" alt="${esc(feat.title)}"
+           onload="if(this.naturalWidth<=120)this.src='${thumb(feat.id)}'"
+           onerror="this.src='${thumb(feat.id)}'">
+      <div class="v-play"><span></span></div>
+      <div class="v-dur">45min</div>
+    </div>
+    <div class="v-feat-body">
+      <span class="v-feat-label">▶ 最新の録画 — 第${feat.vol}回</span>
+      <div class="v-feat-title">${esc(feat.title)}</div>
+      <div class="v-feat-desc">${esc(feat.desc||"")}</div>
+      <div class="v-feat-meta">${feat.date} · Vol.${feat.vol} · ${feat.tags.join(" / ")}</div>
+    </div>
+  </div>`;
+
+/* ---- チップ ---- */
+document.getElementById('vChips').innerHTML =
+  TAGS.map(t=>`<button class="v-chip${t===activeTag?' on':''}" data-tag="${t}">${t}</button>`).join('');
+document.getElementById('vChips').addEventListener('click', e=>{
+  const b = e.target.closest('.v-chip'); if(!b) return;
+  activeTag = b.dataset.tag;
+  document.querySelectorAll('.v-chip').forEach(c=>c.classList.toggle('on', c===b));
+  applyFilter();
+});
+
+/* ---- グリッド ---- */
+document.getElementById('vGrid').innerHTML = VIDEOS.map(v=>`
+  <div class="v-card" data-vol="${v.vol}" data-tags="${v.tags.join(',')}" data-text="${esc(v.title.toLowerCase())} vol${v.vol} 第${v.vol}回">
+    <div class="v-card-thumb" onclick="openModal(${v.vol})">
+      <img src="${thumb(v.id)}" alt="${esc(v.title)}">
+      <div class="v-play"><span></span></div>
+      <span class="v-vol">Vol.${v.vol}</span>
+      <div class="v-dur">45min</div>
+    </div>
+    <div class="v-card-body">
+      <div class="v-card-title">${esc(v.title)}</div>
+      <div class="v-card-tags">${v.tags.map(t=>`<span class="v-tag">${t}</span>`).join('')}</div>
+      <div class="v-card-meta"><span>${v.date}</span><a href="https://youtu.be/${v.id}" target="_blank" rel="noopener">YouTubeで開く ↗</a></div>
+    </div>
+  </div>`).join('');
+document.getElementById('vCount').textContent = VIDEOS.length;
+
+/* ---- 検索・フィルタ ---- */
+document.getElementById('vSearch').addEventListener('input', e=>{ query = e.target.value.trim().toLowerCase(); applyFilter(); });
+function applyFilter(){
+  let shown = 0;
+  document.querySelectorAll('.v-card').forEach(c=>{
+    const tagOk = activeTag==="すべて" || c.dataset.tags.split(',').includes(activeTag);
+    const qOk = !query || c.dataset.text.includes(query);
+    const show = tagOk && qOk;
+    c.classList.toggle('hide', !show);
+    if(show) shown++;
+  });
+  document.getElementById('vEmpty').style.display = shown ? 'none' : 'block';
+}
+
+/* ---- モーダル再生 ---- */
+const modal = document.getElementById('vModal');
+function openModal(vol){
+  const v = VIDEOS.find(x=>x.vol===vol); if(!v) return;
+  document.getElementById('vModalTitle').textContent = `第${v.vol}回：${v.title}`;
+  document.getElementById('vModalYt').href = `https://youtu.be/${v.id}`;
+  document.getElementById('vFrame').innerHTML =
+    `<iframe src="https://www.youtube-nocookie.com/embed/${v.id}?autoplay=1&rel=0" title="PA45 第${v.vol}回" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`;
+  modal.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(){
+  modal.classList.remove('open');
+  document.getElementById('vFrame').innerHTML = '';
+  document.body.style.overflow = '';
+}
+document.getElementById('vModalClose').addEventListener('click', closeModal);
+modal.addEventListener('click', e=>{ if(e.target===modal) closeModal(); });
+document.addEventListener('keydown', e=>{ if(e.key==='Escape' && modal.classList.contains('open')) closeModal(); });
+</script>
+<script src="../assets/js/motion.js?v=20260718" defer></script>
+</body>
+</html>
