@@ -1,0 +1,109 @@
+/* =====================================================
+   PA45 インサイト（achievements/insights/）専用スタイル
+   style.css のあとに読み込む前提。
+   アクセント色はページ側で --ac / --ac-d / --ac-l を上書きする。
+   ===================================================== */
+
+.ins {
+  --ac:   #0e9f6e;   /* アクセント */
+  --ac-d: #043a26;   /* 濃いほう（heroグラデ始点） */
+  --ac-l: #c9f7e2;   /* 薄いほう（hero上の文字） */
+}
+
+/* ===== Hero ===== */
+.ins-hero {
+  background: linear-gradient(135deg, var(--ac-d) 0%, var(--ac) 100%);
+  color: #fff;
+  padding: 42px 0 38px;
+}
+.ins-eyebrow {
+  display: inline-block; font-size: 12px; font-weight: 700; letter-spacing: .06em;
+  background: rgba(255,255,255,.15); border: 1px solid rgba(255,255,255,.3);
+  padding: 5px 14px; border-radius: 999px; margin-bottom: 16px;
+}
+.ins-eyebrow b { color: #ffe9a8; }
+.ins-h1 { font-size: clamp(24px, 4.6vw, 36px); font-weight: 900; line-height: 1.28; letter-spacing: -.01em; }
+.ins-h1 small { display: block; font-size: clamp(14px, 2.2vw, 17px); font-weight: 600; color: var(--ac-l); margin-top: 10px; line-height: 1.6; }
+.ins-meta { font-size: 13px; color: var(--ac-l); margin-top: 14px; }
+
+.ins-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-top: 24px; }
+.ins-stat { background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.22); border-radius: 16px; padding: 16px 14px; text-align: center; }
+.ins-stat .n { font-size: 32px; font-weight: 900; line-height: 1; }
+.ins-stat .n span { font-size: 17px; margin-left: 1px; }
+.ins-stat .l { font-size: 12px; font-weight: 600; color: var(--ac-l); margin-top: 8px; }
+
+/* ===== カード ===== */
+.ins-card {
+  background: var(--c-surface); border-radius: var(--radius-md);
+  padding: 18px 20px; box-shadow: var(--shadow-card); margin-bottom: 14px;
+}
+.ins-q { font-size: 14px; font-weight: 700; margin-bottom: 14px; color: var(--c-text); }
+.ins-note { font-size: 12px; color: var(--c-hint); line-height: 1.7; margin-top: 10px; }
+
+/* ===== ランキングバー ===== */
+.ins-rank { list-style: none; padding: 0; margin: 0; }
+.ins-rank li { display: grid; grid-template-columns: 26px minmax(0,1fr) 56px; align-items: center; gap: 10px; padding: 9px 0; border-bottom: 1px dashed var(--c-border); }
+.ins-rank li:last-child { border-bottom: none; }
+.ins-rank .rk { font-family: var(--font-mono); font-size: 12px; color: var(--c-hint); }
+.ins-rank .lb { display: block; font-size: 13px; font-weight: 600; color: var(--c-text); line-height: 1.5; }
+.ins-rank .tr { display: block; height: 9px; background: #eef2f5; border-radius: 5px; overflow: hidden; margin-top: 6px; }
+.ins-rank .tr span { display: block; height: 100%; background: var(--ac); border-radius: 5px; }
+.ins-rank .nm { font-family: var(--font-mono); font-size: 12px; color: var(--c-muted); text-align: right; }
+
+/* ===== 積み上げバー ===== */
+.ins-bar { height: 26px; border-radius: 8px; overflow: hidden; display: flex; background: #eef2f5; margin-bottom: 10px; }
+.ins-seg { height: 100%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #fff; white-space: nowrap; overflow: hidden; }
+.ins-legend { display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 12px; color: var(--c-muted); }
+.ins-legend i { display: inline-block; width: 11px; height: 11px; border-radius: 3px; margin-right: 5px; vertical-align: middle; }
+
+/* ===== 参加者推移（縦棒） ===== */
+.ins-cols { display: flex; align-items: flex-end; gap: clamp(3px, 1vw, 8px); height: 190px; padding-top: 8px; }
+.ins-col { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; min-width: 0; }
+.ins-col .bv { font-size: 10px; font-family: var(--font-mono); color: var(--c-muted); margin-bottom: 4px; }
+.ins-col .bb { width: 100%; background: var(--ac); border-radius: 4px 4px 0 0; opacity: .85; }
+.ins-col .bl { font-size: 9px; font-family: var(--font-mono); color: var(--c-hint); margin-top: 5px; }
+
+/* ===== 一覧テーブル ===== */
+.ins-tbl-wrap { overflow-x: auto; }
+.ins-tbl { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 560px; }
+.ins-tbl th { font-size: 10px; color: var(--c-hint); text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--c-border); white-space: nowrap; font-weight: 600; }
+.ins-tbl td { padding: 9px 8px; border-bottom: 1px solid var(--c-border); color: var(--c-muted); line-height: 1.5; vertical-align: middle; }
+.ins-tbl td.vol { font-family: var(--font-mono); font-size: 11px; color: var(--c-text); white-space: nowrap; }
+.ins-tbl td.th { color: var(--c-text); font-weight: 600; }
+.ins-tbl td.num { font-family: var(--font-mono); text-align: right; white-space: nowrap; }
+.ins-tbl a { color: var(--c-blue-mid); }
+
+/* ===== 声カード ===== */
+.ins-voices { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 12px; }
+.ins-voice {
+  background: var(--c-surface); border-radius: var(--radius-md); box-shadow: var(--shadow-card);
+  padding: 16px 18px; font-size: 13px; line-height: 1.75; color: var(--c-text);
+  border-left: 3px solid var(--ac);
+}
+.ins-voice .vt { display: block; font-size: 10px; font-family: var(--font-mono); color: var(--c-hint); margin-top: 10px; }
+
+/* ===== 切り口カード（他ページ導線） ===== */
+.ins-links { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+.ins-link {
+  display: block; background: var(--c-surface); border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card); padding: 16px 18px; transition: box-shadow .15s, transform .15s;
+}
+.ins-link:hover { box-shadow: var(--shadow-hover); transform: translateY(-1px); }
+.ins-link .lt { font-size: 14px; font-weight: 700; color: var(--c-text); margin-bottom: 6px; }
+.ins-link .ld { font-size: 12px; color: var(--c-muted); line-height: 1.65; }
+.ins-link .lg { font-size: 11px; color: var(--c-blue-mid); margin-top: 10px; display: block; }
+
+/* ===== CTA ===== */
+.ins-cta { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 22px; }
+.ins-btn {
+  display: inline-block; font-size: 13px; font-weight: 600; padding: 11px 18px;
+  border-radius: 10px; background: var(--c-blue-bg); color: var(--c-blue-text);
+}
+.ins-btn.alt { background: var(--c-green-bg); color: var(--c-green-text); }
+
+@media (max-width: 640px) {
+  .ins-voices { grid-template-columns: 1fr; }
+  .ins-rank li { grid-template-columns: 20px minmax(0,1fr) 46px; }
+  .ins-cols { height: 150px; }
+  .ins-col .bv { display: none; }
+}
