@@ -72,6 +72,7 @@ def card_pa45(p):
     <button class="btn copy" data-t="p{p['no']}">本文をコピー</button>
     <a class="btn go" href="{html.escape(intent(p['body']))}" target="_blank" rel="noopener">Xの下書きを開く →</a>
   </div>
+  <label class="done-row"><input type="checkbox" class="donebox" data-k="pa45-{p['no']}"> 投稿済みにする</label>
 </article>'''
 
 
@@ -108,6 +109,7 @@ def card_tips(it):
     <button class="btn copy2" data-p='{html.escape(paths)}'>画像2枚のパス</button>
     <a class="btn go" href="{html.escape(intent(it['body']))}" target="_blank" rel="noopener">Xの下書きを開く →</a>
   </div>
+  <label class="done-row"><input type="checkbox" class="donebox" data-k="tips-{it['vol']}"> 投稿済みにする</label>
 </article>'''
 
 
@@ -152,6 +154,14 @@ h1{font-size:24px;font-weight:900;margin-bottom:4px}
   background:#fff;color:var(--tx);cursor:pointer;text-decoration:none;text-align:center;font-family:inherit}
 .btn.go{background:var(--ac);border-color:var(--ac);color:#fff;flex:1;min-width:140px}
 .btn.done{background:#0e9f6e;border-color:#0e9f6e;color:#fff}
+.done-row{font-size:11.5px;color:var(--mu);display:flex;align-items:center;gap:6px;cursor:pointer;
+  user-select:none;margin-top:-2px}
+.card.posted{opacity:.42}
+.card.posted .og,.card.posted .shots{filter:grayscale(1)}
+.filter{display:flex;align-items:center;gap:14px;margin-bottom:14px;font-size:12.5px;color:var(--mu)}
+.filter label{display:flex;align-items:center;gap:6px;cursor:pointer;user-select:none}
+.filter .cnt{font-family:ui-monospace,monospace}
+body.hide-posted .card.posted{display:none}
 """
 
 JS = """
@@ -174,6 +184,28 @@ document.querySelectorAll('.copy2').forEach(b=>b.addEventListener('click',async(
   await navigator.clipboard.writeText(b.dataset.p);
   flash(b,'パスをコピー');
 }));
+
+// 投稿済みチェック（このPCのブラウザに保存。35本を数ヶ月かけて回すための進捗管理）
+const KEY='pa45-x-posted';
+const posted=new Set(JSON.parse(localStorage.getItem(KEY)||'[]'));
+function count(){
+  const n=document.querySelectorAll('.card:not(.posted)').length;
+  document.getElementById('remain').textContent=n;
+}
+document.querySelectorAll('.donebox').forEach(cb=>{
+  const card=cb.closest('.card');
+  if(posted.has(cb.dataset.k)){cb.checked=true;card.classList.add('posted');}
+  cb.addEventListener('change',()=>{
+    card.classList.toggle('posted',cb.checked);
+    cb.checked?posted.add(cb.dataset.k):posted.delete(cb.dataset.k);
+    localStorage.setItem(KEY,JSON.stringify([...posted]));
+    count();
+  });
+});
+document.getElementById('hideposted').addEventListener('change',e=>{
+  document.body.classList.toggle('hide-posted',e.target.checked);
+});
+count();
 """
 
 
@@ -192,6 +224,11 @@ def main():
 <div class="tabs">
   <button class="tab on" data-pane="pane-pa45">PA45（切り口）<span class="c">{len(pa45)}本</span></button>
   <button class="tab" data-pane="pane-tips">X技術Tips<span class="c">{len(tips)}本</span></button>
+</div>
+
+<div class="filter">
+  <span>未投稿 <b class="cnt" id="remain">-</b> 本</span>
+  <label><input type="checkbox" id="hideposted"> 投稿済みを隠す</label>
 </div>
 
 <section class="pane on" id="pane-pa45">
