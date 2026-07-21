@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>アダプティブ カード デザイナーの使い方｜PA45 第20回</title>
+<style>
+  :root{
+    --blue-bg:#eaf2fc;--blue-mid:#2a7dd4;--blue-text:#14528f;--blue-line:#b8d3ef;
+    --text:#1f2937;--muted:#475569;--hint:#94a3b8;--border:#e2e8f0;--bg:#eef2f7;
+    --green-bg:#ecfdf5;--green-text:#065f46;--yellow-bg:#fffbeb;--yellow-text:#92400e;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--text);
+    font-family:"Meiryo UI","Yu Gothic UI","Segoe UI",sans-serif;font-size:16px;line-height:1.75;}
+  .wrap{max-width:1040px;margin:0 auto;padding:30px 22px 80px;}
+  .head{background:linear-gradient(135deg,#14528f 0%,#2a7dd4 100%);color:#fff;
+    border-radius:16px;padding:28px 34px;border-bottom:5px solid #fbbf24;margin-bottom:14px;}
+  .head .eyebrow{font-size:13px;font-weight:700;letter-spacing:.05em;color:#bfdcff;}
+  .head h1{margin:6px 0 10px;font-size:28px;line-height:1.3;}
+  .head p{margin:0;font-size:15px;color:#e3eefc;}
+  .urlbar{background:#0f172a;color:#7dd3fc;border-radius:10px;padding:12px 18px;
+    font-family:Consolas,monospace;font-size:15px;margin-bottom:28px;word-break:break-all;}
+  .urlbar a{color:#7dd3fc;}
+  section{background:#fff;border:1px solid var(--border);border-radius:16px;
+    padding:26px 30px;margin-bottom:20px;box-shadow:0 2px 10px rgba(15,40,80,.05);}
+  .tag{display:inline-block;font-size:12px;font-weight:800;color:var(--blue-mid);
+    background:var(--blue-bg);padding:4px 14px;border-radius:20px;}
+  h2{font-size:22px;margin:12px 0 6px;line-height:1.35;}
+  .lede{color:var(--muted);font-size:15px;margin:0 0 18px;}
+  h3{font-size:16px;margin:22px 0 8px;color:var(--blue-text);}
+  code{font-family:Consolas,monospace;background:#eef2f7;padding:2px 7px;border-radius:5px;font-size:.92em;}
+  .en{font-family:"Segoe UI",sans-serif;font-weight:700;color:#0f172a;
+    background:#fef3c7;padding:1px 7px;border-radius:4px;}
+  .callout{background:var(--yellow-bg);border-left:5px solid #f59e0b;padding:14px 20px;
+    border-radius:8px;color:#78350f;margin:14px 0;font-size:14.5px;line-height:1.7;}
+  .callout.blue{background:var(--blue-bg);border-left-color:#2a7dd4;color:#14528f;}
+  .callout.green{background:var(--green-bg);border-left-color:#059669;color:#065f46;}
+
+  /* ===== デザイナー画面モック ===== */
+  .dz{background:#fff;border:1px solid #d6dbe1;border-radius:8px;overflow:hidden;
+    font-family:"Segoe UI","Meiryo UI",sans-serif;font-size:12px;box-shadow:0 3px 12px rgba(0,0,0,.1);}
+  .dz .bar{display:flex;flex-wrap:wrap;align-items:center;gap:14px;background:#faf9f8;
+    border-bottom:1px solid #e6e4e2;padding:9px 14px;font-size:12px;color:#333;}
+  .dz .bar .sel{background:#fff;border:1px solid #c7c7c7;border-radius:4px;padding:3px 10px;}
+  .dz .bar .hot{background:#fff3bf;border:1px solid #e0a800;border-radius:4px;padding:3px 10px;font-weight:700;}
+  .dz .cols{display:grid;grid-template-columns:135px 1fr 165px;min-height:220px;}
+  .dz .cols>div{padding:11px 13px;}
+  .dz .el{border-right:1px solid #eee;background:#fcfcfc;}
+  .dz .hd{font-size:10px;font-weight:800;color:#8a8886;letter-spacing:.05em;margin-bottom:8px;}
+  .dz .el .grp{font-size:10.5px;font-weight:700;color:#605e5c;background:#f0f0f0;padding:3px 6px;margin:8px 0 4px;border-radius:3px;}
+  .dz .el ul{list-style:none;padding:0;margin:0;}
+  .dz .el li{padding:4px 7px;border-radius:4px;color:#333;font-size:11.5px;}
+  .dz .el li.on{background:#eef4fc;color:#14528f;font-weight:700;}
+  .dz .pv{background:#f3f2f1;display:flex;align-items:center;justify-content:center;}
+  .dz .tr{border-left:1px solid #eee;font-size:11px;color:#444;background:#fcfcfc;}
+  .dz .tr .t{padding:2px 0;white-space:nowrap;}
+  .dz .props{border-top:1px solid #eee;margin-top:10px;padding-top:8px;}
+  .dz .json{background:#1e1e1e;color:#dcdcdc;border-top:1px solid #333;padding:9px 14px;
+    font-family:Consolas,monospace;font-size:11px;line-height:1.5;}
+  .dz .json .k{color:#9cdcfe;}.dz .json .s{color:#ce9178;}.dz .json .c{color:#6a9955;}
+  .dz .json .hd2{color:#8a8886;font-size:10px;font-weight:800;letter-spacing:.05em;margin-bottom:5px;}
+
+  /* ミニ カード */
+  .card{background:#fff;border:1px solid #e1dfdd;border-radius:6px;overflow:hidden;width:215px;}
+  .card .ch{background:#e3ebf9;padding:8px 11px;font-size:12px;font-weight:700;color:#1b1b1b;}
+  .card .cb{padding:9px 11px;}
+  .card .nm{font-size:11.5px;font-weight:700;}
+  .card table{width:100%;font-size:10px;border-collapse:collapse;}
+  .card td{padding:2px 0;}
+  .card .ft{font-weight:700;width:52px;}
+  .card .btn{display:inline-block;border:1px solid #c7c7c7;border-radius:3px;
+    padding:4px 10px;font-size:10.5px;font-weight:600;margin-top:8px;}
+
+  /* 番号付き手順 */
+  .steps{counter-reset:s;list-style:none;padding:0;margin:16px 0 0;}
+  .steps>li{counter-increment:s;position:relative;padding:0 0 0 52px;margin-bottom:22px;}
+  .steps>li::before{content:counter(s);position:absolute;left:0;top:0;width:34px;height:34px;
+    border-radius:50%;background:var(--blue-mid);color:#fff;font-weight:800;
+    display:flex;align-items:center;justify-content:center;font-size:16px;}
+  .steps h3{margin:4px 0 6px;font-size:17px;color:var(--text);}
+  .steps p{margin:0 0 8px;color:var(--muted);font-size:14.5px;line-height:1.7;}
+
+  /* 早見表 */
+  table.ref{width:100%;border-collapse:collapse;font-size:14px;margin-top:10px;}
+  table.ref th{background:var(--blue-text);color:#fff;text-align:left;padding:9px 12px;font-size:13px;}
+  table.ref td{padding:9px 12px;border-bottom:1px solid var(--border);vertical-align:top;}
+  table.ref tr:nth-child(even) td{background:#f8fafc;}
+  table.ref td:first-child{white-space:nowrap;font-family:"Segoe UI",sans-serif;font-weight:700;color:#0f172a;}
+
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:12px;}
+  .box{border-radius:12px;overflow:hidden;border:1px solid var(--border);}
+  .box .bh{padding:9px 15px;font-size:14px;font-weight:800;color:#fff;}
+  .box.ng .bh{background:#94a3b8;}
+  .box.ok .bh{background:#2a7dd4;}
+  .box .bb{padding:13px 15px;background:#fff;}
+  .box pre{margin:0;font-family:Consolas,monospace;font-size:13px;background:#f1f5f9;
+    border-radius:8px;padding:11px;line-height:1.6;}
+  .hl-ng{background:#fde68a;border-radius:3px;padding:0 3px;font-weight:700;}
+  .hl-ok{background:#bfdbfe;border-radius:3px;padding:0 3px;font-weight:700;}
+  .cap{font-size:13px;color:var(--muted);margin:9px 0 0;line-height:1.5;}
+  .foot{text-align:center;color:var(--hint);font-size:12px;margin-top:26px;line-height:1.8;}
+  @media(max-width:820px){ .dz .cols{grid-template-columns:1fr;} .two{grid-template-columns:1fr;} }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="head">
+    <div class="eyebrow">PA45 第20回 ・ 補助資料</div>
+    <h1>アダプティブ カード デザイナーの使い方</h1>
+    <p>カードの見た目をマウスで組み立てて、JSONを自動で作ってくれる公式ツール。今回の「検品」で使います。</p>
+  </div>
+  <div class="urlbar">🔗 <a href="https://adaptivecards.io/designer/" target="_blank" rel="noopener">https://adaptivecards.io/designer/</a>　（ログイン不要・無料）</div>
+
+  <!-- 画面の全体像 -->
+  <section>
+    <span class="tag">STEP 0</span>
+    <h2>まず画面の全体像（4つのエリア）</h2>
+    <p class="lede">開くと少し情報量が多く見えますが、<strong>役割は4つだけ</strong>です。※画面の表示は<strong>英語</strong>です。</p>
+
+    <div class="dz">
+      <div class="bar">
+        <span>New card</span>
+        <span>Select host app：<span class="hot">Microsoft Teams</span></span>
+        <span>Theme：<span class="sel">Light</span></span>
+        <span>Target version：<span class="sel">1.5</span></span>
+        <span>Copy card payload</span>
+        <span>Preview mode</span>
+      </div>
+      <div class="cols">
+        <div class="el">
+          <div class="hd">① CARD ELEMENTS</div>
+          <div class="grp">Containers</div>
+          <ul><li>Container</li><li class="on">FactSet</li><li>ColumnSet</li><li>Table</li></ul>
+          <div class="grp">Elements</div>
+          <ul><li>TextBlock</li><li>Image</li><li>ActionSet</li></ul>
+          <div class="grp">Inputs</div>
+          <ul><li>Input.Text</li><li>Input.ChoiceSet</li></ul>
+        </div>
+        <div class="pv">
+          <div class="card">
+            <div class="ch">✈ 出張申請が届きました</div>
+            <div class="cb">
+              <div class="nm">山田 太郎</div>
+              <table><tr><td class="ft">行き先</td><td>名古屋</td></tr><tr><td class="ft">概算費用</td><td>¥42,800</td></tr></table>
+              <span class="btn">申請内容を開く</span>
+            </div>
+          </div>
+        </div>
+        <div class="tr">
+          <div class="hd">③ CARD STRUCTURE</div>
+          <div class="t">▾ AdaptiveCard</div>
+          <div class="t">&nbsp;▾ Container</div>
+          <div class="t">&nbsp;&nbsp;TextBlock</div>
+          <div class="t">&nbsp;FactSet</div>
+          <div class="t">&nbsp;ActionSet</div>
+          <div class="props">
+            <div class="hd">ELEMENT PROPERTIES</div>
+            <div style="color:#8a8886;font-size:10.5px;">要素を選ぶと<br>ここで設定を編集</div>
+          </div>
+        </div>
+      </div>
+      <div class="json">
+        <div class="hd2">④ CARD PAYLOAD EDITOR</div>
+        <span class="c">// 組み立てた内容がJSONで自動生成される（ここに貼り付けてもOK）</span><br>
+        { <span class="k">"type"</span>: <span class="s">"AdaptiveCard"</span>, <span class="k">"version"</span>: <span class="s">"1.5"</span>, <span class="k">"body"</span>: [ … ] }
+      </div>
+    </div>
+
+    <table class="ref">
+      <tr><th style="width:210px;">エリア</th><th>役割</th></tr>
+      <tr><td>① CARD ELEMENTS</td><td>カードの<strong>部品置き場</strong>。ここから中央にドラッグして追加します。</td></tr>
+      <tr><td>② 中央（プレビュー）</td><td><strong>実際の見た目</strong>。選んだホストアプリの見え方で表示されます。</td></tr>
+      <tr><td>③ CARD STRUCTURE ＋<br>ELEMENT PROPERTIES</td><td>上＝部品の<strong>入れ子構造（ツリー）</strong>。下＝選んだ部品の<strong>設定パネル</strong>（色・サイズ・太さなど）。</td></tr>
+      <tr><td>④ CARD PAYLOAD EDITOR</td><td><strong>JSON</strong>。マウス操作すると自動で書き換わり、<strong>JSONを貼れば見た目に反映</strong>されます。</td></tr>
+    </table>
+  </section>
+
+  <!-- 使い方 -->
+  <section>
+    <span class="tag">使い方</span>
+    <h2>今回やる流れは、この5ステップ</h2>
+    <p class="lede">Copilotが作ったJSONを貼って、Teamsでの見え方を確認し、直して、持ち帰る ── が基本の型です。</p>
+
+    <ol class="steps">
+      <li>
+        <h3><span class="en">Select host app</span> を「Microsoft Teams」にする</h3>
+        <p>ここが<strong>いちばん大事</strong>。既定は <code>Bot Framework WebChat</code> なので、<strong>Teams に切り替える</strong>と「実際にTeamsで見たときの色・余白」で表示されます。検品はこの状態でやります。</p>
+        <div class="callout blue">選べるホストアプリ例：Bot Framework WebChat ／ Outlook Actionable Messages ／ <strong>Microsoft Teams</strong> ／ Viva Connections ／ Widgets Board など。<strong>届け先に合わせて選ぶ</strong>のがコツ。</div>
+      </li>
+      <li>
+        <h3><span class="en">Target version</span> を 1.5 にする</h3>
+        <p>カードの「文法バージョン」。新しすぎるとTeamsで表示できないことがあるので、<strong>1.5</strong>にしておくと安全です。</p>
+      </li>
+      <li>
+        <h3><span class="en">CARD PAYLOAD EDITOR</span> にJSONを貼る</h3>
+        <p>Copilotに作ってもらったJSON、または配布JSONを<strong>丸ごと貼り付け</strong>。貼った瞬間に中央のプレビューが変わります。<strong>ゼロから部品を並べる必要はありません</strong>。</p>
+      </li>
+      <li>
+        <h3>気になる所を直す（＝検品）</h3>
+        <p>中央のプレビューで<strong>部品をクリック</strong>すると、右下の <span class="en">ELEMENT PROPERTIES</span> で色や太さを変更できます。JSONを直接書き換えてもOK。</p>
+      </li>
+      <li>
+        <h3><span class="en">Copy card payload</span> でJSONを持ち帰る</h3>
+        <p>上部のこのボタンで<strong>JSON全体をコピー</strong>。あとは Power Automate の「アダプティブ カードを投稿…」の<strong>メッセージ欄に貼る</strong>だけです。</p>
+        <div class="callout green"><strong>迷ったら：</strong><span class="en">Preview mode</span> を押すと、ボタンを押せる状態で最終確認できます（元に戻すともう一度編集できます）。</div>
+      </li>
+    </ol>
+  </section>
+
+  <!-- 検品ポイント -->
+  <section>
+    <span class="tag">今回の検品ポイント</span>
+    <h2>Copilotの出力を、ここだけ直す</h2>
+    <p class="lede">Copilotは見出しを <code>emphasis</code>（グレー地）で作ってくることがあります。デザイナーで確認して <code>accent</code> に変えると、狙いどおりの色帯になります。</p>
+    <div class="two">
+      <div class="box ng"><div class="bh">Copilotの出力</div><div class="bb">
+        <pre>"style": <span class="hl-ng">"emphasis"</span></pre>
+        <p class="cap">動くけれど、見出しがグレー地であっさりした印象。</p></div></div>
+      <div class="box ok"><div class="bh">配布版（検品後）</div><div class="bb">
+        <pre>"style": <span class="hl-ok">"accent"</span>,
+"bleed": true</pre>
+        <p class="cap">色帯が付いて、ひと目で内容が伝わるカードに。</p></div></div>
+    </div>
+    <div class="callout"><strong>色は受け手のテーマで変わります。</strong>明るいTeamsでは水色の帯、暗いTeamsでは濃紺の帯で表示されます。どちらでも読めるようになっています。</div>
+  </section>
+
+  <!-- 部品早見表 -->
+  <section>
+    <span class="tag">早見表</span>
+    <h2>よく使う部品（CARD ELEMENTS）</h2>
+    <table class="ref">
+      <tr><th style="width:180px;">部品</th><th>何をするもの</th></tr>
+      <tr><td>TextBlock</td><td>文字を置く。サイズ・太さ・色を変えられる（見出しにも本文にも）。</td></tr>
+      <tr><td>FactSet</td><td><strong>「項目：値」を整然と並べる</strong>表。今回の行き先・期間・費用はこれ。</td></tr>
+      <tr><td>Container</td><td>部品をまとめる箱。<code>style</code> を付けると<strong>背景色</strong>が付く（＝色帯の正体）。</td></tr>
+      <tr><td>ColumnSet</td><td>横に並べる。左に名前・右にバッジ、のような配置ができる。</td></tr>
+      <tr><td>Image</td><td>画像・アイコンを置く。</td></tr>
+      <tr><td>ActionSet</td><td><strong>ボタン</strong>を置く。今回は「申請内容を開く」（<code>Action.OpenUrl</code>）。</td></tr>
+      <tr><td>Input.Text ほか</td><td>入力欄。<strong>回答を受け取りたいとき</strong>に使う（第21回で登場）。</td></tr>
+    </table>
+    <div class="callout blue"><strong>全部覚えなくて大丈夫。</strong>今回のカードで使うのは <strong>Container・TextBlock・FactSet・ColumnSet・ActionSet</strong> の5つだけです。</div>
+  </section>
+
+  <!-- 発展 -->
+  <section>
+    <span class="tag">発展</span>
+    <h2>新しいデザイナーもあります</h2>
+    <p class="lede">Microsoft公式の新版。サンプルが豊富で、Copilot／Teams／Outlook向けの作例がそろっています。慣れてきたらこちらも。</p>
+    <div class="urlbar" style="margin:0;">🔗 <a href="https://adaptivecards.microsoft.com/designer" target="_blank" rel="noopener">https://adaptivecards.microsoft.com/designer</a></div>
+    <div class="callout"><strong>講座で使うのは従来版</strong>（上の adaptivecards.io）です。ホストアプリをTeamsに切り替えて見え方を確認する流れが分かりやすいためです。</div>
+  </section>
+
+  <div class="foot">
+    PA45 第20回 補助資料 ／ 出典：Microsoft Learn（Adaptive Cards）・Adaptive Cards Designer<br>
+    画面のラベルは英語表記です。人名・数値はすべて架空のサンプルです。<br>
+    本内容は公開日時点のものです。Microsoftの仕様・画面は今後変わる可能性があります。
+  </div>
+
+</div>
+</body>
+</html>

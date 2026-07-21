@@ -1,0 +1,697 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>PA45 第20回 スライド｜アダプティブカードの作り方 ― そっけない通知が、"リッチカード"に化ける</title>
+<style>
+  :root{
+    --blue-bg:#eaf2fc;--blue-mid:#2a7dd4;--blue-text:#14528f;--blue-light:#b8d3ef;
+    --orange:#e06030;--red:#c03520;--surface:#fff;--bg:#f3f6fa;--text:#1f2937;
+    --muted:#475569;--hint:#94a3b8;--border:#e2e8f0;--green-bg:#ecfdf5;--green-text:#065f46;
+    --yellow-bg:#fffbeb;--yellow-text:#92400e;--teal:#0f7b8a;--purple:#7c3aed;
+  }
+  body{margin:0;padding:24px 24px 24px 280px;background:#1a2233;
+    font-family:"Meiryo UI","Yu Gothic UI","Segoe UI",sans-serif;color:var(--text);font-size:16px;}
+  .deck-header{color:#fff;max-width:1280px;margin:0 auto 24px;font-size:16px;opacity:.85;}
+  .deck-header h1{margin:0 0 4px;font-size:24px;}
+  .toc{position:fixed;top:0;left:0;bottom:0;width:260px;background:#0f172a;color:#cbd5e1;
+    padding:22px 0;overflow-y:auto;z-index:100;border-right:1px solid #1e293b;box-shadow:4px 0 16px rgba(0,0,0,.3);}
+  .toc-header{padding:0 22px 14px;border-bottom:1px solid #1e293b;margin-bottom:10px;}
+  .toc-header .title{font-size:14px;font-weight:800;color:#fff;}
+  .toc-header .sub{font-size:11px;color:#64748b;margin-top:4px;}
+  .toc ol{list-style:none;padding:0;margin:0;}
+  .toc li a{display:block;padding:9px 22px 9px 18px;color:#cbd5e1;text-decoration:none;font-size:13px;
+    line-height:1.45;border-left:3px solid transparent;transition:background .15s,border-color .15s,color .15s;}
+  .toc li a:hover{background:#1e293b;color:#fff;}
+  .toc li a.active{background:#1e293b;color:#fff;border-left-color:#2a7dd4;}
+  .toc li a .n{display:inline-block;width:22px;color:#64748b;font-weight:700;font-size:12px;}
+  .toc li a.active .n{color:#2a7dd4;}
+  .toc-toggle{position:fixed;top:10px;left:270px;z-index:101;background:#1e293b;color:#fff;border:none;
+    padding:8px 14px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:600;}
+  body.toc-collapsed{padding-left:24px;}
+  body.toc-collapsed .toc{transform:translateX(-100%);}
+  body.toc-collapsed .toc-toggle{left:10px;}
+  .toc,.toc-toggle{transition:transform .2s,left .2s;}
+  .slide{width:1280px;height:720px;margin:0 auto 28px;background:#fff;box-shadow:0 12px 40px rgba(0,0,0,.35);
+    border-radius:6px;overflow:hidden;position:relative;display:flex;flex-direction:column;}
+  .slide-num{position:absolute;top:10px;right:14px;font-size:14px;color:var(--hint);
+    background:rgba(255,255,255,.9);padding:3px 10px;border-radius:12px;z-index:10;}
+  .slide-head{padding:24px 48px 22px;background:linear-gradient(135deg,#14528f 0%,#2a7dd4 100%);
+    color:#fff;border-bottom:4px solid #fbbf24;}
+  .slide-eyebrow{font-size:15px;color:#93c5fd;font-weight:700;letter-spacing:.04em;text-transform:uppercase;}
+  .slide-title{font-size:38px;font-weight:800;line-height:1.2;margin:4px 0 0;color:#fff;letter-spacing:-.01em;}
+  .slide-title small{font-size:23px;color:rgba(255,255,255,.85);font-weight:600;}
+  .concept-dot{position:absolute;top:30px;right:60px;display:flex;align-items:center;gap:8px;
+    font-size:15px;color:#fbbf24;font-weight:700;}
+  .concept-dot::before{content:'';width:10px;height:10px;border-radius:50%;background:#fbbf24;}
+  .title-slide .slide-head,.anchor .slide-head{background:transparent;color:inherit;border-bottom:none;}
+  .title-slide .slide-eyebrow,.anchor .slide-eyebrow{color:var(--blue-mid);text-transform:none;letter-spacing:0;}
+  .anchor .slide-eyebrow{color:#92400e;}
+  .title-slide .slide-title,.anchor .slide-title{color:var(--text);}
+  .anchor .slide-title{color:#78350f;}
+  .title-slide .slide-title small,.anchor .slide-title small{color:var(--muted);}
+  .slide-body{flex:1;padding:24px 48px 0;display:flex;flex-direction:column;font-size:22px;}
+  .slide-footer{margin-top:auto;padding:14px 48px 18px;display:flex;justify-content:space-between;
+    align-items:center;font-size:14px;color:var(--hint);background:#fff;}
+  .slide-footer .chat-reminder{background:var(--blue-bg);color:var(--blue-text);padding:7px 16px;
+    border-radius:20px;font-weight:600;font-size:14px;}
+  .slide-footer .src{color:#b6becb;font-size:12px;}
+  .cards-3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:20px;}
+  .cards-2{display:grid;grid-template-columns:repeat(2,1fr);gap:26px;margin-top:20px;}
+  .card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:24px 28px;box-shadow:0 2px 6px rgba(0,0,0,.04);}
+  .card.blue{background:var(--blue-bg);border-color:rgba(42,125,212,.25);}
+  .card.green{background:var(--green-bg);border-color:rgba(6,95,70,.25);}
+  .card.yellow{background:var(--yellow-bg);border-color:rgba(146,64,14,.25);}
+  .card.purple{background:#f5f3ff;border-color:rgba(124,58,237,.25);}
+  .card .num{display:inline-flex;align-items:center;justify-content:center;width:50px;height:50px;
+    border-radius:50%;background:var(--blue-mid);color:#fff;font-weight:800;font-size:26px;margin-bottom:12px;}
+  .card .ico{font-size:46px;margin-bottom:10px;display:block;}
+  .card h3{margin:0 0 12px;font-size:26px;font-weight:700;color:var(--text);line-height:1.35;}
+  .card p,.card ul{font-size:21px;line-height:1.8;color:var(--muted);margin:0;}
+  .card ul{padding-left:22px;}.card li{margin-bottom:9px;}
+  code,.code{font-family:"DM Mono","Consolas",monospace;background:#f1f5f9;padding:3px 9px;border-radius:5px;font-size:.94em;color:#0f172a;}
+  .code-block{background:#0f172a;color:#e2e8f0;padding:14px 18px;border-radius:10px;
+    font-family:"DM Mono","Consolas",monospace;font-size:18px;line-height:1.6;margin:12px 0;overflow-x:auto;white-space:pre-wrap;word-break:break-all;}
+  .code-block .hl{color:#fbbf24;}.code-block .key{color:#7dd3fc;}.code-block .str{color:#86efac;}
+  .code-block .br{color:#fca5a5;font-weight:700;}.code-block .cm{color:#64748b;font-size:14px;}
+  .title-slide{background:linear-gradient(135deg,#eaf2fc 0%,#d4e6f7 100%);}
+  .title-slide .badge-row{display:flex;gap:14px;margin-bottom:20px;}
+  .title-slide .pill{background:rgba(255,255,255,.85);color:var(--blue-text);padding:8px 20px;border-radius:22px;font-size:16px;font-weight:700;}
+  .title-slide .pill.alt{background:#fff;color:var(--blue-mid);border:2px solid var(--blue-mid);}
+  .title-slide h1{font-size:42px;font-weight:800;line-height:1.18;color:var(--blue-text);margin:0 0 20px;letter-spacing:-.02em;}
+  .title-slide .lead{font-size:21px;color:var(--muted);margin:0 0 22px;line-height:1.6;}
+  .meta-table{background:rgba(255,255,255,.7);border-left:5px solid var(--blue-mid);padding:16px 26px;border-radius:8px;max-width:1040px;}
+  .meta-table dt{display:inline-block;width:110px;color:var(--blue-mid);font-weight:700;font-size:18px;}
+  .meta-table dd{display:inline;margin:0;font-size:20px;color:var(--text);}
+  .meta-table dl{margin:11px 0;}
+  ul.check{padding:0;list-style:none;}
+  ul.check li{padding-left:34px;position:relative;font-size:22px;line-height:1.8;margin-bottom:12px;color:var(--text);}
+  ul.check li::before{content:'✓';position:absolute;left:4px;top:0;color:var(--blue-mid);font-weight:800;font-size:22px;}
+  ul.cross li::before{content:'✕';color:var(--red);}
+  .callout{background:var(--yellow-bg);border-left:6px solid #f59e0b;padding:18px 26px;border-radius:6px;
+    font-size:22px;line-height:1.75;color:#78350f;margin:12px 0;}
+  .callout strong{color:#78350f;}
+  .callout.blue{background:var(--blue-bg);border-left-color:#2a7dd4;color:#14528f;}
+  .callout.blue strong{color:#14528f;}
+  .callout.green{background:var(--green-bg);border-left-color:#059669;color:#065f46;}
+  .callout.green strong{color:#065f46;}
+  .callout.red{background:#fff1f2;border-left-color:#e11d48;color:#9f1239;}
+  .callout.red strong{color:#9f1239;}
+  .anchor{background:linear-gradient(135deg,#fde68a 0%,#fcd34d 100%);}
+  .haru-img{width:230px;height:230px;border-radius:50%;object-fit:cover;box-shadow:0 8px 24px rgba(42,125,212,.3);}
+  .opening-bar{background:var(--blue-mid);color:#fff;padding:12px 48px;display:flex;justify-content:space-between;font-size:16px;font-weight:700;}
+  .pull-quote{font-size:22px;font-weight:700;color:var(--blue-text);text-align:center;background:var(--blue-bg);padding:14px;border-radius:12px;margin:12px 0;}
+  .pathpill{display:inline-block;background:#0f172a;color:#fbbf24;font-family:"DM Mono","Consolas",monospace;font-weight:700;padding:4px 12px;border-radius:8px;font-size:16px;}
+  .stepflow{display:grid;grid-template-columns:1fr 28px 1fr 28px 1fr 28px 1fr;align-items:stretch;gap:6px;margin-top:16px;}
+  .stepflow .arr{display:flex;align-items:center;justify-content:center;font-size:24px;color:var(--hint);}
+  .stepbox{border-radius:14px;padding:18px 14px;text-align:center;display:flex;flex-direction:column;align-items:center;border:2px solid;}
+  .stepbox .badge{font-size:15px;font-weight:800;letter-spacing:.04em;padding:3px 14px;border-radius:12px;margin-bottom:10px;}
+  .stepbox h3{margin:0 0 8px;font-size:23px;line-height:1.3;}
+  .stepbox p{margin:0;font-size:17px;line-height:1.55;color:var(--muted);}
+  .stepbox .act{font-family:"DM Mono","Consolas",monospace;font-size:14px;background:#0f172a;color:#7dd3fc;padding:4px 11px;border-radius:6px;margin-top:10px;}
+  .ba{display:grid;grid-template-columns:1fr 40px 1fr;align-items:center;gap:8px;margin-top:14px;}
+  .ba .arrow{text-align:center;font-size:28px;color:var(--blue-mid);font-weight:800;}
+  .ba .box{border-radius:12px;padding:16px 20px;font-size:19px;line-height:1.65;}
+  .ba .bad{background:#fff1f2;border:1px solid #fecdd3;color:#9f1239;}
+  .ba .good{background:var(--green-bg);border:1px solid #86efac;color:#065f46;}
+  .ba .lab{font-weight:800;font-size:16px;display:block;margin-bottom:5px;}
+  .maillink{color:#1d4ed8;text-decoration:underline;font-weight:700;}
+  .steplist{counter-reset:s;list-style:none;padding:0;margin:8px 0 0;}
+  .steplist li{counter-increment:s;position:relative;padding:8px 0 8px 44px;font-size:17px;line-height:1.55;border-bottom:1px dashed var(--border);}
+  .steplist li::before{content:counter(s);position:absolute;left:0;top:6px;width:30px;height:30px;border-radius:50%;
+    background:var(--blue-mid);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:15px;}
+  .steplist li:last-child{border-bottom:none;}
+  .deco{position:absolute;pointer-events:none;z-index:1;}
+  .illus{display:block;width:auto;}
+  .introrow{display:grid;grid-template-columns:150px 1fr;gap:24px;align-items:center;margin:6px 0 12px;}
+  .introrow .illus{max-height:140px;margin:0 auto;}
+  /* ===== Power Automate アクションカード風 ===== */
+  .paact{background:#fff;border:1px solid #d7dde3;border-radius:10px;box-shadow:0 3px 10px rgba(0,0,0,.08);overflow:hidden;}
+  .paact .pahdr{display:flex;align-items:center;gap:10px;padding:11px 16px;background:#faf9f8;border-bottom:1px solid #e5e7eb;}
+  .paact .paicon{width:30px;height:30px;border-radius:6px;background:linear-gradient(135deg,#0b5cab,#3b82c4);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;flex:0 0 30px;}
+  .paact .paicon.sp{background:linear-gradient(135deg,#036c70,#12908a);}
+  .paact .paicon.var{background:linear-gradient(135deg,#7719aa,#9b30c9);}
+  .paact .paicon.sch{background:linear-gradient(135deg,#b25a00,#e0851d);}
+  .paact .patitle{font-size:18px;font-weight:700;color:#242424;}
+  .paact .pabody{padding:12px 16px 16px;}
+  .pafield{margin-bottom:11px;}
+  .pafield .lbl{font-size:14px;font-weight:600;color:#3b3a39;margin-bottom:4px;display:block;}
+  .pafield .lbl b{color:#a4262c;font-weight:700;}
+  .pafield .inp{border:1px solid #b3b0ad;border-bottom:2px solid #0f6cbd;border-radius:2px;padding:8px 12px;font-size:16px;color:#242424;background:#fff;min-height:20px;}
+  .pafield .inp.ph{color:#8a8886;}
+  .pafield .inp.dd{display:flex;justify-content:space-between;align-items:center;}
+  .pafield .inp.dd::after{content:'⌄';color:#605e5c;font-size:20px;line-height:.6;}
+  .pafield .tok{display:inline-block;background:#eef6fc;border:1px solid #b6d7f2;color:#0f6cbd;border-radius:4px;padding:1px 8px;font-size:14px;font-weight:600;}
+  .pafield .tok.fx{background:#fdf2e9;border-color:#f3c99a;color:#b25a00;}
+  .padrop{border:1px solid #b3b0ad;border-radius:4px;box-shadow:0 6px 18px rgba(0,0,0,.14);overflow:hidden;background:#fff;}
+  .padrop div{padding:9px 14px;font-size:15px;color:#242424;border-bottom:1px solid #f0f0f0;}
+  .padrop div.sel{background:#eef6fc;font-weight:700;color:#0f6cbd;}
+  .padrop div:last-child{border-bottom:none;}
+  /* ===== SharePoint リスト風テーブル ===== */
+  .sptable{width:100%;border-collapse:collapse;font-size:16px;background:#fff;border:1px solid #e1dfdd;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+  .sptable th{background:#f3f2f1;color:#323130;font-weight:700;text-align:left;padding:10px 16px;border-bottom:1px solid #e1dfdd;font-size:15px;}
+  .sptable td{padding:10px 16px;border-bottom:1px solid #f0f0f0;color:#242424;}
+  .sptable tr:last-child td{border-bottom:none;}
+  .sptable .new td{background:#eef6fc;font-weight:700;}
+  .sptable .num{text-align:right;font-variant-numeric:tabular-nums;}
+  /* ===== KPI 帯（ダッシュボードの作られ方） ===== */
+  .kpirow{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:14px;}
+  .kpibox{border-radius:12px;padding:14px 18px;color:#fff;}
+  .kpibox .kl{font-size:15px;font-weight:700;opacity:.92;}
+  .kpibox .kf{font-family:"DM Mono","Consolas",monospace;font-size:16px;margin-top:8px;background:rgba(255,255,255,.16);padding:6px 10px;border-radius:6px;line-height:1.4;}
+  /* 密なスライド微調整 */
+  #s2 .introrow{margin:2px 0 8px;}
+  #s2 .introrow .illus{max-height:114px;}
+  #s2 .introrow p{font-size:20px;line-height:1.7;}
+  #s2 .cards-2{margin-top:12px;}
+  #s2 .card{padding:15px 24px;}
+  #s2 .callout{margin-top:10px;padding:13px 22px;}
+  #s7 .cards-3{margin-top:14px;}
+  #s7 .card{padding:16px 22px;}
+  #s7 .card p{font-size:18px;line-height:1.65;}
+  #s7 .card .ico{font-size:38px;margin-bottom:6px;}
+  #s7 .callout{margin-top:auto;}
+  #s8 .stepbox{padding:14px 12px;}
+  #s8 .callout{padding:12px 18px;}
+  #s12 .cards-2{margin-top:12px;}
+  #s12 .card{padding:16px 22px;}
+  #s13 .card{padding:16px 22px;}
+  #s13 .code-block{font-size:15px;margin:8px 0;}
+  #s14 .cards-2{margin-top:8px;}
+  #s14 .paact .pabody{padding:9px 14px 10px;}
+  #s14 .pafield{margin-bottom:7px;}
+  #s14 .pafield .inp{padding:6px 12px;}
+  #s14 .sptable th{padding:7px 14px;}
+  #s14 .sptable td{padding:7px 14px;}
+  #s14 .callout{margin-top:8px;padding:10px 18px;font-size:18px;line-height:1.6;}
+  #s14 .callout.green{margin-top:10px;padding:9px 14px;}
+  #s15 .kpirow{gap:7px;}
+  #s15 .kpibox{padding:9px 16px;}
+  #s15 .kpibox .kl{font-size:14px;}
+  #s15 .kpibox .kf{margin-top:5px;padding:5px 9px;font-size:15px;}
+  #s15 h3{font-size:20px !important;margin-bottom:6px !important;}
+  #s15 img{max-height:408px;object-fit:contain;}
+  #s15 .callout{margin-top:9px;padding:9px 18px;font-size:17px;line-height:1.55;}
+  #s16 .cards-2{margin-top:12px;}
+  #s16 .card{padding:16px 22px;}
+  #s18 .cards-3{margin-top:10px;gap:16px;}
+  #s18 .card{padding:13px 18px;}
+  #s18 .card .ico{font-size:32px;margin-bottom:4px;}
+  #s18 .card h3{margin-bottom:6px;}
+  #s18 .card p{font-size:16px;line-height:1.5;}
+  #s18 .callout{margin-top:12px;padding:13px 22px;}
+  /* ===== 実機フローノード（デザイナー風） ===== */
+  .flowmap{display:flex;flex-direction:column;align-items:stretch;}
+  .flownode{display:flex;align-items:center;gap:14px;background:#fff;border:1px solid #d7dde3;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,.08);padding:14px 18px;position:relative;overflow:hidden;}
+  .flownode .fnbar{position:absolute;left:0;top:0;bottom:0;width:6px;}
+  .flownode .fnico{width:36px;height:36px;border-radius:7px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;flex:0 0 36px;margin-left:4px;}
+  .flownode .fntitle{font-size:20px;font-weight:700;color:#242424;}
+  .flownode.sel{border:2px solid #2563EB;}
+  .flowarrow{display:flex;flex-direction:column;align-items:center;justify-content:center;height:38px;color:#9aa4b2;}
+  .flowarrow .plus{width:28px;height:28px;border-radius:50%;border:1px solid #c7ccd3;display:flex;align-items:center;justify-content:center;font-size:18px;color:#5b6472;background:#fff;}
+  #s11 .cards-2{margin-top:14px;}
+  #s11 .flownode{padding:11px 16px;}
+  #s11 .flownode .fnico{width:32px;height:32px;flex:0 0 32px;font-size:18px;}
+  #s11 .flownode .fntitle{font-size:18px;}
+  #s11 .flowarrow{height:28px;}
+  #s11 .paact .pabody{padding:9px 14px 11px;}
+  #s11 .pafield{margin-bottom:8px;}
+  #s11 .callout.blue{margin-top:12px;padding:11px 16px;font-size:16px;}
+  #s11 .slide-body>.callout{margin-top:auto;padding:11px 18px;font-size:18px;}
+  /* ===== Vol.20 アダプティブカード用モック ===== */
+  .teamsbot{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+  .teamsbot .av{width:34px;height:34px;border-radius:7px;background:#5b5fc7;color:#fff;display:flex;align-items:center;justify-content:center;font-size:17px;}
+  .teamsbot .nm{font-size:15px;font-weight:700;color:#242424;}
+  .teamsbot .tm{font-size:12px;color:#616161;}
+  .acard{background:#fff;border:1px solid #e1dfdd;border-radius:8px;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.12);width:440px;font-family:"Segoe UI","Meiryo UI",sans-serif;}
+  .acard .ah{background:#e3ebf9;padding:14px 20px;display:flex;align-items:center;gap:12px;}
+  .acard .ah .pl{font-size:24px;}
+  .acard .ah .ti{font-size:21px;font-weight:700;color:#1b1b1b;}
+  .acard .ab{padding:16px 20px 18px;}
+  .acard .atop{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;}
+  .acard .atop .l{font-size:14px;color:#616161;}
+  .acard .atop .nm{font-size:19px;font-weight:700;color:#1b1b1b;line-height:1.3;}
+  .acard .atop .sub{font-size:13.5px;color:#616161;}
+  .acard .atop .bdg{font-size:15px;font-weight:700;color:#b7791f;white-space:nowrap;padding-top:2px;}
+  .acard table{width:100%;border-collapse:collapse;font-size:16px;}
+  .acard td{padding:4px 0;vertical-align:top;color:#242424;}
+  .acard .ft{font-weight:700;color:#1b1b1b;width:108px;white-space:nowrap;}
+  .acard .an{margin-top:12px;font-size:14px;color:#616161;line-height:1.6;}
+  .acard .abtn{margin-top:16px;display:inline-block;border:1px solid #c7c7c7;border-radius:4px;padding:9px 22px;font-size:16px;font-weight:600;color:#242424;background:#fff;}
+  .cop{background:#1f1f24;border-radius:14px;padding:18px 20px;color:#e6e6e6;font-family:"Segoe UI","Meiryo UI",sans-serif;}
+  .cop .cu{background:#2d2d33;border-radius:12px;padding:12px 16px;font-size:14px;line-height:1.6;margin:0 0 14px auto;max-width:90%;}
+  .cop .cw{display:flex;align-items:center;gap:9px;font-size:15px;font-weight:700;margin-bottom:9px;color:#f3f3f3;}
+  .cop .cw .ci{width:22px;height:22px;border-radius:6px;background:conic-gradient(from 210deg,#7c5cff,#43b6ff,#25d0ab,#7c5cff);}
+  .copcode{background:#141417;border:1px solid #2c2c33;border-radius:10px;overflow:hidden;}
+  .copcode .bar{display:flex;justify-content:space-between;align-items:center;background:#26262c;padding:7px 14px;font-size:12px;color:#a9a9b3;}
+  .copcode .bar .tag{background:#34343c;color:#c9c9d4;border-radius:5px;padding:2px 10px;font-weight:700;font-size:11px;}
+  .copcode pre{margin:0;padding:12px 16px;font-family:"DM Mono","Consolas",monospace;font-size:13px;line-height:1.5;color:#dcdcdc;overflow:auto;}
+  .copcode .k{color:#9cdcfe;}.copcode .s{color:#ce9178;}
+  .copchips{display:flex;flex-wrap:wrap;gap:9px;margin-top:12px;}
+  .copchips span{background:#2b2b31;border:1px solid #3a3a42;color:#d5d5dd;border-radius:16px;padding:6px 14px;font-size:13px;}
+  .dz{background:#fff;border:1px solid #d6dbe1;border-radius:8px;overflow:hidden;font-family:"Segoe UI","Meiryo UI",sans-serif;}
+  .dz .dtl{display:flex;gap:16px;background:#faf9f8;border-bottom:1px solid #e6e4e2;padding:9px 14px;font-size:13px;color:#333;}
+  .dz .dtl .sel{background:#fff;border:1px solid #c7c7c7;border-radius:4px;padding:3px 10px;}
+  .dz .cols{display:grid;grid-template-columns:150px 1fr 170px;}
+  .dz .cols>div{padding:12px 14px;}
+  .dz .el{border-right:1px solid #eee;}
+  .dz .el .h,.dz .tr .h{font-size:11px;font-weight:800;color:#8a8886;letter-spacing:.04em;margin-bottom:8px;}
+  .dz .el ul{list-style:none;padding:0;margin:0;}
+  .dz .el li{padding:6px 8px;border-radius:4px;color:#333;font-size:13px;}
+  .dz .el li.on{background:#eef4fc;color:#14528f;font-weight:700;}
+  .dz .pv{background:#f3f2f1;display:flex;align-items:center;justify-content:center;}
+  .dz .tr{border-left:1px solid #eee;font-size:12px;color:#444;}
+  .dz .tr .t{padding:2px 0;white-space:nowrap;}
+  .dz .json{background:#1e1e1e;color:#dcdcdc;border-top:1px solid #333;padding:10px 16px;font-family:"Consolas",monospace;font-size:12px;line-height:1.5;}
+  .dz .json .k{color:#9cdcfe;}.dz .json .s{color:#ce9178;}.dz .json .c{color:#6a9955;}
+  .diffrow{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:6px;}
+  .diffcol{border-radius:12px;overflow:hidden;border:1px solid var(--border);}
+  .diffcol .h{padding:9px 16px;font-size:15px;font-weight:800;color:#fff;}
+  .diffcol.plain .h{background:#94a3b8;}
+  .diffcol.rich .h{background:#2a7dd4;}
+  .diffcol .b{padding:12px 14px;background:#fff;}
+  .diffcol pre{margin:0;font-family:"Consolas",monospace;font-size:14px;line-height:1.6;background:#f1f5f9;border-radius:8px;padding:12px;color:#0f172a;}
+  .diffcol .cap{font-size:14px;color:var(--muted);margin:10px 0 0;line-height:1.5;}
+  .emh{background:#fde68a;border-radius:3px;padding:0 3px;font-weight:700;}
+  .ach{background:#bfdbfe;border-radius:3px;padding:0 3px;font-weight:700;}
+  .partgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px 26px;margin:0;list-style:none;padding:0;}
+  .partgrid li{font-size:19px;color:var(--muted);padding-left:26px;position:relative;line-height:1.5;}
+  .partgrid li::before{content:'●';position:absolute;left:0;color:var(--blue-mid);font-size:12px;top:5px;}
+  .partgrid b{color:var(--text);}
+  .badge-todo{font-size:12px;font-weight:800;padding:3px 10px;border-radius:10px;background:#fef3c7;color:#92400e;vertical-align:middle;margin-left:8px;}
+  /* 見切れ微調整 */
+  #s9 .cards-3{margin-top:14px;}
+  #s9 .cards-2{margin-top:12px;}
+  #s9 .card{padding:15px 22px;}
+  #s9 .card p{font-size:18px;line-height:1.6;}
+  #s9 .card h3{margin-bottom:8px;}
+  #s9 .callout{margin-top:12px;padding:12px 22px;}
+</style>
+</head>
+<body>
+<nav class="toc" id="toc">
+  <div class="toc-header">
+    <div class="title">📑 目次 — PA45 第20回</div>
+    <div class="sub">クリックでジャンプ</div>
+  </div>
+  <ol>
+    <li><a href="#s1"><span class="n">01</span>20:15 START</a></li>
+    <li><a href="#s2"><span class="n">02</span>事前準備</a></li>
+    <li><a href="#s3"><span class="n">03</span>PA45とは？</a></li>
+    <li><a href="#s4"><span class="n">04</span>講師自己紹介（Haru）</a></li>
+    <li><a href="#s5"><span class="n">05</span>ご参加にあたって</a></li>
+    <li><a href="#s6"><span class="n">06</span>第20回タイトル</a></li>
+    <li><a href="#s7"><span class="n">07</span>掴み：張り紙→押せる受付ボタン</a></li>
+    <li><a href="#s8"><span class="n">08</span>アダプティブカードとは（完成形）</a></li>
+    <li><a href="#s9"><span class="n">09</span>"リッチに見える"正体（5部品）</a></li>
+    <li><a href="#s10"><span class="n">10</span>JSONは書かない → Copilotに頼む</a></li>
+    <li><a href="#s11"><span class="n">11</span>Copilotの実機出力（JSON）</a></li>
+    <li><a href="#s12"><span class="n">12</span>★ 検品：emphasis→accent</a></li>
+    <li><a href="#s13"><span class="n">13</span>今日つくる全体像（3ステップ）</a></li>
+    <li><a href="#s14"><span class="n">14</span>★ ①投稿アクションを置く</a></li>
+    <li><a href="#s15"><span class="n">15</span>★ ②配布JSONを貼る（1箇所だけ直す）</a></li>
+    <li><a href="#s16"><span class="n">16</span>★ 実行 → Teamsに届く 🎉</a></li>
+    <li><a href="#s17"><span class="n">17</span>応用＋次回への引き</a></li>
+    <li><a href="#s18"><span class="n">18</span>⚠️ 使うときの注意</a></li>
+    <li><a href="#s19"><span class="n">19</span>クロージング＆アンケート</a></li>
+  </ol>
+</nav>
+<button class="toc-toggle" id="tocToggle" type="button">≡ 目次</button>
+
+<div class="deck-header">
+  <h1>PA45 第20回 スライド</h1>
+  <div>アダプティブカードの作り方 ── そっけない通知が、"リッチカード"に化ける（出張申請カードを、完成JSON配布＋Copilotの作り方実演でつくる）</div>
+</div>
+
+<!-- ===== S1: 20:15 START ===== -->
+<section class="slide title-slide" id="s1">
+  <span class="slide-num">1 / 19</span>
+  <div class="opening-bar"><span>PA45 — Power Automate 45 ｜ 第20回 / Vol.20</span><span>Online Hands-on</span></div>
+  <div class="slide-body" style="justify-content:center;align-items:center;text-align:center;">
+    <div style="font-size:30px;color:var(--blue-mid);font-weight:800;margin-bottom:4px;">まもなく開始します</div>
+    <div style="font-size:128px;color:var(--blue-text);font-weight:900;line-height:1;margin:8px 0 4px;letter-spacing:.02em;">20:15 <span style="font-size:56px;">START</span></div>
+    <h1 style="font-size:36px;color:var(--text);font-weight:800;line-height:1.3;margin:20px 0 12px;">第20回｜アダプティブカードの作り方 ✈💬</h1>
+    <p style="font-size:24px;color:var(--muted);margin:0;">開始まで、もう少しお待ちください ☕</p>
+  </div>
+  <div class="slide-footer"><span>Power Automate for Beginners</span><span style="color:var(--hint);">Copyright © PA45</span></div>
+</section>
+<!-- ===== S2: 事前準備 ===== -->
+<section class="slide" id="s2">
+  <span class="slide-num">2 / 19</span>
+  <div class="slide-head"><div class="slide-eyebrow">PA45｜第20回</div><h1 class="slide-title">事前準備 <small>（サインインだけでOK）</small></h1></div>
+  <div class="slide-body">
+    <div class="introrow">
+      <img class="illus" src="assets/irasutoya_programming.png" alt="">
+      <p style="font-size:21px;color:var(--muted);margin:0;line-height:1.75;">今日は <strong>「Teamsに"リッチなカード"を投稿するフロー」</strong>を一緒に作ります。そっけない通知を、<strong>色帯・表・ボタン付きの見やすいカード</strong>に化けさせる回です。カードの中身（JSON）は <strong>完成版を配布</strong>するので、貼るだけ。さらに <strong>そのJSONをCopilotに作らせる</strong>方法も実演します。使うのは <strong>標準コネクタ＝プレミアム不要</strong>。</p>
+    </div>
+    <div class="cards-2">
+      <div class="card blue"><div class="num">1</div><h3>Power Automate にサインイン</h3><p><span class="pathpill">make.powerautomate.com</span> を開いてサインイン。今日は <strong>ゼロから1本</strong>作ります。</p></div>
+      <div class="card green"><div class="num">2</div><h3>Teams が使えればOK</h3><p>投稿先に <strong>自分のチーム／チャネル</strong>を使います。テスト用チャネルがあると安心（無ければ一緒に用意）。</p></div>
+    </div>
+    <div class="callout blue" style="margin-top:14px;"><strong>📥 今日のゴール：</strong> 完成JSONを貼って、<strong>"驚くリッチなカード"を自分のTeamsに1枚届ける</strong>。そして「Copilotに頼む→デザイナーで検品→貼る」の型を持ち帰る。</div>
+  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span></div>
+</section>
+<!-- ===== S3: PA45とは？ ===== -->
+<section class="slide" id="s3">
+  <span class="slide-num">3 / 19</span>
+  <div class="slide-head"><div class="slide-eyebrow">INTRODUCTION</div><h1 class="slide-title">PA45 とは？ </h1><div class="concept-dot">Concept</div></div>
+  <div class="slide-body">
+    <div style="text-align:center;color:var(--blue-text);font-weight:800;font-size:28px;">忙しい人のための 45分ハンズオン</div>
+    <div class="cards-3">
+      <div class="card blue"><div class="ico">⏱️</div><h3>45分完結</h3><p>長時間の研修は不要。<strong>要点だけ</strong>を凝縮し、最短でスキルを習得。終わったその日から1本使えるようになります。</p></div>
+      <div class="card green"><div class="ico">💻</div><h3>実践型ハンズオン</h3><p>座学だけではありません。<strong>その場で手を動かし</strong>「使える」技術を学びます。見るだけ参加も大歓迎です。</p></div>
+      <div class="card yellow"><div class="ico">👥</div><h3>一緒に作る</h3><p><strong>ゼロから一緒に</strong>作ることで仕組みを理解。「なぜ動くのか」が腑に落ちるので、応用も自分でできます。</p></div>
+    </div>
+    <div style="text-align:center;color:var(--green-text);font-weight:700;margin-top:auto;padding:18px;background:var(--green-bg);border-radius:10px;font-size:23px;">✓ Power Automate 未経験・知識ゼロでも大丈夫！今日も「できた！」をひとつ持ち帰りましょう。</div>
+  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span></div>
+</section>
+<!-- ===== S4: 講師自己紹介（Haru） ===== -->
+<section class="slide" id="s4">
+  <span class="slide-num">4 / 19</span>
+  <div class="slide-head"><div class="slide-eyebrow">SPEAKER</div><h1 class="slide-title">Power Automate 45 (PA45) </h1><div class="concept-dot">Speaker</div></div>
+  <div class="slide-body">
+    <div style="display:grid;grid-template-columns:280px 1fr;gap:36px;align-items:center;margin-top:8px;">
+      <img class="haru-img" src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="Haru" style="width:280px;height:280px;">
+      <div>
+        <div style="font-size:40px;font-weight:800;color:var(--blue-text);line-height:1.1;">Haru</div>
+        <div style="font-size:23px;color:var(--muted);margin:6px 0 18px;">💻 Power Platform / DX 推進</div>
+        <ul class="check" style="font-size:24px;">
+          <li style="margin-bottom:16px;">🏢 社内で PA／Copilot ハンズオン講座を開催し、DXを推進</li>
+          <li style="margin-bottom:16px;">🎤 広島コミュニティ「PLUG」運営・外部コミュニティ登壇</li>
+          <li style="margin-bottom:16px;">📱 X で初心者向け Power Automate チップスを継続発信</li>
+          <li>🕐 PA45（45分の "1粒ハンズオン"）を毎週開催・運営</li>
+        </ul>
+      </div>
+    </div>
+    <div class="pull-quote" style="margin-top:auto;font-size:26px;padding:18px;">今日も一緒に「できた！」を作っていきましょう 😊</div>
+  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span></div>
+</section>
+<!-- ===== S5: ご参加にあたって ===== -->
+<section class="slide" id="s5">
+  <span class="slide-num">5 / 19</span>
+  <div class="slide-head"><div class="slide-eyebrow">PA45 Online Course</div><h1 class="slide-title">ご参加にあたってのお願い <small>（ルール）</small></h1><div class="concept-dot">Guidelines</div></div>
+  <div class="slide-body">
+    <div class="cards-3">
+      <div class="card blue"><div class="ico">🤝</div><h3>気持ちよく学ぶ</h3><ul><li>誹謗中傷・不適切な発言は禁止</li><li>お互いを尊重し合いましょう</li></ul></div>
+      <div class="card green"><div class="ico">🎥</div><h3>録画について</h3><ul><li>後日 YouTube 公開予定</li><li>匿名参加で表示名を隠せます</li></ul></div>
+      <div class="card yellow"><div class="ico">💬</div><h3>チャットは気軽に</h3><ul><li>「できました！」大歓迎</li><li>小さな質問でもOK</li></ul></div>
+    </div>
+    <div class="cards-2" style="margin-top:14px;">
+      <div class="card"><h3 style="color:var(--blue-text);">🖌️ アウトプットで定着</h3><p><strong>#PA45</strong> をつけて投稿しよう！「気づき」「これ便利！」何でもOK。</p></div>
+      <div class="card"><h3 style="color:var(--green-text);">🎓 初心者大歓迎</h3><p>🚫 難しい専門用語は使いません／🚶 置いてけぼりにしないようゆっくり進行。</p></div>
+    </div>
+  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span></div>
+</section>
+<!-- ===== S6: 第19回タイトル ===== -->
+<section class="slide title-slide" id="s6">
+  <span class="slide-num">6 / 19</span>
+  <div class="slide-head"><div class="slide-eyebrow">Power Automate 入門講座</div><h1 class="slide-title">Vol.20 </h1></div>
+  <div class="slide-body">
+    <div class="badge-row"><span class="pill">アダプティブカード</span><span class="pill alt">Teamsに投稿</span><span class="pill alt">Copilotで作る</span><span class="pill alt">プレミアム不要</span></div>
+    <h1>第20回：アダプティブカードの作り方<br>そっけない通知が、"リッチカード"に化ける</h1>
+    <div class="meta-table">
+      <dl><dt>Theme</dt><dd>出張申請カードを題材に、完成JSONを貼ってTeamsに投稿。Copilotでの作り方も実演</dd></dl>
+      <dl><dt>Target</dt><dd>フローは作れるが「通知が地味…」をリッチにしたい方（知識ゼロOK・作れなくても貼るだけ）</dd></dl>
+      <dl><dt>Time</dt><dd>解説＋その場で一緒に作る 約45分</dd></dl>
+    </div>
+    <img class="deco" src="assets/irasutoya_robot.png" alt="" style="right:46px;bottom:20px;height:190px;">
+  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span></div>
+</section>
+<!-- ===== S7: 掴み（張り紙→受付ボタン） ===== -->
+<section class="slide" id="s7">
+  <span class="slide-num">7 / 19</span>
+  <div class="slide-head"><div class="slide-eyebrow">PA45｜第20回 ／ 掴み</div><h1 class="slide-title">ただの"張り紙"を、押せる"受付ボタン"に <small>── 通知が化ける</small></h1><div class="concept-dot">Hook</div></div>
+  <div class="slide-body">
+    <div class="introrow">
+      <img class="illus" src="assets/irasutoya_email.png" alt="">
+      <p style="margin:0;color:var(--muted);line-height:1.7;">Teamsに届く通知、たいてい <strong>そっけないテキスト</strong>。読み飛ばされるし、次に何をすればいいかも分からない。今日は同じ内容を <strong>「見やすくて、その場で押せるカード」</strong>に化けさせます。例えるなら ── <strong>壁の張り紙</strong>を、<strong>ボタン付きの受付パネル</strong>に変えるイメージ。</p>
+    </div>
+    <div class="ba">
+      <div class="bad"><span class="lab">BEFORE ── 素の通知</span>出張申請が届きました。申請者：山田太郎／名古屋 7/22-23／¥42,800。確認してください。<br><span style="font-size:15px;">→ 文字だけ。パッと頭に入らない。</span></div>
+      <div class="arrow">→</div>
+      <div class="good"><span class="lab">AFTER ── リッチカード</span>色帯・アイコン・整った表・状態バッジ・「開く」ボタン。<br><strong>一目で内容が分かって、その場で動ける。</strong></div>
+    </div>
+    <div class="callout blue" style="margin-top:auto;"><strong>今日のゴール：</strong>この"驚くカード"を、<strong>完成JSONを貼るだけ</strong>で自分のTeamsに届かせる。さらに <strong>そのJSONをCopilotに作らせる</strong>方法まで持ち帰ります。</div>
+  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span></div>
+</section>
+<!-- ===== S8: アダプティブカードとは（完成形を見せる） ===== -->
+<section class="slide" id="s8">
+  <span class="slide-num">8 / 19</span>
+  <div class="slide-head"><div class="slide-eyebrow">PA45｜第20回 ／ 完成イメージ</div><h1 class="slide-title">これを全員のTeamsに届けます <small>── アダプティブカードとは</small></h1><div class="concept-dot">Goal</div></div>
+  <div class="slide-body">
+    <div style="display:grid;grid-template-columns:1fr 1.05fr;gap:30px;align-items:center;">
+      <div>
+        <p style="font-size:20px;color:var(--muted);line-height:1.75;margin:0 0 14px;"><strong>アダプティブカード</strong>＝Teamsやメールに出せる <strong>"部品を組み合わせたカード"</strong>。色帯・表・ボタンを乗せられて、<strong>見る人のテーマ（明/暗）に合わせて自動で色が変わります</strong>。</p>
+        <div class="callout green" style="margin:0;"><strong>今回の題材：</strong>出張申請の通知カード（架空）。項目が多いぶん <strong>リッチに映えて</strong>、次回の"承認ボタン"にもつながります。</div>
+      </div>
+      <div style="display:flex;justify-content:center;">
+        <div class="acard">
+          <div class="ah"><span class="pl">✈</span><span class="ti">出張申請が届きました</span></div>
+          <div class="ab">
+            <div class="atop"><div><div class="l">申請者</div><div class="nm">山田 太郎</div><div class="sub">技術部 ・ 申請番号 #A-1042</div></div><div class="bdg">承認待ち</div></div>
+            <table><tr><td class="ft">行き先</td><td>愛知県 名古屋市（本社）</td></tr><tr><td class="ft">期間</td><td>7/22（水）〜 7/23（木）・ 1泊2日</td></tr><tr><td class="ft">目的</td><td>新ラインの立ち会い・技術打合せ</td></tr><tr><td class="ft">交通手段</td><td>新幹線（往復）</td></tr><tr><td class="ft">概算費用</td><td>¥42,800</td></tr></table>
+            <div class="an">先方の都合で日程が前倒しになりました。ご確認お願いします。</div>
+            <span class="abtn">申請内容を開く</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="src">出典：Microsoft Learn ／ 画面は実機を再現・人名/数値は架空</span><span class="chat-reminder">💬 #PA45 へ！</span></div>
+</section>
+<!-- ===== S9: リッチの正体（5部品） ===== -->
+<section class="slide" id="s9">
+  <span class="slide-num">9 / 19</span>
+  <div class="slide-head"><div class="slide-eyebrow">PA45｜第20回 ／ 仕組み</div><h1 class="slide-title">"リッチに見える"正体は、この5部品 <small>── 難しくない</small></h1><div class="concept-dot">Parts</div></div>
+  <div class="slide-body">
+    <div class="cards-3">
+      <div class="card blue"><div class="ico">🎨</div><h3 style="font-size:23px;">① 色帯＋アイコン</h3><p>見出しを <code>Container</code> の <code>accent</code> で色付け。一気に"製品っぽく"。</p></div>
+      <div class="card yellow"><div class="ico">🏷️</div><h3 style="font-size:23px;">② 状態バッジ</h3><p>「承認待ち」を <code>color:Warning</code> で。状態がひと目で分かる。</p></div>
+      <div class="card green"><div class="ico">📋</div><h3 style="font-size:23px;">③ FactSet</h3><p>「項目：値」が整然と並ぶ。<strong>これが業務システム感の正体</strong>。</p></div>
+    </div>
+    <div class="cards-2" style="margin-top:16px;">
+      <div class="card"><h3 style="font-size:23px;color:var(--blue-text);">④ 強弱のある文字</h3><p>申請者名を大きく太く。大事な情報が先に目に入る。</p></div>
+      <div class="card"><h3 style="font-size:23px;color:var(--green-text);">⑤ 押せるボタン</h3><p><code>Action.OpenUrl</code> で「申請内容を開く」。今回は<strong>開くだけ</strong>（押して結果が返るのは次回）。</p></div>
+    </div>
+    <div class="callout" style="margin-top:auto;"><strong>この5つが入るだけ</strong>で、素のテキストとの落差で「おおっ」となります。逆にテキストだけだと驚きは出ません。</div>
+  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="src">出典：Microsoft Learn</span><span class="chat-reminder">💬 #PA45 へ！</span></div>
+</section>
+<!-- ===== S10: JSONは書かない→Copilotに頼む ===== -->
+<section class="slide" id="s10">
+  <span class="slide-num">10 / 19</span>
+  <div class="slide-head"><div class="slide-eyebrow">PA45｜第20回 ／ AIと一緒に</div><h1 class="slide-title">JSONは"書かない"。Copilotに頼む <small>── 頼み方にコツ</small></h1><div class="concept-dot">Copilot</div></div>
+  <div class="slide-body">
+    <p style="font-size:20px;color:var(--muted);margin:0 0 12px;line-height:1.7;">カードの中身は <strong>JSON</strong>という文章。でも <strong>手で書く必要はありません</strong>。<strong>M365 Copilotチャット</strong>に「こういうカードを作って」と頼めば、そのまま貼れるJSONが返ってきます（Power Automate内蔵のCopilotより素直に出ます）。</p>
+    <div class="cards-3">
+      <div class="card blue"><div class="num">1</div><h3 style="font-size:22px;">バージョンを指定</h3><p><strong>Adaptive Card 1.5</strong> と最初に伝える。古い書式が混じるのを防ぐ。</p></div>
+      <div class="card green"><div class="num">2</div><h3 style="font-size:22px;">要素を箇条書きで渡す</h3><p>見出し／申請者／FactSetの項目／ボタン ── <strong>欲しい部品を並べる</strong>だけ。</p></div>
+      <div class="card yellow"><div class="num">3</div><h3 style="font-size:22px;">「JSONだけ」と縛る</h3><p>説明は不要、<strong>JSONだけ出して</strong>。そのまま貼れる形になる。</p></div>
+    </div>
+    <div class="callout blue" style="margin-top:auto;"><strong>頼み方の例：</strong>「Adaptive Card 1.5 のJSONを作って。用途はTeamsへの出張申請通知。①青い見出しバー ②申請者名 ③FactSet（行き先/期間/目的/交通手段/費用）④"申請内容を開く"ボタン。説明は不要、JSONだけ。」</div>
+  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="src">出典：Microsoft Learn</span><span class="chat-reminder">💬 #PA45 へ！</span></div>
+</section>
+<!-- ===== S11: Copilotの実機出力 ===== -->
+<section class="slide" id="s11">
+  <span class="slide-num">11 / 19</span>
+  <div class="slide-head"><div class="slide-eyebrow">PA45｜第20回 ／ 実演</div><h1 class="slide-title">実際にCopilotに頼むと、こう返ってきます <small>── そのまま動くJSON</small></h1><div class="concept-dot">Live</div></div>
+  <div class="slide-body">
+    <div style="display:grid;grid-template-columns:1.15fr 0.85fr;gap:24px;align-items:start;">
+      <div class="cop">
+        <div class="cu">Adaptive Card 1.5 のJSONを作って。Teamsへの出張申請通知。①青い見出しバー ②申請者名 ③FactSet（行き先/期間/目的/交通手段/費用）④"申請内容を開く"ボタン。説明は不要、JSONだけ。</div>
+        <div class="cw"><span class="ci"></span>Copilot</div>
+        <div class="copcode">
+          <div class="bar"><span>アダプティブ カード JSON</span><span class="tag">JSON</span></div>
+<pre>{
+  <span class="k">"$schema"</span>: <span class="s">"http://adaptivecards.io/..."</span>,
+  <span class="k">"type"</span>: <span class="s">"AdaptiveCard"</span>, <span class="k">"version"</span>: <span class="s">"1.5"</span>,
+  <span class="k">"body"</span>: [
+    { <span class="k">"type"</span>: <span class="s">"Container"</span>, <span class="k">"style"</span>: <span class="s">"emphasis"</span>,
+      <span class="k">"items"</span>: [ { <span class="k">"type"</span>: <span class="s">"TextBlock"</span>,
+        <span class="k">"text"</span>: <span class="s">"出張申請が届きました"</span>,
+        <span class="k">"color"</span>: <span class="s">"Accent"</span> } ] },
+    { <span class="k">"type"</span>: <span class="s">"FactSet"</span>, <span class="k">"facts"</span>: [ … ] } ],
+  <span class="k">"actions"</span>: [ { <span class="k">"type"</span>: <span class="s">"Action.OpenUrl"</span>, … } ]
+}</pre>
+        </div>
+        <div class="copchips"><span>行き先を大阪に変更して</span><span>申請者名を入力できるように</span></div>
+      </div>
+      <div>
+        <div class="callout green" style="margin-top:0;"><strong>ちゃんと動くJSONが即・出ます。</strong>「$schema」「AdaptiveCard」「version 1.5」が入った、貼れる形。</div>
+        <div class="callout" style="margin-top:14px;"><strong>でも…見出しが <code>emphasis</code>（グレー地）</strong>で来ました。イメージの"青帯"とちょっと違う。<br>→ 次のスライドで <strong>デザイナーで検品して仕上げます</strong>。</div>
+      </div>
+    </div>
+  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="src">出典：M365 Copilot 実機出力を再現 ／ 架空データ</span><span class="chat-reminder">💬 #PA45 へ！</span></div>
+</section>
+<!-- ===== S12: 検品（emphasis→accent） ===== -->
+<section class="slide" id="s12">
+  <span class="slide-num">12 / 19</span>
+  <div class="slide-head"><div class="slide-eyebrow">★ 検品 ／ FINISH</div><h1 class="slide-title">AIの"たたき台"を、デザイナーで仕上げる <small>── ここが肝</small></h1><div class="concept-dot">Review</div></div>
+  <div class="slide-body">
+    <p style="font-size:19px;color:var(--muted);margin:0 0 10px;line-height:1.65;">Copilotの出力は <strong>動くけど"あっさり"</strong>。<strong>アダプティブ カード デザイナー</strong>（GUI）に貼って見た目を確認し、<code>emphasis</code>→<code>accent</code>に直すだけで、驚く"青帯"になります。JSONは手で書かず、<strong>ここでポチポチ直す</strong>。<span style="font-size:17px;">（画面は<strong>英語表示</strong>です）</span></p>
+    <div style="display:grid;grid-template-columns:0.82fr 1.18fr;gap:22px;align-items:start;">
+      <div class="diffrow" style="grid-template-columns:1fr;gap:12px;">
+        <div class="diffcol plain"><div class="h">Copilotの出力</div><div class="b"><pre>"style": <span class="emh">"emphasis"</span></pre><p class="cap">見出しはグレー地。少しあっさり。</p></div></div>
+        <div class="diffcol rich"><div class="h">配布版（検品後）</div><div class="b"><pre>"style": <span class="ach">"accent"</span>,
+"bleed": true</pre><p class="cap">青帯＋アイコン＋バッジで"驚き"に。</p></div></div>
+      </div>
+      <div class="dz">
+        <div class="dtl"><span>Select host app：<span class="sel">Microsoft Teams</span></span><span>Target version：<span class="sel">1.5</span></span></div>
+        <div class="cols">
+          <div class="el"><div class="h">CARD ELEMENTS</div><ul><li>Container</li><li class="on">FactSet</li><li>ColumnSet</li><li>TextBlock</li><li>ActionSet</li></ul></div>
+          <div class="pv"><div class="acard" style="width:210px;transform:scale(.92);transform-origin:top center;"><div class="ah" style="padding:8px 12px;"><span class="pl" style="font-size:15px;">✈</span><span class="ti" style="font-size:13px;">出張申請が届きました</span></div><div class="ab" style="padding:9px 12px;"><div class="atop" style="margin-bottom:7px;"><div><div class="nm" style="font-size:12px;">山田 太郎</div><div class="sub" style="font-size:10px;">#A-1042</div></div><div class="bdg" style="font-size:10px;">承認待ち</div></div><table style="font-size:10px;"><tr><td class="ft" style="width:48px;">行き先</td><td>名古屋</td></tr><tr><td class="ft">費用</td><td>¥42,800</td></tr></table><span class="abtn" style="padding:5px 12px;font-size:11px;margin-top:8px;">申請内容を開く</span></div></div></div>
+          <div class="tr"><div class="h">CARD STRUCTURE</div><div class="t">▾ AdaptiveCard</div><div class="t">&nbsp;▾ Container [accent]</div><div class="t">&nbsp;&nbsp;TextBlock</div><div class="t">&nbsp;FactSet</div><div class="t">&nbsp;ActionSet</div></div>
+        </div>
+        <div class="json"><span class="c">CARD PAYLOAD EDITOR ／ 画面で組むとJSONが自動で出る</span> <span class="k">"type"</span>:<span class="s">"AdaptiveCard"</span>, <span class="k">"version"</span>:<span class="s">"1.5"</span> …</div>
+      </div>
+    </div>
+  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="src">出典：Microsoft Learn（Adaptive Cards Designer）</span><span class="chat-reminder">💬 #PA45 へ！</span></div>
+</section>
+<!-- ===== S13: 今日つくる全体像 ===== -->
+<section class="slide" id="s13">
+  <span class="slide-num">13 / 19</span>
+  <div class="slide-head"><div class="slide-eyebrow">PA45｜第20回 ／ ハンズオン準備</div><h1 class="slide-title">今日つくるフローは、たった3ステップ <small>── 全体像</small></h1><div class="concept-dot">Overview</div></div>
+  <div class="slide-body">
+    <div class="stepflow">
+      <div class="stepbox" style="border-color:#2a7dd4;background:var(--blue-bg);"><div class="badge" style="background:#2a7dd4;color:#fff;">STEP 1</div><h3>🖱️ ボタンで開始</h3><p>「手動でトリガー」。ボタンを押したら動くだけ。</p></div>
+      <div class="arr">→</div>
+      <div class="stepbox" style="border-color:#6264a7;background:#f1f1fa;"><div class="badge" style="background:#6264a7;color:#fff;">STEP 2</div><h3>💬 カードを投稿</h3><p>Teamsアクションに <strong>配布JSONを貼る</strong>。</p></div>
+      <div class="arr">→</div>
+      <div class="stepbox" style="border-color:#0f7b8a;background:#e6f4f6;"><div class="badge" style="background:#0f7b8a;color:#fff;">STEP 3</div><h3>🎉 Teamsに届く</h3><p>実行すると、自分のチームにカードが登場。</p></div>
+    </div>
+    <div class="cards-2" style="margin-top:18px;">
+      <div class="card blue"><h3 style="color:var(--blue-text);">🔑 受講生が触るのは1箇所だけ</h3><p>配布JSONの中の <strong>「申請者: 山田 太郎」を自分の名前に</strong>変えるだけ。他は固定で「まず動かす」を優先。</p></div>
+      <div class="card"><h3 style="color:var(--green-text);">📋 使うアクション</h3><p><strong>「アダプティブ カードを投稿して応答を待機する」</strong>。今回は情報カードなので<strong>投稿された時点でOK</strong>（応答は次回）。</p></div>
+    </div>
+  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span></div>
+</section>
+<!-- ===== S14: ①投稿アクションを置く ===== -->
+<section class="slide" id="s14">
+  <span class="slide-num">14 / 19</span>
+  <div class="slide-head"><div class="slide-eyebrow">★ STEP 2 ／ HANDS-ON</div><h1 class="slide-title">Teamsに投稿するアクションを置く <small>── 宛先を選ぶだけ</small></h1><div class="concept-dot">Build</div></div>
+  <div class="slide-body">
+    <div style="display:grid;grid-template-columns:0.9fr 1.1fr;gap:26px;align-items:start;">
+      <div class="flowmap">
+        <div class="flownode"><span class="fnbar" style="background:#2563EB;"></span><span class="fnico" style="background:#2563EB;">▶</span><span class="fntitle">フローを手動でトリガーする</span></div>
+        <div class="flowarrow"><span class="plus">＋</span></div>
+        <div class="flownode sel"><span class="fnbar" style="background:#6264a7;"></span><span class="fnico" style="background:#6264a7;">▦</span><span class="fntitle">アダプティブ カードを投稿して応答を待機する</span></div>
+      </div>
+      <div class="paact">
+        <div class="pahdr"><span class="paicon" style="background:linear-gradient(135deg,#5559c9,#7b83eb);">▦</span><span class="patitle">アダプティブ カードを投稿…</span></div>
+        <div class="pabody">
+          <div class="pafield"><span class="lbl">投稿者 <b>*</b></span><div class="inp dd">フロー ボット</div></div>
+          <div class="pafield"><span class="lbl">投稿先 <b>*</b></span><div class="inp dd">チャネル</div></div>
+          <div class="pafield"><span class="lbl">チーム <b>*</b></span><div class="inp dd">PA45 Demo</div></div>
+          <div class="pafield"><span class="lbl">チャネル <b>*</b></span><div class="inp dd">一般（General）</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="callout blue" style="margin-top:16px;"><strong>ここまでは選ぶだけ。</strong>投稿者＝フローボット、投稿先＝チャネル、そして <strong>自分のチームと投稿したいチャネル</strong>を選択。次に、肝心の"カード本体"を貼ります。</div>
+  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="src">出典：Microsoft Learn（Teams コネクタ）</span><span class="chat-reminder">💬 #PA45 へ！</span></div>
+</section>
+<!-- ===== S15: ②配布JSONを貼る ===== -->
+<section class="slide" id="s15">
+  <span class="slide-num">15 / 19</span>
+  <div class="slide-head"><div class="slide-eyebrow">★ STEP 2 ／ HANDS-ON</div><h1 class="slide-title">「メッセージ」欄に、配布JSONを貼る <small>── 直すのは名前だけ</small></h1><div class="concept-dot">Paste</div></div>
+  <div class="slide-body">
+    <div class="paact">
+      <div class="pahdr"><span class="paicon" style="background:linear-gradient(135deg,#5559c9,#7b83eb);">▦</span><span class="patitle">アダプティブ カードを投稿して応答を待機する</span></div>
+      <div class="pabody">
+        <div class="pafield"><span class="lbl">メッセージ <b>*</b>（アダプティブ カード JSON）</span>
+          <div class="inp" style="font-family:'Consolas',monospace;font-size:14px;line-height:1.5;color:#0f172a;white-space:pre-wrap;word-break:break-all;">{ "type": "AdaptiveCard", "version": "1.5", "body": [ { "type":"Container", "style":"accent", … 出張申請カード … }, { "type":"FactSet", "facts":[ … ] } ], "actions":[ { "type":"Action.OpenUrl", "title":<span class="tok">"申請内容を開く"</span> } ] }</div>
+        </div>
+      </div>
+    </div>
+    <div class="ba" style="margin-top:16px;">
+      <div class="good" style="background:var(--green-bg);border-color:#86efac;"><span class="lab" style="color:#065f46;">✔ 受講生が触るのはここだけ</span><code>"text": "申請者: 山田 太郎"</code> を<strong>自分の名前</strong>に置き換える。</div>
+      <div class="arrow">▶</div>
+      <div class="good" style="background:var(--blue-bg);border-color:var(--blue-line);"><span class="lab" style="color:#14528f;">他は固定でOK</span>金額・行き先はそのまま。まずは <strong>「動いた！」を最優先</strong>。</div>
+    </div>
+    <div class="callout" style="margin-top:auto;"><strong>ヒント：</strong>JSONは <strong>Copilotに作らせたもの or 配布ファイル</strong>をそのまま貼れます。中カッコの対応が崩れないよう、<strong>丸ごとコピペ</strong>が安全。</div>
+  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span></div>
+</section>
+<!-- ===== S16: 実行→Teamsに届く ===== -->
+<section class="slide" id="s16">
+  <span class="slide-num">16 / 19</span>
+  <div class="slide-head"><div class="slide-eyebrow">★ STEP 3 ／ ヤマ場</div><h1 class="slide-title">テスト実行 → 自分のTeamsにカードが届く 🎉</h1><div class="concept-dot">Ta-da!</div></div>
+  <div class="slide-body">
+    <div style="display:grid;grid-template-columns:1fr 1.05fr;gap:30px;align-items:center;">
+      <div>
+        <ul class="check" style="font-size:21px;">
+          <li><strong>テスト</strong> → 手動 → <strong>フローの実行</strong>を押す</li>
+          <li>選んだチームの<strong>チャネルにカードが登場</strong></li>
+          <li>投稿主は <strong>「ワークフロー経由の〇〇」</strong></li>
+        </ul>
+        <div class="callout green" style="margin-top:14px;"><strong>色は見る人のテーマで変わります。</strong>明るいTeamsでは<strong>水色帯</strong>、暗いTeamsでは<strong>濃紺帯</strong>に。どちらも狙い通りリッチ。</div>
+        <div class="callout" style="margin-top:12px;font-size:18px;"><strong>豆知識：</strong>今回のアクションは"応答を待機"するので、投稿後もフローは「実行中」のまま。<strong>カードが届けば成功</strong>。実行はキャンセルしてOK。</div>
+      </div>
+      <div style="display:flex;justify-content:center;">
+        <div style="background:#201f2b;border-radius:12px;padding:16px;">
+          <div class="acard" style="width:360px;background:#2b2a33;border-color:#3b3a44;">
+            <div class="ah" style="background:#0b1b3a;"><span class="pl">✈</span><span class="ti" style="color:#fff;">出張申請が届きました</span></div>
+            <div class="ab">
+              <div class="atop"><div><div class="l" style="color:#a9a9b3;">申請者</div><div class="nm" style="color:#fff;">山田 太郎</div><div class="sub" style="color:#a9a9b3;">技術部 ・ #A-1042</div></div><div class="bdg" style="color:#f0b429;">承認待ち</div></div>
+              <table style="color:#e6e6e6;"><tr><td class="ft" style="color:#fff;">行き先</td><td>愛知県 名古屋市</td></tr><tr><td class="ft" style="color:#fff;">期間</td><td>7/22〜7/23</td></tr><tr><td class="ft" style="color:#fff;">概算費用</td><td>¥42,800</td></tr></table>
+              <span class="abtn" style="background:transparent;color:#fff;border-color:#5b5b66;">申請内容を開く</span>
+            </div>
+          </div>
+          <div style="text-align:center;color:#9aa0aa;font-size:12px;margin-top:8px;">▲ 実機（暗いTeams）に届いた本物のカード</div>
+        </div>
+      </div>
+    </div>
+  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="src">実機で投稿・確認済み ／ 架空データ</span><span class="chat-reminder">💬 「できた！」を #PA45 へ！</span></div>
+</section>
+<!-- ===== S17: 応用＋次回への引き ===== -->
+<section class="slide" id="s17">
+  <span class="slide-num">17 / 19</span>
+  <div class="slide-head"><div class="slide-eyebrow">NEXT STEP</div><h1 class="slide-title">このカードに、次は"押せるボタン"を付けます <small>── 第21回予告</small></h1><div class="concept-dot">To be continued</div></div>
+  <div class="slide-body">
+    <div class="next">
+      <div class="box this"><span class="l">第20回（今回）</span>情報カードを<strong>投稿する</strong>まで。<br>ボタンは「開く」だけ（見て動く）。</div>
+      <div class="arrow">→</div>
+      <div class="box n21"><span class="l">第21回（次回）</span>承認・却下の <strong>Submitボタン</strong>を足して、<strong>押した結果をフローが受け取って</strong>次の処理へ。</div>
+    </div>
+    <div class="cards-3" style="margin-top:18px;">
+      <div class="card blue"><div class="ico">🧾</div><h3 style="font-size:20px;">申請・承認フロー</h3><p>今日のカードに承認ボタン → 上司が押すだけで回る。</p></div>
+      <div class="card green"><div class="ico">📅</div><h3 style="font-size:20px;">出欠・アンケート</h3><p>ボタンで回答を集計。Teamsで完結。</p></div>
+      <div class="card yellow"><div class="ico">🔔</div><h3 style="font-size:20px;">通知の格上げ</h3><p>いつもの通知を、この型でリッチに置き換え。</p></div>
+    </div>
+    <div class="callout blue" style="margin-top:auto;"><strong>今日の型（頼む→検品→貼る）</strong>さえ覚えれば、中身を替えるだけで <strong>いろんなカード</strong>が作れます。まずは1枚、届かせられたら大成功。</div>
+  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span></div>
+</section>
+<!-- ===== S18: 使うときの注意 ===== -->
+<section class="slide" id="s18">
+  <span class="slide-num">18 / 19</span>
+  <div class="slide-head"><div class="slide-eyebrow">PA45｜第20回 ／ 大切なこと</div><h1 class="slide-title">使うときの注意 <small>── ここだけ押さえる</small></h1><div class="concept-dot">Cautions</div></div>
+  <div class="slide-body">
+    <div class="cards-3">
+      <div class="card"><div class="ico">🔐</div><h3 style="font-size:23px;color:#92400e;">個人情報は載せない</h3><p>カードは<strong>チャネルの全員に見えます</strong>。氏名・金額など機微な内容は入れすぎない。練習は<strong>架空データ</strong>で。</p></div>
+      <div class="card"><div class="ico">🎯</div><h3 style="font-size:23px;color:#1d4ed8;">まず自分/テスト用に</h3><p>いきなり全社チャネルへ投稿しない。<strong>自分のテストチャネル</strong>で見た目を確かめてから。</p></div>
+      <div class="card green"><div class="ico">🧪</div><h3 style="font-size:23px;color:#15803d;">"待機"は止まって当然</h3><p>今回のアクションは応答待ち。<strong>投稿できていれば成功</strong>。実行はキャンセルでOK。</p></div>
+    </div>
+    <div class="callout" style="margin-top:auto;"><strong>免責：</strong>本内容は公開日時点の情報です。筆者が実機で学んで試した手順で、<strong>Microsoftの仕様・画面は今後変わる</strong>可能性があります。最新は公式（Microsoft Learn）もご確認ください。</div>
+  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="src">出典：Microsoft Learn</span><span class="chat-reminder">💬 #PA45 へ！</span></div>
+</section>
+<!-- ===== S19: クロージング＆アンケート ===== -->
+<section class="slide anchor" id="s19">
+  <span class="slide-num">19 / 19</span>
+  <div class="slide-head"><div class="slide-eyebrow">Thank you!</div><h1 class="slide-title">おつかれさまでした！ <small>── アンケートのお願い</small></h1></div>
+  <div class="slide-body">
+    <div class="pull-quote" style="background:rgba(255,255,255,.6);font-size:26px;padding:18px;">✈💬 そっけない通知が、リッチカードに ── 今日から"見せて伝わる"自動化を！</div>
+    <div class="cards-2" style="margin-top:14px;">
+      <div class="card"><h3>📝 アンケートにご協力ください</h3>
+        <p style="margin:0 0 12px;">2分で終わります。回答者には<strong>参加バッジ</strong>をお送りします🏅 「ここが分かりにくかった」も大歓迎。次回をもっと良くする力になります。</p>
+        <p style="margin:0;font-size:22px;">▶ <a class="maillink" href="https://forms.cloud.microsoft/r/mVzhNWH6JE" target="_blank">アンケートに回答する</a></p>
+      </div>
+      <div class="card blue"><h3>📚 復習＆次回の予約</h3>
+        <p style="margin:0 0 10px;font-size:20px;">📚 <a class="maillink" href="https://haru-powerplatform.github.io/pa45/" target="_blank">参加者向けサイト（全回スライド）</a></p>
+        <p style="margin:0 0 10px;font-size:20px;">🌐 <a class="maillink" href="https://haru-powerplatform.github.io/pa45/slides/vol-20/" target="_blank">今日のスライド（復習用）</a></p>
+        <p style="margin:0;font-size:20px;">📅 <a class="maillink" href="https://powerautomate-create.connpass.com/" target="_blank">次回（第21回・承認ボタン編）をチェック</a></p>
+      </div>
+    </div>
+    <div style="text-align:center;color:#78350f;font-weight:700;margin-top:auto;line-height:1.5;">
+      <div style="font-size:25px;">次回は、このカードに"押せるボタン"を付けます 🔘</div>
+      <div style="font-size:22px;margin-top:6px;">また一緒に「できた！」を作りましょう 😊</div>
+    </div>
+  </div>
+  <img class="deco" src="assets/irasutoya_businessman.png" alt="" style="left:34px;bottom:24px;height:150px;">
+  <div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 学んだこと・気づいたことを #PA45 でリアルタイムに投稿しよう！スクショOK！</span></div>
+</section>

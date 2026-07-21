@@ -1,0 +1,465 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PA45 第20回 構成ストーリーボード｜アダプティブカード編（出張申請）</title>
+<style>
+  :root{
+    --blue-bg:#eaf2fc;--blue-mid:#2a7dd4;--blue-text:#14528f;--blue-line:#b8d3ef;
+    --orange:#e06030;--red:#c03520;--surface:#fff;--bg:#eef2f7;--text:#1f2937;
+    --muted:#475569;--hint:#94a3b8;--border:#e2e8f0;
+    --green-bg:#ecfdf5;--green-text:#065f46;--yellow-bg:#fffbeb;--yellow-text:#92400e;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--text);
+    font-family:"Meiryo UI","Yu Gothic UI","Segoe UI",sans-serif;font-size:16px;line-height:1.7;}
+  .wrap{max-width:1080px;margin:0 auto;padding:32px 24px 80px;}
+  .doc-head{background:linear-gradient(135deg,#14528f 0%,#2a7dd4 100%);color:#fff;
+    border-radius:16px;padding:30px 36px;border-bottom:5px solid #fbbf24;margin-bottom:12px;}
+  .doc-head .eyebrow{font-size:14px;font-weight:700;letter-spacing:.05em;color:#bfdcff;text-transform:uppercase;}
+  .doc-head h1{margin:6px 0 10px;font-size:30px;line-height:1.25;}
+  .doc-head p{margin:0;font-size:16px;color:#e3eefc;}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;margin:16px 0 30px;font-size:13px;color:var(--muted);}
+  .legend span{display:inline-flex;align-items:center;gap:7px;background:#fff;border:1px solid var(--border);
+    border-radius:20px;padding:6px 14px;}
+  .dot{width:10px;height:10px;border-radius:50%;display:inline-block;}
+  .dot.ok{background:#16a34a;}.dot.todo{background:#f59e0b;}
+
+  section{background:#fff;border:1px solid var(--border);border-radius:16px;
+    padding:28px 32px;margin-bottom:22px;box-shadow:0 2px 10px rgba(15,40,80,.05);}
+  .sec-tag{display:inline-block;font-size:13px;font-weight:800;color:var(--blue-mid);
+    background:var(--blue-bg);padding:4px 14px;border-radius:20px;letter-spacing:.03em;}
+  h2{font-size:23px;margin:12px 0 4px;line-height:1.35;}
+  .lede{color:var(--muted);font-size:15px;margin:0 0 18px;}
+  h3{font-size:17px;margin:22px 0 10px;color:var(--blue-text);}
+  p{margin:0 0 12px;}
+  .muted{color:var(--muted);}
+  .small{font-size:13px;}
+  code{font-family:"Consolas","DM Mono",monospace;background:#eef2f7;padding:2px 7px;border-radius:5px;font-size:.92em;color:#0f172a;}
+
+  /* summary grid */
+  .sum{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:6px;}
+  .sum .item{background:#f8fafc;border:1px solid var(--border);border-radius:12px;padding:16px 20px;}
+  .sum .item .k{font-size:12px;font-weight:800;color:var(--blue-mid);letter-spacing:.04em;}
+  .sum .item .v{font-size:17px;font-weight:700;margin-top:4px;}
+  .sum .item .n{font-size:13px;color:var(--muted);margin-top:3px;}
+
+  /* timeline */
+  .tl{display:flex;flex-direction:column;gap:8px;margin-top:8px;}
+  .tl .row{display:grid;grid-template-columns:96px 1fr;gap:14px;align-items:stretch;}
+  .tl .t{font-weight:800;color:var(--blue-mid);font-size:14px;background:var(--blue-bg);
+    border-radius:8px;display:flex;align-items:center;justify-content:center;}
+  .tl .c{background:#f8fafc;border:1px solid var(--border);border-radius:10px;padding:12px 18px;}
+  .tl .c b{font-size:15px;}
+  .tl .c .d{font-size:13px;color:var(--muted);}
+  .tl .row.peak .t{background:#fef3c7;color:#92400e;}
+  .tl .row.peak .c{background:#fffbeb;border-color:#fde68a;}
+
+  /* before/after */
+  .ba{display:grid;grid-template-columns:1fr 44px 1fr;align-items:center;gap:10px;margin-top:12px;}
+  .ba .arrow{text-align:center;font-size:26px;color:var(--blue-mid);font-weight:800;}
+  .ba .lab{font-weight:800;font-size:13px;letter-spacing:.03em;margin-bottom:8px;display:block;}
+  .ba .before{background:#fff8f7;border:1px solid #fadcd6;border-radius:12px;padding:16px 18px;}
+  .ba .after{background:#f4f9f4;border:1px solid #cfe9cf;border-radius:12px;padding:16px 18px;}
+  .plainmsg{font-size:14px;color:#57534e;line-height:1.7;}
+
+  callout,.callout{display:block;background:var(--yellow-bg);border-left:5px solid #f59e0b;
+    padding:14px 20px;border-radius:8px;color:#78350f;margin:14px 0;font-size:14.5px;line-height:1.7;}
+  .callout.blue{background:var(--blue-bg);border-left-color:#2a7dd4;color:#14528f;}
+  .callout.green{background:var(--green-bg);border-left-color:#059669;color:#065f46;}
+  .callout b{font-weight:800;}
+
+  .mocklabel{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:800;color:#64748b;
+    text-transform:uppercase;letter-spacing:.05em;margin:0 0 8px;}
+  .mocklabel .badge{font-size:10px;font-weight:800;padding:2px 8px;border-radius:10px;}
+  .badge.ok{background:#dcfce7;color:#166534;}.badge.todo{background:#fef3c7;color:#92400e;}
+  .mockwrap{background:#f1f5f9;border:1px solid var(--border);border-radius:14px;padding:22px;display:flex;justify-content:center;}
+
+  /* ===== Teams adaptive card mock (faithful) ===== */
+  .teams-stage{background:#f5f5f7;border-radius:12px;padding:20px 22px;max-width:520px;width:100%;
+    font-family:"Segoe UI","Meiryo UI",sans-serif;}
+  .teams-bot{display:flex;align-items:center;gap:9px;margin-bottom:10px;}
+  .teams-bot .av{width:30px;height:30px;border-radius:6px;background:#5b5fc7;color:#fff;
+    display:flex;align-items:center;justify-content:center;font-size:15px;}
+  .teams-bot .nm{font-size:13px;font-weight:700;color:#242424;}
+  .teams-bot .tm{font-size:11px;color:#616161;}
+  .ac-card{background:#fff;border:1px solid #e1dfdd;border-radius:8px;overflow:hidden;
+    box-shadow:0 1px 2px rgba(0,0,0,.08);}
+  .ac-head{background:#e3ebf9;padding:13px 18px;display:flex;align-items:center;gap:10px;}
+  .ac-head .pl{font-size:19px;}
+  .ac-head .ti{font-size:16px;font-weight:700;color:#1b1b1b;}
+  .ac-body{padding:15px 18px 17px;}
+  .ac-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;}
+  .ac-top .lbl{font-size:12px;color:#616161;}
+  .ac-top .nm{font-size:15px;font-weight:700;color:#1b1b1b;line-height:1.3;}
+  .ac-top .sub{font-size:12px;color:#616161;}
+  .ac-top .badge{font-size:12px;font-weight:700;color:#b7791f;white-space:nowrap;padding-top:2px;}
+  .ac-facts{width:100%;border-collapse:collapse;font-size:13.5px;}
+  .ac-facts td{padding:3px 0;vertical-align:top;}
+  .ac-facts .ft{font-weight:700;color:#1b1b1b;width:92px;white-space:nowrap;}
+  .ac-facts .fv{color:#242424;}
+  .ac-note{margin-top:12px;font-size:12.5px;color:#616161;line-height:1.6;}
+  .ac-btn{margin-top:15px;display:inline-block;border:1px solid #c7c7c7;border-radius:4px;
+    padding:8px 18px;font-size:13.5px;font-weight:600;color:#242424;background:#fff;}
+
+  /* callouts pointing at parts */
+  .partlist{list-style:none;padding:0;margin:14px 0 0;display:grid;grid-template-columns:1fr 1fr;gap:8px 18px;}
+  .partlist li{font-size:13.5px;color:var(--muted);padding-left:22px;position:relative;line-height:1.5;}
+  .partlist li::before{content:'●';position:absolute;left:0;color:var(--blue-mid);font-size:10px;top:4px;}
+  .partlist b{color:var(--text);}
+
+  /* ===== Copilot chat mock (dark) ===== */
+  .cop{background:#1f1f24;border-radius:14px;padding:18px 18px 16px;max-width:560px;width:100%;
+    font-family:"Segoe UI","Meiryo UI",sans-serif;color:#e6e6e6;}
+  .cop .user{background:#2d2d33;border-radius:12px;padding:12px 15px;font-size:13px;line-height:1.6;
+    color:#e6e6e6;margin:0 0 16px auto;max-width:92%;}
+  .cop .who{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;margin-bottom:8px;color:#f3f3f3;}
+  .cop .who .ci{width:20px;height:20px;border-radius:5px;
+    background:conic-gradient(from 210deg,#7c5cff,#43b6ff,#25d0ab,#7c5cff);}
+  .code{background:#141417;border:1px solid #2c2c33;border-radius:10px;overflow:hidden;}
+  .code .bar{display:flex;align-items:center;justify-content:space-between;
+    background:#26262c;padding:6px 12px;font-size:11px;color:#a9a9b3;}
+  .code .bar .tag{background:#34343c;color:#c9c9d4;border-radius:5px;padding:2px 9px;font-weight:700;font-size:10.5px;}
+  .code pre{margin:0;padding:12px 14px;font-family:"Consolas","DM Mono",monospace;font-size:11.5px;
+    line-height:1.55;color:#dcdcdc;overflow-x:auto;max-height:300px;}
+  .code .k{color:#9cdcfe;}.code .s{color:#ce9178;}.code .n{color:#b5cea8;}.code .p{color:#808080;}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;}
+  .chips .chip{background:#2b2b31;border:1px solid #3a3a42;color:#d5d5dd;border-radius:16px;
+    padding:6px 13px;font-size:12px;}
+  .fade{font-size:11px;color:#8a8a93;text-align:center;margin-top:12px;}
+
+  /* diff two-up */
+  .diff{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:12px;}
+  .diff .col{border-radius:12px;overflow:hidden;border:1px solid var(--border);}
+  .diff .col .h{padding:10px 14px;font-size:13px;font-weight:800;color:#fff;}
+  .diff .col.plain .h{background:#94a3b8;}
+  .diff .col.rich .h{background:#2a7dd4;}
+  .diff .col .b{padding:14px;background:#fff;}
+  .diff .col pre{margin:0;font-family:"Consolas",monospace;font-size:12px;line-height:1.6;color:#0f172a;
+    background:#f1f5f9;border-radius:8px;padding:12px;overflow-x:auto;}
+  .diff .col pre .em{background:#fde68a;border-radius:3px;padding:0 3px;font-weight:700;}
+  .diff .col pre .ac{background:#bfdbfe;border-radius:3px;padding:0 3px;font-weight:700;}
+
+  /* ===== Designer mock ===== */
+  .designer{background:#fff;border:1px solid #d6dbe1;border-radius:8px;overflow:hidden;max-width:640px;width:100%;
+    font-family:"Segoe UI","Meiryo UI",sans-serif;font-size:12px;}
+  .dz-tool{display:flex;align-items:center;gap:14px;background:#faf9f8;border-bottom:1px solid #e6e4e2;padding:8px 12px;font-size:11.5px;color:#333;}
+  .dz-tool .sel{background:#fff;border:1px solid #c7c7c7;border-radius:4px;padding:3px 10px;}
+  .dz-cols{display:grid;grid-template-columns:130px 1fr 150px;}
+  .dz-cols>div{padding:10px 12px;}
+  .dz-el{border-right:1px solid #eee;}
+  .dz-el .hd{font-size:10px;font-weight:800;color:#8a8886;letter-spacing:.04em;margin-bottom:8px;}
+  .dz-el ul{list-style:none;padding:0;margin:0;}
+  .dz-el li{padding:5px 8px;border-radius:4px;color:#333;font-size:11.5px;}
+  .dz-el li.on{background:#eef4fc;color:#14528f;font-weight:700;}
+  .dz-prev{background:#f3f2f1;display:flex;align-items:center;justify-content:center;}
+  .dz-tree{border-left:1px solid #eee;font-size:11px;color:#444;}
+  .dz-tree .hd{font-size:10px;font-weight:800;color:#8a8886;letter-spacing:.04em;margin-bottom:8px;}
+  .dz-tree .t{padding:2px 0;white-space:nowrap;}
+  .dz-json{background:#1e1e1e;color:#dcdcdc;border-top:1px solid #333;padding:10px 14px;
+    font-family:"Consolas",monospace;font-size:11px;line-height:1.5;}
+  .dz-json .k{color:#9cdcfe;}.dz-json .s{color:#ce9178;}.dz-json .l{color:#6a9955;}
+  .mini-card{transform:scale(.82);transform-origin:center;}
+
+  /* ===== PA action mock ===== */
+  .pa{max-width:560px;width:100%;font-family:"Segoe UI","Meiryo UI",sans-serif;}
+  .pa-node{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #d6dbe1;
+    border-left:4px solid #6264a7;border-radius:8px;padding:11px 14px;box-shadow:0 1px 3px rgba(0,0,0,.08);margin:0 auto 4px;max-width:330px;}
+  .pa-node .ic{width:26px;height:26px;border-radius:5px;background:#6264a7;color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;}
+  .pa-node .tx{font-size:13px;font-weight:600;color:#242424;line-height:1.3;}
+  .pa-plus{text-align:center;color:#a0a0a0;font-size:18px;margin:2px 0;}
+  .pa-panel{background:#fff;border:1px solid #d6dbe1;border-radius:8px;padding:16px 18px;margin-top:10px;}
+  .pa-tabs{display:flex;gap:18px;border-bottom:1px solid #eee;margin-bottom:14px;font-size:12.5px;color:#666;}
+  .pa-tabs .on{color:#14528f;font-weight:700;border-bottom:2px solid #2a7dd4;padding-bottom:8px;}
+  .pa-field{margin-bottom:13px;}
+  .pa-field label{display:block;font-size:12px;font-weight:700;color:#333;margin-bottom:4px;}
+  .pa-field label .req{color:#c03520;}
+  .pa-input{border:1px solid #c7c7c7;border-radius:4px;padding:7px 11px;font-size:13px;color:#242424;
+    display:flex;align-items:center;justify-content:space-between;background:#fff;}
+  .pa-input.ph{color:#8a8886;}
+  .pa-json{border:1px solid #c7c7c7;border-radius:4px;background:#fbfbfb;padding:10px 12px;
+    font-family:"Consolas",monospace;font-size:11px;line-height:1.5;color:#0f172a;max-height:150px;overflow:auto;}
+  .pa-json .hi{background:#fff3bf;border-radius:3px;padding:0 2px;}
+  .pa-conn{display:flex;align-items:center;gap:7px;font-size:11.5px;color:#0f6c3f;margin-top:6px;}
+
+  .next{display:grid;grid-template-columns:1fr 44px 1fr;align-items:center;gap:10px;margin-top:10px;}
+  .next .arrow{text-align:center;font-size:24px;color:#7c3aed;font-weight:800;}
+  .next .box{border-radius:12px;padding:16px 18px;font-size:14px;line-height:1.6;}
+  .next .this{background:var(--blue-bg);border:1px solid var(--blue-line);color:#14528f;}
+  .next .n21{background:#f5f3ff;border:1px solid #ddd6fe;color:#5b21b6;}
+  .next .box .l{font-weight:800;font-size:12px;letter-spacing:.03em;display:block;margin-bottom:6px;}
+
+  .todos{background:#fffbeb;border:1px solid #fde68a;border-radius:12px;padding:16px 22px;}
+  .todos h3{color:#92400e;margin-top:0;}
+  .todos ul{margin:0;padding-left:20px;}
+  .todos li{margin-bottom:7px;font-size:14px;color:#78350f;}
+  .foot{text-align:center;color:var(--hint);font-size:12px;margin-top:24px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="doc-head">
+    <div class="eyebrow">PA45 第20回 ・ 構成ストーリーボード</div>
+    <h1>アダプティブカードの作り方 ― “そっけない通知”が、リッチカードに化ける</h1>
+    <p>題材：出張申請カード（架空）／45分・投稿まで／完成JSON配布＋M365 Copilotでの作り方を実演</p>
+  </div>
+  <div class="legend">
+    <span><i class="dot ok"></i>実機で裏取り済み（スクショ取得）</span>
+    <span><i class="dot todo"></i>次セッションで撮り直し予定</span>
+    <span class="small">※ 画面はすべて実機スクショを HTML/CSS で忠実に再現したモックです（人名・数値は架空）</span>
+  </div>
+
+  <!-- 0. 企画サマリ -->
+  <section>
+    <span class="sec-tag">企画サマリ</span>
+    <h2>この回でやること・やらないこと</h2>
+    <p class="lede">「作れなくても、貼れば動く」を守りつつ、“受講生が驚くリッチなカード”を全員のTeamsに届けるのがゴール。</p>
+    <div class="sum">
+      <div class="item"><div class="k">題材</div><div class="v">出張申請カード</div><div class="n">申請者・行き先・期間・目的・費用が並ぶ（架空）</div></div>
+      <div class="item"><div class="k">方式</div><div class="v">完成JSONを配布 → 貼る</div><div class="n">受講生が触るのは「申請者名」1箇所だけ</div></div>
+      <div class="item"><div class="k">スコープ</div><div class="v">Teamsに投稿するまで</div><div class="n">押せる承認ボタン＝応答待ちは第21回へ</div></div>
+      <div class="item"><div class="k">AIの見せ場</div><div class="v">M365 Copilotで作り方も実演</div><div class="n">「もらう」だけでなく「自分でも作れる」まで</div></div>
+    </div>
+  </section>
+
+  <!-- 1. タイムライン -->
+  <section>
+    <span class="sec-tag">45分の流れ</span>
+    <h2>タイムライン</h2>
+    <p class="lede">Copilotは“見せる”、ハンズオンは配布JSONで“確実に動かす”。二段構えで時間を守る。</p>
+    <div class="tl">
+      <div class="row"><div class="t">0–8分</div><div class="c"><b>掴み＋Before/After</b><div class="d">「ただの張り紙 → 押せる受付ボタン」のたとえ。素の通知とリッチカードを並べて見せる。</div></div></div>
+      <div class="row"><div class="t">8–18分</div><div class="c"><b>アダプティブカードとは／Copilot実演</b><div class="d">M365 Copilotに頼む → JSONが出る → デザイナーで確認（＝検品）。「JSONは書かなくていい」を体感。</div></div></div>
+      <div class="row peak"><div class="t">18–35分</div><div class="c"><b>ハンズオン（ヤマ場）</b><div class="d">フローに「アダプティブカードを投稿する」を置く → 配布JSONを貼る → 申請者名だけ書き換え → 実行 → 自分のTeamsに届く 🎉</div></div></div>
+      <div class="row"><div class="t">35–42分</div><div class="c"><b>応用チラ見せ＋次回の引き</b><div class="d">「このカードに“押せるボタン”を付けます」＝第21回 承認ボタン編へ。</div></div></div>
+      <div class="row"><div class="t">42–45分</div><div class="c"><b>まとめ・質疑</b></div></div>
+    </div>
+  </section>
+
+  <!-- 2. 掴み -->
+  <section>
+    <span class="sec-tag">① 掴み（0–8分）</span>
+    <h2>「ただの張り紙」と「押せる受付ボタン」</h2>
+    <p class="lede">素っ気ないテキスト通知（Before）と、見やすくて押せるカード（After）を並べて落差で掴む。</p>
+    <div class="ba">
+      <div class="before">
+        <span class="lab" style="color:#9f1239;">BEFORE ― 素の通知</span>
+        <div class="plainmsg">出張申請が届きました。<br>申請者：山田太郎<br>行き先：名古屋 期間：7/22-23<br>費用：42800円<br>確認してください。</div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="after">
+        <span class="lab" style="color:#065f46;">AFTER ― リッチカード</span>
+        <div class="plainmsg" style="color:#065f46;">色帯・アイコン・項目が整った表・状態バッジ・「開く」ボタン。<br><b>一目で内容が分かって、その場で動ける。</b></div>
+      </div>
+    </div>
+    <div class="callout blue">たとえ話は、はるの語彙で一番ピンとくるものに差し替え可（張り紙／そっけないメモ→記入欄付きの申込用紙、など）。</div>
+  </section>
+
+  <!-- 3. 完成カード -->
+  <section>
+    <span class="sec-tag">② 完成カード ― 受講生が驚くゴール</span>
+    <h2>これを全員のTeamsに届ける</h2>
+    <p class="lede">下は実機のカードデザイナー（Microsoft Teamsホスト）でレンダリングした“正”を再現したもの。配布JSONはこの見た目で確定済み。</p>
+
+    <div class="mocklabel">Teams に届いたカード <span class="badge ok">実機裏取り済み</span></div>
+    <div class="mockwrap">
+      <div class="teams-stage">
+        <div class="teams-bot"><div class="av">✈</div><div><div class="nm">申請フロー Bot</div><div class="tm">投稿しました ・ たった今</div></div></div>
+        <div class="ac-card">
+          <div class="ac-head"><span class="pl">✈</span><span class="ti">出張申請が届きました</span></div>
+          <div class="ac-body">
+            <div class="ac-top">
+              <div><div class="lbl">申請者</div><div class="nm">山田 太郎</div><div class="sub">技術部 ・ 申請番号 #A-1042</div></div>
+              <div class="badge">承認待ち</div>
+            </div>
+            <table class="ac-facts">
+              <tr><td class="ft">行き先</td><td class="fv">愛知県 名古屋市（本社）</td></tr>
+              <tr><td class="ft">期間</td><td class="fv">7/22（水）〜 7/23（木）・ 1泊2日</td></tr>
+              <tr><td class="ft">目的</td><td class="fv">新ラインの立ち会い・技術打合せ</td></tr>
+              <tr><td class="ft">交通手段</td><td class="fv">新幹線（往復）</td></tr>
+              <tr><td class="ft">概算費用</td><td class="fv">¥42,800</td></tr>
+            </table>
+            <div class="ac-note">先方の都合で日程が前倒しになりました。ご確認お願いします。</div>
+            <span class="ac-btn">申請内容を開く</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <h3>“リッチに見える”正体（5つの部品）</h3>
+    <ul class="partlist">
+      <li><b>色帯＋アイコン</b>（style: accent）で製品っぽさ</li>
+      <li><b>状態バッジ</b>「承認待ち」（color: Warning）</li>
+      <li><b>FactSet</b>で項目：値が整然と並ぶ＝業務システム感</li>
+      <li><b>強弱のある文字</b>（申請者名を大きく太く）</li>
+      <li><b>ボタン</b>「申請内容を開く」（Action.OpenUrl）＝押せる</li>
+      <li class="small muted">※ 今回は開くだけ。押して結果が返るのは次回。</li>
+    </ul>
+  </section>
+
+  <!-- 4. Copilotで作る -->
+  <section>
+    <span class="sec-tag">③ Copilotで作る（8–18分・実演）</span>
+    <h2>JSONは“書かない”。M365 Copilotに頼む</h2>
+    <p class="lede">PA内蔵Copilotより M365 Copilotチャットの方が素直にJSONを出す。下は実機で実際に投げたプロンプトと返答。</p>
+
+    <div class="mocklabel">M365 Copilot チャット <span class="badge ok">実機裏取り済み</span></div>
+    <div class="mockwrap">
+      <div class="cop">
+        <div class="user">Adaptive Card 1.5 のJSONを作ってください。用途はTeamsへの「出張申請」通知。含める要素：①青い見出しバー「出張申請が届きました」②申請者名 ③FactSetで行き先／期間／目的／交通手段／概算費用 ④「申請内容を開く」ボタン（Action.OpenUrl）。…説明は不要、JSONだけ。</div>
+        <div class="who"><span class="ci"></span>Copilot</div>
+        <div class="code">
+          <div class="bar"><span>アダプティブ カード JSON</span><span class="tag">JSON</span></div>
+<pre>{
+  <span class="k">"$schema"</span>: <span class="s">"http://adaptivecards.io/schemas/adaptive-card.json"</span>,
+  <span class="k">"type"</span>: <span class="s">"AdaptiveCard"</span>,
+  <span class="k">"version"</span>: <span class="s">"1.5"</span>,
+  <span class="k">"body"</span>: [
+    { <span class="k">"type"</span>: <span class="s">"Container"</span>, <span class="k">"style"</span>: <span class="s">"emphasis"</span>, <span class="k">"items"</span>: [
+      { <span class="k">"type"</span>: <span class="s">"TextBlock"</span>, <span class="k">"text"</span>: <span class="s">"出張申請が届きました"</span>,
+        <span class="k">"weight"</span>: <span class="s">"Bolder"</span>, <span class="k">"color"</span>: <span class="s">"Accent"</span> } ] },
+    { <span class="k">"type"</span>: <span class="s">"TextBlock"</span>, <span class="k">"text"</span>: <span class="s">"申請者: 山田 太郎"</span>, <span class="k">"weight"</span>: <span class="s">"Bolder"</span> },
+    { <span class="k">"type"</span>: <span class="s">"FactSet"</span>, <span class="k">"facts"</span>: [
+      { <span class="k">"title"</span>: <span class="s">"行き先"</span>, <span class="k">"value"</span>: <span class="s">"東京"</span> },
+      { <span class="k">"title"</span>: <span class="s">"期間"</span>, <span class="k">"value"</span>: <span class="s">"2026/07/20 〜 2026/07/22"</span> },
+      { <span class="k">"title"</span>: <span class="s">"概算費用"</span>, <span class="k">"value"</span>: <span class="s">"¥50,000"</span> } ] }
+  ],
+  <span class="k">"actions"</span>: [
+    { <span class="k">"type"</span>: <span class="s">"Action.OpenUrl"</span>, <span class="k">"title"</span>: <span class="s">"申請内容を開く"</span>, <span class="k">"url"</span>: <span class="s">"https://..."</span> } ]
+}</pre>
+        </div>
+        <div class="chips">
+          <span class="chip">行き先を大阪に変更して</span>
+          <span class="chip">申請者名を入力できるようにする</span>
+          <span class="chip">ボタンのURLを変更して</span>
+        </div>
+        <div class="fade">AI で生成されたコンテンツは誤りを含む可能性があります</div>
+      </div>
+    </div>
+
+    <h3>Copilotへの頼み方（崩さないコツ）</h3>
+    <div class="callout blue">
+      <b>① バージョンを指定</b>（Adaptive Card 1.5）／<b>② 要素を箇条書きで渡す</b>（見出し・申請者・FactSet項目・ボタン）／<b>③「JSONだけ」と縛る</b>。
+      これを外すと古いschemaやTeams非対応の書式が混じる ― <b>だからデザイナーで検品する</b>。
+    </div>
+  </section>
+
+  <!-- 5. 検品 -->
+  <section>
+    <span class="sec-tag">④ 検品 ― AIの“たたき台”を仕上げる</span>
+    <h2>Copilotのままだと、見出しの青がイメージと違う</h2>
+    <p class="lede">実機で確認した“本物の差”。Copilotは <code>style:"emphasis"</code>（グレー地＋青文字）で出す。配布版は <code>style:"accent"</code>（青帯）に直してリッチにする。これがこの回の一番の学び。</p>
+
+    <div class="diff">
+      <div class="col plain">
+        <div class="h">Copilotの出力（そのまま）</div>
+        <div class="b"><pre>"type": "Container",
+"style": <span class="em">"emphasis"</span>,
+  ...
+"color": "Accent"</pre>
+        <p class="small muted" style="margin:10px 0 0;">動くけど見出しはグレー地。項目も最小限で少しあっさり。</p></div>
+      </div>
+      <div class="col rich">
+        <div class="h">配布版（デザイナーで検品後）</div>
+        <div class="b"><pre>"type": "Container",
+"style": <span class="ac">"accent"</span>,
+"bleed": true,
+  ... ＋アイコン・状態バッジ</pre>
+        <p class="small muted" style="margin:10px 0 0;">青帯＋✈＋「承認待ち」バッジで“驚くリッチ”に。</p></div>
+      </div>
+    </div>
+
+    <div class="mocklabel" style="margin-top:20px;">アダプティブ カード デザイナー <span class="badge ok">実機裏取り済み</span></div>
+    <div class="mockwrap">
+      <div class="designer">
+        <div class="dz-tool"><span>ホストアプリ：<span class="sel">Microsoft Teams</span></span><span>ターゲット バージョン：<span class="sel">1.5</span></span></div>
+        <div class="dz-cols">
+          <div class="dz-el">
+            <div class="hd">カード要素</div>
+            <ul>
+              <li>Container</li><li>ImageSet</li><li class="on">FactSet</li><li>ColumnSet</li><li>TextBlock</li><li>Image</li><li>ActionSet</li>
+            </ul>
+          </div>
+          <div class="dz-prev">
+            <div class="mini-card">
+              <div class="ac-card" style="width:250px;">
+                <div class="ac-head" style="padding:9px 12px;"><span class="pl" style="font-size:15px;">✈</span><span class="ti" style="font-size:13px;">出張申請が届きました</span></div>
+                <div class="ac-body" style="padding:10px 12px;">
+                  <div class="ac-top" style="margin-bottom:8px;"><div><div class="nm" style="font-size:12px;">山田 太郎</div><div class="sub" style="font-size:10px;">#A-1042</div></div><div class="badge" style="font-size:10px;">承認待ち</div></div>
+                  <table class="ac-facts" style="font-size:10.5px;"><tr><td class="ft" style="width:52px;">行き先</td><td>名古屋</td></tr><tr><td class="ft">概算費用</td><td>¥42,800</td></tr></table>
+                  <span class="ac-btn" style="padding:5px 12px;font-size:11px;margin-top:9px;">申請内容を開く</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="dz-tree">
+            <div class="hd">カード構造</div>
+            <div class="t">▾ AdaptiveCard</div>
+            <div class="t">&nbsp;&nbsp;▾ Container [accent]</div>
+            <div class="t">&nbsp;&nbsp;&nbsp;&nbsp;TextBlock</div>
+            <div class="t">&nbsp;&nbsp;▾ ColumnSet</div>
+            <div class="t">&nbsp;&nbsp;FactSet</div>
+            <div class="t">&nbsp;&nbsp;ActionSet</div>
+          </div>
+        </div>
+        <div class="dz-json"><span class="l">// GUIで組むとJSONが自動で出る</span><br><span class="k">"type"</span>: <span class="s">"AdaptiveCard"</span>, <span class="k">"version"</span>: <span class="s">"1.5"</span> …</div>
+      </div>
+    </div>
+    <p class="small muted">授業では「JSONを手で書くのではなく、ここでポチポチ＝GUIで直せる」を実演。全員には触らせず、はるがデモで見せる。</p>
+  </section>
+
+  <!-- 6. ハンズオン -->
+  <section>
+    <span class="sec-tag">⑤ ハンズオン（18–35分・ヤマ場）</span>
+    <h2>フローに貼って、自分のTeamsに届かせる</h2>
+    <p class="lede">配布JSONは検品済み。受講生の操作は「アクションを置く → JSONを貼る → 申請者名だけ直す → 実行」の実質3ステップ。</p>
+
+    <div class="mocklabel">Power Automate ― アダプティブ カードを投稿するアクション <span class="badge todo">JSON貼付欄は撮り直し予定</span></div>
+    <div class="mockwrap">
+      <div class="pa">
+        <div class="pa-node"><span class="ic">▶</span><span class="tx">フローを手動でトリガーする</span></div>
+        <div class="pa-plus">＋</div>
+        <div class="pa-node" style="border-left-color:#6264a7;"><span class="ic">▦</span><span class="tx">チャットまたはチャネルにアダプティブ カードを投稿する</span></div>
+        <div class="pa-panel">
+          <div class="pa-tabs"><span class="on">パラメーター</span><span>設定</span><span>コード ビュー</span></div>
+          <div class="pa-field"><label>投稿者 <span class="req">*</span></label><div class="pa-input">Flow bot <span>▾</span></div></div>
+          <div class="pa-field"><label>投稿先 <span class="req">*</span></label><div class="pa-input">Channel <span>▾</span></div></div>
+          <div class="pa-field"><label>メッセージ（アダプティブ カード JSON）<span class="req">*</span></label>
+            <div class="pa-json"><span class="hi">ここに配布JSONを貼る</span><br>{ "type": "AdaptiveCard", "version": "1.5",<br>&nbsp;&nbsp;"body": [ … 出張申請カード … ] }</div>
+          </div>
+          <div class="pa-conn">🔗 Microsoft Teams に接続されています</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout green"><b>受講生が触るのはここだけ：</b>貼ったJSONの中の <code>"text": "申請者: 山田 太郎"</code> を自分の名前に変える。他（金額・行き先）は固定で「まず動かす」を優先。</div>
+  </section>
+
+  <!-- 7. 次回 -->
+  <section>
+    <span class="sec-tag">⑥ 次回への引き（35–42分）</span>
+    <h2>このカードに“押せるボタン”を付けます</h2>
+    <div class="next">
+      <div class="box this"><span class="l">第20回（今回）</span>アダプティブカードを<b>投稿する</b>まで。<br>ボタンは「開く」だけ（応答待ちナシ）。</div>
+      <div class="arrow">→</div>
+      <div class="box n21"><span class="l">第21回（次回）</span>承認・却下<b>ボタンを押すと結果が返ってくる</b>（応答待ち）。今回のカードがそのまま土台になる。</div>
+    </div>
+  </section>
+
+  <!-- 残タスク -->
+  <section class="todos">
+    <h3>資料化に向けた残タスク</h3>
+    <ul>
+      <li><b>実機スクショ #3：</b>Power Automate「投稿先＝Channel」選択後の <b>メッセージ（JSON貼付）欄</b>を撮り直し（新デザイナーがスクショで固まったため、次セッションで再取得）。</li>
+      <li>このストーリーボードで流れOKなら、<b>Vol.20スライド一式</b>（<code>pa45/slides/vol-20/index.html</code>）へ展開。ハウススタイル（1280×720・青テーマ・見切れチェック）で作成。</li>
+      <li>掴みのたとえ話を最終確定（張り紙→受付ボタン、で仮置き）。</li>
+    </ul>
+  </section>
+
+  <div class="foot">PA45 第20回 構成ストーリーボード ・ 出典：Microsoft Learn（Adaptive Cards / Teams コネクタ）・ 人名・数値はすべて架空</div>
+
+</div>
+</body>
+</html>
