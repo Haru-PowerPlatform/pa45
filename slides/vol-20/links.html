@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PA45 第20回 資料リンク集｜アダプティブカードの作り方</title>
+<style>
+  :root{
+    --blue-text:#14528f;--blue-mid:#2a7dd4;--blue-bg:#eaf2fc;--ink:#1f2937;--muted:#475569;
+    --border:#e2e8f0;--green:#15803d;--amber:#b45309;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:linear-gradient(160deg,#eaf2fc 0%,#f5f8fc 40%,#fff 100%);
+    font-family:"Meiryo UI","Yu Gothic UI","Segoe UI",sans-serif;color:var(--ink);
+    min-height:100vh;padding:28px 16px 60px;}
+  .wrap{max-width:820px;margin:0 auto;}
+  header{text-align:center;margin-bottom:8px;}
+  .eyebrow{display:inline-block;background:var(--blue-mid);color:#fff;font-weight:700;
+    font-size:13px;letter-spacing:.06em;padding:5px 16px;border-radius:20px;}
+  h1{font-size:30px;font-weight:800;color:var(--blue-text);margin:14px 0 6px;line-height:1.25;}
+  h1 small{display:block;font-size:16px;color:var(--muted);font-weight:600;margin-top:6px;}
+  .meta{color:var(--muted);font-size:14px;margin-bottom:22px;text-align:center;}
+  .lead{background:#fff;border:1px solid var(--border);border-left:5px solid var(--blue-mid);
+    border-radius:12px;padding:14px 18px;font-size:15px;line-height:1.8;color:var(--muted);
+    margin-bottom:22px;box-shadow:0 2px 8px rgba(20,82,143,.05);}
+  .lead b{color:var(--ink);}
+
+  /* 配布JSONブロック */
+  .json-box{background:#fff;border:2px solid #f59e0b;border-radius:14px;padding:18px 20px;
+    margin-bottom:22px;box-shadow:0 3px 12px rgba(180,83,9,.12);}
+  .json-box h2{margin:0 0 4px;font-size:19px;color:#92400e;display:flex;align-items:center;gap:9px;}
+  .json-box .sub{font-size:13.5px;color:var(--muted);margin:0 0 12px;line-height:1.7;}
+  .json-box .sub code{background:#fef3c7;color:#92400e;padding:1px 7px;border-radius:4px;font-weight:700;}
+  .btnrow{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;}
+  .btn{border:none;cursor:pointer;font-family:inherit;font-size:14px;font-weight:700;
+    padding:10px 20px;border-radius:8px;background:#f59e0b;color:#fff;transition:background .15s;}
+  .btn:hover{background:#d97706;}
+  .btn.sec{background:#fff;color:var(--blue-text);border:1px solid var(--blue-mid);text-decoration:none;display:inline-block;}
+  .btn.sec:hover{background:var(--blue-bg);}
+  .btn.copied{background:var(--green);}
+  pre{margin:0;background:#0f172a;color:#e2e8f0;border-radius:10px;padding:14px 16px;
+    font-family:Consolas,monospace;font-size:12px;line-height:1.55;max-height:220px;overflow:auto;}
+  pre .k{color:#7dd3fc;}pre .s{color:#86efac;}
+
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  @media(max-width:640px){.grid{grid-template-columns:1fr;}}
+  .card{display:flex;gap:14px;align-items:flex-start;text-decoration:none;color:inherit;
+    background:#fff;border:1px solid var(--border);border-radius:14px;padding:18px;
+    box-shadow:0 2px 8px rgba(20,82,143,.06);transition:transform .12s,box-shadow .12s,border-color .12s;}
+  .card:hover{transform:translateY(-3px);box-shadow:0 10px 22px rgba(20,82,143,.16);border-color:var(--blue-mid);}
+  .card .ico{flex:0 0 46px;width:46px;height:46px;border-radius:12px;display:flex;align-items:center;
+    justify-content:center;font-size:24px;background:var(--blue-bg);}
+  .card .body{flex:1;min-width:0;}
+  .card .t{font-size:16px;font-weight:800;color:var(--blue-text);margin:0 0 3px;line-height:1.35;}
+  .card .d{font-size:13px;color:var(--muted);line-height:1.6;margin:0;}
+  .card .go{display:inline-block;margin-top:9px;font-size:12px;font-weight:700;color:#fff;
+    background:var(--blue-mid);padding:5px 14px;border-radius:16px;}
+  .card.primary{border:2px solid #f59e0b;background:#fffbeb;}
+  .card.primary .ico{background:#fef3c7;}
+  .card.primary .t{color:#92400e;}
+  .card.primary .go{background:#f59e0b;}
+  .note{margin-top:22px;font-size:12.5px;color:var(--muted);text-align:center;line-height:1.8;}
+  footer{margin-top:28px;text-align:center;color:#94a3b8;font-size:12px;line-height:1.8;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <span class="eyebrow">PA45 第20回｜HANDS-ON</span>
+    <h1>アダプティブカードの作り方 ✈💬<small>そっけない通知を、色帯・表・ボタン付きの "リッチカード" にしてTeamsへ投稿する（Adaptive Cards × Teams）</small></h1>
+  </header>
+  <div class="meta">2026-07-23（木）20:15〜 開催 ／ このページに今日の資料をまとめています</div>
+
+  <div class="lead">
+    <b>使い方：</b> ①connpassで入室 → ②Power Automateを開く → ③下の<b>配布JSONをコピー</b>して、フローの「メッセージ」欄に貼る、の流れです。<b>JSONは書けなくて大丈夫</b>。貼ったあと<b>名前の1箇所だけ</b>を自分用に変えます。復習スライドもここから開けます。
+  </div>
+
+  <!-- 配布JSON -->
+  <div class="json-box">
+    <h2>📋 配布JSON（出張申請カード）</h2>
+    <p class="sub">これが今日のカードの中身です。<b>コピーして、Power Automateの「メッセージ」欄にそのまま貼り付け</b>てください。貼ったら <code>"申請者: 山田 太郎"</code> の部分だけ自分の名前に変えます。</p>
+    <div class="btnrow">
+      <button class="btn" id="copyBtn" type="button">📋 JSONをコピー</button>
+      <a class="btn sec" href="assets/adaptive-card.json" download="adaptive-card.json">⬇ ファイルで保存</a>
+      <a class="btn sec" href="https://adaptivecards.io/designer/" target="_blank" rel="noopener">🎨 デザイナーで開いて確認</a>
+    </div>
+    <pre id="jsonView">読み込み中…</pre>
+  </div>
+
+  <div class="grid">
+
+    <a class="card" href="https://powerautomate-create.connpass.com/event/400905/" target="_blank" rel="noopener">
+      <div class="ico">🎫</div>
+      <div class="body">
+        <p class="t">connpass イベントページ</p>
+        <p class="d">参加登録・当日の入室（Teams会議リンク）はこちら。</p>
+        <span class="go">開く →</span>
+      </div>
+    </a>
+
+    <a class="card primary" href="https://make.powerautomate.com/" target="_blank" rel="noopener">
+      <div class="ico">🤖</div>
+      <div class="body">
+        <p class="t">Power Automate を開く</p>
+        <p class="d">今日はここでフローを1本作ります。サインインしておいてください。</p>
+        <span class="go">開く →</span>
+      </div>
+    </a>
+
+    <a class="card" href="designer-guide.html" target="_blank" rel="noopener">
+      <div class="ico">📐</div>
+      <div class="body">
+        <p class="t">デザイナーの使い方ガイド</p>
+        <p class="d">画面の見方と5ステップ。カードを自分で直したいときはこちら。</p>
+        <span class="go">開く →</span>
+      </div>
+    </a>
+
+    <a class="card" href="https://adaptivecards.io/designer/" target="_blank" rel="noopener">
+      <div class="ico">🎨</div>
+      <div class="body">
+        <p class="t">アダプティブ カード デザイナー</p>
+        <p class="d">カードの見た目を確認・修正する公式ツール（画面は英語）。</p>
+        <span class="go">開く →</span>
+      </div>
+    </a>
+
+    <a class="card" href="./" target="_blank" rel="noopener">
+      <div class="ico">📊</div>
+      <div class="body">
+        <p class="t">今日のスライド（当日・復習用）</p>
+        <p class="d">解説スライド全19枚。あとから見返せます。</p>
+        <span class="go">開く →</span>
+      </div>
+    </a>
+
+    <a class="card" href="https://learn.microsoft.com/ja-jp/adaptive-cards/" target="_blank" rel="noopener">
+      <div class="ico">📘</div>
+      <div class="body">
+        <p class="t">アダプティブ カード（Microsoft Learn）</p>
+        <p class="d">公式ドキュメント。もっと詳しく知りたい方へ。</p>
+        <span class="go">開く →</span>
+      </div>
+    </a>
+
+    <a class="card" href="https://forms.cloud.microsoft/r/mVzhNWH6JE" target="_blank" rel="noopener">
+      <div class="ico">📝</div>
+      <div class="body">
+        <p class="t">アンケート（参加バッジ 🏅）</p>
+        <p class="d">2分で完了。回答者には参加バッジをお送りします。</p>
+        <span class="go">回答する →</span>
+      </div>
+    </a>
+
+    <a class="card" href="https://haru-powerplatform.github.io/pa45/" target="_blank" rel="noopener">
+      <div class="ico">🌐</div>
+      <div class="body">
+        <p class="t">参加者向けサイト（全回まとめ）</p>
+        <p class="d">過去回のスライド・資料はこちらから。</p>
+        <span class="go">開く →</span>
+      </div>
+    </a>
+
+  </div>
+
+  <div class="note">
+    うまくいかないときは、チャットで気軽に声をかけてください。<br>
+    「できました！」の報告も大歓迎です 😊　#PA45
+  </div>
+
+  <footer>
+    PA45 第20回 資料リンク集 ／ 出典：Microsoft Learn（Adaptive Cards）<br>
+    カード内の人名・数値はすべて架空のサンプルです。<br>
+    本内容は公開日時点のものです。Microsoftの仕様・画面は今後変わる可能性があります。
+  </footer>
+</div>
+
+<script>
+  var JSON_PATH = 'assets/adaptive-card.json';
+  var raw = '';
+  fetch(JSON_PATH).then(function(r){ return r.text(); }).then(function(t){
+    raw = t;
+    var esc = t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    esc = esc.replace(/"([^"]+)":/g, '<span class="k">"$1"</span>:')
+             .replace(/: (&quot;|")([^"]*)(&quot;|")/g, ': <span class="s">"$2"</span>');
+    document.getElementById('jsonView').innerHTML = esc;
+  }).catch(function(){
+    document.getElementById('jsonView').textContent = 'JSONの読み込みに失敗しました。「ファイルで保存」からダウンロードしてください。';
+  });
+
+  document.getElementById('copyBtn').addEventListener('click', function(){
+    var btn = this;
+    var text = raw || document.getElementById('jsonView').textContent;
+    navigator.clipboard.writeText(text).then(function(){
+      btn.textContent = '✅ コピーしました！';
+      btn.classList.add('copied');
+      setTimeout(function(){ btn.textContent = '📋 JSONをコピー'; btn.classList.remove('copied'); }, 2200);
+    }).catch(function(){
+      btn.textContent = '⚠ コピー不可（下の枠から手動で選択してください）';
+      setTimeout(function(){ btn.textContent = '📋 JSONをコピー'; }, 3000);
+    });
+  });
+</script>
+</body>
+</html>
