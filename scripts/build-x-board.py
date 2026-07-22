@@ -84,7 +84,14 @@ STATUS = {
 }
 
 
-def card_tips(it, prefix="#", key="tips"):
+SERIES = {
+    "tips":    ("#", "tips", "時短ワザ"),
+    "copasta": ("コパスタ #", "cs", "コパスタ入門"),
+}
+
+
+def card_tips(it):
+    prefix, key, sname = SERIES.get(it.get("series", "tips"), SERIES["tips"])
     f = it["folder"]
     img1 = ROOT / "assets" / "x" / "html" / f / f"{f.replace('-', '')}.png"
     img2 = ROOT / "assets" / "x" / "html" / f"{f}b" / f"{f.replace('-', '')}b.png"
@@ -97,7 +104,7 @@ def card_tips(it, prefix="#", key="tips"):
 <article class="card">
   <div class="head"><span class="no">{prefix}{it['vol']}</span><h2>{html.escape(it['title'])}</h2>
     <span class="badge {cls}">{label}</span><span class="len">{x_len(it['body'])}</span></div>
-  <div class="sub">{html.escape(it['sub'])}</div>
+  <div class="sub"><span class="ser ser-{key}">{sname}</span>{html.escape(it['sub'])}</div>
   <div class="shots">
     <a href="{rel1}" target="_blank"><img src="{rel1}" alt="1枚目" loading="lazy"></a>
     <a href="{rel2}" target="_blank"><img src="{rel2}" alt="2枚目" loading="lazy"></a>
@@ -212,6 +219,9 @@ body.hide-posted .card.posted{display:none}
 .blogcard .head h2{font-size:13.5px;line-height:1.5}
 .blogcard .body{font-size:12px;color:var(--mu);max-height:150px;overflow:auto}
 .slug{font-family:ui-monospace,monospace;font-size:10px;color:#9db0c2}
+.ser{font-size:10px;font-weight:700;padding:1px 7px;border-radius:5px;margin-right:6px}
+.ser-tips{background:#e8f1fb;color:#0b3e72}
+.ser-cs{background:#efeafd;color:#4b31a8}
 """
 
 JS = """
@@ -219,7 +229,7 @@ function show(pane){
   document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on', x.dataset.pane===pane));
   document.querySelectorAll('.pane').forEach(x=>x.classList.toggle('on', x.id===pane));
 }
-const HASH={'pane-pa45':'#pa45','pane-tips':'#tips','pane-cs':'#cs','pane-blog':'#blog'};
+const HASH={'pane-pa45':'#pa45','pane-tips':'#tips','pane-blog':'#blog'};
 document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
   show(t.dataset.pane);
   history.replaceState(null,'', HASH[t.dataset.pane]||'#pa45');
@@ -268,9 +278,8 @@ def main():
     pa45 = load_pa45()
     tips = json.loads((ROOT / "data" / "x-tips-board.json").read_text(encoding="utf-8"))["items"]
 
-    csf = ROOT / "data" / "x-copasta-board.json"
-    cs_data = json.loads(csf.read_text(encoding="utf-8")) if csf.exists() else {"items": [], "note_html": ""}
-    cs = cs_data["items"]
+    n_tips = sum(1 for t in tips if t.get("series", "tips") == "tips")
+    n_cs = sum(1 for t in tips if t.get("series") == "copasta")
 
     bf = ROOT / "data" / "blog-board.json"
     blog = json.loads(bf.read_text(encoding="utf-8"))["items"] if bf.exists() else []
@@ -286,8 +295,7 @@ def main():
 
 <div class="tabs">
   <button class="tab on" data-pane="pane-pa45">PA45（切り口）<span class="c">{len(pa45)}本</span></button>
-  <button class="tab" data-pane="pane-tips">X技術Tips<span class="c">{len(tips)}本</span></button>
-  <button class="tab" data-pane="pane-cs">コパスタ<span class="c">{len(cs)}本</span></button>
+  <button class="tab" data-pane="pane-tips">X技術Tips<span class="c">時短{n_tips}・コパスタ{n_cs}</span></button>
   <button class="tab" data-pane="pane-blog">ブログ<span class="c">下書き{n_draft}本</span></button>
 </div>
 
@@ -306,15 +314,11 @@ def main():
 
 <section class="pane" id="pane-tips">
   <div class="note">
-    画像2枚つきなので手順が1つ増えます。<b>「Xの下書きを開く」→ 画像ボタン → ファイル選択の枠に「画像2枚のパス」を貼り付け</b>で2枚同時に選べます。<br>
-    貼り付け順＝添付順（概念 → 作り方）。Vol番号＝フォルダ番号（Vol.69以降）。
+    <b>時短ワザ</b>（#PowerAutomate）と<b>コパスタ入門</b>（Copilot Studio）をまとめています。どちらも画像2枚を1ツイートに添付します。<br>
+    <b>「Xの下書きを開く」→ 画像ボタン → ファイル選択の枠に「画像2枚のパス」を貼り付け</b>で2枚同時に選べます。貼り付け順＝添付順（概念 → 作り方）。<br>
+    Vol番号＝フォルダ番号（時短ワザはVol.69以降が一致）。
   </div>
   <div class="grid">{"".join(card_tips(t) for t in tips)}</div>
-</section>
-
-<section class="pane" id="pane-cs">
-  <div class="note">{cs_data.get("note_html") or "Copilot Studio（コパスタ）シリーズ。画像2枚を1ツイートに一緒に添付します。"}</div>
-  <div class="grid">{"".join(card_tips(c, prefix="コパスタ #", key="cs") for c in cs)}</div>
 </section>
 
 <section class="pane" id="pane-blog">
@@ -330,7 +334,8 @@ def main():
 
     OUT.write_text(page, encoding="utf-8")
     print(f"[OK] {OUT}")
-    print(f"  PA45 {len(pa45)}本 / 技術Tips {len(tips)}本 / コパスタ {len(cs)}本 / ブログ {len(blog)}本（下書き{n_draft}）")
+    print(f"  PA45 {len(pa45)}本 / X技術Tips {len(tips)}本（時短{n_tips}・コパスタ{n_cs}）"
+          f" / ブログ {len(blog)}本（下書き{n_draft}）")
 
 
 if __name__ == "__main__":
