@@ -84,7 +84,7 @@ STATUS = {
 }
 
 
-def card_tips(it):
+def card_tips(it, prefix="#", key="tips"):
     f = it["folder"]
     img1 = ROOT / "assets" / "x" / "html" / f / f"{f.replace('-', '')}.png"
     img2 = ROOT / "assets" / "x" / "html" / f"{f}b" / f"{f.replace('-', '')}b.png"
@@ -95,7 +95,7 @@ def card_tips(it):
     miss = "" if img1.exists() and img2.exists() else '<div class="warn">PNGが見つかりません</div>'
     return f'''
 <article class="card">
-  <div class="head"><span class="no">#{it['vol']}</span><h2>{html.escape(it['title'])}</h2>
+  <div class="head"><span class="no">{prefix}{it['vol']}</span><h2>{html.escape(it['title'])}</h2>
     <span class="badge {cls}">{label}</span><span class="len">{x_len(it['body'])}</span></div>
   <div class="sub">{html.escape(it['sub'])}</div>
   <div class="shots">
@@ -103,13 +103,59 @@ def card_tips(it):
     <a href="{rel2}" target="_blank"><img src="{rel2}" alt="2枚目" loading="lazy"></a>
   </div>
   {miss}
-  <pre class="body" id="t{it['vol']}">{html.escape(it['body'])}</pre>
+  <pre class="body" id="{key}{it['vol']}">{html.escape(it['body'])}</pre>
   <div class="acts">
-    <button class="btn copy" data-t="t{it['vol']}">本文をコピー</button>
+    <button class="btn copy" data-t="{key}{it['vol']}">本文をコピー</button>
     <button class="btn copy2" data-p='{html.escape(paths)}'>画像2枚のパス</button>
     <a class="btn go" href="{html.escape(intent(it['body']))}" target="_blank" rel="noopener">Xの下書きを開く →</a>
   </div>
-  <label class="done-row"><input type="checkbox" class="donebox" data-k="tips-{it['vol']}"> 投稿済みにする</label>
+  <label class="done-row"><input type="checkbox" class="donebox" data-k="{key}-{it['vol']}"> 投稿済みにする</label>
+</article>'''
+
+
+# ── タブ4：ブログ（automate136.com）────────────────────────
+BSTATUS = {
+    "draft":   ("下書き", "st-todo"),
+    "publish": ("公開済み", "st-done"),
+    "idea":    ("ネタ（未着手）", "st-posted"),
+    "private": ("非公開", "st-posted"),
+}
+
+
+def card_blog(b):
+    label, cls = BSTATUS.get(b["status"], (b["status"], "st-posted"))
+    meta = []
+    if b.get("chars"):
+        meta.append(f'{b["chars"]:,}字')
+    if b.get("modified"):
+        meta.append(f'更新 {b["modified"]}')
+    if b.get("post_id"):
+        meta.append(f'ID {b["post_id"]}')
+
+    acts = []
+    if b.get("edit_url"):
+        verb = "公開記事を編集" if b["status"] == "publish" else "WordPressの下書きを開く"
+        acts.append(f'<a class="btn go" href="{html.escape(b["edit_url"])}" target="_blank" '
+                    f'rel="noopener">{verb} →</a>')
+    if b.get("preview_url") and b["status"] != "publish":
+        acts.append(f'<a class="btn" href="{html.escape(b["preview_url"])}" target="_blank" '
+                    f'rel="noopener">プレビュー</a>')
+    if b["status"] == "publish" and b.get("public_url"):
+        acts.append(f'<a class="btn" href="{html.escape(b["public_url"])}" target="_blank" '
+                    f'rel="noopener">公開ページ</a>')
+    if not acts:
+        acts.append('<span class="btn" style="opacity:.5;cursor:default;">WordPress未作成</span>')
+    acts.append(f'<button class="btn copy3" data-p="{html.escape(str(ROOT / b["folder"][5:]))}">'
+                f'記事フォルダのパス</button>')
+
+    return f'''
+<article class="card blogcard">
+  <div class="head"><span class="badge {cls}">{label}</span>
+    <h2>{html.escape(b["title"])}</h2></div>
+  <div class="sub">{" ／ ".join(meta) if meta else "WordPressにはまだ作っていません"}</div>
+  <pre class="body">{html.escape(b["summary"] or "（内容メモなし）")}</pre>
+  <div class="acts">{"".join(acts)}</div>
+  <div class="slug">{html.escape(b["slug"])}</div>
 </article>'''
 
 
@@ -162,6 +208,10 @@ h1{font-size:24px;font-weight:900;margin-bottom:4px}
 .filter label{display:flex;align-items:center;gap:6px;cursor:pointer;user-select:none}
 .filter .cnt{font-family:ui-monospace,monospace}
 body.hide-posted .card.posted{display:none}
+.blogcard .head{align-items:flex-start}
+.blogcard .head h2{font-size:13.5px;line-height:1.5}
+.blogcard .body{font-size:12px;color:var(--mu);max-height:150px;overflow:auto}
+.slug{font-family:ui-monospace,monospace;font-size:10px;color:#9db0c2}
 """
 
 JS = """
@@ -169,16 +219,21 @@ function show(pane){
   document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on', x.dataset.pane===pane));
   document.querySelectorAll('.pane').forEach(x=>x.classList.toggle('on', x.id===pane));
 }
+const HASH={'pane-pa45':'#pa45','pane-tips':'#tips','pane-cs':'#cs','pane-blog':'#blog'};
 document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
   show(t.dataset.pane);
-  history.replaceState(null,'', t.dataset.pane==='pane-tips' ? '#tips' : '#pa45');
+  history.replaceState(null,'', HASH[t.dataset.pane]||'#pa45');
 }));
-if(location.hash==='#tips') show('pane-tips');
+for(const [pane,h] of Object.entries(HASH)){ if(location.hash===h) show(pane); }
 function flash(b,msg){const o=b.textContent;b.textContent=msg;b.classList.add('done');
   setTimeout(()=>{b.textContent=o;b.classList.remove('done')},1500);}
 document.querySelectorAll('.copy').forEach(b=>b.addEventListener('click',async()=>{
   await navigator.clipboard.writeText(document.getElementById(b.dataset.t).textContent);
   flash(b,'コピーしました');
+}));
+document.querySelectorAll('.copy3').forEach(b=>b.addEventListener('click',async()=>{
+  await navigator.clipboard.writeText(b.dataset.p);
+  flash(b,'パスをコピー');
 }));
 document.querySelectorAll('.copy2').forEach(b=>b.addEventListener('click',async()=>{
   await navigator.clipboard.writeText(b.dataset.p);
@@ -189,7 +244,7 @@ document.querySelectorAll('.copy2').forEach(b=>b.addEventListener('click',async(
 const KEY='pa45-x-posted';
 const posted=new Set(JSON.parse(localStorage.getItem(KEY)||'[]'));
 function count(){
-  const n=document.querySelectorAll('.card:not(.posted)').length;
+  const n=[...document.querySelectorAll('.donebox')].filter(c=>!c.checked).length;
   document.getElementById('remain').textContent=n;
 }
 document.querySelectorAll('.donebox').forEach(cb=>{
@@ -213,6 +268,14 @@ def main():
     pa45 = load_pa45()
     tips = json.loads((ROOT / "data" / "x-tips-board.json").read_text(encoding="utf-8"))["items"]
 
+    csf = ROOT / "data" / "x-copasta-board.json"
+    cs_data = json.loads(csf.read_text(encoding="utf-8")) if csf.exists() else {"items": [], "note_html": ""}
+    cs = cs_data["items"]
+
+    bf = ROOT / "data" / "blog-board.json"
+    blog = json.loads(bf.read_text(encoding="utf-8"))["items"] if bf.exists() else []
+    n_draft = sum(1 for b in blog if b["status"] == "draft")
+
     page = f'''<!doctype html>
 <html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -224,6 +287,8 @@ def main():
 <div class="tabs">
   <button class="tab on" data-pane="pane-pa45">PA45（切り口）<span class="c">{len(pa45)}本</span></button>
   <button class="tab" data-pane="pane-tips">X技術Tips<span class="c">{len(tips)}本</span></button>
+  <button class="tab" data-pane="pane-cs">コパスタ<span class="c">{len(cs)}本</span></button>
+  <button class="tab" data-pane="pane-blog">ブログ<span class="c">下書き{n_draft}本</span></button>
 </div>
 
 <div class="filter">
@@ -247,11 +312,25 @@ def main():
   <div class="grid">{"".join(card_tips(t) for t in tips)}</div>
 </section>
 
+<section class="pane" id="pane-cs">
+  <div class="note">{cs_data.get("note_html") or "Copilot Studio（コパスタ）シリーズ。画像2枚を1ツイートに一緒に添付します。"}</div>
+  <div class="grid">{"".join(card_tips(c, prefix="コパスタ #", key="cs") for c in cs)}</div>
+</section>
+
+<section class="pane" id="pane-blog">
+  <div class="note">
+    automate136.com の投稿状況。<b>状態はWordPressから直接取得</b>しているので、ここが今の実態です。<br>
+    最新にするには <code>python scripts/fetch-blog-status.py</code> → <code>python scripts/build-x-board.py</code>。
+    <b>公開は必ずプレビュー確認のうえ手動で。</b>
+  </div>
+  <div class="grid">{"".join(card_blog(b) for b in blog)}</div>
+</section>
+
 </div><script>{JS}</script></body></html>'''
 
     OUT.write_text(page, encoding="utf-8")
     print(f"[OK] {OUT}")
-    print(f"  PA45 {len(pa45)}本 / 技術Tips {len(tips)}本")
+    print(f"  PA45 {len(pa45)}本 / 技術Tips {len(tips)}本 / コパスタ {len(cs)}本 / ブログ {len(blog)}本（下書き{n_draft}）")
 
 
 if __name__ == "__main__":
