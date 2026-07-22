@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.75-1 赤くなった時に、最初に見る場所</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB; --blue-bg:#EFF6FF; --blue-dark:#1E40AF;
+    --green:#16A34A; --green-bg:#ECFDF5; --green-dark:#064E3B;
+    --red:#DC2626; --red-dark:#991B1B; --orange:#EA580C;
+    --ink:#1F2937; --gray:#374151; --weak:#6B7280; --line:#E5E7EB;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+  .ic{display:block;width:100%;height:100%;}
+
+  .titlebar{height:90px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:16px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:26px;border-radius:999px;padding:7px 20px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .vol-logo{height:50px;width:50px;object-fit:contain;flex:0 0 auto;background:#fff;border-radius:12px;padding:5px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
+  .title-text{color:#fff;font-weight:900;font-size:27px;line-height:1.14;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:150px;}
+  .title-text .hl{color:#FFE08A;}
+  .title-chara{position:absolute;right:14px;bottom:-40px;height:142px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .concl{margin:10px 16px 0;background:var(--blue-bg);border:2.5px solid var(--blue);border-radius:13px;display:flex;align-items:center;gap:13px;padding:10px 18px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;width:40px;height:40px;border-radius:11px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;padding:8px;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
+  .concl .txt{font-weight:800;font-size:19.5px;color:var(--blue-dark);line-height:1.36;padding-right:100px;}
+  .concl .txt b{color:var(--orange);}
+
+  .stage{flex:1 1 auto;margin:11px 16px 0;display:flex;gap:15px;min-height:0;}
+
+  /* 主役＝実行履歴の実画面 */
+  .hero{flex:1;display:flex;flex-direction:column;min-height:0;}
+  .hd{font-weight:900;font-size:24px;color:var(--ink);margin-bottom:7px;display:flex;align-items:center;gap:9px;letter-spacing:-.01em;}
+  .hd .b{flex:0 0 auto;width:32px;height:32px;border-radius:50%;background:var(--blue);color:#fff;font-weight:900;font-size:18px;display:flex;align-items:center;justify-content:center;}
+  .run{flex:1;background:#fff;border:1px solid #D7DEE8;border-radius:13px;box-shadow:0 7px 18px rgba(0,0,0,.16);overflow:hidden;font-family:'Segoe UI','Noto Sans JP',sans-serif;display:flex;flex-direction:column;min-height:0;}
+  .run-h{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:10px 14px;background:#F3F6FB;border-bottom:1px solid #E3E9F1;}
+  .run-h img{width:22px;height:22px;object-fit:contain;}
+  .run-h .rt{font-weight:800;font-size:15.5px;color:#243B58;}
+  .run-h .fail{margin-left:auto;background:#FEE2E2;color:var(--red-dark);font-weight:900;font-size:14.5px;border-radius:999px;padding:3px 13px;border:1.5px solid #FCA5A5;}
+  .run-b{flex:1;display:flex;min-height:0;}
+  .steps{flex:0 0 292px;border-right:1px solid #E3E9F1;padding:10px 11px;display:flex;flex-direction:column;gap:7px;background:#FAFCFE;}
+  .st{display:flex;align-items:center;gap:9px;background:#fff;border:1.5px solid #E3E9F1;border-radius:9px;padding:7px 10px;}
+  .st img{width:24px;height:24px;object-fit:contain;flex:0 0 auto;}
+  .st .sn{font-weight:800;font-size:15px;color:#243B58;flex:1;line-height:1.2;}
+  .st .mk{flex:0 0 auto;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;color:#fff;}
+  .st.ok .mk{background:var(--green);}
+  .st.ng{border-color:var(--red);background:#FFF5F5;box-shadow:0 0 0 3px rgba(220,38,38,.14);}
+  .st.ng .mk{background:var(--red);}
+  .st.ng .sn{color:var(--red-dark);}
+  .st.sk{opacity:.55;border-style:dashed;}
+  .st.sk .mk{background:#9CA3AF;}
+  .stnote.sknote{color:var(--weak);font-weight:700;}
+  .stnote{font-size:13px;font-weight:800;color:var(--red-dark);margin-top:-3px;padding-left:2px;}
+
+  .detail{flex:1;padding:11px 13px;display:flex;flex-direction:column;gap:7px;min-width:0;}
+  .dh{font-weight:900;font-size:16px;color:#243B58;}
+  .errbox{background:#FEF2F2;border:2px solid #FCA5A5;border-radius:10px;padding:8px 11px;}
+  .errbox .ec{font-family:'Roboto Mono',monospace;font-weight:700;font-size:17px;color:var(--red-dark);}
+  .errbox .em{font-size:14.5px;font-weight:700;color:#7F1D1D;line-height:1.45;margin-top:5px;}
+  .fixbox{background:#ECFDF5;border:2px solid #86EFAC;border-radius:10px;padding:8px 11px;}
+  .fixbox .fh{font-weight:900;font-size:15px;color:var(--green-dark);margin-bottom:4px;}
+  .fixbox .ft{font-size:14px;font-weight:700;color:#065F46;line-height:1.5;}
+  .resend{margin-top:auto;display:flex;align-items:center;gap:10px;}
+  .resend .rb{background:var(--blue);color:#fff;font-weight:900;font-size:15.5px;border-radius:9px;padding:8px 18px;box-shadow:0 3px 7px rgba(37,99,235,.4);}
+  .resend .rn{font-size:14px;font-weight:800;color:var(--blue-dark);line-height:1.4;}
+
+  /* 右：手順 */
+  .side{flex:0 0 316px;display:flex;flex-direction:column;min-height:0;}
+  .route{flex:1;background:linear-gradient(180deg,#EEF4FF,#DEEAFF);border:2.5px solid var(--blue);border-radius:14px;padding:12px 13px;display:flex;flex-direction:column;gap:9px;box-shadow:0 6px 14px rgba(37,99,235,.22);position:relative;}
+  .rli{display:flex;align-items:flex-start;gap:11px;font-weight:800;font-size:18px;color:#23416B;line-height:1.34;}
+  .rli .sn{flex:0 0 auto;width:29px;height:29px;border-radius:50%;background:#2563EB;color:#fff;font-size:16px;font-weight:900;display:flex;align-items:center;justify-content:center;}
+  .rli b{color:var(--blue-dark);}
+  .tipbox{background:#FFF7ED;border:2px solid #FDBA74;border-radius:10px;padding:8px 10px;font-size:14px;font-weight:800;color:#7C2D12;line-height:1.45;}
+  .tipbox b{color:#9A3412;}
+  .smascot{position:absolute;right:-12px;bottom:-10px;height:86px;z-index:30;filter:drop-shadow(0 3px 7px rgba(0,0,0,.4));}
+
+  .next{flex:0 0 auto;margin:10px 16px 18px;background:linear-gradient(180deg,#EAF2FF,#DCEAFE);border:2.5px solid var(--blue);border-radius:13px;padding:12px 18px;display:flex;align-items:center;gap:11px;font-weight:900;font-size:20px;color:var(--blue-dark);box-shadow:0 3px 9px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .next .na{flex:0 0 auto;width:26px;height:26px;color:var(--blue);}
+  .next b{color:var(--orange);}
+  .src{position:absolute;left:16px;bottom:4px;font-size:10px;color:#AEB6C2;font-weight:700;z-index:3;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const ICON={arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',bulb:'<path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/>'};
+const svg=(n)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${ICON[n]}</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.75-1</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">フローが赤くなった｜<span class="hl">最初に見るのは、この1画面だけ</span></div>
+    <img class="title-chara" src="${A}chara/chara_trouble.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svg('bulb')}</div>
+    <div class="txt">実行履歴で<b>赤い「!」が付いたアクション</b>を開くと、右側に<b>エラーの内容と直し方</b>が出ています。直したら<b>「再送信」</b>で同じデータのまま流し直せます。</div>
+  </div>
+
+  <div class="stage">
+    <div class="hero">
+      <div class="hd"><span class="b">1</span>失敗した実行を開く（実際の画面）</div>
+      <div class="run">
+        <div class="run-h">
+          <img src="${A}icons/pa_logo.png" alt="">
+          <span class="rt">締切リマインド ー 2026/07/22 9:00 の実行</span>
+          <span class="fail">失敗</span>
+        </div>
+        <div class="run-b">
+          <div class="steps">
+            <div class="st ok"><img src="${A}icons/pa_schedule.png" alt=""><span class="sn">繰り返し</span><span class="mk">✓</span></div>
+            <div class="st ok"><img src="${A}icons/pa_excel.png" alt=""><span class="sn">表内に存在する行を一覧表示</span><span class="mk">✓</span></div>
+            <div class="st ng"><img src="${A}icons/pa_sharepoint.png" alt=""><span class="sn">項目の作成</span><span class="mk">!</span></div>
+            <div class="stnote">▲ ここが赤い。開くと右に詳細が出る</div>
+            <div class="st sk"><img src="${A}icons/pa_control.png" alt=""><span class="sn">条件</span><span class="mk">−</span></div>
+            <div class="stnote sknote">この先は実行されずに終わる</div>
+          </div>
+          <div class="detail">
+            <div class="dh">エラーの詳細</div>
+            <div class="errbox">
+              <div class="ec">NotFound (404)</div>
+              <div class="em">The list 'タスク管理' was not found.<br>指定したリストが見つかりません。</div>
+            </div>
+            <div class="fixbox">
+              <div class="fh">修正方法</div>
+              <div class="ft">リストの名前が変わっていないか確認し、アクションで選び直してください。</div>
+            </div>
+            <div class="fixbox" style="background:#F5F8FF;border-color:#BFDBFE;">
+              <div class="fh" style="color:var(--blue-dark);">入力／出力も開ける</div>
+              <div class="ft" style="color:#1E3A8A;">そのアクションに<b>何を送って、何が返ってきたか</b>がそのまま見られます。400番台は、たいていここで原因が分かります。</div>
+            </div>
+            <div class="resend">
+              <span class="rb">再送信</span>
+              <span class="rn">直したら、この実行を<br>同じデータのまま流し直せる</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="side">
+      <div class="hd"><span class="b">2</span>たどり方は3手</div>
+      <div class="route">
+        <div class="rli"><span class="sn">1</span><span><b>マイ フロー</b>から対象のフローを開く</span></div>
+        <div class="rli"><span class="sn">2</span><span><b>28日間の実行履歴</b>で失敗した日時を選ぶ</span></div>
+        <div class="rli"><span class="sn">3</span><span>赤い<b>「!」</b>のアクションを開く</span></div>
+        <div class="tipbox">💡 所有者には<b>修復のヒントメール</b>も届きます。「何が起きたか」と「直し方」が書いてあります。</div>
+        <div class="tipbox" style="background:#ECFDF5;border-color:#86EFAC;color:#065F46;">🤖 新しいデザイナーなら<b>Copilotが原因を日本語で説明</b>してくれます。</div>
+        <img class="smascot" src="${A}chara/chara_point.png" alt="">
+      </div>
+    </div>
+  </div>
+
+  <div class="next"><span class="na">${svg('arrow')}</span>401・404・InvalidTemplate…<b>よく出るエラー8個の意味と直し方</b>は <b>2枚目</b>に早見表でまとめました！</div>
+  <div class="src">出典：Microsoft Learn（クラウド フローのトラブルシューティング／クラウド フロー エラー コード リファレンス）／画面は再現・名称は架空</div>
+`;
+</script>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>
