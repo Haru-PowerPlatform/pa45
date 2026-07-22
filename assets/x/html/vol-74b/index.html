@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.74-2 日付の式でハマる4か所</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB;--blue-dark:#1E40AF;--green:#16A34A;--green-dark:#0B5E37;
+    --ink:#1F2937;--gray:#374151;--weak:#6B7280;--orange:#EA580C;--red:#DC2626;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+
+  .titlebar{height:86px;
+    background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);
+    box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);
+    display:flex;align-items:center;gap:14px;padding:0 26px;position:relative;z-index:3;}
+  .tb-badge{background:#fff;color:var(--blue-dark);font-weight:900;font-size:17px;padding:5px 14px;border-radius:8px;white-space:nowrap;}
+  .tb-title{color:#fff;font-weight:900;font-size:33px;letter-spacing:-.01em;text-shadow:0 2px 4px rgba(0,0,0,.22);}
+  .tb-title b{color:#FDE68A;}
+  .tb-chara{position:absolute;right:16px;bottom:-16px;height:104px;}
+
+  .body{flex:1;padding:16px 26px 14px;display:flex;flex-direction:column;gap:12px;}
+
+  .cards{flex:1;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:12px 16px;}
+  .c{background:#F8F9FA;border:1px solid #E5E7EB;border-radius:12px;padding:12px 15px;display:flex;flex-direction:column;gap:7px;position:relative;}
+  .c::before{content:"";position:absolute;left:0;top:14px;bottom:14px;width:5px;border-radius:0 4px 4px 0;background:var(--red);}
+  .c .h{font-size:22px;font-weight:900;color:var(--ink);line-height:1.25;padding-left:10px;}
+  .c .h i{font-style:normal;color:var(--red);margin-right:6px;}
+  .c .d{font-size:16.5px;font-weight:600;color:var(--gray);line-height:1.6;padding-left:10px;}
+  .ng,.ok{display:flex;align-items:center;gap:8px;font-family:"Roboto Mono",monospace;font-size:15.5px;font-weight:700;border-radius:7px;padding:7px 10px;line-height:1.3;word-break:break-all;}
+  .ng{background:#FEF2F2;border:1px solid #FECACA;color:#991B1B;}
+  .ok{background:#ECFDF5;border:1px solid #A7F3D0;color:#065F46;}
+  .ng b,.ok b{font-family:"Noto Sans JP",sans-serif;font-size:13px;flex:0 0 auto;}
+  .pair{display:flex;flex-direction:column;gap:6px;padding-left:10px;}
+  .ex{margin-top:auto;padding-left:10px;font-size:15px;font-weight:700;color:#0B3A8F;background:#EFF6FF;
+    border:1px solid #BFDBFE;border-radius:8px;padding:8px 11px;line-height:1.5;}
+  .ex b{color:#1E40AF;}
+
+  .foot{display:flex;align-items:center;gap:12px;background:#EFF6FF;border:1px solid #BFDBFE;border-radius:10px;padding:9px 14px;}
+  .foot .t{font-size:16px;font-weight:900;color:var(--blue-dark);white-space:nowrap;}
+  .foot .d{font-size:15px;font-weight:700;color:#1E3A8A;line-height:1.4;}
+
+  .src{position:absolute;right:14px;bottom:6px;font-size:11px;color:#9CA3AF;}
+</style>
+</head>
+<body>
+<div id="slide">
+  <div class="titlebar">
+    <span class="tb-badge">#PowerAutomate</span>
+    <span class="tb-title">日付の式で<b>ハマるのは、この4か所</b></span>
+    <img class="tb-chara" src="../../pptx/_assets/chara/chara_point.png" alt="">
+  </div>
+
+  <div class="body">
+    <div class="cards">
+
+      <div class="c">
+        <div class="h"><i>①</i>9時間ずれる</div>
+        <div class="d">既定はUTC。日本時間で出すなら必ず変換を挟む。</div>
+        <div class="pair">
+          <div class="ng"><b>ずれる</b>utcNow()</div>
+          <div class="ok"><b>正しい</b>convertFromUtc(utcNow(),'Tokyo Standard Time')</div>
+        </div>
+        <div class="ex">例）スケジュールのタイムゾーンをUTCのままにすると、<b>朝9時のつもりが日本時間の18時</b>に動きます。</div>
+      </div>
+
+      <div class="c">
+        <div class="h"><i>②</i>タイムゾーン名を間違える</div>
+        <div class="d">日本は「Japan」ではありません。Windowsの名前で書きます。</div>
+        <div class="pair">
+          <div class="ng"><b>無い</b>'Japan Standard Time'</div>
+          <div class="ok"><b>正しい</b>'Tokyo Standard Time'</div>
+        </div>
+        <div class="ex">画面のドロップダウンでは <b>(UTC+09:00) 大阪、札幌、東京</b>。式に書くときだけ英語名が要ります。</div>
+      </div>
+
+      <div class="c">
+        <div class="h"><i>③</i>大文字と小文字で別物</div>
+        <div class="d">MMは月、mmは分。HHは24時間、hhは12時間。</div>
+        <div class="pair">
+          <div class="ng"><b>分になる</b>'yyyy/mm/dd'</div>
+          <div class="ok"><b>月になる</b>'yyyy/MM/dd HH:mm'</div>
+        </div>
+        <div class="ex">よく使う形 ─ <b>yyyy年M月d日</b>（2026年7月5日）／<b>ddd</b>（曜日）／<b>tt</b>（午前・午後）</div>
+      </div>
+
+      <div class="c">
+        <div class="h"><i>④</i>「N営業日後」の関数は無い</div>
+        <div class="d">土日祝を飛ばす関数は用意されていません。1日ずつ足して曜日で判定するか、祝日リストを持ちます。</div>
+        <div class="pair">
+          <div class="ok"><b>判定に使う</b>dayOfWeek(utcNow())　日=0 … 土=6</div>
+        </div>
+        <div class="ex">作り方 ─ 1日足す → 曜日が<b>0か6なら もう1日足す</b>、を繰り返す（第12回でやった型）。</div>
+      </div>
+
+    </div>
+
+    <div class="foot">
+      <div class="t">💡 覚え方</div>
+      <div class="d">「計算はUTCのまま、表示する直前に日本時間へ」。この順番にすると、日をまたぐ処理でズレません。</div>
+    </div>
+  </div>
+  <div class="src">出典: Microsoft Learn（関数リファレンス）／タイムゾーン名は Windows の名称を実機確認</div>
+</div>
+</body>
+</html>

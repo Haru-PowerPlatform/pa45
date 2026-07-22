@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.74-1 日付と時刻の式チートシート</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB;--blue-dark:#1E40AF;--green:#16A34A;--green-dark:#0B5E37;
+    --ink:#1F2937;--gray:#374151;--weak:#6B7280;--orange:#EA580C;--red:#DC2626;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+
+  .titlebar{height:86px;
+    background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);
+    box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);
+    display:flex;align-items:center;gap:14px;padding:0 26px;position:relative;z-index:3;}
+  .tb-badge{background:#fff;color:var(--blue-dark);font-weight:900;font-size:17px;padding:5px 14px;border-radius:8px;letter-spacing:.02em;white-space:nowrap;}
+  .tb-title{color:#fff;font-weight:900;font-size:33px;letter-spacing:-.01em;text-shadow:0 2px 4px rgba(0,0,0,.22);}
+  .tb-title b{color:#FDE68A;}
+  .tb-chara{position:absolute;right:16px;bottom:-16px;height:104px;}
+
+  .body{flex:1;padding:16px 26px 12px;display:flex;flex-direction:column;gap:11px;}
+  .lead{font-size:19px;font-weight:700;color:var(--ink);}
+  .lead span{color:var(--blue);}
+
+  .grid{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:9px 16px;}
+  .row{display:flex;align-items:center;gap:10px;background:#F8F9FA;border:1px solid #E5E7EB;border-left:5px solid var(--blue);border-radius:9px;padding:7px 11px;}
+  .row .k{width:132px;flex:0 0 132px;font-size:15px;font-weight:700;color:var(--ink);line-height:1.25;}
+  .row .v{flex:1;font-family:"Roboto Mono",monospace;font-weight:500;font-size:14.5px;color:#0B3A8F;word-break:break-all;line-height:1.35;}
+  .row.warm{border-left-color:var(--orange);}
+  .row.warm .v{color:#9A3412;}
+
+  .foot{display:flex;align-items:center;gap:12px;background:#FFF7ED;border:1px solid #FED7AA;border-radius:10px;padding:9px 14px;}
+  .foot .t{font-size:16px;font-weight:900;color:#9A3412;white-space:nowrap;}
+  .foot .d{font-size:15px;font-weight:700;color:#7C2D12;line-height:1.4;}
+  .foot .d code{font-family:"Roboto Mono",monospace;background:#fff;border:1px solid #FDBA74;border-radius:5px;padding:1px 6px;}
+
+  .src{position:absolute;right:14px;bottom:6px;font-size:11px;color:#9CA3AF;}
+</style>
+</head>
+<body>
+<div id="slide">
+  <div class="titlebar">
+    <span class="tb-badge">#PowerAutomate</span>
+    <span class="tb-title">日付の式、<b>これだけコピーすれば足りる</b></span>
+    <img class="tb-chara" src="../../pptx/_assets/chara/chara_confident.png" alt="">
+  </div>
+
+  <div class="body">
+    <div class="lead">毎回ググっていた式を1枚に。<span>そのまま貼って動きます</span>（すべて標準・追加費用なし）</div>
+
+    <div class="grid">
+      <div class="row"><div class="k">今日（UTC）</div><div class="v">utcNow()</div></div>
+      <div class="row"><div class="k">今日の日付だけ</div><div class="v">formatDateTime(utcNow(),'yyyy/MM/dd')</div></div>
+
+      <div class="row warm"><div class="k">日本時間にする</div><div class="v">convertFromUtc(utcNow(),'Tokyo Standard Time','yyyy/MM/dd HH:mm')</div></div>
+      <div class="row"><div class="k">今日の0時</div><div class="v">startOfDay(utcNow())</div></div>
+
+      <div class="row"><div class="k">3日後</div><div class="v">addDays(utcNow(),3)</div></div>
+      <div class="row"><div class="k">3日前</div><div class="v">addDays(utcNow(),-3)</div></div>
+
+      <div class="row"><div class="k">1週間後</div><div class="v">addToTime(utcNow(),1,'Week')</div></div>
+      <div class="row"><div class="k">30分後</div><div class="v">addMinutes(utcNow(),30)</div></div>
+
+      <div class="row"><div class="k">今月の1日</div><div class="v">startOfMonth(utcNow(),'yyyy/MM/dd')</div></div>
+      <div class="row"><div class="k">来月の1日</div><div class="v">startOfMonth(addToTime(utcNow(),1,'Month'),'yyyy/MM/dd')</div></div>
+
+      <div class="row warm"><div class="k">今月の末日</div><div class="v">addDays(startOfMonth(addToTime(utcNow(),1,'Month')),-1,'yyyy/MM/dd')</div></div>
+      <div class="row"><div class="k">曜日（日=0）</div><div class="v">dayOfWeek(utcNow())</div></div>
+    </div>
+
+    <div class="foot">
+      <div class="t">⚠ 先に1つだけ</div>
+      <div class="d">Power Automateの時刻は<b>既定でUTC</b>。日本時間で出したいときは <code>convertFromUtc</code> を通す。ハマりどころは2枚目へ。</div>
+    </div>
+  </div>
+  <div class="src">出典: Microsoft Learn（ワークフロー定義言語の関数リファレンス）</div>
+</div>
+</body>
+</html>
