@@ -3,110 +3,159 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=1280, initial-scale=1">
-<title>X技術Tips Vol.74-2 日付の式でハマる4か所</title>
+<title>X技術Tips Vol.74-2 そのまま貼れる日付の式12個</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --blue:#2563EB;--blue-dark:#1E40AF;--green:#16A34A;--green-dark:#0B5E37;
-    --ink:#1F2937;--gray:#374151;--weak:#6B7280;--orange:#EA580C;--red:#DC2626;
+    --blue:#2563EB; --blue-bg:#EFF6FF; --blue-dark:#1E40AF;
+    --green:#16A34A; --green-bg:#ECFDF5; --green-dark:#064E3B;
+    --red:#DC2626; --orange:#EA580C; --ink:#1F2937; --gray:#374151; --weak:#6B7280; --line:#E5E7EB;
   }
   *{margin:0;padding:0;box-sizing:border-box;}
   body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
   #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+  .ic{display:block;width:100%;height:100%;}
 
-  .titlebar{height:86px;
-    background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);
-    box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);
-    display:flex;align-items:center;gap:14px;padding:0 26px;position:relative;z-index:3;}
-  .tb-badge{background:#fff;color:var(--blue-dark);font-weight:900;font-size:17px;padding:5px 14px;border-radius:8px;white-space:nowrap;}
-  .tb-title{color:#fff;font-weight:900;font-size:33px;letter-spacing:-.01em;text-shadow:0 2px 4px rgba(0,0,0,.22);}
-  .tb-title b{color:#FDE68A;}
-  .tb-chara{position:absolute;right:16px;bottom:-16px;height:104px;}
+  .titlebar{height:90px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:16px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:26px;border-radius:999px;padding:7px 20px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .vol-logo{height:50px;width:50px;object-fit:contain;flex:0 0 auto;background:#fff;border-radius:12px;padding:5px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
+  .title-text{color:#fff;font-weight:900;font-size:27px;line-height:1.14;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:150px;}
+  .title-text .hl{color:#FFE08A;}
+  .title-chara{position:absolute;right:14px;bottom:-40px;height:142px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
 
-  .body{flex:1;padding:16px 26px 14px;display:flex;flex-direction:column;gap:12px;}
+  .concl{margin:10px 16px 0;background:var(--blue-bg);border:2.5px solid var(--blue);border-radius:13px;display:flex;align-items:center;gap:13px;padding:10px 18px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;width:40px;height:40px;border-radius:11px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;padding:8px;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
+  .concl .txt{font-weight:800;font-size:19px;color:var(--blue-dark);line-height:1.36;padding-right:100px;}
+  .concl .txt b{color:var(--orange);}
 
-  .cards{flex:1;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:12px 16px;}
-  .c{background:#F8F9FA;border:1px solid #E5E7EB;border-radius:12px;padding:12px 15px;display:flex;flex-direction:column;gap:7px;position:relative;}
-  .c::before{content:"";position:absolute;left:0;top:14px;bottom:14px;width:5px;border-radius:0 4px 4px 0;background:var(--red);}
-  .c .h{font-size:22px;font-weight:900;color:var(--ink);line-height:1.25;padding-left:10px;}
-  .c .h i{font-style:normal;color:var(--red);margin-right:6px;}
-  .c .d{font-size:16.5px;font-weight:600;color:var(--gray);line-height:1.6;padding-left:10px;}
-  .ng,.ok{display:flex;align-items:center;gap:8px;font-family:"Roboto Mono",monospace;font-size:15.5px;font-weight:700;border-radius:7px;padding:7px 10px;line-height:1.3;word-break:break-all;}
-  .ng{background:#FEF2F2;border:1px solid #FECACA;color:#991B1B;}
-  .ok{background:#ECFDF5;border:1px solid #A7F3D0;color:#065F46;}
-  .ng b,.ok b{font-family:"Noto Sans JP",sans-serif;font-size:13px;flex:0 0 auto;}
-  .pair{display:flex;flex-direction:column;gap:6px;padding-left:10px;}
-  .ex{margin-top:auto;padding-left:10px;font-size:15px;font-weight:700;color:#0B3A8F;background:#EFF6FF;
-    border:1px solid #BFDBFE;border-radius:8px;padding:8px 11px;line-height:1.5;}
-  .ex b{color:#1E40AF;}
+  .stage{flex:1 1 auto;margin:11px 16px 0;display:flex;gap:14px;min-height:0;}
 
-  .foot{display:flex;align-items:center;gap:12px;background:#EFF6FF;border:1px solid #BFDBFE;border-radius:10px;padding:9px 14px;}
-  .foot .t{font-size:16px;font-weight:900;color:var(--blue-dark);white-space:nowrap;}
-  .foot .d{font-size:15px;font-weight:700;color:#1E3A8A;line-height:1.4;}
+  /* 左：実画面モック（式エディタ） */
+  .lz{flex:0 0 404px;display:flex;flex-direction:column;min-height:0;}
+  .zhd{font-weight:900;font-size:17.5px;color:var(--ink);margin-bottom:7px;display:flex;align-items:center;gap:8px;}
+  .zhd .b{flex:0 0 auto;width:25px;height:25px;border-radius:50%;background:var(--blue);color:#fff;font-weight:900;font-size:14px;display:flex;align-items:center;justify-content:center;}
+  .pa{flex:1;background:#fff;border:1px solid #D7DEE8;border-radius:12px;box-shadow:0 6px 15px rgba(0,0,0,.14);overflow:hidden;font-family:'Segoe UI','Noto Sans JP',sans-serif;display:flex;flex-direction:column;min-height:0;}
+  .pa-h{flex:0 0 auto;display:flex;align-items:center;gap:9px;padding:9px 12px;background:#F3F6FB;border-bottom:1px solid #E3E9F1;}
+  .pa-h img{width:20px;height:20px;object-fit:contain;}
+  .pa-h span{font-weight:800;font-size:14px;color:#243B58;}
+  .tabs{flex:0 0 auto;display:flex;gap:0;border-bottom:1px solid #E3E9F1;background:#fff;}
+  .tab{font-size:13.5px;font-weight:800;color:#6B7280;padding:9px 14px;border-bottom:3px solid transparent;}
+  .tab.on{color:var(--blue);border-bottom-color:var(--blue);background:#F7FAFF;}
+  .fx{margin:11px 12px 0;border:2px solid var(--blue);border-radius:9px;background:#fff;box-shadow:0 2px 7px rgba(37,99,235,.18);display:flex;align-items:flex-start;gap:8px;padding:9px 10px;}
+  .fx .fxi{flex:0 0 auto;font-family:'Roboto Mono',monospace;font-weight:700;font-size:15px;color:var(--blue);background:#EFF6FF;border-radius:6px;padding:2px 7px;}
+  .fx .fxv{font-family:'Roboto Mono',monospace;font-size:14px;font-weight:700;color:#0B3A8F;line-height:1.4;word-break:break-all;}
+  .fx .cur{display:inline-block;width:2px;height:15px;background:var(--blue);vertical-align:-2px;margin-left:1px;}
+  .hint{margin:9px 12px 0;flex:0 0 auto;font-size:13.5px;font-weight:800;color:#1E40AF;background:#EFF6FF;border:1px dashed #93C5FD;border-radius:8px;padding:7px 10px;line-height:1.45;}
+  .fnl{margin:9px 12px 0;flex:1;min-height:0;display:flex;flex-direction:column;border:1px solid #E3E9F1;border-radius:9px;overflow:hidden;background:#fff;}
+  .fnl-h{flex:0 0 auto;font-size:12.5px;font-weight:800;color:#6B7280;background:#F7F9FC;padding:6px 11px;border-bottom:1px solid #E3E9F1;}
+  .fn{flex:1;display:flex;align-items:center;gap:9px;padding:0 11px;border-bottom:1px solid #F1F4F8;min-height:0;}
+  .fn:last-child{border-bottom:none;}
+  .fn .fi{flex:0 0 auto;width:20px;height:20px;border-radius:5px;background:#EFF6FF;color:var(--blue);font-family:'Roboto Mono',monospace;font-weight:700;font-size:11px;display:flex;align-items:center;justify-content:center;}
+  .fn .fnm{font-family:'Roboto Mono',monospace;font-size:13.5px;font-weight:700;color:#243B58;}
+  .fn .fdc{font-size:12px;font-weight:700;color:#94A3B8;margin-left:auto;}
+  .fn.sel{background:#EFF6FF;}
+  .okbar{margin:10px 12px 12px;display:flex;justify-content:flex-end;gap:8px;}
+  .okbar span{font-size:13.5px;font-weight:800;border-radius:7px;padding:7px 16px;}
+  .okbar .ko{background:#F3F4F6;color:#6B7280;}
+  .okbar .kk{background:var(--blue);color:#fff;box-shadow:0 2px 5px rgba(37,99,235,.4);}
 
-  .src{position:absolute;right:14px;bottom:6px;font-size:11px;color:#9CA3AF;}
+  /* 右：式リスト */
+  .rz{flex:1;display:flex;flex-direction:column;min-height:0;}
+  .list{flex:1;display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:1fr;gap:6px 10px;min-height:0;}
+  .it{display:flex;align-items:center;gap:9px;background:#F8F9FA;border:1px solid #E5E7EB;border-left:4px solid var(--blue);border-radius:8px;padding:5px 9px;min-height:0;}
+  .it .k{flex:0 0 104px;font-size:14.5px;font-weight:900;color:var(--ink);line-height:1.2;}
+  .it .v{flex:1;font-family:'Roboto Mono',monospace;font-size:13px;font-weight:700;color:#0B3A8F;line-height:1.28;word-break:break-all;}
+  .it.hot{border-left-color:var(--orange);background:#FFF9F3;}
+  .it.hot .v{color:#9A3412;}
+
+  .warn{flex:0 0 auto;margin:10px 16px 16px;background:#FFF7ED;border:2px solid #FDBA74;border-radius:12px;padding:9px 16px;display:flex;align-items:center;gap:14px;}
+  .warn .wt{flex:0 0 auto;font-weight:900;font-size:16px;color:#9A3412;}
+  .warn .wl{display:flex;gap:18px;flex-wrap:wrap;font-size:14.5px;font-weight:800;color:#7C2D12;line-height:1.35;}
+  .warn code{font-family:'Roboto Mono',monospace;background:#fff;border:1px solid #FDBA74;border-radius:5px;padding:1px 6px;}
+  .src{position:absolute;left:16px;bottom:4px;font-size:10px;color:#AEB6C2;font-weight:700;z-index:3;}
 </style>
 </head>
 <body>
-<div id="slide">
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgBulb='<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/></svg>';
+
+const EX=[
+ ["今日（UTC）","utcNow()",0],
+ ["今日の日付だけ","formatDateTime(utcNow(),'yyyy/MM/dd')",0],
+ ["日本時間にする","convertFromUtc(utcNow(),'Tokyo Standard Time','yyyy/MM/dd HH:mm')",1],
+ ["今日の0時","startOfDay(utcNow())",0],
+ ["3日後","addDays(utcNow(),3)",0],
+ ["3日前","addDays(utcNow(),-3)",0],
+ ["1週間後","addToTime(utcNow(),1,'Week')",0],
+ ["30分後","addMinutes(utcNow(),30)",0],
+ ["今月の1日","startOfMonth(utcNow(),'yyyy/MM/dd')",0],
+ ["来月の1日","startOfMonth(addToTime(utcNow(),1,'Month'),'yyyy/MM/dd')",0],
+ ["今月の末日","addDays(startOfMonth(addToTime(utcNow(),1,'Month')),-1,'yyyy/MM/dd')",1],
+ ["曜日（日=0）","dayOfWeek(utcNow())",0]
+];
+
+document.getElementById('slide').innerHTML=`
   <div class="titlebar">
-    <span class="tb-badge">#PowerAutomate</span>
-    <span class="tb-title">日付の式で<b>ハマるのは、この4か所</b></span>
-    <img class="tb-chara" src="../../pptx/_assets/chara/chara_point.png" alt="">
+    <div class="vol-pill">Vol.74-2</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">毎回ググっていた日付の式｜<span class="hl">そのまま貼れる12個をまとめました</span></div>
+    <img class="title-chara" src="${A}chara/chara_point.png" alt="">
   </div>
 
-  <div class="body">
-    <div class="cards">
+  <div class="concl">
+    <div class="chip">${svgBulb}</div>
+    <div class="txt">貼る場所は、動的なコンテンツの隣の<b>「fx（式）」タブ</b>。<b>全部が標準機能</b>なので、追加のライセンスは要りません。</div>
+  </div>
 
-      <div class="c">
-        <div class="h"><i>①</i>9時間ずれる</div>
-        <div class="d">既定はUTC。日本時間で出すなら必ず変換を挟む。</div>
-        <div class="pair">
-          <div class="ng"><b>ずれる</b>utcNow()</div>
-          <div class="ok"><b>正しい</b>convertFromUtc(utcNow(),'Tokyo Standard Time')</div>
+  <div class="stage">
+    <div class="lz">
+      <div class="zhd"><span class="b">1</span>ここに貼る（実際の画面）</div>
+      <div class="pa">
+        <div class="pa-h"><img src="${A}icons/pa_logo.png" alt=""><span>作成 — 入力</span></div>
+        <div class="tabs"><span class="tab">動的なコンテンツ</span><span class="tab on">式</span></div>
+        <div class="fx">
+          <span class="fxi">fx</span>
+          <span class="fxv">convertFromUtc(utcNow(),'Tokyo&nbsp;Standard&nbsp;Time','yyyy/MM/dd&nbsp;HH:mm')<span class="cur"></span></span>
         </div>
-        <div class="ex">例）スケジュールのタイムゾーンをUTCのままにすると、<b>朝9時のつもりが日本時間の18時</b>に動きます。</div>
-      </div>
-
-      <div class="c">
-        <div class="h"><i>②</i>タイムゾーン名を間違える</div>
-        <div class="d">日本は「Japan」ではありません。Windowsの名前で書きます。</div>
-        <div class="pair">
-          <div class="ng"><b>無い</b>'Japan Standard Time'</div>
-          <div class="ok"><b>正しい</b>'Tokyo Standard Time'</div>
+        <div class="fnl">
+          <div class="fnl-h">日付と時刻</div>
+          <div class="fn sel"><span class="fi">fx</span><span class="fnm">convertFromUtc</span><span class="fdc">日本時間へ</span></div>
+          <div class="fn"><span class="fi">fx</span><span class="fnm">utcNow</span><span class="fdc">現在（UTC）</span></div>
+          <div class="fn"><span class="fi">fx</span><span class="fnm">addDays</span><span class="fdc">日を足す</span></div>
+          <div class="fn"><span class="fi">fx</span><span class="fnm">formatDateTime</span><span class="fdc">表示を整える</span></div>
+          <div class="fn"><span class="fi">fx</span><span class="fnm">startOfMonth</span><span class="fdc">月初</span></div>
+          <div class="fn"><span class="fi">fx</span><span class="fnm">dayOfWeek</span><span class="fdc">曜日</span></div>
         </div>
-        <div class="ex">画面のドロップダウンでは <b>(UTC+09:00) 大阪、札幌、東京</b>。式に書くときだけ英語名が要ります。</div>
+        <div class="hint">💡 動的なコンテンツの候補に出てこない値も、この「式」タブになら書けます。</div>
+        <div class="okbar"><span class="ko">キャンセル</span><span class="kk">OK</span></div>
       </div>
-
-      <div class="c">
-        <div class="h"><i>③</i>大文字と小文字で別物</div>
-        <div class="d">MMは月、mmは分。HHは24時間、hhは12時間。</div>
-        <div class="pair">
-          <div class="ng"><b>分になる</b>'yyyy/mm/dd'</div>
-          <div class="ok"><b>月になる</b>'yyyy/MM/dd HH:mm'</div>
-        </div>
-        <div class="ex">よく使う形 ─ <b>yyyy年M月d日</b>（2026年7月5日）／<b>ddd</b>（曜日）／<b>tt</b>（午前・午後）</div>
-      </div>
-
-      <div class="c">
-        <div class="h"><i>④</i>「N営業日後」の関数は無い</div>
-        <div class="d">土日祝を飛ばす関数は用意されていません。1日ずつ足して曜日で判定するか、祝日リストを持ちます。</div>
-        <div class="pair">
-          <div class="ok"><b>判定に使う</b>dayOfWeek(utcNow())　日=0 … 土=6</div>
-        </div>
-        <div class="ex">作り方 ─ 1日足す → 曜日が<b>0か6なら もう1日足す</b>、を繰り返す（第12回でやった型）。</div>
-      </div>
-
     </div>
 
-    <div class="foot">
-      <div class="t">💡 覚え方</div>
-      <div class="d">「計算はUTCのまま、表示する直前に日本時間へ」。この順番にすると、日をまたぐ処理でズレません。</div>
+    <div class="rz">
+      <div class="zhd"><span class="b">2</span>コピーして使う12個</div>
+      <div class="list">
+        ${EX.map(([k,v,hot])=>`<div class="it${hot?' hot':''}"><span class="k">${k}</span><span class="v">${v}</span></div>`).join('')}
+      </div>
     </div>
   </div>
-  <div class="src">出典: Microsoft Learn（関数リファレンス）／タイムゾーン名は Windows の名称を実機確認</div>
-</div>
+
+  <div class="warn">
+    <span class="wt">⚠ 使う前に確認</span>
+    <span class="wl">
+      <span>日本は <code>'Tokyo Standard Time'</code>（Japan ではない）</span>
+      <span><code>MM</code>＝月／<code>mm</code>＝分</span>
+      <span>「N営業日後」の関数は無い（曜日で判定）</span>
+    </span>
+  </div>
+  <div class="src">出典：Microsoft Learn（ワークフロー定義言語の関数リファレンス）／タイムゾーン名は Windows の名称を実機確認</div>
+`;
+</script>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
 </body>
 </html>
