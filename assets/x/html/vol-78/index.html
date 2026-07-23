@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.78-1 そのフロー、追加のお金がいる？いらない？</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB; --blue-bg:#EFF6FF; --blue-dark:#1E40AF;
+    --green:#16A34A; --green-bg:#ECFDF5; --green-dark:#064E3B;
+    --red:#DC2626; --red-dark:#991B1B; --orange:#EA580C; --amber:#B45309;
+    --ink:#1F2937; --gray:#374151; --weak:#6B7280; --line:#E5E7EB;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+  .ic{display:block;width:100%;height:100%;}
+
+  .titlebar{height:90px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:16px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:26px;border-radius:999px;padding:7px 20px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .vol-logo{height:50px;width:50px;object-fit:contain;flex:0 0 auto;background:#fff;border-radius:12px;padding:5px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
+  .title-text{color:#fff;font-weight:900;font-size:26.5px;line-height:1.14;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:150px;}
+  .title-text .hl{color:#FFE08A;}
+  .title-chara{position:absolute;right:14px;bottom:-40px;height:142px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .concl{margin:10px 16px 0;background:var(--blue-bg);border:2.5px solid var(--blue);border-radius:13px;display:flex;align-items:center;gap:13px;padding:10px 18px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;width:40px;height:40px;border-radius:11px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;padding:8px;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
+  .concl .txt{font-weight:800;font-size:19.5px;color:var(--blue-dark);line-height:1.36;padding-right:100px;}
+  .concl .txt b{color:var(--orange);}
+
+  .stage{flex:1 1 auto;margin:11px 16px 0;display:flex;gap:15px;min-height:0;}
+
+  /* 左：判定フロー */
+  .flowz{flex:0 0 452px;display:flex;flex-direction:column;min-height:0;}
+  .hd{font-weight:900;font-size:23px;color:var(--ink);margin-bottom:8px;display:flex;align-items:center;gap:9px;letter-spacing:-.01em;}
+  .hd .b{flex:0 0 auto;width:31px;height:31px;border-radius:50%;background:var(--blue);color:#fff;font-weight:900;font-size:17px;display:flex;align-items:center;justify-content:center;}
+  .flow{flex:1;display:flex;flex-direction:column;gap:9px;min-height:0;justify-content:center;}
+  .qbox{background:#fff;border:2.5px solid var(--blue);border-radius:14px;padding:13px 16px;box-shadow:0 5px 13px rgba(37,99,235,.16);text-align:center;}
+  .qbox .qq{font-weight:900;font-size:20px;color:var(--blue-dark);line-height:1.35;}
+  .qbox .qs{font-size:14.5px;font-weight:800;color:var(--weak);margin-top:4px;line-height:1.4;}
+  .branch{display:flex;gap:12px;}
+  .ans{flex:1;border-radius:13px;padding:12px 13px;display:flex;flex-direction:column;gap:5px;position:relative;}
+  .ans.yes{background:linear-gradient(180deg,#F1FCF6,#E1F6EB);border:2.5px solid #86EFAC;}
+  .ans.no{background:linear-gradient(180deg,#FFF7ED,#FFEAD5);border:2.5px solid #FDBA74;}
+  .ans .at{font-weight:900;font-size:17px;line-height:1.25;}
+  .ans.yes .at{color:var(--green-dark);}
+  .ans.no .at{color:var(--amber);}
+  .ans .ad{font-size:14.5px;font-weight:800;line-height:1.4;}
+  .ans.yes .ad{color:#166534;}
+  .ans.no .ad{color:#7C2D12;}
+  .ans .badge{align-self:flex-start;font-weight:900;font-size:14px;border-radius:999px;padding:3px 12px;margin-top:2px;}
+  .ans.yes .badge{background:#DCFCE7;color:#166534;border:1.5px solid #86EFAC;}
+  .ans.no .badge{background:#FFE4C4;color:#9A3412;border:1.5px solid #FDBA74;}
+
+  /* 右：例 */
+  .exz{flex:1;display:flex;flex-direction:column;min-height:0;}
+  .ex{flex:1;display:flex;flex-direction:column;gap:8px;min-height:0;}
+  .card{flex:1;background:#fff;border:1px solid #D7DEE8;border-radius:12px;box-shadow:0 5px 13px rgba(0,0,0,.13);overflow:hidden;display:flex;flex-direction:column;min-height:0;}
+  .card-h{flex:0 0 auto;display:flex;align-items:center;gap:9px;padding:9px 13px;font-weight:900;font-size:16.5px;color:#fff;}
+  .card.free .card-h{background:linear-gradient(90deg,#0B7A4B,#16A34A);}
+  .card.prem .card-h{background:linear-gradient(90deg,#9A3412,#EA580C);}
+  .card-h .tag{margin-left:auto;font-size:13.5px;font-weight:900;background:rgba(255,255,255,.25);border-radius:999px;padding:2px 12px;}
+  .cbody{flex:1;padding:9px 12px;display:flex;flex-direction:column;gap:6px;justify-content:center;min-height:0;}
+  .cn{display:flex;align-items:center;gap:9px;font-size:16px;font-weight:800;color:#243B58;}
+  .cn img{width:24px;height:24px;object-fit:contain;flex:0 0 auto;}
+  .cn .plus{margin-left:auto;font-family:'Roboto Mono',monospace;font-size:13.5px;font-weight:700;}
+  .card.free .cn .plus{color:var(--green-dark);}
+  .card.prem .cn .plus{color:#9A3412;}
+  .exmascot{position:absolute;right:4px;bottom:2px;height:82px;z-index:30;filter:drop-shadow(0 3px 7px rgba(0,0,0,.4));}
+  .exz{position:relative;}
+
+  .next{flex:0 0 auto;margin:10px 16px 18px;background:linear-gradient(180deg,#EAF2FF,#DCEAFE);border:2.5px solid var(--blue);border-radius:13px;padding:12px 18px;display:flex;align-items:center;gap:11px;font-weight:900;font-size:20px;color:var(--blue-dark);box-shadow:0 3px 9px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .next .na{flex:0 0 auto;width:26px;height:26px;color:var(--blue);}
+  .next b{color:var(--orange);}
+  .src{position:absolute;left:16px;bottom:4px;font-size:10px;color:#AEB6C2;font-weight:700;z-index:3;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const ICON={arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',bulb:'<path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/>'};
+const svg=(n)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${ICON[n]}</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.78-1</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">そのフロー、追加のお金がいる？｜<span class="hl">見分け方は“1つのこと”だけ</span></div>
+    <img class="title-chara" src="${A}chara/chara_think.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svg('bulb')}</div>
+    <div class="txt">Microsoft 365があれば<b>標準コネクタは追加費用なし</b>。<b>プレミアムを1つでも</b>使うと、そのフロー全体が有料ライセンス（Premium）扱いになります。</div>
+  </div>
+
+  <div class="stage">
+    <div class="flowz">
+      <div class="hd"><span class="b">?</span>判定はこれだけ</div>
+      <div class="flow">
+        <div class="qbox">
+          <div class="qq">使うコネクタに、プレミアムが1つでもある？</div>
+          <div class="qs">アイコンに <b style="color:#EA580C">◆プレミアム</b> のマークが付いているか</div>
+        </div>
+        <div class="branch">
+          <div class="ans yes">
+            <div class="at">いいえ（標準だけ）</div>
+            <div class="ad">M365ライセンスの範囲。<br>追加費用なしで動く。</div>
+            <div class="badge">✓ 追加費用なし</div>
+          </div>
+          <div class="ans no">
+            <div class="at">はい（1つでも）</div>
+            <div class="ad">作る人・動かす人の<br>両方にPremiumが要る。</div>
+            <div class="badge">＄ Premium が必要</div>
+          </div>
+        </div>
+        <div class="qbox" style="border-color:#FDBA74;background:#FFFBF5;box-shadow:none;text-align:left;">
+          <div class="qq" style="color:#9A3412;font-size:17px;">⚠ よくある勘違い</div>
+          <div class="qs" style="text-align:left;margin-top:5px;">「作るだけ」なら M365 でもOK。でも<b style="color:#9A3412;">動かす（実行する）にはPremiumが要る</b>。作れたから無料、ではありません。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="exz">
+      <div class="hd"><span class="b">例</span>身近なフローで見ると</div>
+      <div class="ex">
+        <div class="card free">
+          <div class="card-h">この組み合わせなら 追加費用なし<span class="tag">✓ 標準だけ</span></div>
+          <div class="cbody">
+            <div class="cn"><img src="${A}icons/pa_forms.png" alt="">Forms<span style="color:#94A3B8">＋</span><img src="${A}icons/pa_sharepoint.png" alt="">SharePoint<span style="color:#94A3B8">＋</span><img src="${A}icons/pa_teams.png" alt="">Teams<span class="plus">全部 標準</span></div>
+            <div class="cn"><img src="${A}icons/pa_outlook.png" alt="">Outlook<span style="color:#94A3B8">＋</span><img src="${A}icons/pa_excel.png" alt="">Excel<span style="color:#94A3B8">＋</span><img src="${A}icons/pa_schedule.png" alt="">スケジュール<span class="plus">全部 標準</span></div>
+          </div>
+        </div>
+        <div class="card prem">
+          <div class="card-h">これが混じると Premium<span class="tag">＄ 有料</span></div>
+          <div class="cbody">
+            <div class="cn">🌐 HTTP<span style="color:#94A3B8">／</span>🗄️ SQL Server<span style="color:#94A3B8">／</span>⚙️ Dataverse<span class="plus">◆プレミアム</span></div>
+            <div class="cn" style="padding-right:76px">🔧 カスタムコネクタ<span style="color:#94A3B8">／</span>🤖 AI Builder<span class="plus">◆プレミアム</span></div>
+          </div>
+        </div>
+      </div>
+      <img class="exmascot" src="${A}chara/chara_point.png" alt="">
+    </div>
+  </div>
+
+  <div class="next"><span class="na">${svg('arrow')}</span>標準／プレミアムの<b>コネクタ早見表</b>と<b>ライセンスの数字</b>は <b>2枚目</b>にまとめました！</div>
+  <div class="src">出典：Microsoft Learn（Power Automate ライセンスの種類・2026-07更新）／アイコンは一部イメージ</div>
+`;
+</script>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>

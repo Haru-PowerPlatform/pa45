@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.78-2 標準／プレミアム コネクタ早見表</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB; --blue-bg:#EFF6FF; --blue-dark:#1E40AF;
+    --green:#16A34A; --green-dark:#064E3B;
+    --red:#DC2626; --red-dark:#991B1B; --orange:#EA580C; --amber:#9A3412;
+    --ink:#1F2937; --gray:#374151; --weak:#6B7280; --line:#E5E7EB;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+  .ic{display:block;width:100%;height:100%;}
+
+  .titlebar{height:90px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:16px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:26px;border-radius:999px;padding:7px 20px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .vol-logo{height:50px;width:50px;object-fit:contain;flex:0 0 auto;background:#fff;border-radius:12px;padding:5px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
+  .title-text{color:#fff;font-weight:900;font-size:27px;line-height:1.14;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:150px;}
+  .title-text .hl{color:#FFE08A;}
+  .title-chara{position:absolute;right:14px;bottom:-40px;height:142px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .concl{margin:10px 16px 0;background:var(--blue-bg);border:2.5px solid var(--blue);border-radius:13px;display:flex;align-items:center;gap:13px;padding:10px 18px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;width:40px;height:40px;border-radius:11px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;padding:8px;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
+  .concl .txt{font-weight:800;font-size:19.5px;color:var(--blue-dark);line-height:1.36;padding-right:100px;}
+  .concl .txt b{color:var(--orange);}
+
+  .stage{flex:1 1 auto;margin:11px 16px 0;display:flex;gap:14px;min-height:0;}
+  .col{flex:1;display:flex;flex-direction:column;min-height:0;}
+  .colhd{flex:0 0 auto;font-weight:900;font-size:18px;color:#fff;border-radius:11px 11px 0 0;padding:9px 14px;display:flex;align-items:center;gap:8px;}
+  .col.free .colhd{background:linear-gradient(90deg,#0B7A4B,#16A34A);}
+  .col.prem .colhd{background:linear-gradient(90deg,#9A3412,#EA580C);}
+  .colhd .tag{margin-left:auto;font-size:14px;font-weight:900;background:rgba(255,255,255,.25);border-radius:999px;padding:3px 13px;}
+  .list{flex:1;border:2px solid;border-top:none;border-radius:0 0 11px 11px;padding:9px 11px;display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:1fr;gap:7px 9px;min-height:0;}
+  .col.free .list{border-color:#9BE0BE;background:#F5FCF8;}
+  .col.prem .list{border-color:#FDBA74;background:#FFFBF5;}
+  .ci{display:flex;align-items:center;gap:9px;background:#fff;border:1px solid var(--line);border-radius:8px;padding:6px 9px;font-size:16px;font-weight:800;color:#243B58;min-height:0;}
+  .ci img{width:23px;height:23px;object-fit:contain;flex:0 0 auto;}
+  .ci .em{font-size:19px;flex:0 0 auto;width:23px;text-align:center;}
+
+  .rz{flex:0 0 316px;display:flex;flex-direction:column;min-height:0;gap:9px;}
+  .nums{background:#F8F9FA;border:1px solid var(--line);border-radius:12px;padding:10px 12px;}
+  .nums .nh{font-weight:900;font-size:17px;color:var(--ink);margin-bottom:7px;}
+  .nrow{display:flex;align-items:baseline;gap:9px;padding:4px 0;border-bottom:1px dashed var(--line);}
+  .nrow:last-child{border-bottom:none;}
+  .nrow .nl{font-size:15px;font-weight:800;color:var(--gray);flex:1;line-height:1.3;}
+  .nrow .nv{font-family:'Roboto Mono',monospace;font-size:16px;font-weight:700;color:var(--blue-dark);white-space:nowrap;}
+  .tip{flex:1;background:linear-gradient(180deg,#EFF6FF,#DCEAFE);border:2px solid #93C5FD;border-radius:12px;padding:11px 13px;display:flex;flex-direction:column;gap:6px;position:relative;min-height:0;justify-content:center;}
+  .tip .th{font-weight:900;font-size:17px;color:var(--blue-dark);}
+  .tip .tt{font-size:14.5px;font-weight:800;color:#1E3A8A;line-height:1.5;}
+  .tip .tt b{color:#9A3412;}
+  .tmascot{position:absolute;right:-8px;bottom:-6px;height:80px;z-index:30;filter:drop-shadow(0 3px 7px rgba(0,0,0,.4));}
+
+  .warn{flex:0 0 auto;margin:10px 16px 18px;background:#FFF7ED;border:2px solid #FDBA74;border-radius:12px;padding:9px 16px;display:flex;align-items:center;gap:16px;}
+  .warn .wt{flex:0 0 auto;font-weight:900;font-size:17px;color:#9A3412;}
+  .warn .wl{display:flex;gap:22px;flex-wrap:wrap;font-size:16px;font-weight:800;color:#7C2D12;line-height:1.35;}
+  .warn b{color:#C2410C;}
+  .src{position:absolute;left:16px;bottom:4px;font-size:10px;color:#AEB6C2;font-weight:700;z-index:3;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgBulb='<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/></svg>';
+
+const FREE=[
+ [A+'icons/pa_sharepoint.png','SharePoint'],[A+'icons/pa_outlook.png','Outlook'],
+ [A+'icons/pa_teams.png','Teams'],[A+'icons/pa_forms.png','Forms'],
+ [A+'icons/pa_onedrive.png','OneDrive'],[A+'icons/pa_excel.png','Excel Online'],
+ [A+'icons/pa_schedule.png','スケジュール'],['emoji:✅','承認 (Approvals)'],
+ ['emoji:📋','Planner'],['emoji:📰','RSS'],
+];
+const PREM=[
+ ['emoji:🌐','HTTP'],['emoji:🗄️','SQL Server'],
+ ['emoji:⚙️','Dataverse'],['emoji:🔧','カスタムコネクタ'],
+ ['emoji:🤖','AI Builder'],['emoji:☁️','Azure 各種'],
+];
+
+function ci(a){
+  const icon = a[0].startsWith('emoji:') ? `<span class="em">${a[0].slice(6)}</span>` : `<img src="${a[0]}" alt="">`;
+  return `<div class="ci">${icon}${a[1]}</div>`;
+}
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.78-2</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">コネクタ早見表｜<span class="hl">M365で無料の“標準”と、有料の“プレミアム”</span></div>
+    <img class="title-chara" src="${A}chara/chara_point.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svgBulb}</div>
+    <div class="txt">迷ったら<b>コネクタを選ぶ画面で「プレミアム」タブ</b>を見れば分かります。よく使う顔ぶれを並べました。</div>
+  </div>
+
+  <div class="stage">
+    <div class="col free">
+      <div class="colhd">✓ 標準（M365で追加費用なし）<span class="tag">無料</span></div>
+      <div class="list">${FREE.map(ci).join('')}</div>
+    </div>
+
+    <div class="col prem" style="flex:0 0 236px">
+      <div class="colhd">＄ プレミアム（有料）</div>
+      <div class="list" style="grid-template-columns:1fr;">${PREM.map(ci).join('')}</div>
+    </div>
+
+    <div class="rz">
+      <div class="nums">
+        <div class="nh">数字でざっくり</div>
+        <div class="nrow"><span class="nl">Premium（1人あたり月ぎめ）</span><span class="nv">有料</span></div>
+        <div class="nrow"><span class="nl">1日のアクション上限（Premium）</span><span class="nv">40,000</span></div>
+        <div class="nrow"><span class="nl">AI Builder クレジット</span><span class="nv">5,000/月</span></div>
+      </div>
+      <div class="tip">
+        <div class="th">💡 まず標準だけで組む</div>
+        <div class="tt">この保存シリーズのフローは<b>ほぼ全部が標準</b>。HTTPやDataverseは、標準で無理なときの最後の手段くらいで十分です。</div>
+        <img class="tmascot" src="${A}chara/chara_guts.png" alt="">
+      </div>
+    </div>
+  </div>
+
+  <div class="warn">
+    <span class="wt">⚠ 使う前に確認</span>
+    <span class="wl">
+      <span>価格・上限は<b>変わります</b>。最新はMicrosoftの価格ページで</span>
+      <span>PAD（デスクトップ）は<b>別ライセンス</b>の話</span>
+    </span>
+  </div>
+  <div class="src">出典：Microsoft Learn（Power Automate ライセンスの種類・2026-07更新）／価格は目安・アイコンは一部イメージ</div>
+`;
+</script>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>
