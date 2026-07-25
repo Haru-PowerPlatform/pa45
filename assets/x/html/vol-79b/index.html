@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.79-2 値の取り出しチートシート</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB; --blue-bg:#EFF6FF; --blue-dark:#1E40AF;
+    --green:#16A34A; --green-dark:#064E3B;
+    --red:#DC2626; --red-dark:#991B1B; --orange:#EA580C; --purple:#7C3AED;
+    --ink:#1F2937; --gray:#374151; --weak:#6B7280; --line:#E5E7EB;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+  .ic{display:block;width:100%;height:100%;}
+
+  .titlebar{height:90px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:16px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:26px;border-radius:999px;padding:7px 20px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .vol-logo{height:50px;width:50px;object-fit:contain;flex:0 0 auto;background:#fff;border-radius:12px;padding:5px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
+  .title-text{color:#fff;font-weight:900;font-size:27px;line-height:1.14;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:150px;}
+  .title-text .hl{color:#FFE08A;}
+  .title-chara{position:absolute;right:14px;bottom:-44px;height:146px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .concl{margin:10px 16px 0;background:var(--blue-bg);border:2.5px solid var(--blue);border-radius:13px;display:flex;align-items:center;gap:13px;padding:10px 18px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;width:40px;height:40px;border-radius:11px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;padding:8px;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
+  .concl .txt{font-weight:800;font-size:19.5px;color:var(--blue-dark);line-height:1.36;padding-right:100px;}
+  .concl .txt b{color:var(--orange);}
+
+  .stage{flex:1 1 auto;margin:11px 16px 0;display:flex;gap:14px;min-height:0;}
+  .lz{flex:1;display:flex;flex-direction:column;min-height:0;}
+  .rz{flex:0 0 344px;display:flex;flex-direction:column;min-height:0;gap:9px;}
+  .hd{font-weight:900;font-size:23px;color:var(--ink);margin-bottom:7px;display:flex;align-items:center;gap:9px;letter-spacing:-.01em;}
+  .hd .b{flex:0 0 auto;width:31px;height:31px;border-radius:50%;background:var(--blue);color:#fff;font-weight:900;font-size:17px;display:flex;align-items:center;justify-content:center;}
+
+  .qs{flex:1;display:grid;grid-template-columns:1fr;grid-auto-rows:1fr;gap:8px;min-height:0;}
+  .q{display:flex;align-items:center;gap:13px;background:#F8F9FA;border:1px solid var(--line);border-left:6px solid var(--blue);border-radius:9px;padding:8px 13px;min-height:0;}
+  .q .lbl{flex:0 0 186px;font-size:16.5px;font-weight:900;color:var(--ink);line-height:1.25;}
+  .q .lbl small{display:block;font-size:13px;font-weight:800;color:var(--weak);margin-top:1px;}
+  .q .val{flex:1;font-family:'Roboto Mono',monospace;font-size:16px;font-weight:700;color:#0B3A8F;line-height:1.3;word-break:break-all;}
+  .q.t{border-left-color:var(--purple);} .q.t .val{color:#5B21B6;}
+  .q.o{border-left-color:var(--orange);} .q.o .val{color:#9A3412;}
+  .q.g{border-left-color:var(--green);} .q.g .val{color:var(--green-dark);}
+
+  /* 右上：outputs と body の違い（図解） */
+  .diff{background:#fff;border:2.5px solid var(--blue);border-radius:13px;box-shadow:0 5px 13px rgba(37,99,235,.14);overflow:hidden;}
+  .diff-h{font-weight:900;font-size:16.5px;color:var(--blue-dark);background:#EEF4FF;padding:8px 13px;border-bottom:1px solid #C7DBF7;}
+  .diff-b{padding:10px 12px;display:flex;flex-direction:column;gap:7px;}
+  .drow{display:flex;align-items:center;gap:9px;}
+  .drow .dk{flex:0 0 auto;font-family:'Roboto Mono',monospace;font-weight:700;font-size:15px;border-radius:7px;padding:4px 10px;white-space:nowrap;}
+  .drow.out .dk{background:#EDE9FE;color:#5B21B6;}
+  .drow.bod .dk{background:#DCFCE7;color:#166534;}
+  .drow .dd{font-size:14.5px;font-weight:800;color:var(--gray);line-height:1.35;}
+  .drow .dd b{color:var(--ink);}
+  .diff-note{font-size:13.5px;font-weight:800;color:#1E40AF;background:#EFF6FF;border-top:1px dashed #93C5FD;padding:8px 12px;line-height:1.45;}
+
+  .tip{flex:1;background:linear-gradient(180deg,#FFF7ED,#FFEAD5);border:2.5px solid #FDBA74;border-radius:13px;padding:11px 13px;display:flex;flex-direction:column;gap:6px;position:relative;min-height:0;justify-content:center;}
+  .tip .th{font-weight:900;font-size:17px;color:#9A3412;}
+  .tip .tt{font-size:14.5px;font-weight:800;color:#7C2D12;line-height:1.5;padding-right:96px;}
+  .tip .tt code{font-family:'Roboto Mono',monospace;font-size:14px;background:#fff;border:1px solid #FDBA74;border-radius:5px;padding:1px 6px;}
+  .tmascot{position:absolute;right:-10px;bottom:-8px;height:116px;z-index:30;filter:drop-shadow(0 3px 7px rgba(0,0,0,.4));}
+
+  .warn{flex:0 0 auto;margin:10px 16px 18px;background:#FFF7ED;border:2px solid #FDBA74;border-radius:12px;padding:9px 16px;display:flex;align-items:center;gap:16px;}
+  .warn .wt{flex:0 0 auto;font-weight:900;font-size:17px;color:#9A3412;}
+  .warn .wl{display:flex;gap:22px;flex-wrap:wrap;font-size:16px;font-weight:800;color:#7C2D12;line-height:1.35;}
+  .warn code{font-family:'Roboto Mono',monospace;font-size:15px;background:#fff;border:1px solid #FDBA74;border-radius:5px;padding:1px 6px;}
+  .src{position:absolute;left:16px;bottom:4px;font-size:10px;color:#AEB6C2;font-weight:700;z-index:3;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgBulb='<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/></svg>';
+
+const Q=[
+ ['','アクションの本文','（いちばん使う）', "body('担当者を取得')"],
+ ['t','トリガーの中身','', "triggerBody()?['件名']"],
+ ['','奥の項目を安全に','（? を付ける）', "body('項目取得')?['作成者']?['mail']"],
+ ['o','配列の先頭','（0 番から）', "body('一覧取得')?['value'][0]"],
+ ['g','繰り返しの中の今の値','（Apply to each）', "item()?['Title']"]
+];
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.79-2</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">値の取り出し｜<span class="hl">コピーして使う式と、outputs / body の違い</span></div>
+    <img class="title-chara" src="${A}chara/chara_point.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svgBulb}</div>
+    <div class="txt">形は<b>関数(‘アクション名’)?['項目']</b> だけ。<b>アクション名のスペースは「_」</b>に変わる点だけ注意します。</div>
+  </div>
+
+  <div class="stage">
+    <div class="lz">
+      <div class="hd"><span class="b">1</span>コピーして使う5つ</div>
+      <div class="qs">
+        ${Q.map(([c,l,sub,v])=>`<div class="q ${c}"><span class="lbl">${l}${sub?`<small>${sub}</small>`:''}</span><span class="val">${v}</span></div>`).join('')}
+      </div>
+    </div>
+
+    <div class="rz">
+      <div class="hd" style="margin-bottom:0"><span class="b">2</span>outputs と body</div>
+      <div class="diff">
+        <div class="diff-h">同じアクションでも、返る中身が違う</div>
+        <div class="diff-b">
+          <div class="drow out"><span class="dk">outputs()</span><span class="dd"><b>まるごと</b>（状態・ヘッダー・本文）</span></div>
+          <div class="drow bod"><span class="dk">body()</span><span class="dd"><b>本文だけ</b>。ふだんはこっち</span></div>
+        </div>
+        <div class="diff-note">💡 body で欲しい物が無い時だけ、<b>outputs(...)?['body']</b> と一段深く取りに行く。</div>
+      </div>
+      <div class="tip">
+        <div class="th">🔧 名前が分からない時は</div>
+        <div class="tt">実行履歴でそのアクションを開き、<code>本文</code>の中のキー名（<code>mail</code>など）を見てから <code>?['mail']</code> と書く。</div>
+        <img class="tmascot" src="${A}chara/chara_guts.png" alt="">
+      </div>
+    </div>
+  </div>
+
+  <div class="warn">
+    <span class="wt">⚠ 使う前に確認</span>
+    <span class="wl">
+      <span>アクション名の空白は <code>_</code>（「項目 取得」→<code>'項目_取得'</code>）</span>
+      <span>無い項目は <code>?</code> を付けてエラー回避</span>
+    </span>
+  </div>
+  <div class="src">出典：Microsoft Learn（ワークフロー定義言語の関数リファレンス）／アクション名・データは架空</div>
+`;
+</script>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>
