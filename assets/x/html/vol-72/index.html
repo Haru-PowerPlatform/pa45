@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.72-1 送りっぱなしメールに追跡番号をつける</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB; --blue-bg:#EFF6FF; --blue-dark:#1E40AF;
+    --green:#16A34A; --green-dark:#064E3B;
+    --red:#DC2626; --red-dark:#991B1B; --orange:#EA580C; --amber:#B45309;
+    --teams:#5B5FC7; --ink:#1F2937; --gray:#374151; --weak:#6B7280; --line:#E5E7EB;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+  .ic{display:block;width:100%;height:100%;}
+
+  .titlebar{height:90px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:16px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:26px;border-radius:999px;padding:7px 20px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .vol-logo{height:50px;width:50px;object-fit:contain;flex:0 0 auto;background:#fff;border-radius:12px;padding:5px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
+  .title-text{color:#fff;font-weight:900;font-size:26.5px;line-height:1.14;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:158px;}
+  .title-text .hl{color:#FFE08A;}
+  .title-chara{position:absolute;right:14px;bottom:-44px;height:146px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .concl{margin:10px 16px 0;background:var(--blue-bg);border:2.5px solid var(--blue);border-radius:13px;display:flex;align-items:center;gap:13px;padding:11px 18px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;width:42px;height:42px;border-radius:11px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;padding:8px;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
+  .concl .txt{font-weight:800;font-size:19.5px;color:var(--blue-dark);line-height:1.36;padding-right:100px;}
+  .concl .txt b{color:var(--orange);}
+
+  /* 4コマ紙芝居 */
+  .komas{flex:1 1 auto;margin:12px 16px 0;display:grid;grid-template-columns:repeat(4,1fr);gap:12px;min-height:0;}
+  .koma{background:#fff;border:1px solid #E1E7EF;border-radius:14px;box-shadow:0 5px 13px rgba(0,0,0,.12);display:flex;flex-direction:column;min-height:0;overflow:hidden;position:relative;}
+  .koma-h{flex:0 0 auto;display:flex;align-items:center;gap:9px;padding:9px 12px;color:#fff;}
+  .koma-h .kn{flex:0 0 auto;width:31px;height:31px;border-radius:50%;background:rgba(255,255,255,.28);font-weight:900;font-size:17px;display:flex;align-items:center;justify-content:center;}
+  .koma-h .kt{font-weight:900;font-size:18.5px;line-height:1.15;}
+  .koma-h .day{margin-left:auto;font-weight:900;font-size:13.5px;background:rgba(255,255,255,.25);border-radius:999px;padding:2px 10px;white-space:nowrap;}
+  .k1 .koma-h{background:linear-gradient(90deg,#1D4ED8,#3B82F6);}
+  .k2 .koma-h{background:linear-gradient(90deg,#6B7280,#9CA3AF);}
+  .k3 .koma-h{background:linear-gradient(90deg,#B45309,#EA580C);}
+  .k4 .koma-h{background:linear-gradient(90deg,#0B7A4B,#16A34A);}
+  .koma-b{flex:1;padding:11px 12px;display:flex;flex-direction:column;gap:9px;min-height:0;}
+  .scene{flex:0 0 auto;height:132px;}
+  .cap{font-size:16.5px;font-weight:800;line-height:1.52;color:var(--gray);}
+  .cap b{color:var(--ink);}
+  .k1 .cap b{color:var(--blue-dark);} .k3 .cap b{color:var(--amber);} .k4 .cap b{color:var(--green-dark);}
+  .tag{align-self:stretch;text-align:center;font-weight:900;font-size:15.5px;border-radius:9px;padding:6px 12px;line-height:1.2;}
+  .k1 .tag{background:#DBEAFE;color:#1E40AF;}
+  .k2 .tag{background:#F1F5F9;color:#64748B;}
+  .k3 .tag{background:#FFEDD5;color:#9A3412;}
+  .k4 .tag{background:#DCFCE7;color:#166534;}
+    .mini{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;gap:5px;
+    background:#F8FAFC;border:1px solid #E5EAF1;border-radius:9px;padding:8px 10px;margin-top:1px;}
+  .k1 .mini{background:#F0F6FF;border-color:#CFE0FB;}
+  .k3 .mini{background:#FFF6EC;border-color:#FCD9AE;}
+  .k4 .mini{background:#F1FBF5;border-color:#BBF0CE;padding-right:56px;}
+  .mrow{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:800;color:#334155;line-height:1.25;}
+  .mrow .ml{flex:1;} .mrow .mm{font-family:'Roboto Mono',monospace;font-size:12.5px;color:#64748B;}
+  .mrow .badge{font-size:12px;font-weight:900;border-radius:999px;padding:2px 9px;white-space:nowrap;}
+  .badge.wait{background:#FEE2E2;color:#991B1B;} .badge.done{background:#DCFCE7;color:#166534;}
+  .mmail{font-size:14px;font-weight:800;color:#166534;line-height:1.4;}
+  .mmail b{color:#064E3B;}
+  .komascot{position:absolute;right:-4px;bottom:64px;height:104px;z-index:20;filter:drop-shadow(0 3px 6px rgba(0,0,0,.4));}
+
+  .next{flex:0 0 auto;margin:12px 16px 18px;background:linear-gradient(180deg,#EAF2FF,#DCEAFE);border:2.5px solid var(--blue);border-radius:13px;padding:12px 18px;display:flex;align-items:center;gap:11px;font-weight:900;font-size:20px;color:var(--blue-dark);box-shadow:0 3px 9px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .next .na{flex:0 0 auto;width:26px;height:26px;color:var(--blue);}
+  .next b{color:var(--orange);}
+  .src{position:absolute;left:16px;bottom:5px;font-size:10px;color:#AEB6C2;font-weight:700;z-index:3;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgArrow='<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+const svgBulb='<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/></svg>';
+
+/* ① 送信＋追跡番号発行（封筒＋伝票ラベル） */
+const scene1=`<svg class="ic" viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+  <defs><linearGradient id="env1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#E7EEFB"/></linearGradient></defs>
+  <ellipse cx="100" cy="110" rx="66" ry="7" fill="#000" opacity=".07"/>
+  <g transform="rotate(-8 96 52)">
+    <rect x="46" y="30" width="108" height="70" rx="8" fill="url(#env1)" stroke="#2563EB" stroke-width="2.5"/>
+    <path d="M46 38 L100 74 L154 38" fill="none" stroke="#2563EB" stroke-width="2.5"/>
+    <path d="M20 44 h20 M14 60 h26 M24 76 h16" stroke="#93C5FD" stroke-width="3" stroke-linecap="round"/>
+  </g>
+  <g transform="rotate(6 154 90)">
+    <rect x="118" y="74" width="72" height="34" rx="6" fill="#FEF9C3" stroke="#CA8A04" stroke-width="2"/>
+    <text x="154" y="88" font-size="10" font-weight="900" fill="#854D0E" text-anchor="middle">TRACKING</text>
+    <text x="154" y="102" font-family="monospace" font-size="12" font-weight="700" fill="#92400E" text-anchor="middle">#A-0007</text>
+  </g>
+</svg>`;
+
+/* ② 返信を待つ（受信トレイ＋…） */
+const scene2=`<svg class="ic" viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+  <ellipse cx="100" cy="110" rx="60" ry="7" fill="#000" opacity=".06"/>
+  <rect x="48" y="28" width="104" height="72" rx="10" fill="#F8FAFC" stroke="#94A3B8" stroke-width="2.5"/>
+  <path d="M48 42 h104" stroke="#CBD5E1" stroke-width="2"/>
+  <circle cx="64" cy="35" r="3.5" fill="#CBD5E1"/><circle cx="76" cy="35" r="3.5" fill="#CBD5E1"/>
+  <rect x="60" y="54" width="80" height="7" rx="3.5" fill="#E2E8F0"/>
+  <rect x="60" y="68" width="62" height="7" rx="3.5" fill="#E2E8F0"/>
+  <rect x="60" y="82" width="70" height="7" rx="3.5" fill="#E2E8F0"/>
+  <g><circle cx="150" cy="32" r="18" fill="#fff" stroke="#94A3B8" stroke-width="2"/>
+  <circle cx="143" cy="32" r="2.6" fill="#94A3B8"/><circle cx="150" cy="32" r="2.6" fill="#94A3B8"/><circle cx="157" cy="32" r="2.6" fill="#94A3B8"/></g>
+</svg>`;
+
+/* ③ 3日経過をフローが見張る（カレンダー＋目） */
+const scene3=`<svg class="ic" viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+  <defs><linearGradient id="cal3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#FFF1E2"/></linearGradient></defs>
+  <ellipse cx="100" cy="110" rx="60" ry="7" fill="#000" opacity=".07"/>
+  <rect x="56" y="28" width="88" height="76" rx="9" fill="url(#cal3)" stroke="#EA580C" stroke-width="2.5"/>
+  <rect x="56" y="28" width="88" height="20" rx="9" fill="#EA580C"/>
+  <rect x="72" y="22" width="7" height="14" rx="3.5" fill="#9A3412"/><rect x="121" y="22" width="7" height="14" rx="3.5" fill="#9A3412"/>
+  <text x="100" y="43" font-size="11" font-weight="900" fill="#fff" text-anchor="middle">3日 経過</text>
+  <g font-size="12" font-weight="800" fill="#C2410C" text-anchor="middle">
+    <text x="74" y="68">1</text><text x="100" y="68">2</text>
+    <circle cx="126" cy="64" r="13" fill="#EA580C"/><text x="126" y="69" fill="#fff">3</text>
+  </g>
+  <g transform="translate(150 94)"><ellipse cx="0" cy="0" rx="16" ry="11" fill="#fff" stroke="#EA580C" stroke-width="2"/><circle cx="0" cy="0" r="6" fill="#EA580C"/><circle cx="2" cy="-2" r="2" fill="#fff"/></g>
+</svg>`;
+
+/* ④ 自分にだけリマインド（通知カード＋ベル） */
+const scene4=`<svg class="ic" viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+  <defs><linearGradient id="bell4" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4ADE80"/><stop offset="1" stop-color="#16A34A"/></linearGradient></defs>
+  <ellipse cx="100" cy="110" rx="60" ry="7" fill="#000" opacity=".07"/>
+  <rect x="38" y="36" width="124" height="54" rx="10" fill="#fff" stroke="#16A34A" stroke-width="2.5"/>
+  <rect x="38" y="36" width="124" height="17" rx="9" fill="#DCFCE7"/>
+  <text x="52" y="49" font-size="10" font-weight="900" fill="#166534">自分あて リマインド</text>
+  <rect x="52" y="61" width="98" height="6" rx="3" fill="#BBF7D0"/>
+  <rect x="52" y="74" width="66" height="6" rx="3" fill="#BBF7D0"/>
+  <g transform="translate(160 32)"><path d="M0 -8 a10 10 0 0 1 10 10 v6 l3 5 h-26 l3 -5 v-6 a10 10 0 0 1 10 -10z" fill="url(#bell4)" stroke="#0B7A4B" stroke-width="1.5"/><circle cx="0" cy="18" r="3.5" fill="#0B7A4B"/></g>
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.72-1</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">返信こない、でも催促しづらい｜<span class="hl">メールに“追跡番号”をつける</span></div>
+    <img class="title-chara" src="${A}chara/chara_trouble.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svgBulb}</div>
+    <div class="txt">宅配便の<b>追跡番号</b>みたいに、送ったメールを台帳で見張る。<b>3日返信がなければ、相手ではなく自分にそっと催促</b>が届きます。</div>
+  </div>
+
+  <div class="komas">
+    <div class="koma k1">
+      <div class="koma-h"><span class="kn">1</span><span class="kt">送る時にボタン</span><span class="day">Day 0</span></div>
+      <div class="koma-b">
+        <div class="scene">${scene1}</div>
+        <div class="cap">送信のあと<b>ボタンをひと押し</b>。追跡ボードに1行できる。</div>
+        <div class="mini">
+          <div class="mrow"><span class="ml">A社 見積の件</span><span class="mm">7/24</span><span class="badge wait">未返信</span></div>
+        </div>
+        <div class="tag">📮 追跡番号を発行</div>
+      </div>
+    </div>
+    <div class="koma k2">
+      <div class="koma-h"><span class="kn">2</span><span class="kt">返信を待つ</span><span class="day">Day 1–2</span></div>
+      <div class="koma-b">
+        <div class="scene">${scene2}</div>
+        <div class="cap">返信が来たら会話を照合し、<b>その行はそっと消える</b>。追いかけない。</div>
+        <div class="mini">
+          <div class="mrow"><span class="ml">📨 返信が届いた</span><span class="badge done">✓ 完了</span></div>
+        </div>
+        <div class="tag">📥 来たら自動でクローズ</div>
+      </div>
+    </div>
+    <div class="koma k3">
+      <div class="koma-h"><span class="kn">3</span><span class="kt">3日たつと</span><span class="day">Day 3</span></div>
+      <div class="koma-b">
+        <div class="scene">${scene3}</div>
+        <div class="cap">毎朝フローが台帳を見張り、<b>返信のない行</b>だけを拾い上げる。</div>
+        <div class="mini">
+          <div class="mrow"><span class="ml">3日たった未返信</span><span class="badge wait">2 件</span></div>
+        </div>
+        <div class="tag">👀 未返信を発見</div>
+      </div>
+    </div>
+    <div class="koma k4">
+      <div class="koma-h"><span class="kn">4</span><span class="kt">自分にだけ届く</span><span class="day">催促</span></div>
+      <div class="koma-b">
+        <div class="scene">${scene4}</div>
+        <div class="cap"><b>自分あて</b>に届く。催促は相手に飛ばさない。</div>
+        <div class="mini">
+          <div class="mmail">📧「<b>A社の見積</b>、まだ<br>返信ないよ」</div>
+        </div>
+        <div class="tag">🔔 忘れないための保険</div>
+        <img class="komascot" src="${A}chara/chara_guts.png" alt="">
+      </div>
+    </div>
+  </div>
+
+  <div class="next"><span class="na">${svgArrow}</span>台帳の作り方・3日の見張り方…<b>具体的な組み方</b>は <b>2枚目</b>で解説！</div>
+  <div class="src">出典：Microsoft Learn（Office 365 Outlook／SharePoint／スケジュール）／画面は再現・データは架空</div>
+`;
+</script>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>
