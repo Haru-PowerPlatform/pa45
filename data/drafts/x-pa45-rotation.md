@@ -17,7 +17,7 @@
 | 8 | 要望→第18回 承認 | youtu.be（第18回） | YouTube |
 | 9 | 「45分では足りない」→スライド常設 | slides/ | og-slides.png |
 | 10 | 「JSONが無理」→第14回 | youtu.be（第14回） | YouTube |
-| 11 | 動画アーカイブ15本 | videos/ | og-videos.png |
+| 11 | 動画アーカイブ17本 | videos/ | og-videos.png |
 | 12 | 実行履歴の読み方（第11回） | youtu.be（第11回） | YouTube |
 | 13 | スライド全19回 | slides/ | og-slides.png |
 | 14 | 初参加ガイド | start-here/ | og-start-here.png |
@@ -161,7 +161,7 @@ https://youtu.be/9fkbQmOR6Fo
 
 ## 11. 動画アーカイブ15本
 ```
-PA45の過去回の録画を15本公開しています。
+PA45の過去回の録画を17本公開しています。
 
 承認・Forms連携・通知・JSON・Copilotなど。気になるテーマの回だけ、その場で再生できます。1本45分です。
 

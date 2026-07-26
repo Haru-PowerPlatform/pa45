@@ -43,6 +43,7 @@ SESSIONS = {
     17: ("Due Date Watch", "2026-07-02", "deadline"),
     18: ("Approval Escalation", "2026-07-09", "approval"),
     19: ("Effect Visualization", "2026-07-16", "dashboard"),
+    20: ("Adaptive Cards", "2026-07-23", "card"),
 }
 
 
@@ -60,6 +61,10 @@ PALETTE_OVERRIDE = {
     #          サファイア青からの変化で、右肩上がりの棒グラフicon（gold）を主役に。
     19: dict(ring=("#a7f3d0", "#04331f"), disc=("#0e9f6e", "#022b1a"),
              gold=GOLD, title="#ffffff", sub="#bbf7d8"),
+    # Vol.20：アダプティブカード＝Teams/カードの世界。エメラルドからの変化でインディゴ×ゴールド。
+    #          クリーム色のリッチカードicon（金ヘッダー＋アクションボタン）が主役。
+    20: dict(ring=("#b7c0ff", "#141c54"), disc=("#4f46e5", "#0b0a33"),
+             gold=GOLD, title="#ffffff", sub="#cfd4ff"),
 }
 
 
@@ -187,9 +192,32 @@ def icon_dashboard(g):
   </g>'''
 
 
+def icon_card(g):
+    """アダプティブカード = 金ヘッダー＋項目行＋アクションボタン付きのリッチカード。"""
+    gl, gm, gd = g
+    x, y, w, h, r = 350, 298, 180, 182, 18
+    return f'''
+  <g filter="url(#ishadow)">
+    <!-- カード本体（クリーム） -->
+    <rect x="{x}" y="{y}" width="{w}" height="{h}" rx="{r}" fill="#fffaf0" stroke="{gd}" stroke-width="4"/>
+    <!-- ヘッダーバー（金・上端だけ丸め） -->
+    <path d="M{x} {y+36} V{y+r} Q{x} {y} {x+r} {y} H{x+w-r} Q{x+w} {y} {x+w} {y+r} V{y+36} Z"
+          fill="url(#sparkgrad)"/>
+    <rect x="{x+16}" y="{y+13}" width="98" height="11" rx="5.5" fill="#fffaf0" opacity="0.92"/>
+    <!-- 項目行 -->
+    <rect x="{x+18}" y="{y+58}" width="{w-36}" height="11" rx="5.5" fill="{gm}" opacity="0.55"/>
+    <rect x="{x+18}" y="{y+80}" width="{w-62}" height="11" rx="5.5" fill="{gm}" opacity="0.40"/>
+    <rect x="{x+18}" y="{y+102}" width="{w-44}" height="11" rx="5.5" fill="{gm}" opacity="0.40"/>
+    <!-- アクションボタン -->
+    <rect x="{x+18}" y="{y+132}" width="{w-36}" height="42" rx="13"
+          fill="url(#sparkgrad)" stroke="{gd}" stroke-width="3"/>
+    <rect x="{x+28}" y="{y+140}" width="{w-56}" height="9" rx="4.5" fill="{gl}" opacity="0.60"/>
+  </g>'''
+
+
 ICONS = {"foldermail": icon_foldermail, "copilot": icon_copilot,
          "deadline": icon_deadline, "approval": icon_approval,
-         "dashboard": icon_dashboard}
+         "dashboard": icon_dashboard, "card": icon_card}
 
 
 def knurl_dots(cx, cy, r, n, color):
@@ -271,7 +299,7 @@ def build_svg(vol, theme, date, key, pal):
       <stop offset="1" stop-color="#000000" stop-opacity="0.35"/>
     </linearGradient>
     <filter id="dshadow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="10" stdDeviation="16" flood-color="#000" flood-opacity="0.45"/>
+      <feDropShadow dx="0" dy="14" stdDeviation="22" flood-color="#000" flood-opacity="0.55"/>
     </filter>
     <filter id="ishadow" x="-30%" y="-30%" width="160%" height="160%">
       <feDropShadow dx="0" dy="5" stdDeviation="6" flood-color="#000" flood-opacity="0.35"/>
@@ -299,20 +327,20 @@ def build_svg(vol, theme, date, key, pal):
   {icon_svg}
 
   <!-- テーマ名（立体） -->
-  {text3d(cx, 560, tsize, 1, pal['title'], gd, 800, title)}
+  {text3d(cx, 572, tsize, 1, pal['title'], gd, 800, title)}
   <!-- VOL・日付（立体） -->
-  {text3d(cx, 606, 24, 3, pal['sub'], gd, 600, f"VOL.{vol} · {date}", sheen=False)}
+  {text3d(cx, 618, 24, 3, pal['sub'], gd, 600, f"VOL.{vol} · {date}", sheen=False)}
 
   <!-- 光沢・立体（上半分ハイライト＋下部の陰影＋内周ベベル） -->
   <g clip-path="url(#discclip)">
     <ellipse cx="{cx}" cy="{cy-118}" rx="285" ry="180" fill="url(#gloss)"/>
-    <path d="M {cx-232} {cy-92} A 232 232 0 0 1 {cx+232} {cy-92}"
-          fill="none" stroke="#ffffff" stroke-width="6" stroke-linecap="round" opacity="0.5"/>
+    <!-- 内周の落ち込み影（凹んだコイン面＝立体感） -->
+    <circle cx="{cx}" cy="{cy}" r="{ID}" fill="none" stroke="#000000" stroke-width="24" opacity="0.30"/>
     <circle cx="{cx}" cy="{cy}" r="{ID}" fill="url(#vign)"/>
   </g>
   <!-- 内周ベベルリング（金属の縁の立体感） -->
-  <circle cx="{cx}" cy="{cy}" r="{ID-3}" fill="none" stroke="url(#bevel)" stroke-width="6" opacity="0.9"/>
-  <circle cx="{cx}" cy="{cy}" r="{rim}" fill="none" stroke="url(#bevel)" stroke-width="4" opacity="0.7"/>
+  <circle cx="{cx}" cy="{cy}" r="{ID-3}" fill="none" stroke="url(#bevel)" stroke-width="9" opacity="1"/>
+  <circle cx="{cx}" cy="{cy}" r="{rim}" fill="none" stroke="url(#bevel)" stroke-width="6" opacity="0.85"/>
 </svg>'''
 
 
