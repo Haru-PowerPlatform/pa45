@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.65-2 おかえりダイジェストの作り方</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB; --blue-bg:#EFF6FF; --blue-dark:#1E40AF;
+    --green:#16A34A; --green-dark:#064E3B;
+    --orange:#EA580C; --red:#DC2626; --ink:#1F2937; --gray:#374151; --weak:#6B7280;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+  .ic{display:block;width:100%;height:100%;}
+
+  .titlebar{height:90px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:15px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:26px;border-radius:999px;padding:7px 20px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .logos{display:flex;align-items:center;gap:7px;flex:0 0 auto;}
+  .logos .ll{height:48px;width:48px;object-fit:contain;background:#fff;border-radius:12px;padding:6px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
+  .logos .plus{color:#fff;font-weight:900;font-size:24px;text-shadow:0 1px 2px rgba(0,0,0,.25);line-height:1;}
+  .title-text{color:#fff;font-weight:900;font-size:30px;line-height:1.14;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:150px;}
+  .title-text .hl{color:#FFE08A;}
+  .title-chara{position:absolute;right:14px;bottom:-44px;height:146px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .concl{margin:9px 16px 0;background:#EFF6FF;border:2.5px solid var(--blue);border-radius:13px;display:flex;align-items:center;gap:13px;padding:8px 18px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;display:flex;align-items:center;gap:6px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;font-weight:900;font-size:16px;border-radius:9px;padding:8px 14px;white-space:nowrap;box-shadow:0 3px 6px rgba(0,0,0,.24);}
+  .concl .chip svg{width:17px;height:17px;flex:0 0 auto;}
+  .concl .txt{font-weight:800;font-size:17px;color:var(--blue-dark);line-height:1.32;padding-right:96px;}
+  .concl .txt b{color:var(--orange);}
+  .concl .txt .g{color:var(--green-dark);}
+
+  .cols{flex:1 1 auto;margin:11px 15px 0;display:flex;align-items:stretch;gap:0;min-height:0;}
+  .col{flex:1;display:flex;flex-direction:column;min-height:0;position:relative;}
+  .carrow{flex:0 0 30px;display:flex;align-items:center;justify-content:center;color:#9AA7B8;}
+  .carrow svg{width:28px;height:28px;}
+  .colcard{flex:1;background:#fff;border:1.5px solid #C9D2E0;border-radius:13px;box-shadow:0 5px 13px rgba(0,0,0,.12);overflow:hidden;display:flex;flex-direction:column;}
+  .cnum{position:absolute;top:-10px;left:-10px;width:34px;height:34px;border-radius:50%;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;font-weight:900;font-size:18px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 5px rgba(0,0,0,.3);z-index:5;border:2.5px solid #fff;}
+  .ch{display:flex;align-items:center;gap:11px;padding:9px 32px 9px 12px;min-height:58px;background:#fff;border-bottom:1px solid #EDEFF2;position:relative;}
+  .ch .sq{flex:0 0 auto;width:40px;height:40px;border-radius:8px;background:#fff;border:1px solid #EAECEF;display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.08);}
+  .ch .sq img{width:30px;height:30px;object-fit:contain;}
+  .ch .nm{flex:1;font-weight:900;font-size:14.5px;color:var(--ink);line-height:1.16;}
+  .ch .nm small{display:block;font-weight:700;font-size:11.5px;color:var(--weak);margin-top:2px;}
+  .ch .dots{position:absolute;right:11px;top:10px;color:#9AA3AF;font-size:19px;font-weight:900;line-height:1;}
+
+  .cp{flex:1;font-family:'Segoe UI','Noto Sans JP',sans-serif;padding:0 11px 8px;display:flex;flex-direction:column;gap:0;}
+  .tabs{display:flex;align-items:center;gap:13px;padding:0 2px;border-bottom:1px solid #E5E7EB;}
+  .tabs span{font-size:12px;font-weight:700;color:#605E5C;padding:6px 1px;white-space:nowrap;}
+  .tabs span.on{color:var(--blue);font-weight:800;box-shadow:inset 0 -2.5px 0 var(--blue);}
+  .ptop{flex:0 0 236px;display:flex;flex-direction:column;gap:6px;overflow:hidden;background:#fff;padding:9px 2px 4px;}
+  .fld{display:flex;flex-direction:column;gap:2px;}
+  .fld .l{font-size:12.5px;color:#605E5C;font-weight:800;line-height:1.15;}
+  .fld .l .req{color:#D13438;margin-left:1px;}
+  .fld .v{border:1px solid #D1D1D1;border-radius:6px;padding:6px 10px;font-size:13.5px;color:#242424;background:#fff;display:flex;align-items:center;gap:8px;font-weight:700;}
+  .fld .v .cr{margin-left:auto;flex:0 0 auto;color:#605E5C;font-weight:900;font-size:11px;}
+  .fld .v .hi{color:#B91C1C;font-weight:900;}
+  .dyn{display:inline-flex;align-items:center;gap:5px;background:#EAF1FE;border:1px solid #BBD0EE;border-radius:5px;padding:2px 7px;font-size:12.5px;font-weight:800;color:#1E40AF;}
+  .dyn svg{width:12px;height:12px;flex:0 0 auto;}
+  .note{font-size:12px;color:#8A8886;font-weight:700;line-height:1.3;}
+
+  .suppl{flex:1;display:flex;align-items:center;gap:9px;background:#F5F9FE;border:1.5px dashed #B7CFF0;border-radius:10px;padding:7px 11px;margin-top:4px;min-height:0;}
+  .suppl .si{flex:0 0 auto;font-size:21px;line-height:1;}
+  .suppl .st{font-size:12px;font-weight:800;color:#33507a;line-height:1.35;}
+  .suppl .st b{color:var(--blue-dark);}
+  .suppl .st .hot{color:#B91C1C;}
+  .suppl .st img{width:18px;height:18px;object-fit:contain;vertical-align:middle;}
+
+  .howsteps{flex:1;margin-top:7px;background:linear-gradient(180deg,#EEF6FF,#E3EFFB);border:1px solid #C7DDF3;border-radius:10px;padding:9px 12px;display:flex;flex-direction:column;gap:6px;}
+  .howsteps .hh{display:flex;align-items:center;gap:7px;font-size:14.5px;font-weight:900;color:#0A4B86;}
+  .howsteps .hh::before{content:"";width:5px;height:15px;border-radius:2px;background:var(--blue);}
+  .howsteps ol{list-style:none;display:flex;flex-direction:column;justify-content:space-evenly;flex:1;gap:5px;}
+  .howsteps li{display:flex;gap:9px;align-items:flex-start;font-size:13.5px;font-weight:700;color:#294056;line-height:1.28;}
+  .howsteps li .sn{flex:0 0 auto;width:22px;height:22px;border-radius:50%;background:var(--blue);color:#fff;font-size:12.5px;font-weight:900;display:flex;align-items:center;justify-content:center;margin-top:1px;}
+  .howsteps li b{color:var(--blue-dark);}
+  .howsteps li.key{color:#0B5E37;} .howsteps li.key .sn{background:#16A34A;} .howsteps li.key b{color:#0B5E37;}
+  .howsteps li.hot{color:#9A3412;} .howsteps li.hot .sn{background:#EA580C;} .howsteps li.hot b{color:#B91C1C;}
+
+  .pitfall{flex:0 0 auto;margin:9px 15px 11px;background:linear-gradient(180deg,#FFF7ED,#FFEFD9);border:2px solid #FDBA74;border-radius:13px;padding:9px 16px;display:flex;align-items:center;gap:13px;box-shadow:0 2px 6px rgba(0,0,0,.07);position:relative;}
+  .pitfall .pl{flex:0 0 auto;display:flex;align-items:center;gap:7px;background:linear-gradient(180deg,#FB923C,#EA580C);color:#fff;font-weight:900;font-size:15px;border-radius:9px;padding:8px 13px;box-shadow:0 2px 4px rgba(0,0,0,.25);}
+  .pitfall .pl svg{width:17px;height:17px;}
+  .pitfall .px{flex:1;font-weight:800;font-size:13.5px;color:#7C2D12;line-height:1.34;padding-right:104px;}
+  .pitfall .px b{color:var(--orange);}
+  .pitfall .px code{font-family:'Courier New',monospace;background:#fff;border:1px solid #F0C89B;border-radius:5px;padding:1px 6px;color:#9A3412;font-weight:800;}
+  .pit-chara{position:absolute;right:12px;bottom:-2px;height:104px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.4));}
+  .src{position:absolute;left:16px;bottom:3px;font-size:10px;color:#AEB6C2;font-weight:700;z-index:3;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const ICON={
+ bulb:'<path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/>',
+ warn:'<path d="M10.3 3.3 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.3a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>',
+ arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',
+ zap:'<path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/>'
+};
+const svg=(n)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${ICON[n]}</svg>`;
+const zap=(t)=>`<span class="dyn">${svg('zap')}${t}</span>`;
+
+const s=document.getElementById('slide');
+s.innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.65-2</div>
+    <div class="logos"><img class="ll" src="${A}icons/pa_logo.png" alt=""><span class="plus">＋</span><img class="ll" src="${A}icons/pa_outlook.png" alt=""></div>
+    <div class="title-text">作り方｜<span class="hl">“おかえりダイジェスト”を3ステップで自作</span></div>
+    <img class="title-chara" src="${A}chara/chara_laptop.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svg('bulb')}カギは②</div>
+    <div class="txt"><b>①復帰日の朝に起動 →②未読メールを重要度つきで取得 →③1通にまとめて自分へ送信。</b><br>取得は<span class="g">Outlook「メールを取得する(V3)」＝標準</span>。3つ全部 追加費用なしで作れます。</div>
+  </div>
+
+  <div class="cols">
+    <div class="col">
+      <div class="cnum">1</div>
+      <div class="colcard">
+        <div class="ch"><span class="sq"><img src="${A}icons/pa_schedule.png" alt=""></span><span class="nm">繰り返し<small>スケジュール（トリガー）</small></span><span class="dots">⋮</span></div>
+        <div class="cp">
+          <div class="tabs"><span class="on">パラメーター</span><span>設定</span><span>詳細</span></div>
+          <div class="ptop">
+            <div class="fld"><span class="l">間隔 <span class="req">*</span></span><span class="v">1<span class="cr">／日</span></span></div>
+            <div class="fld"><span class="l">設定時刻</span><span class="v">8<span class="cr">時</span></span></div>
+            <div class="fld"><span class="l">タイム ゾーン</span><span class="v">(UTC+09:00) 大阪、札幌、東京<span class="cr">▾</span></span></div>
+          </div>
+          <div class="howsteps">
+            <div class="hh">操作手順</div>
+            <ol>
+              <li><span class="sn">1</span><span>トリガーに<b>「繰り返し」</b></span></li>
+              <li class="key"><span class="sn">2</span><span>復帰日の<b>朝いち</b>に起動</span></li>
+              <li><span class="sn">3</span><span>手動トリガーで<b>好きな時</b>にでもOK</span></li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="carrow">${svg('arrow')}</div>
+
+    <div class="col">
+      <div class="cnum">2</div>
+      <div class="colcard">
+        <div class="ch"><span class="sq"><img src="${A}icons/pa_outlook.png" alt=""></span><span class="nm">メールを取得する (V3)<small>Office 365 Outlook（標準）</small></span><span class="dots">⋮</span></div>
+        <div class="cp">
+          <div class="tabs"><span class="on">パラメーター</span><span>設定</span><span>詳細</span></div>
+          <div class="ptop">
+            <div class="fld"><span class="l">フォルダー</span><span class="v">受信トレイ<span class="cr">▾</span></span></div>
+            <div class="fld"><span class="l">未読のみ取得</span><span class="v">はい<span class="cr">▾</span></span></div>
+            <div class="fld"><span class="l">重要度</span><span class="v"><span class="hi">高</span><span class="cr">▾</span></span></div>
+            <div class="fld"><span class="l">上位</span><span class="v">25<span class="cr">件</span></span></div>
+          </div>
+          <div class="howsteps">
+            <div class="hh">操作手順</div>
+            <ol>
+              <li><span class="sn">1</span><span><b>「メールを取得する(V3)」</b>を追加</span></li>
+              <li class="key"><span class="sn">2</span><span><b>未読のみ＝はい</b>で溜まった分を</span></li>
+              <li class="hot"><span class="sn">3</span><span><b>重要度・上位N</b>で大事な順に絞る</span></li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="carrow">${svg('arrow')}</div>
+
+    <div class="col">
+      <div class="cnum">3</div>
+      <div class="colcard">
+        <div class="ch"><span class="sq"><img src="${A}icons/pa_outlook.png" alt=""></span><span class="nm">メールの送信 (V2)<small>Outlook（自分へダイジェスト）</small></span><span class="dots">⋮</span></div>
+        <div class="cp">
+          <div class="tabs"><span class="on">パラメーター</span><span>設定</span><span>詳細</span></div>
+          <div class="ptop">
+            <div class="fld"><span class="l">宛先 <span class="req">*</span></span><span class="v">自分（自分のアドレス）</span></div>
+            <div class="fld"><span class="l">件名</span><span class="v">📬 おかえり！休暇中の重要メール</span></div>
+            <div class="fld"><span class="l">本文</span><span class="v">${zap('HTML テーブルの作成 の出力')}</span></div>
+            <div class="suppl"><div class="si">🧩</div><div class="st"><b>間に「HTML テーブルの作成」を1つ</b><br><img src="${A}icons/pa_dataoperation.png" alt="">取得したメールを表に整形→本文に差し込み。<span class="hot">本文「HTMLとして」ON</span></div></div>
+          </div>
+          <div class="howsteps">
+            <div class="hh">操作手順</div>
+            <ol>
+              <li><span class="sn">1</span><span><b>「HTMLテーブルの作成」</b>で表に</span></li>
+              <li class="key"><span class="sn">2</span><span><b>「メールの送信(V2)」</b>で自分へ</span></li>
+              <li><span class="sn">3</span><span>本文に<b>⚡表</b>を差し込み・HTML ON</span></li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pitfall">
+    <div class="pl">${svg('warn')}正直な注意</div>
+    <div class="px">受信<b>“日時”での厳密な絞り込みは無い</b>→休み明けは<b>「未読」</b>が溜まるので、それを拾うのが実用的（期間は検索クエリで補助）。フィルタは<b>先頭250件</b>に対して実行＝<code>上位N</code>で調整。<b>“重要そう”はAIの判定でなく</b>重要度・未読・送信者の<b>ルールで並べる</b>。宛先は<b>自分→自分</b>で気軽に。</div>
+    <img class="pit-chara" src="${A}chara/chara_point.png" alt="">
+  </div>
+  <div class="src">出典：Microsoft Learn（Office 365 Outlook コネクタ）／Power Automate 実機（PA45 Demo）　※アクション名は2026-07時点</div>
+`;
+</script>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>

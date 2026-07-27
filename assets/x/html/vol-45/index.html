@@ -3,69 +3,102 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=1280, initial-scale=1">
-<title>X技術Tips Vol.45-1 動的コンテンツが出てこない問題</title>
+<title>X技術Tips Vol.45-1 Teamsのスタンプでナレッジ自動収集</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
 <style>
   :root{
     --blue:#2563EB; --blue-bg:#EFF6FF; --blue-dark:#1E40AF;
-    --red:#DC2626; --red-dark:#7F1D1D;
-    --green:#16A34A; --green-dark:#064E3B;
-    --orange:#EA580C; --amber:#D97706; --ink:#1F2937; --gray:#374151; --weak:#6B7280; --line:#E5E7EB;
+    --green:#16A34A; --green-bg:#ECFDF5; --green-dark:#064E3B;
+    --spo:#0F6CBD; --spo-dark:#0A4F8A; --teams:#5B5FC7; --teams-dark:#4347A8;
+    --orange:#EA580C; --ink:#1F2937; --gray:#374151; --weak:#6B7280; --line:#E5E7EB;
   }
   *{margin:0;padding:0;box-sizing:border-box;}
   body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
   #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
   .ic{display:block;width:100%;height:100%;}
 
-  .titlebar{height:88px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:15px;padding:0 22px;position:relative;flex:0 0 auto;z-index:5;}
-  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:24px;border-radius:999px;padding:6px 18px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
-  .vol-logo{height:48px;width:48px;object-fit:contain;flex:0 0 auto;background:#fff;border-radius:12px;padding:5px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
-  .title-text{color:#fff;font-weight:900;font-size:26px;line-height:1.18;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:150px;}
+  .titlebar{height:90px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:16px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:26px;border-radius:999px;padding:7px 20px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .vol-logo{height:50px;width:50px;object-fit:contain;flex:0 0 auto;background:#fff;border-radius:12px;padding:5px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
+  .title-text{color:#fff;font-weight:900;font-size:28px;line-height:1.14;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:150px;}
   .title-text .hl{color:#FFE08A;}
-  .title-chara{position:absolute;right:13px;bottom:-42px;height:140px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+  .title-chara{position:absolute;right:14px;bottom:-44px;height:146px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
 
-  .concl{margin:8px 15px 0;background:var(--blue-bg);border:2px solid var(--blue);border-radius:11px;display:flex;align-items:center;gap:11px;padding:8px 15px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
-  .concl .chip{flex:0 0 auto;width:34px;height:34px;border-radius:9px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;padding:7px;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
-  .concl .txt{font-weight:700;font-size:15.5px;color:var(--blue-dark);line-height:1.34;padding-right:88px;}
-  .concl .txt b{color:var(--red-dark);}
+  .concl{margin:10px 16px 0;background:var(--blue-bg);border:2.5px solid var(--blue);border-radius:13px;display:flex;align-items:center;gap:13px;padding:11px 18px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;width:42px;height:42px;border-radius:11px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;padding:8px;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
+  .concl .txt{font-weight:800;font-size:19.5px;color:var(--blue-dark);line-height:1.38;padding-right:96px;}
+  .concl .txt b{color:var(--orange);}
 
-  .body{flex:1 1 auto;margin:9px 15px 0;display:flex;gap:13px;min-height:0;}
-  /* 左：動的コンテンツpiカーmock */
-  .left{flex:0 0 462px;display:flex;flex-direction:column;}
-  .panelttl{display:flex;align-items:center;gap:7px;font-weight:900;font-size:15px;color:var(--ink);margin-bottom:8px;}
-  .panelttl .pi{width:24px;height:24px;color:var(--red);}
-  .dcp{flex:1;font-family:'Segoe UI','Noto Sans JP',sans-serif;background:#fff;border:1.5px solid #C9D2E0;border-radius:12px;box-shadow:0 5px 13px rgba(0,0,0,.13);overflow:hidden;display:flex;flex-direction:column;}
-  .dcp-field{padding:10px 12px;border-bottom:1px solid #EEF1F5;background:#FAFBFD;}
-  .dcp-flbl{font-size:11.5px;color:#605E5C;font-weight:700;margin-bottom:4px;}
-  .dcp-fin{display:flex;align-items:center;gap:8px;border:1px solid #D1D1D1;border-radius:5px;padding:7px 9px;background:#fff;}
-  .dcp-fin .ph{flex:1;font-size:12.5px;color:#A19F9D;}
-  .dcp-fin .lt{flex:0 0 auto;width:18px;height:18px;color:#5B5FC7;}
-  .dcp-pop{flex:1;display:flex;flex-direction:column;min-height:0;}
-  .dcp-search{margin:9px 11px 7px;display:flex;align-items:center;gap:7px;border:1px solid #C7CBD4;border-radius:6px;padding:6px 9px;}
-  .dcp-search .si{width:15px;height:15px;color:#8A8886;}
-  .dcp-search .st{font-size:12px;color:#242424;font-weight:700;}
-  .dcp-grp{padding:4px 13px;font-size:11px;font-weight:800;color:#8A8886;}
-  .dcp-item{display:flex;align-items:center;gap:8px;padding:6px 13px;font-size:12.5px;color:#242424;font-weight:600;}
-  .dcp-item .di{flex:0 0 auto;width:18px;height:18px;border-radius:4px;background:#E7ECF7;display:flex;align-items:center;justify-content:center;overflow:hidden;}
-  .dcp-item .di img{width:14px;height:14px;}
-  .dcp-none{margin:6px 11px 11px;background:#FEF2F2;border:1.5px solid #F4B4B4;border-radius:8px;padding:8px 11px;display:flex;align-items:center;gap:8px;}
-  .dcp-none .ni{flex:0 0 auto;width:20px;height:20px;color:var(--red);}
-  .dcp-none .nt{font-weight:800;font-size:12.5px;color:#8A2020;line-height:1.3;}
+  .stage{flex:1 1 auto;margin:12px 16px 0;display:flex;align-items:stretch;gap:0;min-height:0;}
 
-  /* 右：よくある原因 */
-  .right{flex:1;display:flex;flex-direction:column;}
-  .causes{flex:1;display:flex;flex-direction:column;gap:9px;}
-  .cause{flex:1;background:linear-gradient(180deg,#FFF8F1,#FDEEDD);border:1.5px solid #F6C99A;border-radius:11px;padding:9px 13px;display:flex;align-items:center;gap:11px;box-shadow:0 3px 8px rgba(0,0,0,.08);}
-  .cause .cn{flex:0 0 auto;width:30px;height:30px;border-radius:50%;background:linear-gradient(180deg,#FB923C,#EA580C);color:#fff;font-weight:900;font-size:15px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 4px rgba(0,0,0,.25);}
-  .cause .cx{font-weight:800;font-size:15.5px;color:#7C3A12;line-height:1.32;}
-  .cause .cx b{color:var(--red);}
+  /* 左：Teams会話 */
+  .tzone{flex:0 0 440px;display:flex;flex-direction:column;min-height:0;}
+  .tzhd{font-weight:900;font-size:18px;color:var(--ink);margin-bottom:9px;display:flex;align-items:center;gap:8px;}
+  .tzhd .b{flex:0 0 auto;width:26px;height:26px;border-radius:50%;background:#5B5FC7;color:#fff;font-weight:900;font-size:15px;display:flex;align-items:center;justify-content:center;}
+  .teams{flex:1;background:#fff;border:1px solid #E1E1ED;border-radius:14px;box-shadow:0 6px 16px rgba(0,0,0,.14);overflow:hidden;font-family:'Segoe UI','Noto Sans JP',sans-serif;display:flex;flex-direction:column;min-height:0;}
+  .teams-h{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:12px 15px;background:linear-gradient(90deg,#4347A8,#5B5FC7);}
+  .teams-h .ti{width:24px;height:24px;border-radius:6px;background:#fff;display:flex;align-items:center;justify-content:center;}
+  .teams-h .ti svg{width:17px;height:17px;color:#5B5FC7;}
+  .teams-h span{font-weight:800;font-size:15px;color:#fff;}
+  .tbody{flex:1;display:flex;flex-direction:column;justify-content:center;gap:4px;padding:8px 4px;}
+  .daychip{align-self:center;background:#F0F0F6;color:#797882;font-weight:700;font-size:12px;border-radius:999px;padding:4px 14px;margin:4px 0;}
+  .msg{display:flex;gap:12px;padding:9px 15px;}
+  .msg .av{flex:0 0 auto;width:40px;height:40px;border-radius:50%;color:#fff;font-weight:900;font-size:14px;display:flex;align-items:center;justify-content:center;}
+  .av.a1{background:#9373C9;} .av.a2{background:#2E8B8B;} .av.a3{background:#C77AA0;}
+  .msg .mc{flex:1;min-width:0;}
+  .msg .mtop{display:flex;align-items:baseline;gap:9px;}
+  .msg .mn{font-weight:800;font-size:15px;color:#242424;}
+  .msg .mt{font-size:12px;color:#8A8886;}
+  .msg .mbody{margin-top:4px;font-size:15px;color:#242424;line-height:1.5;font-weight:500;}
+  .msg .mbody b{color:#4347A8;font-weight:800;}
+  .msg.hot{background:#F7F8FE;border-left:3px solid #5B5FC7;}
+  .react{margin:1px 15px 8px 67px;display:flex;flex-direction:column;gap:7px;align-items:flex-start;}
+  .rbar{position:relative;display:inline-flex;align-items:center;gap:3px;background:#fff;border:1px solid #E3E3EE;border-radius:999px;padding:5px 7px;box-shadow:0 5px 14px rgba(0,0,0,.2);}
+  .rbar .e{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;}
+  .rbar .e.on{background:#EEF0FB;outline:2.5px solid #5B5FC7;outline-offset:-1px;}
+  .rbar .taphand{position:absolute;bottom:-20px;width:40px;height:40px;filter:drop-shadow(0 2px 3px rgba(0,0,0,.4));}
+  .react .hint{font-weight:800;font-size:13.5px;color:var(--teams-dark);line-height:1.35;}
+  .react .hint b{color:#EA580C;}
 
-  .next{flex:0 0 auto;margin:9px 15px 12px;background:linear-gradient(180deg,#EAF7EE,#D7F0E0);border:2px solid var(--green);border-radius:11px;padding:10px 16px;display:flex;align-items:center;gap:9px;font-weight:900;font-size:16px;color:var(--green-dark);box-shadow:0 3px 9px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
-  .next .na{flex:0 0 auto;width:22px;height:22px;color:var(--green);}
-  .next b{color:var(--green-dark);}
-  .src{position:absolute;left:16px;bottom:3px;font-size:9.5px;color:#AEB6C2;font-weight:700;z-index:3;}
+  /* 中：矢印 */
+  .mzone{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 6px;position:relative;}
+  .mzbig{font-weight:900;font-size:27px;color:var(--ink);text-align:center;line-height:1.28;}
+  .mzbig b{color:var(--green-dark);}
+  .engine{width:100%;max-width:310px;background:linear-gradient(180deg,#EEF4FF,#DEEAFF);border:2.5px solid #2563EB;border-radius:16px;padding:16px 17px 17px;box-shadow:0 6px 14px rgba(37,99,235,.24),inset 0 1px 0 rgba(255,255,255,.7);margin:15px 0;}
+  .eng-top{display:flex;align-items:center;gap:11px;font-weight:900;font-size:19.5px;color:var(--blue-dark);padding-bottom:12px;margin-bottom:12px;border-bottom:2px dashed #A9C4F0;}
+  .eng-top img{width:34px;height:34px;object-fit:contain;}
+  .eng-li{display:flex;align-items:center;gap:12px;font-weight:800;font-size:19px;color:#23416B;padding:8px 0;line-height:1.3;}
+  .eng-li .sn{flex:0 0 auto;width:30px;height:30px;border-radius:50%;background:#2563EB;color:#fff;font-size:17px;font-weight:900;display:flex;align-items:center;justify-content:center;}
+  .eng-li b{color:#1E40AF;}
+  .bigarrow{width:66px;height:66px;color:var(--blue);margin:6px 0 14px;}
+  .autobadge{display:inline-flex;align-items:center;gap:9px;background:linear-gradient(180deg,#FBBF24,#EA580C);color:#fff;font-weight:900;font-size:19px;border-radius:999px;padding:12px 22px;box-shadow:0 4px 9px rgba(234,88,12,.42);text-align:center;}
+  .autobadge svg{width:21px;height:21px;flex:0 0 auto;}
+  .mzmascot{position:absolute;right:-8px;bottom:-6px;height:112px;filter:drop-shadow(0 3px 7px rgba(0,0,0,.4));z-index:30;}
+
+  /* 右：ナレッジ箱 */
+  .rzone{flex:0 0 392px;display:flex;flex-direction:column;min-height:0;}
+  .rzhd{font-weight:900;font-size:18px;color:var(--ink);margin-bottom:9px;display:flex;align-items:center;gap:8px;}
+  .rzhd .b{flex:0 0 auto;width:26px;height:26px;border-radius:50%;background:#0A66C2;color:#fff;font-weight:900;font-size:15px;display:flex;align-items:center;justify-content:center;}
+  .spo{flex:1;background:#fff;border:1px solid #E1E6EF;border-radius:13px;box-shadow:0 6px 15px rgba(0,0,0,.13);overflow:hidden;font-family:'Segoe UI','Noto Sans JP',sans-serif;display:flex;flex-direction:column;min-height:0;}
+  .spo-h{flex:0 0 auto;display:flex;align-items:center;gap:9px;padding:12px 14px;background:linear-gradient(90deg,#0A4F8A,#1277CE);}
+  .spo-h img{width:21px;height:21px;object-fit:contain;background:#fff;border-radius:5px;padding:2px;}
+  .spo-h span{font-weight:800;font-size:15px;color:#fff;}
+  .spo-th{flex:0 0 auto;display:flex;font-size:14px;background:#F3F7FC;font-weight:800;color:#3A4A63;border-bottom:1px solid #E1E6EF;}
+  .spo-tr{flex:1;display:flex;align-items:center;font-size:15px;border-bottom:1px solid #F0F3F8;font-weight:700;color:#242424;min-height:0;}
+  .spo-tr:last-child{border-bottom:none;}
+  .spo-tr:nth-child(odd){background:#FAFCFE;}
+  .spo-c{padding:8px 11px;}
+  .spo-th .spo-c{padding:9px 11px;}
+  .n1{flex:0 0 96px;} .n2{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .spo-tr .n1{color:#0A66C2;font-weight:800;}
+  .spo-tr .em{margin-right:5px;}
+
+  .next{flex:0 0 auto;margin:11px 16px 12px;background:linear-gradient(180deg,#EAF2FF,#DCEAFE);border:2.5px solid var(--blue);border-radius:13px;padding:13px 18px;display:flex;align-items:center;gap:11px;font-weight:900;font-size:20px;color:var(--blue-dark);box-shadow:0 3px 9px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .next .na{flex:0 0 auto;width:26px;height:26px;color:var(--blue);}
+  .next b{color:var(--orange);}
+  .src{position:absolute;left:16px;bottom:3px;font-size:10px;color:#AEB6C2;font-weight:700;z-index:3;}
 </style>
 </head>
 <body>
@@ -73,60 +106,94 @@
 <script>
 const A="../../pptx/_assets/";
 const ICON={
- bolt:'<path d="M13 2 3 14h7l-1 8 10-12h-7z"/>',
- search:'<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>',
- warn:'<path d="M10.3 3.3 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.3a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>',
  arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',
- bulb:'<path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/>'
+ teams:'<path d="M3 6h12v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4z"/><path d="M15 9h5v6a3 3 0 0 1-3 3"/><circle cx="17.5" cy="5" r="2"/>',
+ zap:'<path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/>',
+ bulb:'<path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/>',
+ hand:'<path d="M9 11V5.5a1.5 1.5 0 0 1 3 0V11"/><path d="M12 11V4.5a1.5 1.5 0 0 1 3 0V11"/><path d="M15 11V6.5a1.5 1.5 0 0 1 3 0V13c0 3.5-2 7-6 7s-5-2.5-6.5-4.5L4 12.5a1.5 1.5 0 0 1 2.5-1.7L9 13"/>'
 };
 const svg=(n)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${ICON[n]}</svg>`;
-const svgF=(n)=>`<svg class="ic" viewBox="0 0 24 24" fill="currentColor" stroke="none">${ICON[n]}</svg>`;
 
 const s=document.getElementById('slide');
 s.innerHTML=`
   <div class="titlebar">
     <div class="vol-pill">Vol.45-1</div>
     <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
-    <div class="title-text">Power Automateで全員ハマる<br><span class="hl">“動的コンテンツが出てこない”</span>問題</div>
-    <img class="title-chara" src="${A}chara/chara_think.png" alt="">
+    <div class="title-text">Teamsの絵文字リアクションが“保存ボタン”に｜<span class="hl">押すだけで“ナレッジ箱”に自動収集</span></div>
+    <img class="title-chara" src="${A}chara/chara_point.png" alt="">
   </div>
 
   <div class="concl">
     <div class="chip">${svg('bulb')}</div>
-    <div class="txt">入力欄で動的コンテンツを開いても、<b>欲しい値が一覧に出てこない…</b>。初心者が必ず一度はハマる場面。でも原因はたいてい4つ。順に確認すれば必ず出せます。</div>
+    <div class="txt">良い投稿に<b>絵文字リアクション（👍😄❤️…）を1つ押すだけ</b>で、自動でナレッジ箱（SharePoint）に保存。<b>決めた絵文字が“保存ボタン”</b>になる（今回は👍）。</div>
   </div>
 
-  <div class="body">
-    <div class="left">
-      <div class="panelttl"><span class="pi">${svgF('bolt')}</span>動的コンテンツ … “申請者名”が無い！</div>
-      <div class="dcp uimock">
-        <div class="dcp-field">
-          <div class="dcp-flbl">タイトル</div>
-          <div class="dcp-fin"><span class="ph">値の選択（動的コンテンツ）</span><span class="lt">${svgF('bolt')}</span></div>
-        </div>
-        <div class="dcp-pop">
-          <div class="dcp-search"><span class="si">${svg('search')}</span><span class="st">申請者名</span></div>
-          <div class="dcp-grp">新しいメールが届いたとき (V3)</div>
-          <div class="dcp-item"><span class="di"><img src="${A}icons/pa_outlook.png" alt=""></span>件名</div>
-          <div class="dcp-item"><span class="di"><img src="${A}icons/pa_outlook.png" alt=""></span>本文のプレビュー</div>
-          <div class="dcp-item"><span class="di"><img src="${A}icons/pa_outlook.png" alt=""></span>差出人</div>
-          <div class="dcp-none"><span class="ni">${svg('warn')}</span><span class="nt">欲しい「申請者名」が見つからない…</span></div>
+  <div class="stage">
+    <div class="tzone">
+      <div class="tzhd"><span class="b">1</span>良い投稿に絵文字リアクションを押す</div>
+      <div class="teams">
+        <div class="teams-h"><span class="ti"><img src="${A}icons/pa_teams.png" alt="" style="width:18px;height:18px;object-fit:contain"></span><span>業務改善メンバー ・ グループ チャット</span></div>
+        <div class="tbody">
+          <div class="daychip">今日</div>
+          <div class="msg">
+            <span class="av a3">SH</span>
+            <span class="mc">
+              <div class="mtop"><span class="mn">佐藤 花子</span><span class="mt">10:18</span></div>
+              <div class="mbody">承認の催促って自動でやっていいのかな…誤催促が怖くて。</div>
+            </span>
+          </div>
+          <div class="msg hot">
+            <span class="av a1">YT</span>
+            <span class="mc">
+              <div class="mtop"><span class="mn">山田 太郎</span><span class="mt">10:24</span></div>
+              <div class="mbody">経費精算、<b>スマホのボタン1発で写真と一緒に記録</b>できるようにしたよ。出張時めっちゃ楽！手順はこのリンク→</div>
+            </span>
+          </div>
+          <div class="react">
+            <div class="rbar">
+              <span class="e on">👍</span><span class="e">❤️</span><span class="e">😆</span><span class="e">😮</span><span class="e">😢</span>
+              <svg class="taphand" style="left:9px" viewBox="0 0 24 24" fill="#FFD54A" stroke="#7A4A00" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">${ICON.hand}</svg>
+            </div>
+            <span class="hint">❤️😆😮…どれでもOK。<b>決めた1つの絵文字＝保存スイッチ</b>（今回は👍）</span>
+          </div>
+          <div class="msg">
+            <span class="av a2">SK</span>
+            <span class="mc">
+              <div class="mtop"><span class="mn">鈴木 一郎</span><span class="mt">10:25</span></div>
+              <div class="mbody">おお、それ知りたい！後で読む📌</div>
+            </span>
+          </div>
         </div>
       </div>
     </div>
 
-    <div class="right">
-      <div class="panelttl"><span class="pi" style="color:var(--orange)">${svg('warn')}</span>出てこない… よくある4つの原因</div>
-      <div class="causes">
-        <div class="cause"><span class="cn">1</span><span class="cx">まだ<b>1回も実行してない</b>＝出力が無いから出ない</span></div>
-        <div class="cause"><span class="cn">2</span><span class="cx"><b>後ろのステップ</b>の値は使えない（順番の問題）</span></div>
-        <div class="cause"><span class="cn">3</span><span class="cx">配列の中の値は <b>Apply to each の中</b>でしか出ない</span></div>
-        <div class="cause"><span class="cn">4</span><span class="cx">そもそも一覧に無い値＝<b>式で取り出す</b>必要がある</span></div>
+    <div class="mzone">
+      <div class="mzbig">👍を押すと<br><b>あとは全部自動</b></div>
+      <div class="engine">
+        <div class="eng-top"><img src="${A}icons/pa_logo.png" alt="">Power Automate が実行</div>
+        <div class="eng-li"><span class="sn">1</span><span>投稿の<b>リンク</b>を取得</span></div>
+        <div class="eng-li"><span class="sn">2</span><span><b>ナレッジ箱</b>へ記録</span></div>
+      </div>
+      <span class="bigarrow">${svg('arrow')}</span>
+      <div class="autobadge">${svg('zap')}転記なし・探す手間なし</div>
+      <img class="mzmascot" src="${A}chara/chara_guts.png" alt="">
+    </div>
+
+    <div class="rzone">
+      <div class="rzhd"><span class="b">2</span>ナレッジ箱に勝手に貯まる</div>
+      <div class="spo">
+        <div class="spo-h"><img src="${A}icons/pa_sharepoint.png" alt="">ナレッジ箱（SharePoint）</div>
+        <div class="spo-th"><span class="spo-c n1">投稿者</span><span class="spo-c n2">内容</span></div>
+        <div class="spo-tr"><span class="spo-c n1">山田 太郎</span><span class="spo-c n2"><span class="em">📌</span>経費精算をスマホボタンで記録</span></div>
+        <div class="spo-tr"><span class="spo-c n1">佐藤 花子</span><span class="spo-c n2"><span class="em">📌</span>承認の催促を自動化するコツ</span></div>
+        <div class="spo-tr"><span class="spo-c n1">鈴木 一郎</span><span class="spo-c n2"><span class="em">📌</span>JSONの読み方まとめ</span></div>
+        <div class="spo-tr"><span class="spo-c n1">高橋 健</span><span class="spo-c n2"><span class="em">📌</span>Teams通知を減らす設定</span></div>
+        <div class="spo-tr"><span class="spo-c n1">山本 みき</span><span class="spo-c n2"><span class="em">📌</span>Excel集計を自動化した話</span></div>
       </div>
     </div>
   </div>
 
-  <div class="next"><span class="na">${svg('arrow')}</span>4つの<b>解決方法</b>は <b>2枚目</b>でぜんぶ解説！</div>
+  <div class="next"><span class="na">${svg('arrow')}</span>「あれどこだっけ？」が消える。具体的な<b>作り方</b>は <b>2枚目</b>で解説！</div>
   <div class="src">出典：Microsoft Learn</div>
 `;
 </script>

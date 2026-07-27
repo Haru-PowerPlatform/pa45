@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.71-1 当番表に足が生える</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB;--blue-dark:#1E40AF;--green:#16A34A;--green-dark:#0B5E37;
+    --ink:#1F2937;--gray:#374151;--weak:#6B7280;--orange:#EA580C;--red:#DC2626;
+    --teams:#5059C9;--sp:#0B7C66;--wine:#A4283C;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+
+  .titlebar{height:86px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:14px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:25px;border-radius:999px;padding:7px 19px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .logos{display:flex;align-items:center;gap:7px;flex:0 0 auto;}
+  .logos .ll{height:47px;width:47px;object-fit:contain;background:#fff;border-radius:12px;padding:6px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
+  .logos .plus{color:#fff;font-weight:900;font-size:23px;text-shadow:0 1px 2px rgba(0,0,0,.25);line-height:1;}
+  .title-text{color:#fff;font-weight:900;font-size:27px;line-height:1.15;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:150px;}
+  .title-text .hl{color:#FFE08A;}
+  .title-chara{position:absolute;right:14px;bottom:-42px;height:142px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .concl{margin:9px 16px 0;background:#EFF6FF;border:2.5px solid var(--blue);border-radius:13px;display:flex;align-items:center;gap:13px;padding:9px 18px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;width:42px;height:42px;border-radius:12px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;font-size:23px;box-shadow:0 3px 6px rgba(0,0,0,.26);}
+  .concl .txt{font-weight:800;font-size:19px;color:var(--blue-dark);line-height:1.4;padding-right:96px;}
+  .concl .txt b{color:var(--red);}
+  .concl .txt .g{color:var(--green-dark);}
+
+  .cols{flex:1 1 auto;margin:12px 15px 0;display:flex;align-items:stretch;gap:0;min-height:0;}
+  .col{flex:1;display:flex;flex-direction:column;min-height:0;position:relative;}
+  .carrow{flex:0 0 30px;display:flex;align-items:center;justify-content:center;color:#2563EB;font-size:30px;font-weight:900;}
+  .colcard{flex:1;display:flex;flex-direction:column;min-height:0;border-radius:14px;overflow:hidden;box-shadow:0 5px 13px rgba(0,0,0,.12);border:2px solid;}
+  .col.c1 .colcard{background:#FDF3F4;border-color:#E7B7BF;}
+  .col.c2 .colcard{background:#F4F5FD;border-color:#C3C7EE;}
+  .col.c3 .colcard{background:#EDFBF3;border-color:#A6E1BC;}
+  .chd{flex:0 0 auto;text-align:center;font-weight:900;font-size:16.5px;color:#fff;padding:8px 8px;line-height:1.2;}
+  .col.c1 .chd{background:linear-gradient(180deg,#BE4358,#A4283C);}
+  .col.c2 .chd{background:linear-gradient(180deg,#6B73D6,#5059C9);}
+  .col.c3 .chd{background:linear-gradient(180deg,#22A366,#15803D);}
+  .cbd{flex:1;padding:9px 10px;display:flex;flex-direction:column;gap:8px;min-height:0;font-family:'Segoe UI','Noto Sans JP',sans-serif;}
+  .cnum{position:absolute;top:-9px;left:-9px;width:32px;height:32px;border-radius:50%;color:#fff;font-weight:900;font-size:17px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 5px rgba(0,0,0,.3);z-index:6;border:2.5px solid #fff;}
+  .col.c1 .cnum{background:linear-gradient(180deg,#BE4358,#A4283C);}
+  .col.c2 .cnum{background:linear-gradient(180deg,#6B73D6,#5059C9);}
+  .col.c3 .cnum{background:linear-gradient(180deg,#22A366,#15803D);}
+
+  .scene{flex:0 0 auto;height:118px;border-radius:10px;overflow:hidden;border:1.5px solid;position:relative;display:flex;align-items:flex-end;justify-content:center;}
+  .col.c1 .scene{background:linear-gradient(180deg,#FCEDEF,#F6D8DD);border-color:#E7B7BF;}
+  .col.c2 .scene{background:linear-gradient(180deg,#EFF0FC,#DCDEF6);border-color:#C3C7EE;}
+  .col.c3 .scene{background:linear-gradient(180deg,#E9FBF1,#CDF3DD);border-color:#A6E1BC;}
+  .sc-bg{position:absolute;inset:0;width:100%;height:100%;}
+  .sc-chara{position:relative;z-index:2;height:110px;width:auto;filter:drop-shadow(0 4px 6px rgba(0,0,0,.32));}
+
+  /* 貼り紙の当番表（Before） */
+  .paper{flex:1 1 auto;background:#fff;border:1.5px solid #E0BEC5;border-radius:9px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 2px 6px rgba(0,0,0,.08);}
+  .paper .ph{flex:0 0 auto;text-align:center;background:#F7E7EA;padding:5px 8px;font-size:13.5px;font-weight:900;color:var(--wine);border-bottom:1px solid #EBD3D8;}
+  .prow{flex:1;display:flex;align-items:center;gap:8px;padding:3px 11px;border-bottom:1px solid #F6EFF0;min-height:0;}
+  .prow:last-child{border-bottom:none;}
+  .prow .wk{flex:0 0 34px;font-size:12.5px;font-weight:900;color:var(--wine);}
+  .prow .nm2{flex:1;font-size:13px;font-weight:700;color:#31343f;}
+  .prow .st{flex:0 0 auto;font-size:11.5px;font-weight:900;border-radius:5px;padding:2px 7px;background:#FBE3E6;color:#9A1B2B;}
+  .pcap{flex:0 0 auto;text-align:center;font-size:14px;font-weight:800;line-height:1.3;padding:0 2px;}
+  .col.c1 .pcap{color:#9A1B2B;} .col.c2 .pcap{color:#3C43A8;} .col.c3 .pcap{color:#0B5E37;}
+  .pcap b{color:#111;}
+
+  /* SharePoint 当番表 */
+  .spm{flex:1 1 auto;background:#fff;border:1.5px solid #C9CCEE;border-radius:9px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 2px 6px rgba(0,0,0,.08);}
+  .spm .sh{flex:0 0 auto;display:flex;align-items:center;gap:8px;background:var(--sp);padding:6px 10px;}
+  .spm .sh img{width:19px;height:19px;object-fit:contain;background:#fff;border-radius:4px;padding:2px;}
+  .spm .sh b{font-size:13px;font-weight:900;color:#fff;}
+  .spr{flex:1;display:flex;align-items:center;gap:7px;padding:3px 10px;border-bottom:1px solid #F0F1F8;min-height:0;}
+  .spr:last-child{border-bottom:none;}
+  .spr.hd{background:#EFF0FC;}
+  .spr .n{flex:1;font-size:12.5px;font-weight:800;color:#31343f;}
+  .spr .d{flex:0 0 62px;font-size:12px;font-weight:800;color:#5C6270;text-align:right;}
+  .spr.hd .n,.spr.hd .d{font-size:11.5px;font-weight:900;color:#3C43A8;}
+  .spr.pick{background:#E5E7FA;}
+  .spr.pick .n{color:#2A3196;font-weight:900;}
+  .spr .tag{flex:0 0 auto;font-size:10.5px;font-weight:900;background:#5059C9;color:#fff;border-radius:5px;padding:2px 6px;}
+
+  /* Teams DM */
+  .dm{flex:1 1 auto;background:#fff;border:1.5px solid #BDE6CD;border-radius:9px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 2px 6px rgba(0,0,0,.08);}
+  .dm .dh{flex:0 0 auto;display:flex;align-items:center;gap:8px;background:#EAF7EF;padding:6px 10px;border-bottom:1px solid #CDEBD8;}
+  .dm .dh img{width:19px;height:19px;object-fit:contain;}
+  .dm .dh b{font-size:13px;font-weight:900;color:#15803D;}
+  .bubble{flex:1;margin:7px 10px 3px;background:#F4F6FB;border:1.5px solid #D8DEEA;border-radius:10px;padding:7px 10px;display:flex;flex-direction:column;gap:3px;justify-content:center;min-height:0;}
+  .bubble .who{font-size:11.5px;font-weight:900;color:var(--teams);}
+  .bubble .msg{font-size:13.5px;font-weight:800;color:#242424;line-height:1.3;}
+  .bubble .msg b{color:#15803D;}
+  .btn{flex:0 0 auto;margin:0 10px 4px;background:linear-gradient(180deg,#22A366,#15803D);color:#fff;text-align:center;font-size:13.5px;font-weight:900;border-radius:8px;padding:7px;box-shadow:0 2px 5px rgba(21,128,61,.35);}
+  .dnote{flex:0 0 auto;margin:0 10px 8px;background:#F0FAF4;border:1.5px dashed #9CD4B2;border-radius:8px;padding:5px 9px;font-size:11.5px;font-weight:800;color:#0B5E37;line-height:1.3;}
+
+  .uses{flex:0 0 auto;margin:11px 15px 12px;display:flex;align-items:stretch;gap:9px;}
+  .ulabel{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;font-weight:900;font-size:15px;border-radius:11px;padding:0 15px;text-align:center;line-height:1.25;box-shadow:0 3px 8px rgba(37,99,235,.32);}
+  .uc{flex:1;background:#F8F9FA;border:2px solid #D7E0EC;border-radius:11px;padding:9px 12px;box-shadow:0 2px 6px rgba(0,0,0,.07);display:flex;align-items:center;gap:10px;}
+  .uc .em{font-size:23px;flex:0 0 auto;}
+  .uc .ut{font-size:15.5px;font-weight:800;color:#33405a;line-height:1.28;}
+  .uc .ut b{color:var(--blue-dark);}
+  .src{position:absolute;left:16px;bottom:3px;font-size:10px;color:#AEB6C2;font-weight:700;z-index:3;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+
+// ①壁の当番表が色あせて誰も見てない
+const scene1=`<svg class="sc-bg" viewBox="0 0 460 118" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+ <defs><linearGradient id="pp" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFDFD"/><stop offset="1" stop-color="#F0DCE0"/></linearGradient></defs>
+ <g transform="translate(34 14) rotate(-3)">
+   <rect x="0" y="0" width="104" height="88" rx="3" fill="url(#pp)" stroke="#D9B3BA" stroke-width="1.5"/>
+   <rect x="0" y="0" width="104" height="15" fill="#C9808E"/>
+   ${[0,1,2,3].map(r=>`<rect x="9" y="${23+r*15}" width="${r===2?46:76}" height="7" rx="3" fill="#EBD8DC"/>`).join('')}
+   <circle cx="52" cy="-3" r="5" fill="#B0566A"/>
+   <path d="M96 78 l10 12 l-14 -2 Z" fill="#E4CBD0"/>
+ </g>
+ <!-- ほこり／クモの巣 -->
+ <path d="M30 12 q14 8 18 22 M30 12 q22 2 30 12" stroke="#D9B3BA" stroke-width="1.4" fill="none" opacity=".8"/>
+ <!-- 素通りする人（点線の足跡） -->
+ <g opacity=".85">
+   ${[0,1,2,3].map(i=>`<ellipse cx="${248+i*40}" cy="${86-(i%2)*12}" rx="9" ry="5" fill="#D7AEB6" transform="rotate(${-14+(i%2)*24} ${248+i*40} ${86-(i%2)*12})"/>`).join('')}
+ </g>
+ <text x="330" y="34" text-anchor="middle" font-size="12.5" fill="#9A1B2B" font-weight="900" font-family="'Noto Sans JP',sans-serif">みんな素通り…</text>
+ <text x="330" y="108" text-anchor="middle" font-size="11.5" fill="#9A1B2B" font-weight="900" font-family="'Noto Sans JP',sans-serif">結局いつもの人がやる</text>
+</svg>`;
+
+// ②名簿から次の人を自動で選ぶ（矢印がぐるっと回る）
+const scene2=`<svg class="sc-bg" viewBox="0 0 460 118" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+ ${[0,1,2,3].map(i=>{const x=54+i*42;return `<g transform="translate(${x} 42)">
+   <circle cx="0" cy="0" r="15" fill="${i===1?'#5059C9':'#C9CCEE'}" stroke="#fff" stroke-width="2"/>
+   <circle cx="0" cy="-4" r="5" fill="#fff"/>
+   <path d="M-8 9 a8 8 0 0 1 16 0 Z" fill="#fff"/>
+ </g>`;}).join('')}
+ <!-- ぐるっと回る矢印 -->
+ <path d="M40 74 q104 34 190 -4" fill="none" stroke="#5059C9" stroke-width="4" stroke-linecap="round" stroke-dasharray="9 7"/>
+ <path d="M226 66 l8 12 l-15 3 Z" fill="#5059C9"/>
+ <!-- 選ばれた人にスポット -->
+ <circle cx="96" cy="42" r="24" fill="none" stroke="#5059C9" stroke-width="2.6"/>
+ <text x="96" y="18" text-anchor="middle" font-size="11.5" fill="#3C43A8" font-weight="900" font-family="'Noto Sans JP',sans-serif">次はこの人</text>
+ <text x="352" y="46" text-anchor="middle" font-size="12.5" fill="#3C43A8" font-weight="900" font-family="'Noto Sans JP',sans-serif">一番長く</text>
+ <text x="352" y="64" text-anchor="middle" font-size="12.5" fill="#3C43A8" font-weight="900" font-family="'Noto Sans JP',sans-serif">やってない人</text>
+ <text x="150" y="108" text-anchor="middle" font-size="11.5" fill="#3C43A8" font-weight="900" font-family="'Noto Sans JP',sans-serif">順番は自動で回る</text>
+</svg>`;
+
+// ③本人に名指しで届く＋完了で次へ
+const scene3=`<svg class="sc-bg" viewBox="0 0 460 118" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+ <g transform="translate(52 26)">
+   <rect x="0" y="0" width="96" height="64" rx="10" fill="#fff" stroke="#63BE8C" stroke-width="2"/>
+   <path d="M18 64 L24 78 L36 64 Z" fill="#fff" stroke="#63BE8C" stroke-width="2"/>
+   <path d="M19 65 L35 65" stroke="#fff" stroke-width="3"/>
+   <text x="48" y="26" text-anchor="middle" font-size="12.5" fill="#15803D" font-weight="900" font-family="'Noto Sans JP',sans-serif">今日はあなた</text>
+   <text x="48" y="46" text-anchor="middle" font-size="12.5" fill="#15803D" font-weight="900" font-family="'Noto Sans JP',sans-serif">の当番です</text>
+ </g>
+ <!-- バトン -->
+ <g transform="translate(300 44) rotate(-18)">
+   <rect x="-32" y="-7" width="64" height="14" rx="7" fill="#F5B301" stroke="#C98A00" stroke-width="1.6"/>
+   <circle cx="-32" cy="0" r="8" fill="#FFD466" stroke="#C98A00" stroke-width="1.6"/>
+   <circle cx="32" cy="0" r="8" fill="#FFD466" stroke="#C98A00" stroke-width="1.6"/>
+ </g>
+ <path d="M356 44 h34" stroke="#16A34A" stroke-width="3.4" stroke-linecap="round"/>
+ <path d="M390 38 l10 6 l-10 6 Z" fill="#16A34A"/>
+ <text x="330" y="86" text-anchor="middle" font-size="11.5" fill="#0B5E37" font-weight="900" font-family="'Noto Sans JP',sans-serif">完了で次の人へ</text>
+</svg>`;
+
+const s=document.getElementById('slide');
+s.innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.71-1</div>
+    <div class="logos"><img class="ll" src="${A}icons/pa_logo.png" alt=""><span class="plus">＋</span><img class="ll" src="${A}icons/pa_teams.png" alt=""></div>
+    <div class="title-text">当番表に<span class="hl">“足が生える”</span>と、ちゃんと回りだす</div>
+    <img class="title-chara" src="${A}chara/chara_laptop.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">🔄</div>
+    <div class="txt">当番表は貼ってあるのに、<b>気づいた人がやる</b>状態になりがちですよね。<br>名簿から次の人を選んで<span class="g">本人に名指しで通知</span>すれば、当番のほうから会いに来てくれます。</div>
+  </div>
+
+  <div class="cols">
+    <div class="col c1">
+      <div class="cnum">1</div>
+      <div class="colcard">
+        <div class="chd">貼ってあるだけの当番表</div>
+        <div class="cbd">
+          <div class="scene">${scene1}<img class="sc-chara" src="${A}chara/chara_tired.png" alt=""></div>
+          <div class="paper">
+            <div class="ph">📌 給湯室そうじ当番</div>
+            <div class="prow"><span class="wk">1週</span><span class="nm2">山田</span><span class="st">やった？</span></div>
+            <div class="prow"><span class="wk">2週</span><span class="nm2">佐藤</span><span class="st">未</span></div>
+            <div class="prow"><span class="wk">3週</span><span class="nm2">鈴木</span><span class="st">未</span></div>
+            <div class="prow"><span class="wk">4週</span><span class="nm2">高橋</span><span class="st">未</span></div>
+          </div>
+          <div class="pcap">見てないから<b>回らない</b>😩</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="carrow">▶</div>
+
+    <div class="col c2">
+      <div class="cnum">2</div>
+      <div class="colcard">
+        <div class="chd">次の当番を自動で選ぶ</div>
+        <div class="cbd">
+          <div class="scene">${scene2}<img class="sc-chara" src="${A}chara/chara_point.png" alt=""></div>
+          <div class="spm">
+            <div class="sh"><img src="${A}icons/pa_sharepoint.png" alt=""><b>当番表リスト</b></div>
+            <div class="spr hd"><span class="n">名前</span><span class="d">最終担当日</span></div>
+            <div class="spr pick"><span class="n">佐藤</span><span class="d">6/20</span><span class="tag">次</span></div>
+            <div class="spr"><span class="n">鈴木</span><span class="d">6/27</span></div>
+            <div class="spr"><span class="n">高橋</span><span class="d">7/4</span></div>
+            <div class="spr"><span class="n">山田</span><span class="d">7/11</span></div>
+          </div>
+          <div class="pcap"><b>最終担当日が一番古い人</b>を選ぶだけ</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="carrow">▶</div>
+
+    <div class="col c3">
+      <div class="cnum">3</div>
+      <div class="colcard">
+        <div class="chd">本人に名指しで届く</div>
+        <div class="cbd">
+          <div class="scene">${scene3}<img class="sc-chara" src="${A}chara/chara_guts.png" alt=""></div>
+          <div class="dm">
+            <div class="dh"><img src="${A}icons/pa_teams.png" alt=""><b>佐藤さんへ（個別DM）</b></div>
+            <div class="bubble">
+              <span class="who">Power Automate フローボット　8:00</span>
+              <span class="msg">おはようございます！<br><b>今週の給湯室そうじは佐藤さんの番</b>です🧹</span>
+            </div>
+            <div class="btn">✅ 完了しました</div>
+            <div class="dnote">押すと記録され、<b>来週は自動で次の人</b>へ。名指しだから「自分ごと」になる</div>
+          </div>
+          <div class="pcap">当番のほうから<b>会いに来る</b></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="uses">
+    <div class="ulabel">こんな<br>当番に</div>
+    <div class="uc"><span class="em">🧹</span><span class="ut">掃除・<b>ゴミ出し当番</b></span></div>
+    <div class="uc"><span class="em">📝</span><span class="ut">朝礼・<b>議事録の当番</b></span></div>
+    <div class="uc"><span class="em">🔧</span><span class="ut">設備の<b>点検・巡回当番</b></span></div>
+    <div class="uc"><span class="em">📞</span><span class="ut">電話・<b>受付の当番</b></span></div>
+  </div>
+  <div class="src">出典：Microsoft Learn（SharePoint／Microsoft Teams コネクタ）　※作り方は2枚目</div>
+`;
+</script>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>

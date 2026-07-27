@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.59-3 まとめメールはこう届く クリックでTeamsへ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB; --blue-bg:#EFF6FF; --blue-dark:#1E40AF;
+    --green:#16A34A; --green-dark:#065F38; --green-bg:#ECFDF5;
+    --teams:#5B5FC7; --teams-dark:#4347A8;
+    --outlook:#0F6CBD; --outlook-dark:#0A4E8A;
+    --orange:#EA580C; --amber:#D97706; --ink:#1F2937; --gray:#374151; --weak:#6B7280;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+  .ic{display:block;width:100%;height:100%;}
+
+  .titlebar{height:86px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:14px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:25px;border-radius:999px;padding:7px 19px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .logos{display:flex;align-items:center;gap:7px;flex:0 0 auto;}
+  .logos .ll{height:47px;width:47px;object-fit:contain;background:#fff;border-radius:12px;padding:6px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
+  .logos .plus{color:#fff;font-weight:900;font-size:24px;text-shadow:0 1px 2px rgba(0,0,0,.25);line-height:1;}
+  .title-text{color:#fff;font-weight:900;font-size:24px;line-height:1.16;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:150px;}
+  .title-text .hl{color:#FFE08A;}
+  .title-chara{position:absolute;right:14px;bottom:-42px;height:142px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .concl{margin:9px 16px 0;background:var(--green-bg);border:2.5px solid var(--green);border-radius:13px;display:flex;align-items:center;gap:15px;padding:10px 20px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;width:48px;height:48px;border-radius:13px;background:linear-gradient(180deg,#22C55E,#16A34A);color:#fff;display:flex;align-items:center;justify-content:center;padding:11px;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
+  .concl .txt{font-weight:800;font-size:19px;color:var(--green-dark);line-height:1.4;padding-right:120px;}
+  .concl .txt b{color:var(--orange);}
+
+  .stage{flex:1 1 auto;margin:11px 16px 0;display:flex;align-items:stretch;gap:13px;min-height:0;}
+
+  /* ===== LEFT: realistic Outlook email ===== */
+  .email{flex:1.28;background:#fff;border:1.5px solid #C4CCD6;border-radius:12px;overflow:hidden;box-shadow:0 6px 16px rgba(0,0,0,.15);display:flex;flex-direction:column;font-family:'Segoe UI','Noto Sans JP',sans-serif;}
+  .otop{display:flex;align-items:center;gap:10px;background:linear-gradient(180deg,#106EBE,#0F6CBD);padding:8px 14px;}
+  .otop .olg{width:26px;height:26px;object-fit:contain;background:#fff;border-radius:6px;padding:3px;}
+  .otop .onm{color:#fff;font-weight:900;font-size:15px;letter-spacing:.3px;}
+  .otop .otool{margin-left:auto;display:flex;gap:14px;color:#DCEBFF;font-size:11.5px;font-weight:700;}
+  .otop .otool span{display:flex;align-items:center;gap:4px;}
+  .otop .otool svg{width:13px;height:13px;}
+  .ohead{padding:11px 16px 10px;border-bottom:1px solid #E6EAF0;background:#FCFDFE;}
+  .esubj{font-size:19px;font-weight:900;color:#1B2733;line-height:1.25;}
+  .emeta{display:flex;align-items:center;gap:10px;margin-top:9px;}
+  .emeta .av{flex:0 0 auto;width:36px;height:36px;border-radius:50%;background:#0F6CBD;color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;}
+  .emeta .who{flex:1;min-width:0;font-size:13px;font-weight:900;color:#1B2733;line-height:1.35;}
+  .emeta .who small{display:block;font-weight:700;color:#7C8797;font-size:11px;}
+  .emeta .patag{flex:0 0 auto;display:inline-flex;align-items:center;gap:5px;background:#EFF6FF;border:1px solid #BBD0EE;border-radius:6px;padding:3px 9px;font-size:10.5px;font-weight:800;color:#1E40AF;}
+  .emeta .patag img{width:13px;height:13px;object-fit:contain;}
+  .emeta .time{flex:0 0 auto;font-size:11px;color:#7C8797;font-weight:700;text-align:right;}
+  .ebody{flex:1;padding:11px 16px 13px;display:flex;flex-direction:column;gap:9px;min-height:0;}
+  .intro{font-size:13px;font-weight:700;color:#3E4A5C;line-height:1.45;}
+  .intro b{color:#B45309;}
+
+  .mtbl{flex:1;border:1.5px solid #C5CFDD;border-radius:9px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 1px 3px rgba(0,0,0,.05);}
+  .mtbl .row{display:flex;}
+  .mtbl .thd{background:#E8EEF6;border-bottom:1.5px solid #C5CFDD;font-size:11.5px;font-weight:900;color:#42506A;}
+  .mtbl .tr{border-bottom:1px solid #E4EAF1;flex:1;}
+  .mtbl .tr:last-child{border-bottom:none;}
+  .mtbl .tr.hot{background:#FFFAEC;}
+  .cell{padding:7px 11px;border-right:1px solid #E4EAF1;display:flex;align-items:center;min-width:0;}
+  .cell:last-child{border-right:none;}
+  .thd .cell{border-right:1px solid #D3DCE8;}
+  .co-from{flex:0 0 31%;}
+  .co-msg{flex:1;}
+  .co-time{flex:0 0 54px;justify-content:center;}
+  .co-link{flex:0 0 92px;justify-content:center;}
+  .co-from .fn{font-size:12.5px;font-weight:900;color:#1B2733;line-height:1.2;}
+  .co-from .fn small{display:block;font-weight:700;color:#8A94A6;font-size:10.5px;}
+  .co-msg .mt{font-size:12px;font-weight:700;color:#475569;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .co-time .tt{font-size:11px;font-weight:700;color:#94A0B0;}
+  .co-link a{display:inline-flex;align-items:center;gap:4px;white-space:nowrap;background:linear-gradient(180deg,#2E7CE4,#1F62C2);color:#fff;font-weight:900;font-size:12px;border-radius:7px;padding:5px 11px;box-shadow:0 2px 5px rgba(31,98,194,.35);}
+  .co-link a svg{width:13px;height:13px;flex:0 0 auto;}
+  .tr.hot .co-link a{background:linear-gradient(180deg,#FBBF24,#EA580C);box-shadow:0 2px 6px rgba(234,88,12,.4);}
+  .efoot{flex:0 0 auto;display:flex;align-items:center;gap:14px;font-size:11px;font-weight:800;color:#5B6A7E;padding-top:1px;}
+  .efoot span{display:flex;align-items:center;gap:5px;}
+  .efoot svg{width:13px;height:13px;flex:0 0 auto;}
+  .efoot .g{color:#0B5E37;}
+
+  /* ===== RIGHT: click -> real Teams ===== */
+  .jump{flex:.92;display:flex;flex-direction:column;align-items:center;gap:7px;background:#F4F4FB;border:2px solid var(--teams);border-radius:12px;padding:11px 12px;box-shadow:0 6px 16px rgba(91,95,199,.16);}
+  .jump .jt{font-size:14.5px;font-weight:900;color:var(--teams-dark);text-align:center;line-height:1.3;}
+  .obtn{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(180deg,#FBBF24,#EA580C);color:#fff;font-weight:900;font-size:15px;border-radius:10px;padding:7px 20px;box-shadow:0 4px 9px rgba(234,88,12,.4);}
+  .obtn svg{width:16px;height:16px;}
+  .darr{color:var(--teams);display:flex;flex-direction:column;align-items:center;font-weight:900;font-size:11px;line-height:1;gap:1px;}
+  .darr svg{width:26px;height:26px;}
+  .tapp{align-self:stretch;flex:1;min-height:0;background:#fff;border:1.5px solid #D6D8F2;border-radius:11px;overflow:hidden;box-shadow:0 4px 11px rgba(91,95,199,.18);display:flex;flex-direction:column;font-family:'Segoe UI','Noto Sans JP',sans-serif;}
+  .tapp .tbar{display:flex;align-items:center;gap:8px;background:linear-gradient(180deg,#5B5FC7,#4A4EB8);color:#fff;padding:8px 11px;font-size:13px;font-weight:900;}
+  .tapp .tbar img{width:19px;height:19px;object-fit:contain;filter:brightness(0) invert(1);}
+  .tapp .tpath{font-size:11.5px;font-weight:800;color:#5B5FC7;background:#EEF0FB;padding:5px 11px;border-bottom:1px solid #E3E4F5;display:flex;align-items:center;gap:5px;}
+  .tapp .tpath svg{width:13px;height:13px;}
+  .tapp .tfeed{flex:1;min-height:0;padding:9px 11px;display:flex;flex-direction:column;gap:8px;justify-content:center;}
+  .tmg{display:flex;gap:8px;align-items:flex-start;}
+  .tmg .av{flex:0 0 auto;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;color:#fff;}
+  .tmg .bd{flex:1;min-width:0;}
+  .tmg .nm{font-size:11.5px;font-weight:900;color:#3B3B3B;}
+  .tmg .nm small{color:#9AA0AA;font-weight:700;font-size:10px;margin-left:5px;}
+  .tmg .tx{font-size:11.5px;font-weight:700;color:#555;line-height:1.35;margin-top:1px;}
+  .tmg.dim{opacity:.45;}
+  .tmg.dim .av{background:#B7BCC6;}
+  .tmg.a1 .av{background:#8A8F98;}
+  .tmg.hot{background:#FFFAEC;border:2px solid #F5C451;border-radius:10px;padding:7px 8px;position:relative;box-shadow:0 2px 7px rgba(234,88,12,.14);}
+  .tmg.hot .av{background:#C0475A;}
+  .tmg.hot .jb{position:absolute;right:-4px;top:-12px;display:inline-flex;align-items:center;gap:3px;background:linear-gradient(180deg,#FB923C,#EA580C);color:#fff;font-weight:900;font-size:10.5px;border-radius:999px;padding:2px 9px;box-shadow:0 2px 5px rgba(234,88,12,.4);}
+  .tmg.hot .jb svg{width:11px;height:11px;}
+  .jnote{flex:0 0 auto;font-size:12.5px;font-weight:900;color:#4A4EB8;text-align:center;line-height:1.3;}
+
+  /* merit band */
+  .merit{flex:0 0 auto;margin:10px 16px 12px;display:flex;align-items:stretch;gap:9px;}
+  .mlabel{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(180deg,#22C55E,#16A34A);color:#fff;font-weight:900;font-size:15px;border-radius:11px;padding:0 15px;text-align:center;line-height:1.25;box-shadow:0 3px 8px rgba(22,163,74,.3);}
+  .mc{flex:1;background:#F8F9FA;border:2px solid #E1E5EC;border-radius:11px;padding:7px 11px;box-shadow:0 2px 6px rgba(0,0,0,.07);display:flex;align-items:center;gap:9px;}
+  .mc .mi{flex:0 0 auto;width:30px;height:30px;border-radius:8px;background:linear-gradient(180deg,#34D399,#16A34A);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 5px rgba(22,163,74,.3);}
+  .mc .mi svg{width:18px;height:18px;}
+  .mc .mt{font-size:13px;font-weight:800;color:#2B3A2F;line-height:1.3;}
+  .mc .mt b{color:var(--green-dark);}
+  .src{position:absolute;left:16px;bottom:3px;font-size:10px;color:#AEB6C2;font-weight:700;z-index:3;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const ICON={
+ mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/>',
+ ext:'<path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>',
+ down:'<path d="M12 5v14M5 12l7 7 7-7"/>',
+ focus:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/>',
+ filter:'<path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3z"/>',
+ inbox:'<path d="M22 12h-6l-2 3h-4l-2-3H2"/><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"/>',
+ tap:'<path d="M9 11V6a2 2 0 0 1 4 0v5"/><path d="M13 11V7.5a2 2 0 0 1 4 0V13"/><path d="M17 11.5a2 2 0 0 1 4 0V16a6 6 0 0 1-6 6h-2.5a5 5 0 0 1-3.9-1.9l-3.3-4.1a2 2 0 0 1 3-2.6l1.2 1.2"/>',
+ reply:'<path d="M9 17 4 12l5-5"/><path d="M20 18v-2a4 4 0 0 0-4-4H4"/>',
+ forward:'<path d="m15 17 5-5-5-5"/><path d="M4 18v-2a4 4 0 0 1 4-4h12"/>',
+ chev:'<path d="m9 18 6-6-6-6"/>',
+ check:'<path d="M20 6 9 17l-5-5"/>',
+ clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'
+};
+const svg=(n)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${ICON[n]}</svg>`;
+
+const s=document.getElementById('slide');
+s.innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.59-3</div>
+    <div class="logos"><img class="ll" src="${A}icons/pa_logo.png" alt=""><span class="plus">＋</span><img class="ll" src="${A}icons/pa_outlook.png" alt=""></div>
+    <div class="title-text">“まとめメール”はこう届く！<span class="hl">開くを押せば、そのままTeamsの投稿へ</span></div>
+    <img class="title-chara" src="${A}chara/chara_point.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svg('mail')}</div>
+    <div class="txt">1日数回、<b>未対応の重要チャットだけ</b>を1通に集約。<b>「開く」でその投稿へジャンプ</b>。もう探し回らない。</div>
+  </div>
+
+  <div class="stage">
+    <div class="email">
+      <div class="otop"><img class="olg" src="${A}icons/pa_outlook.png" alt=""><span class="onm">Outlook</span><span class="otool"><span>${svg('reply')}返信</span><span>${svg('forward')}転送</span></span></div>
+      <div class="ohead">
+        <div class="esubj">未対応の重要チャット 4件（15:00便）</div>
+        <div class="emeta"><span class="av">自</span><span class="who">あなた<small>you@example.co.jp　宛先: あなた</small></span><span class="patag"><img src="${A}icons/pa_logo.png" alt="">Power Automate が自動作成</span><span class="time">15:00 受信</span></div>
+      </div>
+      <div class="ebody">
+        <div class="intro">集中タイム中に届いた、あなた宛の重要チャットを<b>この1通にまとめました</b>。各行の「開く」でTeamsの投稿に直行できます。</div>
+        <div class="mtbl">
+          <div class="row thd"><span class="cell co-from">差出人</span><span class="cell co-msg">メッセージ</span><span class="cell co-time">時刻</span><span class="cell co-link">リンク</span></div>
+          <div class="row tr hot"><span class="cell co-from"><span class="fn">田中 部長<small>#営業・見積</small></span></span><span class="cell co-msg"><span class="mt">至急、見積もりの件を確認したいです</span></span><span class="cell co-time"><span class="tt">13:42</span></span><span class="cell co-link"><a>${svg('ext')}開く</a></span></div>
+          <div class="row tr"><span class="cell co-from"><span class="fn">佐藤 さん<small>プロジェクトX</small></span></span><span class="cell co-msg"><span class="mt">議事録アップしました。確認お願いします</span></span><span class="cell co-time"><span class="tt">14:05</span></span><span class="cell co-link"><a>${svg('ext')}開く</a></span></div>
+          <div class="row tr"><span class="cell co-from"><span class="fn">山本 さん<small>1:1 チャット</small></span></span><span class="cell co-msg"><span class="mt">明日のMTG、10時で大丈夫ですか？</span></span><span class="cell co-time"><span class="tt">14:20</span></span><span class="cell co-link"><a>${svg('ext')}開く</a></span></div>
+          <div class="row tr"><span class="cell co-from"><span class="fn">鈴木 さん<small>#総務連絡</small></span></span><span class="cell co-msg"><span class="mt">経費申請、本日締めです</span></span><span class="cell co-time"><span class="tt">14:38</span></span><span class="cell co-link"><a>${svg('ext')}開く</a></span></div>
+        </div>
+        <div class="efoot"><span class="g">${svg('check')}全4件に一次応答ずみ</span><span>${svg('clock')}次のまとめは 18:00</span></div>
+      </div>
+    </div>
+
+    <div class="jump">
+      <div class="jt">表の「開く」を押すと…</div>
+      <div class="obtn">${svg('ext')}開く</div>
+      <div class="darr">${svg('down')}<span>クリック</span></div>
+      <div class="tapp">
+        <div class="tbar"><img src="${A}icons/pa_teams_official.png" alt="">Microsoft Teams</div>
+        <div class="tpath">営業・見積 ${svg('chev')} 投稿</div>
+        <div class="tfeed">
+          <div class="tmg dim"><span class="av">上</span><div class="bd"><div class="nm">上原 さん<small>13:20</small></div><div class="tx">来週の資料、こちらにまとめました</div></div></div>
+          <div class="tmg hot"><span class="jb">${svg('tap')}ここへ直行！</span><span class="av">田</span><div class="bd"><div class="nm">田中 部長<small>13:42</small></div><div class="tx">至急、見積もりの件を確認したいです</div></div></div>
+          <div class="tmg dim"><span class="av">森</span><div class="bd"><div class="nm">森 さん<small>13:55</small></div><div class="tx">承知しました、確認します</div></div></div>
+        </div>
+      </div>
+      <div class="jnote">Teamsが開き、その投稿にピンポイント着地。探す手間ゼロ。</div>
+    </div>
+  </div>
+
+  <div class="merit">
+    <div class="mlabel">4つの<br>メリット</div>
+    <div class="mc"><span class="mi">${svg('focus')}</span><span class="mt">通知を切っても<b>集中できる</b></span></div>
+    <div class="mc"><span class="mi">${svg('filter')}</span><span class="mt"><b>大事なものだけ</b>（自分宛）</span></div>
+    <div class="mc"><span class="mi">${svg('inbox')}</span><span class="mt"><b>1通に集約</b>・何度も開かない</span></div>
+    <div class="mc"><span class="mi">${svg('tap')}</span><span class="mt"><b>ワンクリック</b>でTeams直行</span></div>
+  </div>
+  <div class="src">出典：Power Automate 実機（PA45 Demo）／Microsoft Learn　※作り方は4枚目</div>
+`;
+</script>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>

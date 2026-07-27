@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.61-3 Power BIで見える化</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB;--blue-dark:#1E40AF;--green:#16A34A;--green-dark:#064E3B;
+    --ink:#1F2937;--gray:#374151;--weak:#6B7280;--orange:#EA580C;--bi:#E0A800;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+  .ic{display:block;width:100%;height:100%;}
+
+  .titlebar{height:88px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:15px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:26px;border-radius:999px;padding:7px 20px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .logos{display:flex;align-items:center;gap:7px;flex:0 0 auto;}
+  .logos .ll{height:46px;width:46px;object-fit:contain;background:#fff;border-radius:12px;padding:6px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
+  .logos .plus{color:#fff;font-weight:900;font-size:22px;text-shadow:0 1px 2px rgba(0,0,0,.25);line-height:1;}
+  .title-text{color:#fff;font-weight:900;font-size:30px;line-height:1.14;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:150px;}
+  .title-text .hl{color:#FFE08A;}
+  .title-chara{position:absolute;right:14px;bottom:-42px;height:140px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .concl{margin:9px 16px 0;background:#FFFBEB;border:2.5px solid #F5C518;border-radius:13px;display:flex;align-items:center;gap:13px;padding:8px 18px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;display:flex;align-items:center;gap:6px;background:linear-gradient(180deg,#F2C811,#E0A800);color:#3A2E00;font-weight:900;font-size:16px;border-radius:9px;padding:8px 14px;white-space:nowrap;box-shadow:0 3px 6px rgba(0,0,0,.22);}
+  .concl .chip svg{width:18px;height:18px;}
+  .concl .txt{font-weight:800;font-size:17px;color:#6B4E00;line-height:1.34;padding-right:96px;}
+  .concl .txt b{color:var(--orange);}
+
+  .main{flex:1 1 auto;margin:11px 16px 0;display:flex;align-items:stretch;gap:13px;min-height:0;}
+
+  /* 左：ダッシュボード実物 */
+  .dashwrap{flex:1;display:flex;flex-direction:column;min-height:0;}
+  .browser{flex:1;background:#fff;border:2px solid #C2C9D2;border-radius:12px;box-shadow:0 6px 16px rgba(0,0,0,.18);overflow:hidden;display:flex;flex-direction:column;min-height:0;}
+  .bbar{flex:0 0 auto;height:30px;background:linear-gradient(180deg,#F3F4F6,#E5E7EB);border-bottom:1px solid #D1D5DB;display:flex;align-items:center;gap:7px;padding:0 12px;}
+  .bbar .dot{width:11px;height:11px;border-radius:50%;} .bbar .r{background:#FF5F57;} .bbar .y{background:#FEBC2E;} .bbar .g{background:#28C840;}
+  .bbar .url{margin-left:9px;flex:1;max-width:360px;background:#fff;border:1px solid #D1D5DB;border-radius:6px;font-size:11px;font-weight:700;color:#6B7280;padding:3px 10px;font-family:'Segoe UI',sans-serif;}
+  .bbar .badge{margin-left:auto;font-size:11px;font-weight:900;color:#B45309;background:#FEF3C7;border-radius:6px;padding:2px 9px;}
+  .dashimg{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;background:#F7F8FA;padding:6px;}
+  .dashimg img{max-width:100%;max-height:100%;object-fit:contain;border-radius:4px;}
+  .dashcap{flex:0 0 auto;margin-top:8px;text-align:center;font-size:13px;font-weight:800;color:var(--weak);}
+  .dashcap b{color:var(--green);}
+
+  /* 右：説明 */
+  .side{flex:0 0 33%;display:flex;flex-direction:column;gap:10px;min-height:0;}
+  .card{background:#fff;border:1.5px solid #D7DEE8;border-radius:12px;box-shadow:0 4px 11px rgba(0,0,0,.10);padding:10px 12px;}
+  .card.how{background:linear-gradient(180deg,#F0F6FF,#E4EEFE);border-color:#B9D0F0;}
+  .card.see{flex:1;display:flex;flex-direction:column;min-height:0;}
+  .ct{font-size:14px;font-weight:900;color:var(--blue-dark);display:flex;align-items:center;gap:7px;margin-bottom:7px;}
+  .ct::before{content:"";width:5px;height:16px;border-radius:2px;background:#2563EB;}
+  .see .ct{color:var(--green-dark);} .see .ct::before{background:#16A34A;}
+  .hstep{display:flex;gap:8px;align-items:flex-start;font-size:13px;font-weight:700;color:#28324A;line-height:1.32;padding:3.5px 0;}
+  .hstep .hn{flex:0 0 auto;width:20px;height:20px;border-radius:50%;background:#2563EB;color:#fff;font-size:11.5px;font-weight:900;display:flex;align-items:center;justify-content:center;margin-top:1px;}
+  .hstep b{color:var(--blue-dark);}
+  .seelist{display:flex;flex-direction:column;gap:7px;flex:1;justify-content:space-evenly;}
+  .sr{display:flex;gap:9px;align-items:flex-start;font-size:13px;font-weight:700;color:#2B3A2F;line-height:1.3;}
+  .sr .si{flex:0 0 auto;width:22px;height:22px;border-radius:6px;background:#DCFCE7;color:#0B5E37;display:flex;align-items:center;justify-content:center;font-size:13px;}
+  .sr b{color:var(--green-dark);}
+
+  .pitfall{flex:0 0 auto;margin:9px 16px 11px;background:linear-gradient(180deg,#FFF7ED,#FFEFD9);border:2px solid #FDBA74;border-radius:13px;padding:9px 16px;display:flex;align-items:center;gap:13px;box-shadow:0 2px 6px rgba(0,0,0,.07);position:relative;}
+  .pitfall .pl{flex:0 0 auto;display:flex;align-items:center;gap:7px;background:linear-gradient(180deg,#FB923C,#EA580C);color:#fff;font-weight:900;font-size:15px;border-radius:9px;padding:8px 13px;box-shadow:0 2px 4px rgba(0,0,0,.25);}
+  .pitfall .pl svg{width:17px;height:17px;}
+  .pitfall .px{flex:1;font-weight:800;font-size:14px;color:#7C2D12;line-height:1.36;padding-right:104px;}
+  .pitfall .px b{color:var(--orange);}
+  .pit-chara{position:absolute;right:12px;bottom:-2px;height:104px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.4));}
+  .src{position:absolute;left:16px;bottom:3px;font-size:10px;color:#AEB6C2;font-weight:700;z-index:3;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const ICON={
+ bulb:'<path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/>',
+ warn:'<path d="M10.3 3.3 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.3a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>'
+};
+const svg=(n)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${ICON[n]}</svg>`;
+const biIcon='<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="10" width="4.4" height="11" rx="1.2" fill="#E6A200"/><rect x="9.8" y="5" width="4.4" height="16" rx="1.2" fill="#F2C811"/><rect x="16.6" y="2" width="4.4" height="19" rx="1.2" fill="#FFD23F"/></svg>';
+
+const s=document.getElementById('slide');
+s.innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.61-4</div>
+    <div class="logos"><img class="ll" src="${A}icons/pa_sharepoint.png" alt=""><span class="plus">＋</span><span class="ll" style="display:flex;align-items:center;justify-content:center;">${biIcon}</span></div>
+    <div class="title-text">見える化｜<span class="hl">Power BIで“こんなダッシュボード”に</span></div>
+    <img class="title-chara" src="${A}chara/chara_guts.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svg('bulb')}つなぐだけ</div>
+    <div class="txt">溜まった「効果ログ」を<b>Power BIにつなぐだけ</b>。実行データが自動でグラフに変わり、<br><b>累計の削減時間・コスト・部署別の成果</b>が一目でわかる“成果の見える化”が完成します。</div>
+  </div>
+
+  <div class="main">
+    <div class="dashwrap">
+      <div class="browser">
+        <div class="bbar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="url">app.powerbi.com &nbsp;/&nbsp; 自動化の成果ダッシュボード</span><span class="badge">毎日 自動更新</span></div>
+        <div class="dashimg"><img src="${A}img/dashboard_pa45.png" alt="Power BI ダッシュボード"></div>
+      </div>
+      <div class="dashcap">▲ 実際に作った例：<b>「みんなで積み上げる自動化の成果」</b>ダッシュボード（数値はマスク表示）</div>
+    </div>
+
+    <div class="side">
+      <div class="card how">
+        <div class="ct">つなぎ方（3手）</div>
+        <div class="hstep"><span class="hn">1</span><span>Power BIで<b>「SharePoint リスト」</b>から取得</span></div>
+        <div class="hstep"><span class="hn">2</span><span>「効果ログ」を選んで<b>データを読み込む</b></span></div>
+        <div class="hstep"><span class="hn">3</span><span>削減時間や部署を<b>グラフに配置</b></span></div>
+      </div>
+      <div class="card see">
+        <div class="ct">見えること</div>
+        <div class="seelist">
+          <div class="sr"><span class="si">◆</span><span><b>KPIカード</b>：総実行回数／効率化時間／削減コスト／部署数</span></div>
+          <div class="sr"><span class="si">📈</span><span><b>月別＋累積</b>の削減が右肩上がりで積み上がる</span></div>
+          <div class="sr"><span class="si">📊</span><span><b>部署（Gr・係）別</b>の実行回数ランキング</span></div>
+          <div class="sr"><span class="si">⤴</span><span><b>前日比</b>も出せて、成果の伸びが毎日わかる</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pitfall">
+    <div class="pl">${svg('warn')}正直な注意</div>
+    <div class="px"><b>Power BIはPower Automateとは別サービス。</b>作成は<b>無料のPower BI Desktop</b>でOK、共有・自動更新には<b>Proライセンス等</b>が必要な場合あり。削減コストは<b>「削減時間×時給」</b>をメジャーで計算すると出せます。</div>
+    <img class="pit-chara" src="${A}chara/chara_smile.png" alt="">
+  </div>
+  <div class="src">出典：Power BI 実機（なんでもCopilot 大阪 登壇資料）／Microsoft Learn　※数値はサンプル・マスク表示</div>
+`;
+</script>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>

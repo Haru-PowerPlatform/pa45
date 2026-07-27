@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>コパスタ Vol.6 - コンセプト</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cs:#7C3AED; --cs-bg:#F5F3FF; --cs-bg2:#EDE9FE; --cs-dark:#5B21B6;
+    --green:#16A34A; --green-bg:#ECFDF5; --green-bg2:#C6F0D6; --green-dark:#064E3B;
+    --teams:#5B5FC7;
+    --ink:#1F2937; --gray:#374151; --weak:#6B7280;
+    --card:#F8F9FA; --line:#E5E7EB; --segline:#D1D1D1; --segink:#242424;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+
+  .titlebar{height:90px;
+    background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#5B21B6 0%,#7C3AED 50%,#A855F7 100%);
+    box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(91,33,182,.36);
+    display:flex;align-items:center;gap:18px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--cs);font-weight:900;font-size:24px;border-radius:999px;padding:7px 20px;letter-spacing:.5px;white-space:nowrap;flex:0 0 auto;}
+  .part-pill{background:rgba(255,255,255,.16);color:#fff;font-weight:900;font-size:17px;border-radius:999px;padding:6px 14px;white-space:nowrap;flex:0 0 auto;border:1.6px solid rgba(255,255,255,.78);box-shadow:inset 0 1px 0 rgba(255,255,255,.25);}
+  .part-pill b{color:#FDE047;}
+  .title-text{color:#fff;font-weight:900;font-size:31px;line-height:1.18;letter-spacing:.3px;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:140px;}
+  .title-text .q{color:#FDE047;}
+  .title-chara{position:absolute;right:14px;bottom:-52px;height:148px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .concl{margin:9px 18px 0;background:var(--green-bg);border:2px solid var(--green);border-radius:12px;
+    display:flex;align-items:center;gap:14px;padding:10px 18px;flex:0 0 auto;
+    box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{background:linear-gradient(180deg,rgba(255,255,255,.30),rgba(255,255,255,0) 50%),linear-gradient(180deg,#2BD06A,#16A34A);color:#fff;font-weight:900;font-size:22px;border-radius:9px;padding:8px 18px;white-space:nowrap;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
+  .concl .txt{font-weight:700;font-size:20px;color:var(--green-dark);line-height:1.38;}
+  .concl .txt b{color:var(--cs);} .concl .txt em{color:var(--green);font-style:normal;}
+
+  .body{flex:1 1 auto;display:flex;gap:15px;padding:10px 18px 0;min-height:0;}
+  .mockwrap{flex:1.5;display:flex;flex-direction:column;min-height:0;}
+  .mocklabel{font-weight:900;font-size:16.5px;color:var(--cs-dark);margin-bottom:6px;display:flex;align-items:center;gap:8px;}
+  .mocklabel .dot{width:11px;height:11px;border-radius:50%;background:var(--cs);}
+
+  /* Teams 風ウィンドウ */
+  .tw{flex:1;border-radius:12px;border:1px solid var(--segline);background:#fff;box-shadow:0 8px 20px rgba(0,0,0,.20);overflow:hidden;display:flex;font-family:"Segoe UI","Noto Sans JP",sans-serif;min-height:0;}
+  .rail{flex:0 0 62px;background:#F0F0F5;border-right:1px solid #E4E4EC;display:flex;flex-direction:column;align-items:center;gap:11px;padding:11px 0;}
+  .rail .it{display:flex;flex-direction:column;align-items:center;gap:2px;color:#616161;width:54px;}
+  .rail .it .ic{width:24px;height:24px;display:flex;align-items:center;justify-content:center;}
+  .rail .it .lb{font-size:8.5px;font-weight:700;}
+  .rail .it.on{color:var(--teams);}
+  .rail .agent{margin-top:4px;width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#6D5DF6,#8B5CF6);display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(109,93,246,.5);}
+  .rail .agent img{width:22px;height:22px;object-fit:contain;filter:brightness(0) invert(1);}
+  .rail .pin{font-size:8px;font-weight:800;color:var(--cs-dark);margin-top:2px;text-align:center;line-height:1.1;}
+
+  .chat{flex:1;display:flex;flex-direction:column;min-height:0;}
+  .chat-top{flex:0 0 auto;height:44px;border-bottom:1px solid #EDEDED;display:flex;align-items:center;gap:9px;padding:0 14px;}
+  .chat-top .av{width:26px;height:26px;border-radius:7px;background:linear-gradient(135deg,#6D5DF6,#8B5CF6);display:flex;align-items:center;justify-content:center;}
+  .chat-top .av img{width:17px;height:17px;object-fit:contain;filter:brightness(0) invert(1);}
+  .chat-top .nm{font-size:14px;font-weight:800;color:var(--segink);}
+  .chat-top .tag{font-size:10px;font-weight:800;color:#5B21B6;background:#EDE9FE;border:1px solid #C4B5FD;border-radius:999px;padding:2px 9px;}
+  .chat-body{flex:1;padding:11px 14px;display:flex;flex-direction:column;gap:9px;min-height:0;overflow:hidden;background:#fff;}
+  .msg{display:flex;gap:9px;align-items:flex-start;}
+  .msg .ava{flex:0 0 auto;width:26px;height:26px;border-radius:50%;background:#C7C7D1;color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;}
+  .msg.bot .ava{border-radius:7px;background:linear-gradient(135deg,#6D5DF6,#8B5CF6);}
+  .msg .bl{background:#F5F5F7;border-radius:9px;padding:8px 11px;font-size:12.8px;font-weight:600;line-height:1.55;color:#242424;max-width:88%;}
+  .msg .who{font-size:11px;font-weight:800;color:#616161;margin-bottom:3px;}
+  .msg.bot .bl{background:#F0EFFC;}
+  .msg .bl .cit{display:inline-flex;align-items:center;gap:5px;margin-top:6px;font-size:10.5px;font-weight:800;color:#5B21B6;}
+  .msg .bl .cit .b{width:15px;height:15px;border-radius:50%;background:#EDE9FE;font-size:9px;display:flex;align-items:center;justify-content:center;}
+  .compose{flex:0 0 auto;margin:0 14px 12px;border:1px solid #DCDCE4;border-radius:9px;height:34px;display:flex;align-items:center;padding:0 11px;font-size:11.5px;color:#9C9CA6;}
+
+  .pts{flex:1;display:flex;flex-direction:column;min-height:0;}
+  .pt-head{align-self:stretch;text-align:center;color:#fff;font-weight:900;font-size:21px;border-radius:11px;padding:9px 12px;margin-bottom:10px;background:linear-gradient(120deg,#7C3AED 0%,#C026D3 55%,#EC4899 100%);box-shadow:0 4px 8px rgba(0,0,0,.26),inset 0 1px 0 rgba(255,255,255,.5);text-shadow:0 1px 2px rgba(0,0,0,.22);}
+  .plist{display:flex;flex-direction:column;justify-content:space-between;flex:1;gap:10px;}
+  .p{background:linear-gradient(180deg,#FFFFFF,#F4F1FB);border:2px solid #DDD3F0;border-radius:13px;box-shadow:0 5px 11px rgba(0,0,0,.12);display:flex;flex-direction:column;justify-content:center;gap:4px;padding:11px 14px;flex:1;}
+  .p .h{font-weight:900;font-size:19px;color:var(--ink);line-height:1.22;display:flex;align-items:center;gap:8px;}
+  .p .h .em{font-size:21px;}
+  .p .s{font-weight:700;font-size:14px;color:#4B5563;line-height:1.36;}
+  .p .s b{color:var(--cs-dark);}
+
+  .darkband{margin:11px 0 0;background:linear-gradient(180deg,#565C66,#4A4F58);color:#fff;flex:0 0 auto;position:relative;display:flex;align-items:stretch;gap:14px;padding:9px 22px 11px;height:126px;overflow:hidden;box-shadow:inset 0 1px 0 rgba(255,255,255,.10);}
+  .nf{flex:1.55;display:flex;flex-direction:column;min-height:0;}
+  .nf .label{font-weight:900;font-size:16px;color:#FCD34D;margin-bottom:6px;letter-spacing:.3px;}
+  .nf .grid{display:flex;gap:9px;flex:1;min-height:0;margin-bottom:12px;}
+  .nf .fc{flex:1;background:linear-gradient(180deg,#FFFFFF,#EEF1F6);color:var(--ink);border-radius:10px;padding:7px 10px;display:flex;flex-direction:column;justify-content:center;gap:3px;box-shadow:0 3px 6px rgba(0,0,0,.26),inset 0 1px 0 rgba(255,255,255,.9);border-top:3px solid var(--cs);}
+  .nf .fc.off{border-top-color:#9CA3AF;opacity:.86;}
+  .nf .fc .ft{font-weight:900;font-size:13.8px;color:var(--cs-dark);line-height:1.2;}
+  .nf .fc.off .ft{color:#4B5563;}
+  .nf .fc .fd{font-weight:700;font-size:12.3px;color:#4B5563;line-height:1.28;}
+  .note{flex:1;background:linear-gradient(180deg,#646A75,#565C66);border:1.5px solid #7A818D;border-radius:11px;padding:10px 14px;margin-right:118px;display:flex;flex-direction:column;justify-content:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.12);}
+  .note .label{font-weight:900;font-size:15px;color:#FCD34D;margin-bottom:6px;display:flex;align-items:center;gap:6px;}
+  .note .txt{font-weight:700;font-size:13.6px;color:#fff;line-height:1.4;}
+  .note .txt b{color:#FCA5A5;}
+  .band-chara{position:absolute;right:6px;bottom:0;height:148px;z-index:50;filter:drop-shadow(0 3px 7px rgba(0,0,0,.45));}
+  .src{position:absolute;left:22px;bottom:3px;font-size:11px;font-weight:500;color:rgba(255,255,255,.5);z-index:40;}
+</style>
+</head>
+<body>
+<div id="slide">
+  <div class="titlebar">
+    <div class="vol-pill">コパスタ Vol.6</div>
+    <div class="part-pill">前編 <b>(1/2)</b></div>
+    <div class="title-text">作ったAIは、Teamsに置いて<br>はじめて"みんなのAI"になる<span class="q">。</span></div>
+    <img class="title-chara" src="../../pptx/_assets/chara/chara_smile_g.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">結論</div>
+    <div class="txt">作っただけだと、使えるのは<b>作った本人のテスト画面だけ</b>。<br><em>発行してTeamsに追加</em>すると、同僚がいつものチャットから話しかけられます。</div>
+  </div>
+
+  <div class="body">
+    <div class="mockwrap">
+      <div class="mocklabel"><span class="dot"></span>Teamsに置いたあとの、同僚の画面</div>
+      <div class="tw">
+        <div class="rail">
+          <div class="it"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 6h16M4 12h16M4 18h10"/></svg></span><span class="lb">通知</span></div>
+          <div class="it on"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a8 8 0 1 1-3.2-6.4"/><path d="M3 20l1.6-4"/></svg></span><span class="lb">チャット</span></div>
+          <div class="it"><span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.4"/><path d="M3 19c0-3 3-5 6-5s6 2 6 5"/></svg></span><span class="lb">チーム</span></div>
+          <div class="agent"><img src="../../pptx/_assets/icons/cs_logo.png" alt=""></div>
+          <div class="pin">社内ヘルプ<br>エージェント</div>
+        </div>
+        <div class="chat">
+          <div class="chat-top">
+            <span class="av"><img src="../../pptx/_assets/icons/cs_logo.png" alt=""></span>
+            <span class="nm">社内ヘルプ エージェント</span>
+            <span class="tag">アプリ</span>
+          </div>
+          <div class="chat-body">
+            <div class="msg">
+              <span class="ava">佐藤</span>
+              <div><div class="who">佐藤 みなみ　9:12</div>
+                <div class="bl">有給って何日前までに申請すればいいんでしたっけ？</div></div>
+            </div>
+            <div class="msg bot">
+              <span class="ava"><img src="../../pptx/_assets/icons/cs_logo.png" alt="" style="width:15px;height:15px;filter:brightness(0) invert(1);"></span>
+              <div><div class="who">社内ヘルプ エージェント　9:12</div>
+                <div class="bl">原則5営業日前までです。急な事情のときは上長へ連絡のうえ、事後申請もできます。
+                  <span class="cit"><span class="b">1</span>就業規則_2026年版.pdf</span>
+                </div></div>
+            </div>
+            <div class="msg">
+              <span class="ava">佐藤</span>
+              <div><div class="who">佐藤 みなみ　9:13</div>
+                <div class="bl">助かりました。ありがとうございます！</div></div>
+            </div>
+          </div>
+          <div class="compose">メッセージを入力…</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pts">
+      <div class="pt-head">置くと、ここが変わる</div>
+      <div class="plist">
+        <div class="p">
+          <div class="h"><span class="em">🚪</span>入口がいつもの場所に</div>
+          <div class="s">URLを覚えなくていい。<br><b>Teamsの左に並ぶ</b>ので、思い出せます</div>
+        </div>
+        <div class="p">
+          <div class="h"><span class="em">👥</span>同僚が自分で使える</div>
+          <div class="s">聞かれるたびに答える側から、<br><b>自分で調べてもらう側</b>へ</div>
+        </div>
+        <div class="p">
+          <div class="h"><span class="em">🔒</span>権限はそのまま</div>
+          <div class="s">社内文書は<b>見られる人にだけ</b>。<br>誰でも全部見えるわけではありません</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="darkband">
+    <div class="nf">
+      <div class="label">新しい画面から今すぐ公開できる場所（2026年7月時点）</div>
+      <div class="grid">
+        <div class="fc"><div class="ft">Microsoft Teams</div><div class="fd">チャットで話しかけられる</div></div>
+        <div class="fc"><div class="ft">M365 Copilot</div><div class="fd">エージェント一覧に並ぶ</div></div>
+        <div class="fc"><div class="ft">デモ用サイト・Webアプリ</div><div class="fd">お試し用・自社サイトに埋め込み</div></div>
+        <div class="fc off"><div class="ft">SharePoint・Slack</div><div class="fd">今のところ未対応</div></div>
+      </div>
+    </div>
+    <div class="note">
+      <div class="label">⚠ 使う前に確認</div>
+      <div class="txt">チャネルやグループチャットでは<b>SharePointなど認証が要るナレッジは使えません</b>（1対1のチャットのみ）。</div>
+    </div>
+    <div class="src">出典：Microsoft Learn（新しいエクスペリエンス／エージェントのチャネル・Teamsへの接続）／画面は説明用の再現・人名は架空です</div>
+  </div>
+  <img class="band-chara" src="../../pptx/_assets/chara/chara_guts_g.png" alt="">
+</div>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>

@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.61-2 書類PDF自動生成の作り方3ステップ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB; --blue-bg:#EFF6FF; --blue-dark:#1E40AF;
+    --green:#16A34A; --green-dark:#064E3B;
+    --teams:#5B5FC7; --teams-dark:#4347A8;
+    --orange:#EA580C; --ink:#1F2937; --gray:#374151; --weak:#6B7280;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+  .ic{display:block;width:100%;height:100%;}
+
+  .titlebar{height:90px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:15px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:26px;border-radius:999px;padding:7px 20px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .logos{display:flex;align-items:center;gap:7px;flex:0 0 auto;}
+  .logos .ll{height:48px;width:48px;object-fit:contain;background:#fff;border-radius:12px;padding:6px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
+  .logos .plus{color:#fff;font-weight:900;font-size:24px;text-shadow:0 1px 2px rgba(0,0,0,.25);line-height:1;}
+  .title-text{color:#fff;font-weight:900;font-size:30px;line-height:1.14;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:140px;}
+  .title-text .hl{color:#FFE08A;}
+  .title-chara{position:absolute;right:14px;bottom:-44px;height:146px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .concl{margin:9px 16px 0;background:#F3F3FB;border:2.5px solid var(--teams);border-radius:13px;display:flex;align-items:center;gap:13px;padding:8px 18px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;width:40px;height:40px;border-radius:11px;background:linear-gradient(180deg,#7A7ED6,#5B5FC7);color:#fff;display:flex;align-items:center;justify-content:center;padding:8px;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.4);}
+  .concl .txt{font-weight:800;font-size:17.5px;color:var(--teams-dark);line-height:1.32;padding-right:92px;}
+  .concl .txt b{color:var(--orange);}
+
+  .cols{flex:1 1 auto;margin:11px 15px 0;display:flex;align-items:stretch;gap:0;min-height:0;}
+  .col{flex:1;display:flex;flex-direction:column;min-height:0;position:relative;}
+  .carrow{flex:0 0 30px;display:flex;align-items:center;justify-content:center;color:#9AA7B8;}
+  .carrow svg{width:28px;height:28px;}
+  .colcard{flex:1;background:#fff;border:1.5px solid #C9D2E0;border-radius:13px;box-shadow:0 5px 13px rgba(0,0,0,.12);overflow:hidden;display:flex;flex-direction:column;}
+  .cnum{position:absolute;top:-10px;left:-10px;width:34px;height:34px;border-radius:50%;background:linear-gradient(180deg,#7A7ED6,#5B5FC7);color:#fff;font-weight:900;font-size:18px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 5px rgba(0,0,0,.3);z-index:5;border:2.5px solid #fff;}
+  .ch{display:flex;align-items:center;gap:11px;padding:9px 32px 9px 12px;min-height:58px;background:#fff;border-bottom:1px solid #EDEFF2;position:relative;}
+  .ch .sq{flex:0 0 auto;width:40px;height:40px;border-radius:8px;background:#fff;border:1px solid #EAECEF;display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.08);}
+  .ch .sq img{width:29px;height:29px;object-fit:contain;}
+  .ch .sq.real{border:none;background:none;box-shadow:none;}
+  .ch .sq.real img{width:100%;height:100%;object-fit:cover;border-radius:8px;}
+  .ch .sq.tile img{width:31px;height:31px;}
+  .ch .nm{flex:1;font-weight:900;font-size:15px;color:var(--ink);line-height:1.18;}
+  .ch .nm small{display:block;font-weight:700;font-size:11.5px;color:var(--weak);margin-top:2px;}
+  .ch .dots{position:absolute;right:11px;top:10px;color:#9AA3AF;font-size:19px;font-weight:900;line-height:1;}
+
+  .cp{flex:1;font-family:'Segoe UI','Noto Sans JP',sans-serif;padding:0 11px 8px;display:flex;flex-direction:column;gap:0;}
+  .tabs{display:flex;align-items:center;gap:13px;padding:0 2px;border-bottom:1px solid #E5E7EB;}
+  .tabs span{font-size:12px;font-weight:700;color:#605E5C;padding:6px 1px;white-space:nowrap;}
+  .tabs span.on{color:#5B5FC7;font-weight:800;box-shadow:inset 0 -2.5px 0 #5B5FC7;}
+  .ptop{flex:0 0 232px;display:flex;flex-direction:column;gap:7px;overflow:hidden;background:#fff;padding:9px 2px 4px;}
+  .fld{display:flex;flex-direction:column;gap:3px;}
+  .fld .l{font-size:13px;color:#605E5C;font-weight:800;line-height:1.2;}
+  .fld .l .req{color:#D13438;margin-left:1px;}
+  .fld .v{border:1px solid #D1D1D1;border-radius:6px;padding:7px 10px;font-size:14px;color:#242424;background:#fff;display:flex;align-items:center;gap:8px;font-weight:700;}
+  .fld .v.ph{color:#A19F9D;font-weight:600;}
+  .fld .v .cr{margin-left:auto;flex:0 0 auto;color:#605E5C;font-weight:900;font-size:11px;}
+  .fld .v img{width:18px;height:18px;object-fit:contain;flex:0 0 auto;}
+  .dyn{display:inline-flex;align-items:center;gap:6px;background:#EAF1FE;border:1.5px solid #BBD0EE;border-radius:6px;padding:6px 10px;font-size:14px;font-weight:800;color:#1E40AF;align-self:flex-start;}
+  .dyn svg{width:14px;height:14px;flex:0 0 auto;}
+
+  /* condition row builder */
+  .sect{font-size:12.5px;font-weight:900;color:#5A6B85;display:flex;align-items:center;gap:6px;}
+  .sect::before{content:"";width:5px;height:14px;border-radius:2px;background:#8FA0BC;}
+  .condrow{display:flex;flex-direction:column;gap:5px;}
+  .condrow .cell{border:1px solid #D1D1D1;border-radius:6px;padding:6px 9px;font-size:13.5px;font-weight:800;color:#242424;background:#fff;display:flex;align-items:center;gap:6px;}
+  .condrow .cell .cr{margin-left:auto;color:#605E5C;font-weight:900;font-size:10px;}
+  .condchip{display:inline-flex;align-items:center;gap:5px;background:#EAF1FE;border:1px solid #BBD0EE;border-radius:5px;padding:2px 8px;font-size:13px;font-weight:800;color:#1E40AF;}
+  .condchip svg{width:12px;height:12px;}
+  .kw{color:#5B21B6;font-weight:900;}
+  .branch{display:flex;gap:7px;margin-top:2px;}
+  .brc{flex:1;border-radius:8px;padding:6px 9px;font-size:12.5px;font-weight:800;line-height:1.28;}
+  .brc.yes{background:#F2FCF6;border:1.5px solid #86D8A5;color:#0B5E37;}
+  .brc.no{background:#F6F7F9;border:1.5px solid #D3D9E1;color:#5A6270;}
+  .brc .bl{display:block;font-size:11px;font-weight:900;margin-bottom:1px;}
+
+  .howsteps{flex:1;margin-top:7px;background:linear-gradient(180deg,#F5F6FD,#EEEFFA);border:1px solid #D7D9F0;border-radius:10px;padding:9px 12px;display:flex;flex-direction:column;gap:6px;}
+  .howsteps .hh{display:flex;align-items:center;gap:7px;font-size:14.5px;font-weight:900;color:#3A3B6B;}
+  .howsteps .hh::before{content:"";width:5px;height:15px;border-radius:2px;background:#5B5FC7;}
+  .howsteps ol{list-style:none;display:flex;flex-direction:column;justify-content:space-evenly;flex:1;gap:5px;}
+  .howsteps li{display:flex;gap:9px;align-items:flex-start;font-size:14px;font-weight:700;color:#333B57;line-height:1.28;}
+  .howsteps li .sn{flex:0 0 auto;width:22px;height:22px;border-radius:50%;background:#5B5FC7;color:#fff;font-size:12.5px;font-weight:900;display:flex;align-items:center;justify-content:center;margin-top:1px;}
+  .howsteps li b{color:#4347A8;}
+  .howsteps li.key{color:#0B5E37;} .howsteps li.key .sn{background:#16A34A;} .howsteps li.key b{color:#0B5E37;}
+
+  .pitfall{flex:0 0 auto;margin:9px 15px 11px;background:linear-gradient(180deg,#FFF7ED,#FFEFD9);border:2px solid #FDBA74;border-radius:13px;padding:9px 16px;display:flex;align-items:center;gap:13px;box-shadow:0 2px 6px rgba(0,0,0,.07);position:relative;}
+  .pitfall .pl{flex:0 0 auto;display:flex;align-items:center;gap:7px;background:linear-gradient(180deg,#FB923C,#EA580C);color:#fff;font-weight:900;font-size:15px;border-radius:9px;padding:8px 13px;box-shadow:0 2px 4px rgba(0,0,0,.25);}
+  .pitfall .pl svg{width:17px;height:17px;}
+  .pitfall .px{flex:1;font-weight:800;font-size:14.5px;color:#7C2D12;line-height:1.36;padding-right:100px;}
+  .pitfall .px b{color:var(--orange);}
+  .pitfall .px code{font-family:'Courier New',monospace;background:#fff;border:1px solid #F0C89B;border-radius:5px;padding:1px 6px;color:#9A3412;font-weight:800;}
+  .pit-chara{position:absolute;right:12px;bottom:-2px;height:100px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.4));}
+  .src{position:absolute;left:16px;bottom:3px;font-size:10px;color:#AEB6C2;font-weight:700;z-index:3;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const ICON={
+ bulb:'<path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/>',
+ warn:'<path d="M10.3 3.3 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.3a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>',
+ arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',
+ zap:'<path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/>'
+};
+const svg=(n)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${ICON[n]}</svg>`;
+
+const s=document.getElementById('slide');
+s.innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.61-2</div>
+    <div class="logos"><img class="ll" src="${A}icons/pa_logo.png" alt=""><span class="plus">＋</span><img class="ll" src="${A}icons/pa_onedrive.png" alt=""></div>
+    <div class="title-text">作り方｜<span class="hl">“書類PDF自動生成”を3ステップで自作</span></div>
+    <img class="title-chara" src="${A}chara/chara_laptop.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svg('bulb')}</div>
+    <div class="txt">やることは<b>①入力を受け取る →②HTMLで書類を組み立てて保存 →③PDFに変換して送る</b>の3つ。<br>カギは②で<b>体裁のHTMLに⚡差し込み</b>、③で<b>OneDriveがPDF化</b>。全部 標準・無料で作れます。</div>
+  </div>
+
+  <div class="cols">
+    <div class="col">
+      <div class="cnum">1</div>
+      <div class="colcard">
+        <div class="ch"><span class="sq tile"><img src="${A}icons/pa_trigger_button.png" alt=""></span><span class="nm">フローを手動でトリガーする<small>インスタント（トリガー）</small></span><span class="dots">⋮</span></div>
+        <div class="cp">
+          <div class="tabs"><span class="on">パラメーター</span><span>設定</span><span>コード ビュー</span><span>詳細</span></div>
+          <div class="ptop">
+            <div class="fld"><span class="l">入力① <span class="req">*</span></span><span class="v">会社名（テキスト）<span class="cr">▾</span></span></div>
+            <div class="fld"><span class="l">入力② <span class="req">*</span></span><span class="v">品目（テキスト）<span class="cr">▾</span></span></div>
+            <div class="fld"><span class="l">入力③ <span class="req">*</span></span><span class="v">金額（数値）<span class="cr">▾</span></span></div>
+          </div>
+          <div class="howsteps">
+            <div class="hh">操作手順</div>
+            <ol>
+              <li><span class="sn">1</span><span>トリガー＝<b>手動でトリガー</b></span></li>
+              <li class="key"><span class="sn">2</span><span>入力に<b>会社名・品目・金額</b></span></li>
+              <li><span class="sn">3</span><span>これを<b>書類に差し込む</b></span></li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="carrow">${svg('arrow')}</div>
+
+    <div class="col">
+      <div class="cnum">2</div>
+      <div class="colcard">
+        <div class="ch"><span class="sq tile"><img src="${A}icons/pa_onedrive.png" alt=""></span><span class="nm">ファイルの作成<small>OneDrive（HTMLで書類を組み立て）</small></span><span class="dots">⋮</span></div>
+        <div class="cp">
+          <div class="tabs"><span class="on">パラメーター</span><span>設定</span><span>コード ビュー</span><span>詳細</span></div>
+          <div class="ptop">
+            <div class="fld"><span class="l">フォルダー <span class="req">*</span></span><span class="v">/見積書<span class="cr">▾</span></span></div>
+            <div class="fld"><span class="l">ファイル名 <span class="req">*</span></span><span class="v">見積書_ABC.html</span></div>
+            <div class="fld"><span class="l">ファイル コンテンツ <span class="req">*</span></span><span class="dyn">${svg('zap')}見積書のHTML＋⚡差し込み</span></div>
+          </div>
+          <div class="howsteps">
+            <div class="hh">操作手順</div>
+            <ol>
+              <li><span class="sn">1</span><span>「<b>ファイルの作成</b>」を追加</span></li>
+              <li class="key"><span class="sn">2</span><span>中身＝<b>書類のHTML（⚡入力を差し込み）</b></span></li>
+              <li><span class="sn">3</span><span><b>.html</b>で保存（表・ロゴはCSSで）</span></li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="carrow">${svg('arrow')}</div>
+
+    <div class="col">
+      <div class="cnum">3</div>
+      <div class="colcard">
+        <div class="ch"><span class="sq tile"><img src="${A}icons/pa_onedrive.png" alt=""></span><span class="nm">ファイルの変換<small>OneDrive（→PDF）</small></span><span class="dots">⋮</span></div>
+        <div class="cp">
+          <div class="tabs"><span class="on">パラメーター</span><span>設定</span><span>コード ビュー</span><span>詳細</span></div>
+          <div class="ptop">
+            <div class="fld"><span class="l">ファイル <span class="req">*</span></span><span class="dyn">${svg('zap')}作成したファイル</span></div>
+            <div class="fld"><span class="l">対象の種類 <span class="req">*</span></span><span class="v">PDF<span class="cr">▾</span></span></div>
+            <div class="fld"><span class="l" style="color:#8A8886;font-weight:700;">※このあとメール送信でPDFを添付</span></div>
+          </div>
+          <div class="howsteps">
+            <div class="hh">操作手順</div>
+            <ol>
+              <li><span class="sn">1</span><span>「<b>ファイルの変換</b>」を追加</span></li>
+              <li class="key"><span class="sn">2</span><span>対象の種類＝<b>PDF</b></span></li>
+              <li><span class="sn">3</span><span><b>メール送信(V2)</b>で⚡PDFを添付</span></li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pitfall">
+    <div class="pl">${svg('warn')}正直な注意</div>
+    <div class="px">書類の体裁は<b>HTML/CSS</b>で作る（表・ロゴもOK）。<b>複雑なレイアウトはPDF化で崩れることも</b>＝まずシンプルに。<b>作成と変換の間に少し待機</b>を入れると安定。もっときれいなテンプレに差し込むなら<b>Word Onlineの「Wordテンプレートを設定」→PDF</b>（※こちらは<b>プレミアム</b>）。</div>
+    <img class="pit-chara" src="${A}chara/chara_point.png" alt="">
+  </div>
+  <div class="src">出典：Power Automate 実機（PA45 Demo）／Microsoft Learn　※アクション名は2026-07時点</div>
+`;
+</script>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>

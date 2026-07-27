@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.69-1 フォームが届くたびExcelが自動で記録＆集計</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB;--blue-dark:#1E40AF;--green:#16A34A;--green-dark:#0B5E37;
+    --ink:#1F2937;--gray:#374151;--weak:#6B7280;--orange:#EA580C;--red:#DC2626;
+    --xl:#107C41;--forms:#5A2E91;--amber:#D97706;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+
+  .titlebar{height:86px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:14px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:25px;border-radius:999px;padding:7px 19px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .logos{display:flex;align-items:center;gap:7px;flex:0 0 auto;}
+  .logos .ll{height:47px;width:47px;object-fit:contain;background:#fff;border-radius:12px;padding:6px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
+  .logos .plus{color:#fff;font-weight:900;font-size:23px;text-shadow:0 1px 2px rgba(0,0,0,.25);line-height:1;}
+  .title-text{color:#fff;font-weight:900;font-size:27px;line-height:1.15;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:150px;}
+  .title-text .hl{color:#FFE08A;}
+  .title-chara{position:absolute;right:14px;bottom:-42px;height:142px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .concl{margin:9px 16px 0;background:#EFF6FF;border:2.5px solid var(--blue);border-radius:13px;display:flex;align-items:center;gap:13px;padding:9px 18px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;width:42px;height:42px;border-radius:12px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;font-size:23px;box-shadow:0 3px 6px rgba(0,0,0,.26);}
+  .concl .txt{font-weight:800;font-size:19px;color:var(--blue-dark);line-height:1.4;padding-right:96px;}
+  .concl .txt b{color:var(--orange);}
+  .concl .txt .g{color:var(--green-dark);}
+
+  .cols{flex:1 1 auto;margin:12px 15px 0;display:flex;align-items:stretch;gap:0;min-height:0;}
+  .col{flex:1;display:flex;flex-direction:column;min-height:0;position:relative;}
+  .col.hero{flex:1.06;}
+  .carrow{flex:0 0 30px;display:flex;align-items:center;justify-content:center;color:#2563EB;font-size:30px;font-weight:900;}
+  .colcard{flex:1;display:flex;flex-direction:column;min-height:0;border-radius:14px;overflow:hidden;box-shadow:0 5px 13px rgba(0,0,0,.12);border:2px solid;}
+  .col.c1 .colcard{background:#F7F3FC;border-color:#D6C2EE;}
+  .col.hero .colcard{background:#EFF4FF;border-color:#9DBEF5;}
+  .col.c3 .colcard{background:#EDFBF3;border-color:#A6E1BC;}
+  .chd{flex:0 0 auto;text-align:center;font-weight:900;font-size:16.5px;color:#fff;padding:8px 8px;line-height:1.2;}
+  .col.c1 .chd{background:linear-gradient(180deg,#8B5CC4,#6D28D9);}
+  .col.hero .chd{background:linear-gradient(180deg,#3B82F6,#2563EB);}
+  .col.c3 .chd{background:linear-gradient(180deg,#22A366,#15803D);}
+  .cbd{flex:1;padding:9px 10px;display:flex;flex-direction:column;gap:8px;min-height:0;font-family:'Segoe UI','Noto Sans JP',sans-serif;}
+  .cnum{position:absolute;top:-9px;left:-9px;width:32px;height:32px;border-radius:50%;color:#fff;font-weight:900;font-size:17px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 5px rgba(0,0,0,.3);z-index:6;border:2.5px solid #fff;}
+  .col.c1 .cnum{background:linear-gradient(180deg,#8B5CC4,#6D28D9);}
+  .col.hero .cnum{background:linear-gradient(180deg,#3B82F6,#2563EB);}
+  .col.c3 .cnum{background:linear-gradient(180deg,#22A366,#15803D);}
+
+  .scene{flex:0 0 auto;height:126px;border-radius:10px;overflow:hidden;border:1.5px solid;position:relative;display:flex;align-items:flex-end;justify-content:center;}
+  .col.c1 .scene{background:linear-gradient(180deg,#F3EBFB,#E5D5F5);border-color:#D6C2EE;}
+  .col.hero .scene{background:linear-gradient(180deg,#E8F0FF,#D2E2FC);border-color:#9DBEF5;}
+  .col.c3 .scene{background:linear-gradient(180deg,#E9FBF1,#CDF3DD);border-color:#A6E1BC;}
+  .sc-bg{position:absolute;inset:0;width:100%;height:100%;}
+  .sc-chara{position:relative;z-index:2;height:116px;width:auto;filter:drop-shadow(0 4px 6px rgba(0,0,0,.32));}
+
+  /* Forms回答 mock（左） */
+  .fmock{flex:1 1 auto;background:#fff;border:1.5px solid #D8C7EE;border-radius:9px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 2px 6px rgba(0,0,0,.08);}
+  .fmock .fh{flex:0 0 auto;display:flex;align-items:center;gap:8px;background:#F3EDFB;padding:6px 10px;border-bottom:1px solid #E6DAF5;}
+  .fmock .fh img{width:20px;height:20px;object-fit:contain;}
+  .fmock .fh b{font-size:14px;font-weight:900;color:var(--forms);}
+  .fmock .fq{flex:1;display:flex;flex-direction:column;justify-content:center;gap:5px;padding:6px 11px;}
+  .fmock .qline{font-size:13.5px;font-weight:800;color:#3A3A3A;}
+  .fmock .stars{font-size:17px;color:#F5B301;letter-spacing:2px;}
+  .fmock .opt{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:700;color:#41474F;}
+  .fmock .opt .rd{width:13px;height:13px;border-radius:50%;border:2px solid #8B5CC4;flex:0 0 auto;}
+  .fmock .opt .rd.on{background:radial-gradient(circle,#6D28D9 42%,#fff 46%);}
+  .fmock .sub{flex:0 0 auto;margin:5px 11px 8px;text-align:center;background:linear-gradient(180deg,#7C3AED,#6D28D9);color:#fff;font-size:13.5px;font-weight:900;border-radius:7px;padding:6px;box-shadow:0 2px 5px rgba(109,40,217,.35);}
+  .chips{flex:0 0 auto;display:flex;gap:5px;}
+  .chips .ci{flex:1;display:flex;align-items:center;justify-content:center;gap:4px;background:#fff;border:1.3px solid #D8C7EE;border-radius:7px;padding:5px 3px;font-size:11px;font-weight:800;color:var(--forms);line-height:1.1;box-shadow:0 1px 3px rgba(0,0,0,.06);}
+  .chips .ci img{width:15px;height:15px;object-fit:contain;}
+
+  /* 中央エンジン（hero） */
+  .eng{flex:1 1 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;}
+  .eng .runs{width:100%;display:flex;flex-direction:column;gap:6px;}
+  .eng .run{display:flex;align-items:center;gap:8px;background:#fff;border:1.5px solid #BCD2F2;border-radius:9px;padding:7px 10px;font-size:13.5px;font-weight:800;color:#28406a;line-height:1.2;box-shadow:0 2px 4px rgba(0,0,0,.07);}
+  .eng .run .rn{flex:0 0 auto;width:21px;height:21px;border-radius:6px;background:#2563EB;color:#fff;font-size:12px;font-weight:900;display:flex;align-items:center;justify-content:center;}
+  .eng .run b{color:var(--blue-dark);}
+  .eng .tag{flex:0 0 auto;background:#DBEAFE;color:#1E40AF;font-size:12.5px;font-weight:900;border-radius:999px;padding:4px 12px;}
+
+  /* Excel結果 mock（右） */
+  .xmock{flex:1 1 auto;background:#fff;border:1.5px solid #BDE6CD;border-radius:9px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 2px 6px rgba(0,0,0,.08);}
+  .xmock .xh{flex:0 0 auto;display:flex;align-items:center;gap:8px;background:var(--xl);padding:6px 10px;}
+  .xmock .xh img{width:19px;height:19px;object-fit:contain;background:#fff;border-radius:4px;padding:2px;}
+  .xmock .xh b{font-size:13.5px;font-weight:900;color:#fff;}
+  .xmock .xh .xt{margin-left:auto;font-size:11.5px;font-weight:900;color:#fff;background:rgba(255,255,255,.22);border-radius:999px;padding:2px 9px;}
+  .xr{flex:1;display:flex;align-items:center;border-bottom:1px solid #EDF3EF;min-height:0;padding:0 9px;gap:6px;}
+  .xr:last-child{border-bottom:none;}
+  .xr.head{background:#EAF7EF;}
+  .xr .a{flex:0 0 84px;font-size:13px;font-weight:800;color:#242424;}
+  .xr .b{flex:1;font-size:13px;font-weight:700;color:#41474F;}
+  .xr .c{flex:0 0 54px;font-size:15px;font-weight:900;color:#F5B301;text-align:right;letter-spacing:1px;}
+  .xr.head .a,.xr.head .b,.xr.head .c{color:#0B5E37;font-weight:900;font-size:12px;}
+  .xr.newrow{background:#DFF3E7;position:relative;}
+  .xr.newrow .badge{position:absolute;right:6px;top:50%;transform:translateY(-50%);background:#16A34A;color:#fff;font-size:10.5px;font-weight:900;border-radius:5px;padding:2px 7px;}
+  .sumbar{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;background:#F0FAF4;border-top:1.5px solid #BDE6CD;padding:5px 11px;}
+  .sumbar .sl{font-size:13px;font-weight:900;color:#0B5E37;}
+  .sumbar .sv{font-size:16px;font-weight:900;color:#15803D;}
+
+  .cap{flex:0 0 auto;text-align:center;font-size:14px;font-weight:800;line-height:1.3;padding:0 2px;}
+  .col.c1 .cap{color:#5B21B6;} .col.hero .cap{color:var(--blue-dark);} .col.c3 .cap{color:#0B5E37;}
+  .cap b{color:#111;}
+
+  .uses{flex:0 0 auto;margin:11px 15px 12px;display:flex;align-items:stretch;gap:9px;}
+  .ulabel{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;font-weight:900;font-size:15px;border-radius:11px;padding:0 15px;text-align:center;line-height:1.25;box-shadow:0 3px 8px rgba(37,99,235,.32);}
+  .uc{flex:1;background:#F8F9FA;border:2px solid #D7E0EC;border-radius:11px;padding:9px 12px;box-shadow:0 2px 6px rgba(0,0,0,.07);display:flex;align-items:center;gap:10px;}
+  .uc .em{font-size:23px;flex:0 0 auto;}
+  .uc .ut{font-size:15.5px;font-weight:800;color:#33405a;line-height:1.28;}
+  .uc .ut b{color:var(--blue-dark);}
+  .src{position:absolute;left:16px;bottom:3px;font-size:10px;color:#AEB6C2;font-weight:700;z-index:3;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+
+// 左：フォームが送信される情景（クリップボード＋送信の紙飛行機＋スパーク）
+const scene1=`<svg class="sc-bg" viewBox="0 0 460 126" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+ <defs><linearGradient id="clp" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#EFE6FA"/></linearGradient></defs>
+ <g transform="translate(28 16)">
+   <rect x="0" y="0" width="86" height="100" rx="8" fill="url(#clp)" stroke="#C9AEE8" stroke-width="1.6"/>
+   <rect x="26" y="-6" width="34" height="14" rx="4" fill="#8B5CC4"/>
+   ${[0,1,2,3].map(r=>`<rect x="12" y="${18+r*20}" width="${r===3?36:62}" height="8" rx="3" fill="${r===3?'#C9AEE8':'#E4D8F3'}"/>`).join('')}
+   ${[0,1,2].map(r=>`<circle cx="66" cy="${22+r*20}" r="5" fill="none" stroke="#8B5CC4" stroke-width="1.6"/>`).join('')}
+   <circle cx="66" cy="22" r="2.6" fill="#6D28D9"/>
+ </g>
+ <!-- 送信の紙飛行機＋スパーク -->
+ <g transform="translate(300 40)">
+   <path d="M0 24 L64 0 L40 30 L30 26 L26 46 L18 30 Z" fill="#7C3AED" stroke="#5B21B6" stroke-width="1.5" stroke-linejoin="round"/>
+   <path d="M-6 34 h20 M-14 44 h26" stroke="#B794E8" stroke-width="3" stroke-linecap="round" opacity=".75"/>
+ </g>
+ <path d="M392 20 l3 8 l8 3 l-8 3 l-3 8 l-3 -8 l-8 -3 l8 -3 Z" fill="#C4A0EE"/>
+ <text x="342" y="112" text-anchor="middle" font-size="12" fill="#5B21B6" font-weight="900" font-family="'Noto Sans JP',sans-serif">送信！</text>
+</svg>`;
+
+// 中央：Office スクリプトのエンジンが起動（歯車＋⚡＋Excelタイル）
+const scene2=`<svg class="sc-bg" viewBox="0 0 460 126" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+ <defs>
+  <linearGradient id="gear" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3B82F6"/><stop offset="1" stop-color="#1E40AF"/></linearGradient>
+  <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#FEF3C7" stop-opacity=".9"/><stop offset="1" stop-color="#FEF3C7" stop-opacity="0"/></radialGradient>
+ </defs>
+ <ellipse cx="230" cy="66" rx="120" ry="52" fill="url(#glow)"/>
+ <!-- 大歯車 -->
+ <g transform="translate(196 60)">
+   ${Array.from({length:12},(_,i)=>{const a=i*30*Math.PI/180;const c=Math.cos(a),s=Math.sin(a);return `<rect x="-6" y="-40" width="12" height="14" rx="2" fill="url(#gear)" transform="rotate(${i*30})"/>`;}).join('')}
+   <circle cx="0" cy="0" r="30" fill="url(#gear)"/>
+   <circle cx="0" cy="0" r="13" fill="#EAF2FF"/>
+ </g>
+ <!-- 小歯車 -->
+ <g transform="translate(250 84)">
+   ${Array.from({length:9},(_,i)=>`<rect x="-4" y="-25" width="8" height="9" rx="1.5" fill="#2563EB" transform="rotate(${i*40})"/>`).join('')}
+   <circle cx="0" cy="0" r="18" fill="#2563EB"/>
+   <circle cx="0" cy="0" r="8" fill="#DBEAFE"/>
+ </g>
+ <!-- ⚡ -->
+ <path d="M300 30 L280 60 L296 60 L288 92 L318 52 L300 52 L308 30 Z" fill="#F5B301" stroke="#fff" stroke-width="2" stroke-linejoin="round"/>
+</svg>`;
+
+// 右：Excelに自動追記＆集計更新＋✓
+const scene3=`<svg class="sc-bg" viewBox="0 0 460 126" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+ <defs><linearGradient id="xt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#E3F5EA"/></linearGradient></defs>
+ <g transform="translate(150 14)">
+   <rect x="0" y="0" width="150" height="96" rx="8" fill="url(#xt)" stroke="#7EC79A" stroke-width="1.8"/>
+   <rect x="0" y="0" width="150" height="18" rx="8" fill="#107C41"/><rect x="0" y="10" width="150" height="8" fill="#107C41"/>
+   ${[0,1,2,3].map(r=>[0,1,2].map(c=>`<rect x="${9+c*46}" y="${26+r*16}" width="40" height="10" rx="2" fill="${r===3?'#C7ECD5':(r%2?'#EDF7F0':'#DFF0E5')}"/>`).join('')).join('')}
+   <!-- 新規行を指す矢印 -->
+   <path d="M158 78 h-14" stroke="#16A34A" stroke-width="3" stroke-linecap="round"/>
+   <path d="M146 74 l-6 4 l6 4 Z" fill="#16A34A"/>
+   <circle cx="132" cy="14" r="11" fill="#16A34A"/><path d="M126 14 l4 4 l8 -8" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/>
+ </g>
+ <text x="225" y="122" text-anchor="middle" font-size="12" fill="#0B5E37" font-weight="900" font-family="'Noto Sans JP',sans-serif">自動で1行＆集計更新</text>
+</svg>`;
+
+const s=document.getElementById('slide');
+s.innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.69-1</div>
+    <div class="logos"><img class="ll" src="${A}icons/pa_logo.png" alt=""><span class="plus">＋</span><img class="ll" src="${A}icons/pa_excel.png" alt=""></div>
+    <div class="title-text">フォームが届くたび、<span class="hl">Excelが自分で記録＆集計</span></div>
+    <img class="title-chara" src="${A}chara/chara_laptop.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">⚡</div>
+    <div class="txt">Excelの自動化って“毎週◯曜”みたいな<b>時間</b>で動かすイメージが強いですよね。<br>実は<b>フォームやメールが届いた“瞬間”</b>にもスクリプトを起動できて、回答を<span class="g">記録＆集計まで自動</span>にできます。</div>
+  </div>
+
+  <div class="cols">
+    <div class="col c1">
+      <div class="cnum">1</div>
+      <div class="colcard">
+        <div class="chd">きっかけは“出来事”</div>
+        <div class="cbd">
+          <div class="scene">${scene1}<img class="sc-chara" src="${A}chara/chara_point.png" alt=""></div>
+          <div class="fmock">
+            <div class="fh"><img src="${A}icons/pa_forms.png" alt=""><b>満足度アンケート</b></div>
+            <div class="fq">
+              <div class="qline">Q. 今回の対応はいかがでしたか？</div>
+              <div class="stars">★★★★☆</div>
+              <div class="opt"><span class="rd on"></span>とても良い／良い</div>
+            </div>
+            <div class="sub">送信する</div>
+          </div>
+          <div class="chips">
+            <div class="ci"><img src="${A}icons/pa_outlook.png" alt="">メール受信</div>
+            <div class="ci"><img src="${A}icons/pa_teams.png" alt="">Teams投稿</div>
+            <div class="ci"><img src="${A}icons/pa_trigger_button.png" alt="">ボタン</div>
+          </div>
+          <div class="cap">何かが起きた<b>“瞬間”</b>に</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="carrow">▶</div>
+
+    <div class="col hero">
+      <div class="cnum">2</div>
+      <div class="colcard">
+        <div class="chd">Office スクリプトが起動</div>
+        <div class="cbd">
+          <div class="scene">${scene2}<img class="sc-chara" src="${A}chara/chara_guts.png" alt=""></div>
+          <div class="eng">
+            <span class="tag">記録したExcel操作が自動で走る</span>
+            <div class="runs">
+              <div class="run"><span class="rn">1</span><span>回答を表に<b>1行 追記</b></span></div>
+              <div class="run"><span class="rn">2</span><span>日付順に<b>並べ替え</b></span></div>
+              <div class="run"><span class="rn">3</span><span>平均・件数を<b>再集計</b></span></div>
+            </div>
+          </div>
+          <div class="cap">PAが苦手なExcel整形を<b>スクリプトに丸投げ</b></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="carrow">▶</div>
+
+    <div class="col c3">
+      <div class="cnum">3</div>
+      <div class="colcard">
+        <div class="chd">Excelは常に最新</div>
+        <div class="cbd">
+          <div class="scene">${scene3}<img class="sc-chara" src="${A}chara/chara_smile.png" alt=""></div>
+          <div class="xmock">
+            <div class="xh"><img src="${A}icons/pa_excel.png" alt=""><b>アンケート集計.xlsx</b><span class="xt">自動更新</span></div>
+            <div class="xr head"><span class="a">日付</span><span class="b">担当</span><span class="c">評価</span></div>
+            <div class="xr"><span class="a">7/17</span><span class="b">佐藤</span><span class="c">5</span></div>
+            <div class="xr"><span class="a">7/18</span><span class="b">田中</span><span class="c">4</span></div>
+            <div class="xr newrow"><span class="a">7/19</span><span class="b">鈴木</span><span class="c">4</span><span class="badge">＋自動追記</span></div>
+            <div class="sumbar"><span class="sl">平均満足度</span><span class="sv">★ 4.3 ／ 12件</span></div>
+          </div>
+          <div class="cap"><b>人は何もしてない</b>のに揃ってる</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="uses">
+    <div class="ulabel">こんな<br>自動化に</div>
+    <div class="uc"><span class="em">📝</span><span class="ut">アンケートの<b>自動集計</b></span></div>
+    <div class="uc"><span class="em">🗒️</span><span class="ut">申請・<b>受付の記録</b></span></div>
+    <div class="uc"><span class="em">📥</span><span class="ut">注文メールの<b>取り込み</b></span></div>
+    <div class="uc"><span class="em">📊</span><span class="ut">日報・<b>実績の蓄積</b></span></div>
+  </div>
+  <div class="src">出典：Microsoft Learn（Office スクリプト／Power Automate 連携チュートリアル）　※作り方は2枚目</div>
+`;
+</script>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>

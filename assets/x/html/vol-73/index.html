@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.73-1 いつものExcel集計を1回記録で毎週自動</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB;--blue-dark:#1E40AF;--green:#16A34A;--green-dark:#0B5E37;
+    --ink:#1F2937;--gray:#374151;--weak:#6B7280;--orange:#EA580C;--red:#DC2626;--xl:#107C41;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+
+  .titlebar{height:86px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:14px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:25px;border-radius:999px;padding:7px 19px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .logos{display:flex;align-items:center;gap:7px;flex:0 0 auto;}
+  .logos .ll{height:47px;width:47px;object-fit:contain;background:#fff;border-radius:12px;padding:6px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
+  .logos .plus{color:#fff;font-weight:900;font-size:23px;text-shadow:0 1px 2px rgba(0,0,0,.25);line-height:1;}
+  .title-text{color:#fff;font-weight:900;font-size:28px;line-height:1.15;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:150px;}
+  .title-text .hl{color:#FFE08A;}
+  .title-chara{position:absolute;right:14px;bottom:-42px;height:142px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .concl{margin:9px 16px 0;background:#EFF6FF;border:2.5px solid var(--blue);border-radius:13px;display:flex;align-items:center;gap:13px;padding:9px 18px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;width:42px;height:42px;border-radius:12px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;font-size:23px;box-shadow:0 3px 6px rgba(0,0,0,.26);}
+  .concl .txt{font-weight:800;font-size:19px;color:var(--blue-dark);line-height:1.4;padding-right:96px;}
+  .concl .txt b{color:var(--red);}
+  .concl .txt .g{color:var(--green-dark);}
+
+  .stage{flex:1 1 auto;margin:12px 15px 0;display:flex;align-items:stretch;gap:0;min-height:0;}
+  .panel{flex:1;display:flex;flex-direction:column;min-height:0;position:relative;border-radius:14px;overflow:hidden;box-shadow:0 5px 13px rgba(0,0,0,.12);}
+  .panel.before{background:#FEF3F2;border:2px solid #F4B4AD;}
+  .panel.after{background:#EDFBF3;border:2px solid #A6E1BC;}
+  .phd{flex:0 0 auto;text-align:center;font-weight:900;font-size:16.5px;color:#fff;padding:8px 8px;line-height:1.2;}
+  .before .phd{background:linear-gradient(180deg,#EF5350,#C62828);}
+  .after .phd{background:linear-gradient(180deg,#22A366,#15803D);}
+  .pbd{flex:1;padding:9px 10px;display:flex;flex-direction:column;gap:8px;min-height:0;font-family:'Segoe UI','Noto Sans JP',sans-serif;}
+
+  .scene{flex:0 0 auto;height:128px;border-radius:10px;overflow:hidden;border:1.5px solid;position:relative;display:flex;align-items:flex-end;justify-content:center;}
+  .before .scene{background:linear-gradient(180deg,#FFF0ED,#FFD8D1);border-color:#F4B4AD;}
+  .after .scene{background:linear-gradient(180deg,#E9FBF1,#CDF3DD);border-color:#A6E1BC;}
+  .sc-bg{position:absolute;inset:0;width:100%;height:100%;}
+  .sc-chara{position:relative;z-index:2;height:120px;width:auto;filter:drop-shadow(0 4px 6px rgba(0,0,0,.34));}
+  .sc-badge{position:absolute;top:7px;right:9px;z-index:3;background:linear-gradient(180deg,#EF4444,#B91C1C);color:#fff;font-weight:900;font-size:14px;line-height:1.05;text-align:center;border-radius:11px;padding:4px 11px;box-shadow:0 2px 6px rgba(185,28,28,.45);}
+  .sc-badge small{display:block;font-size:10px;font-weight:800;}
+  .sc-badge.g{background:linear-gradient(180deg,#22A366,#15803D);box-shadow:0 2px 6px rgba(21,128,61,.45);}
+
+  /* Excelウィンドウ風mock（共通） */
+  .xw{flex:1 1 auto;background:#fff;border-radius:9px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 2px 6px rgba(0,0,0,.08);}
+  .before .xw{border:1.5px solid #E7C4BF;}
+  .after .xw{border:1.5px solid #BDE6CD;}
+  .xh{flex:0 0 auto;display:flex;align-items:center;gap:8px;background:var(--xl);padding:6px 10px;}
+  .xh img{width:20px;height:20px;object-fit:contain;background:#fff;border-radius:4px;padding:2px;}
+  .xh b{font-size:14px;font-weight:900;color:#fff;}
+  .xh .xtag{margin-left:auto;font-size:12px;font-weight:900;color:#fff;background:rgba(255,255,255,.22);border-radius:999px;padding:2px 10px;white-space:nowrap;}
+
+  /* Before: 手作業ステップ行 */
+  .srow{flex:1;display:flex;align-items:center;gap:9px;padding:4px 11px;border-bottom:1px solid #F1EDED;min-height:0;}
+  .srow:last-child{border-bottom:none;}
+  .srow .sn{flex:0 0 auto;width:22px;height:22px;border-radius:50%;background:#F4B4AD;color:#7F1D1D;font-size:12.5px;font-weight:900;display:flex;align-items:center;justify-content:center;}
+  .srow .stx{flex:1;font-size:14px;font-weight:800;color:#41474F;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .srow .stm{flex:0 0 auto;font-size:12px;font-weight:900;color:#B91C1C;background:#FEE2E2;border-radius:5px;padding:2px 7px;}
+
+  /* After: 集計済みテーブル */
+  .trow{flex:1;display:flex;align-items:center;border-bottom:1px solid #EDF3EF;min-height:0;padding:0 9px;gap:6px;}
+  .trow:last-child{border-bottom:none;}
+  .trow.head{background:#EAF7EF;}
+  .trow .c1{flex:0 0 92px;font-size:13.5px;font-weight:900;color:#0B5E37;}
+  .trow .c2{flex:1;font-size:13.5px;font-weight:800;color:#242424;text-align:right;}
+  .trow .c3{flex:0 0 76px;font-size:13px;font-weight:900;text-align:right;}
+  .trow .up{color:#15803D;} .trow .dw{color:#B91C1C;}
+  .trow.head .c1,.trow.head .c2,.trow.head .c3{color:#0B5E37;font-weight:900;font-size:12.5px;}
+
+  .pcap{flex:0 0 auto;text-align:center;font-size:14.5px;font-weight:800;line-height:1.3;padding:0 2px;}
+  .before .pcap{color:#9A1B1B;} .after .pcap{color:#0B5E37;}
+  .pcap b{color:#111;}
+
+  /* 中央エンジン */
+  .mid{flex:0 0 176px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;padding:0 8px;}
+  .engine{width:82px;height:82px;border-radius:22px;background:linear-gradient(180deg,#EAF2FF,#D6E6FF);border:3px solid var(--blue);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 15px rgba(37,99,235,.3),inset 0 1px 0 rgba(255,255,255,.8);}
+  .engine img{width:50px;height:50px;object-fit:contain;}
+  .marrow{color:#2563EB;font-size:28px;font-weight:900;line-height:.5;}
+  .mflow{display:flex;flex-direction:column;gap:7px;width:100%;}
+  .mstep{display:flex;align-items:center;gap:7px;background:#fff;border:1.5px solid #C7D3E6;border-radius:9px;padding:6px 8px;font-size:13px;font-weight:800;color:#28406a;line-height:1.22;box-shadow:0 2px 4px rgba(0,0,0,.07);}
+  .mstep .mn{flex:0 0 auto;width:20px;height:20px;border-radius:50%;background:var(--blue);color:#fff;font-size:12px;font-weight:900;display:flex;align-items:center;justify-content:center;}
+  .mstep b{color:var(--blue-dark);}
+
+  .uses{flex:0 0 auto;margin:11px 15px 12px;display:flex;align-items:stretch;gap:9px;}
+  .ulabel{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;font-weight:900;font-size:15px;border-radius:11px;padding:0 15px;text-align:center;line-height:1.25;box-shadow:0 3px 8px rgba(37,99,235,.32);}
+  .uc{flex:1;background:#F8F9FA;border:2px solid #D7E0EC;border-radius:11px;padding:9px 12px;box-shadow:0 2px 6px rgba(0,0,0,.07);display:flex;align-items:center;gap:10px;}
+  .uc .em{font-size:24px;flex:0 0 auto;}
+  .uc .ut{font-size:15.5px;font-weight:800;color:#33405a;line-height:1.28;}
+  .uc .ut b{color:var(--blue-dark);}
+  .src{position:absolute;left:16px;bottom:3px;font-size:10px;color:#AEB6C2;font-weight:700;z-index:3;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+
+// Beforeの情景＝月曜のカレンダー×スプレッドシート×ぐるぐる手作業
+const beforeScene=`<svg class="sc-bg" viewBox="0 0 460 128" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+ <defs>
+  <linearGradient id="calG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#F2E4E1"/></linearGradient>
+  <linearGradient id="shG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#EDEFF3"/></linearGradient>
+ </defs>
+ <!-- カレンダー（毎週月曜に赤丸） -->
+ <g transform="translate(24 8)">
+   <rect x="0" y="0" width="96" height="96" rx="8" fill="url(#calG)" stroke="#E2A69E" stroke-width="1.6"/>
+   <rect x="0" y="0" width="96" height="22" rx="8" fill="#C62828"/>
+   <rect x="0" y="12" width="96" height="10" fill="#C62828"/>
+   <text x="48" y="16" text-anchor="middle" font-size="12" fill="#fff" font-weight="900" font-family="'Noto Sans JP',sans-serif">7月</text>
+   ${[0,1,2,3].map(r=>[0,1,2,3,4,5,6].map(c=>`<rect x="${6+c*13}" y="${28+r*17}" width="10" height="12" rx="2" fill="${c===0?'#FDE0DC':'#F3F4F6'}"/>`).join('')).join('')}
+   ${[0,1,2,3].map(r=>`<circle cx="11" cy="${34+r*17}" r="7.5" fill="none" stroke="#DC2626" stroke-width="2"/>`).join('')}
+   <text x="48" y="114" text-anchor="middle" font-size="11" fill="#9A1B1B" font-weight="900" font-family="'Noto Sans JP',sans-serif">毎週月曜…</text>
+ </g>
+ <!-- スプレッドシート＋ぐるぐる矢印（手作業のくり返し） -->
+ <g transform="translate(318 14)">
+   <rect x="0" y="8" width="118" height="78" rx="7" fill="url(#shG)" stroke="#C9A29B" stroke-width="1.6"/>
+   <rect x="0" y="8" width="118" height="16" rx="7" fill="#107C41"/>
+   <rect x="0" y="17" width="118" height="7" fill="#107C41"/>
+   ${[0,1,2,3].map(r=>[0,1,2].map(c=>`<rect x="${7+c*37}" y="${30+r*14}" width="32" height="9" rx="2" fill="${r%2?'#EEF1F5':'#E3E8EE'}"/>`).join('')).join('')}
+   <!-- くり返し矢印 -->
+   <path d="M-14 48 a72 44 0 1 1 24 34" fill="none" stroke="#EA580C" stroke-width="4.5" stroke-linecap="round" opacity=".85"/>
+   <path d="M4 74 L12 86 L-4 88 Z" fill="#EA580C" opacity=".9"/>
+   <text x="59" y="104" text-anchor="middle" font-size="11" fill="#9A1B1B" font-weight="900" font-family="'Noto Sans JP',sans-serif">同じ操作をぐるぐる</text>
+ </g>
+ <!-- 汗 -->
+ <path d="M164 26 q4 7 0 12 M180 20 q4 7 0 12" stroke="#7EB3E8" stroke-width="3.4" stroke-linecap="round" fill="none" opacity=".85"/>
+</svg>`;
+
+// Afterの情景＝できあがった集計表×時計7:00×コーヒー
+const afterScene=`<svg class="sc-bg" viewBox="0 0 460 128" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+ <defs>
+  <linearGradient id="tblG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#E3F5EA"/></linearGradient>
+  <linearGradient id="cupG2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#E6F0EA"/></linearGradient>
+  <linearGradient id="cofG2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8A5330"/><stop offset="1" stop-color="#5A3418"/></linearGradient>
+ </defs>
+ <!-- 完成した集計表＋大きなチェック -->
+ <g transform="translate(30 8)">
+   <rect x="0" y="0" width="132" height="88" rx="8" fill="url(#tblG)" stroke="#7EC79A" stroke-width="1.8"/>
+   <rect x="0" y="0" width="132" height="18" rx="8" fill="#107C41"/>
+   <rect x="0" y="10" width="132" height="8" fill="#107C41"/>
+   ${[0,1,2].map(r=>[0,1,2].map(c=>`<rect x="${8+c*42}" y="${26+r*18}" width="36" height="11" rx="2" fill="${r%2?'#EDF7F0':'#DFF0E5'}"/>`).join('')).join('')}
+   <circle cx="128" cy="82" r="17" fill="#16A34A"/>
+   <path d="M120 82 l6 6 l11 -12" fill="none" stroke="#fff" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"/>
+   <text x="62" y="112" text-anchor="middle" font-size="11" fill="#0B5E37" font-weight="900" font-family="'Noto Sans JP',sans-serif">できあがり済み</text>
+ </g>
+ <!-- 時計 7:00 -->
+ <g transform="translate(348 12)">
+   <circle cx="26" cy="26" r="24" fill="#fff" stroke="#15803D" stroke-width="2.6"/>
+   <circle cx="26" cy="26" r="2.6" fill="#15803D"/>
+   <path d="M26 26 L26 10 M26 26 L38 30" stroke="#15803D" stroke-width="3" stroke-linecap="round"/>
+   <text x="26" y="64" text-anchor="middle" font-size="12" fill="#0B5E37" font-weight="900" font-family="'Noto Sans JP',sans-serif">月曜 7:00</text>
+   <!-- コーヒー -->
+   <g transform="translate(2 60)">
+     <path d="M12 6 q5 -6 0 -12" fill="none" stroke="#B7E3C8" stroke-width="2.6" stroke-linecap="round" opacity=".9"/>
+     <path d="M26 6 q5 -6 0 -12" fill="none" stroke="#D3EEDD" stroke-width="2.6" stroke-linecap="round" opacity=".8"/>
+     <ellipse cx="20" cy="42" rx="30" ry="6.5" fill="#EAF7EF" stroke="#15803D" stroke-width="1.8"/>
+     <path d="M2 12 L38 12 L34 34 Q20 41 6 34 Z" fill="url(#cupG2)" stroke="#15803D" stroke-width="2.2"/>
+     <path d="M38 16 q14 2 9 14 q-4 7 -11 4" fill="none" stroke="#15803D" stroke-width="2.8"/>
+     <ellipse cx="20" cy="12" rx="18" ry="4.6" fill="#fff" stroke="#15803D" stroke-width="1.8"/>
+     <ellipse cx="20" cy="12" rx="13.5" ry="3.2" fill="url(#cofG2)"/>
+   </g>
+ </g>
+ <!-- キラキラ -->
+ <path d="M196 22 l3 8 l8 3 l-8 3 l-3 8 l-3 -8 l-8 -3 l8 -3 Z" fill="#8FD8AC"/>
+ <path d="M232 60 l2 5.5 l5.5 2 l-5.5 2 l-2 5.5 l-2 -5.5 l-5.5 -2 l5.5 -2 Z" fill="#B4E6C8"/>
+</svg>`;
+
+const s=document.getElementById('slide');
+s.innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.73-1</div>
+    <div class="logos"><img class="ll" src="${A}icons/pa_logo.png" alt=""><span class="plus">＋</span><img class="ll" src="${A}icons/pa_excel.png" alt=""></div>
+    <div class="title-text">いつものExcel集計、<span class="hl">“1回記録”で毎週自動</span></div>
+    <img class="title-chara" src="${A}chara/chara_confident.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">📊</div>
+    <div class="txt">毎週月曜、同じExcelで同じ集計。<b>VBAは書けないし…</b>となりがちですよね。<br>実は、いつもの操作を<b>1回記録するだけ</b>。<span class="g">“クラウドに引っ越したマクロ”</span>が毎週勝手に実行してくれます。</div>
+  </div>
+
+  <div class="stage">
+    <div class="panel before">
+      <div class="phd">Before ｜ 毎週月曜のルーティン集計</div>
+      <div class="pbd">
+        <div class="scene">${beforeScene}<img class="sc-chara" src="${A}chara/chara_tired.png" alt=""><div class="sc-badge">毎週45分<small>手作業…</small></div></div>
+        <div class="xw">
+          <div class="xh"><img src="${A}icons/pa_excel.png" alt=""><b>売上データ.xlsx</b><span class="xtag">毎週やる手順</span></div>
+          <div class="srow"><span class="sn">1</span><span class="stx">今週分のデータをフィルター</span><span class="stm">5分</span></div>
+          <div class="srow"><span class="sn">2</span><span class="stx">集計シートへコピー＆貼り付け</span><span class="stm">10分</span></div>
+          <div class="srow"><span class="sn">3</span><span class="stx">SUMIFで支店別に集計</span><span class="stm">15分</span></div>
+          <div class="srow"><span class="sn">4</span><span class="stx">罫線・色・体裁を整える</span><span class="stm">10分</span></div>
+          <div class="srow"><span class="sn">5</span><span class="stx">できたら関係者へ共有</span><span class="stm">5分</span></div>
+        </div>
+        <div class="pcap">同じ手順を<b>毎週、手でくり返し</b>😩</div>
+      </div>
+    </div>
+
+    <div class="mid">
+      <div class="engine"><img src="${A}icons/pa_logo.png" alt=""></div>
+      <div class="marrow">▶</div>
+      <div class="mflow">
+        <div class="mstep"><span class="mn">1</span><span>いつもの操作を<b>1回記録</b></span></div>
+        <div class="mstep"><span class="mn">2</span><span><b>スクリプト</b>として保存</span></div>
+        <div class="mstep"><span class="mn">3</span><span>毎週月曜、<b>自動で実行</b></span></div>
+      </div>
+    </div>
+
+    <div class="panel after">
+      <div class="phd">After ｜ 月曜の朝には集計済み</div>
+      <div class="pbd">
+        <div class="scene">${afterScene}<img class="sc-chara" src="${A}chara/chara_guts.png" alt=""><div class="sc-badge g">7:00に<small>完了済み</small></div></div>
+        <div class="xw">
+          <div class="xh"><img src="${A}icons/pa_excel.png" alt=""><b>週次売上集計.xlsx</b><span class="xtag">月曜 7:00 自動更新</span></div>
+          <div class="trow head"><span class="c1">支店</span><span class="c2">今週売上</span><span class="c3">前週比</span></div>
+          <div class="trow"><span class="c1">広島本店</span><span class="c2">¥1,842,000</span><span class="c3 up">＋12%</span></div>
+          <div class="trow"><span class="c1">東京支店</span><span class="c2">¥1,510,000</span><span class="c3 up">＋4%</span></div>
+          <div class="trow"><span class="c1">大阪支店</span><span class="c2">¥1,238,000</span><span class="c3 dw">−3%</span></div>
+        </div>
+        <div class="pcap">出社したら<b>もう終わってる</b>☕</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="uses">
+    <div class="ulabel">こんな<br>集計に</div>
+    <div class="uc"><span class="em">📈</span><span class="ut">週次の<b>売上まとめ</b></span></div>
+    <div class="uc"><span class="em">🕒</span><span class="ut">勤怠・<b>残業時間の集計</b></span></div>
+    <div class="uc"><span class="em">📦</span><span class="ut">在庫・<b>受注リストの整理</b></span></div>
+    <div class="uc"><span class="em">📮</span><span class="ut">問い合わせ<b>件数レポート</b></span></div>
+  </div>
+  <div class="src">出典：Microsoft Learn（Office スクリプト／Excel Online (Business) コネクタ）　※作り方は2枚目</div>
+`;
+</script>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>

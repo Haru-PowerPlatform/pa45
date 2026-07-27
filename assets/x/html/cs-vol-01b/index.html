@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>コパスタ Vol.1 - 新UIツアー</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB; --blue-bg:#EFF6FF; --blue-dark:#1E40AF;
+    --cs:#7C3AED; --cs-bg:#F5F3FF; --cs-bg2:#EDE9FE; --cs-dark:#5B21B6;
+    --green:#16A34A; --green-bg:#ECFDF5; --green-dark:#064E3B;
+    --orange:#EA580C; --orange-bg:#FFF7ED;
+    --ink:#1F2937; --gray:#374151; --weak:#6B7280; --faint:#9CA3AF;
+    --card:#F8F9FA; --line:#E5E7EB;
+    --seg:#605E5C; --segline:#D1D1D1; --segink:#323130; --segph:#A19F9D;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+
+  .titlebar{
+    height:90px;
+    background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#5B21B6 0%,#7C3AED 50%,#A855F7 100%);
+    box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(91,33,182,.36);
+    display:flex;align-items:center;gap:18px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;
+  }
+  .vol-pill{background:#fff;color:var(--cs);font-weight:900;font-size:24px;border-radius:999px;padding:7px 20px;letter-spacing:.5px;white-space:nowrap;flex:0 0 auto;}
+  .part-pill{background:rgba(255,255,255,.16);color:#fff;font-weight:900;font-size:17px;border-radius:999px;padding:6px 14px;white-space:nowrap;flex:0 0 auto;border:1.6px solid rgba(255,255,255,.78);box-shadow:inset 0 1px 0 rgba(255,255,255,.25);}
+  .part-pill b{color:#FDE047;}
+  .title-text{color:#fff;font-weight:900;font-size:31px;line-height:1.18;letter-spacing:.3px;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:140px;}
+  .title-text .q{color:#FDE047;}
+  .title-chara{position:absolute;right:14px;bottom:-54px;height:150px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .body{flex:1 1 auto;display:flex;gap:15px;padding:11px 18px 0;min-height:0;}
+
+  /* 左：新ホームのモック */
+  .mockwrap{flex:1.32;display:flex;flex-direction:column;min-height:0;}
+  .mocklabel{font-weight:900;font-size:18px;color:var(--cs-dark);margin-bottom:7px;display:flex;align-items:center;gap:8px;}
+  .mocklabel .dot{width:11px;height:11px;border-radius:50%;background:var(--cs);}
+  .win{flex:1;border-radius:13px;border:1.5px solid var(--segline);background:#fff;box-shadow:0 8px 20px rgba(0,0,0,.18);overflow:hidden;display:flex;flex-direction:column;font-family:"Segoe UI","Noto Sans JP",sans-serif;}
+  .win-top{flex:0 0 auto;height:34px;background:#F5F5F5;border-bottom:1px solid #EBEBEB;display:flex;align-items:center;justify-content:space-between;padding:0 12px;}
+  .win-top .l{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;color:var(--segink);}
+  .win-top .l .mslogo{width:19px;height:19px;object-fit:contain;}
+  .win-top .r{font-size:11px;color:var(--seg);text-align:right;line-height:1.15;}
+  .win-body{flex:1;display:flex;min-height:0;}
+  .rail{flex:0 0 60px;background:#FAFAFA;border-right:1px solid #EFEFEF;display:flex;flex-direction:column;align-items:center;gap:9px;padding:12px 0;}
+  .rail .it{display:flex;flex-direction:column;align-items:center;gap:2px;width:50px;color:var(--seg);}
+  .rail .it.on{color:var(--cs);}
+  .rail .it .ic{width:24px;height:24px;border-radius:7px;display:flex;align-items:center;justify-content:center;}
+  .rail .it.on .ic{background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.14);}
+  .rail .it .lb{font-size:8.5px;font-weight:700;line-height:1;}
+  .stage{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 16px;min-height:0;}
+  .stage h2{font-size:25px;font-weight:800;color:#242424;margin-bottom:11px;}
+  .toggle{display:flex;background:#EFE9FB;border-radius:999px;padding:4px;gap:4px;margin-bottom:11px;}
+  .toggle span{font-size:13px;font-weight:700;padding:6px 16px;border-radius:999px;color:var(--seg);display:flex;align-items:center;gap:6px;}
+  .toggle span.on{background:#5B3FA8;color:#fff;box-shadow:0 2px 5px rgba(91,63,168,.4);}
+  .nlbox{width:100%;border:1.5px solid #E2DCEF;border-radius:13px;background:#fff;box-shadow:0 3px 9px rgba(0,0,0,.07);padding:13px 14px 10px;}
+  .nlbox .ph{font-size:13.5px;color:var(--segph);font-weight:500;line-height:1.3;}
+  .nlbox .ctl{display:flex;align-items:center;justify-content:space-between;margin-top:14px;}
+  .nlbox .gear{width:22px;height:22px;color:var(--seg);}
+  .nlbox .send{width:26px;height:26px;border-radius:50%;background:#EDEAF2;display:flex;align-items:center;justify-content:center;color:#8A8A8A;font-size:15px;font-weight:900;}
+  .zlabel{align-self:flex-start;font-size:12px;font-weight:800;color:#3A3A3A;margin:13px 0 7px;}
+  .builds{display:flex;gap:9px;width:100%;}
+  .bc{flex:1;border:1px solid #ECECEC;border-radius:10px;background:#FCFBFE;padding:9px 9px 8px;box-shadow:0 2px 5px rgba(0,0,0,.05);}
+  .bc .ti{font-size:11.5px;font-weight:800;color:#242424;line-height:1.15;display:flex;align-items:center;gap:5px;margin-bottom:4px;}
+  .bc .ti .g{width:16px;height:16px;border-radius:5px;background:linear-gradient(120deg,#7C3AED,#C026D3 60%,#EC4899);flex:0 0 auto;}
+  .bc .de{font-size:9.5px;font-weight:500;color:var(--seg);line-height:1.25;}
+
+  /* 右：3ステップ */
+  .how{flex:1;display:flex;flex-direction:column;min-height:0;}
+  .how-head{align-self:stretch;text-align:center;color:#fff;font-weight:900;font-size:24px;border-radius:11px;padding:10px 14px;margin-bottom:11px;letter-spacing:.4px;background:linear-gradient(120deg,#7C3AED 0%,#C026D3 55%,#EC4899 100%);box-shadow:0 4px 8px rgba(0,0,0,.26),inset 0 1px 0 rgba(255,255,255,.5);text-shadow:0 1px 2px rgba(0,0,0,.22);}
+  .steps{display:flex;flex-direction:column;justify-content:space-between;flex:1;gap:11px;}
+  .step{background:linear-gradient(180deg,#FFFFFF,#F4F1FB);border:2px solid #DDD3F0;border-radius:14px;box-shadow:0 5px 11px rgba(0,0,0,.12),inset 0 1px 0 rgba(255,255,255,.9);display:flex;align-items:center;gap:15px;padding:14px 17px;flex:1;}
+  .step .num{flex:0 0 auto;width:50px;height:50px;border-radius:50%;background:linear-gradient(180deg,#8B5CF6,#6D28D9);color:#fff;font-weight:900;font-size:27px;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 7px rgba(109,40,217,.4),inset 0 1px 0 rgba(255,255,255,.4);}
+  .step .tx{display:flex;flex-direction:column;gap:4px;}
+  .step .tx .h{font-weight:900;font-size:24px;color:var(--ink);line-height:1.22;}
+  .step .tx .s{font-weight:700;font-size:17px;color:#4B5563;line-height:1.34;}
+  .step .tx .s b{color:var(--cs-dark);}
+
+  /* 下部ダーク帯：新機能 + 注意 */
+  .darkband{margin:11px 0 0;background:linear-gradient(180deg,#565C66,#4A4F58);color:#fff;flex:0 0 auto;position:relative;display:flex;align-items:stretch;gap:14px;padding:11px 22px;height:128px;overflow:hidden;box-shadow:inset 0 1px 0 rgba(255,255,255,.10);}
+  .nf{flex:1.55;display:flex;flex-direction:column;}
+  .nf .label{font-weight:900;font-size:17px;color:#FCD34D;margin-bottom:8px;letter-spacing:.3px;}
+  .nf .grid{display:flex;gap:9px;flex:1;}
+  .nf .fc{flex:1;background:linear-gradient(180deg,#FFFFFF,#EEF1F6);color:var(--ink);border-radius:10px;padding:9px 12px;display:flex;flex-direction:column;gap:4px;box-shadow:0 3px 6px rgba(0,0,0,.26),inset 0 1px 0 rgba(255,255,255,.9);border-top:3px solid var(--cs);}
+  .nf .fc .ft{font-weight:900;font-size:16px;color:var(--cs-dark);line-height:1.2;}
+  .nf .fc .fd{font-weight:700;font-size:13.5px;color:#4B5563;line-height:1.3;}
+  .note{flex:1;background:linear-gradient(180deg,#646A75,#565C66);border:1.5px solid #7A818D;border-radius:11px;padding:10px 14px;margin-right:118px;display:flex;flex-direction:column;justify-content:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.12);}
+  .note .label{font-weight:900;font-size:15px;color:#FCD34D;margin-bottom:6px;display:flex;align-items:center;gap:6px;}
+  .note .txt{font-weight:700;font-size:15.5px;color:#fff;line-height:1.42;}
+  .note .txt b{color:#FCA5A5;}
+  .band-chara{position:absolute;right:6px;bottom:0;height:150px;z-index:50;filter:drop-shadow(0 3px 7px rgba(0,0,0,.45));}
+  .src{position:absolute;left:22px;bottom:3px;font-size:11px;font-weight:500;color:rgba(255,255,255,.5);z-index:40;}
+</style>
+</head>
+<body>
+<div id="slide">
+  <div class="titlebar">
+    <div class="vol-pill">コパスタ Vol.1</div>
+    <div class="part-pill">後編 <b>(2/2)</b></div>
+    <div class="title-text">2026年の新しい Copilot Studio は、<br>"作りたいことを書くだけ"で作れる<span class="q">！</span></div>
+    <img class="title-chara" src="../../pptx/_assets/chara/chara_point_g.png" alt="">
+  </div>
+
+  <div class="body">
+    <!-- 左：新ホーム再現 -->
+    <div class="mockwrap">
+      <div class="mocklabel"><span class="dot"></span>新しいホーム画面（実際の画面）</div>
+      <div class="win">
+        <div class="win-top">
+          <div class="l">
+            <img class="mslogo" src="../../pptx/_assets/icons/cs_logo.png" alt="">
+            Copilot Studio
+          </div>
+          <div class="r">環境<br>PA45 Demo</div>
+        </div>
+        <div class="win-body">
+          <div class="rail">
+            <div class="it on"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></svg></span><span class="lb">ホーム</span></div>
+            <div class="it"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 8l-4 4 4 4"/><path d="M15 8l4 4-4 4"/></svg></span><span class="lb">エージェント</span></div>
+            <div class="it"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="6" height="6" rx="1"/><rect x="15" y="15" width="6" height="6" rx="1"/><path d="M9 6h6a3 3 0 0 1 3 3v6"/></svg></span><span class="lb">フロー</span></div>
+            <div class="it"><span class="ic"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg></span><span class="lb">ツール</span></div>
+          </div>
+          <div class="stage">
+            <h2>何を構築しますか?</h2>
+            <div class="toggle">
+              <span class="on">&lt;/&gt; エージェント</span>
+              <span>ワークフロー</span>
+            </div>
+            <div class="nlbox">
+              <div class="ph">構築開始にあたって、エージェントに行わせたいことを説明してください</div>
+              <div class="ctl">
+                <svg class="gear" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19 12a7 7 0 0 0-.1-1l2-1.5-2-3.4-2.3 1a7 7 0 0 0-1.7-1L14.5 3h-5l-.4 2.6a7 7 0 0 0-1.7 1l-2.3-1-2 3.4L3 11a7 7 0 0 0 0 2l-2 1.5 2 3.4 2.3-1a7 7 0 0 0 1.7 1l.4 2.6h5l.4-2.6a7 7 0 0 0 1.7-1l2.3 1 2-3.4-2-1.5a7 7 0 0 0 .1-1z"/></svg>
+                <div class="send">&#8594;</div>
+              </div>
+            </div>
+            <div class="zlabel">ゼロから構築する</div>
+            <div class="builds">
+              <div class="bc"><div class="ti"><span class="g"></span>エージェント</div><div class="de">Web サイトや Teams で質問に回答・操作</div></div>
+              <div class="bc"><div class="ti"><span class="g"></span>PC操作エージェント</div><div class="de">アプリや Web を直接操作して作業</div></div>
+              <div class="bc"><div class="ti"><span class="g"></span>エージェント フロー</div><div class="de">安全に業務を自動化する流れ</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 右：3ステップ -->
+    <div class="how">
+      <div class="how-head">3ステップで作れる！</div>
+      <div class="steps">
+        <div class="step">
+          <div class="num">1</div>
+          <div class="tx"><div class="h">日本語で書く</div><div class="s">ホームの入力欄に<b>「○○に答えるエージェント」</b>と話し言葉で説明するだけ</div></div>
+        </div>
+        <div class="step">
+          <div class="num">2</div>
+          <div class="tx"><div class="h">ナレッジ・指示を足す</div><div class="s"><b>SharePoint</b> の文書や Web、答え方のルールを追加して賢くする</div></div>
+        </div>
+        <div class="step">
+          <div class="num">3</div>
+          <div class="tx"><div class="h">テストして公開</div><div class="s">右の<b>テスト画面</b>で会話を確認 → <b>Teams や Web サイト</b>へ公開</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 下部：新機能 + 注意 -->
+  <div class="darkband">
+    <div class="nf">
+      <div class="label">2026年の新バージョンで追加されたもの</div>
+      <div class="grid">
+        <div class="fc"><div class="ft">GPT-5 が一般提供</div><div class="fd">最新モデルを業務で利用可（欧州・米国リージョン）</div></div>
+        <div class="fc"><div class="ft">マルチエージェント連携</div><div class="fd">複雑な仕事を複数エージェントで分担</div></div>
+        <div class="fc"><div class="ft">SharePoint 絞り込み</div><div class="fd">メタデータで参照する文書を限定</div></div>
+      </div>
+    </div>
+    <div class="note">
+      <div class="label">⚠ はじめる前に</div>
+      <div class="txt">利用には<b>メッセージ課金（ライセンス）</b>が必要。まずは試用版やデモ環境で触るのが安心。</div>
+    </div>
+    <div class="src">出典：Microsoft Copilot Studio（実機・PA45 Demo）／Microsoft Learn</div>
+  </div>
+  <img class="band-chara" src="../../pptx/_assets/chara/chara_guts_g.png" alt="">
+</div>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>

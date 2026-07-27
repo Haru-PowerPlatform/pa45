@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.55-1 Copilotの言うアクション名がPAで見つからない</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB; --blue-bg:#EFF6FF; --blue-dark:#1E40AF;
+    --green:#16A34A; --green-dark:#064E3B; --green-bg:#ECFDF5;
+    --cop:#7C3AED; --cop-dark:#5B21B6;
+    --cop-grad:linear-gradient(120deg,#7C3AED,#C026D3 55%,#EC4899);
+    --enji:#A4283C; --enji-dark:#6E1628;
+    --orange:#EA580C; --amber:#D97706; --ink:#1F2937; --gray:#374151; --weak:#6B7280;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+  .ic{display:block;width:100%;height:100%;}
+
+  .titlebar{height:86px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:15px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:25px;border-radius:999px;padding:7px 19px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .vol-logo{height:48px;width:48px;object-fit:contain;flex:0 0 auto;background:#fff;border-radius:12px;padding:5px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
+  .title-text{color:#fff;font-weight:900;font-size:27px;line-height:1.14;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:150px;}
+  .title-text .hl{color:#FFE08A;}
+  .title-chara{position:absolute;right:14px;bottom:-42px;height:142px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .concl{margin:9px 16px 0;background:var(--blue-bg);border:2.5px solid var(--blue);border-radius:13px;display:flex;align-items:center;gap:13px;padding:9px 18px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;width:42px;height:42px;border-radius:11px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;padding:9px;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
+  .concl .txt{font-weight:800;font-size:19px;color:var(--blue-dark);line-height:1.36;padding-right:100px;}
+  .concl .txt b{color:var(--orange);}
+
+  .flowhd{margin:12px 16px 0;font-weight:900;font-size:18px;color:var(--enji-dark);display:flex;align-items:center;gap:9px;flex:0 0 auto;}
+  .flowhd .bar{width:6px;height:22px;border-radius:3px;background:var(--enji);}
+
+  .flow{flex:1 1 auto;margin:9px 16px 0;display:flex;align-items:stretch;gap:0;min-height:0;}
+  .step{flex:1;border-radius:14px;padding:13px 13px;display:flex;flex-direction:column;min-height:0;box-shadow:0 4px 11px rgba(0,0,0,.11),inset 0 1px 0 rgba(255,255,255,.7);position:relative;}
+  .step.s1{background:#FBFAFE;border:2.5px solid var(--cop);}
+  .step.s2{background:#F6FAFF;border:2.5px solid var(--blue);}
+  .step.s3{background:linear-gradient(180deg,#FDF3F4,#FAE7EA);border:2.5px solid var(--enji);}
+  .step.s4{background:linear-gradient(180deg,#F1FBF5,#E5F7EC);border:2.5px solid var(--green);}
+  .stepn{position:absolute;top:-14px;left:13px;width:30px;height:30px;border-radius:50%;color:#fff;font-weight:900;font-size:16px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 5px rgba(0,0,0,.3);border:2.5px solid #fff;}
+  .s1 .stepn{background:var(--cop);} .s2 .stepn{background:var(--blue);} .s3 .stepn{background:var(--enji);} .s4 .stepn{background:var(--green);}
+  .step .sh{font-weight:900;font-size:17px;margin:10px 0 6px;display:flex;align-items:center;gap:8px;}
+  .s1 .sh{color:var(--cop-dark);} .s2 .sh{color:var(--blue-dark);} .s3 .sh{color:var(--enji-dark);} .s4 .sh{color:var(--green-dark);}
+  .step .sh img{width:26px;height:26px;object-fit:contain;flex:0 0 auto;}
+  .step .sh svg{width:23px;height:23px;flex:0 0 auto;}
+  .step .body{flex:1;display:flex;flex-direction:column;justify-content:space-evenly;align-items:stretch;gap:12px;padding:6px 0;}
+  .bigmag{align-self:center;color:#93B4E8;}
+  .bigmag svg{width:104px;height:104px;}
+  .bigcop{align-self:center;height:86px;filter:drop-shadow(0 2px 5px rgba(124,58,237,.3));}
+
+  .qbub{background:#EEF1F6;border:1.5px solid #CBD4E0;border-radius:12px;padding:12px 14px;font-size:18px;font-weight:800;color:#2E3B4E;line-height:1.44;box-shadow:0 2px 6px rgba(0,0,0,.06);font-family:'Segoe UI','Noto Sans JP',sans-serif;}
+  .qbub b{color:#1E3A5F;}
+  .abub{background:#fff;border:1.5px solid #D8CBEF;border-radius:12px;padding:12px 14px;font-size:18px;font-weight:800;color:#3B3172;line-height:1.44;box-shadow:0 2px 6px rgba(0,0,0,.07);font-family:'Segoe UI','Noto Sans JP',sans-serif;}
+  .abub code{background:#EDE9FE;border:1px solid #C9B8F0;border-radius:5px;padding:1px 7px;color:#5B21B6;font-weight:900;font-size:17.5px;}
+  .qbub .who,.abub .who{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:900;margin-bottom:5px;}
+  .qbub .who{color:#5A6B85;} .abub .who{color:var(--cop-dark);}
+  .abub .who img{width:19px;height:19px;object-fit:contain;}
+  .bub{background:#fff;border:1.5px solid #D8CBEF;border-radius:12px;padding:15px 16px;font-size:21px;font-weight:800;color:#3B3172;line-height:1.46;box-shadow:0 2px 6px rgba(0,0,0,.07);font-family:'Segoe UI','Noto Sans JP',sans-serif;}
+  .bub code{background:#EDE9FE;border:1px solid #C9B8F0;border-radius:5px;padding:1px 7px;color:#5B21B6;font-weight:900;font-size:19px;}
+  .searchbox{background:#fff;border:2px solid #B8C4D6;border-radius:9px;padding:16px 15px;display:flex;align-items:center;gap:11px;font-family:'Segoe UI','Noto Sans JP',sans-serif;box-shadow:inset 0 1px 3px rgba(0,0,0,.05);}
+  .searchbox svg{width:24px;height:24px;color:#8A93A3;flex:0 0 auto;}
+  .searchbox .q{font-size:22px;font-weight:800;color:#242424;}
+  .searchcap{font-size:16px;font-weight:800;color:var(--weak);text-align:center;}
+  .noresult{display:flex;flex-direction:column;align-items:center;gap:14px;}
+  .noresult .zero{font-size:26px;font-weight:900;color:var(--enji);background:#fff;border:2.5px solid #E0A5B0;border-radius:11px;padding:14px 18px;text-align:center;line-height:1.3;box-shadow:0 2px 6px rgba(0,0,0,.08);}
+  .noresult .zero small{display:block;font-size:16px;color:#B4232F;font-weight:800;margin-top:4px;}
+  .noresult img{height:118px;width:auto;flex:0 0 auto;align-self:center;object-fit:contain;filter:drop-shadow(0 3px 6px rgba(0,0,0,.3));}
+  .aha{align-items:center;}
+  .aha .real{background:#fff;border:2.5px solid #86D8A5;border-radius:11px;padding:15px 15px;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,.08);align-self:stretch;}
+  .aha .real .lab{font-size:16px;font-weight:800;color:#0B7A46;}
+  .aha .real .nm{font-size:32px;font-weight:900;color:var(--green-dark);line-height:1.15;margin-top:5px;white-space:nowrap;}
+  .aha img{height:110px;filter:drop-shadow(0 3px 6px rgba(0,0,0,.3));align-self:center;}
+  .scap{flex:0 0 auto;margin-top:10px;border-radius:10px;padding:9px 11px;font-size:15px;font-weight:800;line-height:1.36;display:flex;align-items:flex-start;gap:8px;}
+  .scap .d{flex:0 0 auto;width:9px;height:9px;border-radius:50%;margin-top:6px;}
+  .s1 .scap{background:#F1ECFC;color:#5B21B6;} .s1 .scap .d{background:var(--cop);}
+  .s2 .scap{background:#EAF1FE;color:#1E40AF;} .s2 .scap .d{background:var(--blue);}
+  .s3 .scap{background:#FBE9EC;color:#8E2033;} .s3 .scap .d{background:var(--enji);}
+  .s4 .scap{background:#E5F7EC;color:#0B5E37;} .s4 .scap .d{background:var(--green);}
+  .scap b{font-weight:900;}
+
+  .conn{flex:0 0 30px;display:flex;align-items:center;justify-content:center;color:#9AA7B8;}
+  .conn svg{width:26px;height:26px;}
+  .conn.red{color:var(--enji);}
+
+  .reasons{flex:0 0 auto;margin:11px 16px 12px;display:flex;align-items:stretch;gap:9px;}
+  .rlabel{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(180deg,#565C66,#4A4F58);color:#fff;font-weight:900;font-size:14.5px;border-radius:11px;padding:0 15px;text-align:center;line-height:1.25;box-shadow:0 3px 8px rgba(0,0,0,.18);}
+  .rc{flex:1;border-radius:11px;padding:8px 12px;box-shadow:0 2px 6px rgba(0,0,0,.08);border:2px solid;background:#F8F9FA;}
+  .rc.r1{border-color:var(--blue);} .rc.r2{border-color:var(--orange);} .rc.r3{border-color:var(--cop);}
+  .rc .rt{font-weight:900;font-size:15px;line-height:1.2;margin-bottom:4px;}
+  .rc.r1 .rt{color:var(--blue-dark);} .rc.r2 .rt{color:var(--orange);} .rc.r3 .rt{color:var(--cop-dark);}
+  .rc .rb{font-size:14.5px;font-weight:800;color:#3A4656;line-height:1.32;}
+  .rc .rb code{font-family:'Segoe UI','Noto Sans JP',sans-serif;background:#EEF1F5;border:1px solid #DEE3EA;border-radius:5px;padding:0 5px;font-size:13.5px;color:#374151;font-weight:800;}
+  .rc .rb b{color:var(--ink);}
+  .src{position:absolute;left:16px;bottom:3px;font-size:10px;color:#AEB6C2;font-weight:700;z-index:3;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const ICON={
+ arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',
+ search:'<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>',
+ bulb:'<path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/>'
+};
+const svg=(n)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${ICON[n]}</svg>`;
+
+const s=document.getElementById('slide');
+s.innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.55-1</div>
+    <img class="vol-logo" src="${A}icons/copilot_m365.png" alt="">
+    <div class="title-text">Copilotの指示どおりに作っても<span class="hl">Power Automateで見つからない…！</span></div>
+    <img class="title-chara" src="${A}chara/chara_trouble.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svg('bulb')}</div>
+    <div class="txt">Copilotの答えを<b>そのまま検索したのに、一覧に出てこない</b>…。よくある“つまずき”です。<br>まずは、その<b>困った流れ</b>をそのまま図にしました。</div>
+  </div>
+
+  <div class="flowhd"><span class="bar"></span>実際によくある流れ（例：Copilotが「指定時刻まで遅延」を追加してと言った）</div>
+
+  <div class="flow">
+    <div class="step s1">
+      <div class="stepn">1</div>
+      <div class="sh"><img src="${A}icons/copilot_m365.png" alt="">Copilotに相談</div>
+      <div class="body">
+        <div class="qbub"><span class="who">🙋 自分（質問）</span>Power Automateで、処理を<b>指定した時刻まで止めて</b>おきたい。どうすれば？</div>
+        <div class="abub"><span class="who"><img src="${A}icons/copilot_m365.png" alt="">Copilot（回答）</span>「<code>指定時刻まで遅延</code>」を追加してください</div>
+      </div>
+      <div class="scap"><span class="d"></span><span>Copilotは<b>英語や“意訳”</b>で答えることがある。悪気はない。</span></div>
+    </div>
+
+    <div class="conn">${svg('arrow')}</div>
+
+    <div class="step s2">
+      <div class="stepn">2</div>
+      <div class="sh">${svg('search')}PAで同じ名前を検索</div>
+      <div class="body">
+        <div class="bigmag">${svg('search')}</div>
+        <div class="searchbox">${svg('search')}<span class="q">指定時刻まで遅延</span></div>
+        <div class="searchcap">言われたとおり、そのまま入力</div>
+      </div>
+      <div class="scap"><span class="d"></span><span>この日本語は<b>PAには存在しない名前</b>だった。</span></div>
+    </div>
+
+    <div class="conn red">${svg('arrow')}</div>
+
+    <div class="step s3">
+      <div class="stepn">3</div>
+      <div class="sh">あれ、出てこない…</div>
+      <div class="body noresult">
+        <div class="zero">該当なし（0件）<small>この名前のアクションは無い</small></div>
+        <img src="${A}chara/chara_trouble.png" alt="">
+      </div>
+      <div class="scap"><span class="d"></span><span>焦らなくてOK。<b>機能はある、名前が違うだけ。</b></span></div>
+    </div>
+
+    <div class="conn">${svg('arrow')}</div>
+
+    <div class="step s4">
+      <div class="stepn">4</div>
+      <div class="sh">正体はコレ！</div>
+      <div class="body aha">
+        <div class="real"><span class="lab">PAでの正式名は</span><span class="nm">延期期限</span></div>
+        <img src="${A}chara/chara_guts.png" alt="">
+      </div>
+      <div class="scap"><span class="d"></span><span>正式名で探し直せば一発。<b>対応表は2枚目！</b></span></div>
+    </div>
+  </div>
+
+  <div class="reasons">
+    <div class="rlabel">ズレる<br>理由は<br>3つ</div>
+    <div class="rc r1">
+      <div class="rt">① 英語のまま言われる</div>
+      <div class="rb"><code>Create file</code> → <b>ファイルの作成</b></div>
+    </div>
+    <div class="rc r2">
+      <div class="rt">② 親切な日本語訳がズレる</div>
+      <div class="rb"><code>指定時刻まで遅延</code> → <b>延期期限</b></div>
+    </div>
+    <div class="rc r3">
+      <div class="rt">③ アクションでなく“差し込む値”</div>
+      <div class="rb"><code>Attachments Content</code> → <b>動的コンテンツ「コンテンツのバイト数」</b></div>
+    </div>
+  </div>
+  <div class="src">出典：Microsoft 365 Copilot 実機／Power Automate 実機（PA45 Demo）</div>
+`;
+</script>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>

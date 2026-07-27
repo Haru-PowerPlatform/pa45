@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>コパスタ Vol.7 - コンセプト</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cs:#7C3AED; --cs-bg:#F5F3FF; --cs-bg2:#EDE9FE; --cs-dark:#5B21B6;
+    --green:#16A34A; --green-bg:#ECFDF5; --green-bg2:#C6F0D6; --green-dark:#064E3B;
+    --red:#DC2626; --red-bg:#FEF2F2;
+    --ink:#1F2937; --gray:#374151; --weak:#6B7280;
+    --card:#F8F9FA; --line:#E5E7EB; --segline:#D1D1D1; --segink:#242424;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+
+  .titlebar{height:90px;
+    background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#5B21B6 0%,#7C3AED 50%,#A855F7 100%);
+    box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(91,33,182,.36);
+    display:flex;align-items:center;gap:18px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--cs);font-weight:900;font-size:24px;border-radius:999px;padding:7px 20px;letter-spacing:.5px;white-space:nowrap;flex:0 0 auto;}
+  .part-pill{background:rgba(255,255,255,.16);color:#fff;font-weight:900;font-size:17px;border-radius:999px;padding:6px 14px;white-space:nowrap;flex:0 0 auto;border:1.6px solid rgba(255,255,255,.78);}
+  .part-pill b{color:#FDE047;}
+  .title-text{color:#fff;font-weight:900;font-size:31px;line-height:1.18;letter-spacing:.3px;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:140px;}
+  .title-text .q{color:#FDE047;}
+  .title-chara{position:absolute;right:14px;bottom:-52px;height:148px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .concl{margin:9px 18px 0;background:var(--green-bg);border:2px solid var(--green);border-radius:12px;
+    display:flex;align-items:center;gap:14px;padding:10px 18px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10);}
+  .concl .chip{background:linear-gradient(180deg,rgba(255,255,255,.30),rgba(255,255,255,0) 50%),linear-gradient(180deg,#2BD06A,#16A34A);color:#fff;font-weight:900;font-size:22px;border-radius:9px;padding:8px 18px;white-space:nowrap;box-shadow:0 3px 6px rgba(0,0,0,.28);}
+  .concl .txt{font-weight:700;font-size:20px;color:var(--green-dark);line-height:1.38;}
+  .concl .txt b{color:var(--cs);} .concl .txt em{color:var(--green);font-style:normal;}
+
+  .body{flex:1 1 auto;display:flex;gap:15px;padding:10px 18px 0;min-height:0;}
+  .mockwrap{flex:1.55;display:flex;flex-direction:column;min-height:0;}
+  .mocklabel{font-weight:900;font-size:16.5px;color:var(--cs-dark);margin-bottom:6px;display:flex;align-items:center;gap:8px;}
+  .mocklabel .dot{width:11px;height:11px;border-radius:50%;background:var(--cs);}
+  .mocklabel .fake{margin-left:auto;font-size:11px;font-weight:800;color:#8A8886;background:#F3F2F1;border:1px solid #E1DFDD;border-radius:999px;padding:2px 9px;}
+
+  .win{flex:1;border-radius:12px;border:1px solid var(--segline);background:#fff;box-shadow:0 8px 20px rgba(0,0,0,.19);overflow:hidden;display:flex;flex-direction:column;font-family:"Segoe UI","Noto Sans JP",sans-serif;min-height:0;}
+  .win-top{flex:0 0 auto;height:36px;border-bottom:1px solid #EBEBEB;display:flex;align-items:center;justify-content:space-between;padding:0 12px;}
+  .win-top .name{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:800;color:var(--segink);}
+  .win-top .name img{width:16px;height:16px;object-fit:contain;}
+  .tabs{display:flex;background:#F5F5F5;border-radius:8px;padding:3px;gap:2px;}
+  .tabs span{font-size:11px;font-weight:700;padding:4px 11px;border-radius:6px;color:#605E5C;}
+  .tabs span.on{background:#fff;color:var(--cs);box-shadow:0 1px 3px rgba(0,0,0,.12);}
+  .tabs span.dis{color:#C8C6C4;}
+
+  .win-in{flex:1;padding:11px 13px;display:flex;flex-direction:column;gap:9px;min-height:0;overflow:hidden;}
+  .scorebar{display:flex;align-items:stretch;gap:10px;}
+  .big{flex:0 0 auto;width:150px;border-radius:11px;background:linear-gradient(180deg,#F5F3FF,#EDE9FE);border:1.5px solid #C4B5FD;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px;}
+  .big .lb{font-size:10.5px;font-weight:800;color:#5B21B6;}
+  .big .v{font-size:38px;font-weight:900;color:#5B21B6;line-height:1.05;}
+  .big .d{font-size:11px;font-weight:900;color:#0E7A52;background:#E7F7EF;border:1px solid #A7E0C6;border-radius:999px;padding:2px 9px;margin-top:3px;}
+  .metas{flex:1;display:flex;flex-direction:column;gap:6px;justify-content:center;}
+  .meta{display:flex;align-items:center;gap:9px;font-size:11.5px;font-weight:700;color:#3B3A39;}
+  .meta .k{flex:0 0 96px;color:#605E5C;}
+  .meta .bar{flex:1;height:9px;border-radius:5px;background:#EFEFF3;overflow:hidden;}
+  .meta .bar i{display:block;height:100%;background:linear-gradient(90deg,#8B5CF6,#C026D3);}
+  .meta .n{flex:0 0 auto;font-weight:900;color:#5B21B6;}
+
+  .tbl{flex:1;border:1px solid #E7E7E7;border-radius:9px;overflow:hidden;display:flex;flex-direction:column;min-height:0;}
+  .tr{display:flex;border-top:1px solid #F0F0F0;flex:1;align-items:center;}
+  .tr.h{background:#F6F5F4;border-top:none;flex:0 0 auto;}
+  .tr .c1{flex:1;padding:6px 10px;font-size:11.5px;font-weight:700;color:#242424;}
+  .tr .c2{flex:0 0 92px;padding:6px 8px;font-size:11.5px;font-weight:800;text-align:center;}
+  .tr .c3{flex:0 0 120px;padding:6px 8px;font-size:11px;font-weight:700;color:#605E5C;}
+  .tr.h .c1,.tr.h .c2,.tr.h .c3{font-size:10.5px;font-weight:900;color:#605E5C;}
+  .pill{border-radius:999px;padding:2px 9px;font-size:10.5px;font-weight:900;}
+  .pill.ok{background:#E7F7EF;color:#0E7A52;border:1px solid #A7E0C6;}
+  .pill.ng{background:#FEECEC;color:#B42318;border:1px solid #F5B5B0;}
+
+  .pts{flex:1;display:flex;flex-direction:column;min-height:0;}
+  .pt-head{align-self:stretch;text-align:center;color:#fff;font-weight:900;font-size:21px;border-radius:11px;padding:9px 12px;margin-bottom:10px;background:linear-gradient(120deg,#7C3AED 0%,#C026D3 55%,#EC4899 100%);box-shadow:0 4px 8px rgba(0,0,0,.26);text-shadow:0 1px 2px rgba(0,0,0,.22);}
+  .plist{display:flex;flex-direction:column;justify-content:space-between;flex:1;gap:10px;}
+  .p{background:linear-gradient(180deg,#FFFFFF,#F4F1FB);border:2px solid #DDD3F0;border-radius:13px;box-shadow:0 5px 11px rgba(0,0,0,.12);display:flex;flex-direction:column;justify-content:center;gap:4px;padding:11px 14px;flex:1;}
+  .p .h{font-weight:900;font-size:19px;color:var(--ink);line-height:1.22;display:flex;align-items:center;gap:8px;}
+  .p .h .em{font-size:21px;}
+  .p .s{font-weight:700;font-size:14px;color:#4B5563;line-height:1.36;}
+  .p .s b{color:var(--cs-dark);}
+
+  .darkband{margin:11px 0 0;background:linear-gradient(180deg,#565C66,#4A4F58);color:#fff;flex:0 0 auto;position:relative;display:flex;align-items:stretch;gap:14px;padding:9px 22px 11px;height:126px;overflow:hidden;}
+  .nf{flex:1.55;display:flex;flex-direction:column;min-height:0;}
+  .nf .label{font-weight:900;font-size:16px;color:#FCD34D;margin-bottom:6px;}
+  .nf .grid{display:flex;gap:9px;flex:1;min-height:0;margin-bottom:12px;}
+  .nf .fc{flex:1;background:linear-gradient(180deg,#FFFFFF,#EEF1F6);color:var(--ink);border-radius:10px;padding:7px 10px;display:flex;flex-direction:column;justify-content:center;gap:3px;box-shadow:0 3px 6px rgba(0,0,0,.26);border-top:3px solid var(--cs);}
+  .nf .fc .ft{font-weight:900;font-size:14.5px;color:var(--cs-dark);line-height:1.2;}
+  .nf .fc .fd{font-weight:700;font-size:12.3px;color:#4B5563;line-height:1.28;}
+  .note{flex:1;background:linear-gradient(180deg,#646A75,#565C66);border:1.5px solid #7A818D;border-radius:11px;padding:10px 14px;margin-right:118px;display:flex;flex-direction:column;justify-content:center;}
+  .note .label{font-weight:900;font-size:15px;color:#FCD34D;margin-bottom:6px;}
+  .note .txt{font-weight:700;font-size:13.6px;color:#fff;line-height:1.4;}
+  .note .txt b{color:#FCA5A5;}
+  .band-chara{position:absolute;right:6px;bottom:0;height:148px;z-index:50;filter:drop-shadow(0 3px 7px rgba(0,0,0,.45));}
+  .src{position:absolute;left:22px;bottom:3px;font-size:11px;font-weight:500;color:rgba(255,255,255,.5);z-index:40;}
+</style>
+</head>
+<body>
+<div id="slide">
+  <div class="titlebar">
+    <div class="vol-pill">コパスタ Vol.7</div>
+    <div class="part-pill">前編 <b>(1/2)</b></div>
+    <div class="title-text">"直したつもりが、悪くなってた"を<br>点数でつかまえる（Evaluate）<span class="q">。</span></div>
+    <img class="title-chara" src="../../pptx/_assets/chara/chara_think_g.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">結論</div>
+    <div class="txt">指示文を1行いじるたびに、手で全部試すのは無理があります。<br><b>よく来る質問をセットにして毎回流す</b>と、良くなったのか悪くなったのかが<em>点数で見えます</em>。</div>
+  </div>
+
+  <div class="body">
+    <div class="mockwrap">
+      <div class="mocklabel"><span class="dot"></span>Evaluate（評価）の結果画面<span class="fake">数値はイメージです</span></div>
+      <div class="win">
+        <div class="win-top">
+          <div class="name"><img src="../../pptx/_assets/icons/cs_logo.png" alt="">社内ヘルプ エージェント</div>
+          <div class="tabs"><span>Build</span><span>Preview</span><span class="on">Evaluate</span><span class="dis">Monitor</span></div>
+        </div>
+        <div class="win-in">
+          <div class="scorebar">
+            <div class="big">
+              <div class="lb">回答の質（総合）</div>
+              <div class="v">82</div>
+              <div class="d">▲ 前回 71 から</div>
+            </div>
+            <div class="metas">
+              <div class="meta"><span class="k">テスト会話</span><span class="bar"><i style="width:100%"></i></span><span class="n">12件</span></div>
+              <div class="meta"><span class="k">合格</span><span class="bar"><i style="width:83%"></i></span><span class="n">10件</span></div>
+              <div class="meta"><span class="k">要改善</span><span class="bar"><i style="width:17%;background:linear-gradient(90deg,#F59E0B,#DC2626)"></i></span><span class="n">2件</span></div>
+              <div class="meta"><span class="k">実行日時</span><span class="bar" style="background:none"></span><span class="n" style="color:#605E5C;font-weight:700">7/21 20:14</span></div>
+            </div>
+          </div>
+
+          <div class="tbl">
+            <div class="tr h"><div class="c1">テストした質問</div><div class="c2">判定</div><div class="c3">気づき</div></div>
+            <div class="tr"><div class="c1">有給は何日前までに申請？</div><div class="c2"><span class="pill ok">良い</span></div><div class="c3">出典つきで回答</div></div>
+            <div class="tr"><div class="c1">申請はどこから出す？</div><div class="c2"><span class="pill ok">良い</span></div><div class="c3">手順まで案内</div></div>
+            <div class="tr"><div class="c1">半休は取れますか？</div><div class="c2"><span class="pill ng">要改善</span></div><div class="c3">資料に記載がない</div></div>
+            <div class="tr"><div class="c1">経費の締切はいつ？</div><div class="c2"><span class="pill ng">要改善</span></div><div class="c3">一般論で回答</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pts">
+      <div class="pt-head">何がうれしい？</div>
+      <div class="plist">
+        <div class="p">
+          <div class="h"><span class="em">🔁</span>毎回おなじ条件で試せる</div>
+          <div class="s">手で1問ずつ打ち直さない。<br><b>同じ質問セット</b>をボタンひとつで</div>
+        </div>
+        <div class="p">
+          <div class="h"><span class="em">📉</span>悪化にすぐ気づける</div>
+          <div class="s">指示を足したら別の質問が崩れた。<br>その変化も<b>点数の下がり</b>で分かる</div>
+        </div>
+        <div class="p">
+          <div class="h"><span class="em">🧭</span>直す場所が分かる</div>
+          <div class="s">落ちた質問を見れば、<br><b>指示文かナレッジか</b>の見当がつく</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="darkband">
+    <div class="nf">
+      <div class="label">公式で確認できた仕様</div>
+      <div class="grid">
+        <div class="fc"><div class="ft">テスト会話の作り方は3つ</div><div class="fd">手で書く／AIに作らせる／CSVで読み込む</div></div>
+        <div class="fc"><div class="ft">採点方法は現在1種類</div><div class="fd">「General quality」＝AIが関連性や過不足を見る</div></div>
+        <div class="fc"><div class="ft">実行者を選べる</div><div class="fd">ユーザープロファイル指定で、道具や接続も含めて試せる</div></div>
+      </div>
+    </div>
+    <div class="note">
+      <div class="label">⚠ 使う前に確認</div>
+      <div class="txt">今の採点は<b>「模範解答と一致したか」は見ません</b>。合否の最終判断は自分の目で。</div>
+    </div>
+    <div class="src">出典：Microsoft Learn（新しいエクスペリエンス／エージェントの評価）／画面と数値は説明用のイメージです</div>
+  </div>
+  <img class="band-chara" src="../../pptx/_assets/chara/chara_point_g.png" alt="">
+</div>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>

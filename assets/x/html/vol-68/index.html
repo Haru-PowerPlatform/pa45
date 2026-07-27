@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.65-1 休み明け受信トレイ救済便</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB;--blue-dark:#1E40AF;--green:#16A34A;--green-dark:#0B5E37;
+    --ink:#1F2937;--gray:#374151;--weak:#6B7280;--orange:#EA580C;--red:#DC2626;--od:#0364B8;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+
+  .titlebar{height:86px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:14px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:25px;border-radius:999px;padding:7px 19px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .logos{display:flex;align-items:center;gap:7px;flex:0 0 auto;}
+  .logos .ll{height:47px;width:47px;object-fit:contain;background:#fff;border-radius:12px;padding:6px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
+  .logos .plus{color:#fff;font-weight:900;font-size:23px;text-shadow:0 1px 2px rgba(0,0,0,.25);line-height:1;}
+  .title-text{color:#fff;font-weight:900;font-size:27px;line-height:1.15;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:150px;}
+  .title-text .hl{color:#FFE08A;}
+  .title-chara{position:absolute;right:14px;bottom:-42px;height:142px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .concl{margin:9px 16px 0;background:#EFF6FF;border:2.5px solid var(--blue);border-radius:13px;display:flex;align-items:center;gap:13px;padding:9px 18px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;width:42px;height:42px;border-radius:12px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;font-size:23px;box-shadow:0 3px 6px rgba(0,0,0,.26);}
+  .concl .txt{font-weight:800;font-size:19.5px;color:var(--blue-dark);line-height:1.4;padding-right:96px;}
+  .concl .txt b{color:var(--red);}
+  .concl .txt .g{color:var(--green-dark);}
+
+  .stage{flex:1 1 auto;margin:12px 15px 0;display:flex;align-items:stretch;gap:0;min-height:0;}
+  .panel{flex:1;display:flex;flex-direction:column;min-height:0;position:relative;border-radius:14px;overflow:hidden;box-shadow:0 5px 13px rgba(0,0,0,.12);}
+  .panel.before{background:#FEF3F2;border:2px solid #F4B4AD;}
+  .panel.after{background:#EDFBF3;border:2px solid #A6E1BC;}
+  .phd{flex:0 0 auto;text-align:center;font-weight:900;font-size:16.5px;color:#fff;padding:8px 8px;line-height:1.2;}
+  .before .phd{background:linear-gradient(180deg,#EF5350,#C62828);}
+  .after .phd{background:linear-gradient(180deg,#22A366,#15803D);}
+  .pbd{flex:1;padding:9px 10px;display:flex;flex-direction:column;gap:8px;min-height:0;font-family:'Segoe UI','Noto Sans JP',sans-serif;}
+
+  .scene{flex:0 0 auto;height:134px;border-radius:10px;overflow:hidden;border:1.5px solid;position:relative;display:flex;align-items:flex-end;justify-content:center;}
+  .before .scene{background:linear-gradient(180deg,#FFF0ED,#FFD8D1);border-color:#F4B4AD;}
+  .after .scene{background:linear-gradient(180deg,#E9FBF1,#CDF3DD);border-color:#A6E1BC;}
+  .sc-bg{position:absolute;inset:0;width:100%;height:100%;}
+  .sc-chara{position:relative;z-index:2;height:126px;width:auto;filter:drop-shadow(0 4px 6px rgba(0,0,0,.34));}
+  .sc-badge{position:absolute;top:7px;right:9px;z-index:3;background:linear-gradient(180deg,#EF4444,#B91C1C);color:#fff;font-weight:900;font-size:14px;line-height:1.05;text-align:center;border-radius:11px;padding:4px 11px;box-shadow:0 2px 6px rgba(185,28,28,.45);}
+  .sc-badge small{display:block;font-size:10px;font-weight:800;}
+
+  /* Beforeの受信トレイmock */
+  .inbox{flex:1 1 auto;background:#fff;border:1.5px solid #E7C4bf;border-radius:9px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 2px 6px rgba(0,0,0,.08);}
+  .inbox .ih{flex:0 0 auto;display:flex;align-items:center;gap:8px;background:#F3F4F6;padding:6px 10px;border-bottom:1px solid #E5E7EB;}
+  .inbox .ih img{width:21px;height:21px;object-fit:contain;}
+  .inbox .ih b{font-size:15px;font-weight:900;color:#242424;}
+  .inbox .ih .cnt{margin-left:auto;font-size:13px;font-weight:900;color:#fff;background:#DC2626;border-radius:999px;padding:3px 11px;}
+  .mrow{flex:1;display:flex;align-items:center;gap:9px;padding:5px 11px;border-bottom:1px solid #F1EDED;min-height:0;}
+  .mrow:last-child{border-bottom:none;}
+  .mrow .dot{flex:0 0 auto;width:9px;height:9px;border-radius:50%;background:#2563EB;}
+  .mrow .mfrom{flex:0 0 88px;font-size:14px;font-weight:800;color:#242424;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .mrow .msub{flex:1;font-size:13.5px;font-weight:600;color:#5B6270;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .mrow.more{justify-content:center;color:#9AA0A6;font-size:13px;font-weight:800;background:#FAFAFA;}
+  .pcap{flex:0 0 auto;text-align:center;font-size:14px;font-weight:800;line-height:1.3;padding:0 2px;}
+  .before .pcap{color:#9A1B1B;} .after .pcap{color:#0B5E37;}
+  .pcap b{color:#111;}
+
+  /* 中央エンジン */
+  .mid{flex:0 0 172px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;padding:0 8px;}
+  .engine{width:84px;height:84px;border-radius:22px;background:linear-gradient(180deg,#EAF2FF,#D6E6FF);border:3px solid var(--blue);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 15px rgba(37,99,235,.3),inset 0 1px 0 rgba(255,255,255,.8);}
+  .engine img{width:52px;height:52px;object-fit:contain;}
+  .marrow{color:#2563EB;font-size:30px;font-weight:900;line-height:.5;}
+  .mflow{display:flex;flex-direction:column;gap:7px;width:100%;}
+  .mstep{display:flex;align-items:center;gap:7px;background:#fff;border:1.5px solid #C7D3E6;border-radius:9px;padding:6px 8px;font-size:13px;font-weight:800;color:#28406a;line-height:1.2;box-shadow:0 2px 4px rgba(0,0,0,.07);}
+  .mstep .mn{flex:0 0 auto;width:20px;height:20px;border-radius:50%;background:var(--blue);color:#fff;font-size:12px;font-weight:900;display:flex;align-items:center;justify-content:center;}
+
+  /* Afterのダイジェストmock */
+  .digest{flex:1 1 auto;background:#fff;border:1.5px solid #BDE6CD;border-radius:9px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 2px 6px rgba(0,0,0,.08);}
+  .digest .dh{flex:0 0 auto;display:flex;align-items:center;gap:8px;background:#EAF7EF;padding:7px 10px;border-bottom:1px solid #CDEBD8;}
+  .digest .dh img{width:21px;height:21px;object-fit:contain;}
+  .digest .dh b{font-size:14px;font-weight:900;color:#15803D;}
+  .digest .dsub{flex:0 0 auto;padding:6px 10px 4px;font-size:14px;font-weight:900;color:#242424;}
+  .dtbl{flex:1;display:flex;flex-direction:column;padding:0 8px 6px;gap:0;min-height:0;}
+  .dtr{flex:1;display:flex;align-items:center;gap:8px;border-bottom:1px solid #EDF3EF;padding:4px 2px;}
+  .dtr:last-child{border-bottom:none;}
+  .dtr .imp{flex:0 0 auto;font-size:12.5px;font-weight:900;border-radius:5px;padding:2px 8px;}
+  .dtr .imp.hi{background:#FEE2E2;color:#B91C1C;}
+  .dtr .imp.nm{background:#E5EDFB;color:#1E40AF;}
+  .dtr .dfrom{flex:0 0 78px;font-size:14px;font-weight:800;color:#242424;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .dtr .dsubj{flex:1;font-size:13.5px;font-weight:600;color:#41474F;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+  .uses{flex:0 0 auto;margin:11px 15px 12px;display:flex;align-items:stretch;gap:9px;}
+  .ulabel{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;font-weight:900;font-size:15px;border-radius:11px;padding:0 15px;text-align:center;line-height:1.25;box-shadow:0 3px 8px rgba(37,99,235,.32);}
+  .uc{flex:1;background:#F8F9FA;border:2px solid #D7E0EC;border-radius:11px;padding:9px 12px;box-shadow:0 2px 6px rgba(0,0,0,.07);display:flex;align-items:center;gap:10px;}
+  .uc .em{font-size:24px;flex:0 0 auto;}
+  .uc .ut{font-size:16px;font-weight:800;color:#33405a;line-height:1.28;}
+  .uc .ut b{color:var(--blue-dark);}
+  .src{position:absolute;left:16px;bottom:3px;font-size:10px;color:#AEB6C2;font-weight:700;z-index:3;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+
+// 高品質なリアル封筒（1通）— グラデ＋影＋フラップ＋切手
+const ENVDEFS=`<defs>
+ <linearGradient id="envG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#E7EAEE"/></linearGradient>
+ <linearGradient id="flapG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E9EBEF"/><stop offset="1" stop-color="#CFD2D8"/></linearGradient>
+</defs>`;
+const env=(x,y,s,r)=>`<g transform="translate(${x} ${y}) rotate(${r}) scale(${s})"><ellipse cx="0" cy="17" rx="19" ry="4" fill="rgba(120,20,20,.10)"/><rect x="-18" y="-13" width="36" height="26" rx="3.5" fill="url(#envG)" stroke="#C4C9D0" stroke-width="1.2"/><path d="M-18 -10 L0 4 L18 -10" fill="none" stroke="#B4B9C1" stroke-width="1.3"/><path d="M-18 -13 L18 -13 L18 -10 L0 4 L-18 -10 Z" fill="url(#flapG)" stroke="#C4C9D0" stroke-width="1"/><rect x="7" y="-9.5" width="8" height="6" rx="1" fill="#F5A79D"/></g>`;
+// 大量の封筒が降り注ぐ＝“うんざり”を演出（14通＋動線）
+const POS=[[46,36,.92,-16],[104,26,.82,12],[166,42,1.02,-6],[300,28,.86,15],[360,32,.96,-12],[416,48,.8,9],[36,90,1.02,-9],[92,102,.94,7],[146,94,.86,-15],[214,104,.9,-6],[266,100,.86,9],[332,96,1.04,11],[388,88,.94,-7],[426,102,.8,13]];
+const mailStorm=`<svg class="sc-bg" viewBox="0 0 460 134" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">${ENVDEFS}${POS.map(p=>env(p[0],p[1],p[2],p[3])).join('')}<path d="M126 8 v11 M250 6 v13 M344 9 v10 M198 10 v9" stroke="#E88B80" stroke-width="2.6" stroke-linecap="round" opacity=".7"/></svg>`;
+
+// 封筒1通＋リアルなコーヒー（After）
+const AFTERDEFS=`<defs>
+ <linearGradient id="cupG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#E6F0EA"/></linearGradient>
+ <linearGradient id="coffeeG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8A5330"/><stop offset="1" stop-color="#5A3418"/></linearGradient>
+ <linearGradient id="envG2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#DBF2E5"/></linearGradient>
+</defs>`;
+const afterScene=`<svg class="sc-bg" viewBox="0 0 460 134" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">${AFTERDEFS}
+ <g transform="translate(92 62) scale(1.5)">
+   <ellipse cx="0" cy="21" rx="27" ry="5" fill="rgba(20,120,60,.13)"/>
+   <rect x="-26" y="-17" width="52" height="34" rx="4.5" fill="url(#envG2)" stroke="#7EC79A" stroke-width="1.6"/>
+   <path d="M-26 -13 L0 6 L26 -13" fill="none" stroke="#57A277" stroke-width="1.6"/>
+   <path d="M-26 -17 L26 -17 L26 -13 L0 6 L-26 -13 Z" fill="#CFF0DD" stroke="#7EC79A" stroke-width="1.2"/>
+   <circle cx="20" cy="-14" r="10" fill="#16A34A"/><path d="M15 -14 l4 4 l7 -8" fill="none" stroke="#fff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>
+ </g>
+ <text x="92" y="126" text-anchor="middle" font-size="15" fill="#0B5E37" font-weight="900" font-family="'Noto Sans JP',sans-serif">まとめて1通</text>
+ <g transform="translate(346 34)">
+   <path d="M18 8 q8 -10 0 -20 q-7 -8 0 -16" fill="none" stroke="#B7E3C8" stroke-width="3.2" stroke-linecap="round" opacity=".9"/>
+   <path d="M40 8 q8 -10 0 -20 q-7 -8 0 -16" fill="none" stroke="#D3EEDD" stroke-width="3.2" stroke-linecap="round" opacity=".8"/>
+   <ellipse cx="34" cy="80" rx="52" ry="11" fill="#EAF7EF" stroke="#15803D" stroke-width="2.2"/>
+   <ellipse cx="34" cy="77" rx="34" ry="6.5" fill="#fff" stroke="#9AD8B4" stroke-width="1.5"/>
+   <path d="M4 28 L64 28 L57 66 Q34 77 11 66 Z" fill="url(#cupG)" stroke="#15803D" stroke-width="2.6"/>
+   <path d="M64 34 q24 3 15 24 q-6 11 -18 7" fill="none" stroke="#15803D" stroke-width="3.6"/>
+   <ellipse cx="34" cy="28" rx="31" ry="7.5" fill="#fff" stroke="#15803D" stroke-width="2.4"/>
+   <ellipse cx="34" cy="28" rx="24" ry="5.4" fill="url(#coffeeG)"/>
+   <ellipse cx="27" cy="26" rx="8" ry="2.2" fill="rgba(255,255,255,.28)"/>
+ </g>
+</svg>`;
+
+const s=document.getElementById('slide');
+s.innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.65-1</div>
+    <div class="logos"><img class="ll" src="${A}icons/pa_logo.png" alt=""><span class="plus">＋</span><img class="ll" src="${A}icons/pa_outlook.png" alt=""></div>
+    <div class="title-text">休み明けの受信トレイ地獄を<span class="hl">“1通”に</span></div>
+    <img class="title-chara" src="${A}chara/chara_smile.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">📬</div>
+    <div class="txt">連休明け、<b>未読247件</b>。仕事の前に“メール整理という仕事”が始まるんですよね…。<br><span class="g">留守番秘書</span>が、大事なメールを<b>重要な順に1通</b>にまとめて、朝いちで届けてくれます。</div>
+  </div>
+
+  <div class="stage">
+    <div class="panel before">
+      <div class="phd">Before ｜ 休み明けの受信トレイ</div>
+      <div class="pbd">
+        <div class="scene">${mailStorm}<img class="sc-chara" src="${A}chara/chara_trouble.png" alt=""><div class="sc-badge">247<small>未読…</small></div></div>
+        <div class="inbox">
+          <div class="ih"><img src="${A}icons/pa_outlook.png" alt=""><b>受信トレイ</b><span class="cnt">未読 247</span></div>
+          <div class="mrow"><span class="dot"></span><span class="mfrom">総務部</span><span class="msub">【重要】夏季点検の日程について</span></div>
+          <div class="mrow"><span class="dot"></span><span class="mfrom">田中(取引先)</span><span class="msub">Re: 見積の件、ご確認ください</span></div>
+          <div class="mrow"><span class="dot"></span><span class="mfrom">メルマガ</span><span class="msub">🎉 今週のおすすめ特集！</span></div>
+          <div class="mrow"><span class="dot"></span><span class="mfrom">経理部</span><span class="msub">経費精算の締切リマインド</span></div>
+          <div class="mrow more">…あと 243 件</div>
+        </div>
+        <div class="pcap">大量すぎて<b>どれが大事か分からない</b>😩</div>
+      </div>
+    </div>
+
+    <div class="mid">
+      <div class="engine"><img src="${A}icons/pa_outlook.png" alt=""></div>
+      <div class="marrow">▶</div>
+      <div class="mflow">
+        <div class="mstep"><span class="mn">1</span>休暇中をためる</div>
+        <div class="mstep"><span class="mn">2</span>重要な順に整理</div>
+        <div class="mstep"><span class="mn">3</span>1通にまとめる</div>
+      </div>
+    </div>
+
+    <div class="panel after">
+      <div class="phd">After ｜ 朝いちに届く “おかえり便”</div>
+      <div class="pbd">
+        <div class="scene">${afterScene}<img class="sc-chara" src="${A}chara/chara_smile.png" alt=""></div>
+        <div class="digest">
+          <div class="dh"><img src="${A}icons/pa_outlook.png" alt=""><b>📬 おかえりなさい！休暇中の重要メール</b></div>
+          <div class="dsub">重要度の高い順に 8件をピックアップ</div>
+          <div class="dtbl">
+            <div class="dtr"><span class="imp hi">高</span><span class="dfrom">総務部</span><span class="dsubj">夏季点検の日程について</span></div>
+            <div class="dtr"><span class="imp hi">高</span><span class="dfrom">田中(取引先)</span><span class="dsubj">見積の件、ご確認ください</span></div>
+            <div class="dtr"><span class="imp nm">中</span><span class="dfrom">経理部</span><span class="dsubj">経費精算の締切リマインド</span></div>
+          </div>
+        </div>
+        <div class="pcap"><b>大事なものから</b>片づけられる☕</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="uses">
+    <div class="ulabel">こんな<br>休み明けに</div>
+    <div class="uc"><span class="em">🎌</span><span class="ut">連休・<b>大型連休明け</b></span></div>
+    <div class="uc"><span class="em">🏖️</span><span class="ut">有給・<b>夏季休暇明け</b></span></div>
+    <div class="uc"><span class="em">✈️</span><span class="ut">出張・<b>外出明け</b></span></div>
+    <div class="uc"><span class="em">🍼</span><span class="ut">産休・<b>育休明け</b></span></div>
+  </div>
+  <div class="src">出典：Microsoft Learn（Office 365 Outlook コネクタ）／Power Automate 実機（PA45 Demo）　※作り方は2枚目</div>
+`;
+</script>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>

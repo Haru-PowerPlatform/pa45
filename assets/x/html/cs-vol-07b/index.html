@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>コパスタ Vol.7 - 評価の作り方</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cs:#7C3AED; --cs-bg:#F5F3FF; --cs-bg2:#EDE9FE; --cs-dark:#5B21B6;
+    --green:#16A34A; --green-bg:#ECFDF5; --green-dark:#064E3B;
+    --ink:#1F2937; --gray:#374151; --weak:#6B7280;
+    --card:#F8F9FA; --line:#E5E7EB; --segline:#D1D1D1; --segink:#242424; --segph:#A19F9D;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+
+  .titlebar{height:90px;
+    background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#5B21B6 0%,#7C3AED 50%,#A855F7 100%);
+    box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(91,33,182,.36);
+    display:flex;align-items:center;gap:18px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--cs);font-weight:900;font-size:24px;border-radius:999px;padding:7px 20px;letter-spacing:.5px;white-space:nowrap;flex:0 0 auto;}
+  .part-pill{background:rgba(255,255,255,.16);color:#fff;font-weight:900;font-size:17px;border-radius:999px;padding:6px 14px;white-space:nowrap;flex:0 0 auto;border:1.6px solid rgba(255,255,255,.78);}
+  .part-pill b{color:#FDE047;}
+  .title-text{color:#fff;font-weight:900;font-size:30px;line-height:1.18;letter-spacing:.3px;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:140px;}
+  .title-text .q{color:#FDE047;}
+  .title-chara{position:absolute;right:14px;bottom:-52px;height:148px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .body{flex:1 1 auto;display:flex;gap:15px;padding:11px 18px 0;min-height:0;}
+  .mockwrap{flex:1.4;display:flex;flex-direction:column;min-height:0;}
+  .mocklabel{font-weight:900;font-size:17px;color:var(--cs-dark);margin-bottom:7px;display:flex;align-items:center;gap:8px;}
+  .mocklabel .dot{width:11px;height:11px;border-radius:50%;background:var(--cs);}
+
+  .dlg{flex:1;border-radius:12px;border:1px solid var(--segline);background:#fff;box-shadow:0 10px 24px rgba(0,0,0,.22);overflow:hidden;display:flex;flex-direction:column;font-family:"Segoe UI","Noto Sans JP",sans-serif;min-height:0;padding:13px 16px 12px;}
+  .dlg-h{display:flex;align-items:flex-start;justify-content:space-between;flex:0 0 auto;}
+  .dlg-h .t{font-size:19px;font-weight:700;color:#242424;line-height:1.2;}
+  .dlg-h .x{font-size:15px;color:#605E5C;font-weight:600;}
+  .dlg-sub{font-size:11.5px;color:#605E5C;margin-top:3px;flex:0 0 auto;}
+
+  .fld{flex:0 0 auto;margin-top:10px;}
+  .fld .lb{font-size:11px;font-weight:800;color:#605E5C;margin-bottom:4px;}
+  .fld .in{height:28px;border:1px solid #D1D1D1;border-radius:7px;display:flex;align-items:center;padding:0 11px;font-size:12px;font-weight:700;color:#242424;background:#fff;}
+  .fld .in.sel{justify-content:space-between;}
+  .fld .in .cv{color:#605E5C;font-size:11px;}
+  .row2{display:flex;gap:9px;}
+  .row2 .fld{flex:1;}
+
+  .waylabel{margin-top:11px;font-size:11px;font-weight:800;color:#605E5C;}
+  .ways{display:flex;gap:8px;margin-top:6px;flex:0 0 auto;}
+  .way{flex:1;border:1px solid #E4E4E4;border-radius:9px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.06);padding:6px 7px;display:flex;flex-direction:column;align-items:center;gap:3px;text-align:center;}
+  .way.hi{border:2px solid var(--cs);background:#FBFAFF;box-shadow:0 3px 9px rgba(124,58,237,.24);}
+  .way .em{font-size:19px;}
+  .way .wn{font-size:11.5px;font-weight:800;color:#242424;line-height:1.25;}
+  .way .wd{font-size:9.5px;font-weight:600;color:#605E5C;line-height:1.3;}
+
+  .list{flex:1;margin-top:10px;border:1px solid #E7E7E7;border-radius:9px;overflow:hidden;display:flex;flex-direction:column;min-height:0;}
+  .list .lh{flex:0 0 auto;background:#F6F5F4;font-size:10.5px;font-weight:900;color:#605E5C;padding:5px 10px;}
+  .list .li{flex:1;display:flex;align-items:center;gap:8px;border-top:1px solid #F0F0F0;padding:3px 10px;font-size:11.5px;font-weight:700;color:#242424;}
+  .list .li .n{flex:0 0 auto;width:17px;height:17px;border-radius:50%;background:#EDE9FE;color:#5B21B6;font-size:10px;font-weight:900;display:flex;align-items:center;justify-content:center;}
+  .btns{flex:0 0 auto;display:flex;justify-content:flex-end;gap:8px;margin-top:10px;}
+  .b1{background:var(--cs);color:#fff;font-size:12px;font-weight:800;border-radius:7px;padding:7px 18px;}
+  .b2{background:#fff;border:1px solid #D1D1D1;color:#242424;font-size:12px;font-weight:800;border-radius:7px;padding:7px 16px;}
+
+  .how{flex:1;display:flex;flex-direction:column;min-height:0;}
+  .how-head{align-self:stretch;text-align:center;color:#fff;font-weight:900;font-size:22px;border-radius:11px;padding:10px 12px;margin-bottom:11px;background:linear-gradient(120deg,#7C3AED 0%,#C026D3 55%,#EC4899 100%);box-shadow:0 4px 8px rgba(0,0,0,.26);text-shadow:0 1px 2px rgba(0,0,0,.22);}
+  .steps{display:flex;flex-direction:column;justify-content:space-between;flex:1;gap:10px;}
+  .step{background:linear-gradient(180deg,#FFFFFF,#F4F1FB);border:2px solid #DDD3F0;border-radius:14px;box-shadow:0 5px 11px rgba(0,0,0,.12);display:flex;align-items:center;gap:13px;padding:11px 14px;flex:1;}
+  .step .num{flex:0 0 auto;width:45px;height:45px;border-radius:50%;background:linear-gradient(180deg,#8B5CF6,#6D28D9);color:#fff;font-weight:900;font-size:24px;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 7px rgba(109,40,217,.4);}
+  .step .tx{display:flex;flex-direction:column;gap:3px;}
+  .step .tx .h{font-weight:900;font-size:19.5px;color:var(--ink);line-height:1.2;}
+  .step .tx .s{font-weight:700;font-size:14.5px;color:#4B5563;line-height:1.32;}
+  .step .tx .s b{color:var(--cs-dark);}
+
+  .darkband{margin:11px 0 0;background:linear-gradient(180deg,#565C66,#4A4F58);color:#fff;flex:0 0 auto;position:relative;display:flex;align-items:stretch;gap:14px;padding:9px 22px 11px;height:128px;overflow:hidden;}
+  .nf{flex:1.55;display:flex;flex-direction:column;min-height:0;}
+  .nf .label{font-weight:900;font-size:16px;color:#FCD34D;margin-bottom:6px;}
+  .nf .grid{display:flex;gap:9px;flex:1;min-height:0;margin-bottom:14px;}
+  .nf .fc{flex:1;background:linear-gradient(180deg,#FFFFFF,#EEF1F6);color:var(--ink);border-radius:10px;padding:7px 10px;display:flex;flex-direction:column;justify-content:center;gap:3px;box-shadow:0 3px 6px rgba(0,0,0,.26);border-top:3px solid var(--cs);}
+  .nf .fc .ft{font-weight:900;font-size:14.5px;color:var(--cs-dark);line-height:1.2;}
+  .nf .fc .fd{font-weight:700;font-size:12.3px;color:#4B5563;line-height:1.28;}
+  .note{flex:1;background:linear-gradient(180deg,#646A75,#565C66);border:1.5px solid #7A818D;border-radius:11px;padding:10px 14px;margin-right:118px;display:flex;flex-direction:column;justify-content:center;}
+  .note .label{font-weight:900;font-size:15px;color:#FCD34D;margin-bottom:6px;}
+  .note .txt{font-weight:700;font-size:13.6px;color:#fff;line-height:1.4;}
+  .note .txt b{color:#FCA5A5;}
+  .band-chara{position:absolute;right:6px;bottom:0;height:150px;z-index:50;filter:drop-shadow(0 3px 7px rgba(0,0,0,.45));}
+  .src{position:absolute;left:22px;bottom:3px;font-size:11px;font-weight:500;color:rgba(255,255,255,.5);z-index:40;}
+</style>
+</head>
+<body>
+<div id="slide">
+  <div class="titlebar">
+    <div class="vol-pill">コパスタ Vol.7</div>
+    <div class="part-pill">後編 <b>(2/2)</b></div>
+    <div class="title-text">質問を10個ためて、流すだけ。<br>評価セットの作り方は3ステップ<span class="q">！</span></div>
+    <img class="title-chara" src="../../pptx/_assets/chara/chara_laptop_g.png" alt="">
+  </div>
+
+  <div class="body">
+    <div class="mockwrap">
+      <div class="mocklabel"><span class="dot"></span>評価（Evaluation）を作る画面</div>
+      <div class="dlg">
+        <div class="dlg-h">
+          <div class="t">新しい評価</div>
+          <div class="x">✕</div>
+        </div>
+        <div class="dlg-sub">テストしたい会話をまとめて、まとめて採点します</div>
+
+        <div class="fld">
+          <div class="lb">名前</div>
+          <div class="in">社内ヘルプ｜休暇まわりの定番質問</div>
+        </div>
+        <div class="row2">
+          <div class="fld">
+            <div class="lb">テスト方法</div>
+            <div class="in sel">General quality<span class="cv">▾</span></div>
+          </div>
+          <div class="fld">
+            <div class="lb">実行するユーザー</div>
+            <div class="in sel">自分（作成者）<span class="cv">▾</span></div>
+          </div>
+        </div>
+
+        <div class="waylabel">テスト会話の追加方法</div>
+        <div class="ways">
+          <div class="way hi"><span class="em">✍️</span><span class="wn">手で書く</span><span class="wd">よく来る質問をそのまま</span></div>
+          <div class="way"><span class="em">🤖</span><span class="wn">AIに作らせる</span><span class="wd">想定質問を自動生成</span></div>
+          <div class="way"><span class="em">📄</span><span class="wn">CSVを読み込む</span><span class="wd">まとめて一括登録</span></div>
+        </div>
+
+        <div class="list">
+          <div class="lh">追加済みのテスト会話（3件）</div>
+          <div class="li"><span class="n">1</span>有給は何日前までに申請すればいい？</div>
+          <div class="li"><span class="n">2</span>申請はどこから出しますか？</div>
+          <div class="li"><span class="n">3</span>半休は取れますか？</div>
+        </div>
+
+        <div class="btns"><span class="b2">キャンセル</span><span class="b1">Evaluate（実行）</span></div>
+      </div>
+    </div>
+
+    <div class="how">
+      <div class="how-head">この3ステップで作れる</div>
+      <div class="steps">
+        <div class="step">
+          <div class="num">1</div>
+          <div class="tx"><div class="h">Evaluate タブで作る</div><div class="s">名前・テスト方法・<br>実行するユーザーを決めます</div></div>
+        </div>
+        <div class="step">
+          <div class="num">2</div>
+          <div class="tx"><div class="h">テスト会話を足す</div><div class="s">手書き／AI生成／CSV。<br><b>実際に社内で来た質問</b>が一番効きます</div></div>
+        </div>
+        <div class="step">
+          <div class="num">3</div>
+          <div class="tx"><div class="h">実行して、直して、また実行</div><div class="s">点数の落ちた質問を見て、<br><b>指示文やナレッジ</b>を手当てします</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="darkband">
+    <div class="nf">
+      <div class="label">うまく回すコツ</div>
+      <div class="grid">
+        <div class="fc"><div class="ft">最初は10問でいい</div><div class="fd">よく聞かれる質問から。増やすのは後でもできる</div></div>
+        <div class="fc"><div class="ft">直す前に1回流す</div><div class="fd">比べる相手（前回の点数）がないと良し悪しが分からない</div></div>
+        <div class="fc"><div class="ft">答えられない質問も入れる</div><div class="fd">「わからない」と正直に言えるかも大事な品質</div></div>
+      </div>
+    </div>
+    <div class="note">
+      <div class="label">⚠ 使う前に確認</div>
+      <div class="txt">評価は<b>プレビュー機能</b>で、採点もAI。点数は目安として見て、最後は自分で読みます。</div>
+    </div>
+    <div class="src">出典：Microsoft Learn（新しいエクスペリエンス／エージェントの評価・テストセットの作成）／画面は説明用の再現です</div>
+  </div>
+  <img class="band-chara" src="../../pptx/_assets/chara/chara_guts_g.png" alt="">
+</div>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>

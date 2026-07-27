@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.50-1 Copilotへの頼み方は“新人への頼み方”と同じ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB; --blue-bg:#EFF6FF; --blue-dark:#1E40AF;
+    --green:#16A34A; --green-bg:#ECFDF5; --green-dark:#064E3B;
+    --enji:#A4283C; --enji-dark:#6E1628;
+    --orange:#EA580C; --amber:#D97706; --ink:#1F2937; --gray:#374151; --weak:#6B7280;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+  .ic{display:block;width:100%;height:100%;}
+
+  .titlebar{height:88px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:15px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:25px;border-radius:999px;padding:7px 19px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .vol-logo{height:48px;width:48px;object-fit:contain;flex:0 0 auto;background:#fff;border-radius:12px;padding:5px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
+  .title-text{color:#fff;font-weight:900;font-size:28px;line-height:1.16;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:150px;}
+  .title-text .hl{color:#FFE08A;}
+  .title-chara{position:absolute;right:14px;bottom:-42px;height:144px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .concl{margin:9px 16px 0;background:var(--blue-bg);border:2.5px solid var(--blue);border-radius:13px;display:flex;align-items:center;gap:13px;padding:9px 18px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;width:40px;height:40px;border-radius:11px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;padding:8px;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
+  .concl .txt{font-weight:800;font-size:18px;color:var(--blue-dark);line-height:1.36;padding-right:96px;}
+  .concl .txt b{color:var(--orange);}
+
+  .stage{flex:1 1 auto;margin:11px 16px 0;display:flex;align-items:stretch;gap:0;min-height:0;position:relative;}
+  .side{flex:1;display:flex;flex-direction:column;min-height:0;}
+  .shd{font-weight:900;font-size:18.5px;margin-bottom:8px;display:flex;align-items:center;gap:9px;}
+  .shd img{width:26px;height:26px;object-fit:contain;}
+  .shd.bad{color:var(--enji-dark);} .shd.good{color:var(--green-dark);}
+  .panel{flex:1;border-radius:14px;padding:12px 14px;display:flex;flex-direction:column;justify-content:space-evenly;gap:9px;min-height:0;box-shadow:0 5px 13px rgba(0,0,0,.12);}
+  .panel.bad{background:linear-gradient(180deg,#FDF6F7,#FAEDEF);border:2.5px solid var(--enji);}
+  .panel.good{background:linear-gradient(180deg,#F3FBF6,#E9F8EF);border:2.5px solid var(--green);}
+  .bub{border-radius:12px;padding:10px 14px;font-size:16px;line-height:1.46;font-weight:700;background:#fff;box-shadow:0 2px 5px rgba(0,0,0,.07);}
+  .bub .who{display:flex;align-items:center;gap:7px;font-weight:900;font-size:12.5px;margin-bottom:4px;color:#5A6B85;}
+  .bub .who img{width:18px;height:18px;object-fit:contain;}
+  .bub.me{border:1.5px solid #D6CBD0;color:#4A3A40;}
+  .panel.good .bub.me{border:1.5px solid #BFE3CC;color:#274435;}
+  .bub.me b{color:var(--enji);}
+  .panel.good .bub.me b{color:var(--green-dark);}
+  .bub.ai{border:1.5px solid #E4E1EC;color:#333;}
+  .verdict{display:flex;align-items:center;gap:9px;font-weight:900;font-size:16.5px;border-radius:11px;padding:9px 13px;}
+  .midnote{display:flex;align-items:center;gap:8px;font-weight:800;font-size:14.5px;color:#6B4A52;line-height:1.35;padding:0 4px;}
+  .panel.good .midnote{color:#2E5A43;}
+  .midnote svg{flex:0 0 auto;width:18px;height:18px;color:#A4283C;}
+  .panel.good .midnote svg{color:#16A34A;}
+  .ai-digest{font-size:14.5px;line-height:1.45;color:#444;font-weight:700;}
+  .verdict img{width:24px;height:24px;object-fit:contain;flex:0 0 auto;}
+  .verdict.bad{background:#FBE9EC;border:1.5px solid #E0A5B0;color:var(--enji-dark);}
+  .verdict.good{background:#DFF5E8;border:1.5px solid #86D8A5;color:var(--green-dark);}
+  .ai-digest b{color:var(--enji);}
+  .panel.good .ai-digest b{color:var(--green-dark);}
+
+  .vsmid{flex:0 0 118px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;position:relative;}
+  .vsbadge{width:64px;height:64px;border-radius:50%;background:linear-gradient(180deg,#475569,#1F2937);color:#fff;font-weight:900;font-size:22px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 10px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.3);border:3px solid #fff;}
+  .vschara{height:118px;filter:drop-shadow(0 3px 7px rgba(0,0,0,.4));}
+
+  .rule{flex:0 0 auto;margin:11px 16px 12px;background:linear-gradient(180deg,#565C66,#4A4F58);border-radius:13px;padding:10px 18px;display:flex;align-items:center;gap:14px;box-shadow:0 3px 9px rgba(0,0,0,.18);}
+  .rule .rl{flex:0 0 auto;display:flex;align-items:center;gap:8px;background:linear-gradient(180deg,#FBBF24,#EA580C);color:#fff;font-weight:900;font-size:15.5px;border-radius:9px;padding:8px 14px;box-shadow:0 2px 4px rgba(0,0,0,.3);}
+  .rule .rl svg{width:18px;height:18px;}
+  .rule .items{flex:1;display:flex;gap:10px;}
+  .rule .it{flex:1;background:rgba(255,255,255,.10);border:1.5px solid rgba(255,255,255,.22);border-radius:9px;padding:7px 11px;color:#fff;font-weight:800;font-size:14.5px;line-height:1.3;display:flex;align-items:center;gap:8px;}
+  .rule .it .n{flex:0 0 auto;width:22px;height:22px;border-radius:50%;background:#FBBF24;color:#4A2A00;font-size:13px;font-weight:900;display:flex;align-items:center;justify-content:center;}
+  .rule .it b{color:#FCD34D;}
+  .src{position:absolute;left:16px;bottom:3px;font-size:10px;color:#AEB6C2;font-weight:700;z-index:3;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const ICON={
+ bulb:'<path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/>',
+ list:'<path d="M8 6h13M8 12h13M8 18h13"/><path d="M3 6h.01M3 12h.01M3 18h.01"/>',
+ loop:'<path d="M17 2l4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/>'
+};
+const svg=(n)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${ICON[n]}</svg>`;
+
+const s=document.getElementById('slide');
+s.innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.50-1</div>
+    <img class="vol-logo" src="${A}icons/copilot_m365.png" alt="">
+    <div class="title-text">Copilotへの頼み方は<span class="hl">“新人さんへの頼み方”と同じ</span></div>
+    <img class="title-chara" src="${A}chara/chara_point.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svg('bulb')}</div>
+    <div class="txt">「いい感じにやっといて」で新人さんが困るのと同じで、曖昧に頼むと<b>作り方のレシピは返ってこない</b>。<br><b>いつ・何を・どうしたいか</b>を書けば、一発でレシピが届く。実際の回答で比較します。</div>
+  </div>
+
+  <div class="stage">
+    <div class="side">
+      <div class="shd bad"><img src="${A}icons/icon_x_red.png" alt="">曖昧な頼み方（実録）</div>
+      <div class="panel bad">
+        <div class="bub me"><span class="who"><img src="${A}chara/chara_trouble.png" alt="">自分</span>メールを<b>いい感じに</b>自動で整理したい</div>
+        <div class="bub ai"><span class="who"><img src="${A}icons/copilot_m365.png" alt="">Copilot</span><span class="ai-digest">Outlookルール＋Power Automateの2段構えが…<br>①自動振り分け ②メルマガ隔離 ③添付保存…<br><b>「どんなメールが多いか教えてください」</b></span></div>
+        <div class="midnote">${svg('loop')}<span>もう1〜2往復しないとレシピに辿り着けない。<br>間違いではないけれど、遠回り。</span></div>
+        <div class="verdict bad"><img src="${A}icons/icon_x_red.png" alt="">提案の羅列＋逆質問。レシピはまだ出ない</div>
+      </div>
+    </div>
+
+    <div class="vsmid">
+      <div class="vsbadge">VS</div>
+      <img class="vschara" src="${A}chara/chara_think.png" alt="">
+    </div>
+
+    <div class="side">
+      <div class="shd good"><img src="${A}icons/icon_check_green.png" alt="">具体的な頼み方（実録）</div>
+      <div class="panel good">
+        <div class="bub me"><span class="who"><img src="${A}chara/chara_smile.png" alt="">自分</span><b>メールに添付ファイルが届いたら、OneDriveに自動保存</b>するフローを作りたい。<b>初心者なので手順を</b>わかりやすく教えて</div>
+        <div class="bub ai"><span class="who"><img src="${A}icons/copilot_m365.png" alt="">Copilot</span><span class="ai-digest">はい、初心者の方向けに説明します。<br><b>手順①〜⑧の完全レシピ</b>＋つまずく設定＋<br>エラー対策まで一発で回答</span></div>
+        <div class="midnote">${svg('loop')}<span>このままVol.49の3ステップで組めば完成。<br>往復ゼロの最短ルート。</span></div>
+        <div class="verdict good"><img src="${A}icons/icon_check_green.png" alt="">1回の質問で、作れるレシピが届いた</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rule">
+    <div class="rl">${svg('list')}頼み方の3点セット</div>
+    <div class="items">
+      <div class="it"><span class="n">1</span><span><b>いつ</b>（◯◯が届いたら）</span></div>
+      <div class="it"><span class="n">2</span><span><b>どうしたい</b>（△△に保存）</span></div>
+      <div class="it"><span class="n">3</span><span><b>「初心者なので手順を」</b></span></div>
+    </div>
+  </div>
+  <div class="src">出典：Microsoft 365 Copilot 実機</div>
+`;
+</script>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>

@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.59-1 日程調整を秘書に丸投げ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB; --blue-bg:#EFF6FF; --blue-dark:#1E40AF;
+    --green:#16A34A; --green-dark:#064E3B; --green-bg:#ECFDF5;
+    --teams:#5B5FC7; --teams-dark:#4347A8;
+    --purple:#7C3AED; --purple-dark:#5B21B6;
+    --orange:#EA580C; --amber:#D97706; --ink:#1F2937; --gray:#374151; --weak:#6B7280;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+  .ic{display:block;width:100%;height:100%;}
+
+  .titlebar{height:86px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:14px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:25px;border-radius:999px;padding:7px 19px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .logos{display:flex;align-items:center;gap:7px;flex:0 0 auto;}
+  .logos .ll{height:47px;width:47px;object-fit:contain;background:#fff;border-radius:12px;padding:6px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
+  .logos .plus{color:#fff;font-weight:900;font-size:24px;text-shadow:0 1px 2px rgba(0,0,0,.25);line-height:1;}
+  .title-text{color:#fff;font-weight:900;font-size:25px;line-height:1.16;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:140px;}
+  .title-text .hl{color:#FFE08A;}
+  .title-chara{position:absolute;right:14px;bottom:-42px;height:142px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .concl{margin:9px 16px 0;background:var(--blue-bg);border:2.5px solid var(--blue);border-radius:13px;display:flex;align-items:center;gap:15px;padding:13px 20px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;width:50px;height:50px;border-radius:13px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;padding:11px;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
+  .concl .txt{font-weight:800;font-size:23px;color:var(--blue-dark);line-height:1.4;padding-right:40px;}
+  .concl .txt b{color:var(--orange);}
+  .concl .txt .mg{color:var(--purple-dark);}
+
+  .stage{flex:1 1 auto;margin:12px 16px 0;display:flex;align-items:stretch;gap:0;min-height:0;}
+  .col{flex:1;display:flex;flex-direction:column;min-height:0;border-radius:15px;padding:12px 13px 12px;box-shadow:0 4px 12px rgba(0,0,0,.11),inset 0 1px 0 rgba(255,255,255,.7);position:relative;}
+  .col.c1{background:#F5F5FC;border:2.5px solid var(--teams);}
+  .col.c2{background:#F1F6FF;border:2.5px solid var(--blue);}
+  .col.c3{background:#F0FBF4;border:2.5px solid var(--green);}
+  .cn{position:absolute;top:-19px;left:12px;right:12px;display:flex;align-items:center;justify-content:center;gap:8px;color:#fff;font-weight:900;font-size:28px;border-radius:12px;padding:9px 14px;box-shadow:0 3px 7px rgba(0,0,0,.28);white-space:nowrap;letter-spacing:-.5px;}
+  .c1 .cn{background:var(--teams);} .c2 .cn{background:var(--blue);} .c3 .cn{background:var(--green);}
+  .col .top{flex:1;display:flex;flex-direction:column;justify-content:center;gap:9px;min-height:0;margin-top:22px;}
+  .cap{flex:0 0 auto;margin-top:10px;border-radius:10px;padding:10px 12px;font-size:15.5px;font-weight:800;line-height:1.44;display:flex;align-items:flex-start;gap:8px;}
+  .cap .d{flex:0 0 auto;width:10px;height:10px;border-radius:50%;margin-top:6px;}
+  .c1 .cap{background:#EAEAF8;color:#3A3B6B;} .c1 .cap .d{background:var(--teams);}
+  .c2 .cap{background:#E6EFFC;color:#1E3A5F;} .c2 .cap .d{background:var(--blue);}
+  .c3 .cap{background:#DFF5E8;color:#0B5E37;} .c3 .cap .d{background:var(--green);}
+  .cap b{font-weight:900;}
+
+  .arrowcol{flex:0 0 46px;display:flex;align-items:center;justify-content:center;color:var(--blue);}
+  .arrowcol svg{width:40px;height:40px;filter:drop-shadow(0 2px 3px rgba(0,0,0,.15));}
+
+  /* Teams compose (step1) */
+  .tmini{font-family:'Segoe UI','Noto Sans JP',sans-serif;}
+  .tmini .bar{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:800;color:#4347A8;margin-bottom:8px;}
+  .tmini .bar .ti{width:22px;height:22px;border-radius:6px;background:#5B5FC7;display:flex;align-items:center;justify-content:center;padding:3px;}
+  .tmini .bar .ti img{width:100%;height:100%;object-fit:contain;filter:brightness(0) invert(1);}
+  .compose{background:#fff;border:2.5px solid #5B5FC7;border-radius:12px;padding:12px 13px;display:flex;align-items:center;gap:9px;box-shadow:0 4px 12px rgba(91,95,199,.25);}
+  .compose .kw{font-weight:900;font-size:27px;color:#4347A8;background:#EEF0FB;border-radius:8px;padding:4px 14px;}
+  .compose .cur{width:2px;height:28px;background:#5B5FC7;animation:none;}
+  .compose .send{margin-left:auto;flex:0 0 auto;width:38px;height:38px;border-radius:50%;background:linear-gradient(180deg,#7A7EDE,#5B5FC7);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 2px 5px rgba(91,95,199,.4);}
+  .callout{margin-top:11px;background:linear-gradient(180deg,#FFF8E5,#FFEFC2);border:2px solid #F5C451;border-radius:11px;padding:10px 13px;display:flex;align-items:center;gap:11px;font-weight:900;font-size:16px;color:#7A4A12;line-height:1.34;box-shadow:0 2px 6px rgba(0,0,0,.08);}
+  .callout .uparr{flex:0 0 auto;width:34px;height:34px;border-radius:9px;background:linear-gradient(180deg,#FBBF24,#EA580C);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 5px rgba(234,88,12,.35);}
+  .callout .uparr svg{width:22px;height:22px;}
+  .callout .big{color:#D2691E;font-size:19px;}
+
+  /* PA engine (step2) */
+  .c2 .top{align-items:center;text-align:center;}
+  .parobot{width:96px;height:96px;border-radius:24px;background:linear-gradient(180deg,#EAF2FF,#D6E6FF);border:3px solid var(--blue);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 16px rgba(37,99,235,.28),inset 0 1px 0 rgba(255,255,255,.8);}
+  .parobot img{width:60px;height:60px;object-fit:contain;}
+  .kidou{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(180deg,#FBBF24,#EA580C);color:#fff;font-weight:900;font-size:21px;border-radius:999px;padding:7px 20px;box-shadow:0 4px 9px rgba(234,88,12,.42);}
+  .kidou svg{width:20px;height:20px;}
+  .pasteps{align-self:stretch;background:#fff;border:1.5px solid #C4D4EE;border-radius:11px;padding:6px 11px;display:flex;flex-direction:column;gap:3px;box-shadow:0 2px 6px rgba(0,0,0,.06);}
+  .pasteps .pl{display:flex;align-items:center;gap:9px;font-weight:800;font-size:16px;color:#23416B;line-height:1.2;text-align:left;}
+  .pasteps .pl .sn{flex:0 0 auto;width:22px;height:22px;border-radius:50%;background:var(--blue);color:#fff;font-size:12.5px;font-weight:900;display:flex;align-items:center;justify-content:center;}
+  .pasteps .pl b{color:var(--blue-dark);}
+
+  /* template result (step3) */
+  .botrow{display:flex;align-items:center;gap:9px;font-family:'Segoe UI','Noto Sans JP',sans-serif;}
+  .botrow .av{flex:0 0 auto;width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#3B82F6,#7C3AED);display:flex;align-items:center;justify-content:center;padding:6px;}
+  .botrow .av img{width:100%;height:100%;object-fit:contain;}
+  .botrow .bn{font-weight:900;font-size:14.5px;color:#242424;}
+  .botrow .bp{font-weight:800;font-size:11px;color:#5B5FC7;background:#EEF0FB;border:1px solid #D6D8F2;border-radius:5px;padding:1px 7px;}
+  .tmpl{background:#fff;border:2.5px solid var(--green);border-radius:13px;padding:13px 15px;box-shadow:0 6px 15px rgba(22,163,74,.18);}
+  .tmpl .th{display:flex;align-items:center;gap:8px;font-weight:900;font-size:19px;color:var(--green-dark);padding-bottom:8px;margin-bottom:9px;border-bottom:2px dashed #A7DEBD;}
+  .tmpl .date{color:#1E40AF;background:#E7EEFB;border-radius:6px;padding:1px 8px;font-size:16px;}
+  .tmpl .row{display:flex;align-items:center;gap:9px;font-size:16px;font-weight:800;color:#2B3A2F;padding:5px 0;}
+  .tmpl .row .sq{flex:0 0 auto;width:13px;height:13px;background:#94D3AC;border-radius:3px;}
+  .tmpl .row .ln{flex:1;border-bottom:2px dotted #BFD8C8;height:14px;}
+  .popbadge{margin-top:10px;align-self:flex-start;display:inline-flex;align-items:center;gap:8px;background:linear-gradient(180deg,#22C55E,#16A34A);color:#fff;font-weight:900;font-size:16px;border-radius:999px;padding:7px 16px;box-shadow:0 4px 9px rgba(22,163,74,.4);}
+  .popbadge svg{width:18px;height:18px;}
+
+  /* bottom uses */
+  .uses{flex:0 0 auto;margin:11px 16px 12px;display:flex;align-items:stretch;gap:9px;}
+  .ulabel{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(180deg,#7A7EDE,#5B5FC7);color:#fff;font-weight:900;font-size:14px;border-radius:11px;padding:0 15px;text-align:center;line-height:1.25;box-shadow:0 3px 8px rgba(91,95,199,.3);}
+  .uc{flex:1;background:#F8F9FA;border:2px solid #D3D5EC;border-radius:11px;padding:8px 13px;box-shadow:0 2px 6px rgba(0,0,0,.07);display:flex;align-items:center;gap:11px;}
+  .uc .cmd{flex:0 0 auto;font-weight:900;font-size:16px;color:#fff;background:linear-gradient(180deg,#7A7EDE,#5B5FC7);border-radius:7px;padding:5px 12px;white-space:nowrap;}
+  .uc .ut{font-size:14.5px;font-weight:800;color:#3A4656;line-height:1.3;}
+  .uc .ut b{color:var(--teams-dark);}
+  .src{position:absolute;left:16px;bottom:3px;font-size:10px;color:#AEB6C2;font-weight:700;z-index:3;}
+
+  /* --- vol60 concept: 1入力 → 4成果物 --- */
+  /* c1 input */
+  .inputcard{align-self:stretch;background:#fff;border:2px solid #C7CBE8;border-radius:13px;padding:12px 13px;box-shadow:0 3px 9px rgba(0,0,0,.09);font-family:'Segoe UI','Noto Sans JP',sans-serif;}
+  .inputcard .il{font-size:13.5px;font-weight:800;color:#4347A8;margin-bottom:8px;display:flex;align-items:center;gap:7px;}
+  .inputcard .il .tag{background:#EEF0FB;border-radius:6px;padding:2px 9px;font-size:12px;}
+  .inputbox{border:2px solid #5B5FC7;border-radius:10px;padding:12px 13px;font-weight:900;font-size:23px;color:#242424;background:#F7F8FF;display:flex;align-items:center;gap:7px;}
+  .inputbox .cur{width:2px;height:26px;background:#5B5FC7;}
+  .runbtn{margin-top:12px;display:flex;align-items:center;justify-content:center;gap:9px;background:linear-gradient(180deg,#7A7EDE,#5B5FC7);color:#fff;font-weight:900;font-size:21px;border-radius:11px;padding:12px 0;box-shadow:0 4px 9px rgba(91,95,199,.4);}
+  .runbtn svg{width:21px;height:21px;}
+  /* c2 fan-out engine */
+  .c2 .top{align-items:center;text-align:center;}
+  .fanbadge{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(180deg,#FBBF24,#EA580C);color:#fff;font-weight:900;font-size:20px;border-radius:999px;padding:8px 20px;box-shadow:0 4px 9px rgba(234,88,12,.42);}
+  .fanbadge svg{width:20px;height:20px;}
+  .fannote{align-self:stretch;background:#fff;border:1.5px solid #C4D4EE;border-radius:11px;padding:10px 12px;font-weight:800;font-size:15.5px;color:#23416B;line-height:1.36;box-shadow:0 2px 6px rgba(0,0,0,.06);}
+  .fannote b{color:var(--blue-dark);}
+  /* c3 4-output grid */
+  .grid4{align-self:stretch;display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+  .ocard{background:#fff;border:2px solid #B9E4C9;border-radius:12px;padding:9px 11px;box-shadow:0 3px 8px rgba(22,163,74,.12);display:flex;flex-direction:column;gap:3px;}
+  .ocard .oi{font-size:25px;line-height:1;}
+  .ocard .ot{font-weight:900;font-size:15.5px;color:var(--green-dark);}
+  .ocard .os{font-weight:800;font-size:12px;color:#3f6b52;line-height:1.25;}
+  /* c3 candidate slots (vol59) */
+  .candcard{align-self:stretch;background:#fff;border:2.5px solid var(--green);border-radius:13px;padding:12px 14px;box-shadow:0 6px 15px rgba(22,163,74,.18);}
+  .candcard .ch2{display:flex;align-items:center;gap:8px;font-weight:900;font-size:17px;color:var(--green-dark);padding-bottom:8px;margin-bottom:8px;border-bottom:2px dashed #A7DEBD;}
+  .candcard .crow{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:900;color:#2B3A2F;padding:5px 0;}
+  .candcard .crow .dow{flex:0 0 auto;font-size:13px;font-weight:900;color:#0B5E37;background:#DCFCE7;border-radius:6px;padding:2px 10px;}
+  .candcard .crow .tm{font-variant-numeric:tabular-nums;letter-spacing:.3px;}
+  .candcard .crow .ok{margin-left:auto;flex:0 0 auto;color:#16A34A;font-size:18px;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const ICON={
+ arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',
+ bulb:'<path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/>',
+ up:'<path d="M12 19V5M5 12l7-7 7 7"/>',
+ bolt:'<path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/>',
+ check:'<path d="M20 6 9 17l-5-5"/>',
+ belloff:'<path d="M13.73 21a2 2 0 0 1-3.46 0"/><path d="M18.63 13A17.9 17.9 0 0 1 18 8"/><path d="M6.26 6.26A5.86 5.86 0 0 0 6 8c0 7-3 9-3 9h14"/><path d="M18 8a6 6 0 0 0-9.33-5"/><path d="m1 1 22 22"/>',
+ clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+ play:'<path d="M7 4v16l13-8z"/>',
+ cal:'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>'
+};
+const svg=(n)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${ICON[n]}</svg>`;
+
+const s=document.getElementById('slide');
+s.innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.59-1</div>
+    <div class="logos"><img class="ll" src="${A}icons/pa_logo.png" alt=""></div>
+    <div class="title-text">日程調整を“秘書”に丸投げ ― <span class="hl">みんなの空きを探して候補が返る！</span></div>
+    <img class="title-chara" src="${A}chara/chara_guts.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svg('cal')}</div>
+    <div class="txt">「来週、AさんBさんと60分で」——それだけ伝えれば、フローが<b>全員の予定表を読んで空き時間を探し</b>、<br>候補を持ってくる。<b>日程調整の往復メールがゼロに。</b>いわば<span class="mg">日程調整の秘書</span>。</div>
+  </div>
+
+  <div class="stage">
+    <div class="col c1">
+      <div class="cn">① 参加者と時間を伝える</div>
+      <div class="top">
+        <div class="inputcard">
+          <div class="il"><span class="tag">おまかせ</span>誰と・何分かを入れるだけ</div>
+          <div class="inputbox" style="font-size:19px;">出席者：Aさん / Bさん<span class="cur"></span></div>
+          <div class="inputbox" style="font-size:19px;margin-top:8px;">所要時間：60分</div>
+          <div class="runbtn">${svg('play')}秘書におまかせ</div>
+        </div>
+      </div>
+      <div class="cap"><span class="d"></span><span><b>誰と・何分か</b>を伝えるだけ。細かい時間合わせは<b>秘書におまかせ。</b></span></div>
+    </div>
+
+    <div class="arrowcol">${svg('arrow')}</div>
+
+    <div class="col c2">
+      <div class="cn">② みんなの空きをチェック</div>
+      <div class="top">
+        <div class="parobot"><img src="${A}icons/pa_logo.png" alt=""></div>
+        <div class="fanbadge">${svg('cal')}全員の予定表を照合！</div>
+        <div class="fannote">Power Automateが参加者<b>全員の予定表を読んで</b>、<b>誰とも重ならない時間</b>だけを探し出す。手作業の突き合わせは不要。</div>
+      </div>
+      <div class="cap"><span class="d"></span><span>「いつ空いてる？」の<b>確認メールも、カレンダー突き合わせも要らない。</b></span></div>
+    </div>
+
+    <div class="arrowcol">${svg('arrow')}</div>
+
+    <div class="col c3">
+      <div class="cn">③ 空いてる候補が返る</div>
+      <div class="top">
+        <div class="candcard">
+          <div class="ch2">🗓️ 空いてる候補（60分）</div>
+          <div class="crow"><span class="dow">火</span><span class="tm">14:00–15:00</span><span class="ok">✓</span></div>
+          <div class="crow"><span class="dow">水</span><span class="tm">10:00–11:00</span><span class="ok">✓</span></div>
+          <div class="crow"><span class="dow">木</span><span class="tm">16:00–17:00</span><span class="ok">✓</span></div>
+        </div>
+        <div class="popbadge">${svg('check')}選んで確定するだけ！</div>
+      </div>
+      <div class="cap"><span class="d"></span><span>空いてる候補が<b>3つ届く。</b>あとは選ぶだけ（そのまま<b>予定を自動作成</b>も可）。</span></div>
+    </div>
+  </div>
+
+  <div class="uses">
+    <div class="ulabel">こんな<br>調整<br>にも</div>
+    <div class="uc"><span class="cmd">1on1面談</span><span class="ut">上司と部下の空きを<b>自動で提案</b></span></div>
+    <div class="uc"><span class="cmd">客先打合せ</span><span class="ut">複数人の予定を<b>まとめて調整</b></span></div>
+    <div class="uc"><span class="cmd">レビュー会</span><span class="ut">チーム全員が<b>集まれる枠</b>を探す</span></div>
+  </div>
+  <div class="src">出典：Power Automate 実機（PA45 Demo）／Microsoft Learn　※作り方は2枚目</div>
+`;
+</script>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>

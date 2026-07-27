@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vol.71 まとめプレビュー（全2枚スクロール）</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  *{margin:0;box-sizing:border-box;}
+  body{background:#34373c;font-family:"Noto Sans JP",sans-serif;padding:18px 0 40px;}
+  .head{color:#e2e8f0;text-align:center;font-weight:900;font-size:17px;margin-bottom:16px;}
+  .head span{color:#93C5FD;}
+  .stack{display:flex;flex-direction:column;align-items:center;gap:26px;}
+  .label{color:#cbd5e1;font-weight:700;font-size:14px;margin:0 0 7px 2px;}
+  .label b{color:#FCD34D;}
+  .frame-wrap{position:relative;overflow:hidden;border-radius:11px;box-shadow:0 8px 24px rgba(0,0,0,.45);background:#fff;}
+  .frame-wrap iframe{width:1280px;height:720px;border:0;display:block;transform-origin:top left;}
+</style>
+</head>
+<body>
+  <div class="head">Vol.71「当番表に“足が生える”と、ちゃんと回りだす」<span> 全2枚（スクロールで確認）</span></div>
+  <div class="stack" id="stack"></div>
+<script>
+  const slides=[
+    {u:'../vol-71/index.html',  l:'1枚目｜<b>概念</b>（貼ってあるだけの当番表→次の当番を自動選出→本人に名指しDM）'},
+    {u:'../vol-71b/index.html', l:'2枚目｜<b>作り方</b>（繰り返し→複数の項目の取得[並べ替え+上位1]→Teams投稿＋項目の更新）'}
+  ];
+  const stack=document.getElementById('stack');
+  slides.forEach(s=>{
+    const item=document.createElement('div');
+    const lab=document.createElement('div');lab.className='label';lab.innerHTML=s.l;
+    const wrap=document.createElement('div');wrap.className='frame-wrap';
+    const ifr=document.createElement('iframe');ifr.src=s.u;ifr.setAttribute('scrolling','no');ifr.loading='eager';
+    wrap.appendChild(ifr);item.appendChild(lab);item.appendChild(wrap);stack.appendChild(item);
+  });
+  function fit(){
+    const avail=Math.min(window.innerWidth-28,1280);const scale=avail/1280;
+    document.querySelectorAll('.frame-wrap').forEach(w=>{
+      const ifr=w.querySelector('iframe');ifr.style.transform='scale('+scale+')';
+      w.style.width=(1280*scale)+'px';w.style.height=(720*scale)+'px';
+    });
+  }
+  window.addEventListener('resize',fit);window.addEventListener('load',fit);fit();
+</script>
+</body>
+</html>

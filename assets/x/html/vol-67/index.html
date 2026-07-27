@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.64-1 デジタル回覧板で「聞いてない」を撲滅</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB;--blue-dark:#1E40AF;--green:#16A34A;--green-dark:#0B5E37;
+    --ink:#1F2937;--gray:#374151;--weak:#6B7280;--orange:#EA580C;--red:#DC2626;--tp:#5B5FC7;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+
+  .titlebar{height:86px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:14px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:25px;border-radius:999px;padding:7px 19px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .logos{display:flex;align-items:center;gap:7px;flex:0 0 auto;}
+  .logos .ll{height:47px;width:47px;object-fit:contain;background:#fff;border-radius:12px;padding:6px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
+  .logos .plus{color:#fff;font-weight:900;font-size:23px;text-shadow:0 1px 2px rgba(0,0,0,.25);line-height:1;}
+  .title-text{color:#fff;font-weight:900;font-size:27px;line-height:1.15;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:150px;}
+  .title-text .hl{color:#FFE08A;}
+  .title-chara{position:absolute;right:14px;bottom:-42px;height:142px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .concl{margin:9px 16px 0;background:#EFF6FF;border:2.5px solid var(--blue);border-radius:13px;display:flex;align-items:center;gap:13px;padding:9px 18px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;width:42px;height:42px;border-radius:12px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;font-size:23px;box-shadow:0 3px 6px rgba(0,0,0,.26);}
+  .concl .txt{font-weight:800;font-size:19.5px;color:var(--blue-dark);line-height:1.4;padding-right:96px;}
+  .concl .txt b{color:var(--red);}
+  .concl .txt .g{color:var(--green-dark);}
+
+  .stage{flex:1 1 auto;margin:12px 15px 0;display:flex;align-items:stretch;gap:0;min-height:0;}
+  .col{flex:1;display:flex;flex-direction:column;min-height:0;position:relative;}
+  .carrow{flex:0 0 30px;display:flex;align-items:center;justify-content:center;color:#9AA7B8;font-size:26px;font-weight:900;}
+  .colcard{flex:1;background:#F8FAFC;border:1.5px solid #C9D2E0;border-radius:14px;box-shadow:0 5px 13px rgba(0,0,0,.12);overflow:hidden;display:flex;flex-direction:column;}
+  .cnum{position:absolute;top:-11px;left:-9px;width:34px;height:34px;border-radius:50%;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;font-weight:900;font-size:18px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 5px rgba(0,0,0,.3);z-index:6;border:2.5px solid #fff;}
+  .chd{flex:0 0 auto;text-align:center;font-weight:900;font-size:18px;color:#fff;padding:9px 8px;line-height:1.2;}
+  .c1 .chd{background:linear-gradient(180deg,#5B5FC7,#4B4F9E);}
+  .c2 .chd{background:linear-gradient(180deg,#22A366,#15803D);}
+  .c3 .chd{background:linear-gradient(180deg,#F97316,#EA580C);}
+  .cbd{flex:1;padding:10px;display:flex;flex-direction:column;gap:8px;min-height:0;font-family:'Segoe UI','Noto Sans JP',sans-serif;justify-content:flex-start;}
+
+  /* 情景イラスト（SVG） */
+  .scene{flex:0 0 auto;height:112px;border-radius:11px;display:flex;align-items:center;justify-content:center;padding:6px;border:1.5px solid;}
+  .c1 .scene{background:#EEF0FB;border-color:#D3D6F2;}
+  .c2 .scene{background:#EAF7EF;border-color:#CBEBD7;}
+  .c3 .scene{background:#FFF3EA;border-color:#F6D8C2;}
+  .scene svg{height:100%;width:auto;}
+
+  .ccap{flex:0 0 auto;margin-top:auto;text-align:center;font-size:14.5px;font-weight:800;line-height:1.3;padding:0 2px;}
+  .c1 .ccap{color:#3B3E86;} .c2 .ccap{color:#15803D;} .c3 .ccap{color:#9A3412;}
+  .ccap b{color:#111;}
+
+  /* ① Teams周知カード */
+  .tcard{flex:1 1 auto;display:flex;flex-direction:column;background:#fff;border:1.5px solid #D8DAF0;border-radius:10px;overflow:hidden;box-shadow:0 3px 7px rgba(0,0,0,.1);}
+  .tcard .tt{flex:0 0 auto;display:flex;align-items:center;gap:7px;background:#F0F0FB;padding:6px 10px;border-bottom:1px solid #E3E3F5;}
+  .tcard .tt img{width:19px;height:19px;object-fit:contain;}
+  .tcard .tt b{font-size:12.5px;font-weight:900;color:#3B3E86;}
+  .tcard .tb{flex:1;padding:9px 12px;display:flex;flex-direction:column;justify-content:center;}
+  .tcard .tb .h{font-size:15.5px;font-weight:900;color:#1F2937;margin-bottom:5px;line-height:1.25;}
+  .tcard .tb .m{font-size:12.5px;font-weight:600;color:#5B6270;line-height:1.35;margin-bottom:9px;}
+  .readbtn{display:flex;align-items:center;justify-content:center;gap:7px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;font-weight:900;font-size:16.5px;border-radius:8px;padding:10px;box-shadow:0 3px 6px rgba(37,99,235,.35);}
+  .taphint{margin-top:7px;text-align:center;font-size:12.5px;font-weight:800;color:#2563EB;}
+  .taphint .fg{font-size:16px;}
+
+  /* ② 既読ボード */
+  .board{flex:1 1 auto;background:#fff;border:1.5px solid #C7E6D3;border-radius:10px;overflow:hidden;box-shadow:0 3px 7px rgba(0,0,0,.1);display:flex;flex-direction:column;}
+  .board .bh{flex:0 0 auto;display:flex;background:#EAF7EF;border-bottom:1.5px solid #CDEBD8;}
+  .board .bh span{padding:6px 10px;font-size:12.5px;font-weight:900;color:#15803D;}
+  .board .bh .n1{flex:1;} .board .bh .n2{flex:0 0 82px;text-align:center;border-left:1px solid #CDEBD8;}
+  .brow{flex:1;display:flex;border-bottom:1px solid #EDF3EF;align-items:center;}
+  .brow:last-child{border-bottom:none;}
+  .brow .nm{flex:1;padding:5px 11px;font-size:14px;font-weight:800;color:#243;}
+  .brow .st{flex:0 0 82px;text-align:center;padding:5px 4px;font-size:13px;font-weight:900;border-left:1px solid #EDF3EF;align-self:stretch;display:flex;align-items:center;justify-content:center;}
+  .brow .st.ok{color:#15803D;}
+  .brow .st.no{color:#DC2626;background:#FEF2F2;}
+
+  /* ③ 未読者DM */
+  .dm{flex:1 1 auto;display:flex;flex-direction:column;background:#fff;border:1.5px solid #F3C9AD;border-radius:10px;overflow:hidden;box-shadow:0 3px 7px rgba(0,0,0,.1);}
+  .dm .dt{flex:0 0 auto;display:flex;align-items:center;gap:7px;background:#FFF4ED;padding:6px 10px;border-bottom:1px solid #F6D9C4;}
+  .dm .dt img{width:19px;height:19px;object-fit:contain;}
+  .dm .dt b{font-size:12.5px;font-weight:900;color:#9A3412;}
+  .dm .db{flex:1;padding:10px 12px;display:flex;flex-direction:column;justify-content:center;gap:9px;}
+  .dm .bubble{background:#F3F5FF;border:1.5px solid #D3DBF7;border-radius:12px;border-top-left-radius:3px;padding:10px 12px;}
+  .dm .bubble .who{display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:900;color:#3B3E86;margin-bottom:6px;}
+  .dm .bubble .who .bot{font-size:10.5px;background:#EDEDFB;border:1px solid #C9C9F0;border-radius:4px;padding:1px 6px;}
+  .dm .bubble .msg{font-size:14.5px;font-weight:700;color:#243;line-height:1.42;}
+  .dm .bubble .msg b{color:#DC2626;}
+  .dm .onlyto{text-align:center;font-size:13px;font-weight:800;color:#9A3412;background:#FFF0E6;border:1px dashed #F3B98F;border-radius:8px;padding:7px 7px;line-height:1.3;}
+
+  .uses{flex:0 0 auto;margin:11px 15px 12px;display:flex;align-items:stretch;gap:9px;}
+  .ulabel{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;font-weight:900;font-size:15px;border-radius:11px;padding:0 15px;text-align:center;line-height:1.25;box-shadow:0 3px 8px rgba(37,99,235,.32);}
+  .uc{flex:1;background:#F8F9FA;border:2px solid #D7E0EC;border-radius:11px;padding:9px 12px;box-shadow:0 2px 6px rgba(0,0,0,.07);display:flex;align-items:center;gap:10px;}
+  .uc .em{font-size:24px;flex:0 0 auto;}
+  .uc .ut{font-size:16px;font-weight:800;color:#33405a;line-height:1.28;}
+  .uc .ut b{color:var(--blue-dark);}
+  .src{position:absolute;left:16px;bottom:3px;font-size:10px;color:#AEB6C2;font-weight:700;z-index:3;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+
+// 情景SVG（列ごと）
+const scene1=`<svg viewBox="0 0 252 112" xmlns="http://www.w3.org/2000/svg">
+  <!-- 発信者 -->
+  <circle cx="40" cy="46" r="15" fill="#5B5FC7"/>
+  <rect x="22" y="62" width="36" height="34" rx="14" fill="#5B5FC7"/>
+  <!-- メガホン -->
+  <path d="M54 70 L96 52 L96 90 L54 82 Z" fill="#F59E0B" stroke="#D97706" stroke-width="2.5" stroke-linejoin="round"/>
+  <rect x="47" y="70" width="10" height="14" rx="3" fill="#D97706"/>
+  <!-- 音の波 -->
+  <path d="M104 60 Q114 71 104 82" fill="none" stroke="#FBBF24" stroke-width="4" stroke-linecap="round"/>
+  <path d="M116 51 Q132 71 116 91" fill="none" stroke="#FCD34D" stroke-width="4" stroke-linecap="round"/>
+  <!-- 受信者3人 -->
+  <circle cx="176" cy="50" r="12" fill="#A9ADE8"/><rect x="162" y="63" width="28" height="26" rx="11" fill="#A9ADE8"/>
+  <circle cx="212" cy="42" r="12" fill="#A9ADE8"/><rect x="198" y="55" width="28" height="26" rx="11" fill="#A9ADE8"/>
+  <circle cx="230" cy="70" r="12" fill="#A9ADE8"/><rect x="216" y="83" width="28" height="24" rx="11" fill="#A9ADE8"/>
+  <!-- 通知バッジ -->
+  <circle cx="194" cy="24" r="11" fill="#5B5FC7"/><text x="194" y="30" text-anchor="middle" font-size="15" fill="#fff" font-weight="900" font-family="Arial">!</text>
+</svg>`;
+
+const scene2=`<svg viewBox="0 0 252 112" xmlns="http://www.w3.org/2000/svg">
+  <!-- クリップボード -->
+  <rect x="70" y="10" width="94" height="96" rx="9" fill="#fff" stroke="#15803D" stroke-width="2.5"/>
+  <rect x="102" y="4" width="30" height="13" rx="4" fill="#15803D"/>
+  <!-- 行1 済 --><rect x="82" y="26" width="42" height="7" rx="3.5" fill="#D6EEDD"/>
+  <path d="M138 26 l5 5 l9 -11" fill="none" stroke="#16A34A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- 行2 済 --><rect x="82" y="44" width="42" height="7" rx="3.5" fill="#D6EEDD"/>
+  <path d="M138 44 l5 5 l9 -11" fill="none" stroke="#16A34A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- 行3 済 --><rect x="82" y="62" width="42" height="7" rx="3.5" fill="#D6EEDD"/>
+  <path d="M138 62 l5 5 l9 -11" fill="none" stroke="#16A34A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- 行4 未 --><rect x="82" y="80" width="42" height="7" rx="3.5" fill="#FBD9D9"/>
+  <path d="M139 78 l11 11 M150 78 l-11 11" stroke="#DC2626" stroke-width="4" stroke-linecap="round"/>
+  <!-- 行5 未 --><rect x="82" y="96" width="42" height="7" rx="3.5" fill="#FBD9D9"/>
+  <path d="M139 94 l11 11 M150 94 l-11 11" stroke="#DC2626" stroke-width="4" stroke-linecap="round"/>
+  <!-- 虫めがね（見える化） -->
+  <circle cx="200" cy="58" r="21" fill="rgba(255,255,255,.6)" stroke="#F59E0B" stroke-width="5.5"/>
+  <line x1="215" y1="73" x2="234" y2="94" stroke="#F59E0B" stroke-width="7" stroke-linecap="round"/>
+</svg>`;
+
+const scene3=`<svg viewBox="0 0 252 112" xmlns="http://www.w3.org/2000/svg">
+  <!-- 既読の2人 -->
+  <circle cx="44" cy="60" r="13" fill="#B7BCEA"/><rect x="29" y="75" width="30" height="26" rx="11" fill="#B7BCEA"/>
+  <circle cx="44" cy="30" r="11" fill="#16A34A"/><path d="M39 30 l4 4 l8 -9" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="96" cy="60" r="13" fill="#B7BCEA"/><rect x="81" y="75" width="30" height="26" rx="11" fill="#B7BCEA"/>
+  <circle cx="96" cy="30" r="11" fill="#16A34A"/><path d="M91 30 l4 4 l8 -9" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- 矢印（この人だけ） -->
+  <path d="M124 62 h26" stroke="#EA580C" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M146 55 l9 7 l-9 7" fill="none" stroke="#EA580C" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- 未読の1人（ハイライト） -->
+  <circle cx="196" cy="64" r="37" fill="#FFE1CC"/>
+  <circle cx="196" cy="58" r="15" fill="#EA580C"/><rect x="178" y="75" width="36" height="30" rx="13" fill="#EA580C"/>
+  <circle cx="196" cy="24" r="12" fill="#DC2626"/><text x="196" y="30" text-anchor="middle" font-size="16" fill="#fff" font-weight="900" font-family="Arial">!</text>
+</svg>`;
+
+const s=document.getElementById('slide');
+s.innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.64-1</div>
+    <div class="logos"><img class="ll" src="${A}icons/pa_logo.png" alt=""><span class="plus">＋</span><img class="ll" src="${A}icons/pa_teams_official.png" alt=""></div>
+    <div class="title-text">“聞いてない”をなくす<span class="hl">デジタル回覧板</span></div>
+    <img class="title-chara" src="${A}chara/chara_confident.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">📢</div>
+    <div class="txt">周知メール、<b>読んでない人ほど「聞いてない」</b>って言うんですよね…。<br>✅読んだボタンで<span class="g">既読を見える化</span>、<b>未読の人にだけ自動で催促</b>。<span class="g">あなたが追いかける気まずさもゼロ</span>。</div>
+  </div>
+
+  <div class="stage">
+    <div class="col c1">
+      <div class="cnum">1</div>
+      <div class="colcard">
+        <div class="chd">全員に「周知カード」を配信</div>
+        <div class="cbd">
+          <div class="scene">${scene1}</div>
+          <div class="tcard">
+            <div class="tt"><img src="${A}icons/pa_teams_official.png" alt=""><b>総務チャネル</b></div>
+            <div class="tb">
+              <div class="h">📢【周知】空調の点検について</div>
+              <div class="m">8/1(金) 10:00〜 各フロアで点検。ご確認を。</div>
+              <div class="readbtn">✅ 読んだ</div>
+              <div class="taphint"><span class="fg">👆</span> このボタンを押すだけ</div>
+            </div>
+          </div>
+          <div class="ccap">ボタン付きカードで<b>「読んだ」がその場で押せる</b></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="carrow">▶</div>
+
+    <div class="col c2">
+      <div class="cnum">2</div>
+      <div class="colcard">
+        <div class="chd">既読が「台帳」に自動で記録</div>
+        <div class="cbd">
+          <div class="scene">${scene2}</div>
+          <div class="board">
+            <div class="bh"><span class="n1">対象者</span><span class="n2">既読？</span></div>
+            <div class="brow"><span class="nm">田中 一郎</span><span class="st ok">✅ 済</span></div>
+            <div class="brow"><span class="nm">佐藤 花子</span><span class="st ok">✅ 済</span></div>
+            <div class="brow"><span class="nm">鈴木 健太</span><span class="st ok">✅ 済</span></div>
+            <div class="brow"><span class="nm">山本 太郎</span><span class="st no">未読</span></div>
+            <div class="brow"><span class="nm">高橋 実</span><span class="st no">未読</span></div>
+          </div>
+          <div class="ccap"><b>誰が読んで誰がまだか</b>、ひと目でわかる</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="carrow">▶</div>
+
+    <div class="col c3">
+      <div class="cnum">3</div>
+      <div class="colcard">
+        <div class="chd">未読の人にだけ 自動で催促</div>
+        <div class="cbd">
+          <div class="scene">${scene3}</div>
+          <div class="dm">
+            <div class="dt"><img src="${A}icons/pa_teams_official.png" alt=""><b>山本 太郎さんへ DM</b></div>
+            <div class="db">
+              <div class="bubble">
+                <div class="who"><img src="${A}icons/pa_logo.png" style="width:15px;height:15px;object-fit:contain" alt="">Power Automate <span class="bot">フローボット</span></div>
+                <div class="msg">先ほどの<b>【周知】空調の点検</b>、まだのようです。お手すきに✅を🙏</div>
+              </div>
+              <div class="onlyto">催促も“全部自動”＝あなたは<br><b>追いかけなくていい</b>（ストレスフリー）</div>
+            </div>
+          </div>
+          <div class="ccap">未読の人へ<b>自動でそっと</b>。声かけの手間ゼロ</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="uses">
+    <div class="ulabel">こんな<br>周知に<br>効く</div>
+    <div class="uc"><span class="em">🏢</span><span class="ut">全社<b>通達・お知らせ</b></span></div>
+    <div class="uc"><span class="em">⚠️</span><span class="ut">安全・<b>コンプラ連絡</b></span></div>
+    <div class="uc"><span class="em">📅</span><span class="ut">締切・<b>提出リマインド</b></span></div>
+    <div class="uc"><span class="em">📋</span><span class="ut">規程・<b>ルール改定</b></span></div>
+  </div>
+  <div class="src">出典：Power Automate 実機（PA45 Demo・Vol.57/60で確認）／Microsoft Learn　※作り方は2枚目</div>
+`;
+</script>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>

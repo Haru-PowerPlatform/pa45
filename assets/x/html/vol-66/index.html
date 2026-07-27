@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.63-1 猛暑の朝に職場へ自動で熱中症アラート</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB;--blue-dark:#1E40AF;--green:#16A34A;--green-dark:#0B5E37;
+    --ink:#1F2937;--gray:#374151;--weak:#6B7280;--orange:#EA580C;--red:#DC2626;--tp:#5A2FB8;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+
+  .titlebar{height:86px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:14px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:25px;border-radius:999px;padding:7px 19px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .logos{display:flex;align-items:center;gap:7px;flex:0 0 auto;}
+  .logos .ll{height:47px;width:47px;object-fit:contain;background:#fff;border-radius:12px;padding:6px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
+  .logos .plus{color:#fff;font-weight:900;font-size:23px;text-shadow:0 1px 2px rgba(0,0,0,.25);line-height:1;}
+  .title-text{color:#fff;font-weight:900;font-size:27px;line-height:1.15;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:150px;}
+  .title-text .hl{color:#FFE08A;}
+  .title-chara{position:absolute;right:14px;bottom:-42px;height:142px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .concl{margin:9px 16px 0;background:#FFF4ED;border:2.5px solid var(--orange);border-radius:13px;display:flex;align-items:center;gap:13px;padding:9px 18px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;width:42px;height:42px;border-radius:12px;background:linear-gradient(180deg,#FB923C,#EA580C);color:#fff;display:flex;align-items:center;justify-content:center;font-size:23px;box-shadow:0 3px 6px rgba(0,0,0,.26);}
+  .concl .txt{font-weight:800;font-size:20px;color:#9A3412;line-height:1.42;padding-right:96px;}
+  .concl .txt b{color:var(--red);}
+
+  .stage{flex:1 1 auto;margin:12px 16px 0;display:flex;align-items:stretch;gap:0;min-height:0;}
+
+  /* 左：温度計カード */
+  .thermo{flex:0 0 236px;background:linear-gradient(165deg,#FFF1EC,#FCDCCF);border:2.5px solid #F19A72;border-radius:16px;padding:11px 13px;display:flex;flex-direction:column;align-items:center;box-shadow:0 5px 13px rgba(0,0,0,.11),inset 0 1px 0 rgba(255,255,255,.7);position:relative;}
+  .thermo .th-hd{align-self:stretch;text-align:center;font-weight:900;font-size:16.5px;color:#9A3412;background:#fff;border:1.5px solid #F3B99A;border-radius:9px;padding:6px 6px;line-height:1.25;margin-bottom:6px;box-shadow:0 2px 4px rgba(0,0,0,.08);}
+  .thermo .th-body{flex:1;display:flex;align-items:center;justify-content:center;gap:10px;min-height:0;}
+  .thermo svg{height:182px;width:auto;filter:drop-shadow(0 3px 5px rgba(0,0,0,.18));}
+  .thermo .reading{display:flex;flex-direction:column;align-items:center;gap:7px;}
+  .thermo .deg{font-weight:900;font-size:56px;color:#DC2626;line-height:.95;letter-spacing:-1px;}
+  .thermo .deg small{font-size:28px;vertical-align:super;}
+  .thermo .mosho{font-weight:900;font-size:17.5px;color:#fff;background:linear-gradient(180deg,#F43F5E,#B91C1C);border-radius:999px;padding:5px 16px;box-shadow:0 3px 6px rgba(185,28,28,.4);}
+  .thermo .th-cap{align-self:stretch;text-align:center;font-weight:800;font-size:15px;color:#9A3412;margin-top:6px;line-height:1.32;}
+
+  /* 中：エンジン */
+  .mid{flex:0 0 182px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;padding:0 6px;}
+  .engine{width:88px;height:88px;border-radius:22px;background:linear-gradient(180deg,#EAF2FF,#D6E6FF);border:3px solid var(--blue);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 15px rgba(37,99,235,.3),inset 0 1px 0 rgba(255,255,255,.8);}
+  .engine img{width:56px;height:56px;object-fit:contain;}
+  .mflow{display:flex;flex-direction:column;gap:8px;width:100%;}
+  .mstep{display:flex;align-items:center;gap:8px;background:#fff;border:1.5px solid #C7D3E6;border-radius:9px;padding:7px 9px;font-size:14px;font-weight:800;color:#28406a;line-height:1.22;box-shadow:0 2px 4px rgba(0,0,0,.07);}
+  .mstep .mn{flex:0 0 auto;width:22px;height:22px;border-radius:50%;background:var(--blue);color:#fff;font-size:13px;font-weight:900;display:flex;align-items:center;justify-content:center;}
+  .mstep.hot{border-color:#F19A72;background:#FFF4ED;color:#9A3412;}
+  .mstep.hot .mn{background:var(--orange);}
+  .marrow{color:#EA580C;font-size:26px;font-weight:900;line-height:.6;}
+
+  /* 右：Teamsアラートカード */
+  .teams{flex:1;background:#fff;border:1.5px solid #C9D2DE;border-radius:16px;box-shadow:0 5px 13px rgba(0,0,0,.13);overflow:hidden;display:flex;flex-direction:column;font-family:'Segoe UI','Noto Sans JP',sans-serif;min-height:0;}
+  .tbar{flex:0 0 auto;display:flex;align-items:center;gap:9px;padding:8px 13px;background:linear-gradient(180deg,#5B5FC7,#4B4F9E);color:#fff;}
+  .tbar .tlogo{width:26px;height:26px;object-fit:contain;background:#fff;border-radius:6px;padding:3px;}
+  .tbar .tpath{font-size:15px;font-weight:800;}
+  .tbar .tpath small{display:block;font-size:12px;font-weight:600;opacity:.85;margin-top:1px;}
+  .tbody{flex:1;padding:12px 15px;display:flex;flex-direction:column;min-height:0;justify-content:center;}
+  .post{display:flex;gap:12px;align-items:flex-start;}
+  .post .av{flex:0 0 auto;width:46px;height:46px;border-radius:9px;background:linear-gradient(180deg,#4A85FF,#2563EB);display:flex;align-items:center;justify-content:center;padding:8px;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .post .av img{width:100%;height:100%;object-fit:contain;filter:brightness(0) invert(1);}
+  .post .body{flex:1;min-width:0;}
+  .post .who{display:flex;align-items:center;gap:8px;font-size:15.5px;font-weight:900;color:#242424;margin-bottom:7px;}
+  .post .who .bot{font-size:11.5px;font-weight:800;color:#5B5FC7;background:#EDEDFB;border:1px solid #C9C9F0;border-radius:5px;padding:2px 7px;}
+  .post .who .tm{margin-left:auto;font-size:12.5px;font-weight:700;color:#9AA0A6;}
+  .card{border:1.5px solid #F0C0A6;border-radius:11px;overflow:hidden;box-shadow:0 3px 8px rgba(0,0,0,.1);}
+  .card .cap{display:flex;align-items:center;gap:10px;background:linear-gradient(180deg,#FB7185,#E11D48);color:#fff;padding:11px 16px;font-weight:900;font-size:21px;line-height:1.2;}
+  .card .cap .em{font-size:26px;flex:0 0 auto;}
+  .card .cbody{background:#FFF8F4;padding:13px 17px;}
+  .card .lead{font-size:17px;font-weight:900;color:#9A3412;line-height:1.4;margin-bottom:11px;}
+  .card .lead b{color:#DC2626;font-size:20px;}
+  .card .tips{display:flex;flex-direction:column;gap:8px;}
+  .card .tips .t{display:flex;align-items:center;gap:9px;font-size:16px;font-weight:800;color:#7C2D12;line-height:1.28;}
+  .card .tips .t .ic{flex:0 0 auto;font-size:19px;}
+  .autotag{margin-top:12px;display:inline-flex;align-items:center;gap:7px;font-size:13.5px;font-weight:800;color:#0B5E37;background:#DCF7E5;border:1px solid #A6E1BC;border-radius:999px;padding:5px 13px;}
+
+  .uses{flex:0 0 auto;margin:11px 16px 12px;display:flex;align-items:stretch;gap:9px;}
+  .ulabel{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(180deg,#F97316,#EA580C);color:#fff;font-weight:900;font-size:15px;border-radius:11px;padding:0 16px;text-align:center;line-height:1.25;box-shadow:0 3px 8px rgba(234,88,12,.32);}
+  .uc{flex:1;background:#F8F9FA;border:2px solid #E3D3C7;border-radius:11px;padding:9px 13px;box-shadow:0 2px 6px rgba(0,0,0,.07);display:flex;align-items:center;gap:11px;}
+  .uc .em{font-size:25px;flex:0 0 auto;}
+  .uc .ut{font-size:16.5px;font-weight:800;color:#33405a;line-height:1.28;}
+  .uc .ut b{color:#B45309;}
+  .src{position:absolute;left:16px;bottom:3px;font-size:10px;color:#AEB6C2;font-weight:700;z-index:3;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const s=document.getElementById('slide');
+s.innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.63-1</div>
+    <div class="logos"><img class="ll" src="${A}icons/pa_logo.png" alt=""><span class="plus">＋</span><img class="ll" src="${A}icons/pa_weather.png" alt=""></div>
+    <div class="title-text">猛暑の朝、職場に<span class="hl">“自動で熱中症アラート”</span></div>
+    <img class="title-chara" src="${A}chara/chara_point.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">🥵</div>
+    <div class="txt">毎朝だれかが暑さに気づいて「水分とってね」…<b>人まかせだと続かない</b>。<br>空模様を<b>自動でみはって</b>、危険な暑さの朝だけTeamsにアラート。Power Automateで自作できます。</div>
+  </div>
+
+  <div class="stage">
+    <div class="thermo">
+      <div class="th-hd">今日の予想最高気温</div>
+      <div class="th-body">
+        <svg viewBox="0 0 60 200" xmlns="http://www.w3.org/2000/svg">
+          <rect x="22" y="8" width="16" height="150" rx="8" fill="#fff" stroke="#B91C1C" stroke-width="3"/>
+          <rect x="25" y="60" width="10" height="98" fill="#EF4444" rx="5"/>
+          <circle cx="30" cy="175" r="19" fill="#DC2626" stroke="#B91C1C" stroke-width="3"/>
+          <rect x="25" y="150" width="10" height="30" fill="#DC2626"/>
+          <line x1="40" y1="30" x2="49" y2="30" stroke="#B91C1C" stroke-width="2.4" stroke-linecap="round"/>
+          <line x1="40" y1="60" x2="49" y2="60" stroke="#B91C1C" stroke-width="2.4" stroke-linecap="round"/>
+          <line x1="40" y1="90" x2="49" y2="90" stroke="#B91C1C" stroke-width="2.4" stroke-linecap="round"/>
+          <line x1="40" y1="120" x2="49" y2="120" stroke="#B91C1C" stroke-width="2.4" stroke-linecap="round"/>
+        </svg>
+        <div class="reading">
+          <div class="deg">38<small>℃</small></div>
+          <div class="mosho">猛暑日</div>
+        </div>
+      </div>
+      <div class="th-cap">35℃を超えた朝だけ、<br>フローがそっと動きます</div>
+    </div>
+
+    <div class="mid">
+      <div class="engine"><img src="${A}icons/pa_weather.png" alt=""></div>
+      <div class="marrow">▼</div>
+      <div class="mflow">
+        <div class="mstep"><span class="mn">1</span><span>毎朝7時に起動</span></div>
+        <div class="mstep"><span class="mn">2</span><span>最高気温を取得</span></div>
+        <div class="mstep hot"><span class="mn">3</span><span>35℃超えで配信</span></div>
+      </div>
+    </div>
+
+    <div class="teams">
+      <div class="tbar"><img class="tlogo" src="${A}icons/pa_teams_official.png" alt=""><div class="tpath">総務・安全チーム<small>＞ 一般 チャネル</small></div></div>
+      <div class="tbody">
+        <div class="post">
+          <div class="av"><img src="${A}icons/pa_logo.png" alt=""></div>
+          <div class="body">
+            <div class="who">Power Automate <span class="bot">フローボット</span><span class="tm">7:00</span></div>
+            <div class="card">
+              <div class="cap"><span class="em">🥵</span>【熱中症アラート】今日は猛暑日の予想です</div>
+              <div class="cbody">
+                <div class="lead">広島市の予想最高気温は <b>38℃</b>。無理をせず、こまめな対策を。</div>
+                <div class="tips">
+                  <div class="t"><span class="ic">💧</span>水分・塩分をこまめに補給しましょう</div>
+                  <div class="t"><span class="ic">🌳</span>屋外作業は日陰・休憩をしっかり</div>
+                  <div class="t"><span class="ic">🚨</span>体調が悪い人はすぐ声かけを</div>
+                </div>
+                <span class="autotag">⚡ Power Automate が毎朝チェックして自動投稿</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="uses">
+    <div class="ulabel">こんな<br>現場に<br>効く</div>
+    <div class="uc"><span class="em">🏭</span><span class="ut">製造・<b>工場のライン</b></span></div>
+    <div class="uc"><span class="em">👷</span><span class="ut">建設・<b>屋外作業</b></span></div>
+    <div class="uc"><span class="em">🏫</span><span class="ut">学校・<b>部活動</b></span></div>
+    <div class="uc"><span class="em">🎪</span><span class="ut">屋外<b>イベント運営</b></span></div>
+  </div>
+  <div class="src">出典：Microsoft Learn（MSN Weather コネクタ）／Power Automate 実機（PA45 Demo）　※作り方は2枚目</div>
+`;
+</script>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>

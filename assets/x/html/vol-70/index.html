@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.70-1 毎日のひとことが金曜に週報の下書きになる</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB;--blue-dark:#1E40AF;--green:#16A34A;--green-dark:#0B5E37;
+    --ink:#1F2937;--gray:#374151;--weak:#6B7280;--orange:#EA580C;--red:#DC2626;
+    --teams:#5059C9;--sp:#0B7C66;--ol:#0364B8;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+
+  .titlebar{height:86px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:14px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:25px;border-radius:999px;padding:7px 19px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .logos{display:flex;align-items:center;gap:7px;flex:0 0 auto;}
+  .logos .ll{height:47px;width:47px;object-fit:contain;background:#fff;border-radius:12px;padding:6px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
+  .logos .plus{color:#fff;font-weight:900;font-size:23px;text-shadow:0 1px 2px rgba(0,0,0,.25);line-height:1;}
+  .title-text{color:#fff;font-weight:900;font-size:27px;line-height:1.15;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:150px;}
+  .title-text .hl{color:#FFE08A;}
+  .title-chara{position:absolute;right:14px;bottom:-42px;height:142px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .concl{margin:9px 16px 0;background:#EFF6FF;border:2.5px solid var(--blue);border-radius:13px;display:flex;align-items:center;gap:13px;padding:9px 18px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;width:42px;height:42px;border-radius:12px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;font-size:23px;box-shadow:0 3px 6px rgba(0,0,0,.26);}
+  .concl .txt{font-weight:800;font-size:19px;color:var(--blue-dark);line-height:1.4;padding-right:96px;}
+  .concl .txt b{color:var(--red);}
+  .concl .txt .g{color:var(--green-dark);}
+
+  .cols{flex:1 1 auto;margin:12px 15px 0;display:flex;align-items:stretch;gap:0;min-height:0;}
+  .col{flex:1;display:flex;flex-direction:column;min-height:0;position:relative;}
+  .col.c3{flex:1.1;}
+  .carrow{flex:0 0 30px;display:flex;align-items:center;justify-content:center;color:#2563EB;font-size:30px;font-weight:900;}
+  .colcard{flex:1;display:flex;flex-direction:column;min-height:0;border-radius:14px;overflow:hidden;box-shadow:0 5px 13px rgba(0,0,0,.12);border:2px solid;}
+  .col.c1 .colcard{background:#F4F5FD;border-color:#C3C7EE;}
+  .col.c2 .colcard{background:#EFF9F6;border-color:#A9DCCE;}
+  .col.c3 .colcard{background:#EDFBF3;border-color:#A6E1BC;}
+  .chd{flex:0 0 auto;text-align:center;font-weight:900;font-size:16.5px;color:#fff;padding:8px 8px;line-height:1.2;}
+  .col.c1 .chd{background:linear-gradient(180deg,#6B73D6,#5059C9);}
+  .col.c2 .chd{background:linear-gradient(180deg,#17997F,#0B7C66);}
+  .col.c3 .chd{background:linear-gradient(180deg,#22A366,#15803D);}
+  .cbd{flex:1;padding:9px 10px;display:flex;flex-direction:column;gap:8px;min-height:0;font-family:'Segoe UI','Noto Sans JP',sans-serif;}
+  .cnum{position:absolute;top:-9px;left:-9px;width:32px;height:32px;border-radius:50%;color:#fff;font-weight:900;font-size:17px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 5px rgba(0,0,0,.3);z-index:6;border:2.5px solid #fff;}
+  .col.c1 .cnum{background:linear-gradient(180deg,#6B73D6,#5059C9);}
+  .col.c2 .cnum{background:linear-gradient(180deg,#17997F,#0B7C66);}
+  .col.c3 .cnum{background:linear-gradient(180deg,#22A366,#15803D);}
+
+  .scene{flex:0 0 auto;height:118px;border-radius:10px;overflow:hidden;border:1.5px solid;position:relative;display:flex;align-items:flex-end;justify-content:center;}
+  .col.c1 .scene{background:linear-gradient(180deg,#EFF0FC,#DCDEF6);border-color:#C3C7EE;}
+  .col.c2 .scene{background:linear-gradient(180deg,#E9F7F3,#CFEDE4);border-color:#A9DCCE;}
+  .col.c3 .scene{background:linear-gradient(180deg,#E9FBF1,#CDF3DD);border-color:#A6E1BC;}
+  .sc-bg{position:absolute;inset:0;width:100%;height:100%;}
+  .sc-chara{position:relative;z-index:2;height:110px;width:auto;filter:drop-shadow(0 4px 6px rgba(0,0,0,.32));}
+
+  /* Teams投稿 mock */
+  .tmock{flex:1 1 auto;background:#fff;border:1.5px solid #C9CCEE;border-radius:9px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 2px 6px rgba(0,0,0,.08);}
+  .tmock .th{flex:0 0 auto;display:flex;align-items:center;gap:8px;background:#F1F2FB;padding:6px 10px;border-bottom:1px solid #E1E3F5;}
+  .tmock .th img{width:20px;height:20px;object-fit:contain;}
+  .tmock .th b{font-size:13.5px;font-weight:900;color:var(--teams);}
+  .tmsg{flex:1;display:flex;align-items:center;gap:8px;padding:4px 10px;border-bottom:1px solid #F2F2F7;min-height:0;}
+  .tmsg:last-of-type{border-bottom:none;}
+  .tmsg .dy{flex:0 0 30px;font-size:12px;font-weight:900;color:var(--teams);}
+  .tmsg .tx{flex:1;font-size:13px;font-weight:700;color:#31343f;line-height:1.2;}
+  .tmsg .tx .kw{color:var(--teams);font-weight:900;}
+  .tinput{flex:0 0 auto;margin:5px 9px 8px;display:flex;align-items:center;gap:7px;border:2px solid var(--teams);border-radius:8px;padding:6px 9px;background:#fff;box-shadow:0 2px 5px rgba(80,89,201,.2);}
+  .tinput .kwb{background:var(--teams);color:#fff;font-size:12px;font-weight:900;border-radius:5px;padding:2px 7px;white-space:nowrap;}
+  .tinput .ph{font-size:12.5px;font-weight:800;color:#31343f;}
+
+  /* SharePoint ネタ帳 mock */
+  .spm{flex:1 1 auto;background:#fff;border:1.5px solid #AEDCCE;border-radius:9px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 2px 6px rgba(0,0,0,.08);}
+  .spm .sh{flex:0 0 auto;display:flex;align-items:center;gap:8px;background:var(--sp);padding:6px 10px;}
+  .spm .sh img{width:19px;height:19px;object-fit:contain;background:#fff;border-radius:4px;padding:2px;}
+  .spm .sh b{font-size:13.5px;font-weight:900;color:#fff;}
+  .spr{flex:1;display:flex;align-items:center;gap:8px;padding:3px 10px;border-bottom:1px solid #EDF5F2;min-height:0;}
+  .spr:last-child{border-bottom:none;}
+  .spr.hd{background:#E9F7F3;}
+  .spr .d{flex:0 0 42px;font-size:12.5px;font-weight:900;color:var(--sp);}
+  .spr .c{flex:1;font-size:12.5px;font-weight:700;color:#31343f;line-height:1.2;}
+  .spr.hd .d,.spr.hd .c{font-size:11.5px;font-weight:900;color:var(--sp);}
+  .spr.newr{background:#DFF3E7;}
+
+  /* 週報メール mock */
+  .mmock{flex:1 1 auto;background:#fff;border:1.5px solid #BDE6CD;border-radius:9px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 2px 6px rgba(0,0,0,.08);}
+  .mmock .mh{flex:0 0 auto;display:flex;align-items:center;gap:8px;background:#EAF7EF;padding:6px 10px;border-bottom:1px solid #CDEBD8;}
+  .mmock .mh img{width:19px;height:19px;object-fit:contain;}
+  .mmock .mh b{font-size:13.5px;font-weight:900;color:#15803D;}
+  .mmock .msub{flex:0 0 auto;padding:6px 11px 3px;font-size:14.5px;font-weight:900;color:#242424;}
+  .mli{flex:1;display:flex;align-items:center;gap:8px;padding:3px 12px;min-height:0;}
+  .mli .bl{flex:0 0 auto;width:6px;height:6px;border-radius:50%;background:#16A34A;}
+  .mli .mt{flex:1;font-size:13px;font-weight:700;color:#31343f;line-height:1.22;}
+  .mli .mt b{color:#0B5E37;}
+  .mfoot{flex:0 0 auto;margin:4px 11px 8px;background:#F0FAF4;border:1.5px dashed #9CD4B2;border-radius:8px;padding:5px 9px;font-size:12px;font-weight:800;color:#0B5E37;line-height:1.3;}
+
+  .cap{flex:0 0 auto;text-align:center;font-size:14px;font-weight:800;line-height:1.3;padding:0 2px;}
+  .col.c1 .cap{color:#3C43A8;} .col.c2 .cap{color:var(--sp);} .col.c3 .cap{color:#0B5E37;}
+  .cap b{color:#111;}
+
+  .uses{flex:0 0 auto;margin:11px 15px 12px;display:flex;align-items:stretch;gap:9px;}
+  .ulabel{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;font-weight:900;font-size:15px;border-radius:11px;padding:0 15px;text-align:center;line-height:1.25;box-shadow:0 3px 8px rgba(37,99,235,.32);}
+  .uc{flex:1;background:#F8F9FA;border:2px solid #D7E0EC;border-radius:11px;padding:9px 12px;box-shadow:0 2px 6px rgba(0,0,0,.07);display:flex;align-items:center;gap:10px;}
+  .uc .em{font-size:23px;flex:0 0 auto;}
+  .uc .ut{font-size:15.5px;font-weight:800;color:#33405a;line-height:1.28;}
+  .uc .ut b{color:var(--blue-dark);}
+  .src{position:absolute;left:16px;bottom:3px;font-size:10px;color:#AEB6C2;font-weight:700;z-index:3;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+
+// ①毎日ひとこと＝日めくりカレンダー＋吹き出し
+const scene1=`<svg class="sc-bg" viewBox="0 0 460 118" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+ <defs><linearGradient id="cal1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#E6E8F7"/></linearGradient></defs>
+ ${[0,1,2].map(i=>`<g transform="translate(${26+i*20} ${34-i*5}) rotate(${-6+i*4})">
+   <rect x="0" y="0" width="62" height="66" rx="6" fill="url(#cal1)" stroke="#B9BEEA" stroke-width="1.5"/>
+   <rect x="0" y="0" width="62" height="15" rx="6" fill="#5059C9"/><rect x="0" y="8" width="62" height="7" fill="#5059C9"/>
+   ${[0,1,2].map(r=>`<rect x="8" y="${23+r*13}" width="${r===2?28:46}" height="6" rx="3" fill="#DDE0F2"/>`).join('')}
+ </g>`).join('')}
+ <!-- 吹き出し -->
+ <g transform="translate(296 10)">
+   <rect x="0" y="0" width="152" height="50" rx="12" fill="#fff" stroke="#5059C9" stroke-width="2"/>
+   <path d="M22 50 L30 63 L42 50 Z" fill="#fff" stroke="#5059C9" stroke-width="2"/>
+   <path d="M23 51 L41 51" stroke="#fff" stroke-width="3"/>
+   <text x="12" y="22" font-size="13" fill="#5059C9" font-weight="900" font-family="'Noto Sans JP',sans-serif">#週報</text>
+   <text x="12" y="40" font-size="12" fill="#31343f" font-weight="800" font-family="'Noto Sans JP',sans-serif">A社の見積を提出</text>
+ </g>
+ <text x="372" y="100" text-anchor="middle" font-size="12" fill="#3C43A8" font-weight="900" font-family="'Noto Sans JP',sans-serif">1日1行、10秒</text>
+</svg>`;
+
+// ②貯まる＝メモが積み上がる
+const scene2=`<svg class="sc-bg" viewBox="0 0 460 118" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+ <defs><linearGradient id="nt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#DDF0E9"/></linearGradient></defs>
+ ${[0,1,2,3].map(i=>`<g transform="translate(${150} ${86-i*17}) rotate(${(i%2?2.5:-2.5)})">
+   <rect x="0" y="0" width="150" height="20" rx="4" fill="url(#nt)" stroke="#8CCFBC" stroke-width="1.4"/>
+   <circle cx="12" cy="10" r="3.4" fill="#0B7C66"/>
+   <rect x="22" y="6" width="${112-i*16}" height="7" rx="3.5" fill="#CBE8DF"/>
+ </g>`).join('')}
+ <path d="M330 78 v-42" stroke="#17997F" stroke-width="3.4" stroke-linecap="round"/>
+ <path d="M330 30 l-7 11 h14 Z" fill="#17997F"/>
+ <text x="336" y="98" text-anchor="middle" font-size="12" fill="#0B7C66" font-weight="900" font-family="'Noto Sans JP',sans-serif">勝手に積み上がる</text>
+</svg>`;
+
+// ③金曜＝封筒がドンと届く＋FRIバッジ
+const scene3=`<svg class="sc-bg" viewBox="0 0 460 118" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+ <defs>
+  <linearGradient id="env3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#DCF3E6"/></linearGradient>
+ </defs>
+ <g transform="translate(120 24) scale(1.25)">
+   <ellipse cx="0" cy="52" rx="52" ry="8" fill="rgba(20,120,60,.13)"/>
+   <rect x="-46" y="-6" width="92" height="58" rx="6" fill="url(#env3)" stroke="#63BE8C" stroke-width="2"/>
+   <path d="M-46 -2 L0 30 L46 -2" fill="none" stroke="#57A277" stroke-width="2"/>
+   <path d="M-46 -6 L46 -6 L46 -2 L0 30 L-46 -2 Z" fill="#CFF0DD" stroke="#63BE8C" stroke-width="1.6"/>
+   <circle cx="38" cy="-2" r="14" fill="#16A34A"/>
+   <path d="M31 -2 l5 5 l10 -11" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+ </g>
+ <g transform="translate(318 22)">
+   <rect x="0" y="0" width="70" height="70" rx="10" fill="#fff" stroke="#15803D" stroke-width="2.4"/>
+   <rect x="0" y="0" width="70" height="20" rx="10" fill="#15803D"/><rect x="0" y="12" width="70" height="8" fill="#15803D"/>
+   <text x="35" y="16" text-anchor="middle" font-size="12" fill="#fff" font-weight="900" font-family="'Noto Sans JP',sans-serif">FRI</text>
+   <text x="35" y="52" text-anchor="middle" font-size="26" fill="#15803D" font-weight="900" font-family="'Noto Sans JP',sans-serif">16:00</text>
+ </g>
+ <path d="M418 26 l3 8 l8 3 l-8 3 l-3 8 l-3 -8 l-8 -3 l8 -3 Z" fill="#8FD8AC"/>
+ <text x="104" y="112" text-anchor="middle" font-size="11.5" fill="#0B5E37" font-weight="900" font-family="'Noto Sans JP',sans-serif">向こうから届く</text>
+</svg>`;
+
+const s=document.getElementById('slide');
+s.innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.70-1</div>
+    <div class="logos"><img class="ll" src="${A}icons/pa_logo.png" alt=""><span class="plus">＋</span><img class="ll" src="${A}icons/pa_teams.png" alt=""></div>
+    <div class="title-text">毎日のひとことが、<span class="hl">金曜に“週報の下書き”になる</span></div>
+    <img class="title-chara" src="${A}chara/chara_laptop.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">📝</div>
+    <div class="txt">週報のために<b>1週間を思い出す作業</b>、あれ自体が地味に時間かかりますよね。<br>毎日ひとこと打っておくだけで、金曜には<span class="g">下書きが勝手に出来上がって</span>います。</div>
+  </div>
+
+  <div class="cols">
+    <div class="col c1">
+      <div class="cnum">1</div>
+      <div class="colcard">
+        <div class="chd">毎日ひとこと打つ</div>
+        <div class="cbd">
+          <div class="scene">${scene1}<img class="sc-chara" src="${A}chara/chara_smile.png" alt=""></div>
+          <div class="tmock">
+            <div class="th"><img src="${A}icons/pa_teams.png" alt=""><b>自分用チャネル</b></div>
+            <div class="tmsg"><span class="dy">月</span><span class="tx"><span class="kw">#週報</span> A社の見積を提出</span></div>
+            <div class="tmsg"><span class="dy">火</span><span class="tx"><span class="kw">#週報</span> 新人研修の資料を作成</span></div>
+            <div class="tmsg"><span class="dy">水</span><span class="tx"><span class="kw">#週報</span> 在庫フローの不具合を修正</span></div>
+            <div class="tinput"><span class="kwb">#週報</span><span class="ph">B社と打合せ｜と打つだけ</span></div>
+          </div>
+          <div class="cap">合言葉を付けて<b>1行つぶやくだけ</b></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="carrow">▶</div>
+
+    <div class="col c2">
+      <div class="cnum">2</div>
+      <div class="colcard">
+        <div class="chd">ネタ帳に自動で貯まる</div>
+        <div class="cbd">
+          <div class="scene">${scene2}<img class="sc-chara" src="${A}chara/chara_point.png" alt=""></div>
+          <div class="spm">
+            <div class="sh"><img src="${A}icons/pa_sharepoint.png" alt=""><b>週報ネタ帳</b></div>
+            <div class="spr hd"><span class="d">日付</span><span class="c">やったこと</span></div>
+            <div class="spr"><span class="d">7/13</span><span class="c">A社の見積を提出</span></div>
+            <div class="spr"><span class="d">7/14</span><span class="c">新人研修の資料を作成</span></div>
+            <div class="spr"><span class="d">7/15</span><span class="c">在庫フローの不具合を修正</span></div>
+            <div class="spr newr"><span class="d">7/16</span><span class="c">B社と打合せ</span></div>
+          </div>
+          <div class="cap">打った瞬間に<b>1行ずつ記録</b></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="carrow">▶</div>
+
+    <div class="col c3">
+      <div class="cnum">3</div>
+      <div class="colcard">
+        <div class="chd">金曜、下書きが届く</div>
+        <div class="cbd">
+          <div class="scene">${scene3}<img class="sc-chara" src="${A}chara/chara_guts.png" alt=""></div>
+          <div class="mmock">
+            <div class="mh"><img src="${A}icons/pa_outlook.png" alt=""><b>週報の下書きが届きました</b></div>
+            <div class="msub">📝 今週やったこと（7/13〜7/17）</div>
+            <div class="mli"><span class="bl"></span><span class="mt">A社の見積を<b>提出</b></span></div>
+            <div class="mli"><span class="bl"></span><span class="mt">新人研修の資料を<b>作成</b></span></div>
+            <div class="mli"><span class="bl"></span><span class="mt">在庫フローの不具合を<b>修正</b></span></div>
+            <div class="mli"><span class="bl"></span><span class="mt">B社と<b>打合せ</b></span></div>
+            <div class="mfoot">あとは自分の言葉で整えるだけ。<b>ゼロから思い出す時間がなくなる</b></div>
+          </div>
+          <div class="cap"><b>思い出す作業</b>がまるごと消える</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="uses">
+    <div class="ulabel">こんな<br>報告に</div>
+    <div class="uc"><span class="em">📄</span><span class="ut">週報・<b>日報の下書き</b></span></div>
+    <div class="uc"><span class="em">📊</span><span class="ut">月報・<b>実績の棚卸し</b></span></div>
+    <div class="uc"><span class="em">🗣️</span><span class="ut">1on1の<b>話すネタ集め</b></span></div>
+    <div class="uc"><span class="em">🏅</span><span class="ut">評価面談の<b>実績メモ</b></span></div>
+  </div>
+  <div class="src">出典：Microsoft Learn（Microsoft Teams／SharePoint コネクタ）　※作り方は2枚目</div>
+`;
+</script>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>

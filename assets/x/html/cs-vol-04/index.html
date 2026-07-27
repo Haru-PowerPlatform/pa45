@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>コパスタ Vol.4 - コンセプト</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB; --cs:#7C3AED; --cs-bg:#F5F3FF; --cs-bg2:#EDE9FE; --cs-dark:#5B21B6;
+    --green:#16A34A; --green-bg:#ECFDF5; --green-bg2:#C6F0D6; --green-dark:#064E3B;
+    --amber:#B45309; --amber-bg:#FFFBEB; --amber-line:#FDE68A;
+    --ink:#1F2937; --gray:#374151; --gray2:#4B5563; --weak:#6B7280; --faint:#9CA3AF;
+    --card:#F8F9FA; --line:#E5E7EB;
+    --segline:#D1D1D1; --segink:#323130;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+
+  .titlebar{
+    height:90px;
+    background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#5B21B6 0%,#7C3AED 50%,#A855F7 100%);
+    box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(91,33,182,.36);
+    display:flex;align-items:center;gap:18px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;
+  }
+  .vol-pill{background:#fff;color:var(--cs);font-weight:900;font-size:24px;border-radius:999px;padding:7px 20px;letter-spacing:.5px;white-space:nowrap;flex:0 0 auto;}
+  .part-pill{background:rgba(255,255,255,.16);color:#fff;font-weight:900;font-size:17px;border-radius:999px;padding:6px 14px;white-space:nowrap;flex:0 0 auto;border:1.6px solid rgba(255,255,255,.78);box-shadow:inset 0 1px 0 rgba(255,255,255,.25);}
+  .part-pill b{color:#FDE047;}
+  .title-text{color:#fff;font-weight:900;font-size:31px;line-height:1.18;letter-spacing:.3px;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:140px;}
+  .title-text .q{color:#FDE047;}
+  .title-chara{position:absolute;right:14px;bottom:-52px;height:148px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .concl{
+    margin:9px 18px 0;background:var(--green-bg);border:2px solid var(--green);border-radius:12px;
+    display:flex;align-items:center;gap:14px;padding:10px 18px;flex:0 0 auto;
+    box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);
+  }
+  .concl .chip{background:linear-gradient(180deg,rgba(255,255,255,.30),rgba(255,255,255,0) 50%),linear-gradient(180deg,#2BD06A,#16A34A);color:#fff;font-weight:900;font-size:22px;border-radius:9px;padding:8px 18px;white-space:nowrap;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
+  .concl .txt{font-weight:700;font-size:20px;color:var(--green-dark);line-height:1.38;}
+  .concl .txt b{color:var(--cs);} .concl .txt em{color:var(--green);font-style:normal;}
+
+  .cmp{flex:1 1 auto;display:flex;gap:16px;padding:10px 18px 0;min-height:0;}
+  .ccard{flex:1;display:flex;flex-direction:column;min-height:0;border-radius:14px;background:var(--card);padding:13px 15px 14px;box-shadow:0 7px 16px rgba(0,0,0,.14),inset 0 1px 0 rgba(255,255,255,.8);}
+  .ccard.before{border:2.5px solid #D97706;}
+  .ccard.after{border:2.5px solid var(--cs);}
+  .chead{align-self:stretch;display:flex;align-items:center;justify-content:center;gap:10px;color:#fff;font-weight:900;font-size:24px;border-radius:11px;padding:9px 14px;letter-spacing:.4px;box-shadow:0 4px 8px rgba(0,0,0,.26),inset 0 1px 0 rgba(255,255,255,.5),inset 0 -3px 4px rgba(0,0,0,.16);text-shadow:0 1px 2px rgba(0,0,0,.22);}
+  .h-before{background:linear-gradient(180deg,rgba(255,255,255,.26),rgba(255,255,255,0) 48%),linear-gradient(180deg,#F59E0B,#D97706);}
+  .h-after{background:linear-gradient(120deg,#7C3AED 0%,#C026D3 52%,#EC4899 100%);}
+
+  /* チャット再現 */
+  .win{flex:1;margin-top:11px;border-radius:12px;border:1.5px solid var(--segline);background:#fff;box-shadow:0 6px 16px rgba(0,0,0,.16);overflow:hidden;display:flex;flex-direction:column;font-family:"Segoe UI","Noto Sans JP",sans-serif;min-height:0;}
+  .win-top{flex:0 0 auto;height:34px;background:#fff;border-bottom:1px solid #EBEBEB;display:flex;align-items:center;justify-content:space-between;padding:0 12px;}
+  .win-top .name{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700;color:var(--segink);white-space:nowrap;}
+  .win-top .name .mslogo{width:16px;height:16px;object-fit:contain;}
+  .win-top .know{font-size:11px;font-weight:800;border-radius:999px;padding:3px 10px;white-space:nowrap;}
+  .know.web{background:#F3F2F1;color:#605E5C;border:1px solid #E1DFDD;}
+  .know.doc{background:#EDE9FE;color:#5B21B6;border:1px solid #C4B5FD;}
+  .win-chat{flex:1;background:#fff;padding:10px 12px;display:flex;flex-direction:column;gap:7px;min-height:0;overflow:hidden;}
+  .ubub{align-self:flex-end;max-width:88%;background:#F3F2F1;color:#242424;font-size:13.5px;font-weight:700;line-height:1.5;border-radius:12px 12px 3px 12px;padding:9px 13px;box-shadow:0 1px 3px rgba(0,0,0,.08);}
+  .ahead{display:flex;align-items:center;gap:8px;}
+  .ahead .ic{width:22px;height:22px;border-radius:6px;background:linear-gradient(135deg,#6D5DF6,#8B5CF6);display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:900;flex:0 0 auto;}
+  .ahead .nm{font-size:12.5px;font-weight:800;color:#242424;}
+  .abub{background:#FAFAFC;border:1px solid #ECECEC;border-radius:10px;padding:10px 12px;font-size:13.5px;font-weight:600;line-height:1.55;color:#242424;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+  .abub .vague{color:#8A8886;}
+  .abub .hit{background:linear-gradient(transparent 58%,#DDD6FE 58%);font-weight:900;color:#3B0764;}
+  .cit{display:inline-flex;align-items:center;gap:6px;margin-top:9px;font-size:11.5px;font-weight:800;color:#5B21B6;}
+  .cit .b{width:17px;height:17px;border-radius:50%;background:#EDE9FE;color:#5B21B6;font-size:10px;font-weight:900;display:flex;align-items:center;justify-content:center;flex:0 0 auto;}
+  .searched{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:700;color:#323130;margin-left:3px;}
+  .searched .mag{width:18px;height:18px;border-radius:5px;background:#F3F2F1;display:flex;align-items:center;justify-content:center;font-size:10px;}
+  .searched .fn{color:#5B21B6;font-weight:800;}
+
+  .verdict{flex:0 0 auto;margin-top:9px;border-radius:10px;padding:8px 12px;font-weight:900;font-size:17px;line-height:1.3;display:flex;align-items:center;gap:9px;}
+  .before .verdict{background:var(--amber-bg);border:1.5px solid var(--amber-line);color:var(--amber);}
+  .after .verdict{background:var(--cs-bg);border:1.5px solid #DDD6FE;color:var(--cs-dark);}
+  .verdict .mk{font-size:22px;line-height:1;}
+
+  /* 中央バッジ */
+  .vs{position:absolute;left:50%;top:352px;transform:translateX(-50%);z-index:30;
+      width:78px;height:78px;border-radius:50%;background:linear-gradient(180deg,#FFFFFF,#EDE9FE);border:3px solid #fff;
+      box-shadow:0 5px 12px rgba(0,0,0,.30);display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:900;color:var(--cs-dark);line-height:1;}
+  .vs .a{font-size:23px;} .vs .t{font-size:12px;margin-top:4px;letter-spacing:.2px;}
+
+  .darkband{margin:11px 0 0;background:linear-gradient(180deg,#565C66,#4A4F58);color:#fff;flex:0 0 auto;position:relative;display:flex;align-items:stretch;gap:16px;padding:10px 22px 13px;height:126px;overflow:hidden;box-shadow:inset 0 1px 0 rgba(255,255,255,.10);}
+  .bridge{flex:1.6;display:flex;flex-direction:column;justify-content:flex-start;}
+  .bridge .label{font-weight:900;font-size:16.5px;color:#FCD34D;margin-bottom:8px;letter-spacing:.4px;}
+  .bridge .row{display:flex;align-items:center;gap:10px;}
+  .pill{color:#fff;font-weight:900;font-size:15.5px;border-radius:10px;padding:8px 13px;white-space:nowrap;box-shadow:0 3px 6px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.4);background:linear-gradient(120deg,#7C3AED,#C026D3 60%,#EC4899);}
+  .pill.g{background:linear-gradient(180deg,#22C55E,#16A34A);}
+  .arw{font-weight:900;font-size:20px;color:#FCD34D;}
+  .bridge .desc{font-weight:700;font-size:15.5px;color:#F1F5F9;line-height:1.3;margin-top:8px;}
+  .bridge .desc b{color:#FDE047;}
+  .memo{flex:1;background:linear-gradient(180deg,#646A75,#565C66);border:1.5px solid #7A818D;border-radius:11px;padding:11px 15px;margin-right:120px;display:flex;flex-direction:column;justify-content:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.12);}
+  .memo .label{font-weight:900;font-size:15px;color:#FCD34D;margin-bottom:6px;}
+  .memo .txt{font-weight:700;font-size:16px;color:#fff;line-height:1.42;}
+  .memo .txt b{color:#6EE7A6;} .memo .txt em{color:#E9D5FF;font-style:normal;}
+  .band-chara{position:absolute;right:8px;bottom:0;height:146px;z-index:50;filter:drop-shadow(0 3px 7px rgba(0,0,0,.45));}
+  .src{position:absolute;left:22px;bottom:4px;font-size:11px;font-weight:500;color:rgba(255,255,255,.5);z-index:40;}
+</style>
+</head>
+<body>
+<div id="slide">
+  <div class="titlebar">
+    <div class="vol-pill">コパスタ Vol.4</div>
+    <div class="part-pill">前編 <b>(1/2)</b></div>
+    <div class="title-text">会社の資料を"読ませる"だけで、<br>社内のことに答えるAIになる<span class="q">。</span></div>
+    <img class="title-chara" src="../../pptx/_assets/chara/chara_smile_g.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">結論</div>
+    <div class="txt">足したのは<b>社内文書ひとつ</b>だけ。指示文は1文字も変えていません。<br>それだけで、答えが<em>「たぶん一般論」から「うちのルール」</em>に変わります。</div>
+  </div>
+
+  <div class="cmp">
+    <div class="ccard before">
+      <div class="chead h-before">Web検索だけのとき</div>
+      <div class="win">
+        <div class="win-top">
+          <div class="name"><img class="mslogo" src="../../pptx/_assets/icons/cs_logo.png" alt="">社内ヘルプ エージェント</div>
+          <div class="know web">🌐 ナレッジ：Web検索のみ</div>
+        </div>
+        <div class="win-chat">
+          <div class="ubub">有給って、何日前までに申請すればいいですか？</div>
+          <div class="ahead"><span class="ic">&lt;/&gt;</span><span class="nm">社内ヘルプ エージェント</span></div>
+          <div class="abub">一般的には、数日前から2週間前までに申請する会社が多いようです。<br>申請は勤怠システムや申請フォームから行うのが一般的です。<br><span class="vague">くわしくは、お勤め先の就業規則をご確認ください。</span></div>
+        </div>
+      </div>
+      <div class="verdict"><span class="mk">😕</span>まちがってはいないけれど、<br>結局は自分で就業規則を開いて調べ直すことに</div>
+    </div>
+
+    <div class="ccard after">
+      <div class="chead h-after">社内文書を足したあと</div>
+      <div class="win">
+        <div class="win-top">
+          <div class="name"><img class="mslogo" src="../../pptx/_assets/icons/cs_logo.png" alt="">社内ヘルプ エージェント</div>
+          <div class="know doc">📄 ナレッジ：就業規則ほか2件</div>
+        </div>
+        <div class="win-chat">
+          <div class="ubub">有給って、何日前までに申請すればいいですか？</div>
+          <div class="ahead"><span class="ic">&lt;/&gt;</span><span class="nm">社内ヘルプ エージェント</span></div>
+          <div class="searched"><span class="mag">🔍</span>Searched knowledge <span class="fn">就業規則_2026年版.pdf</span></div>
+          <div class="abub"><span class="hit">原則5営業日前まで</span>の申請です。急な事情のときは上長へ連絡のうえ、事後申請もできます。
+            <span class="cit"><span class="b">1</span>就業規則_2026年版.pdf（第12条）</span>
+          </div>
+        </div>
+      </div>
+      <div class="verdict"><span class="mk">🎯</span>社内の言葉で回答。しかも、<br>どの資料の何条を見たのかまで示される</div>
+    </div>
+  </div>
+  <div class="vs"><span class="a">＋</span><span class="t">資料1つ</span></div>
+
+  <div class="darkband">
+    <div class="bridge">
+      <div class="label">やったことは、たったこれだけ</div>
+      <div class="row">
+        <span class="pill">Knowledge に文書を追加</span>
+        <span class="arw">→</span>
+        <span class="pill g">答えが社内基準に変わる</span>
+      </div>
+      <div class="desc">指示文（Instructions）は<b>そのまま</b>。読ませる資料を渡しただけです。</div>
+    </div>
+    <div class="memo">
+      <div class="label">作り方は…</div>
+      <div class="txt">次のスライドで<em>実際の追加画面</em>つきで。<br>PDFやWordを<b>ドラッグするだけ</b>で足せます。</div>
+    </div>
+    <div class="src">出典：Microsoft Learn（Copilot Studio ナレッジ ソース）／会話は説明用の例です</div>
+  </div>
+  <img class="band-chara" src="../../pptx/_assets/chara/chara_point_g.png" alt="">
+</div>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>

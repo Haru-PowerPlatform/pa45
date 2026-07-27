@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.49-2 Copilotに聞いて作る｜レシピの読み方と日本語画面への読み替え</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB; --blue-bg:#EFF6FF; --blue-dark:#1E40AF;
+    --green:#16A34A; --green-bg:#ECFDF5; --green-dark:#064E3B;
+    --cop:#7C3AED; --cop-dark:#5B21B6;
+    --cop-grad:linear-gradient(120deg,#7C3AED,#C026D3 55%,#EC4899);
+    --orange:#EA580C; --ink:#1F2937; --gray:#374151; --weak:#6B7280; --line:#E5E7EB;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+  .ic{display:block;width:100%;height:100%;}
+
+  .titlebar{height:90px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:16px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:26px;border-radius:999px;padding:7px 20px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .vol-logo{height:48px;width:48px;object-fit:contain;flex:0 0 auto;background:#fff;border-radius:12px;padding:5px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
+  .title-text{color:#fff;font-weight:900;font-size:30px;line-height:1.14;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:140px;}
+  .title-text .hl{color:#FFE08A;}
+  .title-chara{position:absolute;right:14px;bottom:-44px;height:146px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .concl{margin:9px 16px 0;background:var(--blue-bg);border:2.5px solid var(--blue);border-radius:13px;display:flex;align-items:center;gap:13px;padding:8px 18px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;width:40px;height:40px;border-radius:11px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;padding:8px;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
+  .concl .txt{font-weight:800;font-size:17.5px;color:var(--blue-dark);line-height:1.32;padding-right:92px;}
+  .concl .txt b{color:var(--orange);}
+
+  .cols{flex:1 1 auto;margin:11px 15px 0;display:flex;align-items:stretch;gap:0;min-height:0;}
+  .col{flex:1;display:flex;flex-direction:column;min-height:0;position:relative;}
+  .carrow{flex:0 0 32px;display:flex;align-items:center;justify-content:center;color:#9AA7B8;}
+  .carrow svg{width:30px;height:30px;}
+  .colcard{flex:1;background:#fff;border:1.5px solid #C9D2E0;border-radius:13px;box-shadow:0 5px 13px rgba(0,0,0,.12);overflow:hidden;display:flex;flex-direction:column;}
+  .cnum{position:absolute;top:-10px;left:-10px;width:34px;height:34px;border-radius:50%;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;font-weight:900;font-size:18px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 5px rgba(0,0,0,.3);z-index:5;border:2.5px solid #fff;}
+  .ch{display:flex;align-items:center;gap:11px;padding:10px 34px 10px 13px;min-height:60px;background:#fff;border-bottom:1px solid #EDEFF2;position:relative;}
+  .ch .sq{flex:0 0 auto;width:40px;height:40px;border-radius:8px;background:#fff;border:1px solid #EAECEF;display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.08);}
+  .ch .sq img{width:28px;height:28px;object-fit:contain;}
+  .ch .sq.bloom{border:none;box-shadow:none;background:var(--cop-grad);color:#fff;padding:8px;}
+  .ch .nm{flex:1;font-weight:900;font-size:15.5px;color:var(--ink);line-height:1.18;}
+  .ch .nm small{display:block;font-weight:700;font-size:11.5px;color:var(--weak);margin-top:2px;}
+  .ch .dots{position:absolute;right:12px;top:11px;color:#9AA3AF;font-size:19px;font-weight:900;line-height:1;}
+
+  .cp{flex:1;font-family:'Segoe UI','Noto Sans JP',sans-serif;padding:0 12px 9px;display:flex;flex-direction:column;gap:0;}
+  .ptop{flex:0 0 248px;display:flex;flex-direction:column;gap:6px;overflow:hidden;background:#fff;padding:8px 2px 4px;}
+
+  /* 列1：聞き方 */
+  .askbub{background:#EDE9FE;border:1.5px solid #C4B5FD;border-radius:11px;border-bottom-right-radius:4px;padding:9px 12px;font-size:14px;font-weight:700;color:#3B3172;line-height:1.42;}
+  .askbub b{color:var(--cop-dark);}
+  .askk{display:flex;flex-direction:column;gap:3px;}
+  .askk .kl{font-size:12.5px;font-weight:900;color:#5A6B85;display:flex;align-items:center;gap:6px;}
+  .askk .kl::before{content:"";width:5px;height:14px;border-radius:2px;background:var(--cop);}
+  .askk .kv{border:1px solid #DDD3F0;background:#FBFAFE;border-radius:7px;padding:6px 10px;font-size:13.5px;font-weight:800;color:#43307A;line-height:1.35;}
+
+  /* 列2：レシピ */
+  .rcp{display:flex;gap:8px;align-items:flex-start;font-size:13.5px;font-weight:700;color:#333;line-height:1.3;}
+  .rcp .rn{flex:0 0 auto;min-width:44px;text-align:center;background:#F3EFFB;border:1px solid #DCCFF3;border-radius:6px;padding:2px 6px;font-size:11.5px;font-weight:900;color:var(--cop-dark);margin-top:1px;}
+  .rcp .rv{flex:1;}
+  .rcp .rv code{font-family:'Segoe UI','Noto Sans JP',sans-serif;background:#F6F8FB;border:1px solid #DDE4EE;border-radius:5px;padding:0 5px;font-weight:800;color:#1F2937;font-size:12.5px;}
+  .rcp.key{background:#FFF7ED;border:1.5px solid #FDBA74;border-radius:8px;padding:6px 8px;}
+  .rcp.key .rn{background:#FFEDD5;border-color:#FDBA74;color:#9A3412;}
+  .rcp.key .rv b{color:var(--orange);}
+  .rcp .rv b{color:var(--cop-dark);}
+
+  /* 列3：読み替え表 */
+  .maph{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:900;color:#5A6B85;}
+  .maph span{flex:1;text-align:center;}
+  .map{display:flex;align-items:center;gap:5px;}
+  .map .en{flex:1;font-size:12px;font-weight:700;color:#6B7280;background:#F6F7F9;border:1px solid #E3E7EC;border-radius:6px;padding:3px 7px;line-height:1.22;font-family:'Segoe UI',sans-serif;}
+  .map .ma{flex:0 0 auto;width:15px;height:15px;color:#2563EB;}
+  .map .jp{flex:1.15;font-size:13px;font-weight:900;color:#1E40AF;background:#EAF1FE;border:1.5px solid #BBD0EE;border-radius:6px;padding:3px 7px;line-height:1.22;}
+
+  .howsteps{flex:1;margin-top:7px;background:linear-gradient(180deg,#F5F8FD,#EEF3FA);border:1px solid #D7E1F0;border-radius:10px;padding:9px 12px;display:flex;flex-direction:column;gap:6px;}
+  .howsteps .hh{display:flex;align-items:center;gap:7px;font-size:14.5px;font-weight:900;color:#2B3A52;}
+  .howsteps .hh::before{content:"";width:5px;height:15px;border-radius:2px;background:#2563EB;}
+  .howsteps ol{list-style:none;display:flex;flex-direction:column;justify-content:space-evenly;flex:1;gap:5px;}
+  .howsteps li{display:flex;gap:9px;align-items:flex-start;font-size:14.5px;font-weight:700;color:#2F3E57;line-height:1.28;}
+  .howsteps li .sn{flex:0 0 auto;width:23px;height:23px;border-radius:50%;background:#2563EB;color:#fff;font-size:13px;font-weight:900;display:flex;align-items:center;justify-content:center;margin-top:1px;}
+  .howsteps li b{color:#1E40AF;}
+  .howsteps li.key{color:#0B5E37;} .howsteps li.key .sn{background:#16A34A;} .howsteps li.key b{color:#0B5E37;}
+
+  .pitfall{flex:0 0 auto;margin:9px 15px 11px;background:linear-gradient(180deg,#FFF7ED,#FFEFD9);border:2px solid #FDBA74;border-radius:13px;padding:9px 16px;display:flex;align-items:center;gap:13px;box-shadow:0 2px 6px rgba(0,0,0,.07);position:relative;}
+  .pitfall .pl{flex:0 0 auto;display:flex;align-items:center;gap:7px;background:linear-gradient(180deg,#FB923C,#EA580C);color:#fff;font-weight:900;font-size:15px;border-radius:9px;padding:8px 13px;box-shadow:0 2px 4px rgba(0,0,0,.25);}
+  .pitfall .pl svg{width:17px;height:17px;}
+  .pitfall .px{flex:1;font-weight:800;font-size:15px;color:#7C2D12;line-height:1.36;padding-right:100px;}
+  .pitfall .px b{color:var(--orange);}
+  .pitfall .px code{font-family:'Courier New',monospace;background:#fff;border:1px solid #F0C89B;border-radius:5px;padding:1px 6px;color:#9A3412;font-weight:800;}
+  .pit-chara{position:absolute;right:12px;bottom:-2px;height:100px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.4));}
+  .src{position:absolute;left:16px;bottom:3px;font-size:10px;color:#AEB6C2;font-weight:700;z-index:3;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const ICON={
+ bulb:'<path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/>',
+ warn:'<path d="M10.3 3.3 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.3a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>',
+ arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',
+ spark:'<path d="M12 2l2.2 6.3L21 10l-6.8 1.7L12 18l-2.2-6.3L3 10l6.8-1.7L12 2z"/>'
+};
+const svg=(n)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${ICON[n]}</svg>`;
+
+const s=document.getElementById('slide');
+s.innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.49-2</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">Copilotに聞いて作る｜<span class="hl">レシピの読み方と“読み替え”のコツ</span></div>
+    <img class="title-chara" src="${A}chara/chara_laptop.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svg('bulb')}</div>
+    <div class="txt">コツは3つ。<b>①聞き方の型</b>で質問、<b>②レシピの肝（添付の設定2つ）</b>を見落とさない、<b>③英語名は日本語画面に読み替え</b>。<br>これでAIと一緒に作るフローは迷わない。</div>
+  </div>
+
+  <div class="cols">
+    <div class="col">
+      <div class="cnum">1</div>
+      <div class="colcard">
+        <div class="ch"><span class="sq bloom">${svg('spark')}</span><span class="nm">M365 Copilot チャットに聞く<small>m365.cloud.microsoft／チャット</small></span><span class="dots">⋮</span></div>
+        <div class="cp">
+          <div class="ptop">
+            <div class="askbub">Power Automateで、<b>メールに添付ファイルが届いたらOneDriveに自動保存</b>するフローを作りたいです。<b>初心者なので、作る手順をわかりやすく</b>教えてください。</div>
+            <div class="askk"><span class="kl">聞き方の型①　やりたいこと</span><span class="kv">「◯◯が起きたら△△する」を具体的に書く</span></div>
+            <div class="askk"><span class="kl">聞き方の型②　レベル感</span><span class="kv">「初心者なので手順を」を必ず添える</span></div>
+          </div>
+          <div class="howsteps">
+            <div class="hh">操作手順</div>
+            <ol>
+              <li><span class="sn">1</span><span><b>Copilotチャット</b>を開く</span></li>
+              <li><span class="sn">2</span><span>やりたいことを<b>日本語で具体的に</b></span></li>
+              <li class="key"><span class="sn">3</span><span>「<b>初心者なので手順を</b>」を添える</span></li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="carrow">${svg('arrow')}</div>
+
+    <div class="col">
+      <div class="cnum">2</div>
+      <div class="colcard">
+        <div class="ch"><span class="sq bloom">${svg('spark')}</span><span class="nm">返ってきた“レシピ”を読む<small>実際の回答のダイジェスト</small></span><span class="dots">⋮</span></div>
+        <div class="cp">
+          <div class="ptop">
+            <div class="rcp"><span class="rn">手順①</span><span class="rv">トリガーは <code>When a new email arrives (V3)</code></span></div>
+            <div class="rcp key"><span class="rn">手順②</span><span class="rv"><b>Include Attachments → Yes</b><br><b>Only with Attachments → Yes</b>（ここが肝！）</span></div>
+            <div class="rcp"><span class="rn">手順③</span><span class="rv">OneDrive for Business の <code>Create file</code></span></div>
+            <div class="rcp"><span class="rn">手順⑤⑥</span><span class="rv">ファイル名＝<code>Attachments Name</code>／内容＝<code>Attachments Content</code></span></div>
+            <div class="rcp"><span class="rn">エラー</span><span class="rv">「<b>Apply to each が勝手に増える</b>→正常。<br>複数の添付を順に処理するだけ」まで先回り</span></div>
+          </div>
+          <div class="howsteps">
+            <div class="hh">操作手順</div>
+            <ol>
+              <li><span class="sn">1</span><span>手順を<b>上から順に</b>読む</span></li>
+              <li class="key"><span class="sn">2</span><span><b>添付の設定2つ</b>を見落とさない</span></li>
+              <li><span class="sn">3</span><span><b>エラー対策</b>もメモしておく</span></li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="carrow">${svg('arrow')}</div>
+
+    <div class="col">
+      <div class="cnum">3</div>
+      <div class="colcard">
+        <div class="ch"><span class="sq"><img src="${A}icons/pa_logo.png" alt=""></span><span class="nm">日本語画面に読み替えて組む<small>Power Automate 実画面との対応</small></span><span class="dots">⋮</span></div>
+        <div class="cp">
+          <div class="ptop">
+            <div class="maph"><span>Copilotの回答（英語）</span><span style="flex:0 0 15px;"></span><span>実際の画面（日本語）</span></div>
+            <div class="map"><span class="en">When a new email arrives (V3)</span><span class="ma">${svg('arrow')}</span><span class="jp">新しいメールが届いたとき (V3)</span></div>
+            <div class="map"><span class="en">Include Attachments</span><span class="ma">${svg('arrow')}</span><span class="jp">添付ファイルを含める<br>＝はい</span></div>
+            <div class="map"><span class="en">Only with Attachments</span><span class="ma">${svg('arrow')}</span><span class="jp">添付ファイル付きのみ<br>＝はい</span></div>
+            <div class="map"><span class="en">Create file</span><span class="ma">${svg('arrow')}</span><span class="jp">ファイルの作成</span></div>
+            <div class="map"><span class="en">Attachments Name／Content</span><span class="ma">${svg('arrow')}</span><span class="jp">添付ファイルの<br>「名前」「コンテンツ」</span></div>
+          </div>
+          <div class="howsteps">
+            <div class="hh">操作手順</div>
+            <ol>
+              <li><span class="sn">1</span><span>回答は<b>英語名のことがある</b></span></li>
+              <li class="key"><span class="sn">2</span><span>上の<b>対応表で読み替える</b></span></li>
+              <li><span class="sn">3</span><span>迷ったら<b>実画面の名前が正</b></span></li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pitfall">
+    <div class="pl">${svg('warn')}つまずき注意</div>
+    <div class="px">Copilotの回答は<b>誤りを含むことがある</b>（画面下にも明記）。名前や設定は<b>最後は実画面で確認</b>。<br>同名ファイルは保存に失敗する→ファイル名を<code>受信日時_ファイル名</code>にすると安全。</div>
+    <img class="pit-chara" src="${A}chara/chara_point.png" alt="">
+  </div>
+  <div class="src">出典：Microsoft 365 Copilot 実機／Microsoft Learn</div>
+`;
+</script>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>

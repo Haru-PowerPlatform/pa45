@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>コパスタ Vol.3 - 実演リプレイ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB; --cs:#7C3AED; --cs-bg:#F5F3FF; --cs-bg2:#EDE9FE; --cs-dark:#5B21B6;
+    --green:#16A34A; --green-bg:#ECFDF5; --green-dark:#064E3B;
+    --ink:#1F2937; --gray:#374151; --weak:#6B7280; --faint:#9CA3AF;
+    --card:#F8F9FA; --line:#E5E7EB;
+    --seg:#605E5C; --segline:#D1D1D1; --segink:#323130; --segph:#A19F9D;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+
+  .titlebar{
+    height:90px;
+    background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#5B21B6 0%,#7C3AED 50%,#A855F7 100%);
+    box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(91,33,182,.36);
+    display:flex;align-items:center;gap:18px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;
+  }
+  .vol-pill{background:#fff;color:var(--cs);font-weight:900;font-size:24px;border-radius:999px;padding:7px 20px;letter-spacing:.5px;white-space:nowrap;flex:0 0 auto;}
+  .part-pill{background:rgba(255,255,255,.16);color:#fff;font-weight:900;font-size:17px;border-radius:999px;padding:6px 14px;white-space:nowrap;flex:0 0 auto;border:1.6px solid rgba(255,255,255,.78);box-shadow:inset 0 1px 0 rgba(255,255,255,.25);}
+  .part-pill b{color:#FDE047;}
+  .title-text{color:#fff;font-weight:900;font-size:30px;line-height:1.18;letter-spacing:.3px;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:140px;}
+  .title-text .q{color:#FDE047;}
+  .title-chara{position:absolute;right:14px;bottom:-54px;height:150px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .body{flex:1 1 auto;display:flex;gap:15px;padding:11px 18px 0;min-height:0;}
+
+  /* 左：チャット再現 */
+  .mockwrap{flex:1.42;display:flex;flex-direction:column;min-height:0;}
+  .mocklabel{font-weight:900;font-size:17px;color:var(--cs-dark);margin-bottom:7px;display:flex;align-items:center;gap:8px;}
+  .mocklabel .dot{width:11px;height:11px;border-radius:50%;background:var(--cs);}
+  .win{flex:1;border-radius:13px;border:1.5px solid var(--segline);background:#fff;box-shadow:0 8px 20px rgba(0,0,0,.18);overflow:hidden;display:flex;flex-direction:column;font-family:"Segoe UI","Noto Sans JP",sans-serif;min-height:0;}
+  .win-top{flex:0 0 auto;height:36px;background:#fff;border-bottom:1px solid #EBEBEB;display:flex;align-items:center;justify-content:space-between;padding:0 12px;}
+  .win-top .name{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700;color:var(--segink);white-space:nowrap;}
+  .win-top .name .mslogo{width:16px;height:16px;object-fit:contain;}
+  .tabs{display:flex;background:#F5F5F5;border-radius:8px;padding:3px;gap:2px;}
+  .tabs span{font-size:11px;font-weight:700;padding:4px 11px;border-radius:6px;color:var(--seg);}
+  .tabs span.on{background:#fff;color:var(--cs);box-shadow:0 1px 3px rgba(0,0,0,.12);}
+  .tabs span.dis{color:#C8C6C4;}
+  .win-chat{flex:1;background:#fff;padding:12px 14px;display:flex;flex-direction:column;gap:9px;min-height:0;overflow:hidden;}
+
+  .ubub{align-self:flex-end;max-width:82%;background:#F3F2F1;color:#242424;font-size:12.8px;font-weight:600;line-height:1.5;border-radius:12px 12px 3px 12px;padding:9px 13px;box-shadow:0 1px 3px rgba(0,0,0,.08);}
+
+  .ahead{display:flex;align-items:center;gap:8px;}
+  .ahead .ic{width:22px;height:22px;border-radius:6px;background:linear-gradient(135deg,#6D5DF6,#8B5CF6);display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:900;flex:0 0 auto;}
+  .ahead .nm{font-size:13px;font-weight:800;color:#242424;}
+
+  /* 段取りタイムライン */
+  .planwrap{position:relative;margin-left:4px;}
+  .planlab{position:absolute;right:6px;top:-2px;background:#FEF3C7;color:#92400E;font-size:11px;font-weight:900;border-radius:999px;padding:3px 11px;box-shadow:0 2px 5px rgba(0,0,0,.14);border:1px solid #FCD34D;}
+  .plan{border-left:2px solid #E1DFDD;margin-left:9px;padding:2px 0 2px 15px;display:flex;flex-direction:column;gap:7px;}
+  .plan .think{font-size:11.5px;color:#8A8886;font-style:italic;line-height:1.4;position:relative;}
+  .plan .think::before{content:"";position:absolute;left:-20px;top:4px;width:8px;height:8px;border-radius:50%;background:#C8C6C4;}
+  .plan .sk{display:flex;align-items:center;gap:8px;font-size:12.5px;font-weight:700;color:#323130;position:relative;}
+  .plan .sk::before{content:"";position:absolute;left:-21px;top:2px;width:10px;height:10px;border-radius:50%;background:#fff;border:2px solid #C8C6C4;}
+  .plan .sk .mag{width:17px;height:17px;border-radius:5px;background:#F3F2F1;display:flex;align-items:center;justify-content:center;font-size:10px;}
+  .plan .sk .ch{margin-left:auto;color:#A19F9D;font-size:12px;}
+
+  /* 回答カード */
+  .ans{background:#FAFAFC;border:1px solid #ECECEC;border-radius:10px;padding:10px 12px;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+  .ans .h{font-size:13.5px;font-weight:800;color:#242424;display:flex;align-items:center;gap:6px;margin-bottom:7px;}
+  .atable{border:1px solid #E7E7E7;border-radius:7px;overflow:hidden;}
+  .atable .tr{display:flex;border-top:1px solid #EEE;}
+  .atable .tr:first-child{border-top:none;}
+  .atable .tr .k{flex:0 0 96px;background:#F6F5F4;font-size:11.5px;font-weight:700;color:#605E5C;padding:6px 10px;}
+  .atable .tr .v{flex:1;font-size:11.8px;font-weight:700;color:#242424;padding:6px 10px;}
+  .cit{display:inline-flex;align-items:center;gap:5px;margin-top:8px;font-size:11px;font-weight:700;color:#5B21B6;}
+  .cit .b{width:16px;height:16px;border-radius:50%;background:#EDE9FE;color:#5B21B6;font-size:10px;font-weight:900;display:flex;align-items:center;justify-content:center;}
+
+  /* 右：3ポイント */
+  .how{flex:1;display:flex;flex-direction:column;min-height:0;}
+  .how-head{align-self:stretch;text-align:center;color:#fff;font-weight:900;font-size:22px;border-radius:11px;padding:10px 12px;margin-bottom:11px;letter-spacing:.3px;background:linear-gradient(120deg,#7C3AED 0%,#C026D3 55%,#EC4899 100%);box-shadow:0 4px 8px rgba(0,0,0,.26),inset 0 1px 0 rgba(255,255,255,.5);text-shadow:0 1px 2px rgba(0,0,0,.22);}
+  .steps{display:flex;flex-direction:column;justify-content:space-between;flex:1;gap:11px;}
+  .step{background:linear-gradient(180deg,#FFFFFF,#F4F1FB);border:2px solid #DDD3F0;border-radius:14px;box-shadow:0 5px 11px rgba(0,0,0,.12),inset 0 1px 0 rgba(255,255,255,.9);display:flex;align-items:center;gap:14px;padding:13px 16px;flex:1;}
+  .step .num{flex:0 0 auto;width:48px;height:48px;border-radius:50%;background:linear-gradient(180deg,#8B5CF6,#6D28D9);color:#fff;font-weight:900;font-size:25px;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 7px rgba(109,40,217,.4),inset 0 1px 0 rgba(255,255,255,.4);}
+  .step .tx{display:flex;flex-direction:column;gap:4px;}
+  .step .tx .h{font-weight:900;font-size:21px;color:var(--ink);line-height:1.2;}
+  .step .tx .s{font-weight:700;font-size:15.5px;color:#4B5563;line-height:1.32;}
+  .step .tx .s b{color:var(--cs-dark);}
+
+  .darkband{margin:11px 0 0;background:linear-gradient(180deg,#565C66,#4A4F58);color:#fff;flex:0 0 auto;position:relative;display:flex;align-items:stretch;gap:14px;padding:9px 22px 11px;height:128px;overflow:hidden;box-shadow:inset 0 1px 0 rgba(255,255,255,.10);}
+  .nf{flex:1.55;display:flex;flex-direction:column;min-height:0;}
+  .nf .label{font-weight:900;font-size:16px;color:#FCD34D;margin-bottom:6px;letter-spacing:.3px;}
+  .nf .grid{display:flex;gap:9px;flex:1;min-height:0;margin-bottom:14px;}
+  .nf .fc{flex:1;background:linear-gradient(180deg,#FFFFFF,#EEF1F6);color:var(--ink);border-radius:10px;padding:7px 10px;display:flex;flex-direction:column;justify-content:center;gap:3px;box-shadow:0 3px 6px rgba(0,0,0,.26),inset 0 1px 0 rgba(255,255,255,.9);border-top:3px solid var(--cs);}
+  .nf .fc .ft{font-weight:900;font-size:14px;color:var(--cs-dark);line-height:1.2;}
+  .nf .fc .fd{font-weight:700;font-size:12.3px;color:#4B5563;line-height:1.28;}
+  .note{flex:1;background:linear-gradient(180deg,#646A75,#565C66);border:1.5px solid #7A818D;border-radius:11px;padding:10px 14px;margin-right:118px;display:flex;flex-direction:column;justify-content:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.12);}
+  .note .label{font-weight:900;font-size:15px;color:#FCD34D;margin-bottom:6px;display:flex;align-items:center;gap:6px;}
+  .note .txt{font-weight:700;font-size:14.5px;color:#fff;line-height:1.4;}
+  .note .txt b{color:#6EE7A6;}
+  .band-chara{position:absolute;right:6px;bottom:0;height:150px;z-index:50;filter:drop-shadow(0 3px 7px rgba(0,0,0,.45));}
+  .src{position:absolute;left:22px;bottom:3px;font-size:11px;font-weight:500;color:rgba(255,255,255,.5);z-index:40;}
+</style>
+</head>
+<body>
+<div id="slide">
+  <div class="titlebar">
+    <div class="vol-pill">コパスタ Vol.3</div>
+    <div class="part-pill">後編 <b>(2/2)</b></div>
+    <div class="title-text">1つの質問で"3つ"聞いても、<br>自分で分解して出典つきで回答<span class="q">！</span></div>
+    <img class="title-chara" src="../../pptx/_assets/chara/chara_laptop_g.png" alt="">
+  </div>
+
+  <div class="body">
+    <!-- 左：チャット再現 -->
+    <div class="mockwrap">
+      <div class="mocklabel"><span class="dot"></span>Preview（テスト）での実際のやり取り</div>
+      <div class="win">
+        <div class="win-top">
+          <div class="name"><img class="mslogo" src="../../pptx/_assets/icons/cs_logo.png" alt="">PA45受付エージェント</div>
+          <div class="tabs"><span>Build</span><span class="on">Preview</span><span>Evaluate</span><span class="dis">Monitor</span></div>
+        </div>
+        <div class="win-chat">
+          <div class="ubub">初参加を考えています。PA45がどんな会か教えて。あと、まったく触ったことがなくても大丈夫か、準備することも合わせて教えて。</div>
+
+          <div class="ahead"><span class="ic">&lt;/&gt;</span><span class="nm">PA45受付エージェント</span></div>
+          <div class="planwrap">
+            <div class="planlab">← AIが自分で段取り</div>
+            <div class="plan">
+              <div class="think">ユーザーは3つ聞いている ── どんな会か／初心者でも大丈夫か／事前準備。順番に調べよう…</div>
+              <div class="sk"><span class="mag">🔍</span>Searched knowledge<span class="ch">›</span></div>
+              <div class="sk"><span class="mag">🔍</span>Searched knowledge<span class="ch">›</span></div>
+            </div>
+          </div>
+
+          <div class="ans">
+            <div class="h">🎯 PA45ってどんな会？</div>
+            <div class="atable">
+              <div class="tr"><div class="k">📅 開催</div><div class="v">毎週 木曜 20:15〜21:00</div></div>
+              <div class="tr"><div class="k">💻 形式</div><div class="v">Microsoft Teams（オンライン）</div></div>
+              <div class="tr"><div class="k">💰 参加費</div><div class="v">無料 ／ 初心者歓迎</div></div>
+            </div>
+            <span class="cit"><span class="b">1</span>出典つきで回答（参照元を明示）</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 右：3ポイント -->
+    <div class="how">
+      <div class="how-head">指示文4行で、ここまで動く</div>
+      <div class="steps">
+        <div class="step">
+          <div class="num">1</div>
+          <div class="tx"><div class="h">質問を自分で"分解"</div><div class="s">まとめて聞いた3つを、<br><b>問いごとに切り分け</b>る</div></div>
+        </div>
+        <div class="step">
+          <div class="num">2</div>
+          <div class="tx"><div class="h">ナレッジを"検索"</div><div class="s">必要な情報を、<br><b>自分で取りに行く</b></div></div>
+        </div>
+        <div class="step">
+          <div class="num">3</div>
+          <div class="tx"><div class="h">"出典つき"で回答</div><div class="s">見出しで整理し、<br><b>参照元も明示</b>して答える</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="darkband">
+    <div class="nf">
+      <div class="label">実機で確認できた事実（PA45 Demo）</div>
+      <div class="grid">
+        <div class="fc"><div class="ft">トピック設計はゼロ</div><div class="fd">会話の分岐を1つも作っていない</div></div>
+        <div class="fc"><div class="ft">出典つきで回答</div><div class="fd">参照元が番号①で示される</div></div>
+        <div class="fc"><div class="ft">回答は日本語</div><div class="fd">最初の挨拶は英語だが応答は日本語</div></div>
+      </div>
+    </div>
+    <div class="note">
+      <div class="label">⚠ もっと賢くするなら</div>
+      <div class="txt">ナレッジが<b>Web検索だけ</b>だと一般論になることも。社内文書を足すと精度UP。</div>
+    </div>
+    <div class="src">出典：Microsoft Copilot Studio 実機（PA45 Demo・2026年7月）</div>
+  </div>
+  <img class="band-chara" src="../../pptx/_assets/chara/chara_confident_g.png" alt="">
+</div>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>

@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.59-1 チャットの割り込みから集中を守る</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB; --blue-bg:#EFF6FF; --blue-dark:#1E40AF;
+    --green:#16A34A; --green-dark:#065F38; --green-bg:#ECFDF5;
+    --teams:#5B5FC7; --teams-dark:#4347A8;
+    --enji:#A4283C; --enji-dark:#6E1628;
+    --purple:#7C3AED; --purple-dark:#5B21B6;
+    --orange:#EA580C; --amber:#D97706; --ink:#1F2937; --gray:#374151; --weak:#6B7280;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+  .ic{display:block;width:100%;height:100%;}
+
+  .titlebar{height:86px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:14px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:25px;border-radius:999px;padding:7px 19px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .logos{display:flex;align-items:center;gap:7px;flex:0 0 auto;}
+  .logos .ll{height:47px;width:47px;object-fit:contain;background:#fff;border-radius:12px;padding:6px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
+  .logos .plus{color:#fff;font-weight:900;font-size:24px;text-shadow:0 1px 2px rgba(0,0,0,.25);line-height:1;}
+  .title-text{color:#fff;font-weight:900;font-size:24px;line-height:1.16;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:150px;}
+  .title-text .hl{color:#FFE08A;}
+  .title-chara{position:absolute;right:14px;bottom:-42px;height:142px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .concl{margin:9px 16px 0;background:var(--blue-bg);border:2.5px solid var(--blue);border-radius:13px;display:flex;align-items:center;gap:15px;padding:11px 20px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;width:50px;height:50px;border-radius:13px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;padding:11px;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
+  .concl .txt{font-weight:800;font-size:20.5px;color:var(--blue-dark);line-height:1.4;padding-right:36px;}
+  .concl .txt b{color:var(--orange);}
+  .concl .txt .mg{color:var(--green-dark);}
+
+  .stage{flex:1 1 auto;margin:12px 16px 0;display:flex;align-items:stretch;gap:0;min-height:0;}
+  .col{flex:1;display:flex;flex-direction:column;min-height:0;border-radius:15px;padding:12px 13px 12px;box-shadow:0 4px 12px rgba(0,0,0,.11),inset 0 1px 0 rgba(255,255,255,.7);position:relative;}
+  .col.c1{background:#FBF3F4;border:2.5px solid var(--enji);}
+  .col.c2{background:#F1F6FF;border:2.5px solid var(--blue);}
+  .col.c3{background:#F0FBF4;border:2.5px solid var(--green);}
+  .cn{position:absolute;top:-19px;left:10px;right:10px;display:flex;align-items:center;justify-content:center;gap:8px;color:#fff;font-weight:900;font-size:21.5px;border-radius:12px;padding:9px 12px;box-shadow:0 3px 7px rgba(0,0,0,.28);white-space:nowrap;letter-spacing:-.5px;}
+  .c1 .cn{background:var(--enji);} .c2 .cn{background:var(--blue);} .c3 .cn{background:var(--green);}
+  .col .top{flex:1;display:flex;flex-direction:column;justify-content:space-evenly;gap:8px;min-height:0;margin-top:24px;}
+  .cap{flex:0 0 auto;margin-top:9px;border-radius:10px;padding:9px 12px;font-size:15px;font-weight:800;line-height:1.44;display:flex;align-items:flex-start;gap:8px;}
+  .cap .d{flex:0 0 auto;width:10px;height:10px;border-radius:50%;margin-top:6px;}
+  .c1 .cap{background:#F5E3E6;color:#6E1628;} .c1 .cap .d{background:var(--enji);}
+  .c2 .cap{background:#E6EFFC;color:#1E3A5F;} .c2 .cap .d{background:var(--blue);}
+  .c3 .cap{background:#DFF5E8;color:#0B5E37;} .c3 .cap .d{background:var(--green);}
+  .cap b{font-weight:900;}
+
+  .arrowcol{flex:0 0 42px;display:flex;align-items:center;justify-content:center;color:var(--blue);}
+  .arrowcol svg{width:36px;height:36px;filter:drop-shadow(0 2px 3px rgba(0,0,0,.15));}
+
+  /* c1 notification pile */
+  .notifhead{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:800;color:var(--enji-dark);font-family:'Segoe UI','Noto Sans JP',sans-serif;}
+  .notifhead .ti{width:20px;height:20px;border-radius:6px;background:#5B5FC7;display:flex;align-items:center;justify-content:center;padding:3px;}
+  .notifhead .ti img{width:100%;height:100%;object-fit:contain;filter:brightness(0) invert(1);}
+  .notif{background:#fff;border:1.5px solid #EAD7DB;border-left:4px solid #5B5FC7;border-radius:9px;padding:7px 10px;box-shadow:0 2px 6px rgba(0,0,0,.06);font-family:'Segoe UI','Noto Sans JP',sans-serif;}
+  .notif .nm{font-size:12px;font-weight:900;color:#242424;}
+  .notif .nm small{font-weight:700;color:#8A8A96;font-size:10.5px;margin-left:4px;}
+  .notif .mg{font-size:12px;font-weight:700;color:#555;margin-top:1px;line-height:1.3;}
+  .breakcall{margin-top:2px;display:flex;align-items:center;gap:8px;background:linear-gradient(180deg,#FBEAEC,#F6DADE);border:2px solid #DDA9B2;border-radius:10px;padding:8px 11px;font-weight:900;font-size:14.5px;color:var(--enji-dark);line-height:1.3;}
+  .breakcall .bic{flex:0 0 auto;width:30px;height:30px;border-radius:8px;background:linear-gradient(180deg,#C0475A,#A4283C);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 5px rgba(164,40,60,.35);}
+  .breakcall .bic svg{width:19px;height:19px;}
+  .cntrow{align-self:stretch;display:flex;align-items:center;gap:7px;}
+  .cntrow .trouble{flex:0 0 auto;height:76px;filter:drop-shadow(0 2px 5px rgba(0,0,0,.28));}
+  .cnt{flex:1;display:flex;align-items:center;justify-content:center;gap:9px;background:#fff;border:2px dashed #E0A9B2;border-radius:10px;padding:8px;font-weight:900;font-size:14.5px;color:#8A1C1C;box-shadow:0 2px 6px rgba(0,0,0,.05);}
+  .cnt b{color:#DC2626;font-size:20px;}
+  .cnt .zap{display:inline-flex;gap:1px;color:#DC2626;}
+  .cnt .zap svg{width:15px;height:15px;}
+  .keepwork{align-self:center;display:inline-flex;align-items:center;gap:7px;background:linear-gradient(180deg,#ECFDF5,#D1FAE5);border:2px solid #6EE7B7;border-radius:999px;padding:6px 16px;font-weight:900;font-size:14.5px;color:#0B5E37;box-shadow:0 2px 6px rgba(16,163,74,.14);}
+  .keepwork svg{width:16px;height:16px;}
+  .clocks{align-self:stretch;background:#fff;border:2px solid #BFE3CD;border-radius:11px;padding:8px 6px 7px;box-shadow:0 2px 6px rgba(22,163,74,.12);}
+  .clocks .ct{font-size:12.5px;font-weight:900;color:#0B5E37;text-align:center;margin-bottom:5px;}
+  .clocks .cr{display:flex;justify-content:space-around;align-items:center;}
+  .clocks .ck{display:flex;flex-direction:column;align-items:center;gap:2px;}
+  .clocks .ck svg{width:40px;height:40px;}
+  .clocks .ck span{font-size:12.5px;font-weight:900;color:#15803D;}
+
+  /* c2 chat auto-reply */
+  .chatmini{font-family:'Segoe UI','Noto Sans JP',sans-serif;display:flex;flex-direction:column;gap:8px;}
+  .bubrow{display:flex;gap:8px;align-items:flex-start;}
+  .bubrow.me{flex-direction:row-reverse;}
+  .bubrow .av{flex:0 0 auto;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:#fff;}
+  .bubrow.other .av{background:#8A8F98;}
+  .bubrow.me .av{background:linear-gradient(135deg,#3B82F6,#7C3AED);padding:6px;}
+  .bubrow.me .av img{width:100%;height:100%;object-fit:contain;}
+  .bub{max-width:83%;border-radius:11px;padding:8px 11px;font-size:13px;font-weight:700;line-height:1.34;box-shadow:0 2px 5px rgba(0,0,0,.08);}
+  .bubrow.other .bub{background:#F3F3F5;color:#242424;border-top-left-radius:3px;}
+  .bubrow.me .bub{background:#E7E8FB;color:#2C2E6B;border-top-right-radius:3px;border:1.5px solid #C7C9F0;}
+  .bub .who{font-size:11px;font-weight:900;color:#4347A8;margin-bottom:2px;display:flex;align-items:center;gap:5px;}
+  .bub .who .botpill{font-size:9.5px;background:#EEF0FB;border:1px solid #D6D8F2;border-radius:4px;padding:0 5px;color:#5B5FC7;}
+  .bub .auto{display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:900;color:#0B5E37;background:#DFF5E8;border-radius:5px;padding:1px 6px;margin-top:5px;}
+  .bub .auto svg{width:11px;height:11px;}
+  .modechip{align-self:center;display:inline-flex;align-items:center;gap:8px;background:linear-gradient(180deg,#FEF2F2,#FDE4E4);border:2px solid #F0A9A9;border-radius:999px;padding:6px 17px;font-weight:900;font-size:15px;color:#8A1C1C;box-shadow:0 2px 6px rgba(0,0,0,.09);}
+  .modechip .dot{width:12px;height:12px;border-radius:50%;background:#DC2626;box-shadow:0 0 0 4px rgba(220,38,38,.16);}
+  .modechip .tgl{width:34px;height:19px;border-radius:999px;background:#DC2626;position:relative;flex:0 0 auto;box-shadow:inset 0 1px 2px rgba(0,0,0,.25);}
+  .modechip .tgl .knob{position:absolute;right:2px;top:2px;width:15px;height:15px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.3);}
+  .modechip .hint{font-weight:800;font-size:12px;color:#B91C1C;background:#fff;border:1.5px solid #F0A9A9;border-radius:7px;padding:2px 8px;}
+
+  /* c3 email digest */
+  .mailmini{background:#fff;border:1.5px solid #BFE3CD;border-radius:11px;overflow:hidden;box-shadow:0 3px 8px rgba(22,163,74,.14);font-family:'Segoe UI','Noto Sans JP',sans-serif;}
+  .mailmini .mh{background:#E9F7EF;padding:7px 11px;border-bottom:1px solid #CDEBD9;}
+  .mailmini .mh .sub{font-size:13px;font-weight:900;color:#0B5E37;line-height:1.25;}
+  .mailmini .mh .fr{font-size:10.5px;font-weight:700;color:#4E7A63;margin-top:2px;display:flex;align-items:center;gap:5px;}
+  .mailmini .mh .fr img{width:14px;height:14px;object-fit:contain;}
+  .mrow{display:flex;align-items:center;gap:8px;padding:6px 11px;border-bottom:1px solid #EAF3EE;font-size:12px;}
+  .mrow:last-child{border-bottom:none;}
+  .mrow .who{font-weight:900;color:#2B3A2F;flex:0 0 auto;}
+  .mrow .sn{flex:1;color:#5A6E60;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .mrow .tm{font-size:10.5px;color:#8AA394;font-weight:700;flex:0 0 auto;}
+  .mfoot{padding:6px 11px;background:#F4FBF6;font-size:10.5px;font-weight:800;color:#0B5E37;display:flex;align-items:center;gap:6px;}
+  .mfoot svg{width:13px;height:13px;flex:0 0 auto;}
+
+  /* bottom role band */
+  .uses{flex:0 0 auto;margin:11px 16px 12px;display:flex;align-items:stretch;gap:9px;}
+  .ulabel{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;font-weight:900;font-size:15px;border-radius:11px;padding:0 15px;text-align:center;line-height:1.25;box-shadow:0 3px 8px rgba(37,99,235,.3);}
+  .uc{flex:1;background:#F8F9FA;border:2px solid #E1E5EC;border-radius:11px;padding:8px 12px;box-shadow:0 2px 6px rgba(0,0,0,.07);display:flex;align-items:center;gap:10px;}
+  .uc .cmd{flex:0 0 auto;font-weight:900;font-size:14px;color:#fff;border-radius:7px;padding:5px 11px;white-space:nowrap;}
+  .uc.u1 .cmd{background:linear-gradient(180deg,#7A7EDE,#5B5FC7);}
+  .uc.u2 .cmd{background:linear-gradient(180deg,#3B82F6,#2563EB);}
+  .uc.u3 .cmd{background:linear-gradient(180deg,#22C55E,#16A34A);}
+  .uc .ut{font-size:13.5px;font-weight:800;color:#3A4656;line-height:1.3;}
+  .uc .ut b{color:var(--blue-dark);}
+  .src{position:absolute;left:16px;bottom:3px;font-size:10px;color:#AEB6C2;font-weight:700;z-index:3;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const ICON={
+ arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',
+ bulb:'<path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/>',
+ bolt:'<path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/>',
+ check:'<path d="M20 6 9 17l-5-5"/>',
+ clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'
+};
+const svg=(n)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${ICON[n]}</svg>`;
+const clk=(hx,hy)=>`<svg viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="16" fill="#fff" stroke="#16A34A" stroke-width="2.6"/><circle cx="20" cy="7" r="1.2" fill="#16A34A"/><circle cx="33" cy="20" r="1.2" fill="#16A34A"/><circle cx="20" cy="33" r="1.2" fill="#16A34A"/><circle cx="7" cy="20" r="1.2" fill="#16A34A"/><line x1="20" y1="20" x2="20" y2="10" stroke="#16A34A" stroke-width="2.3" stroke-linecap="round"/><line x1="20" y1="20" x2="${hx}" y2="${hy}" stroke="#0B5E37" stroke-width="2.9" stroke-linecap="round"/><circle cx="20" cy="20" r="2.3" fill="#0B5E37"/></svg>`;
+
+const s=document.getElementById('slide');
+s.innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.59-1</div>
+    <div class="logos"><img class="ll" src="${A}icons/pa_logo.png" alt=""><span class="plus">＋</span><img class="ll" src="${A}icons/pa_teams_official.png" alt=""></div>
+    <div class="title-text">チャットに集中を奪われない！<span class="hl">通知を止めても“大事なもの”は逃さない</span></div>
+    <img class="title-chara" src="${A}chara/chara_guts.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svg('bulb')}</div>
+    <div class="txt">チャットの本当のコストは<b>“集中の中断”</b>。Power Automateで<br><b>①集中中は自動で「後で返します」</b>、<b>②大事なチャットは後でまとめて</b>。だから<span class="mg">安心して通知を切れる</span>。</div>
+  </div>
+
+  <div class="stage">
+    <div class="col c1">
+      <div class="cn">① いまの悩み</div>
+      <div class="top">
+        <div class="notifhead"><span class="ti"><img src="${A}icons/pa_teams_official.png" alt=""></span>Teams の通知が次々…</div>
+        <div class="notif"><div class="nm">田中 部長 <small>#営業・見積</small></div><div class="mg">至急、見積もりの件を確認したいです</div></div>
+        <div class="notif"><div class="nm">佐藤 さん <small>プロジェクトX</small></div><div class="mg">議事録アップしました。確認お願いします</div></div>
+        <div class="breakcall"><span class="bic">${svg('bolt')}</span><span>そのたびに手が止まる…</span></div>
+        <div class="cntrow">
+          <div class="cnt"><span class="zap">${svg('bolt')}</span>今日の割り込み <b>27</b> 回…</div>
+          <img class="trouble" src="${A}chara/chara_trouble.png" alt="">
+        </div>
+      </div>
+      <div class="cap"><span class="d"></span><span>チャットのたびに手が止まり、<b>集中が細切れ</b>に。</span></div>
+    </div>
+
+    <div class="arrowcol">${svg('arrow')}</div>
+
+    <div class="col c2">
+      <div class="cn">② 集中中は自動で返信</div>
+      <div class="top">
+        <div class="modechip"><span class="dot"></span><span>集中モード</span><span class="tgl"><span class="knob"></span></span><span>ON</span><span class="hint">ボタンで切替</span></div>
+        <div class="chatmini">
+          <div class="bubrow other"><span class="av">佐</span><div class="bub"><div class="who">佐藤 さん</div>@あなた 資料の件、お手すきで確認お願いします</div></div>
+          <div class="bubrow me"><span class="av"><img src="${A}icons/pa_logo.png" alt=""></span><div class="bub"><div class="who">あなた <span class="botpill">フロー ボット</span></div>受け取りました🙏 いま取り込み中のため、16時以降に返信します<span class="auto">${svg('bolt')}自動で一次応答</span></div></div>
+        </div>
+        <div class="keepwork">${svg('check')}あなたは作業に集中したまま</div>
+      </div>
+      <div class="cap"><span class="d"></span><span>集中中はメンションに<b>自動で一次応答</b>。手を止めない。</span></div>
+    </div>
+
+    <div class="arrowcol">${svg('arrow')}</div>
+
+    <div class="col c3">
+      <div class="cn">③ あとでまとめて</div>
+      <div class="top">
+        <div class="mailmini">
+          <div class="mh"><div class="sub">未対応の重要チャット 4件（15:00便）</div><div class="fr"><img src="${A}icons/pa_outlook.png" alt="">Outlook ・ あなた宛（自動送信）</div></div>
+          <div class="mrow"><span class="who">田中 部長</span><span class="sn">見積もりの件…</span><span class="tm">13:42</span></div>
+          <div class="mrow"><span class="who">佐藤 さん</span><span class="sn">議事録の確認…</span><span class="tm">14:05</span></div>
+          <div class="mrow"><span class="who">山本 さん</span><span class="sn">明日のMTG…</span><span class="tm">14:20</span></div>
+          <div class="mfoot">${svg('clock')}次のまとめは 18:00 にお届け</div>
+        </div>
+        <div class="clocks">
+          <div class="ct">1日3回、決まった時間にお届け</div>
+          <div class="cr">
+            <div class="ck">${clk(20,11)}<span>12:00</span></div>
+            <div class="ck">${clk(29,20)}<span>15:00</span></div>
+            <div class="ck">${clk(20,29)}<span>18:00</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="cap"><span class="d"></span><span>溜まった分は<b>決まった時間にメールで一覧</b>。見逃さない。</span></div>
+    </div>
+  </div>
+
+  <div class="uses">
+    <div class="ulabel">役割分担で<br>集中を守る</div>
+    <div class="uc u1"><span class="cmd">Teams</span><span class="ut">通知は<b>静かに</b>して手を止めない</span></div>
+    <div class="uc u2"><span class="cmd">Power Automate</span><span class="ut">大事なものを拾って<b>①自動返信 ②まとめ</b></span></div>
+    <div class="uc u3"><span class="cmd">効果</span><span class="ut"><b>安心して通知を切れる</b>＝集中が続く</span></div>
+  </div>
+  <div class="src">出典：Power Automate 実機（PA45 Demo）／Microsoft Learn　※作り方は2枚目</div>
+`;
+</script>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>

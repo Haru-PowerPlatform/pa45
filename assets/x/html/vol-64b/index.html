@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.61-2 効果ログを作って自動記録</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB;--blue-dark:#1E40AF;--green:#16A34A;--green-dark:#064E3B;
+    --ink:#1F2937;--gray:#374151;--weak:#6B7280;--orange:#EA580C;--sp:#0F6CBD;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+  .ic{display:block;width:100%;height:100%;}
+
+  .titlebar{height:88px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:15px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:26px;border-radius:999px;padding:7px 20px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .logos{display:flex;align-items:center;gap:7px;flex:0 0 auto;}
+  .logos .ll{height:46px;width:46px;object-fit:contain;background:#fff;border-radius:12px;padding:6px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
+  .logos .plus{color:#fff;font-weight:900;font-size:22px;text-shadow:0 1px 2px rgba(0,0,0,.25);line-height:1;}
+  .title-text{color:#fff;font-weight:900;font-size:30px;line-height:1.14;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:150px;}
+  .title-text .hl{color:#FFE08A;}
+  .title-chara{position:absolute;right:14px;bottom:-42px;height:140px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .concl{margin:9px 16px 0;background:#ECFDF5;border:2.5px solid var(--green);border-radius:13px;display:flex;align-items:center;gap:13px;padding:8px 18px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;display:flex;align-items:center;gap:6px;background:linear-gradient(180deg,#2BD06A,#16A34A);color:#fff;font-weight:900;font-size:16px;border-radius:9px;padding:8px 14px;white-space:nowrap;box-shadow:0 3px 6px rgba(0,0,0,.24);}
+  .concl .chip svg{width:17px;height:17px;flex:0 0 auto;}
+  .concl .txt{font-weight:800;font-size:17px;color:var(--green-dark);line-height:1.34;padding-right:96px;}
+  .concl .txt b{color:var(--orange);}
+
+  .main{flex:1 1 auto;margin:11px 16px 0;display:flex;align-items:stretch;gap:13px;min-height:0;}
+  .panel{display:flex;flex-direction:column;min-height:0;}
+  .pL{flex:0 0 55%;} .pR{flex:1;}
+  .step{display:flex;align-items:center;gap:8px;font-weight:900;font-size:16px;color:var(--ink);margin-bottom:7px;flex:0 0 auto;}
+  .step .n{flex:0 0 auto;width:28px;height:28px;border-radius:50%;background:linear-gradient(180deg,#4A85FF,#2563EB);color:#fff;font-size:16px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 4px rgba(0,0,0,.28);}
+  .step .n.g{background:linear-gradient(180deg,#2BD06A,#16A34A);}
+  .step small{font-weight:800;font-size:12.5px;color:var(--weak);}
+
+  /* Microsoft Lists 忠実再現 */
+  .lst{flex:1;background:#fff;border:2px solid #AEB4BD;border-radius:11px;box-shadow:0 5px 13px rgba(0,0,0,.14);overflow:hidden;display:flex;flex-direction:column;font-family:'Segoe UI','Noto Sans JP',sans-serif;min-height:0;}
+  .lst .lh{display:flex;align-items:center;gap:8px;padding:8px 12px 7px;border-bottom:1px solid #EAEDF1;background:#FAFBFC;flex:0 0 auto;}
+  .lst .lh .li{width:20px;height:20px;object-fit:contain;}
+  .lst .lh .ln{font-size:14px;font-weight:800;color:#242424;}
+  .lst .lh .tool{margin-left:auto;display:flex;gap:11px;font-size:11.5px;font-weight:700;color:#605E5C;}
+  .lst .lh .tool .new{color:#0F6CBD;font-weight:900;}
+  .lst .ch{display:flex;border-bottom:1.5px solid #E3E3E3;font-size:12px;font-weight:800;color:#3B3A39;background:#F3F6F9;flex:0 0 auto;}
+  .lst .ch div{padding:8px 6px;display:flex;align-items:center;gap:3px;}
+  .lst .ch .srt{color:#9AA3AF;font-size:9px;}
+  .lst .rw{display:flex;align-items:center;font-size:13px;color:#242424;font-weight:600;border-bottom:1px solid #F1F1F1;flex:0 0 auto;}
+  .lst .rw:nth-child(even){background:#FBFCFD;}
+  .lst .rw div{padding:8px 6px;}
+  .lst .pill{display:inline-block;border-radius:12px;padding:2px 9px;font-size:11.5px;font-weight:800;line-height:1.35;}
+  .pl-b{background:#DEECF9;color:#0F6CBD;} .pl-g{background:#DFF6DD;color:#0B6A0B;} .pl-y{background:#FFF4CE;color:#8A6D00;} .pl-p{background:#FDE7E9;color:#A4262C;} .pl-v{background:#EDE7F6;color:#6E48B0;}
+  .num{font-weight:900;color:#107C41;} .num b{font-size:15px;}
+  .lc-d{flex:.82;} .lc-f{flex:1.55;} .lc-m{flex:.72;text-align:center;} .lc-u{flex:.7;} .lc-dep{flex:.9;}
+  .lst .more{padding:6px;text-align:center;color:var(--weak);font-weight:800;font-size:12px;background:#FAFAFA;margin-top:auto;border-top:1px solid #F1F1F1;flex:0 0 auto;}
+
+  /* 列の設計（作り方） */
+  .design{flex:0 0 auto;margin-top:9px;background:linear-gradient(180deg,#F0F6FF,#E4EEFE);border:1.5px solid #B9D0F0;border-radius:11px;padding:8px 11px;}
+  .design .dt{font-size:12.5px;font-weight:900;color:var(--blue-dark);display:flex;align-items:center;gap:6px;margin-bottom:6px;}
+  .design .dt::before{content:"";width:5px;height:14px;border-radius:2px;background:#2563EB;}
+  .cols5{display:flex;gap:6px;}
+  .cb{flex:1;background:#fff;border:1px solid #CBDAF0;border-radius:8px;padding:5px 6px;text-align:center;box-shadow:0 1px 2px rgba(0,0,0,.05);}
+  .cb .cnm{font-size:12px;font-weight:900;color:#1F2937;line-height:1.2;}
+  .cb .cty{margin-top:3px;font-size:10.5px;font-weight:800;border-radius:5px;padding:2px 0;}
+  .ty-dt{background:#EAF1FE;color:#1E40AF;} .ty-tx{background:#F1F0FB;color:#5B4B9A;} .ty-nm{background:#DFF6DD;color:#0B6A0B;} .ty-us{background:#FFF1E6;color:#B45309;} .ty-ch{background:#FDE7EE;color:#A4262C;}
+
+  /* ② 項目の作成 */
+  .up{flex:1;background:#fff;border:2px solid #C2C9D2;border-radius:11px;box-shadow:0 5px 13px rgba(0,0,0,.14);font-family:'Segoe UI','Noto Sans JP',sans-serif;color:#323130;padding:10px 12px;display:flex;flex-direction:column;min-height:0;}
+  .up .uh{display:flex;align-items:center;gap:9px;margin-bottom:7px;flex:0 0 auto;}
+  .up .uh .sq{width:32px;height:32px;border-radius:7px;background:#fff;border:1px solid #EAECEF;display:flex;align-items:center;justify-content:center;overflow:hidden;flex:0 0 auto;box-shadow:0 1px 2px rgba(0,0,0,.08);}
+  .up .uh .sq img{width:24px;height:24px;object-fit:contain;}
+  .up .uh .nm{font-size:15px;font-weight:900;color:#201F1E;line-height:1.15;}
+  .up .uh .nm small{display:block;font-size:11px;font-weight:700;color:var(--weak);margin-top:1px;}
+  .up .tabs{display:flex;gap:13px;border-bottom:1px solid #EDEBE9;margin-bottom:7px;flex:0 0 auto;}
+  .up .tabs span{font-size:11.5px;color:#605E5C;padding-bottom:5px;}
+  .up .tabs span.on{color:#201F1E;font-weight:800;border-bottom:2px solid #2563EB;}
+  .flds{flex:1;display:flex;flex-direction:column;gap:6px;overflow:hidden;}
+  .fld .l{font-size:11.5px;color:#323130;font-weight:700;margin-bottom:2px;}
+  .fld .l .rq{color:#D13438;}
+  .fld .v{border:1px solid #C7C7C7;border-radius:5px;padding:6px 9px;font-size:13px;color:#1F2937;font-weight:700;background:#fff;display:flex;align-items:center;gap:7px;}
+  .fld .v .cv{margin-left:auto;color:#8A8886;font-size:9px;}
+  .fld .v.dyn{color:#6E48B0;background:#F5F1FB;border-color:#C9B8EC;}
+  .fld .v.dyn .zap{flex:0 0 auto;color:#B45309;}
+  .fld .v.dyn .zap svg{width:13px;height:13px;display:block;}
+  .two{display:flex;gap:7px;} .two .fld{flex:1;}
+
+  .pitfall{flex:0 0 auto;margin:9px 16px 11px;background:linear-gradient(180deg,#FFF7ED,#FFEFD9);border:2px solid #FDBA74;border-radius:13px;padding:9px 16px;display:flex;align-items:center;gap:13px;box-shadow:0 2px 6px rgba(0,0,0,.07);position:relative;}
+  .pitfall .pl{flex:0 0 auto;display:flex;align-items:center;gap:7px;background:linear-gradient(180deg,#FB923C,#EA580C);color:#fff;font-weight:900;font-size:15px;border-radius:9px;padding:8px 13px;box-shadow:0 2px 4px rgba(0,0,0,.25);}
+  .pitfall .pl svg{width:17px;height:17px;}
+  .pitfall .px{flex:1;font-weight:800;font-size:14px;color:#7C2D12;line-height:1.36;padding-right:104px;}
+  .pitfall .px b{color:var(--orange);}
+  .pitfall .px code{font-family:'Courier New',monospace;background:#fff;border:1px solid #F0C89B;border-radius:5px;padding:1px 6px;color:#9A3412;font-weight:800;}
+  .pit-chara{position:absolute;right:12px;bottom:-2px;height:104px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.4));}
+  .src{position:absolute;left:16px;bottom:3px;font-size:10px;color:#AEB6C2;font-weight:700;z-index:3;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const ICON={
+ bulb:'<path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/>',
+ warn:'<path d="M10.3 3.3 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.3a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>',
+ zap:'<path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/>'
+};
+const svg=(n)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${ICON[n]}</svg>`;
+const zap='<span class="zap"><svg viewBox="0 0 24 24" fill="currentColor" stroke="none"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg></span>';
+
+const s=document.getElementById('slide');
+s.innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.61-3</div>
+    <div class="logos"><img class="ll" src="${A}icons/pa_logo.png" alt=""><span class="plus">＋</span><img class="ll" src="${A}icons/pa_sharepoint.png" alt=""></div>
+    <div class="title-text">作り方｜<span class="hl">“効果ログ”を作ってフローで自動記録</span></div>
+    <img class="title-chara" src="${A}chara/chara_laptop.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svg('bulb')}やる事は2つ</div>
+    <div class="txt"><b>①SharePointに「効果ログ」リストを作る（列は5つ）</b> → <b>②フローの最後に「項目の作成」で1行記録。</b><br>これだけで実行のたびにデータが溜まる。標準コネクタだけ、<b>追加費用なし</b>で作れます。</div>
+  </div>
+
+  <div class="main">
+    <!-- 左：リスト本体＋列の設計 -->
+    <div class="panel pL">
+      <div class="step"><span class="n g">1</span>“効果ログ”リストを作る<small>Microsoft Lists / SharePoint</small></div>
+      <div class="lst">
+        <div class="lh"><img class="li" src="${A}icons/pa_sharepoint.png" alt=""><span class="ln">効果ログ</span><span class="tool"><span class="new">＋ 新規</span><span>≡ すべてのアイテム ▾</span></span></div>
+        <div class="ch"><div class="lc-d">実行日 <span class="srt">▾</span></div><div class="lc-f">フロー名</div><div class="lc-m">削減(分)</div><div class="lc-u">担当者</div><div class="lc-dep">部署</div></div>
+        <div class="rw"><div class="lc-d">7/09 9:00</div><div class="lc-f"><span class="pill pl-b">日報テンプレ自動投稿</span></div><div class="lc-m num"><b>15</b></div><div class="lc-u">山田</div><div class="lc-dep"><span class="pill pl-p">総務課</span></div></div>
+        <div class="rw"><div class="lc-d">7/09 9:30</div><div class="lc-f"><span class="pill pl-g">経費申請の受付</span></div><div class="lc-m num"><b>10</b></div><div class="lc-u">佐藤</div><div class="lc-dep"><span class="pill pl-y">経理課</span></div></div>
+        <div class="rw"><div class="lc-d">7/09 10:05</div><div class="lc-f"><span class="pill pl-y">添付ファイル自動保存</span></div><div class="lc-m num"><b>8</b></div><div class="lc-u">田中</div><div class="lc-dep"><span class="pill pl-b">営業部</span></div></div>
+        <div class="rw"><div class="lc-d">7/09 11:20</div><div class="lc-f"><span class="pill pl-v">承認リマインド送信</span></div><div class="lc-m num"><b>5</b></div><div class="lc-u">鈴木</div><div class="lc-dep"><span class="pill pl-p">総務課</span></div></div>
+        <div class="rw"><div class="lc-d">7/09 14:10</div><div class="lc-f"><span class="pill pl-b">議事録を自動で要約</span></div><div class="lc-m num"><b>12</b></div><div class="lc-u">高橋</div><div class="lc-dep"><span class="pill pl-g">企画課</span></div></div>
+        <div class="more">⋮ フローが動くたびに1行ずつ自動で増える</div>
+      </div>
+      <div class="design">
+        <div class="dt">列の設計（この5列を作るだけ）</div>
+        <div class="cols5">
+          <div class="cb"><div class="cnm">実行日</div><div class="cty ty-dt">日付と時刻</div></div>
+          <div class="cb"><div class="cnm">フロー名</div><div class="cty ty-tx">1行テキスト</div></div>
+          <div class="cb"><div class="cnm">削減時間</div><div class="cty ty-nm">数値</div></div>
+          <div class="cb"><div class="cnm">担当者</div><div class="cty ty-us">ユーザー</div></div>
+          <div class="cb"><div class="cnm">部署</div><div class="cty ty-ch">選択肢</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 右：項目の作成 -->
+    <div class="panel pR">
+      <div class="step"><span class="n">2</span>フロー末尾に「項目の作成」</div>
+      <div class="up">
+        <div class="uh"><span class="sq"><img src="${A}icons/pa_sharepoint.png" alt=""></span><span class="nm">項目の作成<small>SharePoint（標準）</small></span></div>
+        <div class="tabs"><span class="on">パラメーター</span><span>設定</span><span>コード</span><span>詳細</span></div>
+        <div class="flds">
+          <div class="two">
+            <div class="fld"><div class="l">サイトのアドレス <span class="rq">*</span></div><div class="v">PA45 サイト<span class="cv">▾</span></div></div>
+            <div class="fld"><div class="l">リスト名 <span class="rq">*</span></div><div class="v">効果ログ<span class="cv">▾</span></div></div>
+          </div>
+          <div class="fld"><div class="l">実行日 <span class="rq">*</span></div><div class="v dyn">${zap}現在の日時（convertTimeZoneでJST）</div></div>
+          <div class="fld"><div class="l">フロー名 <span class="rq">*</span></div><div class="v">日報テンプレ自動投稿</div></div>
+          <div class="two">
+            <div class="fld"><div class="l">削減時間 <span class="rq">*</span></div><div class="v">15</div></div>
+            <div class="fld"><div class="l">担当者</div><div class="v dyn">${zap}フローを実行したユーザー</div></div>
+          </div>
+          <div class="fld"><div class="l">部署</div><div class="v">総務課<span class="cv">▾</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pitfall">
+    <div class="pl">${svg('warn')}正直な注意</div>
+    <div class="px"><b>削減時間は「手作業なら何分か」を見積もって固定値</b>で入れるのがコツ。集計したいなら列の種類は必ず<b>数値</b>に。日時は<code>utcNow()</code>を<code>convertTimeZone</code>でJSTへ。担当者は<b>「フローを実行したユーザー」</b>で自動取得も可。</div>
+    <img class="pit-chara" src="${A}chara/chara_think.png" alt="">
+  </div>
+  <div class="src">出典：Power Automate／Microsoft Lists 実機（PA45 Demo）・Microsoft Learn　※アクション名は2026-07時点</div>
+`;
+</script>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>

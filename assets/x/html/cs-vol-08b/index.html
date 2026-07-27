@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>コパスタ Vol.8 - つなぎ方</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cs:#7C3AED; --cs-bg:#F5F3FF; --cs-bg2:#EDE9FE; --cs-dark:#5B21B6;
+    --green:#16A34A; --green-bg:#ECFDF5; --green-dark:#064E3B;
+    --ink:#1F2937; --gray:#374151; --weak:#6B7280;
+    --card:#F8F9FA; --line:#E5E7EB; --segline:#D1D1D1; --segink:#242424; --segph:#A19F9D;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+
+  .titlebar{height:90px;
+    background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#5B21B6 0%,#7C3AED 50%,#A855F7 100%);
+    box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(91,33,182,.36);
+    display:flex;align-items:center;gap:18px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--cs);font-weight:900;font-size:24px;border-radius:999px;padding:7px 20px;letter-spacing:.5px;white-space:nowrap;flex:0 0 auto;}
+  .part-pill{background:rgba(255,255,255,.16);color:#fff;font-weight:900;font-size:17px;border-radius:999px;padding:6px 14px;white-space:nowrap;flex:0 0 auto;border:1.6px solid rgba(255,255,255,.78);}
+  .part-pill b{color:#FDE047;}
+  .title-text{color:#fff;font-weight:900;font-size:30px;line-height:1.18;letter-spacing:.3px;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:140px;}
+  .title-text .q{color:#FDE047;}
+  .title-chara{position:absolute;right:14px;bottom:-52px;height:148px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .body{flex:1 1 auto;display:flex;gap:15px;padding:11px 18px 0;min-height:0;}
+  .mockwrap{flex:1.4;display:flex;flex-direction:column;min-height:0;}
+  .mocklabel{font-weight:900;font-size:17px;color:var(--cs-dark);margin-bottom:7px;display:flex;align-items:center;gap:8px;}
+  .mocklabel .dot{width:11px;height:11px;border-radius:50%;background:var(--cs);}
+
+  .dlg{flex:1;border-radius:12px;border:1px solid var(--segline);background:#fff;box-shadow:0 10px 24px rgba(0,0,0,.22);overflow:hidden;display:flex;flex-direction:column;font-family:"Segoe UI","Noto Sans JP",sans-serif;min-height:0;padding:13px 16px 12px;}
+  .dlg-h{display:flex;align-items:flex-start;justify-content:space-between;flex:0 0 auto;}
+  .dlg-h .t{font-size:19px;font-weight:700;color:#242424;line-height:1.2;}
+  .dlg-h .x{font-size:15px;color:#605E5C;font-weight:600;}
+  .dlg-sub{font-size:11.5px;color:#605E5C;margin-top:3px;flex:0 0 auto;}
+  .srch{flex:0 0 auto;margin-top:9px;height:31px;border:1px solid #D1D1D1;border-radius:7px;display:flex;align-items:center;gap:8px;padding:0 11px;color:var(--segph);font-size:12px;font-weight:500;}
+
+  .agents{flex:0 0 auto;display:flex;flex-direction:column;gap:7px;margin-top:9px;}
+  .ag{border:1px solid #E4E4E4;border-radius:9px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.06);display:flex;align-items:center;gap:9px;padding:8px 10px;}
+  .ag.hi{border:2px solid var(--cs);background:#FBFAFF;box-shadow:0 3px 9px rgba(124,58,237,.24);}
+  .ag .ic{width:26px;height:26px;border-radius:7px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#6D5DF6,#8B5CF6);}
+  .ag .ic img{width:17px;height:17px;object-fit:contain;filter:brightness(0) invert(1);}
+  .ag .tx{min-width:0;}
+  .ag .nm{display:block;font-size:12.5px;font-weight:800;color:#242424;line-height:1.2;}
+  .ag .de{display:block;font-size:10.5px;font-weight:600;color:#605E5C;line-height:1.35;margin-top:2px;}
+  .ag .st{margin-left:auto;font-size:10px;font-weight:900;border-radius:999px;padding:2px 9px;white-space:nowrap;}
+  .st.pub{background:#E7F7EF;color:#0E7A52;border:1px solid #A7E0C6;}
+  .st.no{background:#F3F2F1;color:#8A8886;border:1px solid #E1DFDD;}
+
+  .fld{flex:1;margin-top:11px;display:flex;flex-direction:column;min-height:0;}
+  .fld .lb{font-size:11px;font-weight:800;color:#605E5C;margin-bottom:4px;display:flex;align-items:center;gap:6px;}
+  .fld .lb .must{font-size:9.5px;font-weight:900;color:#fff;background:var(--cs);border-radius:999px;padding:1px 7px;}
+  .fld .ta{flex:1;border:2px solid #C4B5FD;border-radius:8px;background:#FCFBFF;padding:9px 11px;font-size:12px;font-weight:700;color:#242424;line-height:1.6;min-height:0;}
+  .fld .ta .ph{color:#605E5C;font-weight:600;font-size:11px;display:block;margin-top:6px;}
+  .btns{flex:0 0 auto;display:flex;justify-content:flex-end;gap:8px;margin-top:10px;}
+  .b1{background:var(--cs);color:#fff;font-size:12px;font-weight:800;border-radius:7px;padding:7px 20px;}
+  .b2{background:#fff;border:1px solid #D1D1D1;color:#242424;font-size:12px;font-weight:800;border-radius:7px;padding:7px 16px;}
+
+  .how{flex:1;display:flex;flex-direction:column;min-height:0;}
+  .how-head{align-self:stretch;text-align:center;color:#fff;font-weight:900;font-size:22px;border-radius:11px;padding:10px 12px;margin-bottom:11px;background:linear-gradient(120deg,#7C3AED 0%,#C026D3 55%,#EC4899 100%);box-shadow:0 4px 8px rgba(0,0,0,.26);text-shadow:0 1px 2px rgba(0,0,0,.22);}
+  .steps{display:flex;flex-direction:column;justify-content:space-between;flex:1;gap:10px;}
+  .step{background:linear-gradient(180deg,#FFFFFF,#F4F1FB);border:2px solid #DDD3F0;border-radius:14px;box-shadow:0 5px 11px rgba(0,0,0,.12);display:flex;align-items:center;gap:13px;padding:11px 14px;flex:1;}
+  .step .num{flex:0 0 auto;width:45px;height:45px;border-radius:50%;background:linear-gradient(180deg,#8B5CF6,#6D28D9);color:#fff;font-weight:900;font-size:24px;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 7px rgba(109,40,217,.4);}
+  .step .tx{display:flex;flex-direction:column;gap:3px;}
+  .step .tx .h{font-weight:900;font-size:19.5px;color:var(--ink);line-height:1.2;}
+  .step .tx .s{font-weight:700;font-size:14.5px;color:#4B5563;line-height:1.32;}
+  .step .tx .s b{color:var(--cs-dark);}
+
+  .darkband{margin:11px 0 0;background:linear-gradient(180deg,#565C66,#4A4F58);color:#fff;flex:0 0 auto;position:relative;display:flex;align-items:stretch;gap:14px;padding:9px 22px 11px;height:128px;overflow:hidden;}
+  .nf{flex:1.55;display:flex;flex-direction:column;min-height:0;}
+  .nf .label{font-weight:900;font-size:16px;color:#FCD34D;margin-bottom:6px;}
+  .nf .grid{display:flex;gap:9px;flex:1;min-height:0;margin-bottom:14px;}
+  .nf .fc{flex:1;background:linear-gradient(180deg,#FFFFFF,#EEF1F6);color:var(--ink);border-radius:10px;padding:7px 10px;display:flex;flex-direction:column;justify-content:center;gap:3px;box-shadow:0 3px 6px rgba(0,0,0,.26);border-top:3px solid var(--cs);}
+  .nf .fc .ft{font-weight:900;font-size:14.5px;color:var(--cs-dark);line-height:1.2;}
+  .nf .fc .fd{font-weight:700;font-size:12.3px;color:#4B5563;line-height:1.28;}
+  .note{flex:1;background:linear-gradient(180deg,#646A75,#565C66);border:1.5px solid #7A818D;border-radius:11px;padding:10px 14px;margin-right:118px;display:flex;flex-direction:column;justify-content:center;}
+  .note .label{font-weight:900;font-size:15px;color:#FCD34D;margin-bottom:6px;}
+  .note .txt{font-weight:700;font-size:13.6px;color:#fff;line-height:1.4;}
+  .note .txt b{color:#FCA5A5;}
+  .band-chara{position:absolute;right:6px;bottom:0;height:150px;z-index:50;filter:drop-shadow(0 3px 7px rgba(0,0,0,.45));}
+  .src{position:absolute;left:22px;bottom:3px;font-size:11px;font-weight:500;color:rgba(255,255,255,.5);z-index:40;}
+</style>
+</head>
+<body>
+<div id="slide">
+  <div class="titlebar">
+    <div class="vol-pill">コパスタ Vol.8</div>
+    <div class="part-pill">後編 <b>(2/2)</b></div>
+    <div class="title-text">選んで、説明を書くだけ。<br>専門AIのつなぎ方は3ステップ<span class="q">！</span></div>
+    <img class="title-chara" src="../../pptx/_assets/chara/chara_laptop_g.png" alt="">
+  </div>
+
+  <div class="body">
+    <div class="mockwrap">
+      <div class="mocklabel"><span class="dot"></span>接続するエージェントの追加画面</div>
+      <div class="dlg">
+        <div class="dlg-h">
+          <div class="t">Add a connected agent</div>
+          <div class="x">✕</div>
+        </div>
+        <div class="dlg-sub">この環境にある、公開済みのエージェントから選べます</div>
+
+        <div class="srch">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.6-3.6"/></svg>
+          Search agents
+        </div>
+
+        <div class="agents">
+          <div class="ag hi">
+            <span class="ic"><img src="../../pptx/_assets/icons/cs_logo.png" alt=""></span>
+            <span class="tx"><span class="nm">経理AI</span><span class="de">経費精算・締切・勘定科目の質問に答える</span></span>
+            <span class="st pub">公開済み</span>
+          </div>
+          <div class="ag">
+            <span class="ic"><img src="../../pptx/_assets/icons/cs_logo.png" alt=""></span>
+            <span class="tx"><span class="nm">情シスAI</span><span class="de">PC・パスワード・ソフト申請の質問に答える</span></span>
+            <span class="st pub">公開済み</span>
+          </div>
+          <div class="ag">
+            <span class="ic"><img src="../../pptx/_assets/icons/cs_logo.png" alt=""></span>
+            <span class="tx"><span class="nm">採用AI（作成中）</span><span class="de">まだ発行していないため選べません</span></span>
+            <span class="st no">未公開</span>
+          </div>
+        </div>
+
+        <div class="fld">
+          <div class="lb">いつこのエージェントを使うか<span class="must">ここが肝心</span></div>
+          <div class="ta">経費精算に関する質問のときに使う。締切、上限額、領収書の要否、勘定科目の選び方など。休暇や勤怠の質問には使わない。
+            <span class="ph">▲ この説明を読んで、受付AIが取り次ぐかどうかを判断します</span>
+          </div>
+        </div>
+
+        <div class="btns"><span class="b2">キャンセル</span><span class="b1">Add</span></div>
+      </div>
+    </div>
+
+    <div class="how">
+      <div class="how-head">この3ステップでつながる</div>
+      <div class="steps">
+        <div class="step">
+          <div class="num">1</div>
+          <div class="tx"><div class="h">専門AIを先に作る</div><div class="s">分野をひとつに絞って作り、<br><b>発行（Publish）まで</b>済ませます</div></div>
+        </div>
+        <div class="step">
+          <div class="num">2</div>
+          <div class="tx"><div class="h">受付AIから選ぶ</div><div class="s">Build タブ →<b>Connected agents</b><br>→ つなぎたいAIを選択</div></div>
+        </div>
+        <div class="step">
+          <div class="num">3</div>
+          <div class="tx"><div class="h">「いつ使うか」を書く</div><div class="s">担当分野と<b>使わない場面</b>まで書くと、<br>取り違えが減ります</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="darkband">
+    <div class="nf">
+      <div class="label">つなぐ前の条件（公式）</div>
+      <div class="grid">
+        <div class="fc"><div class="ft">同じ環境にあること</div><div class="fd">新しいエクスペリエンスで作ったエージェントが1体以上必要</div></div>
+        <div class="fc"><div class="ft">公開済みであること</div><div class="fd">発行して、接続できる設定になっているものだけ選べる</div></div>
+        <div class="fc"><div class="ft">専門AIは独立して動く</div><div class="fd">自分の指示・ナレッジ・ツールで考えて答えを返す</div></div>
+      </div>
+    </div>
+    <div class="note">
+      <div class="label">⚠ 使う前に確認</div>
+      <div class="txt">説明が似ていると<b>別のAIに振られます</b>。担当範囲は重ねず、境目をはっきり書く。</div>
+    </div>
+    <div class="src">出典：Microsoft Learn（新しいエクスペリエンス／接続されたエージェントの追加）／画面は説明用の再現です</div>
+  </div>
+  <img class="band-chara" src="../../pptx/_assets/chara/chara_confident_g.png" alt="">
+</div>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>

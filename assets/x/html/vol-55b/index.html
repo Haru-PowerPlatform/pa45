@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.55-2 Copilot↔Power Automate アクション名 対応表</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB; --blue-bg:#EFF6FF; --blue-dark:#1E40AF;
+    --green:#16A34A; --green-dark:#064E3B;
+    --cop:#7C3AED; --cop-dark:#5B21B6;
+    --cop-grad:linear-gradient(120deg,#7C3AED,#C026D3 55%,#EC4899);
+    --orange:#EA580C; --amber:#D97706; --ink:#1F2937; --gray:#374151; --weak:#6B7280;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+  .ic{display:block;width:100%;height:100%;}
+
+  .titlebar{height:84px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:15px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:25px;border-radius:999px;padding:6px 19px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .vol-logo{height:46px;width:46px;object-fit:contain;flex:0 0 auto;background:#fff;border-radius:12px;padding:5px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
+  .title-text{color:#fff;font-weight:900;font-size:26px;line-height:1.12;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:150px;}
+  .title-text .hl{color:#FFE08A;}
+  .title-chara{position:absolute;right:14px;bottom:-40px;height:132px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .legend{margin:8px 16px 0;display:flex;align-items:center;gap:10px;flex:0 0 auto;}
+  .legend .lb{font-weight:900;font-size:14px;color:var(--ink);}
+  .legend .pill{display:inline-flex;align-items:center;gap:6px;font-weight:800;font-size:13px;border-radius:999px;padding:4px 12px;color:#fff;}
+  .legend .p1{background:linear-gradient(180deg,#3B82F6,#2563EB);} .legend .p2{background:linear-gradient(180deg,#FB923C,#EA580C);} .legend .p3{background:linear-gradient(180deg,#9F67F0,#7C3AED);}
+  .legend .note{margin-left:auto;font-weight:800;font-size:13px;color:var(--weak);}
+
+  .table{flex:1 1 auto;margin:8px 16px 0;display:flex;flex-direction:column;min-height:0;border-radius:12px;overflow:hidden;border:1.5px solid #D8DEE8;box-shadow:0 4px 11px rgba(0,0,0,.09);}
+  .thead{flex:0 0 auto;display:flex;background:linear-gradient(180deg,#EEF2F8,#E3E9F2);border-bottom:1.5px solid #CFD8E5;}
+  .thead .h{font-weight:900;font-size:15px;color:#42506A;padding:9px 14px;}
+  .c1{flex:0 0 310px;} .c2{flex:1;} .c3{flex:0 0 220px;}
+  .tbody{flex:1;display:flex;flex-direction:column;min-height:0;}
+  .tr{flex:1;display:flex;align-items:center;border-bottom:1px solid #EEF1F5;background:#fff;position:relative;}
+  .tr:last-child{border-bottom:none;}
+  .tr::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;}
+  .tr.b1::before{background:#2563EB;} .tr.b2::before{background:#EA580C;} .tr.b3::before{background:#7C3AED;}
+  .tr .cell{padding:2px 14px;font-family:'Segoe UI','Noto Sans JP',sans-serif;}
+  .tr .cop{flex:0 0 310px;font-size:15.5px;font-weight:800;color:#4B5563;}
+  .tr .cop code{background:#F3F4F6;border:1px solid #E1E5EB;border-radius:5px;padding:1px 6px;font-size:14.5px;color:#374151;font-weight:800;}
+  .tr .cop small{display:block;color:#9AA3AF;font-size:12.5px;font-weight:700;margin-top:1px;}
+  .tr .pa{flex:1;display:flex;align-items:center;}
+  .smock{flex:1;display:flex;align-items:center;gap:10px;border-radius:8px;padding:5px 13px;font-family:'Segoe UI','Noto Sans JP',sans-serif;box-shadow:0 1px 2px rgba(0,0,0,.05);}
+  .smock.search{background:#F5F9FF;border:1.5px solid #BBD0EE;}
+  .smock.pick{background:#F8F3FE;border:1.5px solid #D3C2F0;}
+  .smock.auto{background:#F3F5F8;border:1.5px solid #C7D0DC;}
+  .smock svg{width:18px;height:18px;flex:0 0 auto;color:#5A6B85;}
+  .smock b{font-size:18px;font-weight:900;color:var(--ink);}
+  .tr.b1 .smock b{color:var(--blue-dark);} .tr.b2 .smock b{color:var(--orange);} .tr.b3 .smock b{color:var(--cop-dark);}
+  .smock .z{flex:0 0 auto;font-size:12px;font-weight:900;color:#fff;background:var(--cop-grad);border-radius:6px;padding:2px 8px;}
+  .smock .hint{flex:0 0 auto;font-size:13.5px;font-weight:900;border-radius:999px;padding:2px 10px;}
+  .smock.search .hint{color:#0B7A46;background:#E7F8EF;} .smock.pick .hint{color:var(--cop-dark);background:#F0E8FB;} .smock.auto .hint{color:#3B4A5E;background:#E5EAF1;}
+  .tr .kind{flex:0 0 220px;font-size:15px;font-weight:800;color:#5A6B85;display:flex;align-items:center;gap:8px;}
+  .tr .kind img{flex:0 0 auto;width:22px;height:22px;object-fit:contain;}
+
+  .tips{flex:0 0 auto;margin:8px 16px 10px;background:linear-gradient(180deg,#565C66,#4A4F58);border-radius:13px;padding:8px 14px;display:flex;align-items:stretch;gap:9px;box-shadow:0 3px 9px rgba(0,0,0,.18);position:relative;}
+  .tips .tl{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;background:linear-gradient(180deg,#FBBF24,#EA580C);color:#fff;font-weight:900;font-size:14px;border-radius:10px;padding:0 14px;box-shadow:0 2px 4px rgba(0,0,0,.3);text-align:center;line-height:1.2;}
+  .tips .tl svg{width:20px;height:20px;}
+  .tips .items{flex:1;display:flex;gap:8px;}
+  .tips .it{flex:1;background:rgba(255,255,255,.10);border:1.5px solid rgba(255,255,255,.20);border-radius:9px;padding:7px 11px;color:#fff;font-weight:800;font-size:13.5px;line-height:1.34;}
+  .tips .it .n{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:#FBBF24;color:#4A2A00;font-size:12px;font-weight:900;margin-right:6px;vertical-align:-3px;}
+  .tips .it b{color:#FCD34D;}
+  .tips .it code{font-family:'Courier New',monospace;background:rgba(255,255,255,.16);border-radius:4px;padding:0 5px;color:#FCA5A5;font-weight:800;font-size:12.5px;}
+  .tips-chara{position:absolute;right:10px;bottom:-2px;height:86px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.4));}
+  .src{position:absolute;left:16px;bottom:3px;font-size:10px;color:#AEB6C2;font-weight:700;z-index:3;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const ICON={
+ search:'<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>',
+ loop:'<path d="M17 2l4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/>',
+ bulb:'<path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/>'
+};
+const svg=(n)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${ICON[n]}</svg>`;
+const rows=[
+ {b:'b1',cop:'When a new email arrives (V3)',sub:'',pa:'新しいメールが届いたとき (V3)',z:false,kind:'トリガー',ic:'pa_outlook.png'},
+ {b:'b1',cop:'Create file',sub:'',pa:'ファイルの作成',z:false,kind:'アクション',ic:'pa_onedrive.png'},
+ {b:'b1',cop:'Send an email (V2)',sub:'',pa:'メールの送信 (V2)',z:false,kind:'アクション',ic:'pa_outlook.png'},
+ {b:'b1',cop:'Compose',sub:'',pa:'作成',z:false,kind:'データ操作',ic:'pa_dataoperation.png'},
+ {b:'b1',cop:'Condition',sub:'',pa:'条件',z:false,kind:'コントロール',ic:'pa_condition.png'},
+ {b:'b1',cop:'Apply to each',sub:'配列を使うと自動で追加',pa:'Apply to each（それぞれに適用する）',z:false,mode:'auto',kind:'コントロール',ic:'pa_control.png'},
+ {b:'b2',cop:'Delay until ／「指定時刻まで遅延」',sub:'意訳がズレる',pa:'延期期限',z:false,kind:'スケジュール',ic:'pa_schedule.png'},
+ {b:'b2',cop:'Ends with ／「〜で終わる」',sub:'意訳がズレる',pa:'次の値で終わる',z:false,kind:'条件の演算子',ic:'pa_condition.png'},
+ {b:'b3',cop:'Attachments Content',sub:'アクションでなく“値”',pa:'コンテンツのバイト数',z:true,kind:'動的コンテンツ',ic:'pa_dataoperation.png'},
+ {b:'b3',cop:'Attachments Name',sub:'アクションでなく“値”',pa:'名前',z:true,kind:'動的コンテンツ',ic:'pa_dataoperation.png'}
+];
+const trs=rows.map(r=>{
+ const mode = r.z ? 'pick' : (r.mode || 'search');
+ let inner;
+ if(mode==='pick') inner = `<span class="z">⚡</span><b>${r.pa}</b><span class="hint">動的コンテンツから選ぶ</span>`;
+ else if(mode==='auto') inner = `${svg('loop')}<b>${r.pa}</b><span class="hint">配列で自動追加</span>`;
+ else inner = `${svg('search')}<b>${r.pa}</b><span class="hint">検索ワード</span>`;
+ return `<div class="tr ${r.b}"><span class="cell cop"><code>${r.cop}</code>${r.sub?`<small>${r.sub}</small>`:''}</span><span class="cell pa"><span class="smock ${mode}">${inner}</span></span><span class="cell kind"><img src="${A}icons/${r.ic}" alt="">${r.kind}</span></div>`;
+}).join('');
+
+const s=document.getElementById('slide');
+s.innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.55-2</div>
+    <img class="vol-logo" src="${A}icons/copilot_m365.png" alt="">
+    <div class="title-text">保存版｜Copilot ↔ Power Automate <span class="hl">アクション名 迷わない対応表</span></div>
+    <img class="title-chara" src="${A}chara/chara_point.png" alt="">
+  </div>
+
+  <div class="legend">
+    <span class="lb">色＝迷う理由</span>
+    <span class="pill p1">① 英語のまま</span>
+    <span class="pill p2">② 意訳がズレる</span>
+    <span class="pill p3">③ アクションでなく“差し込む値”</span>
+  </div>
+
+  <div class="table">
+    <div class="thead"><span class="h c1">Copilotの言い方</span><span class="h c2">Power Automate の正式名（🔍で検索／⚡は選ぶ）</span><span class="h c3">種類・どこ</span></div>
+    <div class="tbody">${trs}</div>
+  </div>
+
+  <div class="tips">
+    <div class="tl">${svg('search')}探し方<br>3コツ</div>
+    <div class="items">
+      <div class="it"><span class="n">1</span><b>英語名の検索は当てにならない</b>ことが多い。<code>Delay until</code>→別物の<code>Do until</code>、<code>Send an email</code>→Teams等が上位に（実機で確認）。</div>
+      <div class="it"><span class="n">2</span>だから<b>正式な日本語名で探す</b>のが確実。この表の右側を、そのまま検索窓に入力する。</div>
+      <div class="it"><span class="n">3</span>迷ったら<b>Copilotに聞き返す</b>：「Power Automate<b>日本語画面での正式名称</b>は？」</div>
+    </div>
+    <img class="tips-chara" src="${A}chara/chara_guts.png" alt="">
+  </div>
+  <div class="src">出典：Microsoft 365 Copilot／Power Automate 実機（PA45 Demo）・Microsoft Learn｜※免責：アクション名はコネクタの版・環境で変わる場合があります。最終は実画面でご確認ください。</div>
+`;
+</script>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>

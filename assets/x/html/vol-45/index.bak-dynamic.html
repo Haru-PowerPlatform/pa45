@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.45-1 動的コンテンツが出てこない問題</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB; --blue-bg:#EFF6FF; --blue-dark:#1E40AF;
+    --red:#DC2626; --red-dark:#7F1D1D;
+    --green:#16A34A; --green-dark:#064E3B;
+    --orange:#EA580C; --amber:#D97706; --ink:#1F2937; --gray:#374151; --weak:#6B7280; --line:#E5E7EB;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+  .ic{display:block;width:100%;height:100%;}
+
+  .titlebar{height:88px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:15px;padding:0 22px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:24px;border-radius:999px;padding:6px 18px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .vol-logo{height:48px;width:48px;object-fit:contain;flex:0 0 auto;background:#fff;border-radius:12px;padding:5px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
+  .title-text{color:#fff;font-weight:900;font-size:26px;line-height:1.18;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:150px;}
+  .title-text .hl{color:#FFE08A;}
+  .title-chara{position:absolute;right:13px;bottom:-42px;height:140px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .concl{margin:8px 15px 0;background:var(--blue-bg);border:2px solid var(--blue);border-radius:11px;display:flex;align-items:center;gap:11px;padding:8px 15px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;width:34px;height:34px;border-radius:9px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;padding:7px;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
+  .concl .txt{font-weight:700;font-size:15.5px;color:var(--blue-dark);line-height:1.34;padding-right:88px;}
+  .concl .txt b{color:var(--red-dark);}
+
+  .body{flex:1 1 auto;margin:9px 15px 0;display:flex;gap:13px;min-height:0;}
+  /* 左：動的コンテンツpiカーmock */
+  .left{flex:0 0 462px;display:flex;flex-direction:column;}
+  .panelttl{display:flex;align-items:center;gap:7px;font-weight:900;font-size:15px;color:var(--ink);margin-bottom:8px;}
+  .panelttl .pi{width:24px;height:24px;color:var(--red);}
+  .dcp{flex:1;font-family:'Segoe UI','Noto Sans JP',sans-serif;background:#fff;border:1.5px solid #C9D2E0;border-radius:12px;box-shadow:0 5px 13px rgba(0,0,0,.13);overflow:hidden;display:flex;flex-direction:column;}
+  .dcp-field{padding:10px 12px;border-bottom:1px solid #EEF1F5;background:#FAFBFD;}
+  .dcp-flbl{font-size:11.5px;color:#605E5C;font-weight:700;margin-bottom:4px;}
+  .dcp-fin{display:flex;align-items:center;gap:8px;border:1px solid #D1D1D1;border-radius:5px;padding:7px 9px;background:#fff;}
+  .dcp-fin .ph{flex:1;font-size:12.5px;color:#A19F9D;}
+  .dcp-fin .lt{flex:0 0 auto;width:18px;height:18px;color:#5B5FC7;}
+  .dcp-pop{flex:1;display:flex;flex-direction:column;min-height:0;}
+  .dcp-search{margin:9px 11px 7px;display:flex;align-items:center;gap:7px;border:1px solid #C7CBD4;border-radius:6px;padding:6px 9px;}
+  .dcp-search .si{width:15px;height:15px;color:#8A8886;}
+  .dcp-search .st{font-size:12px;color:#242424;font-weight:700;}
+  .dcp-grp{padding:4px 13px;font-size:11px;font-weight:800;color:#8A8886;}
+  .dcp-item{display:flex;align-items:center;gap:8px;padding:6px 13px;font-size:12.5px;color:#242424;font-weight:600;}
+  .dcp-item .di{flex:0 0 auto;width:18px;height:18px;border-radius:4px;background:#E7ECF7;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+  .dcp-item .di img{width:14px;height:14px;}
+  .dcp-none{margin:6px 11px 11px;background:#FEF2F2;border:1.5px solid #F4B4B4;border-radius:8px;padding:8px 11px;display:flex;align-items:center;gap:8px;}
+  .dcp-none .ni{flex:0 0 auto;width:20px;height:20px;color:var(--red);}
+  .dcp-none .nt{font-weight:800;font-size:12.5px;color:#8A2020;line-height:1.3;}
+
+  /* 右：よくある原因 */
+  .right{flex:1;display:flex;flex-direction:column;}
+  .causes{flex:1;display:flex;flex-direction:column;gap:9px;}
+  .cause{flex:1;background:linear-gradient(180deg,#FFF8F1,#FDEEDD);border:1.5px solid #F6C99A;border-radius:11px;padding:9px 13px;display:flex;align-items:center;gap:11px;box-shadow:0 3px 8px rgba(0,0,0,.08);}
+  .cause .cn{flex:0 0 auto;width:30px;height:30px;border-radius:50%;background:linear-gradient(180deg,#FB923C,#EA580C);color:#fff;font-weight:900;font-size:15px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 4px rgba(0,0,0,.25);}
+  .cause .cx{font-weight:800;font-size:15.5px;color:#7C3A12;line-height:1.32;}
+  .cause .cx b{color:var(--red);}
+
+  .next{flex:0 0 auto;margin:9px 15px 12px;background:linear-gradient(180deg,#EAF7EE,#D7F0E0);border:2px solid var(--green);border-radius:11px;padding:10px 16px;display:flex;align-items:center;gap:9px;font-weight:900;font-size:16px;color:var(--green-dark);box-shadow:0 3px 9px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .next .na{flex:0 0 auto;width:22px;height:22px;color:var(--green);}
+  .next b{color:var(--green-dark);}
+  .src{position:absolute;left:16px;bottom:3px;font-size:9.5px;color:#AEB6C2;font-weight:700;z-index:3;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const ICON={
+ bolt:'<path d="M13 2 3 14h7l-1 8 10-12h-7z"/>',
+ search:'<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/>',
+ warn:'<path d="M10.3 3.3 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.3a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>',
+ arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',
+ bulb:'<path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/>'
+};
+const svg=(n)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${ICON[n]}</svg>`;
+const svgF=(n)=>`<svg class="ic" viewBox="0 0 24 24" fill="currentColor" stroke="none">${ICON[n]}</svg>`;
+
+const s=document.getElementById('slide');
+s.innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.45-1</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">Power Automateで全員ハマる<br><span class="hl">“動的コンテンツが出てこない”</span>問題</div>
+    <img class="title-chara" src="${A}chara/chara_think.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svg('bulb')}</div>
+    <div class="txt">入力欄で動的コンテンツを開いても、<b>欲しい値が一覧に出てこない…</b>。初心者が必ず一度はハマる場面。でも原因はたいてい4つ。順に確認すれば必ず出せます。</div>
+  </div>
+
+  <div class="body">
+    <div class="left">
+      <div class="panelttl"><span class="pi">${svgF('bolt')}</span>動的コンテンツ … “申請者名”が無い！</div>
+      <div class="dcp uimock">
+        <div class="dcp-field">
+          <div class="dcp-flbl">タイトル</div>
+          <div class="dcp-fin"><span class="ph">値の選択（動的コンテンツ）</span><span class="lt">${svgF('bolt')}</span></div>
+        </div>
+        <div class="dcp-pop">
+          <div class="dcp-search"><span class="si">${svg('search')}</span><span class="st">申請者名</span></div>
+          <div class="dcp-grp">新しいメールが届いたとき (V3)</div>
+          <div class="dcp-item"><span class="di"><img src="${A}icons/pa_outlook.png" alt=""></span>件名</div>
+          <div class="dcp-item"><span class="di"><img src="${A}icons/pa_outlook.png" alt=""></span>本文のプレビュー</div>
+          <div class="dcp-item"><span class="di"><img src="${A}icons/pa_outlook.png" alt=""></span>差出人</div>
+          <div class="dcp-none"><span class="ni">${svg('warn')}</span><span class="nt">欲しい「申請者名」が見つからない…</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="right">
+      <div class="panelttl"><span class="pi" style="color:var(--orange)">${svg('warn')}</span>出てこない… よくある4つの原因</div>
+      <div class="causes">
+        <div class="cause"><span class="cn">1</span><span class="cx">まだ<b>1回も実行してない</b>＝出力が無いから出ない</span></div>
+        <div class="cause"><span class="cn">2</span><span class="cx"><b>後ろのステップ</b>の値は使えない（順番の問題）</span></div>
+        <div class="cause"><span class="cn">3</span><span class="cx">配列の中の値は <b>Apply to each の中</b>でしか出ない</span></div>
+        <div class="cause"><span class="cn">4</span><span class="cx">そもそも一覧に無い値＝<b>式で取り出す</b>必要がある</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="next"><span class="na">${svg('arrow')}</span>4つの<b>解決方法</b>は <b>2枚目</b>でぜんぶ解説！</div>
+  <div class="src">出典：Microsoft Learn</div>
+`;
+</script>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>

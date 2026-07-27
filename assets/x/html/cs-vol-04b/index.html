@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>コパスタ Vol.4 - ナレッジの足し方</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cs:#7C3AED; --cs-bg:#F5F3FF; --cs-bg2:#EDE9FE; --cs-dark:#5B21B6;
+    --green:#16A34A; --green-bg:#ECFDF5; --green-dark:#064E3B;
+    --ink:#1F2937; --gray:#374151; --weak:#6B7280; --faint:#9CA3AF;
+    --card:#F8F9FA; --line:#E5E7EB;
+    --seg:#605E5C; --segline:#D1D1D1; --segink:#323130; --segph:#A19F9D;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+
+  .titlebar{
+    height:90px;
+    background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#5B21B6 0%,#7C3AED 50%,#A855F7 100%);
+    box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(91,33,182,.36);
+    display:flex;align-items:center;gap:18px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;
+  }
+  .vol-pill{background:#fff;color:var(--cs);font-weight:900;font-size:24px;border-radius:999px;padding:7px 20px;letter-spacing:.5px;white-space:nowrap;flex:0 0 auto;}
+  .part-pill{background:rgba(255,255,255,.16);color:#fff;font-weight:900;font-size:17px;border-radius:999px;padding:6px 14px;white-space:nowrap;flex:0 0 auto;border:1.6px solid rgba(255,255,255,.78);box-shadow:inset 0 1px 0 rgba(255,255,255,.25);}
+  .part-pill b{color:#FDE047;}
+  .title-text{color:#fff;font-weight:900;font-size:30px;line-height:1.18;letter-spacing:.3px;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:140px;}
+  .title-text .q{color:#FDE047;}
+  .title-chara{position:absolute;right:14px;bottom:-52px;height:148px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .body{flex:1 1 auto;display:flex;gap:15px;padding:11px 18px 0;min-height:0;}
+
+  /* 左：Add knowledge ダイアログ再現 */
+  .mockwrap{flex:1.44;display:flex;flex-direction:column;min-height:0;}
+  .mocklabel{font-weight:900;font-size:17px;color:var(--cs-dark);margin-bottom:7px;display:flex;align-items:center;gap:8px;}
+  .mocklabel .dot{width:11px;height:11px;border-radius:50%;background:var(--cs);}
+  .dlg{flex:1;border-radius:12px;border:1px solid var(--segline);background:#fff;box-shadow:0 10px 24px rgba(0,0,0,.22);overflow:hidden;display:flex;flex-direction:column;font-family:"Segoe UI","Noto Sans JP",sans-serif;min-height:0;padding:13px 16px 11px;}
+  .dlg-h{display:flex;align-items:flex-start;justify-content:space-between;flex:0 0 auto;}
+  .dlg-h .t{font-size:20px;font-weight:700;color:#242424;line-height:1.2;}
+  .dlg-h .x{font-size:15px;color:#605E5C;font-weight:600;}
+  .dlg-sub{font-size:11.5px;color:#605E5C;margin-top:3px;flex:0 0 auto;}
+  .dlg-sub a{color:#0F6CBD;text-decoration:underline;}
+  .srch{flex:0 0 auto;margin-top:9px;height:32px;border:1px solid #D1D1D1;border-radius:7px;display:flex;align-items:center;gap:8px;padding:0 11px;color:var(--segph);font-size:12px;font-weight:500;}
+
+  .upzone{flex:0 0 auto;margin-top:9px;border:1.5px dashed #B9A9E8;border-radius:9px;background:#FBFAFF;padding:9px 10px;display:flex;flex-direction:column;align-items:center;gap:4px;}
+  .upzone .ttl{display:flex;align-items:center;gap:7px;font-size:13.5px;font-weight:700;color:#242424;}
+  .upzone .ttl .ar{font-size:14px;color:var(--cs);}
+  .upzone .de{font-size:11px;color:#605E5C;}
+  .upzone .de u{color:#0F6CBD;}
+  .upzone .btns{display:flex;gap:9px;margin-top:3px;}
+  .upzone .ub{display:flex;align-items:center;gap:6px;border:1px solid #D1D1D1;border-radius:6px;background:#fff;padding:4px 11px;font-size:11.5px;font-weight:700;color:#242424;box-shadow:0 1px 2px rgba(0,0,0,.06);}
+  .upzone .ub img{width:15px;height:15px;object-fit:contain;}
+  .upzone .ub.hi{border:2px solid #7C3AED;box-shadow:0 2px 6px rgba(124,58,237,.28);}
+
+  .tabrow{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;margin-top:10px;}
+  .tabrow .tl{display:flex;gap:7px;}
+  .tabrow .tb{font-size:11.5px;font-weight:700;border-radius:999px;padding:5px 13px;color:#605E5C;background:#F3F2F1;display:flex;align-items:center;gap:5px;}
+  .tabrow .tb.on{background:#EFF4FC;color:#0F6CBD;}
+  .tabrow .sg{font-size:11.5px;font-weight:700;border:1px solid #D1D1D1;border-radius:6px;padding:5px 11px;color:#242424;background:#fff;}
+
+  .cards{flex:1;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:9px;min-height:0;}
+  .kc{border:1px solid #E4E4E4;border-radius:8px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.06);display:flex;align-items:center;gap:8px;padding:8px 9px;min-height:0;}
+  .kc.hi{border:2px solid #7C3AED;box-shadow:0 3px 8px rgba(124,58,237,.26);}
+  .kc .ic{width:22px;height:22px;border-radius:5px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:900;}
+  .kc .ic img{width:20px;height:20px;object-fit:contain;}
+  .kc .nm{font-size:12px;font-weight:700;color:#242424;line-height:1.18;}
+  .kc .nm small{display:block;font-size:9.5px;font-weight:600;color:#605E5C;margin-top:1px;}
+  .ic.web{background:linear-gradient(135deg,#4F86D6,#2563EB);}
+  .ic.ais{background:linear-gradient(135deg,#3B82F6,#1D4ED8);}
+  .ic.dv{background:linear-gradient(135deg,#34D399,#059669);}
+  .ic.d365{background:linear-gradient(135deg,#7A8CF0,#4F46E5);}
+  .ic.snow{background:linear-gradient(135deg,#94A3B8,#475569);}
+  .ic.sf{background:linear-gradient(135deg,#60A5FA,#0EA5E9);}
+  .ic.sql{background:linear-gradient(135deg,#60A5FA,#2563EB);font-size:8px;}
+  .ic.more{background:#F3F2F1;color:#605E5C;}
+  .kc.gh{background:#FAFAFA;border-style:dashed;}
+
+  /* 右：3ステップ */
+  .how{flex:1;display:flex;flex-direction:column;min-height:0;}
+  .how-head{align-self:stretch;text-align:center;color:#fff;font-weight:900;font-size:22px;border-radius:11px;padding:10px 12px;margin-bottom:11px;letter-spacing:.3px;background:linear-gradient(120deg,#7C3AED 0%,#C026D3 55%,#EC4899 100%);box-shadow:0 4px 8px rgba(0,0,0,.26),inset 0 1px 0 rgba(255,255,255,.5);text-shadow:0 1px 2px rgba(0,0,0,.22);}
+  .steps{display:flex;flex-direction:column;justify-content:space-between;flex:1;gap:11px;}
+  .step{background:linear-gradient(180deg,#FFFFFF,#F4F1FB);border:2px solid #DDD3F0;border-radius:14px;box-shadow:0 5px 11px rgba(0,0,0,.12),inset 0 1px 0 rgba(255,255,255,.9);display:flex;align-items:center;gap:13px;padding:12px 15px;flex:1;}
+  .step .num{flex:0 0 auto;width:47px;height:47px;border-radius:50%;background:linear-gradient(180deg,#8B5CF6,#6D28D9);color:#fff;font-weight:900;font-size:25px;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 7px rgba(109,40,217,.4),inset 0 1px 0 rgba(255,255,255,.4);}
+  .step .tx{display:flex;flex-direction:column;gap:4px;}
+  .step .tx .h{font-weight:900;font-size:20.5px;color:var(--ink);line-height:1.2;}
+  .step .tx .s{font-weight:700;font-size:15px;color:#4B5563;line-height:1.34;}
+  .step .tx .s b{color:var(--cs-dark);}
+
+  .darkband{margin:11px 0 0;background:linear-gradient(180deg,#565C66,#4A4F58);color:#fff;flex:0 0 auto;position:relative;display:flex;align-items:stretch;gap:14px;padding:9px 22px 11px;height:128px;overflow:hidden;box-shadow:inset 0 1px 0 rgba(255,255,255,.10);}
+  .nf{flex:1.55;display:flex;flex-direction:column;min-height:0;}
+  .nf .label{font-weight:900;font-size:16px;color:#FCD34D;margin-bottom:6px;letter-spacing:.3px;}
+  .nf .grid{display:flex;gap:9px;flex:1;min-height:0;margin-bottom:14px;}
+  .nf .fc{flex:1;background:linear-gradient(180deg,#FFFFFF,#EEF1F6);color:var(--ink);border-radius:10px;padding:7px 10px;display:flex;flex-direction:column;justify-content:center;gap:3px;box-shadow:0 3px 6px rgba(0,0,0,.26),inset 0 1px 0 rgba(255,255,255,.9);border-top:3px solid var(--cs);}
+  .nf .fc .ft{font-weight:900;font-size:14.5px;color:var(--cs-dark);line-height:1.2;}
+  .nf .fc .fd{font-weight:700;font-size:12.3px;color:#4B5563;line-height:1.28;}
+  .note{flex:1;background:linear-gradient(180deg,#646A75,#565C66);border:1.5px solid #7A818D;border-radius:11px;padding:10px 14px;margin-right:118px;display:flex;flex-direction:column;justify-content:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.12);}
+  .note .label{font-weight:900;font-size:15px;color:#FCD34D;margin-bottom:6px;display:flex;align-items:center;gap:6px;}
+  .note .txt{font-weight:700;font-size:14px;color:#fff;line-height:1.4;}
+  .note .txt b{color:#FCA5A5;}
+  .band-chara{position:absolute;right:6px;bottom:0;height:150px;z-index:50;filter:drop-shadow(0 3px 7px rgba(0,0,0,.45));}
+  .src{position:absolute;left:22px;bottom:3px;font-size:11px;font-weight:500;color:rgba(255,255,255,.5);z-index:40;}
+</style>
+</head>
+<body>
+<div id="slide">
+  <div class="titlebar">
+    <div class="vol-pill">コパスタ Vol.4</div>
+    <div class="part-pill">後編 <b>(2/2)</b></div>
+    <div class="title-text">資料はドラッグして入れるだけ。<br>ナレッジの足し方は3ステップ<span class="q">！</span></div>
+    <img class="title-chara" src="../../pptx/_assets/chara/chara_laptop_g.png" alt="">
+  </div>
+
+  <div class="body">
+    <!-- 左：Add knowledge ダイアログ -->
+    <div class="mockwrap">
+      <div class="mocklabel"><span class="dot"></span>ナレッジの追加（Add knowledge）の画面</div>
+      <div class="dlg">
+        <div class="dlg-h">
+          <div class="t">Add knowledge</div>
+          <div class="x">✕</div>
+        </div>
+        <div class="dlg-sub">Help your agent provide more relevant information and insights. <a>Learn more</a></div>
+
+        <div class="srch">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.6-3.6"/></svg>
+          Search for a knowledge source
+        </div>
+
+        <div class="upzone">
+          <div class="ttl"><span class="ar">⬆</span>Upload file</div>
+          <div class="de">Drag and drop, or <u>select to browse</u>, or upload and sync from</div>
+          <div class="btns">
+            <div class="ub"><img src="../../pptx/_assets/icons/pa_onedrive.png" alt="">OneDrive</div>
+            <div class="ub hi"><img src="../../pptx/_assets/icons/pa_sharepoint.png" alt="">SharePoint</div>
+          </div>
+        </div>
+
+        <div class="tabrow">
+          <div class="tl">
+            <span class="tb on">★ Featured</span>
+            <span class="tb">Advanced</span>
+          </div>
+          <span class="sg">See suggestions</span>
+        </div>
+
+        <div class="cards">
+          <div class="kc"><span class="ic web">🌐</span><span class="nm">Public websites</span></div>
+          <div class="kc hi"><span class="ic"><img src="../../pptx/_assets/icons/pa_sharepoint.png" alt=""></span><span class="nm">SharePoint<small>Powered by Work IQ</small></span></div>
+          <div class="kc"><span class="ic ais">🔍</span><span class="nm">Azure AI Search</span></div>
+          <div class="kc"><span class="ic dv">DV</span><span class="nm">Dataverse</span></div>
+          <div class="kc"><span class="ic d365">365</span><span class="nm">Dynamics 365</span></div>
+          <div class="kc"><span class="ic sf">☁</span><span class="nm">Salesforce</span></div>
+          <div class="kc"><span class="ic snow">now</span><span class="nm">ServiceNow</span></div>
+          <div class="kc"><span class="ic sql">SQL</span><span class="nm">Azure SQL</span></div>
+          <div class="kc gh"><span class="ic more">＋</span><span class="nm">Advanced タブに<small>Confluence・Jira・Azure DevOps ほか</small></span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 右：3ステップ -->
+    <div class="how">
+      <div class="how-head">この3ステップで足せる</div>
+      <div class="steps">
+        <div class="step">
+          <div class="num">1</div>
+          <div class="tx"><div class="h">Knowledge の「＋」を押す</div><div class="s">Build タブの右パネル。<br>最初は<b>Web検索だけ</b>が入っています</div></div>
+        </div>
+        <div class="step">
+          <div class="num">2</div>
+          <div class="tx"><div class="h">資料をドラッグして入れる</div><div class="s">PDF・Word・Excel・PowerPoint。<br><b>SharePoint や OneDrive</b> から選んでも可</div></div>
+        </div>
+        <div class="step">
+          <div class="num">3</div>
+          <div class="tx"><div class="h">名前と"説明"を書いて追加</div><div class="s">説明はできるだけ具体的に。<br>AIが<b>どの資料を見るか</b>選ぶ手がかりに</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="darkband">
+    <div class="nf">
+      <div class="label">公式で確認できた仕様</div>
+      <div class="grid">
+        <div class="fc"><div class="ft">読める形式は幅広い</div><div class="fd">Word・Excel・PowerPoint・PDF・テキスト・CSV ほか</div></div>
+        <div class="fc"><div class="ft">1ファイル 512MB まで</div><div class="fd">1エージェントに最大500ファイルまで追加できる</div></div>
+        <div class="fc"><div class="ft">権限は引き継がれる</div><div class="fd">SharePointは、その人が見られる資料からしか答えない</div></div>
+      </div>
+    </div>
+    <div class="note">
+      <div class="label">⚠ 使う前に確認</div>
+      <div class="txt">画像・動画・音声そのものは<b>読めない</b>（PDF内の画像はOK）。パスワード保護や暗号化されたファイルも不可。</div>
+    </div>
+    <div class="src">出典：Microsoft Learn（ナレッジ ソースとしてファイルをアップロードする／SharePointを追加する／新しいエクスペリエンス）</div>
+  </div>
+  <img class="band-chara" src="../../pptx/_assets/chara/chara_guts_g.png" alt="">
+</div>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>

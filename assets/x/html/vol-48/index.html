@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.48-1 Teamsに予約投稿を自作（指定の日時に自動投稿）</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB; --blue-bg:#EFF6FF; --blue-dark:#1E40AF;
+    --green:#16A34A; --green-bg:#ECFDF5; --green-dark:#064E3B;
+    --teams:#5B5FC7; --teams-dark:#4347A8;
+    --orange:#EA580C; --amber:#D97706; --ink:#1F2937; --gray:#374151; --weak:#6B7280; --line:#E5E7EB;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+  .ic{display:block;width:100%;height:100%;}
+
+  .titlebar{height:88px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:16px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:25px;border-radius:999px;padding:7px 19px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .vol-logo{height:48px;width:48px;object-fit:contain;flex:0 0 auto;background:#fff;border-radius:12px;padding:5px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
+  .title-text{color:#fff;font-weight:900;font-size:27px;line-height:1.16;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:150px;}
+  .title-text .hl{color:#FFE08A;}
+  .title-chara{position:absolute;right:14px;bottom:-42px;height:144px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .concl{margin:9px 16px 0;background:var(--blue-bg);border:2.5px solid var(--blue);border-radius:13px;display:flex;align-items:center;gap:13px;padding:9px 18px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;width:40px;height:40px;border-radius:11px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;padding:8px;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
+  .concl .txt{font-weight:800;font-size:18.5px;color:var(--blue-dark);line-height:1.36;padding-right:96px;}
+  .concl .txt b{color:var(--orange);}
+
+  .tatoe{margin:8px 16px 0;background:linear-gradient(180deg,#FFFBEB,#FEF3C7);border:1.5px solid #FAD77A;border-radius:11px;display:flex;align-items:center;gap:11px;padding:8px 15px;flex:0 0 auto;box-shadow:0 2px 6px rgba(0,0,0,.06);}
+  .tatoe .ti{flex:0 0 auto;width:25px;height:25px;color:var(--amber);}
+  .tatoe .tt{font-weight:800;font-size:16px;color:#7A4A12;line-height:1.34;}
+  .tatoe .tt b{color:var(--teams-dark);}
+
+  .stage{flex:1 1 auto;margin:11px 16px 0;display:flex;align-items:stretch;gap:0;min-height:0;}
+
+  /* 左：入力（今） */
+  .lzone{flex:0 0 412px;display:flex;flex-direction:column;min-height:0;}
+  .zhd{font-weight:900;font-size:18px;color:var(--ink);margin-bottom:9px;display:flex;align-items:center;gap:8px;}
+  .zhd .b{flex:0 0 auto;width:26px;height:26px;border-radius:50%;color:#fff;font-weight:900;font-size:15px;display:flex;align-items:center;justify-content:center;}
+  .zhd.l1 .b{background:#2563EB;} .zhd.l2 .b{background:#4347A8;}
+  .zhd .tag{margin-left:auto;font-weight:900;font-size:13px;color:#fff;border-radius:999px;padding:4px 12px;}
+  .zhd.l1 .tag{background:#2563EB;} .zhd.l2 .tag{background:#4347A8;}
+  .form{flex:1;background:#fff;border:1.5px solid #C9D2E0;border-radius:14px;box-shadow:0 6px 16px rgba(0,0,0,.14);overflow:hidden;font-family:'Segoe UI','Noto Sans JP',sans-serif;display:flex;flex-direction:column;min-height:0;}
+  .form-h{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:11px 14px;background:linear-gradient(90deg,#1D4ED8,#3B82F6);}
+  .form-h img{width:24px;height:24px;object-fit:contain;background:#fff;border-radius:6px;padding:3px;}
+  .form-h span{font-weight:800;font-size:14.5px;color:#fff;}
+  .form-b{flex:1;display:flex;flex-direction:column;justify-content:center;gap:13px;padding:14px 16px;}
+  .ffld{display:flex;flex-direction:column;gap:6px;}
+  .ffld .l{font-size:14.5px;color:#3A4A63;font-weight:900;display:flex;align-items:center;gap:7px;}
+  .ffld .l svg{width:16px;height:16px;color:#5A6B85;}
+  .ffld .v{border:1.5px solid #D1D1D1;border-radius:8px;padding:11px 12px;font-size:16px;color:#242424;background:#fff;font-weight:700;line-height:1.4;}
+  .ffld .v.msg{min-height:64px;}
+  .ffld .v.dt{display:flex;align-items:center;gap:10px;font-weight:800;}
+  .ffld .v.dt svg{width:18px;height:18px;color:#2563EB;flex:0 0 auto;}
+  .ffld .v.dt .clk{margin-left:auto;color:#2563EB;font-weight:900;}
+  .fbtn{align-self:stretch;margin-top:2px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;font-weight:900;font-size:17px;border-radius:9px;padding:12px;text-align:center;box-shadow:0 4px 9px rgba(37,99,235,.4);display:flex;align-items:center;justify-content:center;gap:9px;}
+  .fbtn svg{width:19px;height:19px;}
+
+  /* 中：エンジン */
+  .mzone{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 8px;position:relative;}
+  .mzbig{font-weight:900;font-size:25px;color:var(--ink);text-align:center;line-height:1.28;}
+  .mzbig b{color:var(--green-dark);}
+  .engine{width:100%;max-width:300px;background:linear-gradient(180deg,#EEF4FF,#DEEAFF);border:2.5px solid #2563EB;border-radius:16px;padding:15px 16px 16px;box-shadow:0 6px 14px rgba(37,99,235,.24),inset 0 1px 0 rgba(255,255,255,.7);margin:14px 0;}
+  .eng-top{display:flex;align-items:center;gap:11px;font-weight:900;font-size:18.5px;color:var(--blue-dark);padding-bottom:11px;margin-bottom:11px;border-bottom:2px dashed #A9C4F0;}
+  .eng-top img{width:32px;height:32px;object-fit:contain;}
+  .eng-li{display:flex;align-items:center;gap:11px;font-weight:800;font-size:18px;color:#23416B;padding:7px 0;line-height:1.3;}
+  .eng-li .sn{flex:0 0 auto;width:29px;height:29px;border-radius:50%;background:#2563EB;color:#fff;font-size:16px;font-weight:900;display:flex;align-items:center;justify-content:center;}
+  .eng-li b{color:#1E40AF;}
+  .bigarrow{width:62px;height:62px;color:var(--blue);margin:4px 0 13px;}
+  .autobadge{display:inline-flex;align-items:center;gap:9px;background:linear-gradient(180deg,#FBBF24,#EA580C);color:#fff;font-weight:900;font-size:18px;border-radius:999px;padding:11px 20px;box-shadow:0 4px 9px rgba(234,88,12,.42);text-align:center;}
+  .autobadge svg{width:21px;height:21px;flex:0 0 auto;}
+  .mzmascot{position:absolute;right:-10px;bottom:-6px;height:108px;filter:drop-shadow(0 3px 7px rgba(0,0,0,.4));z-index:30;}
+
+  /* 右：Teams投稿（指定時刻） */
+  .rzone{flex:0 0 416px;display:flex;flex-direction:column;min-height:0;}
+  .teams{flex:1;background:#fff;border:1px solid #E1E1ED;border-radius:14px;box-shadow:0 6px 16px rgba(0,0,0,.14);overflow:hidden;font-family:'Segoe UI','Noto Sans JP',sans-serif;display:flex;flex-direction:column;min-height:0;}
+  .teams-h{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:12px 15px;background:linear-gradient(90deg,#4347A8,#5B5FC7);}
+  .teams-h .ti{width:24px;height:24px;border-radius:6px;background:#fff;display:flex;align-items:center;justify-content:center;}
+  .teams-h .ti img{width:18px;height:18px;object-fit:contain;}
+  .teams-h span{font-weight:800;font-size:14.5px;color:#fff;}
+  .tbody{flex:1;display:flex;flex-direction:column;justify-content:center;gap:6px;padding:10px 6px;}
+  .daychip{align-self:center;background:#F0F0F6;color:#797882;font-weight:700;font-size:12px;border-radius:999px;padding:4px 14px;}
+  .msg{display:flex;gap:12px;padding:9px 15px;}
+  .msg.hot{background:#F7F8FE;border-left:3px solid #5B5FC7;border-radius:0 8px 8px 0;}
+  .msg .av{flex:0 0 auto;width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+  .msg .av.bot{background:linear-gradient(135deg,#3B82F6,#7C3AED);}
+  .msg .av.bot img{width:26px;height:26px;object-fit:contain;}
+  .msg .mc{flex:1;min-width:0;}
+  .msg .mtop{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;}
+  .msg .mn{font-weight:800;font-size:15px;color:#242424;}
+  .msg .botpill{font-weight:800;font-size:11px;color:#5B5FC7;background:#EEF0FB;border:1px solid #D6D8F2;border-radius:5px;padding:1px 7px;}
+  .msg .mt{font-size:12.5px;color:#8A8886;}
+  .msg .mbody{margin-top:5px;font-size:15.5px;color:#242424;line-height:1.5;font-weight:600;}
+  .msg .mbody b{color:#4347A8;font-weight:800;}
+  .postedbadge{margin:2px 15px 4px 69px;display:inline-flex;align-self:flex-start;align-items:center;gap:7px;background:#ECFDF3;border:1.5px solid #86E0AC;border-radius:999px;padding:6px 13px;font-weight:900;font-size:13.5px;color:#0B5E37;}
+  .postedbadge svg{width:16px;height:16px;}
+
+  .next{flex:0 0 auto;margin:10px 16px 12px;background:linear-gradient(180deg,#EAF2FF,#DCEAFE);border:2.5px solid var(--blue);border-radius:13px;padding:12px 18px;display:flex;align-items:center;gap:11px;font-weight:900;font-size:19px;color:var(--blue-dark);box-shadow:0 3px 9px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .next .na{flex:0 0 auto;width:25px;height:25px;color:var(--blue);}
+  .next b{color:var(--orange);}
+  .src{position:absolute;left:16px;bottom:3px;font-size:10px;color:#AEB6C2;font-weight:700;z-index:3;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const ICON={
+ arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',
+ clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/>',
+ cal:'<rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/>',
+ chat:'<path d="M21 11.5a8 8 0 0 1-11.6 7.1L3 21l2.4-6.4A8 8 0 1 1 21 11.5z"/>',
+ zap:'<path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/>',
+ bulb:'<path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/>',
+ play:'<path d="M6 4l14 8-14 8z"/>',
+ check:'<path d="M20 6 9 17l-5-5"/>'
+};
+const svg=(n)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${ICON[n]}</svg>`;
+
+const s=document.getElementById('slide');
+s.innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.48-1</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">Teamsに“予約投稿”を自作｜<span class="hl">指定した日時に、自動でチャネルへ</span></div>
+    <img class="title-chara" src="${A}chara/chara_point.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svg('bulb')}</div>
+    <div class="txt">Teams単体にない<b>「予約投稿」</b>を自作。<b>メッセージと日時を入れておく</b>だけで、Power Automateが<b>指定の時刻にきっかり</b>チャネルへ投稿します。</div>
+  </div>
+
+  <div class="tatoe">
+    <span class="ti">${svg('clock')}</span>
+    <span class="tt">たとえるなら…未来の自分に届ける<b>“時限式の伝言”</b>。今すぐ書いておいて、決めた時刻にポンッと届く。</span>
+  </div>
+
+  <div class="stage">
+    <div class="lzone">
+      <div class="zhd l1"><span class="b">1</span>今｜メッセージと日時を入れる<span class="tag">入力は1回だけ</span></div>
+      <div class="form">
+        <div class="form-h"><img src="${A}icons/pa_logo.png" alt=""><span>フロー ボタン（手動で実行）</span></div>
+        <div class="form-b">
+          <div class="ffld">
+            <span class="l">${svg('chat')}メッセージ</span>
+            <span class="v msg">来週の定例、<b>月曜10:00開始</b>です。<br>アジェンダは添付を確認お願いします！</span>
+          </div>
+          <div class="ffld">
+            <span class="l">${svg('cal')}投稿する日時</span>
+            <span class="v dt">${svg('clock')}<span>2026/07/07（月） 08:00</span><span class="clk">▾</span></span>
+          </div>
+          <div class="fbtn">${svg('play')}実行して予約する</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mzone">
+      <div class="mzbig">あとは<br><b>放っておくだけ</b></div>
+      <div class="engine">
+        <div class="eng-top"><img src="${A}icons/pa_logo.png" alt="">Power Automate が実行</div>
+        <div class="eng-li"><span class="sn">1</span><span>指定の<b>時刻まで待機</b></span></div>
+        <div class="eng-li"><span class="sn">2</span><span>その時刻に<b>チャネルへ投稿</b></span></div>
+      </div>
+      <span class="bigarrow">${svg('arrow')}</span>
+      <div class="autobadge">${svg('clock')}指定の時刻にきっかり投稿</div>
+      <img class="mzmascot" src="${A}chara/chara_guts.png" alt="">
+    </div>
+
+    <div class="rzone">
+      <div class="zhd l2"><span class="b">2</span>指定時刻｜Teamsへ自動投稿<span class="tag">月 8:00</span></div>
+      <div class="teams">
+        <div class="teams-h"><span class="ti"><img src="${A}icons/pa_teams.png" alt=""></span><span>全社アナウンス ＞ 一般</span></div>
+        <div class="tbody">
+          <div class="daychip">7月7日（月）</div>
+          <div class="msg hot">
+            <span class="av bot"><img src="${A}icons/pa_logo.png" alt=""></span>
+            <span class="mc">
+              <div class="mtop"><span class="mn">Power Automate</span><span class="botpill">フロー ボット</span><span class="mt">8:00</span></div>
+              <div class="mbody">来週の定例、<b>月曜10:00開始</b>です。<br>アジェンダは添付を確認お願いします！</div>
+            </span>
+          </div>
+          <div class="postedbadge">${svg('check')}予約どおり 8:00 に自動投稿</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="next"><span class="na">${svg('arrow')}</span>「朝イチの連絡、書いたけど送り忘れた…」が消える。<b>作り方</b>は <b>2枚目</b>で解説！</div>
+  <div class="src">出典：Microsoft Learn</div>
+`;
+</script>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>

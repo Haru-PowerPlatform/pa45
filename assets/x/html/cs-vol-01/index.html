@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>コパスタ Vol.1 - コンセプト</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB; --blue-bg:#EFF6FF; --blue-bg2:#DBEAFE; --blue-dark:#1E40AF;
+    --cs:#7C3AED; --cs-bg:#F5F3FF; --cs-bg2:#EDE9FE; --cs-dark:#5B21B6;
+    --green:#16A34A; --green-bg:#ECFDF5; --green-dark:#064E3B;
+    --enji:#A4283C;
+    --ink:#1F2937; --gray:#374151; --gray2:#4B5563; --weak:#6B7280; --faint:#9CA3AF;
+    --card:#F8F9FA; --line:#E5E7EB;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+
+  /* タイトルバー */
+  .titlebar{
+    height:90px;
+    background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#5B21B6 0%,#7C3AED 50%,#A855F7 100%);
+    box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(91,33,182,.36);
+    display:flex;align-items:center;gap:18px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;
+  }
+  .vol-pill{background:#fff;color:var(--cs);font-weight:900;font-size:24px;border-radius:999px;padding:7px 20px;letter-spacing:.5px;white-space:nowrap;flex:0 0 auto;}
+  .part-pill{background:rgba(255,255,255,.16);color:#fff;font-weight:900;font-size:17px;border-radius:999px;padding:6px 14px;white-space:nowrap;flex:0 0 auto;border:1.6px solid rgba(255,255,255,.78);box-shadow:inset 0 1px 0 rgba(255,255,255,.25);}
+  .part-pill b{color:#FDE047;}
+  .title-text{color:#fff;font-weight:900;font-size:31px;line-height:1.18;letter-spacing:.3px;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:140px;}
+  .title-text .q{color:#FDE047;}
+  .title-chara{position:absolute;right:14px;bottom:-54px;height:150px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  /* 結論バー */
+  .concl{
+    margin:9px 18px 0;background:var(--green-bg);border:2px solid var(--green);border-radius:12px;
+    display:flex;align-items:center;gap:14px;padding:10px 150px 10px 18px;flex:0 0 auto;
+    box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);
+  }
+  .concl .chip{background:linear-gradient(180deg,rgba(255,255,255,.30),rgba(255,255,255,0) 50%),linear-gradient(180deg,#2BD06A,#16A34A);color:#fff;font-weight:900;font-size:22px;border-radius:9px;padding:8px 18px;white-space:nowrap;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
+  .concl .txt{font-weight:700;font-size:20px;color:var(--green-dark);line-height:1.38;}
+  .concl .txt b{color:var(--blue);} .concl .txt em{color:var(--cs);font-style:normal;}
+
+  /* 比較2カラム */
+  .cmp{flex:1 1 auto;display:flex;gap:16px;padding:10px 18px 0;min-height:0;}
+  .ccard{flex:1;display:flex;flex-direction:column;min-height:0;border-radius:14px;background:var(--card);padding:14px 16px 16px;box-shadow:0 7px 16px rgba(0,0,0,.14),inset 0 1px 0 rgba(255,255,255,.8);}
+  .ccard.pa{border:2.5px solid var(--blue);}
+  .ccard.cs{border:2.5px solid var(--cs);}
+  .chead{align-self:stretch;display:flex;align-items:center;gap:12px;color:#fff;font-weight:900;font-size:26px;border-radius:11px;padding:10px 16px;letter-spacing:.4px;box-shadow:0 4px 8px rgba(0,0,0,.26),inset 0 1px 0 rgba(255,255,255,.5),inset 0 -3px 4px rgba(0,0,0,.16);text-shadow:0 1px 2px rgba(0,0,0,.22);}
+  .chead .badge{flex:0 0 auto;width:38px;height:38px;border-radius:9px;background:rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center;}
+  .chead .badge img{width:28px;height:28px;object-fit:contain;}
+  .h-pa{background:linear-gradient(180deg,rgba(255,255,255,.28),rgba(255,255,255,0) 48%),linear-gradient(180deg,#4A85FF,#2563EB);}
+  .h-cs{background:linear-gradient(120deg,#7C3AED 0%,#C026D3 52%,#EC4899 100%);}
+
+  .meta{margin:11px 0 9px;border-radius:11px;padding:11px 14px;font-weight:900;font-size:21px;line-height:1.35;display:flex;align-items:center;gap:10px;}
+  .meta .big{font-size:23px;}
+  .pa .meta{background:var(--blue-bg);border:1.5px solid var(--blue-bg2);color:var(--blue-dark);}
+  .cs .meta{background:var(--cs-bg);border:1.5px solid var(--cs-bg2);color:var(--cs-dark);}
+  .meta .mark{font-size:30px;line-height:1;}
+
+  .blist{list-style:none;display:flex;flex-direction:column;justify-content:space-evenly;flex:1;gap:7px;}
+  .blist li{display:flex;gap:11px;align-items:flex-start;font-weight:700;font-size:20px;color:var(--gray);line-height:1.34;}
+  .blist li::before{content:"";flex:0 0 auto;width:13px;height:13px;margin-top:6px;border-radius:4px;}
+  .pa .blist li::before{background:var(--blue);}
+  .cs .blist li::before{background:var(--cs);}
+  .blist li.ex{font-weight:900;border-radius:9px;padding:8px 11px;align-items:center;}
+  .blist li.ex::before{margin-top:0;}
+  .pa .blist li.ex{background:var(--blue-bg);color:var(--blue-dark);}
+  .cs .blist li.ex{background:var(--cs-bg);color:var(--cs-dark);}
+  .blist li.ex .tag{font-size:14px;font-weight:900;color:#fff;border-radius:6px;padding:2px 8px;margin-right:2px;}
+  .pa .blist li.ex .tag{background:var(--blue);}
+  .cs .blist li.ex .tag{background:var(--cs);}
+
+  /* VSバッジ */
+  .vs{position:absolute;left:50%;top:352px;transform:translateX(-50%);z-index:30;
+      width:58px;height:58px;border-radius:50%;background:linear-gradient(180deg,#FFFFFF,#E5E7EB);border:3px solid #fff;
+      box-shadow:0 5px 12px rgba(0,0,0,.30);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:22px;color:var(--ink);}
+
+  /* 下部ダーク帯 */
+  .darkband{margin:11px 0 0;background:linear-gradient(180deg,#565C66,#4A4F58);color:#fff;flex:0 0 auto;position:relative;display:flex;align-items:stretch;gap:16px;padding:13px 22px;height:120px;overflow:hidden;box-shadow:inset 0 1px 0 rgba(255,255,255,.10);}
+  .bridge{flex:1.5;display:flex;flex-direction:column;justify-content:center;}
+  .bridge .label{font-weight:900;font-size:17px;color:#FCD34D;margin-bottom:9px;letter-spacing:.4px;}
+  .bridge .row{display:flex;align-items:center;gap:12px;}
+  .pill{color:#fff;font-weight:900;font-size:17px;border-radius:10px;padding:9px 14px;white-space:nowrap;box-shadow:0 3px 6px rgba(0,0,0,.3),inset 0 1px 0 rgba(255,255,255,.4);}
+  .pill.pa{background:linear-gradient(180deg,#4A85FF,#2563EB);}
+  .pill.cs{background:linear-gradient(120deg,#7C3AED,#C026D3 60%,#EC4899);}
+  .plus{font-weight:900;font-size:24px;color:#FCD34D;}
+  .bridge .desc{font-weight:700;font-size:16.5px;color:#F1F5F9;line-height:1.32;}
+  .memo{flex:1;background:linear-gradient(180deg,#646A75,#565C66);border:1.5px solid #7A818D;border-radius:11px;padding:11px 15px;margin-right:120px;display:flex;flex-direction:column;justify-content:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.12);}
+  .memo .label{font-weight:900;font-size:15px;color:#FCD34D;margin-bottom:6px;}
+  .memo .txt{font-weight:700;font-size:16.5px;color:#fff;line-height:1.42;}
+  .memo .txt b{color:#93C5FD;} .memo .txt em{color:#E9D5FF;font-style:normal;}
+  .band-chara{position:absolute;right:8px;bottom:0;height:148px;z-index:50;filter:drop-shadow(0 3px 7px rgba(0,0,0,.45));}
+  .src{position:absolute;left:22px;bottom:4px;font-size:11px;font-weight:500;color:rgba(255,255,255,.5);z-index:40;}
+</style>
+</head>
+<body>
+<div id="slide">
+  <div class="titlebar">
+    <div class="vol-pill">コパスタ Vol.1</div>
+    <div class="part-pill">前編 <b>(1/2)</b></div>
+    <div class="title-text">Power Automate は"作業ロボ"、<br>Copilot Studio は"考える受付係"<span class="q">！</span></div>
+    <img class="title-chara" src="../../pptx/_assets/chara/chara_laptop_g.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">結論</div>
+    <div class="txt"><b>Power Automate</b>＝決めた手順を自動でくり返す。<em>Copilot Studio</em>＝会話して自分で考えて動く。<br>役割がちがうので、場面に合わせて"使い分け"るのが正解です。</div>
+  </div>
+
+  <div class="cmp">
+    <div class="ccard pa">
+      <div class="chead h-pa"><span class="badge"><img src="../../pptx/_assets/icons/pa_logo.png" alt=""></span>Power Automate</div>
+      <div class="meta"><span class="mark">🦾</span><span>決めた手順どおりに動く<span class="big">"作業ロボ"</span></span></div>
+      <ul class="blist">
+        <li>トリガー → アクションの「決まった流れ」を自動で実行</li>
+        <li>同じ作業を、速く・正確に・なんども くり返す</li>
+        <li>その場の判断は入らない（決めた手順どおり）</li>
+        <li class="ex"><span class="tag">例</span>メールが来たら、添付ファイルを自動で保存</li>
+      </ul>
+    </div>
+
+    <div class="ccard cs">
+      <div class="chead h-cs"><span class="badge" style="background:#fff;"><img src="../../pptx/_assets/icons/cs_logo.png" alt="" style="width:36px;height:36px;"></span>Copilot Studio</div>
+      <div class="meta"><span class="mark">💬</span><span>会話して自分で考える<span class="big">"AIアシスタント"</span></span></div>
+      <ul class="blist">
+        <li>自然な言葉で質問に答え、相手と対話する</li>
+        <li>状況に応じて、自分で判断してアクションする</li>
+        <li>社内文書（ナレッジ）を読み込んで回答できる</li>
+        <li class="ex"><span class="tag">例</span>社内のよくある質問に答えるAIを作る</li>
+      </ul>
+    </div>
+  </div>
+  <div class="vs">VS</div>
+
+  <div class="darkband">
+    <div class="bridge">
+      <div class="label">じつは組み合わせて使える！</div>
+      <div class="row">
+        <span class="pill cs">Copilot Studio</span>
+        <span class="plus">＋</span>
+        <span class="pill pa">Power Automate</span>
+      </div>
+      <div class="desc" style="margin-top:8px;">Copilot Studio の中から PA の自動化（エージェント フロー）も呼べる＝合わせ技OK</div>
+    </div>
+    <div class="memo">
+      <div class="label">使い分けのコツ</div>
+      <div class="txt">決まりきった作業 → <b>Power Automate</b><br>会話・判断が要る → <em>Copilot Studio</em></div>
+    </div>
+    <div class="src">出典：Microsoft Copilot Studio（実機）／Microsoft Learn</div>
+  </div>
+  <img class="band-chara" src="../../pptx/_assets/chara/chara_guts_g.png" alt="">
+</div>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>

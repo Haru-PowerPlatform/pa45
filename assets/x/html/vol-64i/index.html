@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.61-1 その自動化、成果は伝わってる？（導入）</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB;--blue-dark:#1E40AF;--green:#16A34A;--green-dark:#0B5E37;
+    --ink:#1F2937;--gray:#374151;--weak:#6B7280;--orange:#EA580C;--red:#DC2626;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+
+  .titlebar{height:86px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:14px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:25px;border-radius:999px;padding:7px 19px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .logos{display:flex;align-items:center;gap:7px;flex:0 0 auto;}
+  .logos .ll{height:47px;width:47px;object-fit:contain;background:#fff;border-radius:12px;padding:6px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
+  .title-text{color:#fff;font-weight:900;font-size:29px;line-height:1.16;text-shadow:0 1px 2px rgba(0,0,0,.18);}
+  .title-text .hl{color:#FFE08A;}
+
+  .stage{flex:1 1 auto;margin:13px 15px 0;display:flex;align-items:stretch;gap:0;min-height:0;}
+  .pan{flex:1;position:relative;border-radius:17px;padding:12px 15px 0;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 6px 15px rgba(0,0,0,.12),inset 0 1px 0 rgba(255,255,255,.7);}
+  .pan.left{background:linear-gradient(165deg,#FFF3EF 0%,#FCE3DB 100%);border:2.5px solid #EE9B84;}
+  .pan.right{background:linear-gradient(165deg,#EDFBF3 0%,#D6F2E1 100%);border:2.5px solid #63C48C;}
+  .phd{align-self:flex-start;display:flex;align-items:center;gap:9px;font-weight:900;font-size:21px;border-radius:12px;padding:9px 18px;color:#fff;box-shadow:0 4px 9px rgba(0,0,0,.22);margin-bottom:12px;}
+  .phd.bad{background:linear-gradient(180deg,#F0724F,#D6402A);}
+  .phd.good{background:linear-gradient(180deg,#2BD06A,#16A34A);}
+  .phd .em{font-size:23px;}
+
+  /* 会話バブル（大きく） */
+  .bub{position:relative;background:#fff;border-radius:16px;padding:12px 16px;font-weight:800;font-size:21px;line-height:1.4;color:#2b2b2b;box-shadow:0 4px 10px rgba(0,0,0,.12);}
+  .bub .who{display:inline-flex;align-items:center;gap:4px;font-size:14px;font-weight:900;color:#fff;border-radius:7px;padding:2px 10px;margin-right:8px;vertical-align:middle;transform:translateY(-2px);}
+  .bub b{color:var(--red);}
+  .boss{align-self:flex-start;max-width:88%;border:2.5px solid #F0A891;}
+  .boss .who{background:#D6402A;}
+  .boss::after{content:"";position:absolute;left:34px;bottom:-12px;width:20px;height:20px;background:#fff;border-right:2.5px solid #F0A891;border-bottom:2.5px solid #F0A891;transform:rotate(38deg);}
+
+  /* 効果レポート（本物っぽく・空欄=???） */
+  .report{margin-top:14px;align-self:stretch;width:70%;background:#fff;border:2px solid #E4B9AC;border-radius:14px;box-shadow:0 5px 13px rgba(0,0,0,.12);overflow:hidden;position:relative;}
+  .report .rh{display:flex;align-items:center;gap:9px;background:linear-gradient(180deg,#FBEEE9,#F6E0D7);padding:9px 14px;font-weight:900;font-size:16px;color:#8A4B37;border-bottom:1.5px solid #EAC7BA;}
+  .report .rh .ri{font-size:19px;}
+  .report .rr{display:flex;align-items:center;gap:10px;padding:10px 15px;border-bottom:1px dashed #F0D9CF;font-weight:800;}
+  .report .rr:last-child{border-bottom:none;}
+  .report .rr .k{flex:0 0 128px;font-size:15.5px;color:#5B5048;}
+  .report .rr .q{flex:1;text-align:center;font-size:22px;font-weight:900;color:#C0C4CC;letter-spacing:2px;background:repeating-linear-gradient(135deg,#F3F4F6,#F3F4F6 8px,#ECEEF1 8px,#ECEEF1 16px);border-radius:7px;padding:3px 0;}
+  .report .stamp{position:absolute;right:12px;bottom:10px;transform:rotate(-11deg);border:3px solid #DC2626;color:#DC2626;font-weight:900;font-size:17px;border-radius:9px;padding:4px 12px;opacity:.86;background:rgba(255,255,255,.55);box-shadow:0 1px 4px rgba(0,0,0,.1);}
+
+  /* Power BI風タイル（右・本物志向） */
+  .tile{margin-top:2px;align-self:stretch;background:#fff;border:2px solid #9FE0BC;border-radius:14px;box-shadow:0 5px 14px rgba(22,163,74,.18);padding:11px 14px 8px;}
+  .tile .tt{display:flex;align-items:center;gap:8px;font-weight:900;font-size:16px;color:#0B5E37;}
+  .tile .tt .badge{margin-left:auto;font-size:12.5px;font-weight:900;color:#0B6A0B;background:#DCF7E5;border:1px solid #9FE0BC;border-radius:999px;padding:2px 11px;}
+  .tile .kpirow{display:flex;align-items:flex-end;gap:14px;margin:5px 0 3px;}
+  .tile .kn{font-size:46px;font-weight:900;color:#0B5E37;line-height:.95;}
+  .tile .kn small{font-size:24px;}
+  .tile .kmeta{display:flex;flex-direction:column;gap:2px;padding-bottom:5px;}
+  .tile .kmeta .l1{font-size:13.5px;font-weight:800;color:#3f7357;}
+  .tile .kmeta .l2{font-size:14px;font-weight:900;color:#16A34A;}
+  .tile .tlegend{margin-left:auto;display:flex;gap:14px;font-size:12.5px;font-weight:800;color:#3f7357;padding-bottom:4px;}
+  .tile .tlegend .sw{display:inline-block;margin-right:5px;vertical-align:middle;}
+  .tile .tlegend .sw.bar{width:14px;height:12px;border-radius:3px;background:linear-gradient(180deg,#4FC17E,#16A34A);}
+  .tile .tlegend .sw.line{width:18px;height:3px;border-radius:2px;background:#0E7A3B;}
+  .tile .chartwrap{width:100%;}
+  .tile svg{width:100%;height:auto;display:block;}
+
+  .cha{position:absolute;bottom:-4px;z-index:8;filter:drop-shadow(0 4px 7px rgba(0,0,0,.34));}
+  .left .cha{right:8px;height:172px;} .right .cha{right:6px;height:150px;}
+  .think{position:absolute;z-index:9;background:#FFF7E9;border:2.5px solid #F1D59A;border-radius:14px;padding:8px 13px;font-weight:900;font-size:16.5px;color:#B45309;line-height:1.3;box-shadow:0 4px 9px rgba(0,0,0,.14);}
+  .left .think{right:150px;bottom:40px;max-width:210px;}
+  .left .think::after{content:"";position:absolute;right:-11px;bottom:20px;width:18px;height:18px;background:#FFF7E9;border-right:2.5px solid #F1D59A;border-top:2.5px solid #F1D59A;transform:rotate(43deg);}
+  .right .think{right:132px;bottom:26px;max-width:200px;background:#F0FFF6;border-color:#9FE0BC;color:#0B5E37;}
+  .right .think b{color:#16A34A;}
+  .right .think::after{content:"";position:absolute;right:-11px;bottom:18px;width:18px;height:18px;background:#F0FFF6;border-right:2.5px solid #9FE0BC;border-top:2.5px solid #9FE0BC;transform:rotate(43deg);}
+
+  .mid{flex:0 0 96px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;}
+  .marrow{width:64px;height:64px;border-radius:50%;background:linear-gradient(180deg,#FBBF24,#EA580C);color:#fff;font-weight:900;font-size:40px;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 14px rgba(234,88,12,.42);}
+  .mlbl{font-size:13.5px;font-weight:900;color:#B45309;text-align:center;line-height:1.25;background:#FFF3D9;border:1.5px solid #F3CE7E;border-radius:9px;padding:5px 9px;}
+
+  .punch{flex:0 0 auto;margin:12px 15px 12px;background:linear-gradient(135deg,#1D4ED8,#2563EB 55%,#3B82F6);border-radius:16px;padding:15px 22px;text-align:center;color:#fff;font-weight:900;font-size:34px;line-height:1.15;letter-spacing:.5px;box-shadow:0 7px 17px rgba(30,58,138,.42),inset 0 1px 0 rgba(255,255,255,.4);text-shadow:0 2px 4px rgba(0,0,0,.22);position:relative;}
+  .punch b{color:#FFE08A;}
+  .punch .em{position:absolute;left:24px;top:50%;transform:translateY(-50%);font-size:32px;}
+  .punch .em.r{left:auto;right:24px;}
+  .src{position:absolute;left:16px;bottom:3px;font-size:10px;color:#AEB6C2;font-weight:700;z-index:3;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+
+/* Power BI風 棒＋累積トレンド チャート */
+const chart=()=>{
+  const months=['10月','11月','12月','1月'];
+  const val=[8,11,13,15];               // 月別削減(h)
+  const cum=[8,19,32,47];               // 累計(h)
+  const X0=42,X1=474,Y0=150,Y1=20;      // plot area
+  const bw=52, slot=(X1-X0)/4;
+  const maxBar=18, maxCum=50;
+  const by=v=>Y0-(v/maxBar)*(Y0-Y1);
+  const cy=v=>Y0-(v/maxCum)*(Y0-Y1);
+  let g='';
+  // gridlines + y labels(左=時間)
+  [0,6,12,18].forEach(v=>{const y=by(v);g+=`<line x1="${X0}" y1="${y}" x2="${X1}" y2="${y}" stroke="${v===0?'#B9CBBF':'#E4EDE7'}" stroke-width="${v===0?1.5:1}"/><text x="${X0-6}" y="${y+4}" font-size="11" fill="#7d9686" font-weight="700" text-anchor="end">${v}</text>`;});
+  // bars + value labels + month labels
+  val.forEach((v,i)=>{const cx=X0+slot*i+slot/2;const x=cx-bw/2;const y=by(v);const h=Y0-y;
+    g+=`<rect x="${x}" y="${y}" width="${bw}" height="${h}" rx="5" fill="url(#gb)"/>`;
+    g+=`<text x="${cx}" y="${Y0+18}" font-size="12.5" fill="#4f6b5b" font-weight="800" text-anchor="middle">${months[i]}</text>`;});
+  // 累積トレンドライン
+  let pts=cum.map((v,i)=>{const cx=X0+slot*i+slot/2;return `${cx},${cy(v)}`;}).join(' ');
+  g+=`<polyline points="${pts}" fill="none" stroke="#0E7A3B" stroke-width="3" stroke-dasharray="2 0"/>`;
+  cum.forEach((v,i)=>{const cx=X0+slot*i+slot/2;g+=`<circle cx="${cx}" cy="${cy(v)}" r="5" fill="#fff" stroke="#0E7A3B" stroke-width="3"/>`;});
+  return `<svg viewBox="0 0 490 176" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="gb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4FC17E"/><stop offset="1" stop-color="#16A34A"/></linearGradient></defs>${g}</svg>`;
+};
+
+const s=document.getElementById('slide');
+s.innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.61-1</div>
+    <div class="logos"><img class="ll" src="${A}icons/pa_logo.png" alt=""></div>
+    <div class="title-text">その自動化、<span class="hl">“成果”はちゃんと伝わってますか？</span></div>
+  </div>
+
+  <div class="stage">
+    <div class="pan left">
+      <div class="phd bad"><span class="em">🙍‍♂️</span>よくある悩み</div>
+      <div class="bub boss"><span class="who">🧑‍💼 上司</span>その自動化、<b>“効果”ってどれくらい<br>出てるの？</b></div>
+      <div class="report">
+        <div class="rh"><span class="ri">📋</span>自動化 効果レポート</div>
+        <div class="rr"><span class="k">削減できた時間</span><span class="q">？ ？ ？</span></div>
+        <div class="rr"><span class="k">コスト削減額</span><span class="q">？ ？ ？</span></div>
+        <div class="rr"><span class="k">対象の部署数</span><span class="q">？ ？ ？</span></div>
+        <div class="stamp">未 測 定</div>
+      </div>
+      <div class="think">うっ…<b>“数字”で答えられない</b>😰</div>
+      <img class="cha" src="${A}chara/chara_trouble.png" alt="">
+    </div>
+
+    <div class="mid">
+      <div class="marrow">→</div>
+      <div class="mlbl">記録して<br>見える化</div>
+    </div>
+
+    <div class="pan right">
+      <div class="phd good"><span class="em">✨</span>Power Automateなら</div>
+      <div class="tile">
+        <div class="tt">📊 自動化の成果ダッシュボード<span class="badge">▲ 好調</span></div>
+        <div class="kpirow">
+          <div class="kn">47<small>h</small></div>
+          <div class="kmeta"><span class="l1">累計の削減時間</span><span class="l2">前月比 +47% ↑</span></div>
+          <div class="tlegend"><span><i class="sw bar"></i>月別の削減</span><span><i class="sw line"></i>累計（右肩上がり）</span></div>
+        </div>
+        <div class="chartwrap">${chart()}</div>
+      </div>
+      <div class="think"><b>自動で記録＆グラフに！</b><br>部署別でも一目。</div>
+      <img class="cha" src="${A}chara/chara_guts.png" alt="">
+    </div>
+  </div>
+
+  <div class="punch"><span class="em">📈</span>頑張りが、<b>“数字”で積み上がる。</b><span class="em r">✨</span></div>
+  <div class="src">出典：Power Automate／Power BI（PA45 Demo・なんでもCopilot 大阪 登壇資料）　※次の3枚で作り方</div>
+`;
+</script>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>
