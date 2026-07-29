@@ -1271,5 +1271,21 @@
     });
   })();
 </script>
+<!--fit-slides-->
+<script>
+(function(){
+  function fitSlides(){
+    var cs=getComputedStyle(document.body);
+    var padL=parseFloat(cs.paddingLeft)||0, padR=parseFloat(cs.paddingRight)||0;
+    var avail=document.documentElement.clientWidth-padL-padR;
+    var scale=Math.min(1, avail/1280);
+    var s=document.querySelectorAll('.slide');
+    for(var i=0;i<s.length;i++){ s[i].style.zoom=scale; }
+  }
+  window.addEventListener('resize',fitSlides);
+  window.addEventListener('load',fitSlides);
+  fitSlides();
+})();
+</script>
 </body>
 </html>
