@@ -48,7 +48,7 @@
 
 ## 1. 累計実績
 ```
-【#PowerAutomate ハンズオン｜PA45】
+【#PowerAutomate 45分ハンズオン講座＝PA45】
 
 PA45、19回でのべ682名の方に参加してもらえました。ありがとうございます。
 
@@ -59,9 +59,7 @@ https://haru-powerplatform.github.io/pa45/achievements/insights/
 
 ## 2. できるようになったこと
 ```
-【#PowerAutomate ハンズオン｜PA45】
-
-【できるようになったこと】
+【#PowerAutomate 45分ハンズオン講座＝PA45】
 
 アンケートの「できるようになったこと」を19回分あわせてみました。
 
@@ -75,7 +73,7 @@ https://haru-powerplatform.github.io/pa45/achievements/insights/can-do.html
 
 ## 3. 苦手が消えた声
 ```
-【#PowerAutomate ハンズオン｜PA45】
+【#PowerAutomate 45分ハンズオン講座＝PA45】
 
 【苦手だった人の声】
 
@@ -88,7 +86,7 @@ https://haru-powerplatform.github.io/pa45/achievements/insights/voices.html
 
 ## 4. 時間の設計
 ```
-【#PowerAutomate ハンズオン｜PA45】
+【#PowerAutomate 45分ハンズオン講座＝PA45】
 
 【なぜ45分・木曜20:15か】
 
@@ -101,9 +99,7 @@ https://haru-powerplatform.github.io/pa45/achievements/insights/design.html
 
 ## 5. アンケート全回公開
 ```
-【#PowerAutomate ハンズオン｜PA45】
-
-【アンケート全回公開】
+【#PowerAutomate 45分ハンズオン講座＝PA45】
 
 PA45は毎回アンケートを取って、結果はそのままサイトに出しています。
 
@@ -114,7 +110,7 @@ https://haru-powerplatform.github.io/pa45/achievements/survey.html
 
 ## 6. 活動の記録
 ```
-【#PowerAutomate ハンズオン｜PA45】
+【#PowerAutomate 45分ハンズオン講座＝PA45】
 
 【活動の記録】
 
@@ -127,7 +123,7 @@ https://haru-powerplatform.github.io/pa45/achievements/
 
 ## 7. 要望→第16回 Copilot
 ```
-【#PowerAutomate ハンズオン｜PA45】
+【#PowerAutomate 45分ハンズオン講座＝PA45】
 
 【第16回・Copilotで直す】
 
@@ -140,7 +136,7 @@ https://youtu.be/dVM-WF1A79g
 
 ## 8. 要望→第18回 承認
 ```
-【#PowerAutomate ハンズオン｜PA45】
+【#PowerAutomate 45分ハンズオン講座＝PA45】
 
 【第18回・承認の催促】
 
@@ -153,9 +149,7 @@ https://youtu.be/cghp6TOJfw8
 
 ## 9. 「45分では足りない」→スライド常設
 ```
-【#PowerAutomate ハンズオン｜PA45】
-
-【解説スライドを常設】
+【#PowerAutomate 45分ハンズオン講座＝PA45】
 
 「45分に収まらないですね」「前編・後編でもいいかも」という声を毎回もらいます。
 
@@ -166,7 +160,7 @@ https://haru-powerplatform.github.io/pa45/slides/
 
 ## 10. 「JSONが無理」→第14回
 ```
-【#PowerAutomate ハンズオン｜PA45】
+【#PowerAutomate 45分ハンズオン講座＝PA45】
 
 【第14回・JSONだけ】
 
@@ -179,7 +173,7 @@ https://youtu.be/9fkbQmOR6Fo
 
 ## 11. 動画アーカイブ17本
 ```
-【#PowerAutomate ハンズオン｜PA45】
+【#PowerAutomate 45分ハンズオン講座＝PA45】
 
 【録画アーカイブ17本】
 
@@ -192,7 +186,7 @@ https://haru-powerplatform.github.io/pa45/videos/
 
 ## 12. 実行履歴の読み方（第11回）
 ```
-【#PowerAutomate ハンズオン｜PA45】
+【#PowerAutomate 45分ハンズオン講座＝PA45】
 
 【第11回・実行履歴の読み方】
 
@@ -205,7 +199,7 @@ https://youtu.be/0Wvv6Bf3n18
 
 ## 13. スライド全19回
 ```
-【#PowerAutomate ハンズオン｜PA45】
+【#PowerAutomate 45分ハンズオン講座＝PA45】
 
 【スライド全19回公開】
 
@@ -218,7 +212,7 @@ https://haru-powerplatform.github.io/pa45/slides/
 
 ## 14. 初参加ガイド
 ```
-【#PowerAutomate ハンズオン｜PA45】
+【#PowerAutomate 45分ハンズオン講座＝PA45】
 
 【初参加ガイド】
 
@@ -231,7 +225,7 @@ https://haru-powerplatform.github.io/pa45/start-here/
 
 ## 15. 参加者はこんな感じ
 ```
-【#PowerAutomate ハンズオン｜PA45】
+【#PowerAutomate 45分ハンズオン講座＝PA45】
 
 【参加者はこんな人たち】
 
@@ -244,7 +238,7 @@ https://haru-powerplatform.github.io/pa45/achievements/insights/
 
 ## 16. 次回募集
 ```
-【#PowerAutomate ハンズオン｜PA45】
+【#PowerAutomate 45分ハンズオン講座＝PA45】
 
 【今週木曜・参加募集】
 
@@ -258,7 +252,7 @@ https://haru-powerplatform.github.io/pa45/sessions/
 
 ## 17. 講座の設計思想
 ```
-【#PowerAutomate ハンズオン｜PA45】
+【#PowerAutomate 45分ハンズオン講座＝PA45】
 
 【1回1テーマにする理由】
 
@@ -271,7 +265,7 @@ https://haru-powerplatform.github.io/pa45/method/
 
 ## 18. 登壇・LT資料
 ```
-【#PowerAutomate ハンズオン｜PA45】
+【#PowerAutomate 45分ハンズオン講座＝PA45】
 
 【登壇・LT資料】
 
@@ -284,7 +278,7 @@ https://haru-powerplatform.github.io/pa45/talks/
 
 ## 19. 伸びた回＝AI・JSON
 ```
-【#PowerAutomate ハンズオン｜PA45】
+【#PowerAutomate 45分ハンズオン講座＝PA45】
 
 【人が集まった回】
 
@@ -297,9 +291,7 @@ https://haru-powerplatform.github.io/pa45/achievements/insights/
 
 ## 20. いちばん難しかった回
 ```
-【#PowerAutomate ハンズオン｜PA45】
-
-【いちばん難しかった回】
+【#PowerAutomate 45分ハンズオン講座＝PA45】
 
 19回のうち、理解度がいちばん低かったのは第12回の「式」で72.7%でした。
 
@@ -310,7 +302,7 @@ https://haru-powerplatform.github.io/pa45/achievements/survey.html
 
 ## 21. 19回で扱ったアクション
 ```
-【#PowerAutomate ハンズオン｜PA45】
+【#PowerAutomate 45分ハンズオン講座＝PA45】
 
 PA45の19回で扱ってきたものを並べてみました。
 
@@ -323,7 +315,7 @@ https://haru-powerplatform.github.io/pa45/achievements/insights/
 
 ## 22. 見るだけ参加が普通にいる
 ```
-【#PowerAutomate ハンズオン｜PA45】
+【#PowerAutomate 45分ハンズオン講座＝PA45】
 
 PA45には「見るだけ参加」の人がふつうにいます。
 
@@ -334,7 +326,7 @@ https://haru-powerplatform.github.io/pa45/start-here/
 
 ## 23. 上司にすすめられて来る人
 ```
-【#PowerAutomate ハンズオン｜PA45】
+【#PowerAutomate 45分ハンズオン講座＝PA45】
 
 「会社の上司に進められて、視聴させて頂きました。すごく苦手意識が強かったですが、少しずつ触れる勇気がでました」
 
@@ -345,9 +337,7 @@ https://haru-powerplatform.github.io/pa45/start-here/
 
 ## 24. 教える側の人も来ている
 ```
-【#PowerAutomate ハンズオン｜PA45】
-
-【教える側の人も来ています】
+【#PowerAutomate 45分ハンズオン講座＝PA45】
 
 PA45には、社内でPower Automateを教える側の人も来てくれます。
 
@@ -358,20 +348,18 @@ https://haru-powerplatform.github.io/pa45/method/
 
 ## 25. 資格勉強の人が手を動かしに来る
 ```
-【#PowerAutomate ハンズオン｜PA45】
+【#PowerAutomate 45分ハンズオン講座＝PA45】
 
 「PL-900の試験勉強中なのですが、PA45のハンズオンをしているとイメージが掴みやすい」
 
-資格の勉強と手を動かすのは、セットにすると早いようです。過去回の録画が17本あるので、出てきた用語をその場で触って確かめられます。
+資格の勉強と手を動かすのは、セットにすると早いようです。録画が17本あるので、出てきた用語をその場で触って確かめられます。
 
 https://haru-powerplatform.github.io/pa45/videos/
 ```
 
 ## 26. 職場に持ち帰ってくれた人
 ```
-【#PowerAutomate ハンズオン｜PA45】
-
-【職場に持ち帰ってくれた声】
+【#PowerAutomate 45分ハンズオン講座＝PA45】
 
 「職場で試したところ、送った中の一人が興味を持ってくださったので、PA45も紹介させていただきました」
 
@@ -382,7 +370,7 @@ https://haru-powerplatform.github.io/pa45/achievements/insights/voices.html
 
 ## 27. たとえ話で押し切る回
 ```
-【#PowerAutomate ハンズオン｜PA45】
+【#PowerAutomate 45分ハンズオン講座＝PA45】
 
 【たとえ話で覚える】
 
@@ -395,7 +383,7 @@ https://youtu.be/cltHw91fYm4
 
 ## 28. アクションの命名ルール
 ```
-【#PowerAutomate ハンズオン｜PA45】
+【#PowerAutomate 45分ハンズオン講座＝PA45】
 
 【アクションの命名ルール】
 
@@ -408,7 +396,7 @@ https://haru-powerplatform.github.io/pa45/method/
 
 ## 29. 詰め込んだ回は理解度が落ちた
 ```
-【#PowerAutomate ハンズオン｜PA45】
+【#PowerAutomate 45分ハンズオン講座＝PA45】
 
 【詰め込むと理解度が落ちる】
 
@@ -421,7 +409,7 @@ https://haru-powerplatform.github.io/pa45/achievements/insights/design.html
 
 ## 30. 英語表記を併記している理由
 ```
-【#PowerAutomate ハンズオン｜PA45】
+【#PowerAutomate 45分ハンズオン講座＝PA45】
 
 【英語表記を併記する理由】
 
@@ -434,7 +422,7 @@ https://haru-powerplatform.github.io/pa45/method/
 
 ## 31. 19回、毎週ひとりで回している
 ```
-【#PowerAutomate ハンズオン｜PA45】
+【#PowerAutomate 45分ハンズオン講座＝PA45】
 
 PA45は毎週木曜、スライドを作って、実機で通して、当日進行して、アンケートを集計して録画を出す、という流れでやっています。
 
@@ -445,7 +433,7 @@ https://haru-powerplatform.github.io/pa45/achievements/
 
 ## 32. アンケートを取り続ける理由
 ```
-【#PowerAutomate ハンズオン｜PA45】
+【#PowerAutomate 45分ハンズオン講座＝PA45】
 
 【アンケートを取り続ける理由】
 
@@ -458,7 +446,7 @@ https://haru-powerplatform.github.io/pa45/achievements/survey.html
 
 ## 33. 全部無料・登録なし
 ```
-【#PowerAutomate ハンズオン｜PA45】
+【#PowerAutomate 45分ハンズオン講座＝PA45】
 
 【全部無料・登録なし】
 
@@ -471,7 +459,7 @@ https://haru-powerplatform.github.io/pa45/slides/
 
 ## 34. どこで知って来たのか
 ```
-【#PowerAutomate ハンズオン｜PA45】
+【#PowerAutomate 45分ハンズオン講座＝PA45】
 
 PA45を知ったきっかけで多いのは、Xとconnpass、それと他のコミュニティです。
 
@@ -482,9 +470,7 @@ https://haru-powerplatform.github.io/pa45/sessions/
 
 ## 35. 19回の積み上げ方
 ```
-【#PowerAutomate ハンズオン｜PA45】
-
-【19回の進め方】
+【#PowerAutomate 45分ハンズオン講座＝PA45】
 
 PA45の19回は、3段階で積んできました。
 
@@ -497,11 +483,11 @@ https://haru-powerplatform.github.io/pa45/videos/
 
 ## 36. 第20回アンケート結果
 ```
-【#PowerAutomate ハンズオン｜PA45】
+【#PowerAutomate 45分ハンズオン講座＝PA45】
 
-第20回のアンケート結果です。Copilotとデザイナーでアダプティブカードを作り、Teamsに投稿する回でした。
+第20回のアンケート結果です。Copilotとデザイナーでアダプティブカードを作り、Teamsに投稿する回。
 
-16名回答で、理解できた89.1%、役立ちそう100%。「カードできました！」という声も。コメントは全部そのまま載せています。
+16名回答で、理解できた89.1%、役立ちそう100%。「カードできました！」という声も。コメントはそのまま載せています。
 
 https://haru-powerplatform.github.io/pa45/achievements/vol-20-survey.html
 ```
