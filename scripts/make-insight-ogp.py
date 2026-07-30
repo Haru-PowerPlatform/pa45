@@ -82,9 +82,14 @@ TEMPLATE = """<!doctype html>
   .foot {{ display:flex; justify-content:space-between; align-items:flex-end; margin-top:22px; }}
   .brand {{ font-size:24px; font-weight:900; letter-spacing:.01em; }}
   .url {{ font-size:20px; font-weight:700; color:{y}; }}
+  .avatar {{ position:absolute; right:64px; top:50%; transform:translateY(-50%);
+    width:236px; height:236px; border-radius:50%; object-fit:cover;
+    border:5px solid rgba(255,255,255,.55); box-shadow:0 16px 44px rgba(0,0,0,.32); z-index:2; }}
+  .has-avatar .sub, .has-avatar .quote {{ max-width:840px; }}
 </style></head>
-<body>
+<body class="{bodycls}">
   <div class="glow g1"></div><div class="glow g2"></div>
+  {avatar}
   <div class="wrap">
     <div class="pill">PA45 <b>{eyebrow}</b></div>
     <h1>{title}</h1>
@@ -198,20 +203,6 @@ def build_specs(d):
             ],
             "quote": "「少し難しかった」も「まだイメージがついていない」も消していません。",
         },
-        "learn": {
-            "out": "og-learn.png",
-            "theme": "cyan",
-            "eyebrow": "学習ハブ 📚",
-            "title": "関数と考え方を、1枚ずつ",
-            "tsize": 66,
-            "sub": "Power Automateの関数や概念を、カテゴリ別に整理して置いています。",
-            "stats": [
-                (s["sessions"], "回", "分の講座から"),
-                (45, "分", "1回の長さ"),
-                (0, "円", "登録なしで閲覧"),
-            ],
-            "quote": "「式」も「JSON」も、苦手なところから順番に崩していきます。",
-        },
         "videos": {
             "out": "og-videos.png",
             "theme": "red",
@@ -306,20 +297,32 @@ def build_specs(d):
             "stats": [
                 (s["participants_total"], "名", "のべ参加登録"),
                 (s["usefulness_avg"], "%", "業務に役立ちそう"),
-                (0, "円", "参加費"),
             ],
+            "avatar": True,
             "quote": "「とっかかりがなくて。これをきっかけに触ってみたいなと」（第8回）",
         },
     }
 
 
+AVATAR_PATH = ROOT / "assets" / "img" / "haru-avatar.png"
+
+
+def avatar_tag():
+    import base64
+    b64 = base64.b64encode(AVATAR_PATH.read_bytes()).decode("ascii")
+    return f'<img class="avatar" src="data:image/png;base64,{b64}" alt="">'
+
+
 def render(spec, chrome):
     th = THEMES[spec["theme"]]
+    use_avatar = spec.get("avatar")
     html = TEMPLATE.format(
         d=th["d"], m=th["m"], a=th["a"], l=th["l"], y=th["y"],
         eyebrow=spec["eyebrow"], title=spec["title"], tsize=spec["tsize"], sub=spec["sub"],
         stats="".join(stat_html(*x) for x in spec["stats"]),
         quote=f'<div class="quote">{spec["quote"]}</div>' if spec.get("quote") else "",
+        avatar=avatar_tag() if use_avatar else "",
+        bodycls="has-avatar" if use_avatar else "",
     )
     out = OUT_DIR / spec["out"]
     OUT_DIR.mkdir(parents=True, exist_ok=True)
