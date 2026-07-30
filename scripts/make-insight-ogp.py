@@ -85,7 +85,8 @@ TEMPLATE = """<!doctype html>
   .avatar {{ position:absolute; right:64px; top:50%; transform:translateY(-50%);
     width:236px; height:236px; border-radius:50%; object-fit:cover;
     border:5px solid rgba(255,255,255,.55); box-shadow:0 16px 44px rgba(0,0,0,.32); z-index:2; }}
-  .has-avatar .sub, .has-avatar .quote {{ max-width:840px; }}
+  .has-avatar h1, .has-avatar .sub, .has-avatar .quote {{ max-width:840px; }}
+  .has-avatar .stats {{ max-width:848px; flex-wrap:wrap; }}
 </style></head>
 <body class="{bodycls}">
   <div class="glow g1"></div><div class="glow g2"></div>
@@ -315,7 +316,7 @@ def avatar_tag():
 
 def render(spec, chrome):
     th = THEMES[spec["theme"]]
-    use_avatar = spec.get("avatar")
+    use_avatar = spec.get("avatar", True)
     html = TEMPLATE.format(
         d=th["d"], m=th["m"], a=th["a"], l=th["l"], y=th["y"],
         eyebrow=spec["eyebrow"], title=spec["title"], tsize=spec["tsize"], sub=spec["sub"],
