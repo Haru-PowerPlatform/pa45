@@ -1,0 +1,580 @@
+﻿<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>PA45 第21回 スライド｜PA45を受ける前に ― ログイン・Forms・SharePoint・Teams通知・ライセンス</title>
+<style>
+  :root{
+    --blue-bg:#eaf2fc;--blue-mid:#2a7dd4;--blue-text:#14528f;--blue-light:#b8d3ef;
+    --orange:#e06030;--red:#c03520;--surface:#fff;--bg:#f3f6fa;--text:#1f2937;
+    --muted:#475569;--hint:#94a3b8;--border:#e2e8f0;--green-bg:#ecfdf5;--green-text:#065f46;
+    --yellow-bg:#fffbeb;--yellow-text:#92400e;--teal:#0f7b8a;--purple:#7c3aed;
+    --forms:#238277;--spo:#0f6cbd;--pa:#3a4fb8;--teams:#5b5fc7;
+  }
+  body{margin:0;padding:24px 24px 24px 280px;background:#1a2233;
+    font-family:"Meiryo UI","Yu Gothic UI","Segoe UI",sans-serif;color:var(--text);font-size:16px;}
+  .deck-header{color:#fff;max-width:1280px;margin:0 auto 24px;font-size:16px;opacity:.85;}
+  .deck-header h1{margin:0 0 4px;font-size:24px;}
+  .toc{position:fixed;top:0;left:0;bottom:0;width:260px;background:#0f172a;color:#cbd5e1;
+    padding:22px 0;overflow-y:auto;z-index:100;border-right:1px solid #1e293b;box-shadow:4px 0 16px rgba(0,0,0,.3);}
+  .toc-header{padding:0 22px 14px;border-bottom:1px solid #1e293b;margin-bottom:10px;}
+  .toc-header .title{font-size:14px;font-weight:800;color:#fff;}
+  .toc-header .sub{font-size:11px;color:#64748b;margin-top:4px;}
+  .toc ol{list-style:none;padding:0;margin:0;}
+  .toc li a{display:block;padding:9px 22px 9px 18px;color:#cbd5e1;text-decoration:none;font-size:13px;
+    line-height:1.45;border-left:3px solid transparent;transition:background .15s,border-color .15s,color .15s;}
+  .toc li a:hover{background:#1e293b;color:#fff;}
+  .toc li a.active{background:#1e293b;color:#fff;border-left-color:#2a7dd4;}
+  .toc li a .n{display:inline-block;width:22px;color:#64748b;font-weight:700;font-size:12px;}
+  .toc li a.active .n{color:#2a7dd4;}
+  .toc-toggle{position:fixed;top:10px;left:270px;z-index:101;background:#1e293b;color:#fff;border:none;
+    padding:8px 14px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:600;}
+  body.toc-collapsed{padding-left:24px;}
+  body.toc-collapsed .toc{transform:translateX(-100%);}
+  body.toc-collapsed .toc-toggle{left:10px;}
+  .toc,.toc-toggle{transition:transform .2s,left .2s;}
+  .slide{width:1280px;height:720px;margin:0 auto 28px;background:#fff;box-shadow:0 12px 40px rgba(0,0,0,.35);
+    border-radius:6px;overflow:hidden;position:relative;display:flex;flex-direction:column;}
+  .slide-num{position:absolute;top:10px;right:14px;font-size:14px;color:var(--hint);
+    background:rgba(255,255,255,.9);padding:3px 10px;border-radius:12px;z-index:10;}
+  .slide-head{padding:24px 48px 22px;background:linear-gradient(135deg,#14528f 0%,#2a7dd4 100%);
+    color:#fff;border-bottom:4px solid #fbbf24;}
+  .slide-eyebrow{font-size:15px;color:#93c5fd;font-weight:700;letter-spacing:.04em;text-transform:uppercase;}
+  .slide-title{font-size:38px;font-weight:800;line-height:1.2;margin:4px 0 0;color:#fff;letter-spacing:-.01em;}
+  .slide-title small{font-size:23px;color:rgba(255,255,255,.85);font-weight:600;}
+  .concept-dot{position:absolute;top:30px;right:60px;display:flex;align-items:center;gap:8px;font-size:15px;color:#fbbf24;font-weight:700;}
+  .concept-dot::before{content:'';width:10px;height:10px;border-radius:50%;background:#fbbf24;}
+  .title-slide .slide-head{background:transparent;color:inherit;border-bottom:none;}
+  .title-slide .slide-eyebrow{color:var(--blue-mid);text-transform:none;letter-spacing:0;}
+  .title-slide .slide-title{color:var(--text);}
+  .title-slide .slide-title small{color:var(--muted);}
+  .slide-body{flex:1;padding:24px 48px 0;display:flex;flex-direction:column;font-size:22px;}
+  .slide-footer{margin-top:auto;padding:14px 48px 18px;display:flex;justify-content:space-between;
+    align-items:center;font-size:14px;color:var(--hint);background:#fff;}
+  .slide-footer .chat-reminder{background:var(--blue-bg);color:var(--blue-text);padding:7px 16px;border-radius:20px;font-weight:600;font-size:14px;}
+  .slide-footer .src{color:#b6becb;font-size:12px;}
+  .cards-3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:20px;}
+  .cards-2{display:grid;grid-template-columns:repeat(2,1fr);gap:26px;margin-top:20px;}
+  .card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:24px 28px;box-shadow:0 2px 6px rgba(0,0,0,.04);}
+  .card.blue{background:var(--blue-bg);border-color:rgba(42,125,212,.25);}
+  .card.green{background:var(--green-bg);border-color:rgba(6,95,70,.25);}
+  .card.yellow{background:var(--yellow-bg);border-color:rgba(146,64,14,.25);}
+  .card.purple{background:#f5f3ff;border-color:rgba(124,58,237,.25);}
+  .card .num{display:inline-flex;align-items:center;justify-content:center;width:50px;height:50px;
+    border-radius:50%;background:var(--blue-mid);color:#fff;font-weight:800;font-size:26px;margin-bottom:12px;}
+  .card .ico{font-size:46px;margin-bottom:10px;display:block;}
+  .card h3{margin:0 0 12px;font-size:26px;font-weight:700;color:var(--text);line-height:1.35;}
+  .card p,.card ul{font-size:21px;line-height:1.8;color:var(--muted);margin:0;}
+  .card ul{padding-left:22px;}.card li{margin-bottom:9px;}
+  code,.code{font-family:"DM Mono","Consolas",monospace;background:#f1f5f9;padding:3px 9px;border-radius:5px;font-size:.94em;color:#0f172a;}
+  .title-slide{background:linear-gradient(135deg,#eaf2fc 0%,#d4e6f7 100%);}
+  .title-slide .badge-row{display:flex;gap:14px;margin-bottom:20px;flex-wrap:wrap;}
+  .title-slide .pill{background:rgba(255,255,255,.85);color:var(--blue-text);padding:8px 20px;border-radius:22px;font-size:16px;font-weight:700;}
+  .title-slide .pill.alt{background:#fff;color:var(--blue-mid);border:2px solid var(--blue-mid);}
+  .title-slide h1{font-size:42px;font-weight:800;line-height:1.18;color:var(--blue-text);margin:0 0 20px;letter-spacing:-.02em;}
+  .title-slide .lead{font-size:21px;color:var(--muted);margin:0 0 22px;line-height:1.6;}
+  .meta-table{background:rgba(255,255,255,.7);border-left:5px solid var(--blue-mid);padding:16px 26px;border-radius:8px;max-width:1040px;}
+  .meta-table dt{display:inline-block;width:110px;color:var(--blue-mid);font-weight:700;font-size:18px;}
+  .meta-table dd{display:inline;margin:0;font-size:20px;color:var(--text);}
+  .meta-table dl{margin:11px 0;}
+  ul.check{padding:0;list-style:none;}
+  ul.check li{padding-left:34px;position:relative;font-size:22px;line-height:1.8;margin-bottom:12px;color:var(--text);}
+  ul.check li::before{content:'✓';position:absolute;left:4px;top:0;color:var(--blue-mid);font-weight:800;font-size:22px;}
+  .callout{background:var(--yellow-bg);border-left:6px solid #f59e0b;padding:18px 26px;border-radius:6px;font-size:22px;line-height:1.75;color:#78350f;margin:12px 0;}
+  .callout strong{color:#78350f;}
+  .callout.blue{background:var(--blue-bg);border-left-color:#2a7dd4;color:#14528f;}
+  .callout.blue strong{color:#14528f;}
+  .callout.green{background:var(--green-bg);border-left-color:#059669;color:#065f46;}
+  .callout.green strong{color:#065f46;}
+  .callout.small{font-size:15px;padding:10px 18px;line-height:1.55;color:#64748b;background:#f8fafc;border-left-color:#cbd5e1;}
+  .opening-bar{background:var(--blue-mid);color:#fff;padding:12px 48px;display:flex;justify-content:space-between;font-size:16px;font-weight:700;}
+  .haru-img{width:230px;height:230px;border-radius:50%;object-fit:cover;box-shadow:0 8px 24px rgba(42,125,212,.3);}
+  .pull-quote{font-size:22px;font-weight:700;color:var(--blue-text);text-align:center;background:var(--blue-bg);padding:14px;border-radius:12px;margin:12px 0;}
+  .pathpill{display:inline-block;background:#0f172a;color:#fbbf24;font-family:"DM Mono","Consolas",monospace;font-weight:700;padding:4px 12px;border-radius:8px;font-size:16px;}
+  .deco{position:absolute;pointer-events:none;z-index:1;}
+  .illus{display:block;width:auto;}
+  .introrow{display:grid;grid-template-columns:150px 1fr;gap:24px;align-items:center;margin:6px 0 12px;}
+  .introrow .illus{max-height:140px;margin:0 auto;}
+  .ba{display:grid;grid-template-columns:1fr 40px 1fr;align-items:center;gap:8px;margin-top:14px;}
+  .ba .arrow{text-align:center;font-size:28px;color:var(--blue-mid);font-weight:800;}
+  .ba .box{border-radius:12px;padding:18px 22px;font-size:20px;line-height:1.7;}
+  .ba .bad{background:#fff1f2;border:1px solid #fecdd3;color:#9f1239;}
+  .ba .good{background:var(--green-bg);border:1px solid #86efac;color:#065f46;}
+  .ba .lab{font-weight:800;font-size:16px;display:block;margin-bottom:6px;}
+  .steplist{counter-reset:s;list-style:none;padding:0;margin:8px 0 0;}
+  .steplist li{counter-increment:s;position:relative;padding:11px 0 11px 50px;font-size:21px;line-height:1.5;border-bottom:1px dashed var(--border);}
+  .steplist li::before{content:counter(s);position:absolute;left:0;top:9px;width:32px;height:32px;border-radius:50%;
+    background:var(--blue-mid);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:16px;}
+  .steplist li:last-child{border-bottom:none;}
+  .steplist li.key::before{background:#16a34a;}
+  .steplist b{color:var(--text);}
+
+  /* ブラウザ枠（実スクショ差込プレースホルダ） */
+  .shot{background:#fff;border:1px solid #cbd5e1;border-radius:12px;overflow:hidden;box-shadow:0 6px 20px rgba(0,0,0,.14);}
+  .shot .bar{display:flex;align-items:center;gap:8px;background:#eef1f5;padding:10px 14px;border-bottom:1px solid #e2e8f0;}
+  .shot .bar i{width:12px;height:12px;border-radius:50%;background:#cbd5e1;display:inline-block;}
+  .shot .bar .url{margin-left:8px;font-size:14px;color:#64748b;background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:5px 16px;flex:1;font-family:"DM Mono","Consolas",monospace;}
+  .shot .ph{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:#94a3b8;
+    background:repeating-linear-gradient(45deg,#f8fafc,#f8fafc 14px,#eef2f7 14px,#eef2f7 28px);}
+  .shot .ph .cam{font-size:40px;}
+  .shot .ph .big{font-size:19px;font-weight:800;color:#64748b;margin-top:6px;}
+  .shot .ph .sub{font-size:15px;margin-top:6px;color:#94a3b8;line-height:1.6;}
+  .badge-todo{font-size:13px;font-weight:800;padding:3px 12px;border-radius:12px;background:#fef3c7;color:#92400e;vertical-align:middle;margin-left:10px;}
+
+  /* 3サービス三角図 */
+  .tri{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:12px;}
+  .tri .svc{border-radius:18px;padding:22px 14px;text-align:center;color:#fff;}
+  .tri .svc .ic{font-size:48px;line-height:1;}
+  .tri .svc .nm{font-size:25px;font-weight:800;margin-top:8px;}
+  .tri .svc .role{font-size:18px;margin-top:7px;line-height:1.5;opacity:.97;}
+  .tri .forms{background:linear-gradient(135deg,#2a9d8f,#238277);}
+  .tri .spo{background:linear-gradient(135deg,#2a7dd4,#0f6cbd);}
+  .tri .teams{background:linear-gradient(135deg,#7377d8,#5b5fc7);}
+  .tri .pa{background:linear-gradient(135deg,#5468d4,#3a4fb8);}
+  .flowline{display:flex;align-items:center;justify-content:center;gap:11px;margin-top:16px;font-size:20px;font-weight:800;color:var(--blue-text);flex-wrap:wrap;}
+  .flowline .step{background:var(--blue-bg);border:1px solid var(--blue-light);border-radius:24px;padding:9px 18px;}
+  .flowline .ar{color:var(--blue-mid);font-size:24px;}
+
+  /* ライセンス表 */
+  .lic{width:100%;border-collapse:collapse;margin-top:14px;font-size:21px;}
+  .lic th,.lic td{border:1px solid var(--border);padding:14px 18px;text-align:left;vertical-align:top;line-height:1.5;}
+  .lic th{background:#f1f5f9;font-size:18px;color:#334155;}
+  .lic td .y{color:#166534;font-weight:800;}
+  .lic td .n{color:#b45309;font-weight:800;}
+  .lic tr:nth-child(even) td{background:#fafcff;}
+
+  /* SharePoint リスト風 */
+  .sptable{width:100%;border-collapse:collapse;font-size:19px;background:#fff;border:1px solid #e1dfdd;border-radius:8px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+  .sptable th{background:#f3f2f1;color:#323130;font-weight:700;text-align:left;padding:11px 18px;border-bottom:1px solid #e1dfdd;font-size:17px;}
+  .sptable td{padding:11px 18px;border-bottom:1px solid #f0f0f0;color:#242424;}
+  .sptable tr:last-child td{border-bottom:none;}
+
+  /* 箇条書き（長文をここに置き換える） */
+  .blist{list-style:none;padding:0;margin:8px 0 0;}
+  .blist li{position:relative;padding-left:28px;line-height:1.5;margin-bottom:8px;font-size:20px;color:var(--text);}
+  .blist li::before{content:'';position:absolute;left:8px;top:.55em;width:9px;height:9px;border-radius:2px;background:var(--blue-mid);}
+  .blist li b,.blist li strong{color:var(--blue-text);}
+  .chips{display:flex;flex-wrap:wrap;gap:9px;margin-top:10px;}
+  .chips span{background:#fff;border:1px solid var(--blue-light);color:var(--blue-text);
+    border-radius:18px;padding:6px 15px;font-size:17px;font-weight:700;}
+
+  /* ===== 見切れ微調整 ===== */
+  #s2 .introrow{margin:2px 0 8px;}
+  #s2 .introrow .illus{max-height:112px;}
+  #s2 .introrow p{font-size:19px;line-height:1.62;}
+  #s2 .cards-2{margin-top:12px;}
+  #s2 .card{padding:15px 24px;}
+  #s2 .card h3{font-size:22px;margin-bottom:7px;}
+  #s2 .card p{font-size:19px;line-height:1.55;}
+  #s2 .callout{margin-top:10px;padding:11px 20px;font-size:19px;}
+  #s2 .blist li{font-size:19px;margin-bottom:4px;}
+  #s2 .chips{margin-top:7px;}
+  #s2 .chips span,#s8 .chips span{font-size:16px;padding:5px 13px;}
+  #s8 .chips{margin-top:7px;}
+  #s8 .lic th,#s8 .lic td{padding:9px 15px;}
+  #s8 .callout.small{font-size:14px;line-height:1.5;}
+
+  #s13 .shot img{max-height:322px;object-fit:cover;object-position:top;}
+
+  #s8 .lic{font-size:17px;margin-top:6px;}
+  #s8 .lic th,#s8 .lic td{padding:8px 15px;}
+  #s8 .lic th{font-size:15px;}
+  #s8 .lic td:last-child{white-space:nowrap;font-weight:700;}
+  #s8 .callout.green{margin-top:12px;padding:12px 20px;font-size:19px;}
+  #s8 .callout.small{margin-top:10px;}
+
+  #s14 .cards-2{margin-top:12px;gap:18px;}
+  #s14 .card{padding:14px 22px;}
+  #s14 .card .ico{font-size:34px;margin-bottom:5px;}
+  #s14 .card h3{font-size:22px;margin-bottom:7px;}
+  #s14 .card p{font-size:18px;line-height:1.5;}
+  #s14 .callout{margin-top:12px;padding:12px 20px;font-size:19px;}
+</style>
+</head>
+<body>
+<nav class="toc" id="toc">
+  <div class="toc-header">
+    <div class="title">📑 目次 — PA45 第21回</div>
+    <div class="sub">クリックでジャンプ</div>
+  </div>
+  <ol>
+    <li><a href="#s1"><span class="n">01</span>20:15 START</a></li>
+    <li><a href="#s2"><span class="n">02</span>事前準備</a></li>
+    <li><a href="#s3"><span class="n">03</span>PA45とは？</a></li>
+    <li><a href="#s4"><span class="n">04</span>講師自己紹介（Haru）</a></li>
+    <li><a href="#s5"><span class="n">05</span>ご参加にあたって</a></li>
+    <li><a href="#s6"><span class="n">06</span>第21回タイトル</a></li>
+    <li><a href="#s7"><span class="n">07</span>今日そろえるもの</a></li>
+    <li><a href="#s8"><span class="n">08</span>お金の話（先に確認）</a></li>
+    <li><a href="#s9"><span class="n">09</span>入口とログイン</a></li>
+    <li><a href="#s10"><span class="n">10</span>4サービスの全体像</a></li>
+    <li><a href="#s11"><span class="n">11</span>Forms を1個つくる</a></li>
+    <li><a href="#s12"><span class="n">12</span>SharePoint リストを1個つくる</a></li>
+    <li><a href="#s13"><span class="n">13</span>Teams チャネルに通知する</a></li>
+    <li><a href="#s14"><span class="n">14</span>まとめ</a></li>
+    <li><a href="#s15"><span class="n">15</span>クロージング＆アンケート</a></li>
+  </ol>
+</nav>
+<button class="toc-toggle" id="tocToggle" type="button">≡ 目次</button>
+
+<div class="deck-header">
+  <h1>PA45 第21回 スライド</h1>
+  <div>PA45 を受けるまえに ── ログイン・Forms・SharePoint・Teams通知・ライセンス（原点回帰・非IT初心者歓迎）</div>
+</div>
+
+<!-- ===== S1: START ===== -->
+<section class="slide title-slide" id="s1">
+  <span class="slide-num">1 / 15</span>
+  <div class="opening-bar"><span>PA45 — Power Automate 45 ｜ 第21回 / Vol.21</span><span>Online Hands-on</span></div>
+  <div class="slide-body" style="justify-content:center;align-items:center;text-align:center;">
+    <div style="font-size:30px;color:var(--blue-mid);font-weight:800;margin-bottom:4px;">まもなく開始します</div>
+    <div style="font-size:128px;color:var(--blue-text);font-weight:900;line-height:1;margin:8px 0 4px;letter-spacing:.02em;">20:15 <span style="font-size:56px;">START</span></div>
+    <h1 style="font-size:34px;color:var(--text);font-weight:800;line-height:1.3;margin:20px 0 12px;">第21回｜PA45を受けるまえに、そろえておきたいこと 🚪</h1>
+    <p style="font-size:24px;color:var(--muted);margin:0;">ログイン・Forms・SharePoint・Teams通知・ライセンスの5つを確認します ☕</p>
+  </div>
+  <div class="slide-footer"><span>Power Automate for Beginners</span><span style="color:var(--hint);">Copyright © PA45</span></div>
+</section>
+
+<!-- ===== S2: 事前準備 ===== -->
+<section class="slide" id="s2">
+  <span class="slide-num">2 / 15</span>
+  <div class="slide-head"><div class="slide-eyebrow">PA45｜第21回</div><h1 class="slide-title">事前準備 <small>（サインインできればOK・見るだけ参加も歓迎）</small></h1></div>
+  <div class="slide-body">
+    <div class="introrow">
+      <img class="illus" src="assets/irasutoya_programming.png" alt="">
+      <div>
+        <p style="font-size:20px;color:var(--muted);margin:0;line-height:1.5;">PA45 の各回で、毎回のように出てくるのがこの4つです。</p>
+        <ul class="blist">
+          <li><b>Forms</b> ― 集める</li>
+          <li><b>SharePoint</b> ― 貯める</li>
+          <li><b>Teams 通知</b> ― 知らせる</li>
+          <li><b>ライセンス</b> ― お金がかかるか</li>
+        </ul>
+      </div>
+    </div>
+    <div class="cards-2">
+      <div class="card blue"><div class="num">1</div><h3>会社の Microsoft 365 にサインイン</h3><p><span class="pathpill">office.com</span> を開いてサインインできればOK。特別なインストールは不要です。</p></div>
+      <div class="card green"><div class="num">2</div><h3>今回は画面を見る回</h3><p>手を動かす時間は取りません。<strong>実際の画面で流れを確認</strong>して、あとで自分で試せる状態にします。</p></div>
+    </div>
+    <div class="callout blue" style="margin-top:14px;"><strong>📥 今日のゴール</strong> ― この5つを実際の画面で確認します。
+      <div class="chips"><span>① お金の線引き</span><span>② 入口とログイン</span><span>③ 4つの役割</span><span>④ Forms とリスト</span><span>⑤ Teams通知</span></div>
+    </div>
+  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
+</section>
+
+<!-- ===== S3: PA45とは？ ===== -->
+<section class="slide" id="s3">
+  <span class="slide-num">3 / 15</span>
+  <div class="slide-head"><div class="slide-eyebrow">INTRODUCTION</div><h1 class="slide-title">PA45 とは？ </h1><div class="concept-dot">Concept</div></div>
+  <div class="slide-body">
+    <div style="text-align:center;color:var(--blue-text);font-weight:800;font-size:28px;">忙しい人のための 45分ハンズオン</div>
+    <div class="cards-3">
+      <div class="card blue"><div class="ico">⏱️</div><h3>45分完結</h3><p>長時間の研修は不要。<strong>要点だけ</strong>を凝縮。終わったその日から一歩踏み出せます。</p></div>
+      <div class="card green"><div class="ico">💻</div><h3>実践型ハンズオン</h3><p>座学だけではありません。<strong>その場で手を動かして</strong>学びます。見るだけ参加も大歓迎。</p></div>
+      <div class="card yellow"><div class="ico">👥</div><h3>一緒に作る</h3><p><strong>ゼロから一緒に</strong>作るので「なぜそうするか」が腑に落ちます。</p></div>
+    </div>
+    <div style="text-align:center;color:var(--green-text);font-weight:700;margin-top:auto;padding:18px;background:var(--green-bg);border-radius:10px;font-size:23px;">✓ 未経験・知識ゼロでも大丈夫。今日は「入口が分かった！」を持ち帰りましょう。</div>
+  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
+</section>
+
+<!-- ===== S4: 講師自己紹介 ===== -->
+<section class="slide" id="s4">
+  <span class="slide-num">4 / 15</span>
+  <div class="slide-head"><div class="slide-eyebrow">SPEAKER</div><h1 class="slide-title">Power Automate 45 (PA45) </h1><div class="concept-dot">Speaker</div></div>
+  <div class="slide-body">
+    <div style="display:grid;grid-template-columns:280px 1fr;gap:36px;align-items:center;margin-top:8px;">
+      <img class="haru-img" src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="Haru" style="width:280px;height:280px;">
+      <div>
+        <div style="font-size:40px;font-weight:800;color:var(--blue-text);line-height:1.1;">Haru</div>
+        <div style="font-size:23px;color:var(--muted);margin:6px 0 18px;">💻 Power Platform / DX 推進</div>
+        <ul class="check" style="font-size:24px;">
+          <li style="margin-bottom:16px;">🏢 社内で PA／Copilot ハンズオン講座を開催し、DXを推進</li>
+          <li style="margin-bottom:16px;">🎤 広島コミュニティ「PLUG」運営・外部コミュニティ登壇</li>
+          <li style="margin-bottom:16px;">📱 X で初心者向け Power Automate チップスを継続発信</li>
+          <li>🕐 PA45（45分の "1粒ハンズオン"）を毎週開催・運営</li>
+        </ul>
+      </div>
+    </div>
+    <div class="pull-quote" style="margin-top:auto;font-size:26px;padding:18px;">今日も一緒に「できた！」を作っていきましょう 😊</div>
+  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
+</section>
+
+<!-- ===== S5: ご参加にあたって ===== -->
+<section class="slide" id="s5">
+  <span class="slide-num">5 / 15</span>
+  <div class="slide-head"><div class="slide-eyebrow">PA45 Online Course</div><h1 class="slide-title">ご参加にあたってのお願い <small>（ルール）</small></h1><div class="concept-dot">Guidelines</div></div>
+  <div class="slide-body">
+    <div class="cards-3">
+      <div class="card blue"><div class="ico">🤝</div><h3>気持ちよく学ぶ</h3><ul><li>誹謗中傷・不適切な発言は禁止</li><li>お互いを尊重し合いましょう</li></ul></div>
+      <div class="card green"><div class="ico">🎥</div><h3>録画について</h3><ul><li>後日 YouTube 公開予定</li><li>匿名参加で表示名を隠せます</li></ul></div>
+      <div class="card yellow"><div class="ico">💬</div><h3>チャットは気軽に</h3><ul><li>「できました！」大歓迎</li><li>小さな質問でもOK</li></ul></div>
+    </div>
+    <div class="cards-2" style="margin-top:14px;">
+      <div class="card"><h3 style="color:var(--blue-text);">🖌️ アウトプットで定着</h3><p><strong>#PA45</strong> をつけて投稿しよう！「気づき」「これ便利！」何でもOK。</p></div>
+      <div class="card"><h3 style="color:var(--green-text);">🎓 初心者大歓迎</h3><p>🚫 難しい専門用語は使いません／🚶 置いてけぼりにしないようゆっくり進行。</p></div>
+    </div>
+  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
+</section>
+
+<!-- ===== S6: タイトル ===== -->
+<section class="slide title-slide" id="s6">
+  <span class="slide-num">6 / 15</span>
+  <div class="slide-head"><div class="slide-eyebrow">Power Automate 入門講座</div><h1 class="slide-title">Vol.21 </h1></div>
+  <div class="slide-body">
+    <div class="badge-row"><span class="pill">原点回帰</span><span class="pill alt">ログイン</span><span class="pill alt">Forms</span><span class="pill alt">SharePoint</span><span class="pill alt">Teams通知</span><span class="pill alt">ライセンス</span></div>
+    <h1>第21回：PA45を受けるまえに<br>ログイン・Forms・SharePoint・Teams通知・ライセンス</h1>
+    <div class="meta-table">
+      <dl><dt>Theme</dt><dd>これから PA45 の各回で毎回使う前提部分を、まとめて確認しておく回</dd></dl>
+      <dl><dt>Target</dt><dd>いきなり来た人・久しぶりの人・非IT初心者（知識ゼロOK・見るだけ参加も歓迎）</dd></dl>
+      <dl><dt>Time</dt><dd>解説＋その場で一緒に作る 約45分</dd></dl>
+    </div>
+    <img class="deco" src="assets/irasutoya_robot.png" alt="" style="right:46px;bottom:20px;height:180px;">
+  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
+</section>
+
+<!-- ===== S7: 掴み ===== -->
+<section class="slide" id="s7">
+  <span class="slide-num">7 / 15</span>
+  <div class="slide-head"><div class="slide-eyebrow">PA45｜第21回 ／ 今日の位置づけ</div><h1 class="slide-title">PA45を受けるまえに、そろえておきたいこと</h1><div class="concept-dot">Intro</div></div>
+  <div class="slide-body">
+    <div class="introrow">
+      <img class="illus" src="assets/irasutoya_search.png" alt="">
+      <p style="margin:0;color:var(--muted);line-height:1.55;font-size:20px;">PA45 の各回は、この形が繰り返し出てきます。<br><b style="color:var(--blue-text);">Forms で受け取る → SharePoint に貯める → Teams に通知する</b></p>
+    </div>
+    <div class="ba">
+      <div class="box bad"><span class="lab">よくあるつまずき</span>
+        <ul class="blist" style="margin-top:2px;">
+          <li style="font-size:19px;color:#9f1239;">どこからログインするのか</li>
+          <li style="font-size:19px;color:#9f1239;">4つのサービスの区別がつかない</li>
+          <li style="font-size:19px;color:#9f1239;">自分の契約で使えるのか</li>
+        </ul>
+      </div>
+      <div class="arrow">→</div>
+      <div class="box good"><span class="lab">今日そろえるもの</span>
+        <ul class="blist" style="margin-top:2px;">
+          <li style="font-size:19px;color:#065f46;">入口と、4つの役割</li>
+          <li style="font-size:19px;color:#065f46;">Forms とリストの作り方</li>
+          <li style="font-size:19px;color:#065f46;">Teams通知の設定場所とお金の線引き</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout blue" style="margin-top:auto;"><strong>今回は画面を見ながらの説明回です。</strong>手を動かすのは次回以降。</div>
+  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
+</section>
+
+<!-- ===== S08: ライセンス（統合） ===== -->
+<section class="slide" id="s8">
+  <span class="slide-num">8 / 15</span>
+  <div class="slide-head"><div class="slide-eyebrow">はじめに｜お金の話</div><h1 class="slide-title">今日の内容は、追加費用なしで試せます</h1><div class="concept-dot">License</div></div>
+  <div class="slide-body">
+    <table class="lic">
+      <tr><th style="width:300px;">やりたいこと</th><th>必要なもの</th><th style="width:150px;">追加費用</th></tr>
+      <tr><td>Forms でアンケート・フォーム</td><td>Microsoft 365 に含まれる</td><td><span class="y">なし</span></td></tr>
+      <tr><td>SharePoint で一覧・ファイル</td><td>Microsoft 365 に含まれる</td><td><span class="y">なし</span></td></tr>
+      <tr><td>Teams のチャネルに通知</td><td>Teams コネクタは<b>標準コネクタ</b></td><td><span class="y">なし</span></td></tr>
+      <tr><td>Power Automate（<b>標準コネクタ</b>）</td><td>Teams・Outlook・SharePoint・Forms・OneDrive・Excel など</td><td><span class="y">なし</span></td></tr>
+      <tr><td>プレミアムコネクタ（SQL・HTTP）／AI Builder／RPA</td><td>Power Automate Premium</td><td><span class="n">¥2,248</span> <span style="color:var(--hint);font-size:.85em;">/ ユーザー・月</span></td></tr>
+    </table>
+    <div class="callout green" style="margin-top:12px;"><strong>今日使うのは、すべて「なし」の行です。</strong>有料を考えるのは次の3つのとき。
+      <div class="chips"><span>SQL・HTTP でつなぐ</span><span>AI Builder を使う</span><span>RPA（パソコン操作の自動化）</span></div>
+    </div>
+    <div class="callout small" style="margin-top:auto;">※ Microsoft 365 に付く Power Automate の枠は、1 ユーザー 1 日 6,000 アクションまで。<br>※ Teams を含まない Microsoft 365 プランもあります。<br>※ 価格は年間契約時の月額・税別、2026年7月28日時点。</div>
+  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="src">出典：Microsoft Learn・Microsoft 公式価格ページ（2026-07-28 取得）</span></div>
+</section>
+
+
+<!-- ===== S8: 入口とログイン ===== -->
+<section class="slide" id="s9">
+  <span class="slide-num">9 / 15</span>
+  <div class="slide-head"><div class="slide-eyebrow">STEP ①｜入口</div><h1 class="slide-title">入口は1つ ― <span style="color:#fde68a;">office.com</span> にサインイン</h1></div>
+  <div class="slide-body">
+    <div style="display:grid;grid-template-columns:1.15fr .85fr;gap:28px;align-items:center;">
+      <div class="shot">
+        <div class="bar"><i></i><i></i><i></i><span class="url">https://www.office.com</span></div>
+        <img src="assets/screens/s08_office.png" alt="" style="display:block;width:100%;height:auto;">
+      </div>
+      <div>
+        <ul class="blist" style="margin:0 0 10px;">
+          <li>アプリごとの URL は覚えなくていい</li>
+          <li>まず <b>office.com</b> を開く</li>
+          <li>左上の <b>アプリ一覧（⠿ ワッフル）</b>から選ぶ</li>
+        </ul>
+        <img class="illus" src="assets/irasutoya_door.png" alt="" style="max-height:220px;margin:6px auto 0;">
+        <p style="text-align:center;font-size:16px;color:var(--muted);margin:8px 0 0;">まずはドアを開けるだけ＝サインイン</p>
+      </div>
+    </div>
+  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
+</section>
+
+<!-- ===== S9: 3サービスの全体像 ===== -->
+<section class="slide" id="s10">
+  <span class="slide-num">10 / 15</span>
+  <div class="slide-head"><div class="slide-eyebrow">STEP ①｜全体像</div><h1 class="slide-title">4つのサービスの"役割"を分けて覚える</h1><div class="concept-dot">Map</div></div>
+  <div class="slide-body">
+    <div class="tri">
+      <div class="svc forms"><div class="ic">📝</div><div class="nm">Forms</div><div class="role">集める入口<br>アンケート・申請フォーム</div></div>
+      <div class="svc spo"><div class="ic">🗄️</div><div class="nm">SharePoint</div><div class="role">貯める箱<br>一覧・台帳・ファイル</div></div>
+      <div class="svc teams"><div class="ic">💬</div><div class="nm">Teams</div><div class="role">知らせる先<br>チャネル・チャットに通知</div></div>
+      <div class="svc pa"><div class="ic">⚙️</div><div class="nm">Power&nbsp;Automate</div><div class="role">つなぐ自動化<br>集める→貯める→知らせる</div></div>
+    </div>
+    <div class="flowline">
+      <span class="step">📝 Formsで集める</span><span class="ar">→</span>
+      <span class="step">🗄️ SharePointに貯める</span><span class="ar">→</span>
+      <span class="step">💬 Teamsに知らせる</span>
+      <span style="width:100%;text-align:center;color:var(--muted);font-size:17px;font-weight:600;margin-top:6px;">この3つを つなぐ のが ⚙️ Power Automate の役割</span>
+    </div>
+    <div class="callout blue" style="margin-top:auto;"><strong>今日はこの3つの"置き場所"を、画面で確認します。</strong>
+      <div class="chips"><span>Forms を1個</span><span>SharePoint リストを1個</span><span>Teams の通知先チャネル</span></div>
+    </div>
+  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
+</section>
+
+<!-- ===== S10: Forms ===== -->
+<section class="slide" id="s11">
+  <span class="slide-num">11 / 15</span>
+  <div class="slide-head"><div class="slide-eyebrow">STEP ②｜集める入口</div><h1 class="slide-title">Forms を1個つくる</h1></div>
+  <div class="slide-body">
+    <div style="display:grid;grid-template-columns:1.05fr .95fr;gap:28px;align-items:start;">
+      <div class="shot">
+        <div class="bar"><i></i><i></i><i></i><span class="url">https://forms.office.com</span></div>
+        <img src="assets/screens/s10_forms.png" alt="" style="display:block;width:100%;height:auto;">
+      </div>
+      <div>
+        <ol class="steplist">
+          <li><span></span>forms.office.com を開いて <b>「新しいフォーム」</b></li>
+          <li>フォーム名を入れる（例：勉強会アンケート）</li>
+          <li class="key"><b>「以下でクイック スタート」→「テキスト」</b>で質問を1つ作る</li>
+          <li><b>「回答を収集」</b>からリンクをコピー＝集める入口</li>
+        </ol>
+        <div class="callout green" style="margin-top:14px;font-size:18px;"><strong>今日見るのはここだけ：</strong>質問1つ＋回答用リンク。凝った分岐や複数質問は扱いません。この4手順だけ覚えて帰れば十分です。</div>
+        <div style="display:flex;align-items:center;gap:14px;margin-top:12px;">
+          <img class="illus" src="assets/irasutoya_survey.png" alt="" style="max-height:96px;">
+          <span style="font-size:17px;color:var(--muted);line-height:1.5;">Forms は「答えてもらう用紙」。<br>まず1枚、配れる状態にする。</span>
+        </div>
+      </div>
+    </div>
+  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
+</section>
+
+<!-- ===== S11: SharePoint リスト ===== -->
+<section class="slide" id="s12">
+  <span class="slide-num">12 / 15</span>
+  <div class="slide-head"><div class="slide-eyebrow">STEP ③｜貯める箱</div><h1 class="slide-title">SharePoint の"リスト"を1個つくる</h1></div>
+  <div class="slide-body">
+    <div style="display:grid;grid-template-columns:1.05fr .95fr;gap:28px;align-items:start;">
+      <div>
+        <div class="callout blue" style="margin:0 0 12px;font-size:18px;"><strong>サイト＝部屋、リスト＝その中の"表"。</strong>サイト作成は深追いせず、既存サイトに <strong>リストを1個</strong>作る流れだけを見ます。</div>
+        <ol class="steplist">
+          <li>SharePoint を開く（"貯める箱"を置く場所）</li>
+          <li class="key">既存サイトで <b>「＋新規 → リスト」→ 空白のリスト</b></li>
+          <li>列を1〜2個だけ足す（例：名前・内容）＝表の完成</li>
+        </ol>
+        <div style="display:flex;align-items:center;gap:14px;margin-top:14px;">
+          <img class="illus" src="assets/irasutoya_tana.png" alt="" style="max-height:104px;">
+          <span style="font-size:17px;color:var(--muted);line-height:1.5;">リストは「整理棚」。<br>集めた情報が、行ごとに並んで貯まる。</span>
+        </div>
+      </div>
+      <div class="shot">
+        <div class="bar"><i></i><i></i><i></i><span class="url">https://～.sharepoint.com</span></div>
+        <img src="assets/screens/s11_list.png" alt="" style="display:block;width:100%;height:auto;">
+        <table class="sptable" style="margin-top:12px;">
+          <tr><th>名前</th><th>内容</th></tr>
+          <tr><td>山田 太郎</td><td>勉強会に参加</td></tr>
+          <tr><td>佐藤 花子</td><td>資料を希望</td></tr>
+        </table>
+      </div>
+    </div>
+  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
+</section>
+
+<!-- ===== S12: Teams チャネル通知 ===== -->
+<section class="slide" id="s13">
+  <span class="slide-num">13 / 15</span>
+  <div class="slide-head"><div class="slide-eyebrow">STEP ④｜知らせる先</div><h1 class="slide-title">Teams のチャネルに通知する</h1></div>
+  <div class="slide-body">
+    <div style="display:grid;grid-template-columns:1.05fr .95fr;gap:28px;align-items:start;">
+      <div>
+        <div class="callout blue" style="margin:0 0 12px;font-size:18px;">通知は <strong>Power Automate 側で設定</strong>します。Teams 側でやることは <strong>「どのチャネルに送るか」を決めておく</strong>だけ。</div>
+        <ol class="steplist">
+          <li>Teams で通知先の <b>チーム／チャネル</b>を決める（無ければ「＋」で1個作る）</li>
+          <li>Power Automate でアクションを追加 →「Microsoft Teams」</li>
+          <li class="key"><b>「チャットまたはチャネルでメッセージを投稿する」</b>を選ぶ</li>
+          <li><b>投稿者＝フロー ボット</b>／<b>投稿先＝チャネル</b> を選ぶ</li>
+          <li>チーム・チャネルを選び、<b>メッセージ本文</b>を書く</li>
+        </ol>
+      </div>
+      <div class="shot">
+        <div class="bar"><i></i><i></i><i></i><span class="url">https://make.powerautomate.com</span></div>
+        <img src="assets/screens/s12_teams.png" alt="" style="display:block;width:100%;height:auto;">
+        <div style="display:flex;align-items:center;gap:14px;margin-top:14px;padding:0 4px;">
+          <img class="illus" src="assets/irasutoya_email.png" alt="" style="max-height:92px;">
+          <span style="font-size:17px;color:var(--muted);line-height:1.5;">投稿者は「ユーザー（自分の名前）」、<br>投稿先は「チャット」も選べます。<br>まずはチャネルに1本が分かりやすいです。</span>
+        </div>
+      </div>
+    </div>
+  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="src">出典：Microsoft Learn（Microsoft Teams コネクタ）</span></div>
+</section>
+
+
+
+
+
+<!-- ===== S15: まとめ ===== -->
+<section class="slide" id="s14">
+  <span class="slide-num">14 / 15</span>
+  <div class="slide-head"><div class="slide-eyebrow">WRAP UP</div><h1 class="slide-title">今日そろえたもの</h1><div class="concept-dot">Summary</div></div>
+  <div class="slide-body">
+    <div class="cards-2">
+      <div class="card blue"><div class="ico">🚪</div><h3>入口と役割分担</h3><p>入口は office.com。<br><strong>Forms=集める／SharePoint=貯める<br>Teams=知らせる／Power Automate=つなぐ</strong></p></div>
+      <div class="card green"><div class="ico">🛠️</div><h3>最初の1個の作り方</h3><p><strong>Forms を1個・SharePoint リストを1個</strong>。手順は4つ・3つだけ。あとから同じ画面で試せます。</p></div>
+      <div class="card purple"><div class="ico">💬</div><h3>Teams通知の場所</h3><p>設定は Power Automate 側。<strong>「チャットまたはチャネルでメッセージを投稿する」</strong>で投稿者と投稿先を選ぶ。</p></div>
+      <div class="card yellow"><div class="ico">💰</div><h3>お金の線引き</h3><p>標準コネクタは <strong>M365で追加料金なし</strong>。有料は外部連携・AI・RPAのとき。</p></div>
+    </div>
+    <div class="callout blue" style="margin-top:auto;"><strong>次回から：</strong>今日作った Forms とリスト、それに Teams のチャネルを、Power Automate でつないでいきます。</div>
+  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
+</section>
+
+<!-- ===== S16: クロージング ===== -->
+<section class="slide title-slide" id="s15">
+  <span class="slide-num">15 / 15</span>
+  <div class="slide-head"><div class="slide-eyebrow">Thank you!</div><h1 class="slide-title">お疲れさまでした 🎉</h1></div>
+  <div class="slide-body" style="justify-content:center;text-align:center;">
+    <h1 style="font-size:38px;">アンケートのご協力をお願いします 🙏</h1>
+    <p class="lead" style="font-size:23px;">気づいたことは <strong>#PA45</strong> で投稿を。<br>次回は、今日の Forms・リスト・Teams チャネルをつなぎます。</p>
+    <div class="pull-quote" style="font-size:26px;padding:18px;max-width:900px;margin:8px auto 0;">分からないところは、次回に持ち越しでOKです 😊</div>
+    <img class="deco" src="assets/irasutoya_robot.png" alt="" style="right:56px;bottom:24px;height:150px;">
+  </div><div class="slide-footer"><span>Power Automate for Beginners</span><span style="color:var(--hint);">Copyright © PA45</span></div>
+</section>
+
+<script>
+(function(){
+  var toggle=document.getElementById('tocToggle');
+  toggle&&toggle.addEventListener('click',function(){document.body.classList.toggle('toc-collapsed');});
+  var links=[].slice.call(document.querySelectorAll('.toc a'));
+  var secs=links.map(function(a){return document.querySelector(a.getAttribute('href'));});
+  function onScroll(){
+    var y=window.scrollY+140,idx=0;
+    secs.forEach(function(s,i){if(s&&s.offsetTop<=y)idx=i;});
+    links.forEach(function(a,i){a.classList.toggle('active',i===idx);});
+  }
+  window.addEventListener('scroll',onScroll);onScroll();
+})();
+</script>
+<!--fit-slides-->
+<script>
+(function(){
+  function fitSlides(){
+    var cs=getComputedStyle(document.body);
+    var padL=parseFloat(cs.paddingLeft)||0, padR=parseFloat(cs.paddingRight)||0;
+    var avail=document.documentElement.clientWidth-padL-padR;
+    var scale=Math.min(1, avail/1280);
+    var s=document.querySelectorAll('.slide');
+    for(var i=0;i<s.length;i++){ s[i].style.zoom=scale; }
+  }
+  window.addEventListener('resize',fitSlides);
+  window.addEventListener('load',fitSlides);
+  fitSlides();
+})();
+</script>
+</body>
+</html>

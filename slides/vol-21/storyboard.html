@@ -1,0 +1,364 @@
+﻿<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PA45 第21回 構成ストーリーボード｜PA45を受けるまえに（ログイン・Forms・SharePoint・Teams通知・ライセンス）</title>
+<style>
+  :root{
+    --blue-bg:#eaf2fc;--blue-mid:#2a7dd4;--blue-text:#14528f;--blue-line:#b8d3ef;
+    --orange:#e06030;--red:#c03520;--surface:#fff;--bg:#eef2f7;--text:#1f2937;
+    --muted:#475569;--hint:#94a3b8;--border:#e2e8f0;
+    --green-bg:#ecfdf5;--green-text:#065f46;--yellow-bg:#fffbeb;--yellow-text:#92400e;
+    --forms:#238277;--spo:#0f6cbd;--pa:#0b6bcb;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--text);
+    font-family:"Meiryo UI","Yu Gothic UI","Segoe UI",sans-serif;font-size:16px;line-height:1.7;}
+  .wrap{max-width:1080px;margin:0 auto;padding:32px 24px 80px;}
+  .doc-head{background:linear-gradient(135deg,#14528f 0%,#2a7dd4 100%);color:#fff;
+    border-radius:16px;padding:30px 36px;border-bottom:5px solid #fbbf24;margin-bottom:12px;}
+  .doc-head .eyebrow{font-size:14px;font-weight:700;letter-spacing:.05em;color:#bfdcff;text-transform:uppercase;}
+  .doc-head h1{margin:6px 0 10px;font-size:29px;line-height:1.25;}
+  .doc-head p{margin:0;font-size:16px;color:#e3eefc;}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;margin:16px 0 30px;font-size:13px;color:var(--muted);}
+  .legend span{display:inline-flex;align-items:center;gap:7px;background:#fff;border:1px solid var(--border);
+    border-radius:20px;padding:6px 14px;}
+  .dot{width:10px;height:10px;border-radius:50%;display:inline-block;}
+  .dot.ok{background:#16a34a;}.dot.todo{background:#f59e0b;}.dot.diagram{background:#2a7dd4;}
+
+  section{background:#fff;border:1px solid var(--border);border-radius:16px;
+    padding:28px 32px;margin-bottom:22px;box-shadow:0 2px 10px rgba(15,40,80,.05);}
+  .sec-tag{display:inline-block;font-size:13px;font-weight:800;color:var(--blue-mid);
+    background:var(--blue-bg);padding:4px 14px;border-radius:20px;letter-spacing:.03em;}
+  h2{font-size:23px;margin:12px 0 4px;line-height:1.35;}
+  .lede{color:var(--muted);font-size:15px;margin:0 0 18px;}
+  h3{font-size:17px;margin:22px 0 10px;color:var(--blue-text);}
+  p{margin:0 0 12px;}
+  .muted{color:var(--muted);}
+  .small{font-size:13px;}
+  code{font-family:"Consolas","DM Mono",monospace;background:#eef2f7;padding:2px 7px;border-radius:5px;font-size:.92em;color:#0f172a;}
+
+  .sum{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:6px;}
+  .sum .item{background:#f8fafc;border:1px solid var(--border);border-radius:12px;padding:16px 20px;}
+  .sum .item .k{font-size:12px;font-weight:800;color:var(--blue-mid);letter-spacing:.04em;}
+  .sum .item .v{font-size:17px;font-weight:700;margin-top:4px;}
+  .sum .item .n{font-size:13px;color:var(--muted);margin-top:3px;}
+
+  .tl{display:flex;flex-direction:column;gap:8px;margin-top:8px;}
+  .tl .row{display:grid;grid-template-columns:96px 1fr;gap:14px;align-items:stretch;}
+  .tl .t{font-weight:800;color:var(--blue-mid);font-size:14px;background:var(--blue-bg);
+    border-radius:8px;display:flex;align-items:center;justify-content:center;}
+  .tl .c{background:#f8fafc;border:1px solid var(--border);border-radius:10px;padding:12px 18px;}
+  .tl .c b{font-size:15px;}
+  .tl .c .d{font-size:13px;color:var(--muted);}
+  .tl .row.peak .t{background:#fef3c7;color:#92400e;}
+  .tl .row.peak .c{background:#fffbeb;border-color:#fde68a;}
+
+  .ba{display:grid;grid-template-columns:1fr 44px 1fr;align-items:center;gap:10px;margin-top:12px;}
+  .ba .arrow{text-align:center;font-size:26px;color:var(--blue-mid);font-weight:800;}
+  .ba .lab{font-weight:800;font-size:13px;letter-spacing:.03em;margin-bottom:8px;display:block;}
+  .ba .before{background:#fff8f7;border:1px solid #fadcd6;border-radius:12px;padding:16px 18px;}
+  .ba .after{background:#f4f9f4;border:1px solid #cfe9cf;border-radius:12px;padding:16px 18px;}
+  .plainmsg{font-size:14px;color:#57534e;line-height:1.7;}
+
+  .callout{display:block;background:var(--yellow-bg);border-left:5px solid #f59e0b;
+    padding:14px 20px;border-radius:8px;color:#78350f;margin:14px 0;font-size:14.5px;line-height:1.7;}
+  .callout.blue{background:var(--blue-bg);border-left-color:#2a7dd4;color:#14528f;}
+  .callout.green{background:var(--green-bg);border-left-color:#059669;color:#065f46;}
+  .callout b{font-weight:800;}
+
+  .mocklabel{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:800;color:#64748b;
+    text-transform:uppercase;letter-spacing:.05em;margin:0 0 8px;}
+  .mocklabel .badge{font-size:10px;font-weight:800;padding:2px 8px;border-radius:10px;}
+  .badge.ok{background:#dcfce7;color:#166534;}.badge.todo{background:#fef3c7;color:#92400e;}.badge.diagram{background:#dbeafe;color:#1e40af;}
+  .mockwrap{background:#f1f5f9;border:1px solid var(--border);border-radius:14px;padding:22px;display:flex;justify-content:center;}
+
+  /* シンプルなブラウザ枠（実スクショ差込用プレースホルダ） */
+  .shot{max-width:600px;width:100%;background:#fff;border:1px solid #d6dbe1;border-radius:10px;overflow:hidden;
+    box-shadow:0 2px 8px rgba(0,0,0,.08);}
+  .shot .bar{display:flex;align-items:center;gap:7px;background:#eef1f5;padding:8px 12px;border-bottom:1px solid #e2e8f0;}
+  .shot .bar i{width:11px;height:11px;border-radius:50%;background:#cbd5e1;display:inline-block;}
+  .shot .bar .url{margin-left:8px;font-size:11.5px;color:#64748b;background:#fff;border:1px solid #e2e8f0;
+    border-radius:12px;padding:3px 12px;flex:1;font-family:"Consolas",monospace;}
+  .shot .ph{padding:34px 20px;text-align:center;color:#94a3b8;background:
+    repeating-linear-gradient(45deg,#f8fafc,#f8fafc 12px,#f1f5f9 12px,#f1f5f9 24px);}
+  .shot .ph .big{font-size:14px;font-weight:800;color:#64748b;}
+  .shot .ph .sub{font-size:12.5px;margin-top:4px;color:#94a3b8;line-height:1.6;}
+
+  /* 4サービス図（自作） */
+  .tri{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:6px;}
+  .tri .svc{border-radius:14px;padding:18px 16px;text-align:center;color:#fff;position:relative;}
+  .tri .svc .ic{font-size:30px;line-height:1;}
+  .tri .svc .nm{font-size:16px;font-weight:800;margin-top:8px;}
+  .tri .svc .role{font-size:13px;margin-top:4px;opacity:.95;line-height:1.5;}
+  .tri .forms{background:linear-gradient(135deg,#2a9d8f,#238277);}
+  .tri .spo{background:linear-gradient(135deg,#2a7dd4,#0f6cbd);}
+  .tri .teams{background:linear-gradient(135deg,#7377d8,#5b5fc7);}
+  .tri .pa{background:linear-gradient(135deg,#5468d4,#3a4fb8);}
+  .flow-line{display:flex;align-items:center;justify-content:center;gap:10px;margin:14px 0 4px;
+    font-size:14px;font-weight:800;color:var(--blue-text);flex-wrap:wrap;}
+  .flow-line .step{background:var(--blue-bg);border:1px solid var(--blue-line);border-radius:20px;padding:6px 16px;}
+  .flow-line .ar{color:var(--blue-mid);font-size:18px;}
+
+  /* ライセンス表 */
+  .lic{width:100%;border-collapse:collapse;margin-top:8px;font-size:14px;}
+  .lic th,.lic td{border:1px solid var(--border);padding:10px 14px;text-align:left;vertical-align:top;}
+  .lic th{background:#f1f5f9;font-size:13px;color:#334155;}
+  .lic td .y{color:#166534;font-weight:800;}
+  .lic td .n{color:#b45309;font-weight:800;}
+  .lic tr:nth-child(even) td{background:#fafcff;}
+
+  .steps{list-style:none;padding:0;margin:14px 0 0;counter-reset:st;}
+  .steps li{position:relative;padding:10px 12px 10px 44px;background:#f8fafc;border:1px solid var(--border);
+    border-radius:10px;margin-bottom:8px;font-size:14.5px;line-height:1.6;}
+  .steps li::before{counter-increment:st;content:counter(st);position:absolute;left:12px;top:10px;
+    width:24px;height:24px;border-radius:50%;background:var(--blue-mid);color:#fff;font-weight:800;font-size:13px;
+    display:flex;align-items:center;justify-content:center;}
+  .steps li.key{background:#f4f9f4;border-color:#cfe9cf;}
+  .steps li.key::before{background:#16a34a;}
+
+  .ira{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:#7c3aed;background:#f5f3ff;
+    border:1px dashed #c4b5fd;border-radius:8px;padding:5px 12px;margin-top:8px;}
+
+  .todos{background:#fffbeb;border:1px solid #fde68a;border-radius:12px;padding:16px 22px;}
+  .todos h3{color:#92400e;margin-top:0;}
+  .todos ul{margin:0;padding-left:20px;}
+  .todos li{margin-bottom:7px;font-size:14px;color:#78350f;}
+  .foot{text-align:center;color:var(--hint);font-size:12px;margin-top:24px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="doc-head">
+    <div class="eyebrow">PA45 第21回 ・ 構成ストーリーボード</div>
+    <h1>PA45を受けるまえに ― ログイン・Forms・SharePoint・Teams通知・ライセンス</h1>
+    <p>原点回帰／45分・非IT初心者歓迎／いきなり来た人・久しぶりの人のための「土台づくり」回</p>
+  </div>
+  <div class="legend">
+    <span><i class="dot todo"></i>実スクショをここに差し込む（実機で撮る）</span>
+    <span><i class="dot diagram"></i>概念図（自作／いらすとや併用）</span>
+    <span class="small">※ 20回やってきたからこそ、もう一度「入口」に立ち返る回</span>
+  </div>
+
+  <!-- 0. 企画サマリ -->
+  <section>
+    <span class="sec-tag">企画サマリ</span>
+    <h2>この回でやること・やらないこと</h2>
+    <p class="lede">機能を教える回ではなく、「どこから入って・何が要って・各サービスをどう作るか」の“地図と最初の一歩”を渡す回。非ITの人が置いていかれないことを最優先。</p>
+    <div class="sum">
+      <div class="item"><div class="k">位置づけ</div><div class="v">原点回帰・環境準備</div><div class="n">いきなり第21回に来ても、ゼロから完結できる</div></div>
+      <div class="item"><div class="k">対象</div><div class="v">非IT初心者・出戻り歓迎</div><div class="n">「どこから入るのか分からない」状態の解消</div></div>
+      <div class="item"><div class="k">ゴール</div><div class="v">前提がそろった状態</div><div class="n">入口・4サービスの役割・最初の1個・Teams通知の設定場所・お金の線引き</div></div>
+      <div class="item"><div class="k">ハンズオン</div><div class="v">最小構成</div><div class="n">Forms 1問 ＋ SharePoint リスト 1個（Teams通知は設定方法を見せるだけ）</div></div>
+    </div>
+  </section>
+
+  <!-- 1. タイムライン -->
+  <section>
+    <span class="sec-tag">45分の流れ</span>
+    <h2>タイムライン</h2>
+    <p class="lede">最初に位置づけとお金の話。中盤で画面を見ながら Forms・SharePoint。終盤に Teams通知とまとめ。</p>
+    <div class="tl">
+      <div class="row"><div class="t">0–5分</div><div class="c"><b>今日の位置づけ ― PA45を受けるまえに</b><div class="d">各回で繰り返し出てくる前提（Forms→SharePoint→Teams通知）を先に確認する回だと伝える。非IT初心者歓迎を宣言。</div></div></div>
+      <div class="row"><div class="t">5–9分</div><div class="c"><b>お金の話を先に済ませる</b><div class="d">Microsoft 365 があれば今日の内容は追加費用なし。有料はSQL/HTTP・AI Builder・RPAのときだけ（Power Automate Premium ¥2,248）。</div></div></div>
+      <div class="row"><div class="t">9–16分</div><div class="c"><b>入口とログイン＋4サービスの全体像</b><div class="d">office.com にサインイン → アプリ一覧。Forms＝集める／SharePoint＝貯める／Teams＝知らせる／Power Automate＝つなぐ。</div></div></div>
+      <div class="row peak"><div class="t">16–26分</div><div class="c"><b>Forms を1個つくる（画面を見せて説明）</b><div class="d">新しいフォーム → タイトル →「以下でクイック スタート」→テキストで質問1つ →「回答を収集」。</div></div></div>
+      <div class="row peak"><div class="t">26–36分</div><div class="c"><b>SharePoint リストを1個つくる（画面を見せて説明）</b><div class="d">「サイト」は軽く紹介するだけ。主役は<b>リスト作成</b>（＝“貯める箱”を1個用意）。</div></div></div>
+      <div class="row"><div class="t">36–43分</div><div class="c"><b>Teams チャネルへの通知（設定方法を見せる）</b><div class="d">Teams側は通知先チャネルを決めるだけ。設定は Power Automate の「チャットまたはチャネルでメッセージを投稿する」。</div></div></div>
+      <div class="row"><div class="t">43–45分</div><div class="c"><b>まとめ ― 今日そろえたもの</b></div></div>
+    </div>
+  </section>
+
+  <!-- 2. 掴み -->
+  <section>
+    <span class="sec-tag">① 今日の位置づけ（0–5分）</span>
+    <h2>PA45を受けるまえに、そろえておきたいこと</h2>
+    <p class="lede">PA45の各回は「Forms で受け取る → SharePoint に貯める → Teams に通知する」が繰り返し出てくる。今回はその前提だけをまとめて確認する回。</p>
+    <div class="ba">
+      <div class="before">
+        <span class="lab" style="color:#9f1239;">よくあるつまずき</span>
+        <div class="plainmsg">どこからログインするのか分からない。<br>Forms・SharePoint・Teams・Power Automate の区別がつかない。<br>自分の契約で使えるのか分からない。</div>
+      </div>
+      <div class="arrow">→</div>
+      <div class="after">
+        <span class="lab" style="color:#065f46;">今日そろえるもの</span>
+        <div class="plainmsg" style="color:#065f46;">入口が分かる。4つの役割が分かる。<br><b>自分でFormsとリストを1個ずつ作れる。</b><br>Teams通知の設定場所とお金の線引きも分かる。</div>
+      </div>
+    </div>
+    <div class="ira">🎨 いらすとや：地図を広げて迷う人／スタートラインに立つ人（掴みの挿絵）</div>
+  </section>
+
+  <!-- 2. お金の話（前半に移動） -->
+  <section>
+    <span class="sec-tag">② お金の話（5–9分・スライド1枚）</span>
+    <h2>今日の内容は追加費用なしで試せる、と先に伝える</h2>
+    <p class="lede">結論：会社のMicrosoft 365があれば、Forms・SharePoint・Power Automate（標準）は基本そのまま使える。追加料金が要るのは“プレミアム”の一部だけ。</p>
+
+    <div class="mocklabel">ライセンス早見表 <span class="badge ok">公式取得済み（2026-07-28）</span></div>
+    <table class="lic">
+      <tr><th style="width:170px;">やりたいこと</th><th>必要なもの</th><th style="width:110px;">追加費用</th></tr>
+      <tr><td>Forms でアンケート・フォーム</td><td>Microsoft 365（Business Standard／E3 等）に含まれる</td><td><span class="y">なし</span></td></tr>
+      <tr><td>SharePoint で一覧・ファイル</td><td>Microsoft 365 に含まれる</td><td><span class="y">なし</span></td></tr>
+      <tr><td>Teams のチャネルに通知</td><td>Teams コネクタは<b>標準コネクタ</b>。Teams が含まれる Microsoft 365 プランならそのまま使える（※Teams を含まないプランもあるので契約確認）</td><td><span class="y">なし</span></td></tr>
+      <tr><td>Power Automate（<b>標準コネクタ</b>）</td><td>M365 に付いてくる範囲でクラウドフローが使える（Teams・Outlook・SharePoint・Forms・OneDrive・Excel 等）。<b>1ユーザー1日6,000アクション</b>まで</td><td><span class="y">なし</span></td></tr>
+      <tr><td>プレミアム機能</td><td>プレミアムコネクタ（SQL・HTTP 等）・Dataverse・AI Builder・RPA ＝ <b>Power Automate Premium</b>（ユーザー単位・¥2,248/月）</td><td><span class="n">別料金</span></td></tr>
+    </table>
+
+    <h3>料金（2026-07-28 公式ページ取得・年間契約時の月額・税別）</h3>
+    <table class="lic">
+      <tr><th style="width:230px;">プラン</th><th>内容</th><th style="width:150px;">月額</th></tr>
+      <tr><td>M365 Business Basic</td><td>Forms・SharePoint・Teams・標準コネクタのPA</td><td>¥1,049 <span class="small">（Teamsなし ¥809）</span></td></tr>
+      <tr><td>M365 Business Standard</td><td>上記＋Officeデスクトップアプリ</td><td>¥3,523 <span class="small">（Teamsなし ¥3,041）</span></td></tr>
+      <tr><td>M365 Business Premium</td><td>上記＋セキュリティ管理</td><td>¥4,797 <span class="small">（Teamsなし ¥4,316）</span></td></tr>
+      <tr><td>Teams Essentials</td><td>Teams 単体で足すとき</td><td>¥599</td></tr>
+      <tr><td><b>Power Automate Premium</b></td><td>プレミアム/カスタムコネクタ・Dataverse・AI Builder・RPA。1日40,000アクション</td><td><span class="n">¥2,248</span> /ユーザー</td></tr>
+    </table>
+    <div class="callout blue"><b>スライドは1枚。</b>「なし」の行4つ＋有料1行（Power Automate Premium ¥2,248）だけ。Process などフロー単位のライセンスは初心者には出さない（聞かれたら口頭で）。締めは「SQL・HTTPを使う／AI Builderを使う／RPAをする、の3つに入ったら有料の検討」。</div>
+    <div class="callout green"><b>伝える一言：</b>この講座で使ってきたコネクタは<b>全部「標準」＝追加料金なし</b>。お金がかかるのは、外部システム連携（SQL/HTTP）や AI・RPA を使うとき。</div>
+    <div class="callout small">※ 価格・名称は変わります。出典＝Microsoft 365 / Teams / Power Automate 各価格ページ、Microsoft Learn「Power Automate ライセンスの種類」（2026-07-20更新）。2026-07-28 取得。</div>
+    <div class="ira">🎨 いらすとや：お財布・電卓／無料と有料の看板</div>
+  </section>
+
+  <!-- 3. 入口とログイン -->
+  <section>
+    <span class="sec-tag">③ 入口とログイン＋全体像（9–16分）</span>
+    <h2>入口は1つ ― office.com にサインインするだけ</h2>
+    <p class="lede">アプリごとにURLを覚えなくていい。まず office.com に入って、左上のアプリ一覧（ワッフルボタン）から各サービスへ。</p>
+
+    <div class="mocklabel">サインイン → アプリ一覧 <span class="badge todo">実スクショ差込</span></div>
+    <div class="mockwrap">
+      <div class="shot">
+        <div class="bar"><i></i><i></i><i></i><span class="url">https://www.office.com</span></div>
+        <div class="ph">
+          <div class="big">実機スクショをここに差し込む</div>
+          <div class="sub">① サインイン画面（メール→パスワード）<br>② 左上のアプリ一覧（ワッフル）から Forms / SharePoint / Power Automate</div>
+        </div>
+      </div>
+    </div>
+    <div class="ira">🎨 いらすとや：ドア・鍵（ログインの入口）／建物の受付</div>
+
+    <h3>4つのサービスの役割（役割を分けて覚える）</h3>
+    <div class="mocklabel">全体像 <span class="badge diagram">概念図</span></div>
+    <div class="tri">
+      <div class="svc forms"><div class="ic">📝</div><div class="nm">Forms</div><div class="role">集める入口<br>（アンケート・申請フォーム）</div></div>
+      <div class="svc spo"><div class="ic">🗄️</div><div class="nm">SharePoint</div><div class="role">貯める箱<br>（一覧・台帳・ファイル）</div></div>
+      <div class="svc teams"><div class="ic">💬</div><div class="nm">Teams</div><div class="role">知らせる先<br>（チャネル・チャットに通知）</div></div>
+      <div class="svc pa"><div class="ic">⚙️</div><div class="nm">Power Automate</div><div class="role">つなぐ自動化<br>（集める→貯める→知らせる）</div></div>
+    </div>
+    <div class="flow-line">
+      <span class="step">📝 Formsで集める</span><span class="ar">→</span>
+      <span class="step">🗄️ SharePointに貯める</span><span class="ar">→</span>
+      <span class="step">💬 Teamsに知らせる</span><span class="ar">／</span>
+      <span class="step">⚙️ つなぐのが Power Automate</span>
+    </div>
+    <div class="callout blue">この4つが今後の全回の前提。今日は<b>Forms（集める）</b>と<b>SharePoint（貯める）</b>を1個ずつ作り、<b>Teams（知らせる）</b>は通知先チャネルと設定方法の確認まで。つなぐ Power Automate は次回以降でこの上に積む。</div>
+  </section>
+
+  <!-- 4. Formsを作る -->
+  <section>
+    <span class="sec-tag">④ Forms を1個つくる（16–26分・画面を見せて説明）</span>
+    <h2>集める入口をつくる ― Forms</h2>
+    <p class="lede">forms.office.com で「新しいフォーム」。質問は1つだけ作って、共有リンクを出すところまで。</p>
+
+    <div class="mocklabel">Microsoft Forms 作成画面 <span class="badge todo">実スクショ差込</span></div>
+    <div class="mockwrap">
+      <div class="shot">
+        <div class="bar"><i></i><i></i><i></i><span class="url">https://forms.office.com</span></div>
+        <div class="ph">
+          <div class="big">実機スクショをここに差し込む</div>
+          <div class="sub">① 新しいフォーム ② タイトル入力 ③「+ 新規追加」で質問1つ（例：お名前＝テキスト）<br>④「共有」→ リンクをコピー</div>
+        </div>
+      </div>
+    </div>
+
+    <ol class="steps">
+      <li>forms.office.com を開いて <b>「新しいフォーム」</b></li>
+      <li>フォーム名を入れる（例：勉強会アンケート）</li>
+      <li class="key"><b>「＋ 新規追加」で質問を1つ</b>だけ作る（テキスト／選択肢）</li>
+      <li><b>「共有」</b>からリンクをコピー → これが“集める入口”</li>
+    </ol>
+    <div class="callout green"><b>受講生が触るのはここだけ：</b>質問を1つ作って共有リンクを出す。凝った分岐や複数質問は今日はやらない（まず1個できた、を体験）。</div>
+    <div class="ira">🎨 いらすとや：アンケート用紙・記入する人／投書箱</div>
+  </section>
+
+  <!-- 5. SharePointを作る -->
+  <section>
+    <span class="sec-tag">⑤ SharePoint リストを1個つくる（26–36分・画面を見せて説明）</span>
+    <h2>貯める箱をつくる ― SharePoint の“リスト”</h2>
+    <p class="lede">サイト作成は今日はやらない（軽く紹介するだけ）。主役は<b>リスト作成</b>。「サイト＝部屋、リスト＝その中の表」を一言で押さえて、既存サイトにリストを1個つくる。</p>
+
+    <div class="mocklabel">SharePoint リスト作成 <span class="badge todo">実スクショ差込</span></div>
+    <div class="mockwrap">
+      <div class="shot">
+        <div class="bar"><i></i><i></i><i></i><span class="url">https://～.sharepoint.com</span></div>
+        <div class="ph">
+          <div class="big">実機スクショをここに差し込む</div>
+          <div class="sub">主役＝リスト作成の画面：「＋新規 → リスト」→ 空白のリスト → 列を1〜2個追加（例：名前・内容）<br><span style="opacity:.8;">※「サイト」は既存のものを使い、作り方は口頭で軽く触れるだけ</span></div>
+        </div>
+      </div>
+    </div>
+
+    <ol class="steps">
+      <li>SharePoint を開く（“貯める箱”を置く場所）＋<b>「サイト＝部屋」だけ一言</b>紹介（作成はしない）</li>
+      <li class="key">既存サイトで <b>「＋新規 → リスト」→ 空白のリスト</b>を1個つくる</li>
+      <li>列を1〜2個だけ足す（例：名前・内容）＝“表”の完成</li>
+    </ol>
+    <div class="callout blue"><b>サイトは深追いしない。</b>「サイト＝部屋、リスト＝その中の表」の一言だけ固定して、手を動かすのはリスト作成に集中（初心者を迷子にしない）。</div>
+    <div class="ira">🎨 いらすとや：棚・収納ボックス／整理された引き出し（表・台帳のイメージ）</div>
+  </section>
+
+  <!-- 6. Teams通知 -->
+  <section>
+    <span class="sec-tag">⑥ Teams チャネルへの通知（36–43分・設定方法を見せる）</span>
+    <h2>知らせる先をつくる ― Teams のチャネル通知</h2>
+    <p class="lede">Teams 側でやることは「どのチャネルに送るか」を決めるだけ。通知の設定は Power Automate 側のアクションで行う。ここは作らせず、<b>設定画面と選択肢を見せる</b>ところまで。</p>
+
+    <div class="mocklabel">Power Automate ／ Teams アクション設定 <span class="badge todo">実スクショ差込</span></div>
+    <div class="mockwrap">
+      <div class="shot">
+        <div class="bar"><i></i><i></i><i></i><span class="url">https://make.powerautomate.com</span></div>
+        <div class="ph">
+          <div class="big">実機スクショをここに差し込む</div>
+          <div class="sub">アクション「チャットまたはチャネルにメッセージを投稿する」の設定画面<br>投稿者／投稿先／チーム／チャネル／メッセージ が見えるように</div>
+        </div>
+      </div>
+    </div>
+
+    <ol class="steps">
+      <li>Teams で通知先の <b>チーム／チャネル</b>を決める（無ければ「＋」で1個作る）</li>
+      <li>Power Automate でアクションを追加 →「Microsoft Teams」</li>
+      <li class="key"><b>「チャットまたはチャネルにメッセージを投稿する」</b>を選ぶ</li>
+      <li><b>投稿者＝フロー ボット</b>／<b>投稿先＝チャネル</b>を選ぶ</li>
+      <li>チーム・チャネルを選び、<b>メッセージ本文</b>を書く</li>
+    </ol>
+    <div class="callout green"><b>説明の型：</b>「Teams は“知らせる先”。設定するのは Power Automate 側」。投稿者は「ユーザー（自分の名前）」、投稿先は「チャット」も選べることも一言添える（出典：Microsoft Learn／Microsoft Teams コネクタ＝標準コネクタ）。</div>
+    <div class="ira">🎨 いらすとや：メール・通知（お知らせが届くイメージ）</div>
+  </section>
+
+  <!-- 8. まとめ -->
+  <section>
+    <span class="sec-tag">⑦ まとめ（43–45分）</span>
+    <h2>今日そろえたもの</h2>
+    <p class="lede">入口・4サービスの役割・Forms とリストの最初の1個・Teams通知の設定場所・お金の線引き。次回からは、この上に Power Automate で“つなぐ”を積んでいく。</p>
+    <div class="callout green">締めの言い回し案：「今日そろえた Forms・リスト・Teams のチャネルを、次回つないでいきます」。分からない部分は次回に持ち越しでOK、と添える（言い切りすぎない・上から目線にしない）。</div>
+  </section>
+
+  <!-- 残タスク -->
+  <section class="todos">
+    <h3>資料化に向けた残タスク</h3>
+    <ul>
+      <li><b>実機スクショ取得：</b>①office.com サインイン＆アプリ一覧 ②Forms 作成画面 ③SharePoint リスト作成画面 ④Power Automate「チャットまたはチャネルにメッセージを投稿する」設定画面。PA45 Demo テナントで撮影（[[feedback_real_screenshot_before_html]]）。※前回 claude-in-chrome でタブ消失・スクショ타임アウトあり→拡張サイドパネルの許可確認が必要かも。</li>
+      <li style="text-decoration:line-through;opacity:.6;"><b>✔ ライセンスの公式裏取り（完了）：</b>Microsoft Learn で確定。標準コネクタ＝M365で無料／プレミアム(SQL/HTTP)・Dataverse・AI Builder・RPA＝Power Automate Premium(ユーザー)・Process(フロー)。</li>
+      <li><b>いらすとや素材の選定・配置：</b>各セクションの指定（🎨）どおり、イメージしやすい挿絵を用意。</li>
+      <li>このストーリーボードで流れOKなら <code>pa45/slides/vol-21/index.html</code> へ展開（ハウススタイル 1280×720・青テーマ・見切れチェック）。</li>
+      <li>掴み・締めの言い回しを、はるの語彙で最終確定（上から目線NG）。</li>
+    </ul>
+  </section>
+
+  <div class="foot">PA45 第21回 構成ストーリーボード ・ 出典：Microsoft Learn ・ 実機UIは実スクショに差し替え予定 ・ 人名・数値は架空</div>
+
+</div>
+</body>
+</html>
