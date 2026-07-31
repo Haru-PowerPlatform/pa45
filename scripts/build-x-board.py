@@ -40,6 +40,12 @@ def intent(body: str) -> str:
     return "https://x.com/intent/post?text=" + urllib.parse.quote(body)
 
 
+def c140(body: str) -> int:
+    """告知ツイート用の文字数（URLは23、それ以外は1文字＝1で数える。上限140）。"""
+    s = re.sub(r"https?://\S+", "x" * 23, body)
+    return len(s)
+
+
 # ── タブ1：PA45 切り口ローテ ────────────────────────────────
 def load_pa45():
     src = (ROOT / "data" / "drafts" / "x-pa45-rotation.md").read_text(encoding="utf-8")
@@ -166,6 +172,93 @@ def card_blog(b):
 </article>'''
 
 
+# ── タブ：PA45 開催告知（1回につき4本を自動生成）──────────────
+# ① 前回終了直後に出す「次回の案内」
+# ② 開催週の月曜に出す「リマインド」
+# ③ 当日の昼に出す「今夜です」
+# ④ 開催15分前に出す「まもなく」
+# それぞれ connpass URL を必ず入れる（貼るとOGPカードが出る）＆140字以内。
+ANN_SLOTS = [
+    {
+        "n": 1, "when": "① 前回終了直後", "hint": "前回の回が終わった直後（約1週間前）に",
+        "tpl": ("【PA45 第{vol}回】{md}（{wd}）{time}〜\n"
+                "テーマは「{topic}」。{line}\n"
+                "オンライン・45分、見るだけOKです。申込はこちら👇\n"
+                "{url}\n#PowerAutomate"),
+    },
+    {
+        "n": 2, "when": "② 開催週の月曜", "hint": "開催週の月曜あたりに",
+        "tpl": ("今週{wd}曜 {time}〜、PA45 第{vol}回です。\n"
+                "テーマは「{topic}」。{line}\n"
+                "実際の画面を見ながら進めます。詳細はこちら👇\n"
+                "{url}\n#PowerAutomate"),
+    },
+    {
+        "n": 3, "when": "③ 当日の昼", "hint": "開催当日の昼に",
+        "tpl": ("本日 {time}〜、PA45 第{vol}回です。\n"
+                "テーマは「{topic}」。\n"
+                "オンライン・見るだけOK。申込はこちら👇\n"
+                "{url}\n#PowerAutomate"),
+    },
+    {
+        "n": 4, "when": "④ 開催15分前", "hint": "開催15分前（20:00ごろ）に",
+        "tpl": ("まもなく {time}〜、PA45 第{vol}回です。\n"
+                "テーマは「{topic}」。\n"
+                "オンライン開催、参加はこちら👇\n"
+                "{url}\n#PowerAutomate"),
+    },
+]
+
+
+def ann_bodies(ev):
+    m, d = ev["date"].split("-")[1:]
+    md = f"{int(m)}/{int(d)}"
+    ctx = {
+        "vol": ev["vol"], "md": md, "wd": ev.get("wd", "木"),
+        "time": ev.get("time", "20:15"), "topic": ev["topic"],
+        "line": ev.get("line", ""), "url": ev["connpass_url"],
+    }
+    return [(s, s["tpl"].format(**ctx)) for s in ANN_SLOTS]
+
+
+def cards_announce(ev):
+    if ev.get("og_image"):
+        thumb = f'<img class="og" src="{html.escape(ev["og_image"])}" alt="" loading="lazy">'
+    else:
+        thumb = '<div class="og yt">connpassのOGPカードが出ます</div>'
+    cards = []
+    for slot, body in ann_bodies(ev):
+        n = c140(body)
+        over = ' style="color:#b3261e"' if n > 140 else ""
+        key = f"ann-{ev['vol']}-{slot['n']}"
+        cards.append(f'''
+<article class="card">
+  <div class="head"><span class="no">{slot['when']}</span>
+    <span class="len len140"{over}>{n}</span></div>
+  <div class="sub">{html.escape(slot['hint'])}投稿</div>
+  {thumb}
+  <pre class="body" id="{key}">{html.escape(body)}</pre>
+  <div class="acts">
+    <button class="btn copy" data-t="{key}">本文をコピー</button>
+    <a class="btn go" href="{html.escape(intent(body))}" target="_blank" rel="noopener">Xの下書きを開く →</a>
+  </div>
+  <label class="done-row"><input type="checkbox" class="donebox" data-k="{key}"> 投稿済みにする</label>
+</article>''')
+    return cards
+
+
+def group_announce(ev):
+    m, d = ev["date"].split("-")[1:]
+    md = f"{int(m)}/{int(d)}"
+    return f'''
+<div class="evgroup">
+  <div class="evhead"><b>第{ev['vol']}回</b>
+    <span class="th">{md}（{ev.get('wd','木')}）{ev.get('time','20:15')}〜 ／ {html.escape(ev['topic'])}</span>
+    <a href="{html.escape(ev['connpass_url'])}" target="_blank" rel="noopener">connpassを開く →</a></div>
+  <div class="grid">{"".join(cards_announce(ev))}</div>
+</div>'''
+
+
 CSS = """
 :root{--bg:#f6f7f9;--card:#fff;--tx:#15202b;--mu:#5b6b7b;--ln:#e3e9f0;--ac:#1d9bf0;}
 *{box-sizing:border-box;margin:0;padding:0}
@@ -222,6 +315,13 @@ body.hide-posted .card.posted{display:none}
 .ser{font-size:10px;font-weight:700;padding:1px 7px;border-radius:5px;margin-right:6px}
 .ser-tips{background:#e8f1fb;color:#0b3e72}
 .ser-cs{background:#efeafd;color:#4b31a8}
+.len140::after{content:"/140"}
+.evgroup{margin-bottom:28px}
+.evhead{display:flex;flex-wrap:wrap;align-items:center;gap:10px;background:#eef3f8;
+  border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:13px}
+.evhead b{font-size:15px}
+.evhead .th{color:var(--mu)}
+.evhead a{margin-left:auto;color:var(--ac);font-weight:700;font-size:12px;text-decoration:none;white-space:nowrap}
 """
 
 JS = """
@@ -229,7 +329,7 @@ function show(pane){
   document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on', x.dataset.pane===pane));
   document.querySelectorAll('.pane').forEach(x=>x.classList.toggle('on', x.id===pane));
 }
-const HASH={'pane-pa45':'#pa45','pane-tips':'#tips','pane-cs':'#cs','pane-blog':'#blog'};
+const HASH={'pane-pa45':'#pa45','pane-announce':'#announce','pane-tips':'#tips','pane-cs':'#cs','pane-blog':'#blog'};
 document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
   show(t.dataset.pane);
   history.replaceState(null,'', HASH[t.dataset.pane]||'#pa45');
@@ -287,6 +387,11 @@ def main():
     blog = json.loads(bf.read_text(encoding="utf-8"))["items"] if bf.exists() else []
     n_draft = sum(1 for b in blog if b["status"] == "draft")
 
+    af = ROOT / "data" / "announce-events.json"
+    ann = json.loads(af.read_text(encoding="utf-8"))["events"] if af.exists() else []
+    ann.sort(key=lambda e: e["vol"])
+    n_ann = len(ann) * 4
+
     page = f'''<!doctype html>
 <html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -297,6 +402,7 @@ def main():
 
 <div class="tabs">
   <button class="tab on" data-pane="pane-pa45">PA45（切り口）<span class="c">{len(pa45)}本</span></button>
+  <button class="tab" data-pane="pane-announce">開催告知<span class="c">{n_ann}本</span></button>
   <button class="tab" data-pane="pane-tips">X技術Tips<span class="c">{len(pa_tips)}本</span></button>
   <button class="tab" data-pane="pane-cs">コパスタ<span class="c">{len(cs)}本</span></button>
   <button class="tab" data-pane="pane-blog">ブログ<span class="c">下書き{n_draft}本</span></button>
@@ -313,6 +419,15 @@ def main():
     リンク先は全ページ専用OGPを設定済みなので、貼るとカードが出ます。週2本くらい、同じ切り口が続かないように混ぜる。開催週は16（募集）を必ず1本。
   </div>
   <div class="grid">{"".join(card_pa45(p) for p in pa45)}</div>
+</section>
+
+<section class="pane" id="pane-announce">
+  <div class="note">
+    <b>PA45 各回の開催告知。</b>1回につき4本（<b>①前回終了直後 → ②開催週の月曜 → ③当日の昼 → ④開催15分前</b>）を用意しています。<br>
+    どれも<b>connpassのイベントURL入り</b>なので、貼るとOGPカード（サムネイル）が自動で出ます。全部140字以内。<br>
+    新しい回は connpass でイベントを作ったら <code>data/announce-events.json</code> に1件足して <code>python scripts/build-x-board.py</code>。
+  </div>
+  {"".join(group_announce(e) for e in ann) or '<p class="lead">告知対象の回がありません。data/announce-events.json に追加してください。</p>'}
 </section>
 
 <section class="pane" id="pane-tips">
@@ -342,8 +457,12 @@ def main():
 
     OUT.write_text(page, encoding="utf-8")
     print(f"[OK] {OUT}")
-    print(f"  PA45 {len(pa45)}本 / X技術Tips {len(pa_tips)}本 / コパスタ {len(cs)}本"
+    print(f"  PA45 {len(pa45)}本 / 開催告知 {n_ann}本（{len(ann)}回×4）"
+          f" / X技術Tips {len(pa_tips)}本 / コパスタ {len(cs)}本"
           f" / ブログ {len(blog)}本（下書き{n_draft}）")
+    for e in ann:
+        for slot, body in ann_bodies(e):
+            print(f"    第{e['vol']}回 {slot['when']}: {c140(body)}字")
 
 
 if __name__ == "__main__":
