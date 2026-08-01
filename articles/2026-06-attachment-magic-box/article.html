@@ -1,135 +1,245 @@
 
-<p>「あれ、あの資料どのメールに添付されてたっけ」。メールを検索して、重い PDF を探して、ダウンロードして、デスクトップに置いて、そのまま忘れる。気づくとダウンロードフォルダが、開いたきり二度と見ない添付ファイルでパンパンになっている。</p>
+<style>
+/* 段落・見出しの余白を広げてメリハリを出す（スマホでも詰まって見えないように）
+   ※ 直下の段落だけ。囲み(.mb-cta/.mb-note等)の中の<p>には効かせない */
+.mb-body > p{margin:1.9em 0!important;line-height:2.05!important;}
+.mb-body > h2{margin-top:2.8em!important;}
+.mb-body > h3{margin-top:2.4em!important;}
+.mb-body > ul{margin:1.7em 0!important;line-height:2.0;}
+.mb-body > ul li{margin:.55em 0;}
+.mb-lead{line-height:2.1;}
+.hl-marker{background:linear-gradient(transparent 58%,#fff176 58%);font-weight:700;padding:0 .12em;border-radius:2px;}
+.mb-fig{margin:40px 0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#d9e1ea;border:1px solid #b9c6d6;border-radius:16px;padding:18px 16px 12px;box-shadow:0 2px 8px rgba(15,23,42,.06);}
+.mb-fig img{width:100%;max-width:840px;height:auto;display:block;margin:0 auto;background:#fff;border-radius:10px;box-shadow:0 4px 14px rgba(20,82,143,.14);}
+.mb-fig svg{width:100%;max-width:760px;height:auto;display:block;margin:0 auto;background:#fff;border-radius:10px;padding:14px 10px;}
+.mb-fig figcaption{font-size:.85em;color:#475569;margin-top:12px;}
+.mb-cta{margin:42px 0;padding:18px 22px;border-radius:16px;text-align:center;}
+.mb-cta.pa{background:linear-gradient(135deg,#eaf2fc,#d8e8fa);border:1px solid #b8d3ef;}
+.mb-cta.yt{background:#fff5f5;border:1px solid #f4c2c2;}
+.mb-cta .cta-ttl{font-weight:800;font-size:1.08em;margin:0 0 6px;color:#14528f;}
+.mb-cta.yt .cta-ttl{color:#b91c1c;}
+.mb-cta p{margin:0 0 12px;font-size:.92em;color:#475569;line-height:1.7;}
+.mb-btn{display:inline-block;text-decoration:none;font-weight:800;font-size:.98em;padding:12px 28px;border-radius:50px;color:#fff!important;}
+.mb-btn.pa{background:linear-gradient(135deg,#2a7dd4,#14528f);box-shadow:0 4px 14px rgba(42,125,212,.4);}
+.mb-btn.yt{background:linear-gradient(135deg,#ef4444,#b91c1c);box-shadow:0 4px 14px rgba(239,68,68,.35);}
+.mb-cta .cta-sub{display:block;margin-top:10px;font-size:.82em;color:#64748b;}
+.mb-step{background:#f6faff;border:2px solid #cfe0f3;border-radius:14px;padding:18px 22px 6px;margin:36px 0;}
+.mb-step .st-ttl{display:flex;align-items:center;gap:12px;font-weight:800;color:#14528f;font-size:1.08em;margin-bottom:6px;}
+.mb-step .st-no{flex:none;width:34px;height:34px;border-radius:50%;background:#2a7dd4;color:#fff;display:flex;align-items:center;justify-content:center;font-size:1em;}
+.mb-step ol{margin:6px 0 14px;padding-left:0;list-style:none;counter-reset:s;}
+.mb-step ol li{position:relative;padding:8px 0 8px 30px;line-height:1.8;border-top:1px solid #e4eef9;}
+.mb-step ol li:first-child{border-top:none;}
+.mb-step ol li::before{counter-increment:s;content:counter(s);position:absolute;left:0;top:8px;width:22px;height:22px;background:#dbeafe;color:#1e528f;border-radius:50%;font-size:.78em;font-weight:800;display:flex;align-items:center;justify-content:center;}
+.mb-point{background:#f6faff;border-left:6px solid #4a90d9;border-radius:8px;padding:18px 24px;margin:36px 0;line-height:2.1;}
+.mb-note{background:#fffdf5;border:2px solid #ffd54f;border-radius:12px;padding:18px 24px;margin:38px 0;line-height:2.1;}
+.mb-note .nt-ttl{font-weight:700;color:#e8920c;margin:0 0 14px;}
+.mb-warn{background:#fff6f6;border-left:6px solid #e57373;border-radius:8px;padding:18px 24px;margin:36px 0;line-height:2.1;}
+.mb-code{background:#0f172a;color:#e2e8f0;font-family:Consolas,'DM Mono',monospace;font-size:.92em;line-height:1.6;padding:14px 18px;border-radius:10px;margin:18px 0;overflow-x:auto;white-space:pre-wrap;word-break:break-all;}
+.mb-check{border:1px solid #cfe0f3;border-radius:14px;padding:22px 26px;background:#fff;margin:40px 0;}
+.mb-check .ck-ttl{margin:0 0 14px;font-weight:800;font-size:1.05em;color:#14528f;}
+.mb-check label{display:flex;align-items:flex-start;gap:10px;line-height:1.7;font-size:1em;margin:10px 0;}
+.mb-check input{margin-top:4px;width:16px;height:16px;accent-color:#2a7dd4;flex-shrink:0;}
+.mb-mock{border:1px solid #D1D1D1;border-radius:12px;background:#FAFAFA;padding:16px 18px;margin:34px 0;font-family:'Segoe UI','Noto Sans JP',sans-serif;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+.mb-mock .mk-head{display:flex;align-items:center;gap:10px;}
+.mb-mock .mk-ic{width:34px;height:34px;border-radius:8px;background:#fff;border:1px solid #D1D1D1;display:inline-flex;align-items:center;justify-content:center;flex:none;}
+.mb-mock .mk-nm{font-size:15px;font-weight:700;color:#323130;line-height:1.3;}
+.mb-mock .mk-nm small{display:block;font-size:11.5px;font-weight:500;color:#605E5C;}
+.mb-mock .mk-sec{font-size:11px;color:#605E5C;margin:12px 0 6px;letter-spacing:.04em;}
+.mb-mock .mk-tabs{display:flex;gap:4px;border-bottom:1px solid #D1D1D1;padding-bottom:8px;}
+.mb-mock .mk-tab{padding:5px 12px;font-size:12.5px;border-radius:6px;color:#605E5C;}
+.mb-mock .mk-tab.on{background:#2a7dd4;color:#fff;font-weight:700;}
+.mb-mock .mk-fld{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 12px;border:1px solid #D1D1D1;border-radius:6px;background:#fff;margin-top:8px;}
+.mb-mock .mk-l{font-size:13px;color:#605E5C;}
+.mb-mock .mk-v{font-size:13.5px;color:#323130;font-weight:600;}
+.mb-mock .req{color:#D13438;font-weight:700;}
+.mb-dyn{display:inline-flex;align-items:center;gap:5px;background:#F3E8FF;color:#6B21A8;border:1px solid #D8B4FE;border-radius:6px;padding:3px 9px;font-size:12.5px;font-weight:600;}
+</style>
 
-<p>これ、毎回手で「名前を付けて保存」しているのが地味にしんどいんですよね。しかも保存し忘れると、後で「あのファイルどこ？」がまた始まる。</p>
 
-<p>そこで、メールに添付が届いたら <span style="color: #0000ff;"><strong>自動で OneDrive に放り込む</strong></span> フローを作りました。イメージは <strong>「魔法の箱」</strong>。届いた添付を箱に入れておけば、後はクラウド側でちゃんと整理されて、リンク 1 本で開ける。自分は何もしなくていい。</p>
+<div class="mb-body">
 
-<p>このフロー、X で紹介したら思った以上に反応をもらえたので、<strong>作り方を 3 ステップで丁寧に</strong>書いておきます。実際の設定画面に出てくる項目名どおりに進めるので、見ながらそのまま作れるはずです。</p>
+<p class="mb-lead">メールに届いた添付ファイルを、<span class="hl-marker">自動で OneDrive に保存する</span>フローを作ります。<br>議事録や見積書などを毎回手でダウンロードして保存する手間がなくなり、保存し忘れも防げます。</p>
+
+<p class="mb-lead">重い添付を PC にため込まず、決まった場所にまとめておけるのがメリットです。<br>タイトルの「<strong>魔法の箱</strong>」は、放り込むだけで中身がクラウドに整理される OneDrive のことだと思ってください。</p>
+
+<p class="mb-lead">やることはシンプルですが、毎日のメール処理にそのまま効きます。<strong>Power Automate を初めて触る人でも、画面のどこを押すかまで分かるように</strong>、手順をひとつずつ書いていきます。</p>
+
+<figure class="mb-fig"><img src="https://www.automate136.com/wp-content/uploads/2026/06/attachment-magic-box.png" alt="重い添付を魔法の箱(OneDrive)に自動保存するイメージ" /><figcaption>▲ X で紹介した1枚。重い添付を手でため込む“before”から、放り込むだけの“魔法の箱”へ</figcaption></figure>
 
 &nbsp;
 
-<h2>重い添付、結局どこに置いてますか？</h2>
+<h2>完成イメージ ── 添付が「箱」に吸い込まれる</h2>
 
-<p>仕事のメールには、議事録、見積書、図面、スキャンした書類…と、地味に重いファイルが毎日届きます。1 個 1 個は数 MB でも、積み重なるとメールボックスもローカルフォルダも一気に膨らむ。</p>
+<p>まず、できあがりの形を見ておきましょう。<br>届いた添付メールが、自動で OneDrive（魔法の箱）に保存されます。<br>設定したあとの作業は自動なので、手で保存する必要はありません。</p>
 
-<p>困るのは「保存する」こと自体より、<strong>保存したファイルが散らかる</strong>ことだと思っています。メールの中・ダウンロードフォルダ・デスクトップ・共有ドライブと、置き場所がバラバラだから、いざ必要なときに見つからない。</p>
+<figure class="mb-fig"><svg viewBox="0 0 720 200" font-family="'Noto Sans JP',sans-serif"><defs><linearGradient id="g2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0EA5E9"/><stop offset="1" stop-color="#0364B8"/></linearGradient></defs><rect x="40" y="55" width="180" height="110" rx="14" fill="#EFF6FF" stroke="#2563EB" stroke-width="2"/><rect x="70" y="80" width="120" height="60" rx="6" fill="#fff" stroke="#93C5FD"/><path d="M70 86l60 36 60-36" fill="none" stroke="#2563EB" stroke-width="2.5"/><text x="130" y="44" text-anchor="middle" font-size="15" font-weight="700" fill="#1E40AF">届いた添付メール</text><text x="130" y="158" text-anchor="middle" font-size="12" fill="#64748B">重い PDF・画像…</text><path d="M245 110 H360" stroke="#94A3B8" stroke-width="3" marker-end="url(#ah)"/><marker id="ah" markerWidth="10" markerHeight="10" refX="6" refY="3" orient="auto"><path d="M0 0l6 3-6 3z" fill="#94A3B8"/></marker><text x="305" y="98" text-anchor="middle" font-size="13" font-weight="700" fill="#475569">自動で</text><rect x="385" y="45" width="180" height="130" rx="16" fill="#E0F2FE" stroke="#0364B8" stroke-width="2"/><path d="M455 120a26 26 0 0 1 0-50 32 32 0 0 1 60 8 22 22 0 0 1 0 42z" fill="url(#g2)"/><text x="475" y="36" text-anchor="middle" font-size="15" font-weight="700" fill="#075985">魔法の箱（OneDrive）</text><text x="475" y="162" text-anchor="middle" font-size="12" fill="#0369A1">リンクで開く・共有できる</text><circle cx="650" cy="92" r="18" fill="#FCD34D" stroke="#D97706" stroke-width="2"/><path d="M624 150c0-18 12-28 26-28s26 10 26 28z" fill="#FCD34D" stroke="#D97706" stroke-width="2"/><text x="650" y="182" text-anchor="middle" font-size="12" fill="#92400E">あなたは何もしない</text></svg><figcaption>▲ 届いた添付が、自動で OneDrive に保存される。手作業はゼロ</figcaption></figure>
 
-<p>だったら <strong>届いた瞬間に置き場所を 1 つに決めて、そこへ自動で集める</strong>。それだけで「探す時間」がごっそり減ります。</p>
+<div class="speech-wrap sb-id-14 sbs-stn sbp-l sbis-cb cf"><div class="speech-person"><figure class="speech-icon"><img class="speech-icon-image" src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="" width="1024" height="1024" /></figure></div><div class="speech-balloon">ひとつだけ正直に。<strong>これをやっても受信トレイ自体の容量は減りません</strong>。<br>あくまで「PCにダウンロードしてため込まない」「リンクで共有する」「保存し忘れをなくす」ための仕組みです&#x1f60a;</div></div>
 
 &nbsp;
 
-<h2>「魔法の箱」に放り込むだけ、のイメージ</h2>
+<h2>用意するもの（プレミアム不要）</h2>
 
-<p>今回作るフローを一言でいうと、こうです。</p>
+<p>特別な準備はいりません。<br>会社や学校で配られる Microsoft 365 があれば、追加料金なし（標準コネクタだけ）で作れます。</p>
 
 <ul>
-<li>添付ファイル付きのメールが届く</li>
-<li>その添付を <strong>OneDrive の決まったフォルダ</strong>に自動コピー</li>
-<li>あとはクラウド側でいつでもリンクで開ける・共有できる</li>
+<li><strong>Office 365 Outlook</strong>（いつものメール）</li>
+<li><strong>OneDrive for Business</strong>（保存先のクラウド）</li>
+<li>Power Automate のサイト（<code>make.powerautomate.com</code>）</li>
 </ul>
 
-<p>メールに届いた添付を「魔法の箱（OneDrive）」に入れておくと、<strong>PC にため込まなくていい・リンクで人に渡せる・後から探さなくていい</strong>。この 3 つがまとめて手に入ります。</p>
-
-<div class="speech-wrap sb-id-14 sbs-stn sbp-l sbis-cb cf">
-<div class="speech-person">
-<figure class="speech-icon"><img class="speech-icon-image" src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="" width="1024" height="1024" /></figure>
-</div>
-<div class="speech-balloon">
-ひとつだけ正直に書いておくと、<strong>これをやっても受信トレイの容量は減りません</strong>。あくまで「PC にダウンロードしてため込まない」「クラウドのリンクで共有する」「保存し忘れをなくす」ための仕組みです。
-</div>
-</div>
+<div class="mb-note"><p class="nt-ttl">&#x1f4a1; ここがポイント</p>今回使う3つのアクションは <strong>すべて標準コネクタ</strong>。<br>プレミアム（有料）ライセンスは不要です。</div>
 
 &nbsp;
 
-<h2>作り方は 3 ステップ</h2>
+<h2>はじめに：Power Automate へのサインイン</h2>
 
-<p>使うアクションは 3 つだけです。Power Automate で「自動化したクラウド フロー」を新規作成して、順番に追加していきます。</p>
+<p>「そもそもどこから入るの？」という方へ。<br>Power Automate は、ふだん使っている <strong>会社（や学校）の Microsoft アカウント</strong>でそのまま入れます。</p>
 
-<pre><code>① 新しいメールが届いたとき (V3)   … Office 365 Outlook（トリガー）
-② 添付ファイルでくり返す           … コントロール / Apply to each
-③ ファイルの作成                    … OneDrive for Business</code></pre>
+<div class="mb-step"><div class="st-ttl"><span class="st-no">&#x1f511;</span>サインインの手順</div><ol><li>ブラウザ（Edge や Chrome）で <code>make.powerautomate.com</code> を開く</li><li><strong>会社・学校のメールアドレス</strong>（Microsoft 365 のアカウント）を入力して「次へ」</li><li>パスワードを入力してサインイン（多要素認証が出たら、いつものスマホ承認でOK）</li><li>画面が出れば準備完了。<br>これが Power Automate の作業場所です</li></ol></div>
 
-<p>コツは最初の ① にあります。順番に見ていきます。</p>
+<div class="mb-note"><p class="nt-ttl">&#x1f4a1; 入れないときは</p>個人用の <code>outlook.com</code> や <code>gmail.com</code> では一部機能が使えません。<strong>会社・学校で配られたアカウント</strong>で入るのが確実です。<br>会社でPower Automateが無効になっている場合は、情報システム部門に相談してみてください。</div>
 
 &nbsp;
 
-<h3>① 新しいメールが届いたとき (V3) ── ここが一番大事</h3>
+<h2>作るフローの全体像</h2>
 
-<p>トリガーに <strong>Office 365 Outlook の「新しいメールが届いたとき (V3)」</strong>を選びます。ここで <strong>「詳細設定を表示」</strong>を開いて、2 つの項目を変えるのがこのフロー最大のコツです。</p>
+<p>やることは <strong>3つのアクションを上から順に並べるだけ</strong>です。<br>②の「くり返す」の<strong>中に</strong>③を入れるのがコツ。<br>こうすると、1通に添付が何個ついていても全部保存できます。</p>
 
-<pre><code>添付ファイルを含める   : はい   ← ★これを忘れると中身が取れない
-添付ファイル付きのみ   : はい   ← 添付なしメールでは動かさない</code></pre>
-
-<p><strong>「添付ファイルを含める」を「はい」</strong>にしないと、トリガーは添付の“中身”を受け取ってくれません。見た目は動いているのに、保存されるファイルが空っぽ…という詰まり方をするので、ここは最初に必ずチェックしてください。</p>
-
-<p>「添付ファイル付きのみ」を「はい」にしておくと、<strong>添付のないメールではフローが動かない</strong>ので、ムダな実行を減らせます。</p>
-
-<div class="speech-wrap sb-id-14 sbs-stn sbp-l sbis-cb cf">
-<div class="speech-person">
-<figure class="speech-icon"><img class="speech-icon-image" src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="" width="1024" height="1024" /></figure>
-</div>
-<div class="speech-balloon">
-最初は「全部のメールに反応すると怖いな」と思うので、<strong>テスト中は件名フィルター（例：[保存]）を付けておく</strong>のもおすすめです。慣れたら外せば OK。
-</div>
-</div>
+<figure class="mb-fig"><svg viewBox="0 0 300 470" font-family="'Noto Sans JP',sans-serif" style="max-width:320px;"><marker id="da" markerWidth="10" markerHeight="10" refX="5" refY="6" orient="auto"><path d="M1 1l4 5-4 5" fill="none" stroke="#94A3B8" stroke-width="2"/></marker><rect x="40" y="20" width="220" height="92" rx="14" fill="#EFF6FF" stroke="#2563EB" stroke-width="2"/><text x="60" y="50" font-size="12" font-weight="700" fill="#2563EB">トリガー</text><text x="60" y="74" font-size="14" font-weight="700" fill="#1E3A8A">① 新しいメールが</text><text x="60" y="94" font-size="14" font-weight="700" fill="#1E3A8A">　 届いたとき (V3)</text><path d="M150 112 V140" stroke="#94A3B8" stroke-width="2.5" marker-end="url(#da)"/><rect x="40" y="148" width="220" height="150" rx="14" fill="#F0FDFA" stroke="#0D9488" stroke-width="2"/><text x="60" y="176" font-size="12" font-weight="700" fill="#0D9488">くり返し</text><text x="60" y="200" font-size="14" font-weight="700" fill="#115E59">② 添付ファイルで</text><text x="60" y="220" font-size="14" font-weight="700" fill="#115E59">　 くり返す</text><rect x="60" y="234" width="180" height="50" rx="10" fill="#E0F2FE" stroke="#0364B8" stroke-width="2"/><text x="76" y="254" font-size="12" font-weight="700" fill="#0364B8">③ この中で保存</text><text x="76" y="272" font-size="13" font-weight="700" fill="#075985">ファイルの作成</text><path d="M150 298 V326" stroke="#94A3B8" stroke-width="2.5" marker-end="url(#da)"/><rect x="40" y="334" width="220" height="70" rx="14" fill="#ECFDF5" stroke="#16A34A" stroke-width="2"/><text x="150" y="365" text-anchor="middle" font-size="14" font-weight="700" fill="#15803D">OneDrive に自動保存</text><text x="150" y="388" text-anchor="middle" font-size="12" fill="#16A34A">添付が何個でも全部</text></svg><figcaption>▲ 3ステップだけ。②くり返しの“中”に③保存を入れる</figcaption></figure>
 
 &nbsp;
 
-<h3>② 添付ファイルでくり返す（Apply to each）</h3>
+<h2>ステップ0：からっぽのフローを新規作成する</h2>
 
-<p>1 通のメールに添付が <strong>複数</strong>付いていることがあります。なので「添付を 1 個ずつ処理する」ループで囲みます。</p>
+<p>まずは入れ物（フロー）を用意します。<br>ここは初めての人がつまずきやすいので丁寧にいきます。</p>
 
-<p>「コントロール」から <strong>Apply to each</strong> を追加して、繰り返す対象に動的コンテンツの <strong>「添付ファイル」</strong>を入れます。</p>
+<div class="mb-step"><div class="st-ttl"><span class="st-no">0</span>新しいクラウドフローを作る</div><ol><li>ブラウザで <code>make.powerautomate.com</code> を開く（Microsoft 365 のアカウントでサインイン）</li><li>左メニューの <strong>「作成」</strong> をクリック</li><li><strong>「自動化したクラウド フロー」</strong> を選ぶ（＝何かが起きたら自動で動くタイプ）</li><li>フロー名に <strong>「メール添付を自動保存」</strong> など分かる名前を入力</li><li>トリガーを聞かれたら、いったん <strong>「スキップ」</strong>（次のステップで選びます）</li></ol></div>
 
-<pre><code>以前の手順から出力を選択 : 添付ファイル</code></pre>
+<div class="mb-mock"><div class="mk-sec">クラウド フローを構築する</div><div class="mb-fld mk-fld" style="flex-direction:column;align-items:stretch;gap:5px;"><span class="mk-l">フロー名 <span class="req">*</span></span><span class="mk-v">メール添付を自動保存</span></div><div class="mb-fld mk-fld" style="flex-direction:column;align-items:stretch;gap:5px;margin-top:8px;"><span class="mk-l">フローのトリガーを選択してください <span class="req">*</span></span><span style="font-size:12.5px;color:#A19F9D;display:flex;align-items:center;gap:6px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A19F9D" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg>トリガーを検索（次のステップで選びます）</span></div></div>
 
-<p>このループの <strong>中に</strong>、次の③（ファイルの作成）を入れます。こうすると添付が何個あっても、全部まとめて保存してくれます。</p>
+<div style="text-align:center;font-size:.82em;color:#64748b;margin:-14px 0 8px;">▲ 「自動化したクラウド フロー」を選ぶと出る画面。フロー名を入れて作成します</div>
 
 &nbsp;
 
-<h3>③ ファイルの作成（OneDrive に保存）</h3>
+<h2>作り方は3ステップ（実画面つき）</h2>
 
-<p>ループの中で <strong>OneDrive for Business の「ファイルの作成」</strong>を追加します。設定する項目は 3 つです。</p>
+<p>ここからが本番です。<br>下のスライドが3ステップの全体図。<br>これを1つずつ、実際の設定画面とあわせて見ていきます。</p>
 
-<pre><code>フォルダーのパス     : 保存したいフォルダ（例：/メール添付）
-ファイル名           : 添付ファイルの「名前」（動的コンテンツ）
-ファイル コンテンツ  : 添付ファイルの「コンテンツ」（動的コンテンツ）</code></pre>
+<figure class="mb-fig"><img src="https://www.automate136.com/wp-content/uploads/2026/06/magic-box-howto.png" alt="重い添付をOneDriveへ保存するフローの作り方3ステップ" /><figcaption>▲ 作り方の全体図。①メール受信 →②くり返し →③OneDriveに保存。コツは①の詳細設定</figcaption></figure>
 
-<p>ファイル名には添付の <strong>「名前」</strong>、中身には添付の <strong>「コンテンツ」</strong>を入れる。これだけで、届いた添付がそのままの名前で OneDrive に並びます。</p>
+<h3>ステップ①：メールが届いたら動き出す設定（ここが一番大事）</h3>
 
-<p>ここまでできたら保存して、自分宛に添付付きメールを 1 通送ってテスト。指定したフォルダにファイルが増えていれば完成です。</p>
+<p>最初のアクション＝<strong>トリガー</strong>を置きます。<br>「添付メールが届いたら動き出す」きっかけの部分です。</p>
+
+<div class="mb-mock"><div class="mk-sec">アクションを検索して選ぶ</div><div style="display:flex;align-items:center;gap:8px;border:1px solid #D1D1D1;border-radius:6px;background:#fff;padding:8px 12px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg><span style="font-size:13.5px;color:#323130;">Outlook</span></div><div style="display:flex;align-items:center;gap:10px;padding:9px 12px;border:1px solid #9cc4ee;border-radius:8px;background:#EAF2FD;margin-top:8px;"><span style="width:28px;height:28px;border-radius:7px;background:#fff;border:1px solid #ddd;display:inline-flex;align-items:center;justify-content:center;flex:none;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#2a7dd4" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/></svg></span><span style="font-size:13.5px;font-weight:700;color:#323130;line-height:1.35;">新しいメールが届いたとき (V3)<br><span style="font-weight:500;font-size:11px;color:#888;">Office 365 Outlook</span></span><span style="margin-left:auto;font-size:10.5px;color:#16A34A;font-weight:800;white-space:nowrap;">これを選ぶ</span></div></div>
+
+<div style="text-align:center;font-size:.82em;color:#64748b;margin:-14px 0 8px;">▲ 「Outlook」で検索して、このトリガーを選びます</div>
+
+<div class="mb-mock"><div class="mk-head"><span class="mk-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2a7dd4" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 6 10-6"/></svg></span><span class="mk-nm">新しいメールが届いたとき (V3)<small>Office 365 Outlook（トリガー）</small></span></div><div class="mk-sec">実際の設定画面</div><div class="mk-tabs"><span class="mk-tab on">パラメーター</span><span class="mk-tab">設定</span><span class="mk-tab">コード ビュー</span></div><div class="mb-fld mk-fld"><span class="mk-l">添付ファイルを含める</span><span class="mk-v"><span style="color:#16A34A;">はい</span> ▾</span></div><div class="mb-fld mk-fld"><span class="mk-l">添付ファイル付きのみ</span><span class="mk-v"><span style="color:#16A34A;">はい</span> ▾</span></div></div>
+
+<div style="text-align:center;font-size:.82em;color:#64748b;margin:-14px 0 8px;">▲ 「詳細設定を表示」を開いて、上の2つを「はい」にするのが肝です</div>
+
+<div class="mb-step"><div class="st-ttl"><span class="st-no">1</span>メール受信トリガーを置く</div><ol><li>画面の <strong>「＋ 新しいステップ」</strong> をクリック</li><li>検索ボックスに <strong>「Outlook」</strong> と入力し、<strong>「Office 365 Outlook」</strong> を選ぶ</li><li>アクション一覧から <strong>「新しいメールが届いたとき (V3)」</strong> を選択</li><li>カード下の <strong>「詳細設定を表示」</strong> をクリックして隠れた項目を開く</li><li><strong>「添付ファイルを含める」を「はい」</strong> にする　<span class="req">←★これが最重要</span></li><li><strong>「添付ファイル付きのみ」も「はい」</strong> にする（添付なしメールでは動かさない）</li></ol></div>
+
+<div class="mb-warn"><strong>&#x26a0;&#xfe0f; ここを忘れると一番ハマります。</strong> 「添付ファイルを含める」が「いいえ」のままだと、トリガーは添付の“中身”を受け取りません。<br>フローは動くのに、保存されるファイルが空っぽ…という詰まり方をします。<br>最初に必ず「はい」にしてください。</div>
+
+<div class="speech-wrap sb-id-14 sbs-stn sbp-l sbis-cb cf"><div class="speech-person"><figure class="speech-icon"><img class="speech-icon-image" src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="" width="1024" height="1024" /></figure></div><div class="speech-balloon">テスト中は、<strong>件名フィルター（例：件名に <code>[保存]</code> を含む）</strong>を付けておくと、狙ったメールだけで安全に試せます。<br>慣れたら外せばOKです。</div></div>
+
+<h3>ステップ②：添付を1個ずつ処理する「くり返し」</h3>
+
+<p>1通のメールに添付が <strong>複数</strong>ついていることがあります。<br>なので「添付を1個ずつ取り出して処理する」ループで囲みます。<br>むずかしそうに聞こえますが、項目を1つ選ぶだけです。</p>
+
+<div class="mb-mock"><div class="mk-sec">アクションを検索して選ぶ</div><div style="display:flex;align-items:center;gap:8px;border:1px solid #D1D1D1;border-radius:6px;background:#fff;padding:8px 12px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg><span style="font-size:13.5px;color:#323130;">コントロール</span></div><div style="display:flex;align-items:center;gap:10px;padding:9px 12px;border:1px solid #9cc4ee;border-radius:8px;background:#EAF2FD;margin-top:8px;"><span style="width:28px;height:28px;border-radius:7px;background:#fff;border:1px solid #ddd;display:inline-flex;align-items:center;justify-content:center;flex:none;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#0D9488" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M17 2.1 21 6l-4 3.9"/><path d="M3 12a8 8 0 0 1 14-5.3l4 .3"/><path d="M7 21.9 3 18l4-3.9"/><path d="M21 12a8 8 0 0 1-14 5.3L3 17"/></svg></span><span style="font-size:13.5px;font-weight:700;color:#323130;line-height:1.35;">Apply to each<br><span style="font-weight:500;font-size:11px;color:#888;">コントロール</span></span><span style="margin-left:auto;font-size:10.5px;color:#16A34A;font-weight:800;white-space:nowrap;">これを選ぶ</span></div></div>
+
+<div style="text-align:center;font-size:.82em;color:#64748b;margin:-14px 0 8px;">▲ 「コントロール」で検索して「Apply to each」を選びます</div>
+
+<div class="mb-mock"><div class="mk-head"><span class="mk-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0D9488" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M17 2.1 21 6l-4 3.9"/><path d="M3 12a8 8 0 0 1 14-5.3l4 .3"/><path d="M7 21.9 3 18l4-3.9"/><path d="M21 12a8 8 0 0 1-14 5.3L3 17"/></svg></span><span class="mk-nm">Apply to each（添付ファイルでくり返す）<small>コントロール</small></span></div><div class="mk-sec">実際の設定画面</div><div class="mk-tabs"><span class="mk-tab on">パラメーター</span><span class="mk-tab">設定</span></div><div class="mb-fld mk-fld"><span class="mk-l">以前の手順から出力を選択</span><span class="mk-v"><span class="mb-dyn"><svg width="11" height="11" viewBox="0 0 24 24" fill="#6B21A8"><circle cx="12" cy="12" r="9"/></svg>添付ファイル</span></span></div></div>
+
+<div class="mb-step"><div class="st-ttl"><span class="st-no">2</span>くり返しで囲む</div><ol><li>ステップ①の下の <strong>「＋ 新しいステップ」</strong> をクリック</li><li>検索ボックスに <strong>「コントロール」</strong> と入力して選ぶ</li><li>アクション一覧から <strong>「Apply to each」</strong> を選択</li><li>「以前の手順から出力を選択」の枠をクリックすると、紫色の <strong>動的コンテンツ</strong>一覧が出る</li><li>その中から <strong>「添付ファイル」</strong> を選んで入れる</li></ol></div>
+
+<div class="mb-mock" style="max-width:380px;margin-left:auto;margin-right:auto;"><div style="font-weight:700;font-size:13px;color:#323130;margin-bottom:8px;">動的コンテンツ</div><div style="display:flex;align-items:center;gap:8px;border:1px solid #D1D1D1;border-radius:6px;background:#fff;padding:7px 10px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A19F9D" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg><span style="font-size:12.5px;color:#A19F9D;">動的コンテンツを検索</span></div><div style="display:flex;align-items:center;gap:7px;padding:8px 10px;border-radius:6px;margin-top:6px;background:#F3E8FF;border:1px solid #D8B4FE;"><svg width="13" height="13" viewBox="0 0 24 24" fill="#6B21A8"><circle cx="12" cy="12" r="9"/></svg><span style="font-size:13px;font-weight:700;color:#6B21A8;">添付ファイル</span><span style="margin-left:auto;font-size:10.5px;color:#16A34A;font-weight:800;">これを選ぶ</span></div><div style="display:flex;align-items:center;gap:7px;padding:8px 10px;border-radius:6px;margin-top:6px;background:#fafafb;border:1px solid #eee;"><svg width="13" height="13" viewBox="0 0 24 24" fill="#6B21A8"><circle cx="12" cy="12" r="9"/></svg><span style="font-size:13px;font-weight:600;color:#6B21A8;">差出人</span></div><div style="display:flex;align-items:center;gap:7px;padding:8px 10px;border-radius:6px;margin-top:6px;background:#fafafb;border:1px solid #eee;"><svg width="13" height="13" viewBox="0 0 24 24" fill="#6B21A8"><circle cx="12" cy="12" r="9"/></svg><span style="font-size:13px;font-weight:600;color:#6B21A8;">件名</span></div><div style="display:flex;align-items:center;gap:7px;padding:8px 10px;border-radius:6px;margin-top:6px;background:#fafafb;border:1px solid #eee;"><svg width="13" height="13" viewBox="0 0 24 24" fill="#6B21A8"><circle cx="12" cy="12" r="9"/></svg><span style="font-size:13px;font-weight:600;color:#6B21A8;">本文プレビュー</span></div></div>
+
+<div style="text-align:center;font-size:.82em;color:#64748b;margin:-14px 0 8px;">▲ 枠をクリックすると出る「動的コンテンツ」。ここから「添付ファイル」を選びます</div>
+
+<div class="mb-point"><span class="hl-marker">動的コンテンツ</span>は、前のステップが受け取った値を後ろで使うための“差し込み”です。<br>紫色のタグで出てきます。<br>ここでは「届いたメールの添付ファイル一式」を指しています。</div>
+
+<h3>ステップ③：OneDrive に保存する（くり返しの中に入れる）</h3>
+
+<p>いよいよ保存です。<strong>必ず②のくり返しの「中」</strong>に置きます。</p>
+
+<div class="mb-mock"><div class="mk-sec">アクションを検索して選ぶ</div><div style="display:flex;align-items:center;gap:8px;border:1px solid #D1D1D1;border-radius:6px;background:#fff;padding:8px 12px;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#888" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg><span style="font-size:13.5px;color:#323130;">OneDrive</span></div><div style="display:flex;align-items:center;gap:10px;padding:9px 12px;border:1px solid #9cc4ee;border-radius:8px;background:#EAF2FD;margin-top:8px;"><span style="width:28px;height:28px;border-radius:7px;background:#fff;border:1px solid #ddd;display:inline-flex;align-items:center;justify-content:center;flex:none;"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#0364B8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M17.5 19a4.5 4.5 0 0 0 0-9 6 6 0 0 0-11.7-1.5A4 4 0 0 0 6.5 19z"/></svg></span><span style="font-size:13.5px;font-weight:700;color:#323130;line-height:1.35;">ファイルの作成<br><span style="font-weight:500;font-size:11px;color:#888;">OneDrive for Business</span></span><span style="margin-left:auto;font-size:10.5px;color:#16A34A;font-weight:800;white-space:nowrap;">これを選ぶ</span></div></div>
+
+<div style="text-align:center;font-size:.82em;color:#64748b;margin:-14px 0 8px;">▲ 「OneDrive」で検索して「ファイルの作成」を選びます</div>
+
+<div class="mb-mock"><div class="mk-head"><span class="mk-ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#0364B8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><path d="M17.5 19a4.5 4.5 0 0 0 0-9 6 6 0 0 0-11.7-1.5A4 4 0 0 0 6.5 19z"/></svg></span><span class="mk-nm">ファイルの作成<small>OneDrive for Business</small></span></div><div class="mk-sec">実際の設定画面</div><div class="mk-tabs"><span class="mk-tab on">パラメーター</span><span class="mk-tab">設定</span></div><div class="mb-fld mk-fld"><span class="mk-l">フォルダーのパス <span class="req">*</span></span><span class="mk-v">/メール添付</span></div><div class="mb-fld mk-fld"><span class="mk-l">ファイル名 <span class="req">*</span></span><span class="mk-v"><span class="mb-dyn"><svg width="11" height="11" viewBox="0 0 24 24" fill="#6B21A8"><circle cx="12" cy="12" r="9"/></svg>名前</span></span></div><div class="mb-fld mk-fld"><span class="mk-l">ファイル コンテンツ <span class="req">*</span></span><span class="mk-v"><span class="mb-dyn"><svg width="11" height="11" viewBox="0 0 24 24" fill="#6B21A8"><circle cx="12" cy="12" r="9"/></svg>コンテンツ</span></span></div></div>
+
+<div style="text-align:center;font-size:.82em;color:#64748b;margin:-14px 0 8px;">▲ ファイル名＝「名前」、中身＝「コンテンツ」を動的コンテンツから入れます</div>
+
+<div class="mb-mock" style="max-width:380px;margin-left:auto;margin-right:auto;"><div style="font-weight:700;font-size:13px;color:#323130;margin-bottom:8px;">動的コンテンツ</div><div style="display:flex;align-items:center;gap:8px;border:1px solid #D1D1D1;border-radius:6px;background:#fff;padding:7px 10px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#A19F9D" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle;"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4-4"/></svg><span style="font-size:12.5px;color:#A19F9D;">動的コンテンツを検索</span></div><div style="display:flex;align-items:center;gap:7px;padding:8px 10px;border-radius:6px;margin-top:6px;background:#F3E8FF;border:1px solid #D8B4FE;"><svg width="13" height="13" viewBox="0 0 24 24" fill="#6B21A8"><circle cx="12" cy="12" r="9"/></svg><span style="font-size:13px;font-weight:700;color:#6B21A8;">名前</span><span style="margin-left:auto;font-size:10.5px;color:#16A34A;font-weight:800;">これを選ぶ</span></div><div style="display:flex;align-items:center;gap:7px;padding:8px 10px;border-radius:6px;margin-top:6px;background:#F3E8FF;border:1px solid #D8B4FE;"><svg width="13" height="13" viewBox="0 0 24 24" fill="#6B21A8"><circle cx="12" cy="12" r="9"/></svg><span style="font-size:13px;font-weight:700;color:#6B21A8;">コンテンツ</span><span style="margin-left:auto;font-size:10.5px;color:#16A34A;font-weight:800;">これを選ぶ</span></div><div style="display:flex;align-items:center;gap:7px;padding:8px 10px;border-radius:6px;margin-top:6px;background:#fafafb;border:1px solid #eee;"><svg width="13" height="13" viewBox="0 0 24 24" fill="#6B21A8"><circle cx="12" cy="12" r="9"/></svg><span style="font-size:13px;font-weight:600;color:#6B21A8;">サイズ</span></div><div style="display:flex;align-items:center;gap:7px;padding:8px 10px;border-radius:6px;margin-top:6px;background:#fafafb;border:1px solid #eee;"><svg width="13" height="13" viewBox="0 0 24 24" fill="#6B21A8"><circle cx="12" cy="12" r="9"/></svg><span style="font-size:13px;font-weight:600;color:#6B21A8;">コンテンツの種類</span></div></div>
+
+<div style="text-align:center;font-size:.82em;color:#64748b;margin:-14px 0 8px;">▲ 「名前」と「コンテンツ」は、どちらもこの動的コンテンツから選べます</div>
+
+<div class="mb-step"><div class="st-ttl"><span class="st-no">3</span>OneDriveに保存する</div><ol><li>②の枠の <strong>内側</strong>にある <strong>「＋ アクションの追加」</strong> をクリック（外側ではない点に注意）</li><li>検索ボックスに <strong>「OneDrive」</strong> と入力し、<strong>「OneDrive for Business」</strong> を選ぶ</li><li>アクション一覧から <strong>「ファイルの作成」</strong> を選択</li><li><strong>「フォルダーのパス」</strong>＝保存先フォルダを指定（例：<code>/メール添付</code>。<br>フォルダアイコンから選べます）</li><li><strong>「ファイル名」</strong>＝動的コンテンツの <strong>「名前」</strong> を入れる</li><li><strong>「ファイル コンテンツ」</strong>＝動的コンテンツの <strong>「コンテンツ」</strong> を入れる</li><li>右上の <strong>「保存」</strong> をクリックして完成</li></ol></div>
+
+<div class="mb-note"><p class="nt-ttl">&#x1f4a1; 保存先フォルダは先に作っておく</p>OneDrive にあらかじめ <strong>「メール添付」</strong> のような空フォルダを1つ作っておくと、パス指定で迷いません。</div>
+
+&nbsp;
+
+<h2>動かしてみる（テスト）</h2>
+
+<p>作ったら、本当に動くか確かめます。</p>
+
+<div class="mb-step"><div class="st-ttl"><span class="st-no">&#x2713;</span>テストして確認する</div><ol><li>自分のメールアドレス宛に、<strong>適当なファイルを添付したメール</strong>を1通送る（件名フィルターを付けた人は件名に <code>[保存]</code> を入れる）</li><li>1〜2分待つ（自動で動きます）</li><li>指定した OneDrive のフォルダを開く → <strong>添付ファイルが増えていれば成功！</strong></li><li>うまくいかないときは、Power Automate の <strong>「実行履歴」</strong>を開くと、どこで止まったか色（緑＝成功・赤＝失敗）で分かります</li></ol></div>
 
 &nbsp;
 
 <h2>つまずきポイント（先に知っておくと安心）</h2>
 
 <ul>
-<li><strong>保存したファイルが空っぽになる</strong> → ①の「添付ファイルを含める＝はい」を忘れているのが原因。ほぼこれです。</li>
-<li><strong>同じ名前のファイルが上書きされる</strong> → 「ファイルの作成」は同名だと上書きします。残したいなら、ファイル名の先頭に日時を足すと回避できます。</li>
-<li><strong>署名の画像まで保存される</strong> → メール署名のロゴなども「添付」として届くことがあります。気になる場合は、ファイルサイズや拡張子で条件を足して絞り込みます。</li>
+<li><strong>保存したファイルが0KB・空っぽになる</strong> → ①の「添付ファイルを含める＝はい」を忘れているのが原因。<br>ほぼこれです。</li>
+<li><strong>同じ名前のファイルが上書きされる</strong> → 「ファイルの作成」は同名だと上書きします。<br>残したいなら、次の応用でファイル名に日時を足します。</li>
+<li><strong>署名のロゴ画像まで保存される</strong> → メール署名の画像も「添付」として届くことがあります。<br>気になる場合はファイルサイズや拡張子で条件を足して絞ります。</li>
 </ul>
 
-<p>ファイル名に日時を足したいときは、<strong>「ファイル名」を式</strong>にしてこんな形にします。</p>
+<h3>応用：ファイル名に日時を足してかぶらないようにする</h3>
 
-<pre><code>concat(formatDateTime(utcNow(),'yyyyMMdd_HHmmss'), '_', items('Apply_to_each')?['Name'])</code></pre>
+<p>「ファイル名」を、動的コンテンツのかわりに <strong>式（Expression）</strong>にして、こう書きます。</p>
 
-<p>これで <code>20260626_140530_見積書.pdf</code> のように、かぶらない名前で保存されます。</p>
+<div class="mb-code">concat(formatDateTime(utcNow(),'yyyyMMdd_HHmmss'), '_', items('Apply_to_each')?['Name'])</div>
+
+<p>こうすると <code>20260626_140530_見積書.pdf</code> のように、かぶらない名前で保存されます。<code>items('Apply_to_each')?['Name']</code> は「いまループで処理している添付の名前」という意味です。</p>
 
 &nbsp;
 
 <h2>まとめ</h2>
 
-<p>やったことは <strong>3 つのアクションを並べただけ</strong>です。</p>
+<p>やったことは <strong>3つのアクションを並べただけ</strong>です。</p>
 
 <ul>
-<li>① メール受信トリガーで「添付ファイルを含める＝はい」にする（ここが肝）</li>
-<li>② Apply to each で添付を 1 個ずつ回す</li>
-<li>③ OneDrive の「ファイルの作成」で保存する</li>
+<li><strong>①</strong> メール受信トリガーで「添付ファイルを含める＝はい」にする（ここが肝）</li>
+<li><strong>②</strong> Apply to each で添付を1個ずつ回す</li>
+<li><strong>③</strong> その中で OneDrive「ファイルの作成」に保存する</li>
 </ul>
 
-<p>難しい式は使っていません。それでも「添付を手で保存する」という毎日の小さな手間がなくなって、ファイルの置き場所が 1 つに揃います。<strong>“探す時間”を減らす自動化</strong>として、最初の 1 本にちょうどいいテーマだと思います。</p>
+<p>難しい式は使っていません。<br>それでも「添付を手で保存する」という毎日の小さな手間がなくなって、ファイルの置き場所が1つに揃います。<strong>“探す時間”を減らす自動化</strong>として、最初の1本にちょうどいいテーマだと思います。</p>
 
-<p>まずは <strong>件名フィルター付き＋テスト用フォルダ</strong>で安全に動かしてみて、慣れてきたら本運用に広げてみてください。</p>
+<div class="mb-check"><p class="ck-ttl">&#x1f4cb; この記事で学んだこと</p><label><input type="checkbox">トリガー「新しいメールが届いたとき (V3)」の<strong>詳細設定で「添付ファイルを含める＝はい」</strong>が肝</label><label><input type="checkbox">「添付ファイル付きのみ＝はい」でムダな実行を減らせる</label><label><input type="checkbox">Apply to each で<strong>複数の添付</strong>を1個ずつ処理できる</label><label><input type="checkbox">OneDrive「ファイルの作成」は ファイル名＝名前 / 中身＝コンテンツ</label><label><input type="checkbox">同名は上書きされる → ファイル名を式にして日時を足すと回避できる</label></div>
 
-<p style="font-size:13px;color:#888;">※ 設定画面の項目名・挙動は Microsoft Learn および実機（Power Automate デザイナー）で確認しています。</p>
+&nbsp;
+
+<h2>次回のPA45で、続きを一緒に作りませんか</h2>
+
+<p>今回のような「45分でひとつ作る」ハンズオンを、<strong>毎週木曜の夜にオンライン無料</strong>でやっています。<br>一人で詰まりがちなところも、その場で質問しながら進められます。</p>
+
+<div class="mb-cta pa"><p class="cta-ttl">&#x1f64c; こういうのを、毎週みんなで作っています</p><p>PA45は知識ゼロ・見るだけ参加も大歓迎。<br>次回もまた、ひとつ新しいフローを一緒に作ります。<br>お申し込みは下のボタンから（無料）。</p><a class="mb-btn pa" href="https://powerautomate-create.connpass.com/event/398546/" target="_blank" rel="noopener">次回のPA45に申し込む（無料）</a><span class="cta-sub">毎週木曜の夜・オンライン・参加無料／途中入退室OK・見るだけ参加も歓迎です</span></div>
+
+<p>過去回のまとめや、PA45がどんな勉強会かは <a href="https://www.automate136.com/pa45/" target="_blank" rel="noopener">PA45の紹介ページ</a> にまとめています。<br>また次回、一緒に「できた！」を作りましょう。</p>
+
+<div class="mb-cta yt"><p class="cta-ttl">&#x25b6; 動きは動画で見るのが早いです</p><p>アクションの置き方・つなぎ方は、PA45の各回をYouTubeにアーカイブしています。</p><a class="mb-btn yt" href="https://www.youtube.com/@hu3663" target="_blank" rel="noopener">PA45のYouTubeチャンネルを見る</a></div>
+
+<p style="font-size:13px;color:#888;line-height:1.9;">※ 本記事は公開日時点の情報をもとに、筆者が実際に学んで試した内容を整理したものです。Power Automate の画面や仕様は更新されることがあるため、最新の状況は公式情報（Microsoft Learn）もあわせてご確認ください。設定画面の項目名・挙動は Microsoft Learn および実機（Power Automate デザイナー）で確認しています。</p>
+
+<p style="font-size:13px;color:#888;line-height:1.9;">※ 本記事の構成や、操作画面を分かりやすく図解（再現）した部分は、一部 AI と壁打ちしながら作成しています。</p>
+
+</div>

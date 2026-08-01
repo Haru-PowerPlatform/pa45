@@ -28,12 +28,20 @@ def load_json(path):
 def session_rows():
     """activities から回ごとの参加者数・テーマ・エビデンスを拾う"""
     rows = {}
+    videos = {}
     for p in ACT_DIR.glob("*-pa45-vol*.json"):
         m = re.search(r"pa45-vol(\d+)", p.name)
         if not m:
             continue
         d = load_json(p)
         vol = int(m.group(1))
+        # 録画レコード（type: Video）は講座回と同じ vol 番号を持つ別ファイルなので、
+        # 回として数えず YouTube URL の補完だけに使う
+        if d.get("type") != "PA45":
+            video_url = (d.get("evidence") or {}).get("video")
+            if video_url:
+                videos[vol] = video_url
+            continue
         title = d.get("title", "")
         theme = title.split("：", 1)[1] if "：" in title else title
         # 「── 」以降の副題は落として短くする
@@ -47,6 +55,10 @@ def session_rows():
             "youtube": (d.get("evidence") or {}).get("youtube", ""),
             "blog": (d.get("evidence") or {}).get("blog", ""),
         }
+    # 講座回側に youtube が無い回は、録画レコードの URL で補う
+    for vol, url in videos.items():
+        if vol in rows and not rows[vol]["youtube"]:
+            rows[vol]["youtube"] = url
     return rows
 
 

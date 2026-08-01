@@ -304,12 +304,19 @@ document.addEventListener('click', function(e) {
   // ----- 1. 活動JSONを一括フェッチ -----
   let activities = [];
   try {
-    const idxRes = await fetch(BASE + 'data/meta/activities-index.json');
-    const paths  = await idxRes.json();
-    const results = await Promise.all(
-      paths.map(p => fetch(BASE + p).then(r => r.ok ? r.json() : null).catch(() => null))
-    );
-    activities = results.filter(Boolean);
+    // 活動が100件を超えたので、まず束ねた activities-all.json を1回で読む。
+    // 古いキャッシュや生成前でも動くよう、無ければ従来の1件1フェッチに落とす。
+    const allRes = await fetch(BASE + 'data/meta/activities-all.json');
+    if (allRes.ok) {
+      activities = await allRes.json();
+    } else {
+      const idxRes = await fetch(BASE + 'data/meta/activities-index.json');
+      const paths  = await idxRes.json();
+      const results = await Promise.all(
+        paths.map(p => fetch(BASE + p).then(r => r.ok ? r.json() : null).catch(() => null))
+      );
+      activities = results.filter(Boolean);
+    }
   } catch(e) { console.warn('activities load failed', e); }
 
   // ----- 2. PA45 重複排除（connpass_event_id が同じなら参加者数が多い方を採用）-----
@@ -324,6 +331,7 @@ document.addEventListener('click', function(e) {
   const sessionCount      = pa45Sessions.length;
   const xPosts            = activities.filter(a => a.type === 'X').length;
   const eventCount        = activities.filter(a => a.type === 'Event').length;
+  const videoCount        = activities.filter(a => a.type === 'Video').length;
 
   // ----- 3. ブログ件数（WP API から自動取得）-----
   let blogCount = 63; // フォールバック値
@@ -338,6 +346,7 @@ document.addEventListener('click', function(e) {
     <div class="summary-card"><div class="sum-n">${sessionCount + eventCount}件</div><div class="sum-l">登壇・運営参加（PA45 ${sessionCount}回 ＋ 外部 ${eventCount}件）</div></div>
     <div class="summary-card"><div class="sum-n">${xPosts}枚</div><div class="sum-l">Xスライド投稿</div></div>
     <div class="summary-card"><div class="sum-n">${blogCount}本</div><div class="sum-l">ブログ記事（WordPress）</div></div>
+    <div class="summary-card"><div class="sum-n">${videoCount}本</div><div class="sum-l">YouTube ハンズオン録画</div></div>
   `;
 
   // ----- 5. カテゴリ別サマリ -----
@@ -364,10 +373,17 @@ document.addEventListener('click', function(e) {
       <a href="https://www.automate136.com" target="_blank" rel="noopener" class="cat5-link">Blog →</a>
     </div>
     <div class="cat5-card">
+      <div class="cat5-title">動画アーカイブ</div>
+      <div class="cat5-row"><span class="cat5-key">本数</span><span class="cat5-val">${videoCount}本</span></div>
+      <div class="cat5-row"><span class="cat5-key">内容</span><span class="cat5-val">各回の全編</span></div>
+      <div class="cat5-row"><span class="cat5-key">媒体</span><span class="cat5-val">YouTube</span></div>
+      <a href="../videos/" class="cat5-link">Videos →</a>
+    </div>
+    <div class="cat5-card">
       <div class="cat5-title">社外登壇</div>
       <div class="cat5-row"><span class="cat5-key">件数</span><span class="cat5-val">${eventCount}件</span></div>
       <div class="cat5-row"><span class="cat5-key">種別</span><span class="cat5-val">コミュニティ</span></div>
-      <div class="cat5-row"><span class="cat5-key">形式</span><span class="cat5-val">オンライン</span></div>
+      <div class="cat5-row"><span class="cat5-key">形式</span><span class="cat5-val">現地・オンライン</span></div>
       <a href="#log" class="cat5-link">ログを見る →</a>
     </div>
     <div class="cat5-card">

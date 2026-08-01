@@ -60,3 +60,37 @@ automate136.com 向け単発ブログ記事のメモ・成果物・運用記録�
 - [feedback_blog_purpose](../../../.claude/projects/C--Users-isamu-Documents/memory/feedback_blog_purpose.md): automate136.com の記事は 活動実績の記録が主目的・SEO は二の次
 - [feedback_pa45_blog_no_fabrication](../../../.claude/projects/C--Users-isamu-Documents/memory/feedback_pa45_blog_no_fabrication.md): 架空の体験談・盛り上げ描写は禁止
 - [feedback_pa45_no_affiliate](../../../.claude/projects/C--Users-isamu-Documents/memory/feedback_pa45_no_affiliate.md): X 投稿にアフィリリンクを混ぜない
+
+## 2026-07-22 全面リライト（Copilot Studio記事と同じ品質基準に）
+
+`build_article.py` を新規作成。実行すると article.html を再生成して Post 2423 を上書き（status=draft 固定）。
+
+- 本文 4,323字 → **10,756字**
+- `.mb-*` デザインシステムを適用（step / table / note / warn / point / cards / check / cta / 免責）
+- 句点ごとの `<br>` 改行、常体（〜だ・〜と思う）→ 敬体に統一
+- 共感オープナー（「家計簿、3日続けて、4日目に飛ぶ」）を削除し、事実から入る書き出しに
+- 図解SVG 3枚を新規作成（完成イメージ／フォルダを分ける効果／フロー2本の構成）
+
+### ⚠️ 元の下書きにあった事実の誤り（Microsoft Learnで裏取りして修正）
+
+| 元の記述 | 修正後（出典） |
+|---|---|
+| AI Builder「フォーム処理（レシート モデル）」 | **「領収書から情報を抽出する」**が正しいアクション名（flow-receipt-processing） |
+| 「明細まで取ろうとすると揺れる」だけ | モデルとしては **PurchasedItems** で明細も出力される。揺れは実測としての所感、と書き分けた（prebuilt-receipt-processing） |
+| 「クレジットが秒で溶ける」（数字なし） | **領収書1枚 = 32クレジット / Power Automate Premium = 5,000クレジット = 月約150枚**（credit-management） |
+| 記載なし | **2026-11-01にシードクレジット廃止・新規はAI Builder容量アドオン購入不可**。公開時期を考えると必須なので警告ボックスで追記 |
+| 記載なし | ファイル制限（JPEG/PNG/PDF・20MB・50×50〜10,000×10,000px）、**複数ページ非対応**、**60秒あたり360回**の呼び出し制限 |
+| 「30日トライアル」「M365 Developer Program」 | 裏取りできなかったので削除した |
+
+出典リンクは記事内に5箇所埋め込み済み。
+
+### 実機スクショについて
+実画面のモックは**作っていない**。アクション名は公式で裏取りしたが、設定パネルの
+レイアウトまでは未確認のため、知識ベースで画面を創作しない方針に従った。
+実機スクショを撮れば、各ステップ枠の下に差し込める。
+
+## 次にやること
+1. はるが内容確認・微修正
+2. 実機スクショの追加（任意）
+3. **手動で公開**（自動公開しない）
+4. 公開後 IndexNow 送信
