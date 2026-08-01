@@ -44,6 +44,7 @@ SESSIONS = {
     18: ("Approval Escalation", "2026-07-09", "approval"),
     19: ("Effect Visualization", "2026-07-16", "dashboard"),
     20: ("Adaptive Cards", "2026-07-23", "card"),
+    21: ("First Steps", "2026-07-30", "firststep"),
 }
 
 
@@ -65,6 +66,10 @@ PALETTE_OVERRIDE = {
     #          クリーム色のリッチカードicon（金ヘッダー＋アクションボタン）が主役。
     20: dict(ring=("#b7c0ff", "#141c54"), disc=("#4f46e5", "#0b0a33"),
              gold=GOLD, title="#ffffff", sub="#cfd4ff"),
+    # Vol.21：原点回帰（基礎・最初の一歩）。PA45の原点であるブルーへ戻す。
+    #          階段＋旗の「スタート」iconを主役に。
+    21: dict(ring=("#7db9ff", "#0b234f"), disc=("#2563eb", "#08163a"),
+             gold=GOLD, title="#ffffff", sub="#cfe0ff"),
 }
 
 
@@ -215,9 +220,33 @@ def icon_card(g):
   </g>'''
 
 
+def icon_firststep(g):
+    """最初の一歩（原点回帰・基礎）= 一段ずつ上る階段＋てっぺんに旗（スタート）。"""
+    gl, gm, gd = g
+    steps = [(336, 430, 66, 48), (402, 398, 66, 80), (468, 360, 66, 118)]
+    rects = ""
+    for x, y, w, h in steps:
+        rects += (f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="9" '
+                  f'fill="url(#sparkgrad)" stroke="{gd}" stroke-width="3"/>'
+                  f'<rect x="{x+6}" y="{y+6}" width="{w-12}" height="10" rx="5" '
+                  f'fill="{gl}" opacity="0.55"/>')
+    px = 501  # 旗のポール（最上段の中央）
+    return f'''
+  <g filter="url(#ishadow)">
+    {rects}
+    <!-- 旗ポール -->
+    <rect x="{px}" y="286" width="7" height="82" rx="3.5" fill="{gd}"/>
+    <circle cx="{px+3}" cy="286" r="8" fill="{gl}"/>
+    <!-- 旗（スタート＝最初の一歩） -->
+    <path d="M{px+7} 292 L{px+52} 308 L{px+7} 324 Z" fill="url(#sparkgrad)"
+          stroke="{gd}" stroke-width="3" stroke-linejoin="round"/>
+  </g>'''
+
+
 ICONS = {"foldermail": icon_foldermail, "copilot": icon_copilot,
          "deadline": icon_deadline, "approval": icon_approval,
-         "dashboard": icon_dashboard, "card": icon_card}
+         "dashboard": icon_dashboard, "card": icon_card,
+         "firststep": icon_firststep}
 
 
 def knurl_dots(cx, cy, r, n, color):
