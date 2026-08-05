@@ -1,21 +1,21 @@
 /**
- * PA45 第22回 デモ用 Officeスクリプト「満足度の集計」
+ * PA45 第22回 デモ用 Officeスクリプト「経費の集計」
  * ------------------------------------------------------------
  * やること：
- *   ① 表「アンケート」の見出し行に色をつける（緑＋白字・太字）
- *   ② 「満足度」列の平均を計算する
- *   ③ 表の2つ下に「平均 満足度」と数値を書き出す
- *   ④ 平均値を "戻り値" として返す（← Power Automate の Teams通知で使う）
+ *   ① 表「ExpenseTable」の見出し行に色をつける（緑＋白字・太字）
+ *   ② 「Amount」列の合計を計算する
+ *   ③ 表の2つ下に「経費 合計」と数値を書き出す
+ *   ④ 合計を "戻り値" として返す（← Power Automate の Teams通知で使う）
  *
  * 使い方：Excel（ブラウザ版）→「自動化」タブ →「新しいスクリプト」→
- *         このコードを貼り付け →「満足度の集計」という名前で保存。
+ *         このコードを貼り付け →「経費の集計」という名前で保存。
  *
- * ※ 講座では「操作を記録」で作る流れを見せます。フローに組み込む時だけ、
- *   平均を "返す" 必要があるので、この完成版を使います。
+ * ※ 講座では M365 Copilot にスクリプトを書かせる流れを見せます。
+ *   Copilotの結果が動かない時の "お守り" が、この完成版です。
  */
 function main(workbook: ExcelScript.Workbook): number {
-  // 表「アンケート」を取得（無ければ最初の表）
-  let table = workbook.getTable("アンケート");
+  // 表「ExpenseTable」を取得（無ければ最初の表）
+  let table = workbook.getTable("ExpenseTable");
   if (!table) {
     table = workbook.getTables()[0];
   }
@@ -27,29 +27,26 @@ function main(workbook: ExcelScript.Workbook): number {
   headerFont.setColor("#FFFFFF");
   headerFont.setBold(true);
 
-  // ②「満足度」列の平均を計算
+  // ②「Amount」列の合計を計算
   const headerValues = header.getValues()[0].map(v => String(v));
-  const satIndex = headerValues.indexOf("満足度");
+  const amountIndex = headerValues.indexOf("Amount");
   const bodyValues = table.getRangeBetweenHeaderAndTotal().getValues();
   let sum = 0;
-  let count = 0;
   for (const row of bodyValues) {
-    const n = Number(row[satIndex]);
+    const n = Number(row[amountIndex]);
     if (!isNaN(n)) {
       sum += n;
-      count++;
     }
   }
-  const average = count > 0 ? Math.round((sum / count) * 10) / 10 : 0;
 
-  // ③ 表の2つ下に「平均 満足度」＋数値を書き出す
+  // ③ 表の2つ下に「経費 合計」＋数値を書き出す
   const below = table.getRange().getLastRow().getOffsetRange(2, 0);
-  below.getCell(0, 0).setValue("平均 満足度");
-  const avgCell = below.getCell(0, 1);
-  avgCell.setValue(average);
-  avgCell.getFormat().getFont().setBold(true);
-  avgCell.getFormat().getFill().setColor("#FFF7ED");
+  below.getCell(0, 0).setValue("経費 合計");
+  const totalCell = below.getCell(0, 1);
+  totalCell.setValue(sum);
+  totalCell.getFormat().getFont().setBold(true);
+  totalCell.getFormat().getFill().setColor("#FFF7ED");
 
-  // ④ 平均値を返す（Teams通知の本文で @{...['result']} として使える）
-  return average;
+  // ④ 合計を返す（Teams通知の本文で @{...['result']} として使える）
+  return sum;
 }

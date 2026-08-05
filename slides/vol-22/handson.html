@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>PA45 第22回 ハンズオン手順｜Officeスクリプト × Power Automate</title>
-<meta name="description" content="PA45 第22回のハンズオン手順書。Excelの操作をOfficeスクリプトで録画し、Power Automateの「スクリプトの実行」で呼び出して、満足度の平均をTeamsに通知するまでを、順番どおりに進めます。">
+<meta name="description" content="PA45 第22回のハンズオン手順書。M365 Copilotに書かせたOfficeスクリプトを Power Automateの「スクリプトの実行」で呼び出して、経費（Amount）の合計をTeamsに通知するまでを、順番どおりに進めます。">
 <style>
   :root{
     --xl:#217346;--xl-dark:#14532d;--xl-bg:#e7f4ec;--blue-text:#14528f;--blue-mid:#2a7dd4;--blue-bg:#eaf2fc;
@@ -111,11 +111,11 @@
 
   <header>
     <span class="eyebrow">PA45 第22回｜ハンズオン手順</span>
-    <h1>Officeスクリプト × Power Automate で自動集計<small>アンケートの満足度を、スクリプトで集計してTeamsに通知するまで。順番どおりに進めればできます。</small></h1>
+    <h1>Officeスクリプト × Power Automate で自動集計<small>経費（ExpenseTable）の合計を、スクリプトで集計してTeamsに通知するまで。順番どおりに進めればできます。</small></h1>
   </header>
 
   <div class="goal">
-    <b>今日つくるもの：</b> Excelの「満足度」を自動で平均集計し、その結果を Teams に通知するフロー。
+    <b>今日つくるもの：</b> Excelの経費（Amount）を自動で合計集計し、その結果を Teams に通知するフロー。
     <div class="flowpath">
       <span class="st">🖱️ ボタンで開始</span><span class="ar">→</span>
       <span class="st hot">⚙️ スクリプトで集計</span><span class="ar">→</span>
@@ -134,11 +134,11 @@
   <!-- ===== 0. 準備 ===== -->
   <section class="part" id="p0">
     <div class="part-h"><span class="part-badge">STEP 0</span><h2>準備（サンプルExcel＋Copilotを開く）</h2></div>
-    <p class="part-note">サンプルのアンケート表を OneDrive に置き、ブラウザのExcelと M365 Copilot チャットを開きます。</p>
-    <a class="dl" href="downloads/pa45-vol22-survey.xlsx" download>⬇ サンプルExcel（アンケート表）をダウンロード</a>
+    <p class="part-note">サンプルの経費表（ExpenseTable）を OneDrive に置き、ブラウザのExcelと M365 Copilot チャットを開きます。</p>
+    <a class="dl" href="downloads/pa45-vol22-survey.xlsx" download>⬇ サンプルExcel（経費表 ExpenseTable）をダウンロード</a>
     <ol class="steps">
       <li>ダウンロードした <span class="k">pa45-vol22-survey.xlsx</span> を、<b>OneDrive（職場・学校）</b>にアップロードします。<ul class="sub"><li>迷ったら OneDrive の <span class="k">PA45</span> という新しいフォルダに入れておくと、あとで探しやすいです。</li></ul></li>
-      <li>OneDrive でそのファイルを<b>クリックして開く</b>（ブラウザのExcelで開きます）。表の名前は「<b>アンケート</b>」、列は <span class="k">名前</span>／<span class="k">満足度</span>／<span class="k">コメント</span> です。</li>
+      <li>OneDrive でそのファイルを<b>クリックして開く</b>（ブラウザのExcelで開きます）。表の名前は「<b>ExpenseTable</b>」、列は <span class="k">Name</span>／<span class="k">Amount</span>／<span class="k">Date</span> です。</li>
       <li>別のタブで <b>M365 Copilot チャット</b>を開いておきます（職場・学校アカウントでサインインした Copilot。例：<a href="https://copilot.microsoft.com/" target="_blank" rel="noopener">copilot.microsoft.com</a>、または Teams・Office 画面の Copilot ボタン）。</li>
     </ol>
     <div class="callout warn"><b>⚠️ 使えるか確認：</b> Excel（ブラウザ版）の上のメニューに <span class="tab">自動化</span> タブが出ていればOKです。出ない場合は、会社・学校の Microsoft 365（法人・教育アカウント）でサインインしているか、管理者がオフにしていないかを確認してください（個人向け Personal・Family は対象外）。</div>
@@ -150,21 +150,21 @@
     <p class="part-note">コードは書きません。やってほしいことを日本語で伝えるだけ。Copilot が Officeスクリプトを書いてくれます。</p>
     <ol class="steps">
       <li>M365 Copilot チャットの入力欄に、下の <b>「お願い文」</b>をコピーして貼り付けます。</li>
-      <li>続けて、Excelの<b>表（見出し＋データ）をコピーして貼り付け</b>ます（名前・満足度・コメント）。<ul class="sub"><li>表をドラッグして選択 → <span class="k">Ctrl+C</span> → Copilotの入力欄で <span class="k">Ctrl+V</span>。</li></ul></li>
+      <li>続けて、Excelの<b>表（見出し＋データ）をコピーして貼り付け</b>ます（Name・Amount・Date）。<ul class="sub"><li>表をドラッグして選択 → <span class="k">Ctrl+C</span> → Copilotの入力欄で <span class="k">Ctrl+V</span>。</li></ul></li>
       <li>送信すると、Copilot が <b>Officeスクリプト（コード）</b>を書いてくれます。その<b>コードをコピー</b>します（次の STEP B で使います）。</li>
     </ol>
     <div class="promptwrap">
       <span class="lbl">🟣 Copilotへのお願い文（コピーして貼る）</span>
       <button class="copybtn" data-code="prompt">コピー</button>
 <pre class="prompt" id="prompt">次のExcelの表について、Officeスクリプト（ExcelScript / TypeScript）を書いてください。
-・表の名前は「アンケート」（列：名前・満足度・コメント）
-・「満足度」列の平均を計算する
-・平均値を、表の2つ下のセルに「平均 満足度」というラベルと並べて書き出し、そのセルを黄色に着色する
+・表の名前は「ExpenseTable」（列：Name・Amount・Date）
+・「Amount」列の合計を計算する
+・合計を、表の2つ下のセルに「経費 合計」というラベルと並べて書き出し、そのセルを黄色に着色する
 ・見出し行を緑色＋白文字（太字）にする
-・計算した平均値を、関数の戻り値（return）として返す ← Power Automateで使うため
+・計算した合計を、関数の戻り値（return）として返す ← Power Automateで使うため
 main関数の戻り値の型は number にしてください。</pre>
     </div>
-    <div class="callout tip"><b>💡 一番大事なのは最後の一行：</b>「平均を<b>戻り値(return)で返す</b>」。これが無いと、あとで <b>フローが平均を受け取れません</b>。だからお願い文に必ず入れておきます（初心者がつまずく所を、文章で先回り）。</div>
+    <div class="callout tip"><b>💡 一番大事なのは最後の一行：</b>「合計を<b>戻り値(return)で返す</b>」。これが無いと、あとで <b>フローが合計を受け取れません</b>。だからお願い文に必ず入れておきます（初心者がつまずく所を、文章で先回り）。</div>
     <div class="callout warn"><b>⚠️ AIのコードは、たまに一発で動かないことがあります。</b> エラーが出たら、次の STEP B の <b>「完成版（お守り）」</b>を貼ればOK。今日は「<b>書けなくても、頼めば作れる</b>」体験が目的です。</div>
   </section>
 
@@ -175,16 +175,16 @@ main関数の戻り値の型は number にしてください。</pre>
     <ol class="steps">
       <li>Excel（Web）→ <span class="tab">自動化</span> タブ →<b>「新しいスクリプト」</b>を選びます（コードエディターが開きます）。</li>
       <li>最初から入っているコードを<b>すべて消して</b>、STEP A で <b>Copilot が書いたコードを貼り付け</b>ます。</li>
-      <li>スクリプト名を <b>「満足度の集計」</b> に変更し、<b>「スクリプトの保存」</b>を押します。</li>
-      <li><b>「実行」</b>を押して、Excelで<b>見出しに色</b>がつき、表の下に<b>平均</b>が書き出されるか確認します。</li>
+      <li>スクリプト名を <b>「経費の集計」</b> に変更し、<b>「スクリプトの保存」</b>を押します。</li>
+      <li><b>「実行」</b>を押して、Excelで<b>見出しに色</b>がつき、表の下に<b>合計</b>が書き出されるか確認します。</li>
     </ol>
-    <div class="callout info"><b>🛟 完成版（お守り）：</b> Copilot の結果がうまく動かないときは、下のコードを<b>そのまま貼れば必ず動きます</b>（<span class="k">getValues</span>で平均を計算し、戻り値でも返します）。当日は全員これを配ります。</div>
+    <div class="callout info"><b>🛟 完成版（お守り）：</b> Copilot の結果がうまく動かないときは、下のコードを<b>そのまま貼れば必ず動きます</b>（<span class="k">getValues</span>で合計を計算し、戻り値でも返します）。当日は全員これを配ります。</div>
     <div class="codewrap">
-      <span class="lbl">満足度の集計（完成版・お守り）</span>
+      <span class="lbl">経費の集計（完成版・お守り）</span>
       <button class="copybtn" data-code="script">コピー</button>
 <pre id="script"><span class="kw">function</span> main(workbook: ExcelScript.Workbook): <span class="kw">number</span> {
-  <span class="c">// 表「アンケート」を取得（無ければ最初の表）</span>
-  <span class="kw">let</span> table = workbook.getTable(<span class="s">"アンケート"</span>);
+  <span class="c">// 表「ExpenseTable」を取得（無ければ最初の表）</span>
+  <span class="kw">let</span> table = workbook.getTable(<span class="s">"ExpenseTable"</span>);
   <span class="kw">if</span> (!table) { table = workbook.getTables()[<span class="s">0</span>]; }
 
   <span class="c">// ① 見出し行に色をつける（緑＋白字・太字）</span>
@@ -194,31 +194,31 @@ main関数の戻り値の型は number にしてください。</pre>
   headerFont.setColor(<span class="s">"#FFFFFF"</span>);
   headerFont.setBold(<span class="kw">true</span>);
 
-  <span class="c">// ②「満足度」列の平均を計算</span>
+  <span class="c">// ②「Amount」列の合計を計算</span>
   <span class="kw">const</span> headerValues = header.getValues()[<span class="s">0</span>].map(v => <span class="kw">String</span>(v));
-  <span class="kw">const</span> satIndex = headerValues.indexOf(<span class="s">"満足度"</span>);
+  <span class="kw">const</span> amountIndex = headerValues.indexOf(<span class="s">"Amount"</span>);
   <span class="kw">const</span> bodyValues = table.getRangeBetweenHeaderAndTotal().getValues();
-  <span class="kw">let</span> sum = <span class="s">0</span>, count = <span class="s">0</span>;
+  <span class="kw">let</span> sum = <span class="s">0</span>;
   <span class="kw">for</span> (<span class="kw">const</span> row of bodyValues) {
-    <span class="kw">const</span> n = <span class="kw">Number</span>(row[satIndex]);
-    <span class="kw">if</span> (!isNaN(n)) { sum += n; count++; }
+    <span class="kw">const</span> n = <span class="kw">Number</span>(row[amountIndex]);
+    <span class="kw">if</span> (!isNaN(n)) { sum += n; }
   }
-  <span class="kw">const</span> average = count > <span class="s">0</span> ? <span class="kw">Math</span>.round((sum / count) * <span class="s">10</span>) / <span class="s">10</span> : <span class="s">0</span>;
+  <span class="kw">const</span> total = sum;
 
-  <span class="c">// ③ 表の2つ下に「平均 満足度」＋数値を書き出す</span>
+  <span class="c">// ③ 表の2つ下に「経費 合計」＋数値を書き出す</span>
   <span class="kw">const</span> below = table.getRange().getLastRow().getOffsetRange(<span class="s">2</span>, <span class="s">0</span>);
-  below.getCell(<span class="s">0</span>, <span class="s">0</span>).setValue(<span class="s">"平均 満足度"</span>);
-  <span class="kw">const</span> avgCell = below.getCell(<span class="s">0</span>, <span class="s">1</span>);
-  avgCell.setValue(average);
-  avgCell.getFormat().getFont().setBold(<span class="kw">true</span>);
-  avgCell.getFormat().getFill().setColor(<span class="s">"#FFF7ED"</span>);
+  below.getCell(<span class="s">0</span>, <span class="s">0</span>).setValue(<span class="s">"経費 合計"</span>);
+  <span class="kw">const</span> totalCell = below.getCell(<span class="s">0</span>, <span class="s">1</span>);
+  totalCell.setValue(total);
+  totalCell.getFormat().getFont().setBold(<span class="kw">true</span>);
+  totalCell.getFormat().getFill().setColor(<span class="s">"#FFF7ED"</span>);
 
-  <span class="c">// ④ 平均値を返す（フローのTeams通知で使う）</span>
-  <span class="kw">return</span> average;
+  <span class="c">// ④ 合計を返す（フローのTeams通知で使う）</span>
+  <span class="kw">return</span> total;
 }</pre>
     </div>
     <a class="dl" href="downloads/pa45-vol22-script.ts" download>⬇ 完成版スクリプトをファイルでダウンロード</a>
-    <div class="callout info"><b>このスクリプトがやること：</b> 見出しに色をつけ → 満足度の平均を計算 → 表の下に書き出し → <b>平均値を “返す”</b>。最後の「返す」があるので、次のフローで結果を受け取って Teams に流せます。</div>
+    <div class="callout info"><b>このスクリプトがやること：</b> 見出しに色をつけ → Amount の合計を計算 → 表の下に書き出し → <b>合計を “返す”</b>。最後の「返す」があるので、次のフローで結果を受け取って Teams に流せます。</div>
   </section>
 
   <!-- ===== C. Power Automateで自動化 ===== -->
@@ -227,30 +227,30 @@ main関数の戻り値の型は number にしてください。</pre>
     <p class="part-note"><a href="https://make.powerautomate.com/" target="_blank" rel="noopener">make.powerautomate.com</a> を開いて、手動で動くフローを1本作ります。保存したスクリプトを呼び出し、結果を Teams に通知します。</p>
     <ol class="steps">
       <li>左メニューの <b>「作成」</b> →<b>「インスタント クラウド フロー」</b>を選びます。</li>
-      <li>フロー名を <b>「Vol22 満足度を集計して通知」</b> などに。トリガーは <b>「フローを手動でトリガーします」</b>を選び、<b>「作成」</b>。<ul class="sub"><li>手動トリガー＝ボタンを押すと動くフロー。今日はこれで十分です。</li></ul></li>
+      <li>フロー名を <b>「Vol22 経費を集計して通知」</b> などに。トリガーは <b>「フローを手動でトリガーします」</b>を選び、<b>「作成」</b>。<ul class="sub"><li>手動トリガー＝ボタンを押すと動くフロー。今日はこれで十分です。</li></ul></li>
       <li><b>＋（新しいステップ）</b> →<b>アクションを追加</b>。検索ボックスに <span class="k">スクリプトの実行</span> と入れ、<b>Excel Online (Business)</b> の <b>「スクリプトの実行」</b>を選びます。<ul class="sub"><li>サインインを求められたら、会社・学校のアカウントでサインイン。</li></ul></li>
       <li><b>「スクリプトの実行」</b>に、次を指定します。<ul class="sub">
         <li><b>場所（Location）</b>：OneDrive for Business</li>
         <li><b>ドキュメント ライブラリ</b>：OneDrive</li>
         <li><b>ファイル</b>：フォルダの絵から <span class="k">pa45-vol22-survey.xlsx</span> を選ぶ</li>
-        <li><b>スクリプト</b>：<span class="k">満足度の集計</span> を選ぶ</li>
+        <li><b>スクリプト</b>：<span class="k">経費の集計</span> を選ぶ</li>
       </ul></li>
       <li><b>＋</b> →<b>アクションを追加</b>。<span class="k">Teams メッセージを投稿</span> で検索し、<b>Microsoft Teams</b> の <b>「チャットまたはチャネルでメッセージを投稿する」</b>を選びます。</li>
       <li>Teams の投稿先を指定します。<ul class="sub">
         <li><b>投稿者</b>：Flow bot</li>
         <li><b>投稿先</b>：Chat with Flow bot（自分あて）※チャネルでもOK</li>
         <li><b>Recipient（宛先）</b>：自分（デモなら講師のアカウント）</li>
-        <li><b>メッセージ</b>：下の例のように書き、<b>平均値</b>の部分は動的コンテンツの <span class="k">result</span>（＝スクリプトの実行の戻り値）を挿入</li>
+        <li><b>メッセージ</b>：下の例のように書き、<b>合計</b>の部分は動的コンテンツの <span class="k">result</span>（＝スクリプトの実行の戻り値）を挿入</li>
       </ul></li>
     </ol>
     <div class="codewrap">
       <span class="lbl">Teams メッセージ本文（例）</span>
       <button class="copybtn" data-code="msg">コピー</button>
-<pre id="msg">📊 アンケート集計が終わりました。
-満足度の平均は <b>【ここに result を挿入】</b> です。
+<pre id="msg">📊 経費の集計が終わりました。
+経費の合計は <b>【ここに result を挿入】</b> 円 です。
 （このメッセージは Power Automate が自動送信しています）</pre>
     </div>
-    <div class="callout tip"><b>💡 平均値の入れ方：</b> 本文の入力欄で「動的コンテンツ」を開き、<b>スクリプトの実行 → result</b> を選びます。式で書くなら <span class="k">body('スクリプトの実行')?['result']</span> です。</div>
+    <div class="callout tip"><b>💡 合計の入れ方：</b> 本文の入力欄で「動的コンテンツ」を開き、<b>スクリプトの実行 → result</b> を選びます。式で書くなら <span class="k">body('スクリプトの実行')?['result']</span> です。</div>
     <ol class="steps" start="7" style="counter-reset:st 6;">
       <li>右上の <b>「保存」</b>を押します。</li>
     </ol>
@@ -259,14 +259,14 @@ main関数の戻り値の型は number にしてください。</pre>
     <ol class="steps">
       <li>右上の <b>「テスト」</b> →<b>「手動」</b> →<b>「テスト」</b>→<b>「実行」</b>。</li>
       <li>数秒待つと、各ステップに<b>緑のチェック ✓</b> が付けば成功です。</li>
-      <li><b>Teams</b> を開いて、<b>Flow bot</b> からの通知（満足度の平均）が届いているか確認します。</li>
-      <li>Excel も見ると、<b>見出しに色</b>がつき、表の下に<b>「平均 満足度」</b>が書き出されています。</li>
+      <li><b>Teams</b> を開いて、<b>Flow bot</b> からの通知（経費の合計）が届いているか確認します。</li>
+      <li>Excel も見ると、<b>見出しに色</b>がつき、表の下に<b>「経費 合計」</b>が書き出されています。</li>
     </ol>
     <div class="callout warn"><b>うまくいかないとき：</b>
       <ul style="margin:6px 0 0;padding-left:20px;">
         <li>「スクリプトが見つからない」→ スクリプトの保存先が OneDrive になっているか確認。</li>
         <li>ファイルが選べない → サンプルExcelが OneDrive（職場・学校）に置いてあるか確認。</li>
-        <li>平均が入らない → Teams本文の平均部分に、動的コンテンツ <span class="k">result</span> を入れたか確認。</li>
+        <li>合計が入らない → Teams本文の合計部分に、動的コンテンツ <span class="k">result</span> を入れたか確認。</li>
       </ul>
     </div>
     <div class="callout info"><b>知っておく上限：</b> 1日 約1,600回まで／1回 120秒以内／ファイル 25MBまで／スクリプトから外部サイトの呼び出しは不可。ふつうの集計なら当たりません。（出典：Microsoft Learn）</div>
