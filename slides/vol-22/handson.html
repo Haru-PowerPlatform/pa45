@@ -63,6 +63,11 @@
   ul.sub{margin:8px 0 0;padding-left:20px;font-size:14px;color:var(--muted);}
   ul.sub li{margin:3px 0;}
 
+  .promptwrap{position:relative;margin:10px 0;}
+  .promptwrap .lbl{font-size:12px;font-weight:800;color:#fff;background:#7c5cff;display:inline-block;padding:4px 12px;border-radius:8px 8px 0 0;}
+  pre.prompt{margin:0;background:#f5f3ff;color:#3b2e66;border:1px solid #ddd6fe;border-radius:0 10px 10px 10px;padding:15px 18px;white-space:pre-wrap;word-break:break-word;
+    font-family:"Meiryo UI","Yu Gothic UI","Segoe UI",sans-serif;font-size:13.5px;line-height:1.75;}
+
   .callout{border-radius:10px;padding:12px 18px;font-size:14px;margin:12px 0;line-height:1.7;}
   .callout.tip{background:var(--xl-bg);border-left:5px solid var(--xl);color:#14532d;}
   .callout.warn{background:#fffbeb;border-left:5px solid #f59e0b;color:#78350f;}
@@ -121,45 +126,61 @@
   <nav class="toc" aria-label="手順の目次">
     <span class="toc-lbl">目次</span>
     <a href="#p0">0. 準備</a>
-    <a href="#pa">A. Officeスクリプトを作る</a>
-    <a href="#pb">B. フローを作る</a>
-    <a href="#pc">C. テストして仕上げ</a>
+    <a href="#pa">A. Copilotに書いてもらう</a>
+    <a href="#pb">B. Excelで実行</a>
+    <a href="#pc">C. Power Automateで自動化</a>
   </nav>
 
   <!-- ===== 0. 準備 ===== -->
   <section class="part" id="p0">
-    <div class="part-h"><span class="part-badge">STEP 0</span><h2>準備（サンプルExcelを置く）</h2></div>
-    <p class="part-note">サンプルのアンケート表を OneDrive に置いて、ブラウザのExcelで開きます。</p>
+    <div class="part-h"><span class="part-badge">STEP 0</span><h2>準備（サンプルExcel＋Copilotを開く）</h2></div>
+    <p class="part-note">サンプルのアンケート表を OneDrive に置き、ブラウザのExcelと M365 Copilot チャットを開きます。</p>
     <a class="dl" href="downloads/pa45-vol22-survey.xlsx" download>⬇ サンプルExcel（アンケート表）をダウンロード</a>
     <ol class="steps">
       <li>ダウンロードした <span class="k">pa45-vol22-survey.xlsx</span> を、<b>OneDrive（職場・学校）</b>にアップロードします。<ul class="sub"><li>迷ったら OneDrive の <span class="k">PA45</span> という新しいフォルダに入れておくと、あとで探しやすいです。</li></ul></li>
       <li>OneDrive でそのファイルを<b>クリックして開く</b>（ブラウザのExcelで開きます）。表の名前は「<b>アンケート</b>」、列は <span class="k">名前</span>／<span class="k">満足度</span>／<span class="k">コメント</span> です。</li>
+      <li>別のタブで <b>M365 Copilot チャット</b>を開いておきます（職場・学校アカウントでサインインした Copilot。例：<a href="https://copilot.microsoft.com/" target="_blank" rel="noopener">copilot.microsoft.com</a>、または Teams・Office 画面の Copilot ボタン）。</li>
     </ol>
     <div class="callout warn"><b>⚠️ 使えるか確認：</b> Excel（ブラウザ版）の上のメニューに <span class="tab">自動化</span> タブが出ていればOKです。出ない場合は、会社・学校の Microsoft 365（法人・教育アカウント）でサインインしているか、管理者がオフにしていないかを確認してください（個人向け Personal・Family は対象外）。</div>
   </section>
 
-  <!-- ===== A. スクリプト ===== -->
+  <!-- ===== A. Copilotに書いてもらう ===== -->
   <section class="part" id="pa">
-    <div class="part-h"><span class="part-badge">STEP A</span><h2>Officeスクリプトを作る</h2></div>
-    <p class="part-note">まず「操作を記録」で体験し、そのあと “フローから呼ぶための完成版” を貼り付けて保存します。</p>
-
-    <h3 style="font-size:16px;color:var(--xl-dark);margin:14px 0 6px;">A-1. まずは「記録」を体験（任意）</h3>
+    <div class="part-h"><span class="part-badge">STEP A</span><h2>Copilot にスクリプトを書いてもらう</h2></div>
+    <p class="part-note">コードは書きません。やってほしいことを日本語で伝えるだけ。Copilot が Officeスクリプトを書いてくれます。</p>
     <ol class="steps">
-      <li><span class="tab">自動化</span> タブ →<b>「操作を記録」</b>を選びます。</li>
-      <li>記録が始まったら、いつものように操作します。例：<b>見出し行に色をつける</b> → 空いたセルに <span class="k">=AVERAGE(B2:B6)</span> と入力して<b>満足度の平均を出す</b>。</li>
-      <li><b>「記録を停止」</b>を押すと、今の操作がスクリプトとして保存されます。<b>コードは書いていません。</b></li>
+      <li>M365 Copilot チャットの入力欄に、下の <b>「お願い文」</b>をコピーして貼り付けます。</li>
+      <li>続けて、Excelの<b>表（見出し＋データ）をコピーして貼り付け</b>ます（名前・満足度・コメント）。<ul class="sub"><li>表をドラッグして選択 → <span class="k">Ctrl+C</span> → Copilotの入力欄で <span class="k">Ctrl+V</span>。</li></ul></li>
+      <li>送信すると、Copilot が <b>Officeスクリプト（コード）</b>を書いてくれます。その<b>コードをコピー</b>します（次の STEP B で使います）。</li>
     </ol>
-    <div class="callout warn"><b>⚠️ 記録されない操作があります：</b> テーブルの<b>「集計行」</b>で平均を出したり、<b>絶対／相対モードの切り替え</b>は “操作” として記録されません（モード切替は記録の設定なので出ないのが正常。集計行は「この操作は記録できません」と出ます）。<b>平均を記録させたいときは、集計行ではなく空きセルに <span class="k">=AVERAGE(…)</span> を直接入力</b>してください。</div>
-    <div class="callout tip"><b>ポイント：</b> 記録は「作り方を体で覚える」ためのステップ。フローに組み込むときは、集計した<b>平均値を “返す（return）”</b> 必要があり、これは記録では作れません。だから次の A-2 の完成版（<span class="k">getValues</span>で自前集計＋<span class="k">return</span>）を使います＝記録できない操作があっても大丈夫。</div>
+    <div class="promptwrap">
+      <span class="lbl">🟣 Copilotへのお願い文（コピーして貼る）</span>
+      <button class="copybtn" data-code="prompt">コピー</button>
+<pre class="prompt" id="prompt">次のExcelの表について、Officeスクリプト（ExcelScript / TypeScript）を書いてください。
+・表の名前は「アンケート」（列：名前・満足度・コメント）
+・「満足度」列の平均を計算する
+・平均値を、表の2つ下のセルに「平均 満足度」というラベルと並べて書き出し、そのセルを黄色に着色する
+・見出し行を緑色＋白文字（太字）にする
+・計算した平均値を、関数の戻り値（return）として返す ← Power Automateで使うため
+main関数の戻り値の型は number にしてください。</pre>
+    </div>
+    <div class="callout tip"><b>💡 一番大事なのは最後の一行：</b>「平均を<b>戻り値(return)で返す</b>」。これが無いと、あとで <b>フローが平均を受け取れません</b>。だからお願い文に必ず入れておきます（初心者がつまずく所を、文章で先回り）。</div>
+    <div class="callout warn"><b>⚠️ AIのコードは、たまに一発で動かないことがあります。</b> エラーが出たら、次の STEP B の <b>「完成版（お守り）」</b>を貼ればOK。今日は「<b>書けなくても、頼めば作れる</b>」体験が目的です。</div>
+  </section>
 
-    <h3 style="font-size:16px;color:var(--xl-dark);margin:18px 0 6px;">A-2. フロー用の完成版を貼り付けて保存</h3>
+  <!-- ===== B. Excelで実行 ===== -->
+  <section class="part" id="pb">
+    <div class="part-h"><span class="part-badge">STEP B</span><h2>Excel に貼って、保存して実行</h2></div>
+    <p class="part-note">Copilot が書いたコードを、Excelの「自動化」タブに貼って動かします。</p>
     <ol class="steps">
-      <li><span class="tab">自動化</span> タブ →<b>「新しいスクリプト」</b>を選びます（コードエディターが開きます）。</li>
-      <li>最初から入っているコードを<b>すべて消して</b>、下のコードを<b>まるごと貼り付け</b>ます。</li>
+      <li>Excel（Web）→ <span class="tab">自動化</span> タブ →<b>「新しいスクリプト」</b>を選びます（コードエディターが開きます）。</li>
+      <li>最初から入っているコードを<b>すべて消して</b>、STEP A で <b>Copilot が書いたコードを貼り付け</b>ます。</li>
       <li>スクリプト名を <b>「満足度の集計」</b> に変更し、<b>「スクリプトの保存」</b>を押します。</li>
+      <li><b>「実行」</b>を押して、Excelで<b>見出しに色</b>がつき、表の下に<b>平均</b>が書き出されるか確認します。</li>
     </ol>
+    <div class="callout info"><b>🛟 完成版（お守り）：</b> Copilot の結果がうまく動かないときは、下のコードを<b>そのまま貼れば必ず動きます</b>（<span class="k">getValues</span>で平均を計算し、戻り値でも返します）。当日は全員これを配ります。</div>
     <div class="codewrap">
-      <span class="lbl">満足度の集計（Officeスクリプト）</span>
+      <span class="lbl">満足度の集計（完成版・お守り）</span>
       <button class="copybtn" data-code="script">コピー</button>
 <pre id="script"><span class="kw">function</span> main(workbook: ExcelScript.Workbook): <span class="kw">number</span> {
   <span class="c">// 表「アンケート」を取得（無ければ最初の表）</span>
@@ -196,14 +217,14 @@
   <span class="kw">return</span> average;
 }</pre>
     </div>
-    <a class="dl" href="downloads/pa45-vol22-script.ts" download>⬇ このスクリプトをファイルでダウンロード</a>
-    <div class="callout info"><b>このスクリプトがやること：</b> 見出しに色をつけ → 満足度の平均を計算 → 表の下に書き出し → <b>平均値を “返す”</b>。最後の「返す」があるので、フロー側で結果を受け取って Teams に流せます。</div>
+    <a class="dl" href="downloads/pa45-vol22-script.ts" download>⬇ 完成版スクリプトをファイルでダウンロード</a>
+    <div class="callout info"><b>このスクリプトがやること：</b> 見出しに色をつけ → 満足度の平均を計算 → 表の下に書き出し → <b>平均値を “返す”</b>。最後の「返す」があるので、次のフローで結果を受け取って Teams に流せます。</div>
   </section>
 
-  <!-- ===== B. フロー ===== -->
-  <section class="part" id="pb">
-    <div class="part-h"><span class="part-badge">STEP B</span><h2>Power Automate でフローを作る</h2></div>
-    <p class="part-note"><a href="https://make.powerautomate.com/" target="_blank" rel="noopener">make.powerautomate.com</a> を開いて、手動で動くフローを1本作ります。</p>
+  <!-- ===== C. Power Automateで自動化 ===== -->
+  <section class="part" id="pc">
+    <div class="part-h"><span class="part-badge">STEP C</span><h2>Power Automate で自動化する</h2></div>
+    <p class="part-note"><a href="https://make.powerautomate.com/" target="_blank" rel="noopener">make.powerautomate.com</a> を開いて、手動で動くフローを1本作ります。保存したスクリプトを呼び出し、結果を Teams に通知します。</p>
     <ol class="steps">
       <li>左メニューの <b>「作成」</b> →<b>「インスタント クラウド フロー」</b>を選びます。</li>
       <li>フロー名を <b>「Vol22 満足度を集計して通知」</b> などに。トリガーは <b>「フローを手動でトリガーします」</b>を選び、<b>「作成」</b>。<ul class="sub"><li>手動トリガー＝ボタンを押すと動くフロー。今日はこれで十分です。</li></ul></li>
@@ -233,11 +254,8 @@
     <ol class="steps" start="7" style="counter-reset:st 6;">
       <li>右上の <b>「保存」</b>を押します。</li>
     </ol>
-  </section>
 
-  <!-- ===== C. テスト ===== -->
-  <section class="part" id="pc">
-    <div class="part-h"><span class="part-badge">STEP C</span><h2>テストして仕上げ</h2></div>
+    <h3 style="font-size:16px;color:var(--xl-dark);margin:20px 0 8px;">仕上げ：テストして動かす</h3>
     <ol class="steps">
       <li>右上の <b>「テスト」</b> →<b>「手動」</b> →<b>「テスト」</b>→<b>「実行」</b>。</li>
       <li>数秒待つと、各ステップに<b>緑のチェック ✓</b> が付けば成功です。</li>
