@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PA45 第22回 ハンズオン手順｜Officeスクリプト × Power Automate</title>
+<meta name="description" content="PA45 第22回のハンズオン手順書。Excelの操作をOfficeスクリプトで録画し、Power Automateの「スクリプトの実行」で呼び出して、満足度の平均をTeamsに通知するまでを、順番どおりに進めます。">
+<style>
+  :root{
+    --xl:#217346;--xl-dark:#14532d;--xl-bg:#e7f4ec;--blue-text:#14528f;--blue-mid:#2a7dd4;--blue-bg:#eaf2fc;
+    --ink:#1f2937;--muted:#475569;--border:#e2e8f0;--amber:#b45309;--code-bg:#0f172a;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:linear-gradient(160deg,#e7f4ec 0%,#f5f8fc 42%,#fff 100%);
+    font-family:"Meiryo UI","Yu Gothic UI","Segoe UI",sans-serif;color:var(--ink);
+    min-height:100vh;padding:0 16px 70px;line-height:1.7;}
+  .wrap{max-width:860px;margin:0 auto;}
+
+  .topbar{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.93);
+    -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+    border:1px solid var(--border);border-top:none;border-radius:0 0 14px 14px;
+    box-shadow:0 2px 10px rgba(20,82,143,.08);margin-bottom:18px;}
+  .topbar-in{display:flex;align-items:center;gap:10px;padding:9px 14px;flex-wrap:wrap;}
+  .brand{display:flex;flex-direction:column;text-decoration:none;color:var(--blue-text);font-weight:800;font-size:18px;line-height:1;}
+  .brand span{font-size:9px;font-weight:600;color:var(--muted);letter-spacing:.04em;margin-top:3px;}
+  .tnav{display:flex;gap:3px;flex-wrap:wrap;margin-left:auto;}
+  .tnav a{text-decoration:none;color:var(--blue-text);font-size:12.5px;font-weight:700;padding:6px 10px;border-radius:8px;white-space:nowrap;}
+  .tnav a:hover{background:var(--blue-bg);}
+  .tnav a.cur{background:var(--xl);color:#fff;}
+
+  header{text-align:center;margin-bottom:6px;}
+  .eyebrow{display:inline-block;background:var(--xl);color:#fff;font-weight:700;font-size:13px;letter-spacing:.06em;padding:5px 16px;border-radius:20px;}
+  h1{font-size:29px;font-weight:800;color:var(--xl-dark);margin:14px 0 6px;line-height:1.28;}
+  h1 small{display:block;font-size:15.5px;color:var(--muted);font-weight:600;margin-top:6px;}
+  .crumbs{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:12.5px;color:var(--muted);margin-bottom:14px;justify-content:center;}
+  .crumbs a{color:var(--blue-mid);text-decoration:none;font-weight:700;}
+  .crumbs .sep{color:#cbd5e1;}
+
+  .goal{background:#fff;border:1px solid var(--border);border-left:5px solid var(--xl);border-radius:12px;padding:14px 20px;margin-bottom:16px;box-shadow:0 2px 8px rgba(20,82,143,.05);}
+  .goal b{color:var(--xl-dark);}
+  .flowpath{display:flex;flex-wrap:wrap;align-items:center;gap:8px;justify-content:center;margin:12px 0 0;font-weight:800;color:var(--xl-dark);font-size:15px;}
+  .flowpath .st{background:var(--xl-bg);border:1px solid #a7d9bd;border-radius:22px;padding:7px 15px;}
+  .flowpath .st.hot{background:#fff7ed;border-color:#fdba74;color:#c2410c;}
+  .flowpath .ar{color:var(--xl);font-size:18px;}
+
+  .toc{display:flex;flex-wrap:wrap;gap:8px;background:#fff;border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:22px;box-shadow:0 2px 8px rgba(20,82,143,.05);}
+  .toc-lbl{font-size:12px;font-weight:800;color:var(--xl-dark);background:var(--xl-bg);padding:4px 11px;border-radius:8px;}
+  .toc a{text-decoration:none;color:var(--blue-text);font-size:13px;font-weight:700;padding:6px 12px;border-radius:8px;border:1px solid var(--border);}
+  .toc a:hover{background:var(--blue-bg);border-color:var(--blue-mid);}
+
+  .part{scroll-margin-top:70px;margin:26px 0 0;}
+  .part-h{display:flex;align-items:center;gap:12px;margin-bottom:6px;}
+  .part-badge{flex:0 0 auto;background:var(--xl);color:#fff;font-weight:800;font-size:14px;padding:6px 14px;border-radius:20px;}
+  .part-h h2{font-size:20px;font-weight:800;color:var(--xl-dark);margin:0;}
+  .part-note{font-size:14px;color:var(--muted);margin:0 0 12px;}
+
+  ol.steps{list-style:none;counter-reset:st;padding:0;margin:0;}
+  ol.steps>li{position:relative;padding:14px 16px 14px 54px;background:#fff;border:1px solid var(--border);border-radius:12px;margin-bottom:10px;box-shadow:0 2px 6px rgba(20,82,143,.05);font-size:15px;}
+  ol.steps>li::before{counter-increment:st;content:counter(st);position:absolute;left:14px;top:13px;width:28px;height:28px;border-radius:50%;background:var(--xl);color:#fff;font-weight:800;font-size:15px;display:flex;align-items:center;justify-content:center;}
+  ol.steps>li b{color:var(--xl-dark);}
+  .k{display:inline-block;background:#f1f5f9;border:1px solid #d7dee7;border-radius:6px;padding:1px 8px;font-weight:700;font-size:13.5px;color:#334155;white-space:nowrap;}
+  .tab{display:inline-block;background:var(--xl-bg);border:1px solid #a7d9bd;border-radius:6px;padding:1px 8px;font-weight:700;font-size:13.5px;color:var(--xl-dark);}
+  ul.sub{margin:8px 0 0;padding-left:20px;font-size:14px;color:var(--muted);}
+  ul.sub li{margin:3px 0;}
+
+  .callout{border-radius:10px;padding:12px 18px;font-size:14px;margin:12px 0;line-height:1.7;}
+  .callout.tip{background:var(--xl-bg);border-left:5px solid var(--xl);color:#14532d;}
+  .callout.warn{background:#fffbeb;border-left:5px solid #f59e0b;color:#78350f;}
+  .callout.info{background:var(--blue-bg);border-left:5px solid var(--blue-mid);color:#14528f;}
+
+  .codewrap{position:relative;margin:10px 0;}
+  .codewrap .lbl{font-size:12px;font-weight:800;color:#cbd5e1;background:#1e293b;display:inline-block;padding:4px 12px;border-radius:8px 8px 0 0;}
+  pre{margin:0;background:var(--code-bg);color:#e2e8f0;border-radius:0 10px 10px 10px;padding:16px 18px;overflow-x:auto;font-size:12.5px;line-height:1.65;
+    font-family:"Cascadia Code","Consolas","SFMono-Regular",monospace;}
+  pre .c{color:#7dd3a8;} pre .kw{color:#93c5fd;} pre .s{color:#fca5a5;}
+  .copybtn{position:absolute;top:6px;right:8px;background:#334155;color:#e2e8f0;border:none;border-radius:7px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer;}
+  .copybtn:hover{background:#475569;}
+
+  .dl{display:inline-flex;align-items:center;gap:8px;text-decoration:none;background:var(--xl);color:#fff;font-weight:700;font-size:14px;padding:9px 18px;border-radius:9px;margin:4px 0;}
+  .dl:hover{background:#1a5c38;}
+  .backrow{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:30px;}
+  .btn.sec{display:inline-flex;align-items:center;gap:6px;background:#fff;color:var(--blue-text);border:1px solid var(--blue-mid);text-decoration:none;font-size:14px;font-weight:700;padding:10px 20px;border-radius:9px;}
+  .btn.sec:hover{background:var(--blue-bg);}
+  footer{margin-top:26px;text-align:center;color:#94a3b8;font-size:12px;line-height:1.8;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <nav class="topbar" aria-label="サイト内メニュー">
+    <div class="topbar-in">
+      <a class="brand" href="../../">PA45<span>Power Automate 45</span></a>
+      <div class="tnav">
+        <a href="../../">🏠 ホーム</a>
+        <a href="links.html">🗂️ 第22回の資料</a>
+        <a href="./" class="cur">🛠️ ハンズオン手順</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="crumbs">
+    <a href="../../">🏠 PA45トップ</a><span class="sep">›</span>
+    <a href="links.html">第22回 資料</a><span class="sep">›</span>
+    <span>ハンズオン手順</span>
+  </div>
+
+  <header>
+    <span class="eyebrow">PA45 第22回｜ハンズオン手順</span>
+    <h1>Officeスクリプト × Power Automate で自動集計<small>アンケートの満足度を、スクリプトで集計してTeamsに通知するまで。順番どおりに進めればできます。</small></h1>
+  </header>
+
+  <div class="goal">
+    <b>今日つくるもの：</b> Excelの「満足度」を自動で平均集計し、その結果を Teams に通知するフロー。
+    <div class="flowpath">
+      <span class="st">🖱️ ボタンで開始</span><span class="ar">→</span>
+      <span class="st hot">⚙️ スクリプトで集計</span><span class="ar">→</span>
+      <span class="st">📣 Teamsに通知</span>
+    </div>
+  </div>
+
+  <nav class="toc" aria-label="手順の目次">
+    <span class="toc-lbl">目次</span>
+    <a href="#p0">0. 準備</a>
+    <a href="#pa">A. Officeスクリプトを作る</a>
+    <a href="#pb">B. フローを作る</a>
+    <a href="#pc">C. テストして仕上げ</a>
+  </nav>
+
+  <!-- ===== 0. 準備 ===== -->
+  <section class="part" id="p0">
+    <div class="part-h"><span class="part-badge">STEP 0</span><h2>準備（サンプルExcelを置く）</h2></div>
+    <p class="part-note">サンプルのアンケート表を OneDrive に置いて、ブラウザのExcelで開きます。</p>
+    <a class="dl" href="downloads/pa45-vol22-survey.xlsx" download>⬇ サンプルExcel（アンケート表）をダウンロード</a>
+    <ol class="steps">
+      <li>ダウンロードした <span class="k">pa45-vol22-survey.xlsx</span> を、<b>OneDrive（職場・学校）</b>にアップロードします。<ul class="sub"><li>迷ったら OneDrive の <span class="k">PA45</span> という新しいフォルダに入れておくと、あとで探しやすいです。</li></ul></li>
+      <li>OneDrive でそのファイルを<b>クリックして開く</b>（ブラウザのExcelで開きます）。表の名前は「<b>アンケート</b>」、列は <span class="k">名前</span>／<span class="k">満足度</span>／<span class="k">コメント</span> です。</li>
+    </ol>
+    <div class="callout warn"><b>⚠️ 使えるか確認：</b> Excel（ブラウザ版）の上のメニューに <span class="tab">自動化</span> タブが出ていればOKです。出ない場合は、会社・学校の Microsoft 365（法人・教育アカウント）でサインインしているか、管理者がオフにしていないかを確認してください（個人向け Personal・Family は対象外）。</div>
+  </section>
+
+  <!-- ===== A. スクリプト ===== -->
+  <section class="part" id="pa">
+    <div class="part-h"><span class="part-badge">STEP A</span><h2>Officeスクリプトを作る</h2></div>
+    <p class="part-note">まず「操作を記録」で体験し、そのあと “フローから呼ぶための完成版” を貼り付けて保存します。</p>
+
+    <h3 style="font-size:16px;color:var(--xl-dark);margin:14px 0 6px;">A-1. まずは「記録」を体験（任意）</h3>
+    <ol class="steps">
+      <li><span class="tab">自動化</span> タブ →<b>「操作を記録」</b>を選びます。</li>
+      <li>記録が始まったら、いつものように操作します。例：<b>見出し行に色をつける</b> → <b>満足度の平均をどこかのセルに出す</b>。</li>
+      <li><b>「記録を停止」</b>を押すと、今の操作がスクリプトとして保存されます。<b>コードは書いていません。</b></li>
+    </ol>
+    <div class="callout tip"><b>ポイント：</b> 記録は「作り方を体で覚える」ためのステップ。フローに組み込むときは、集計した<b>平均値を “返す”</b> 必要があるので、次の A-2 の完成版を使います。</div>
+
+    <h3 style="font-size:16px;color:var(--xl-dark);margin:18px 0 6px;">A-2. フロー用の完成版を貼り付けて保存</h3>
+    <ol class="steps">
+      <li><span class="tab">自動化</span> タブ →<b>「新しいスクリプト」</b>を選びます（コードエディターが開きます）。</li>
+      <li>最初から入っているコードを<b>すべて消して</b>、下のコードを<b>まるごと貼り付け</b>ます。</li>
+      <li>スクリプト名を <b>「満足度の集計」</b> に変更し、<b>「スクリプトの保存」</b>を押します。</li>
+    </ol>
+    <div class="codewrap">
+      <span class="lbl">満足度の集計（Officeスクリプト）</span>
+      <button class="copybtn" data-code="script">コピー</button>
+<pre id="script"><span class="kw">function</span> main(workbook: ExcelScript.Workbook): <span class="kw">number</span> {
+  <span class="c">// 表「アンケート」を取得（無ければ最初の表）</span>
+  <span class="kw">let</span> table = workbook.getTable(<span class="s">"アンケート"</span>);
+  <span class="kw">if</span> (!table) { table = workbook.getTables()[<span class="s">0</span>]; }
+
+  <span class="c">// ① 見出し行に色をつける（緑＋白字・太字）</span>
+  <span class="kw">const</span> header = table.getHeaderRowRange();
+  header.getFormat().getFill().setColor(<span class="s">"#217346"</span>);
+  <span class="kw">const</span> headerFont = header.getFormat().getFont();
+  headerFont.setColor(<span class="s">"#FFFFFF"</span>);
+  headerFont.setBold(<span class="kw">true</span>);
+
+  <span class="c">// ②「満足度」列の平均を計算</span>
+  <span class="kw">const</span> headerValues = header.getValues()[<span class="s">0</span>].map(v => <span class="kw">String</span>(v));
+  <span class="kw">const</span> satIndex = headerValues.indexOf(<span class="s">"満足度"</span>);
+  <span class="kw">const</span> bodyValues = table.getRangeBetweenHeaderAndTotal().getValues();
+  <span class="kw">let</span> sum = <span class="s">0</span>, count = <span class="s">0</span>;
+  <span class="kw">for</span> (<span class="kw">const</span> row of bodyValues) {
+    <span class="kw">const</span> n = <span class="kw">Number</span>(row[satIndex]);
+    <span class="kw">if</span> (!isNaN(n)) { sum += n; count++; }
+  }
+  <span class="kw">const</span> average = count > <span class="s">0</span> ? <span class="kw">Math</span>.round((sum / count) * <span class="s">10</span>) / <span class="s">10</span> : <span class="s">0</span>;
+
+  <span class="c">// ③ 表の2つ下に「平均 満足度」＋数値を書き出す</span>
+  <span class="kw">const</span> below = table.getRange().getLastRow().getOffsetRange(<span class="s">2</span>, <span class="s">0</span>);
+  below.getCell(<span class="s">0</span>, <span class="s">0</span>).setValue(<span class="s">"平均 満足度"</span>);
+  <span class="kw">const</span> avgCell = below.getCell(<span class="s">0</span>, <span class="s">1</span>);
+  avgCell.setValue(average);
+  avgCell.getFormat().getFont().setBold(<span class="kw">true</span>);
+  avgCell.getFormat().getFill().setColor(<span class="s">"#FFF7ED"</span>);
+
+  <span class="c">// ④ 平均値を返す（フローのTeams通知で使う）</span>
+  <span class="kw">return</span> average;
+}</pre>
+    </div>
+    <a class="dl" href="downloads/pa45-vol22-script.ts" download>⬇ このスクリプトをファイルでダウンロード</a>
+    <div class="callout info"><b>このスクリプトがやること：</b> 見出しに色をつけ → 満足度の平均を計算 → 表の下に書き出し → <b>平均値を “返す”</b>。最後の「返す」があるので、フロー側で結果を受け取って Teams に流せます。</div>
+  </section>
+
+  <!-- ===== B. フロー ===== -->
+  <section class="part" id="pb">
+    <div class="part-h"><span class="part-badge">STEP B</span><h2>Power Automate でフローを作る</h2></div>
+    <p class="part-note"><a href="https://make.powerautomate.com/" target="_blank" rel="noopener">make.powerautomate.com</a> を開いて、手動で動くフローを1本作ります。</p>
+    <ol class="steps">
+      <li>左メニューの <b>「作成」</b> →<b>「インスタント クラウド フロー」</b>を選びます。</li>
+      <li>フロー名を <b>「Vol22 満足度を集計して通知」</b> などに。トリガーは <b>「フローを手動でトリガーします」</b>を選び、<b>「作成」</b>。<ul class="sub"><li>手動トリガー＝ボタンを押すと動くフロー。今日はこれで十分です。</li></ul></li>
+      <li><b>＋（新しいステップ）</b> →<b>アクションを追加</b>。検索ボックスに <span class="k">スクリプトの実行</span> と入れ、<b>Excel Online (Business)</b> の <b>「スクリプトの実行」</b>を選びます。<ul class="sub"><li>サインインを求められたら、会社・学校のアカウントでサインイン。</li></ul></li>
+      <li><b>「スクリプトの実行」</b>に、次を指定します。<ul class="sub">
+        <li><b>場所（Location）</b>：OneDrive for Business</li>
+        <li><b>ドキュメント ライブラリ</b>：OneDrive</li>
+        <li><b>ファイル</b>：フォルダの絵から <span class="k">pa45-vol22-survey.xlsx</span> を選ぶ</li>
+        <li><b>スクリプト</b>：<span class="k">満足度の集計</span> を選ぶ</li>
+      </ul></li>
+      <li><b>＋</b> →<b>アクションを追加</b>。<span class="k">Teams メッセージを投稿</span> で検索し、<b>Microsoft Teams</b> の <b>「チャットまたはチャネルでメッセージを投稿する」</b>を選びます。</li>
+      <li>Teams の投稿先を指定します。<ul class="sub">
+        <li><b>投稿者</b>：Flow bot</li>
+        <li><b>投稿先</b>：Chat with Flow bot（自分あて）※チャネルでもOK</li>
+        <li><b>Recipient（宛先）</b>：自分（デモなら講師のアカウント）</li>
+        <li><b>メッセージ</b>：下の例のように書き、<b>平均値</b>の部分は動的コンテンツの <span class="k">result</span>（＝スクリプトの実行の戻り値）を挿入</li>
+      </ul></li>
+    </ol>
+    <div class="codewrap">
+      <span class="lbl">Teams メッセージ本文（例）</span>
+      <button class="copybtn" data-code="msg">コピー</button>
+<pre id="msg">📊 アンケート集計が終わりました。
+満足度の平均は <b>【ここに result を挿入】</b> です。
+（このメッセージは Power Automate が自動送信しています）</pre>
+    </div>
+    <div class="callout tip"><b>💡 平均値の入れ方：</b> 本文の入力欄で「動的コンテンツ」を開き、<b>スクリプトの実行 → result</b> を選びます。式で書くなら <span class="k">body('スクリプトの実行')?['result']</span> です。</div>
+    <ol class="steps" start="7" style="counter-reset:st 6;">
+      <li>右上の <b>「保存」</b>を押します。</li>
+    </ol>
+  </section>
+
+  <!-- ===== C. テスト ===== -->
+  <section class="part" id="pc">
+    <div class="part-h"><span class="part-badge">STEP C</span><h2>テストして仕上げ</h2></div>
+    <ol class="steps">
+      <li>右上の <b>「テスト」</b> →<b>「手動」</b> →<b>「テスト」</b>→<b>「実行」</b>。</li>
+      <li>数秒待つと、各ステップに<b>緑のチェック ✓</b> が付けば成功です。</li>
+      <li><b>Teams</b> を開いて、<b>Flow bot</b> からの通知（満足度の平均）が届いているか確認します。</li>
+      <li>Excel も見ると、<b>見出しに色</b>がつき、表の下に<b>「平均 満足度」</b>が書き出されています。</li>
+    </ol>
+    <div class="callout warn"><b>うまくいかないとき：</b>
+      <ul style="margin:6px 0 0;padding-left:20px;">
+        <li>「スクリプトが見つからない」→ スクリプトの保存先が OneDrive になっているか確認。</li>
+        <li>ファイルが選べない → サンプルExcelが OneDrive（職場・学校）に置いてあるか確認。</li>
+        <li>平均が入らない → Teams本文の平均部分に、動的コンテンツ <span class="k">result</span> を入れたか確認。</li>
+      </ul>
+    </div>
+    <div class="callout info"><b>知っておく上限：</b> 1日 約1,600回まで／1回 120秒以内／ファイル 25MBまで／スクリプトから外部サイトの呼び出しは不可。ふつうの集計なら当たりません。（出典：Microsoft Learn）</div>
+  </section>
+
+  <div class="backrow">
+    <a class="btn sec" href="links.html">← 第22回の資料にもどる</a>
+    <a class="btn sec" href="../../">🏠 サイトのトップへ</a>
+  </div>
+
+  <footer>
+    PA45 第22回 ハンズオン手順 ／ Officeスクリプト × Power Automate<br>
+    人名・数値はすべて架空のサンプルです。画面や手順は公開日時点のもので、今後変わる可能性があります。
+  </footer>
+</div>
+
+<script>
+  document.querySelectorAll('.copybtn').forEach(function(b){
+    b.addEventListener('click', function(){
+      var el = document.getElementById(b.dataset.code);
+      var text = el.innerText;
+      navigator.clipboard.writeText(text).then(function(){
+        var o = b.textContent; b.textContent = 'コピーしました'; setTimeout(function(){ b.textContent = o; }, 1400);
+      });
+    });
+  });
+</script>
+</body>
+</html>
