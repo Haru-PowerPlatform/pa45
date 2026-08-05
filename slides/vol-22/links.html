@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PA45 第22回 資料リンク集｜コードを書かずにExcel作業を自動化</title>
+<meta name="description" content="PA45 第22回の資料リンク集。Officeスクリプトの「記録」機能とPower Automateを組み合わせて、Excelの毎回の手作業をコードを書かずに自動化します。">
+<style>
+  :root{
+    --blue-text:#14528f;--blue-mid:#2a7dd4;--blue-bg:#eaf2fc;--ink:#1f2937;--muted:#475569;
+    --border:#e2e8f0;--green:#15803d;--amber:#b45309;--xl:#217346;--xl-bg:#e7f4ec;--xl-dark:#14532d;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:linear-gradient(160deg,#eaf2fc 0%,#f5f8fc 40%,#fff 100%);
+    font-family:"Meiryo UI","Yu Gothic UI","Segoe UI",sans-serif;color:var(--ink);
+    min-height:100vh;padding:0 16px 60px;}
+  .wrap{max-width:820px;margin:0 auto;}
+
+  /* ===== グローバルメニュー（上部固定バー） ===== */
+  .topbar{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.92);
+    -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+    border:1px solid var(--border);border-top:none;border-radius:0 0 14px 14px;
+    box-shadow:0 2px 10px rgba(20,82,143,.08);margin-bottom:18px;}
+  .topbar-in{display:flex;align-items:center;gap:10px;padding:9px 14px;flex-wrap:wrap;}
+  .brand{display:flex;flex-direction:column;text-decoration:none;color:var(--blue-text);
+    font-weight:800;font-size:18px;line-height:1;}
+  .brand span{font-size:9px;font-weight:600;color:var(--muted);letter-spacing:.04em;margin-top:3px;}
+  .tnav{display:flex;gap:3px;flex-wrap:wrap;margin-left:auto;}
+  .tnav a{text-decoration:none;color:var(--blue-text);font-size:12.5px;font-weight:700;
+    padding:6px 10px;border-radius:8px;white-space:nowrap;transition:background .12s;}
+  .tnav a:hover{background:var(--blue-bg);}
+  .tnav a.cur{background:var(--blue-mid);color:#fff;}
+  @media(max-width:600px){
+    .tnav{width:100%;margin-left:0;flex-wrap:nowrap;overflow-x:auto;padding-bottom:2px;
+      -webkit-overflow-scrolling:touch;}
+  }
+
+  header{text-align:center;margin-bottom:8px;}
+  .eyebrow{display:inline-block;background:var(--xl);color:#fff;font-weight:700;
+    font-size:13px;letter-spacing:.06em;padding:5px 16px;border-radius:20px;}
+  h1{font-size:30px;font-weight:800;color:var(--xl-dark);margin:14px 0 6px;line-height:1.25;}
+  h1 small{display:block;font-size:16px;color:var(--muted);font-weight:600;margin-top:6px;}
+  .meta{color:var(--muted);font-size:14px;margin-bottom:16px;text-align:center;}
+
+  /* ===== パンくず＋戻る ===== */
+  .crumbs{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:12.5px;
+    color:var(--muted);margin-bottom:14px;justify-content:center;}
+  .crumbs a{color:var(--blue-mid);text-decoration:none;font-weight:700;}
+  .crumbs a:hover{text-decoration:underline;}
+  .crumbs .sep{color:#cbd5e1;}
+  .crumbs .here{color:var(--muted);font-weight:600;}
+
+  .lead{background:#fff;border:1px solid var(--border);border-left:5px solid var(--xl);
+    border-radius:12px;padding:14px 18px;font-size:15px;line-height:1.8;color:var(--muted);
+    margin-bottom:18px;box-shadow:0 2px 8px rgba(20,82,143,.05);}
+  .lead b{color:var(--ink);}
+
+  /* ===== 目次（ページ内ジャンプ） ===== */
+  .toc{display:flex;flex-wrap:wrap;align-items:center;gap:8px;background:#fff;
+    border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:8px;
+    box-shadow:0 2px 8px rgba(20,82,143,.05);}
+  .toc-lbl{font-size:12px;font-weight:800;color:var(--xl-dark);background:var(--xl-bg);
+    padding:4px 11px;border-radius:8px;}
+  .toc a{text-decoration:none;color:var(--blue-text);font-size:13px;font-weight:700;
+    padding:6px 12px;border-radius:8px;border:1px solid var(--border);transition:background .12s,border-color .12s;}
+  .toc a:hover{background:var(--blue-bg);border-color:var(--blue-mid);}
+
+  /* ===== セクション ===== */
+  .section{scroll-margin-top:74px;}
+  .section h2{display:flex;align-items:center;gap:8px;font-size:16.5px;font-weight:800;
+    color:var(--xl-dark);margin:24px 0 12px;padding-bottom:8px;border-bottom:2px solid var(--xl-bg);}
+
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  @media(max-width:640px){.grid{grid-template-columns:1fr;}}
+  .card{display:flex;gap:14px;align-items:flex-start;text-decoration:none;color:inherit;
+    background:#fff;border:1px solid var(--border);border-radius:14px;padding:18px;
+    box-shadow:0 2px 8px rgba(20,82,143,.06);transition:transform .12s,box-shadow .12s,border-color .12s;}
+  .card:hover{transform:translateY(-3px);box-shadow:0 10px 22px rgba(20,82,143,.16);border-color:var(--blue-mid);}
+  .card .ico{flex:0 0 46px;width:46px;height:46px;border-radius:12px;display:flex;align-items:center;
+    justify-content:center;font-size:24px;background:var(--blue-bg);}
+  .card .body{flex:1;min-width:0;}
+  .card .t{font-size:16px;font-weight:800;color:var(--blue-text);margin:0 0 3px;line-height:1.35;}
+  .card .d{font-size:13px;color:var(--muted);line-height:1.6;margin:0;}
+  .card .go{display:inline-block;margin-top:9px;font-size:12px;font-weight:700;color:#fff;
+    background:var(--blue-mid);padding:5px 14px;border-radius:16px;}
+  .card.primary{border:2px solid var(--xl);background:var(--xl-bg);}
+  .card.primary .ico{background:#c9ead6;}
+  .card.primary .t{color:var(--xl-dark);}
+  .card.primary .go{background:var(--xl);}
+  .card.xl .ico{background:var(--xl-bg);}
+  .card.xl .t{color:var(--xl-dark);}
+  .card.xl .go{background:var(--xl);}
+
+  /* ===== フッター戻り導線 ===== */
+  .backrow{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:26px;}
+  .btn.sec{display:inline-flex;align-items:center;gap:6px;background:#fff;color:var(--blue-text);
+    border:1px solid var(--blue-mid);text-decoration:none;font-size:14px;font-weight:700;
+    padding:10px 20px;border-radius:9px;transition:background .15s;}
+  .btn.sec:hover{background:var(--blue-bg);}
+
+  .note{margin-top:22px;font-size:12.5px;color:var(--muted);text-align:center;line-height:1.8;}
+  footer{margin-top:24px;text-align:center;color:#94a3b8;font-size:12px;line-height:1.8;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- グローバルメニュー -->
+  <nav class="topbar" aria-label="サイト内メニュー">
+    <div class="topbar-in">
+      <a class="brand" href="../../">PA45<span>Power Automate 45</span></a>
+      <div class="tnav">
+        <a href="../../">🏠 ホーム</a>
+        <a href="../../sessions/">🎫 講座</a>
+        <a href="../../videos/">▶ 動画</a>
+        <a href="../../achievements/">📊 活動</a>
+        <a href="../links.html" class="cur">🗂️ 全回の目次</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- パンくず -->
+  <div class="crumbs">
+    <a href="../../">🏠 PA45トップ</a>
+    <span class="sep">›</span>
+    <a href="../links.html">全回の目次</a>
+    <span class="sep">›</span>
+    <span class="here">第22回 資料リンク集</span>
+  </div>
+
+  <header>
+    <span class="eyebrow">PA45 第22回｜Excel自動化編</span>
+    <h1>コードを書かずにExcel作業を自動化 📊<small>Officeスクリプトの「記録」機能とPower Automateで、毎回のExcel集計や転記を任せられる形にする回です</small></h1>
+  </header>
+  <div class="meta">2026-08-06（木）開催 ／ このページに今日の資料リンクをまとめています</div>
+
+  <div class="lead">
+    <b>今日のテーマ：</b> Excelの操作を<b>「録画」するだけ</b>で自動化の部品になります。<br>
+    それをPower Automateから呼び出して、回答→集計→通知までを自動に。コードは書きません。見るだけ参加も歓迎です。
+  </div>
+
+  <!-- 目次 -->
+  <nav class="toc" aria-label="このページの目次">
+    <span class="toc-lbl">目次</span>
+    <a href="#today">📌 今日つかうもの</a>
+    <a href="#review">📚 見返す・過去回</a>
+    <a href="#learn">📘 もっと学ぶ</a>
+  </nav>
+
+  <!-- 今日つかうもの -->
+  <section class="section" id="today">
+    <h2>📌 今日つかうもの</h2>
+    <div class="grid">
+
+      <a class="card primary" href="./" target="_blank" rel="noopener">
+        <div class="ico">📄</div>
+        <div class="body">
+          <p class="t">今日の解説スライド（第22回・全17枚）</p>
+          <p class="d">当日も復習もこちら。Officeスクリプトの記録・実行・Power Automate連携まで、実際の画面つきで見返せます。</p>
+          <span class="go">開く →</span>
+        </div>
+      </a>
+
+      <a class="card xl" href="downloads/pa45-vol22-survey.xlsx" download>
+        <div class="ico">📊</div>
+        <div class="body">
+          <p class="t">サンプルExcel（アンケート集計の題材）</p>
+          <p class="d">今日の実演で使う架空アンケート表。手元でも同じ操作を試せます。</p>
+          <span class="go">ダウンロード →</span>
+        </div>
+      </a>
+
+      <a class="card xl" href="downloads/pa45-vol22-script.ts" download>
+        <div class="ico">📝</div>
+        <div class="body">
+          <p class="t">Officeスクリプト（完成版・コピー用）</p>
+          <p class="d">見出しに色をつけて満足度の平均を出すスクリプト。記録が難しいときはこれを貼り付けてもOK。</p>
+          <span class="go">ダウンロード →</span>
+        </div>
+      </a>
+
+      <a class="card" href="https://powerautomate-create.connpass.com/event/401512/" target="_blank" rel="noopener">
+        <div class="ico">🎫</div>
+        <div class="body">
+          <p class="t">connpass イベントページ</p>
+          <p class="d">参加登録・当日の入室（Teams会議リンク）はこちら。</p>
+          <span class="go">開く →</span>
+        </div>
+      </a>
+
+      <a class="card" href="https://www.office.com/launch/excel" target="_blank" rel="noopener">
+        <div class="ico">📗</div>
+        <div class="body">
+          <p class="t">Excel（Web版）を開く</p>
+          <p class="d">「自動化」タブでスクリプトを記録します。会社のM365でサインインしておいてください。</p>
+          <span class="go">開く →</span>
+        </div>
+      </a>
+
+      <a class="card" href="https://make.powerautomate.com/" target="_blank" rel="noopener">
+        <div class="ico">🤖</div>
+        <div class="body">
+          <p class="t">Power Automate を開く</p>
+          <p class="d">「スクリプトの実行」で、Excelの集計をフローから呼び出します。</p>
+          <span class="go">開く →</span>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- 見返す・過去回 -->
+  <section class="section" id="review">
+    <h2>📚 見返す・過去回</h2>
+    <div class="grid">
+
+      <a class="card" href="../" target="_blank" rel="noopener">
+        <div class="ico">📚</div>
+        <div class="body">
+          <p class="t">これまでの回のスライド（復習）</p>
+          <p class="d">第1〜21回の解説スライド一覧。気になる回を見返せます。</p>
+          <span class="go">開く →</span>
+        </div>
+      </a>
+
+      <a class="card" href="../links.html" target="_blank" rel="noopener">
+        <div class="ico">🗂️</div>
+        <div class="body">
+          <p class="t">全回の資料リンク集（目次）</p>
+          <p class="d">各回の配布ファイル・スライド・アンケートにまとめて飛べます。</p>
+          <span class="go">開く →</span>
+        </div>
+      </a>
+
+      <a class="card" href="../vol-21/links.html" target="_blank" rel="noopener">
+        <div class="ico">🔰</div>
+        <div class="body">
+          <p class="t">第21回（原点回帰の復習回）</p>
+          <p class="d">基礎と環境準備の整理。はじめての方はここから。</p>
+          <span class="go">開く →</span>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- もっと学ぶ -->
+  <section class="section" id="learn">
+    <h2>📘 もっと学ぶ</h2>
+    <div class="grid">
+
+      <a class="card" href="https://learn.microsoft.com/ja-jp/office/dev/scripts/overview/excel" target="_blank" rel="noopener">
+        <div class="ico">📘</div>
+        <div class="body">
+          <p class="t">Office スクリプト 入門（Microsoft Learn）</p>
+          <p class="d">記録機能やスクリプトの基本を公式ドキュメントでおさらいできます。</p>
+          <span class="go">開く →</span>
+        </div>
+      </a>
+
+      <a class="card" href="https://learn.microsoft.com/ja-jp/power-automate/desktop-flows/actions-reference/excel" target="_blank" rel="noopener">
+        <div class="ico">🔗</div>
+        <div class="body">
+          <p class="t">Excel × Power Automate（Microsoft Learn）</p>
+          <p class="d">クラウドフローからスクリプトを実行するときの参考に。</p>
+          <span class="go">開く →</span>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- 戻り導線 -->
+  <div class="backrow">
+    <a class="btn sec" href="../links.html">← 全回の目次にもどる</a>
+    <a class="btn sec" href="../../">🏠 サイトのトップへ</a>
+  </div>
+
+  <div class="note">
+    参加バッジのアンケートは、当日チャットでご案内します。<br>
+    うまくいかないときは、チャットで気軽に声をかけてください。「できました！」の報告も大歓迎です 😊　#PA45
+  </div>
+
+  <footer>
+    PA45 第22回 資料リンク集 ／ コードを書かずにExcel作業を自動化<br>
+    本内容は公開日時点のものです。Microsoftの仕様・画面は今後変わる可能性があります。
+  </footer>
+</div>
+</body>
+</html>
