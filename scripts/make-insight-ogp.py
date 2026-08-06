@@ -138,7 +138,7 @@ def build_specs(d):
             "eyebrow": "できるようになったこと ✅",
             "title": "45分で届くのは、どこまでか",
             "tsize": 68,
-            "sub": "アンケートの複数選択を19回・233件分あつめました。",
+            "sub": f"アンケートの複数選択を{s['sessions']}回・{s['responses_total']}件分あつめました。",
             "stats": [
                 (meaning["rate"], "%", "意味が分かった"),
                 (use["rate"], "%", "自分で使えるようになった"),
@@ -155,7 +155,7 @@ def build_specs(d):
             "sub": "JSON、式、実行履歴。つまずいた人が、そのあと何と言ったか。",
             "stats": [
                 (s["responses_total"], "件", "アンケート回答"),
-                (s["sessions"], "回", "第1回〜第19回"),
+                (s["sessions"], "回", f"第1回〜第{s['sessions']}回"),
                 (s["participants_total"], "名", "のべ参加登録"),
             ],
             "quote": "「JSONはよく分からないなぁっと勝手に苦手意識を持っていましたが…」（第14回）",
@@ -236,7 +236,7 @@ def build_specs(d):
             "out": "og-slides.png",
             "theme": "sky",
             "eyebrow": "解説スライド 📄",
-            "title": "全19回のスライドを置いています",
+            "title": f"全{s['sessions']}回のスライドを置いています",
             "tsize": 60,
             "sub": "その場で追いつけなくても、あとから同じ手順をたどれるように。",
             "stats": [
