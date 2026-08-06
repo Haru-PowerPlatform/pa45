@@ -68,6 +68,11 @@
   pre.prompt{margin:0;background:#f5f3ff;color:#3b2e66;border:1px solid #ddd6fe;border-radius:0 10px 10px 10px;padding:15px 18px;white-space:pre-wrap;word-break:break-word;
     font-family:"Meiryo UI","Yu Gothic UI","Segoe UI",sans-serif;font-size:13.5px;line-height:1.75;}
 
+  figure.shotwrap{margin:14px 0 8px;}
+  figure.shotwrap img{display:block;width:100%;max-width:820px;border:1px solid #e2e8f0;border-radius:12px;box-shadow:0 6px 20px rgba(0,0,0,.13);}
+  figure.shotwrap figcaption{font-size:13px;color:var(--muted);margin-top:7px;}
+  figure.shotwrap figcaption b{color:var(--xl-dark);}
+
   .callout{border-radius:10px;padding:12px 18px;font-size:14px;margin:12px 0;line-height:1.7;}
   .callout.tip{background:var(--xl-bg);border-left:5px solid var(--xl);color:#14532d;}
   .callout.warn{background:#fffbeb;border-left:5px solid #f59e0b;color:#78350f;}
@@ -194,6 +199,10 @@ main関数の戻り値の型は number にしてください。</pre>
       <li>スクリプト名を <b>「経費の集計」</b> に変更し、<b>「スクリプトの保存」</b>を押します。</li>
       <li><b>「実行」</b>を押して、Excelで<b>見出しに色</b>がつき、表の下に<b>合計</b>が書き出されるか確認します。</li>
     </ol>
+    <figure class="shotwrap">
+      <img src="assets/handson/step-b1-automate.png" alt="Excelの自動化タブと新しいスクリプト（実画面）" loading="lazy">
+      <figcaption><b>実画面：</b>「自動化」タブ →「新しいスクリプト」。表は <b>ExpenseTable</b>（Name・Amount・Date）。</figcaption>
+    </figure>
     <div class="callout info"><b>🛟 完成版（お守り）：</b> Copilot の結果がうまく動かないときは、下のコードを<b>そのまま貼れば必ず動きます</b>（<span class="k">getValues</span>で合計を計算し、戻り値でも返します）。当日は全員これを配ります。</div>
     <div class="codewrap">
       <span class="lbl">経費の集計（完成版・お守り）</span>
@@ -235,6 +244,10 @@ main関数の戻り値の型は number にしてください。</pre>
     </div>
     <a class="dl" href="downloads/pa45-vol22-script.ts" download>⬇ 完成版スクリプトをファイルでダウンロード</a>
     <div class="callout info"><b>このスクリプトがやること：</b> 見出しに色をつけ → Amount の合計を計算 → 表の下に書き出し → <b>合計を “返す”</b>。最後の「返す」があるので、次のフローで結果を受け取って Teams に流せます。</div>
+    <figure class="shotwrap">
+      <img src="assets/handson/step-b4-run.png" alt="スクリプトが正常に実行された（実画面）" loading="lazy">
+      <figcaption><b>実画面：</b>「実行」して <b>スクリプトが正常に実行されました</b> と出ればOK。表の下に合計が入ります。</figcaption>
+    </figure>
   </section>
 
   <!-- ===== C. Power Automateで自動化 ===== -->
@@ -259,6 +272,10 @@ main関数の戻り値の型は number にしてください。</pre>
         <li><b>メッセージ</b>：下の例のように書き、<b>合計</b>の部分は動的コンテンツの <span class="k">result</span>（＝スクリプトの実行の戻り値）を挿入</li>
       </ul></li>
     </ol>
+    <figure class="shotwrap">
+      <img src="assets/handson/step-c2-runscript.png" alt="スクリプトの実行の設定（実画面）" loading="lazy">
+      <figcaption><b>実画面：</b>「スクリプトの実行」で <b>ファイル</b> と <b>スクリプト（経費の集計）</b> を選ぶ。</figcaption>
+    </figure>
     <div class="codewrap">
       <span class="lbl">Teams メッセージ本文（例）</span>
       <button class="copybtn" data-code="msg">コピー</button>
@@ -267,6 +284,10 @@ main関数の戻り値の型は number にしてください。</pre>
 （このメッセージは Power Automate が自動送信しています）</pre>
     </div>
     <div class="callout tip"><b>💡 合計の入れ方：</b> 本文の入力欄で「動的コンテンツ」を開き、<b>スクリプトの実行 → result</b> を選びます。式で書くなら <span class="k">body('スクリプトの実行')?['result']</span> です。</div>
+    <figure class="shotwrap">
+      <img src="assets/handson/step-c3-teams.png" alt="Teamsメッセージの設定（実画面）" loading="lazy">
+      <figcaption><b>実画面：</b>投稿者＝<b>Flow bot</b>／本文の合計に <b>result</b> を差し込む。</figcaption>
+    </figure>
     <ol class="steps" start="7" style="counter-reset:st 6;">
       <li>右上の <b>「保存」</b>を押します。</li>
     </ol>
@@ -278,6 +299,10 @@ main関数の戻り値の型は number にしてください。</pre>
       <li><b>Teams</b> を開いて、<b>Flow bot</b> からの通知（経費の合計）が届いているか確認します。</li>
       <li>Excel も見ると、<b>見出しに色</b>がつき、表の下に<b>「経費 合計」</b>が書き出されています。</li>
     </ol>
+    <figure class="shotwrap">
+      <img src="assets/handson/step-c4-success.png" alt="フローが正常に実行された（実画面）" loading="lazy">
+      <figcaption><b>実画面：</b>テスト成功。3つのステップすべてに <b>緑チェック ✓</b> が付けばOK。</figcaption>
+    </figure>
     <div class="callout warn"><b>うまくいかないとき：</b>
       <ul style="margin:6px 0 0;padding-left:20px;">
         <li>「スクリプトが見つからない」→ スクリプトの保存先が OneDrive になっているか確認。</li>
