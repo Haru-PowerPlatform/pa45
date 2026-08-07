@@ -48,6 +48,23 @@ def today_jst():
     return datetime.now(JST).strftime("%Y-%m-%d")
 
 
+def normalize_iso_date(s):
+    """"2026-08-15" でも "2026年8月15日（土）20:15〜" でも ISO(YYYY-MM-DD)に正規化する。
+
+    upcoming-event.json の date は人間向けの和文表記になっていることがあるため、
+    ファイル名・日付照合・カード表示では常に ISO に揃える。
+    """
+    if not s:
+        return s
+    m = re.match(r"\s*(\d{4})-(\d{2})-(\d{2})", s)
+    if m:
+        return f"{m.group(1)}-{m.group(2)}-{m.group(3)}"
+    m = re.search(r"(\d{4})\D+(\d{1,2})\D+(\d{1,2})", s)
+    if m:
+        return f"{int(m.group(1)):04d}-{int(m.group(2)):02d}-{int(m.group(3)):02d}"
+    return s
+
+
 def fetch_participants(event_id):
     urls = [
         f"https://powerautomate-create.connpass.com/event/{event_id}/",
@@ -361,7 +378,8 @@ def main():
 
     vol        = config["vol"]
     event_id   = config["event_id"]
-    date_str   = config["date"]
+    # 和文表記("2026年8月15日（土）…")でも ISO でも受け付けて YYYY-MM-DD に揃える。
+    date_str   = normalize_iso_date(config.get("date_iso") or config["date"])
     theme      = config["theme"]
     description = config.get("description", theme)
     connpass_url = config.get("connpass_url",

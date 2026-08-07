@@ -100,10 +100,16 @@ def card_tips(it):
     prefix, key, sname = SERIES.get(it.get("series", "tips"), SERIES["tips"])
     f = it["folder"]
     img1 = ROOT / "assets" / "x" / "html" / f / f"{f.replace('-', '')}.png"
-    img2 = ROOT / "assets" / "x" / "html" / f"{f}b" / f"{f.replace('-', '')}b.png"
     rel1 = f"pa45/assets/x/html/{f}/{img1.name}"
-    rel2 = f"pa45/assets/x/html/{f}b/{img2.name}"
-    paths = f'"{img1}" "{img2}"'
+    # 2枚目は「同じフォルダ(vol-NN/…b.png)」を優先。無ければ旧構成(vol-NNb/…)にフォールバック
+    img2_same = ROOT / "assets" / "x" / "html" / f / f"{f.replace('-', '')}b.png"
+    img2_old = ROOT / "assets" / "x" / "html" / f"{f}b" / f"{f.replace('-', '')}b.png"
+    if img2_same.exists():
+        img2 = img2_same
+        rel2 = f"pa45/assets/x/html/{f}/{img2.name}"
+    else:
+        img2 = img2_old
+        rel2 = f"pa45/assets/x/html/{f}b/{img2.name}"
     label, cls = STATUS.get(it["status"], ("―", "st-todo"))
     miss = "" if img1.exists() and img2.exists() else '<div class="warn">PNGが見つかりません</div>'
     return f'''
@@ -119,7 +125,8 @@ def card_tips(it):
   <pre class="body" id="{key}{it['vol']}">{html.escape(it['body'])}</pre>
   <div class="acts">
     <button class="btn copy" data-t="{key}{it['vol']}">本文をコピー</button>
-    <button class="btn copy2" data-p='{html.escape(paths)}'>画像2枚のパス</button>
+    <button class="btn copyp" data-p="{html.escape(str(img1))}">1枚目パス</button>
+    <button class="btn copyp" data-p="{html.escape(str(img2))}">2枚目パス</button>
     <a class="btn go" href="{html.escape(intent(it['body']))}" target="_blank" rel="noopener">Xの下書きを開く →</a>
   </div>
   <label class="done-row"><input type="checkbox" class="donebox" data-k="{key}-{it['vol']}"> 投稿済みにする</label>
@@ -178,34 +185,36 @@ def card_blog(b):
 # ③ 当日の昼に出す「今夜です」
 # ④ 開催15分前に出す「まもなく」
 # それぞれ connpass URL を必ず入れる（貼るとOGPカードが出る）＆140字以内。
+# PA45＝Power Automateを45分で学ぶハンズオン講座、と毎回わかるようにする。
+# 本文でPower Automateを明記するので #PowerAutomate ハッシュタグは付けない（重複回避＆字数確保）。
 ANN_SLOTS = [
     {
         "n": 1, "when": "① 前回終了直後", "hint": "前回の回が終わった直後（約1週間前）に",
         "tpl": ("【PA45 第{vol}回】{md}（{wd}）{time}〜\n"
+                "PA45＝Power Automateの45分ハンズオン講座。\n"
                 "テーマは「{topic}」。{line}\n"
-                "オンライン・45分、見るだけOKです。申込はこちら👇\n"
-                "{url}\n#PowerAutomate"),
+                "見るだけ参加もOK。申込はこちら👇\n{url}"),
     },
     {
         "n": 2, "when": "② 開催週の月曜", "hint": "開催週の月曜あたりに",
         "tpl": ("今週{wd}曜 {time}〜、PA45 第{vol}回です。\n"
+                "PA45＝Power Automateの45分ハンズオン講座。\n"
                 "テーマは「{topic}」。{line}\n"
-                "実際の画面を見ながら進めます。詳細はこちら👇\n"
-                "{url}\n#PowerAutomate"),
+                "実際の画面を見ながら進めます。詳細は👇\n{url}"),
     },
     {
         "n": 3, "when": "③ 当日の昼", "hint": "開催当日の昼に",
         "tpl": ("本日 {time}〜、PA45 第{vol}回です。\n"
+                "PA45＝Power Automateの45分ハンズオン講座。\n"
                 "テーマは「{topic}」。\n"
-                "オンライン・見るだけOK。申込はこちら👇\n"
-                "{url}\n#PowerAutomate"),
+                "見るだけ参加もOK。申込はこちら👇\n{url}"),
     },
     {
         "n": 4, "when": "④ 開催15分前", "hint": "開催15分前（20:00ごろ）に",
         "tpl": ("まもなく {time}〜、PA45 第{vol}回です。\n"
+                "PA45＝Power Automateの45分ハンズオン講座。\n"
                 "テーマは「{topic}」。\n"
-                "オンライン開催、参加はこちら👇\n"
-                "{url}\n#PowerAutomate"),
+                "オンライン開催、参加はこちら👇\n{url}"),
     },
 ]
 
@@ -341,11 +350,7 @@ document.querySelectorAll('.copy').forEach(b=>b.addEventListener('click',async()
   await navigator.clipboard.writeText(document.getElementById(b.dataset.t).textContent);
   flash(b,'コピーしました');
 }));
-document.querySelectorAll('.copy3').forEach(b=>b.addEventListener('click',async()=>{
-  await navigator.clipboard.writeText(b.dataset.p);
-  flash(b,'パスをコピー');
-}));
-document.querySelectorAll('.copy2').forEach(b=>b.addEventListener('click',async()=>{
+document.querySelectorAll('.copy3,.copyp').forEach(b=>b.addEventListener('click',async()=>{
   await navigator.clipboard.writeText(b.dataset.p);
   flash(b,'パスをコピー');
 }));
@@ -381,6 +386,8 @@ def main():
     tips_data = json.loads((ROOT / "data" / "x-tips-board.json").read_text(encoding="utf-8"))
     snote = tips_data.get("series_note", {})
     pa_tips = [t for t in tips if t.get("series", "tips") == "tips"]
+    # 表示順：order（小さいほど上＝保存したくなる実務ネタを前に）→ 無ければ vol 降順で後ろに
+    pa_tips.sort(key=lambda t: (t.get("order", 10000), -t["vol"]))
     cs = [t for t in tips if t.get("series") == "copasta"]
 
     bf = ROOT / "data" / "blog-board.json"

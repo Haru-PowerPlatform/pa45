@@ -1,9 +1,10 @@
 name: PA45 開催後 自動サイト更新
 
 on:
-  # 木曜 21:15 JST = UTC 12:15
+  # 毎日 21:15 JST = UTC 12:15 に起動し、開催日(upcoming-event.jsonのdate)と一致する日だけ処理する。
+  # 木曜固定だと土曜開催回などを取りこぼすため、毎日+日付ガード方式にしている。
   schedule:
-    - cron: "15 12 * * 4"
+    - cron: "15 12 * * *"
   workflow_dispatch:
     inputs:
       force:
@@ -45,6 +46,9 @@ jobs:
             ARGS="$ARGS --dry-run"
           fi
           python scripts/auto-post-event.py $ARGS
+
+      - name: Rebuild insights.json (achievements/insights が参照)
+        run: python scripts/build-insights.py
 
       - name: Commit and push if changed
         run: |
