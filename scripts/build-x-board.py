@@ -17,7 +17,11 @@ import io
 import json
 import re
 import urllib.parse
+from datetime import datetime, timezone, timedelta
 from pathlib import Path
+
+# ビルド時刻（JST）。「開いている板が最新か」を一目で分かるようにする。
+BUILT_AT = datetime.now(timezone(timedelta(hours=9))).strftime("%Y-%m-%d %H:%M")
 
 ROOT = Path(__file__).resolve().parent.parent          # ...\Documents\pa45
 OUT = ROOT.parent / "pa45-x-drafts.html"               # ...\Documents\pa45-x-drafts.html
@@ -38,6 +42,10 @@ def x_len(body: str) -> int:
 
 def intent(body: str) -> str:
     return "https://x.com/intent/post?text=" + urllib.parse.quote(body)
+
+
+# LinkedInは本文の事前入力ができないので、composerを開くだけ（コピー→貼付運用）
+LI_COMPOSE = "https://www.linkedin.com/feed/?shareActive=true"
 
 
 def c140(body: str) -> int:
@@ -112,10 +120,21 @@ def card_tips(it):
         rel2 = f"pa45/assets/x/html/{f}b/{img2.name}"
     label, cls = STATUS.get(it["status"], ("―", "st-todo"))
     miss = "" if img1.exists() and img2.exists() else '<div class="warn">PNGが見つかりません</div>'
+
+    # LinkedIn用の詳しい本文（作り方をXより丁寧に）。あればコピー用の隠しpreと専用ボタンを出す。
+    li_body = it.get("li_body")
+    li_pre = li_copy = ""
+    li_flag = ""
+    if li_body:
+        liid = f"li{key}{it['vol']}"
+        li_pre = (f'<pre class="body libody" id="{liid}">'
+                  f'{html.escape(li_body)}</pre>')
+        li_copy = f'<button class="btn copy li" data-t="{liid}">LinkedIn用をコピー</button>'
+        li_flag = '<span class="badge st-li">LinkedIn詳細あり</span>'
     return f'''
 <article class="card">
   <div class="head"><span class="no">{prefix}{it['vol']}</span><h2>{html.escape(it['title'])}</h2>
-    <span class="badge {cls}">{label}</span><span class="len">{x_len(it['body'])}</span></div>
+    <span class="badge {cls}">{label}</span>{li_flag}<span class="len">{x_len(it['body'])}</span></div>
   <div class="sub">{html.escape(it['sub'])}</div>
   <div class="shots">
     <a href="{rel1}" target="_blank"><img src="{rel1}" alt="1枚目" loading="lazy"></a>
@@ -123,11 +142,13 @@ def card_tips(it):
   </div>
   {miss}
   <pre class="body" id="{key}{it['vol']}">{html.escape(it['body'])}</pre>
+  {li_pre}
   <div class="acts">
-    <button class="btn copy" data-t="{key}{it['vol']}">本文をコピー</button>
+    <button class="btn copy" data-t="{key}{it['vol']}">X用をコピー</button>
     <button class="btn copyp" data-p="{html.escape(str(img1))}">1枚目パス</button>
     <button class="btn copyp" data-p="{html.escape(str(img2))}">2枚目パス</button>
     <a class="btn go" href="{html.escape(intent(it['body']))}" target="_blank" rel="noopener">Xの下書きを開く →</a>
+    {li_copy}<a class="btn li" href="{LI_COMPOSE}" target="_blank" rel="noopener">LinkedInを開く →</a>
   </div>
   <label class="done-row"><input type="checkbox" class="donebox" data-k="{key}-{it['vol']}"> 投稿済みにする</label>
 </article>'''
@@ -268,8 +289,30 @@ def group_announce(ev):
 </div>'''
 
 
+# ── タブ：LinkedIn（切り口ローテ）─────────────────────────────
+# これまでの活動を少しずつ、いろんな角度で投稿するための在庫。
+# LinkedInは本文の事前入力ができないため、「本文をコピー」→「LinkedInを開く」→貼り付け。
+# 文字数上限は3000（Xの280とは別物）。
+def card_linkedin(p):
+    n = len(p["body"])
+    over = ' style="color:#b3261e"' if n > 3000 else ""
+    key = f"li-{p['no']}"
+    return f'''
+<article class="card">
+  <div class="head"><span class="no">LI-{p['no']:02d}</span><h2>{html.escape(p['title'])}</h2>
+    <span class="ser ser-li">{html.escape(p.get('angle', ''))}</span>
+    <span class="len len3000"{over}>{n}</span></div>
+  <pre class="body" id="{key}">{html.escape(p['body'])}</pre>
+  <div class="acts">
+    <button class="btn copy go" data-t="{key}">本文をコピー</button>
+    <a class="btn" href="{LI_COMPOSE}" target="_blank" rel="noopener">LinkedInを開く →</a>
+  </div>
+  <label class="done-row"><input type="checkbox" class="donebox" data-k="{key}"> 投稿済みにする</label>
+</article>'''
+
+
 CSS = """
-:root{--bg:#f6f7f9;--card:#fff;--tx:#15202b;--mu:#5b6b7b;--ln:#e3e9f0;--ac:#1d9bf0;}
+:root{--bg:#f6f7f9;--card:#fff;--tx:#15202b;--mu:#5b6b7b;--ln:#e3e9f0;--ac:#1d9bf0;--li:#0a66c2;}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:"Noto Sans JP","Yu Gothic UI",sans-serif;background:var(--bg);color:var(--tx);
   line-height:1.7;padding:26px 16px 60px}
@@ -308,6 +351,7 @@ h1{font-size:24px;font-weight:900;margin-bottom:4px}
 .btn{font-size:12.5px;font-weight:700;border-radius:9px;padding:9px 12px;border:1px solid var(--ln);
   background:#fff;color:var(--tx);cursor:pointer;text-decoration:none;text-align:center;font-family:inherit}
 .btn.go{background:var(--ac);border-color:var(--ac);color:#fff;flex:1;min-width:140px}
+.btn.li{background:var(--li);border-color:var(--li);color:#fff}
 .btn.done{background:#0e9f6e;border-color:#0e9f6e;color:#fff}
 .done-row{font-size:11.5px;color:var(--mu);display:flex;align-items:center;gap:6px;cursor:pointer;
   user-select:none;margin-top:-2px}
@@ -324,7 +368,13 @@ body.hide-posted .card.posted{display:none}
 .ser{font-size:10px;font-weight:700;padding:1px 7px;border-radius:5px;margin-right:6px}
 .ser-tips{background:#e8f1fb;color:#0b3e72}
 .ser-cs{background:#efeafd;color:#4b31a8}
+.ser-li{background:#e5eff9;color:#0a66c2}
+.st-li{background:#e5eff9;color:#0a66c2}
+.libody{background:#f2f7fc;border-color:#cfe0f2}
+.libody::before{content:"LinkedIn用（作り方くわしめ）";display:block;font-size:10.5px;font-weight:800;
+  color:#0a66c2;margin:-2px 0 6px}
 .len140::after{content:"/140"}
+.len3000::after{content:"/3000";opacity:.55}
 .evgroup{margin-bottom:28px}
 .evhead{display:flex;flex-wrap:wrap;align-items:center;gap:10px;background:#eef3f8;
   border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:13px}
@@ -338,7 +388,7 @@ function show(pane){
   document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on', x.dataset.pane===pane));
   document.querySelectorAll('.pane').forEach(x=>x.classList.toggle('on', x.id===pane));
 }
-const HASH={'pane-pa45':'#pa45','pane-announce':'#announce','pane-tips':'#tips','pane-cs':'#cs','pane-blog':'#blog'};
+const HASH={'pane-pa45':'#pa45','pane-announce':'#announce','pane-tips':'#tips','pane-cs':'#cs','pane-blog':'#blog','pane-linkedin':'#linkedin'};
 document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
   show(t.dataset.pane);
   history.replaceState(null,'', HASH[t.dataset.pane]||'#pa45');
@@ -399,13 +449,22 @@ def main():
     ann.sort(key=lambda e: e["vol"])
     n_ann = len(ann) * 4
 
+    lif = ROOT / "data" / "linkedin-board.json"
+    lidata = json.loads(lif.read_text(encoding="utf-8")) if lif.exists() else {}
+    linkedin = lidata.get("items", [])
+    li_note = lidata.get("note", "")
+
     page = f'''<!doctype html>
 <html lang="ja"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <title>PA45 X投稿ボード</title>
 <style>{CSS}</style></head><body><div class="wrap">
 <h1>X投稿ボード</h1>
-<p class="lead">切り口ローテと技術Tipsの在庫。投稿ボタンを押すのは自分。</p>
+<p class="lead">切り口ローテと技術Tipsの在庫。投稿ボタンを押すのは自分。<br>
+<b>ビルド: {BUILT_AT}</b>　※この時刻が古いときは <b>Ctrl+Shift+R</b> で再読み込み。</p>
 
 <div class="tabs">
   <button class="tab on" data-pane="pane-pa45">PA45（切り口）<span class="c">{len(pa45)}本</span></button>
@@ -413,6 +472,7 @@ def main():
   <button class="tab" data-pane="pane-tips">X技術Tips<span class="c">{len(pa_tips)}本</span></button>
   <button class="tab" data-pane="pane-cs">コパスタ<span class="c">{len(cs)}本</span></button>
   <button class="tab" data-pane="pane-blog">ブログ<span class="c">下書き{n_draft}本</span></button>
+  <button class="tab" data-pane="pane-linkedin">LinkedIn<span class="c">{len(linkedin)}本</span></button>
 </div>
 
 <div class="filter">
@@ -441,6 +501,7 @@ def main():
   <div class="note">
     Power Automateの時短ワザ（#PowerAutomate）。画像2枚を1ツイートに添付します。<br>
     <b>「Xの下書きを開く」→ 画像ボタン → ファイル選択の枠に「画像2枚のパス」を貼り付け</b>で2枚同時に選べます。貼り付け順＝添付順（概念 → 作り方）。<br>
+    <b>LinkedInにも同じ内容を出せます</b>（自分の投稿の再利用はOK）。<b>本文をコピー →「LinkedInを開く」→ 貼り付け → 画像で同じ2枚を添付</b>。<br>
     Vol番号＝フォルダ番号（Vol.69以降が一致）。
   </div>
   <div class="grid">{"".join(card_tips(t) for t in pa_tips)}</div>
@@ -460,13 +521,21 @@ def main():
   <div class="grid">{"".join(card_blog(b) for b in blog)}</div>
 </section>
 
+<section class="pane" id="pane-linkedin">
+  <div class="note">
+    {li_note or "LinkedIn投稿の在庫（切り口ローテ）。"}<br>
+    切り口が続かないよう、週1本くらいのペースで混ぜて出すのがおすすめ。追加は <code>data/linkedin-board.json</code> に1件足して <code>python scripts/build-x-board.py</code>。
+  </div>
+  <div class="grid">{"".join(card_linkedin(p) for p in linkedin)}</div>
+</section>
+
 </div><script>{JS}</script></body></html>'''
 
     OUT.write_text(page, encoding="utf-8")
     print(f"[OK] {OUT}")
     print(f"  PA45 {len(pa45)}本 / 開催告知 {n_ann}本（{len(ann)}回×4）"
           f" / X技術Tips {len(pa_tips)}本 / コパスタ {len(cs)}本"
-          f" / ブログ {len(blog)}本（下書き{n_draft}）")
+          f" / ブログ {len(blog)}本（下書き{n_draft}） / LinkedIn {len(linkedin)}本")
     for e in ann:
         for slot, body in ann_bodies(e):
             print(f"    第{e['vol']}回 {slot['when']}: {c140(body)}字")
