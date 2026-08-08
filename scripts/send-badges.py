@@ -279,6 +279,7 @@ def send_email(to_email: str, session_num: int, badge_path: Path):
         18: "承認エスカレーション", 19: "効率化効果の見える化",
         20: "アダプティブカードの作り方",
         21: "はじめる前の基礎と環境準備",
+        22: "OfficeスクリプトとCopilotでExcel自動化",
     }
     theme = THEMES_JP.get(session_num)
     theme_part = f"『{theme}』" if theme else ""

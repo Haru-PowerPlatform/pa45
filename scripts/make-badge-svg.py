@@ -45,6 +45,7 @@ SESSIONS = {
     19: ("Effect Visualization", "2026-07-16", "dashboard"),
     20: ("Adaptive Cards", "2026-07-23", "card"),
     21: ("First Steps", "2026-07-30", "firststep"),
+    22: ("Office Scripts × Copilot", "2026-08-06", "excelscript"),
 }
 
 
@@ -70,6 +71,10 @@ PALETTE_OVERRIDE = {
     #          階段＋旗の「スタート」iconを主役に。
     21: dict(ring=("#7db9ff", "#0b234f"), disc=("#2563eb", "#08163a"),
              gold=GOLD, title="#ffffff", sub="#cfe0ff"),
+    # Vol.22：OfficeスクリプトでExcel自動化。Excelの“表計算グリーン”×ゴールド。
+    #          青(21)からの変化で、表計算シート＋Copilotのきらめきiconを主役に。
+    22: dict(ring=("#8ef0ab", "#0a3b1c"), disc=("#16a34a", "#052e13"),
+             gold=GOLD, title="#ffffff", sub="#b7f3c8"),
 }
 
 
@@ -243,10 +248,50 @@ def icon_firststep(g):
   </g>'''
 
 
+def icon_excelscript(g):
+    """OfficeスクリプトとCopilotでExcel自動化 = 表計算シート＋Copilotのきらめき。"""
+    gl, gm, gd = g
+    x0, y0, w, h = 350, 322, 180, 168
+    hdr = y0 + 40                       # ヘッダー行の下端
+    # 縦グリッド（4列）と横グリッド
+    grid = ""
+    for i in range(1, 4):
+        gx = x0 + w * i / 4
+        grid += (f'<line x1="{gx:.0f}" y1="{hdr}" x2="{gx:.0f}" y2="{y0+h}" '
+                 f'stroke="{gm}" stroke-width="2.4" opacity="0.55"/>')
+    for i in range(1, 3):
+        gy = hdr + (h - 40) * i / 3
+        grid += (f'<line x1="{x0}" y1="{gy:.0f}" x2="{x0+w}" y2="{gy:.0f}" '
+                 f'stroke="{gm}" stroke-width="2.4" opacity="0.55"/>')
+    # アクセントで塗る2セル（自動で埋まる“結果”のニュアンス）
+    cw, ch = w / 4, (h - 40) / 3
+    cell1 = f'<rect x="{x0+cw:.0f}" y="{hdr:.0f}" width="{cw:.0f}" height="{ch:.0f}" fill="{gl}" opacity="0.7"/>'
+    cell2 = f'<rect x="{x0+2*cw:.0f}" y="{hdr+ch:.0f}" width="{cw:.0f}" height="{ch:.0f}" fill="{gm}" opacity="0.45"/>'
+    # Copilotのきらめき（右上に飛び出す4点星・大小）
+    def star(px, py, R, r):
+        return (f'<path d="M{px} {py-R} L{px+r} {py-r} L{px+R} {py} L{px+r} {py+r} '
+                f'L{px} {py+R} L{px-r} {py+r} L{px-R} {py} L{px-r} {py-r} Z" '
+                f'fill="url(#sparkgrad)" stroke="{gd}" stroke-width="2.5" stroke-linejoin="round"/>')
+    spark = star(524, 322, 30, 9) + star(556, 356, 15, 4)
+    return f'''
+  <g filter="url(#ishadow)">
+    <!-- シート本体 -->
+    <rect x="{x0}" y="{y0}" width="{w}" height="{h}" rx="14"
+          fill="#fffaf0" stroke="{gd}" stroke-width="4"/>
+    <!-- ヘッダー行（金） -->
+    <path d="M{x0} {y0+14} q0 -14 14 -14 h{w-28} q14 0 14 14 v26 H{x0} Z" fill="url(#sparkgrad)"/>
+    {cell1}{cell2}
+    {grid}
+    <!-- 外枠の内側ハイライト -->
+    <rect x="{x0+4}" y="{hdr+3}" width="{w-8}" height="8" rx="4" fill="{gl}" opacity="0.35"/>
+    {spark}
+  </g>'''
+
+
 ICONS = {"foldermail": icon_foldermail, "copilot": icon_copilot,
          "deadline": icon_deadline, "approval": icon_approval,
          "dashboard": icon_dashboard, "card": icon_card,
-         "firststep": icon_firststep}
+         "firststep": icon_firststep, "excelscript": icon_excelscript}
 
 
 def knurl_dots(cx, cy, r, n, color):
