@@ -28,24 +28,25 @@ git pull --rebase --autostash origin main 2>&1 | ForEach-Object { Log "pull: $_"
 # 2) 集計を念のため再生成（CI未実行でも最新化）
 python scripts\build-insights.py 2>&1 | ForEach-Object { Log "insights: $_" }
 
-# 3) 新しい回が来たか判定（insights.jsonの開催回数で比較）
-$sessions = (python -c "import json;print(json.load(open(r'$repo\data\insights.json',encoding='utf-8'))['summary']['sessions'])").Trim()
+# 3) 集計値に変化があったか判定（開催回数だけでなく、回答増や%変化も拾う。
+#    遅れて届くアンケート回答で件数・割合が変わっても最新化するため）
+$sig = (python -c "import json;s=json.load(open(r'$repo\data\insights.json',encoding='utf-8'))['summary'];print('|'.join(str(s.get(k)) for k in ['sessions','participants_total','responses_total','understanding_avg','usefulness_avg','participants_max','participants_avg','archive_videos']))").Trim()
 $prev = if (Test-Path $stateFile) { (Get-Content $stateFile -Raw).Trim() } else { "" }
-Log "回数: 今回=$sessions / 前回=$prev"
+Log "集計: 今回=$sig / 前回=$prev"
 
-if ($sessions -ne $prev) {
-  Log "新しい回を検知 → OGP再生成＋push"
+if ($sig -ne $prev) {
+  Log "集計に変化を検知 → OGP再生成＋push"
   # 4) アイキャッチOGP 13枚を再生成（ヘッドレスChrome）
   python scripts\make-insight-ogp.py 2>&1 | ForEach-Object { Log "ogp: $_" }
   # 5) 変更があれば push（GitHub PagesにOGPを反映＝Xカードが最新絵になる）
   git add data\insights.json assets\ogp\*.png data\surveys\*.json 2>&1 | Out-Null
   if (git status --porcelain data\insights.json assets\ogp\*.png data\surveys\*.json) {
-    git commit -m "auto: 第$sessions回時点で集計・アイキャッチOGPを最新化" 2>&1 | ForEach-Object { Log "commit: $_" }
+    git commit -m "auto: 集計・アイキャッチOGPを最新化" 2>&1 | ForEach-Object { Log "commit: $_" }
     git push origin HEAD 2>&1 | ForEach-Object { Log "push: $_" }
   } else { Log "OGPに差分なし" }
-  Set-Content -Path $stateFile -Value $sessions -Encoding utf8
+  Set-Content -Path $stateFile -Value $sig -Encoding utf8
 } else {
-  Log "新回なし → OGP再生成はスキップ"
+  Log "集計に変化なし → OGP再生成はスキップ"
 }
 
 # 6) ローカルのX投稿ボードを毎回再ビルド（数字はinsights.jsonから流し込み）
