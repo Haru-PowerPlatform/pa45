@@ -55,8 +55,41 @@ def c140(body: str) -> int:
 
 
 # ── タブ1：PA45 切り口ローテ ────────────────────────────────
+def _insight_tokens():
+    """data/insights.json の集計値を {{...}} トークンとして返す。
+    rotation.md の累計数字はハードコードせずこのトークンで書き、ビルド時に流し込む
+    ＝毎週 build-insights.py が走れば、ボードの数字は自動で最新になる。"""
+    f = ROOT / "data" / "insights.json"
+    if not f.exists():
+        return {}
+    s = json.loads(f.read_text(encoding="utf-8")).get("summary", {})
+    tp = json.loads(f.read_text(encoding="utf-8")).get("time_preference_pcts", {})
+    slot = tp.get("20:15～21:00") or tp.get("20:15〜21:00") or 0
+    def d1(x):  # 小数1桁（例 91.0）
+        return f"{float(x):.1f}"
+    return {
+        "{{N}}":    str(s.get("sessions", "")),
+        "{{PT}}":   str(s.get("participants_total", "")),
+        "{{RT}}":   str(s.get("responses_total", "")),
+        "{{UND}}":  d1(s.get("understanding_avg", 0)),
+        "{{USE}}":  d1(s.get("usefulness_avg", 0)),
+        "{{AVG}}":  d1(s.get("participants_avg", 0)),
+        "{{AVGI}}": str(round(float(s.get("participants_avg", 0)))),
+        "{{MAX}}":  str(s.get("participants_max", "")),
+        "{{TIME}}": str(round(float(slot))),
+        "{{VID}}":  str(s.get("archive_videos", "")),
+    }
+
+
+def _apply_tokens(text, tokens):
+    for k, v in tokens.items():
+        text = text.replace(k, v)
+    return text
+
+
 def load_pa45():
     src = (ROOT / "data" / "drafts" / "x-pa45-rotation.md").read_text(encoding="utf-8")
+    src = _apply_tokens(src, _insight_tokens())
     titles = re.findall(r"\n## (.+)", src)
     bodies = re.findall(r"\n```\n(.*?)```", src, re.S)
     rows = re.findall(r"\|\s*(\d+)\s*\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|\s*([^|]+?)\s*\|", src)

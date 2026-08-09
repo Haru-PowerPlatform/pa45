@@ -17,9 +17,9 @@
 | 8 | 要望→第18回 承認 | youtu.be（第18回） | YouTube |
 | 9 | 「45分では足りない」→スライド常設 | slides/ | og-slides.png |
 | 10 | 「JSONが無理」→第14回 | youtu.be（第14回） | YouTube |
-| 11 | 動画アーカイブ18本 | videos/ | og-videos.png |
+| 11 | 動画アーカイブ{{VID}}本 | videos/ | og-videos.png |
 | 12 | 実行履歴の読み方（第11回） | youtu.be（第11回） | YouTube |
-| 13 | スライド全22回 | slides/ | og-slides.png |
+| 13 | スライド全{{N}}回 | slides/ | og-slides.png |
 | 14 | 初参加ガイド | start-here/ | og-start-here.png |
 | 15 | 参加者はこんな感じ | achievements/insights/ | insights-numbers.png |
 | 16 | 次回募集 | sessions/ | og-sessions.png |
@@ -27,7 +27,7 @@
 | 18 | 登壇・LT資料 | talks/ | og-talks.png |
 | 19 | 伸びた回＝AI・JSON | achievements/insights/ | insights-numbers.png |
 | 20 | いちばん難しかった回 | achievements/survey.html | og-survey.png |
-| 21 | 22回で扱ったアクション | achievements/insights/ | insights-numbers.png |
+| 21 | {{N}}回で扱ったアクション | achievements/insights/ | insights-numbers.png |
 | 22 | 見るだけ参加が普通にいる | start-here/ | og-start-here.png |
 | 23 | 上司にすすめられて来る人 | start-here/ | og-start-here.png |
 | 24 | 教える側の人も来ている | method/ | og-method.png |
@@ -37,11 +37,11 @@
 | 28 | アクションの命名ルール | method/ | og-method.png |
 | 29 | 詰め込んだ回は理解度が落ちた | insights/design.html | insights-design.png |
 | 30 | 英語表記を併記している理由 | method/ | og-method.png |
-| 31 | 22回、毎週ひとりで回している | achievements/ | og-achievements.png |
+| 31 | {{N}}回、毎週ひとりで回している | achievements/ | og-achievements.png |
 | 32 | アンケートを取り続ける理由 | achievements/survey.html | og-survey.png |
 | 33 | 全部無料・登録なし | slides/ | og-slides.png |
 | 34 | どこで知って来たのか | sessions/ | og-sessions.png |
-| 35 | 22回の積み上げ方（3段階） | videos/ | og-videos.png |
+| 35 | {{N}}回の積み上げ方（3段階） | videos/ | og-videos.png |
 | 36 | 第22回アンケート結果 | achievements/vol-22-survey.html | pa45-vol22-survey-ogp.png |
 
 ---
@@ -50,9 +50,9 @@
 ```
 【#PowerAutomate 45分ハンズオン講座＝PA45】
 
-PA45、22回でのべ865名の方に参加してもらえました。ありがとうございます。
+PA45、{{N}}回でのべ{{PT}}名の方に参加してもらえました。ありがとうございます。
 
-アンケート278件で「内容が理解できた」91.0%、「業務に役立ちそう」93.9%でした。参加者数の推移と全22回のテーマをまとめています。
+アンケート{{RT}}件で「内容が理解できた」{{UND}}%、「業務に役立ちそう」{{USE}}%でした。参加者数の推移と全{{N}}回のテーマをまとめています。
 
 https://haru-powerplatform.github.io/pa45/achievements/insights/
 ```
@@ -61,7 +61,7 @@ https://haru-powerplatform.github.io/pa45/achievements/insights/
 ```
 【#PowerAutomate 45分ハンズオン講座＝PA45】
 
-アンケートの「できるようになったこと」を22回分あわせてみました。
+アンケートの「できるようになったこと」を{{N}}回分あわせてみました。
 
 ・アクションの意味が分かった 77.3%
 ・自分で使えるようになった 40.3%
@@ -79,7 +79,7 @@ https://haru-powerplatform.github.io/pa45/achievements/insights/can-do.html
 
 「JSONはよく分からないなぁっと勝手に苦手意識を持っていましたが」
 
-PA45のアンケートにあった声です。JSON・式・実行履歴でつまずいた人が、そのあとどう書いてくれたか。278件から集めました。
+PA45のアンケートにあった声です。JSON・式・実行履歴でつまずいた人が、そのあとどう書いてくれたか。{{RT}}件から集めました。
 
 https://haru-powerplatform.github.io/pa45/achievements/insights/voices.html
 ```
@@ -92,7 +92,7 @@ https://haru-powerplatform.github.io/pa45/achievements/insights/voices.html
 
 PA45を45分・木曜20:15でやっている理由を書いてみました。
 
-希望時間を毎回聞いていて、278件中73%が20:15〜21:00でした。「前編・後編に分けても」という声もあって、それも載せています。
+希望時間を毎回聞いていて、{{RT}}件中{{TIME}}%が20:15〜21:00でした。「前編・後編に分けても」という声もあって、それも載せています。
 
 https://haru-powerplatform.github.io/pa45/achievements/insights/design.html
 ```
@@ -103,7 +103,7 @@ https://haru-powerplatform.github.io/pa45/achievements/insights/design.html
 
 PA45は毎回アンケートを取って、結果はそのままサイトに出しています。
 
-理解度・役立ち度のスコアと、コメントの原文。「少し難しかった」も隠さず残しています。第1回から第22回まで、回ごとに見られます。
+理解度・役立ち度のスコアと、コメントの原文。「少し難しかった」も隠さず残しています。第1回から第{{N}}回まで、回ごとに見られます。
 
 https://haru-powerplatform.github.io/pa45/achievements/survey.html
 ```
@@ -116,7 +116,7 @@ https://haru-powerplatform.github.io/pa45/achievements/survey.html
 
 PA45がこれまでやってきたことを、1ページにまとめました。
 
-22回の開催、のべ865名、アンケート278件、登壇や記事も。数字も参加者の声も、そのまま置いています。
+{{N}}回の開催、のべ{{PT}}名、アンケート{{RT}}件、登壇や記事も。数字も参加者の声も、そのまま置いています。
 
 https://haru-powerplatform.github.io/pa45/achievements/
 ```
@@ -153,7 +153,7 @@ https://youtu.be/cghp6TOJfw8
 
 「45分に収まらないですね」「前編・後編でもいいかも」という声を毎回もらいます。
 
-45分の枠は動かさない代わりに、解説スライドを全22回分そのまま置くことにしました。あとから同じ手順をたどれます。
+45分の枠は動かさない代わりに、解説スライドを全{{N}}回分そのまま置くことにしました。あとから同じ手順をたどれます。
 
 https://haru-powerplatform.github.io/pa45/slides/
 ```
@@ -171,13 +171,13 @@ https://haru-powerplatform.github.io/pa45/slides/
 https://youtu.be/9fkbQmOR6Fo
 ```
 
-## 11. 動画アーカイブ18本
+## 11. 動画アーカイブ{{VID}}本
 ```
 【#PowerAutomate 45分ハンズオン講座＝PA45】
 
-【録画アーカイブ18本】
+【録画アーカイブ{{VID}}本】
 
-PA45の過去回の録画を18本公開しています。
+PA45の過去回の録画を{{VID}}本公開しています。
 
 承認・Forms連携・通知・JSON・Copilotなど。気になるテーマの回だけ、その場で再生できます。1本45分です。
 
@@ -197,13 +197,13 @@ https://haru-powerplatform.github.io/pa45/videos/
 https://youtu.be/0Wvv6Bf3n18
 ```
 
-## 13. スライド全22回
+## 13. スライド全{{N}}回
 ```
 【#PowerAutomate 45分ハンズオン講座＝PA45】
 
-【スライド全22回公開】
+【スライド全{{N}}回公開】
 
-PA45で使った解説スライドを、全22回分そのまま公開しています。
+PA45で使った解説スライドを、全{{N}}回分そのまま公開しています。
 
 登録もログインも要りません。動画と合わせて使うと、その場で追いつけなかったところを埋められます。
 
@@ -229,9 +229,9 @@ https://haru-powerplatform.github.io/pa45/start-here/
 
 【参加者はこんな人たち】
 
-PA45の参加者は、1回あたり平均39名、多い回で76名でした。
+PA45の参加者は、1回あたり平均{{AVGI}}名、多い回で{{MAX}}名でした。
 
-「Power Automateをさわったことがない」から来る人が中心です。22回分の推移と、テーマごとの人数を出しています。
+「Power Automateをさわったことがない」から来る人が中心です。{{N}}回分の推移と、テーマごとの人数を出しています。
 
 https://haru-powerplatform.github.io/pa45/achievements/insights/
 ```
@@ -244,7 +244,7 @@ https://haru-powerplatform.github.io/pa45/achievements/insights/
 
 今週木曜20:15から、PA45をやります。45分だけ、一緒に手を動かす回です。
 
-初参加歓迎、見るだけでも大丈夫です。過去22回の録画とスライドも置いてあるので、よかったら。
+初参加歓迎、見るだけでも大丈夫です。過去{{N}}回の録画とスライドも置いてあるので、よかったら。
 
 https://haru-powerplatform.github.io/pa45/sessions/
 ```
@@ -293,18 +293,18 @@ https://haru-powerplatform.github.io/pa45/achievements/insights/
 ```
 【#PowerAutomate 45分ハンズオン講座＝PA45】
 
-22回のうち、理解度がいちばん低かったのは第12回の「式」で72.7%でした。
+{{N}}回のうち、理解度がいちばん低かったのは第12回の「式」で72.7%でした。
 
 日数計算を扱った回で「難しかったです（笑）」というコメントも来ました。うまくいかなかった回も、数字のまま置いています。
 
 https://haru-powerplatform.github.io/pa45/achievements/survey.html
 ```
 
-## 21. 22回で扱ったアクション
+## 21. {{N}}回で扱ったアクション
 ```
 【#PowerAutomate 45分ハンズオン講座＝PA45】
 
-PA45の22回で扱ってきたものを並べてみました。
+PA45の{{N}}回で扱ってきたものを並べてみました。
 
 変数／条件分岐／Apply to each／Forms連携／SharePoint登録／承認／Teams通知／実行履歴／式／Try-Catch／JSON／スケジュール／Copilot／見える化／アダプティブカード／Officeスクリプト
 
@@ -352,7 +352,7 @@ https://haru-powerplatform.github.io/pa45/method/
 
 「PL-900の試験勉強中なのですが、PA45のハンズオンをしているとイメージが掴みやすい」
 
-資格の勉強と手を動かすのは、セットにすると早いようです。録画が18本あるので、出てきた用語をその場で触って確かめられます。
+資格の勉強と手を動かすのは、セットにすると早いようです。録画が{{VID}}本あるので、出てきた用語をその場で触って確かめられます。
 
 https://haru-powerplatform.github.io/pa45/videos/
 ```
@@ -400,7 +400,7 @@ https://haru-powerplatform.github.io/pa45/method/
 
 【詰め込むと理解度が落ちる】
 
-22回やってみて分かったのは、詰め込んだ回ほど理解度が落ちる、ということでした。
+{{N}}回やってみて分かったのは、詰め込んだ回ほど理解度が落ちる、ということでした。
 
 式を扱った第12回は72.7%。1つに絞った回は9割を超えます。だから45分で1つしか扱わないようにしています。
 
@@ -420,13 +420,13 @@ PA45のスライドは、アクション名に英語表記も併記していま�
 https://haru-powerplatform.github.io/pa45/method/
 ```
 
-## 31. 22回、毎週ひとりで回している
+## 31. {{N}}回、毎週ひとりで回している
 ```
 【#PowerAutomate 45分ハンズオン講座＝PA45】
 
 PA45は毎週木曜、スライドを作って、実機で通して、当日進行して、アンケートを集計して録画を出す、という流れでやっています。
 
-22回続けてきました。ひとりでやっているぶん、毎回ちょっとずつやり方を見直しています。
+{{N}}回続けてきました。ひとりでやっているぶん、毎回ちょっとずつやり方を見直しています。
 
 https://haru-powerplatform.github.io/pa45/achievements/
 ```
@@ -437,7 +437,7 @@ https://haru-powerplatform.github.io/pa45/achievements/
 
 【アンケートを取り続ける理由】
 
-PA45は22回すべてでアンケートを取っていて、278件たまりました。
+PA45は{{N}}回すべてでアンケートを取っていて、{{RT}}件たまりました。
 
 理解度が落ちた回は、次の回の作りを変えています。声を読むためというより、次を直すために取っている感じです。
 
@@ -468,11 +468,11 @@ PA45を知ったきっかけで多いのは、Xとconnpass、それと他のコ�
 https://haru-powerplatform.github.io/pa45/sessions/
 ```
 
-## 35. 22回の積み上げ方
+## 35. {{N}}回の積み上げ方
 ```
 【#PowerAutomate 45分ハンズオン講座＝PA45】
 
-PA45の22回は、3段階で積んできました。
+PA45の{{N}}回は、3段階で積んできました。
 
 第1〜5回で変数・条件・繰り返し。第6〜10回でForms・SharePoint・承認・Teams。第11回以降は実行履歴や式など、つまずきやすいところ。
 
