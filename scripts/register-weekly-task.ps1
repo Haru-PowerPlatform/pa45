@@ -1,4 +1,4 @@
-# PA45 ボード自動リフレッシュを Windows タスクスケジューラに登録（一度だけ実行）
+﻿# PA45 ボード自動リフレッシュを Windows タスクスケジューラに登録（一度だけ実行）
 #   実行: powershell -ExecutionPolicy Bypass -File scripts\register-weekly-task.ps1
 # 毎朝08:00に weekly-board-refresh.ps1 を走らせる（PCが8時に落ちていても
 # StartWhenAvailable で起動後に取りこぼしを拾う）。

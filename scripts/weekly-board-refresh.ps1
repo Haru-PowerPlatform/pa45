@@ -1,4 +1,4 @@
-# PA45 ボード自動リフレッシュ（毎朝実行し、新しい回が来たときだけ本処理する）
+﻿# PA45 ボード自動リフレッシュ（毎朝実行し、新しい回が来たときだけ本処理する）
 # やること: 集計を最新化 →（新回検知時のみ）アイキャッチOGP13枚を再生成→push
 #          → 毎回ローカルのX投稿ボード(pa45-x-drafts.html)を再ビルド。
 # これで「講座が終わったら数字もOGPも全部最新」になる。
@@ -39,11 +39,18 @@ if ($sig -ne $prev) {
   # 4) アイキャッチOGP 13枚を再生成（ヘッドレスChrome）
   python scripts\make-insight-ogp.py 2>&1 | ForEach-Object { Log "ogp: $_" }
   # 5) 変更があれば push（GitHub PagesにOGPを反映＝Xカードが最新絵になる）
-  git add data\insights.json assets\ogp\*.png data\surveys\*.json 2>&1 | Out-Null
-  if (git status --porcelain data\insights.json assets\ogp\*.png data\surveys\*.json) {
-    git commit -m "auto: 集計・アイキャッチOGPを最新化" 2>&1 | ForEach-Object { Log "commit: $_" }
-    git push origin HEAD 2>&1 | ForEach-Object { Log "push: $_" }
-  } else { Log "OGPに差分なし" }
+  #    対象は make-insight-ogp の出力(insights-*, og-*)＋回別アンケートOGP＋集計/回答。
+  #    assets\ogp\*.png のワイルドカードは無関係な画像まで巻き込むので使わない。
+  $ogpGlobs = "assets\ogp\insights-*.png", "assets\ogp\og-*.png", "assets\ogp\pa45-vol*-survey-ogp.png"
+  git add data\insights.json data\surveys\*.json @ogpGlobs 2>&1 | Out-Null
+  $dirty = (git status --porcelain -- data\insights.json data\surveys\*.json @ogpGlobs | Out-String).Trim()
+  if ($dirty -ne "") {
+    (git commit -m "auto: 集計・アイキャッチOGPを最新化" 2>&1) | ForEach-Object { Log ("commit: " + $_) }
+    (git push origin HEAD 2>&1) | ForEach-Object { Log ("push: " + $_) }
+  }
+  else {
+    Log "OGPに差分なし"
+  }
   Set-Content -Path $stateFile -Value $sig -Encoding utf8
 } else {
   Log "集計に変化なし → OGP再生成はスキップ"
