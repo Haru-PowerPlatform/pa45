@@ -202,6 +202,37 @@
   .fork .arm.yes .cond-lbl{background:#fdba74;color:#7c2d12;}
   .fork .arm.no .cond-lbl{background:#86efac;color:#14532d;}
 
+  /* ==== S9 台帳→返す値→判定 パイプライン図 ==== */
+  .pipe{display:grid;grid-template-columns:1fr 58px 0.72fr 58px 1fr;align-items:center;margin:12px 0 0;}
+  .pstage{display:flex;flex-direction:column;align-items:center;}
+  .pcap{font-size:15px;font-weight:800;color:#2c3a94;margin-bottom:8px;display:flex;align-items:center;gap:7px;}
+  .pcap .pno{background:#3a4fb8;color:#fff;width:24px;height:24px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:14px;flex:0 0 auto;}
+  .parrow{display:flex;flex-direction:column;align-items:center;justify-content:center;color:#3a4fb8;font-size:30px;font-weight:900;line-height:1;}
+  .parrow .pa-lbl{font-size:12px;font-weight:800;color:#64748b;margin-bottom:3px;text-align:center;line-height:1.2;}
+  .pipe .uimock{width:100%;max-width:300px;}
+  .pipe .xl-title{font-size:12px;padding:6px 12px;}
+  .pipe .xl-title span{opacity:.9;font-weight:600;}
+  .pipe .xl-grid th,.pipe .xl-grid td{padding:5px 12px;font-size:13.5px;}
+  .pipe .xl-grid td.amt{text-align:right;font-variant-numeric:tabular-nums;}
+  .sumrow{background:#fff7ed;border-top:2px solid #fdba74;padding:7px 12px;font-size:14px;color:#c2410c;font-weight:800;display:flex;justify-content:space-between;align-items:center;}
+  .sumrow b{font-size:18px;}
+  .retbox{background:linear-gradient(135deg,#1a5c38,#217346);color:#fff;border-radius:16px;padding:16px 18px;text-align:center;box-shadow:0 8px 22px rgba(33,115,70,.28);width:100%;max-width:210px;}
+  .retbox .retlbl{font-size:13.5px;font-weight:700;opacity:.92;font-family:"Consolas",monospace;}
+  .retbox .retnum{font-size:46px;font-weight:900;line-height:1.05;margin:4px 0 2px;letter-spacing:-.01em;}
+  .retbox .retnum span{font-size:20px;font-weight:700;margin-left:3px;}
+  .retbox .rethint{font-size:12.5px;opacity:.92;line-height:1.4;}
+  .judgebox{background:#eef1fc;border:2px solid #aab6f0;border-radius:16px;padding:13px 16px;width:100%;max-width:300px;box-shadow:0 8px 22px rgba(44,58,148,.15);}
+  .judgebox .jq{text-align:center;font-size:21px;font-weight:900;color:#2c3a94;line-height:1.25;}
+  .judgebox .jq .op{color:#c2410c;font-size:24px;margin:0 3px;}
+  .judgebox .jq small{display:block;font-size:12.5px;font-weight:700;color:#64748b;margin-top:2px;font-family:"Consolas",monospace;}
+  .judgebox .jarms{display:flex;flex-direction:column;gap:8px;margin-top:11px;}
+  .judgebox .jy,.judgebox .jn{border-radius:10px;padding:8px 13px;font-size:15px;font-weight:800;display:flex;align-items:center;gap:8px;}
+  .judgebox .jy{background:#fff7ed;border:1.5px solid #fdba74;color:#9a3412;}
+  .judgebox .jn{background:var(--green-bg);border:1.5px solid #86efac;color:#065f46;}
+  .judgebox .jy .tag,.judgebox .jn .tag{font-size:12px;font-weight:900;padding:2px 9px;border-radius:12px;flex:0 0 auto;}
+  .judgebox .jy .tag{background:#fdba74;color:#7c2d12;}
+  .judgebox .jn .tag{background:#86efac;color:#14532d;}
+
   /* ===== 見切れ微調整（検証後に追記） ===== */
   #s2 .slide-body{padding-top:14px;}
   #s2 .introrow{margin:2px 0 6px;}
@@ -461,21 +492,50 @@
   <span class="slide-num">10 / 20</span>
   <div class="slide-head"><div class="slide-eyebrow">STEP ①｜全体像</div><h1 class="slide-title">今日の題材：経費の自動振り分け</h1><div class="concept-dot">Map</div></div>
   <div class="slide-body">
-    <p style="margin:0;color:var(--muted);font-size:19px;line-height:1.5;">「経費の合計を出す → 金額で判定 → 高いなら承認依頼・安いなら自動処理」を、まるごと自動にします。</p>
-    <div class="roles">
-      <div class="r xl"><div class="ic">📊</div><div class="nm">Excel台帳</div><div class="role">経費データ</div></div>
-      <div class="r xl"><div class="ic">⚙️</div><div class="nm">スクリプト</div><div class="role">合計（答え）を返す</div></div>
-      <div class="r cond"><div class="ic">🔀</div><div class="nm">条件</div><div class="role">金額で判定</div></div>
-      <div class="r teams"><div class="ic">📣</div><div class="nm">Teams</div><div class="role">送り先が変わる</div></div>
+    <p style="margin:0 0 2px;color:var(--muted);font-size:18px;line-height:1.5;">やることは3つ。<b style="color:#2c3a94;">① 台帳から合計を出す → ② その"答え"を返す → ③ 金額で判定して行き先を分ける</b>。</p>
+    <div class="pipe">
+      <!-- ① 台帳のモックアップ -->
+      <div class="pstage">
+        <div class="pcap"><span class="pno">①</span>今回の台帳（Excel）</div>
+        <div class="uimock">
+          <div class="xl-title">📊 pa45-vol23-expense.xlsx <span>／ ExpenseTable</span></div>
+          <table class="xl-grid">
+            <thead><tr><th>Name</th><th style="text-align:right;">Amount</th></tr></thead>
+            <tbody>
+              <tr><td>Tanaka</td><td class="amt">3,000</td></tr>
+              <tr><td>Suzuki</td><td class="amt">15,000</td></tr>
+              <tr><td>Sato</td><td class="amt">8,000</td></tr>
+              <tr><td>Yamada</td><td class="amt">25,000</td></tr>
+              <tr><td>Ito</td><td class="amt">1,200</td></tr>
+            </tbody>
+          </table>
+          <div class="sumrow"><span>合計 Amount</span><b>52,200</b></div>
+        </div>
+      </div>
+      <div class="parrow"><span class="pa-lbl">⚙️スクリプト<br>実行</span>→</div>
+      <!-- ② 返す値 -->
+      <div class="pstage">
+        <div class="pcap"><span class="pno">②</span>返す値（答え）</div>
+        <div class="retbox">
+          <div class="retlbl">return / result</div>
+          <div class="retnum">52,200<span>円</span></div>
+          <div class="rethint">この1つの数字が<br>フローに渡る</div>
+        </div>
+      </div>
+      <div class="parrow"><span class="pa-lbl">🔀条件<br>で判定</span>→</div>
+      <!-- ③ 判定と行き先 -->
+      <div class="pstage">
+        <div class="pcap"><span class="pno">③</span>判定 → 行き先</div>
+        <div class="judgebox">
+          <div class="jq">52,200 <span class="op">＞</span> 50,000 ？<small>result &gt; 50000</small></div>
+          <div class="jarms">
+            <div class="jy"><span class="tag">はい</span>🙋 上長に承認依頼</div>
+            <div class="jn"><span class="tag">いいえ</span>✅ 自動で処理</div>
+          </div>
+        </div>
+      </div>
     </div>
-    <div class="flowline">
-      <span class="step">📊 経費の合計</span><span class="ar">→</span>
-      <span class="step hot">🔀 5万円より大きい？</span><span class="ar">→</span>
-      <span class="step">🙋 上長に承認依頼</span>
-      <span style="color:var(--hint);font-weight:800;">／</span>
-      <span class="step">✅ 自動で処理</span>
-    </div>
-    <div class="callout pa" style="margin-top:auto;"><strong>役割分担がポイント。</strong>スクリプトは <b>「答え（合計）を出す」だけ</b>。<b>判定して行き先を選ぶ</b>のは Power Automate の「条件」。今日は <span style="color:#c2410c;font-weight:800;">🔀 の分岐</span>を作ります。</div>
+    <div class="callout pa" style="margin-top:auto;"><strong>役割分担がポイント。</strong>スクリプトは <b>「①→②＝答え（合計）を出す」だけ</b>。<b>③ 判定して行き先を選ぶ</b>のは Power Automate の「条件」。今日つくるのは <span style="color:#c2410c;font-weight:800;">② と ③ のつながり</span>です。</div>
   </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 
