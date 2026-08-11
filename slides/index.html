@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="PA45 スライド一覧 — Xで投稿した1枚スライドをカテゴリ別に整理。関数・概念をひとつずつ学べます。">
-  <title>スライド一覧｜PA45 Power Automate 関数を1枚で整理</title>
+  <meta name="description" content="PA45がXで投稿しているPower Automate / Copilot Studioの技術チップスをVol順に一覧。スライド画像をそのまま大きく並べ、パッと見で追えます。">
+  <title>Xスライド一覧（Vol順）｜PA45 Power Automate 技術チップス</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -20,63 +20,54 @@
     .f-pill:hover, .f-pill.active {
       background: var(--c-blue-bg); border-color: var(--c-blue-mid); color: var(--c-blue-text);
     }
-    .slides-grid {
-      display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 12px;
+    .x-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 18px; }
+    .x-card {
+      margin: 0; background: var(--c-surface); border-radius: var(--radius-lg);
+      overflow: hidden; box-shadow: var(--shadow-card); cursor: zoom-in;
+      transition: box-shadow .2s, transform .2s; outline: none;
     }
-    .slide-card {
-      background: var(--c-surface); border-radius: var(--radius-lg);
-      overflow: hidden; box-shadow: var(--shadow-card);
-      transition: box-shadow .2s, transform .2s; display: block;
-    }
-    .slide-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
-    .slide-img {
-      height: 90px; display: flex; align-items: center;
-      justify-content: center; font-size: 11px; color: var(--c-hint); letter-spacing: .04em;
-    }
-    .slide-img.var    { background: var(--c-blue-bg); }
-    .slide-img.cond   { background: var(--c-purple-bg); }
-    .slide-img.select { background: var(--c-green-bg); }
-    .slide-img.filter { background: var(--c-amber-bg); }
-    .slide-img.ate    { background: var(--c-coral-bg); }
-    .slide-img.date   { background: var(--c-teal-bg); }
-    .slide-img.exp    { background: var(--c-amber-bg); }
-    .slide-img.pjson  { background: var(--c-purple-bg); }
-    .slide-img.dbg    { background: #f1efe8; }
-    .slide-img.cs     { background: #e8f5e9; }
-    .slide-img.teams  { background: #e3f2fd; }
-    .tag-code.cs      { background: #c8e6c9; color: #1b5e20; }
-    .tag-code.teams   { background: #bbdefb; color: #0d47a1; }
-    .slide-body { padding: 10px 12px; }
-    .slide-title { font-size: 12px; font-weight: 500; line-height: 1.45; margin: 5px 0 4px; }
-    .slide-meta  { font-size: 10px; color: var(--c-hint); margin-bottom: 7px; }
-    .slide-links { display: flex; gap: 6px; flex-wrap: wrap; }
-    .slide-link {
-      font-size: 10px; color: var(--c-blue-mid);
-      border: 1px solid var(--c-border-md); border-radius: 3px;
-      padding: 1px 7px; transition: background .15s;
-    }
-    .slide-link:hover { background: var(--c-blue-bg); border-color: var(--c-blue-mid); }
-    .hidden { display: none; }
-    @media (max-width: 640px) {
-      .slides-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
-    }
-    @media (max-width: 380px) {
-      .slides-grid { grid-template-columns: 1fr; }
+    .x-card:hover, .x-card:focus-visible { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
+    .x-card:focus-visible { box-shadow: 0 0 0 3px var(--c-blue-mid); }
+    .x-shot { aspect-ratio: 16 / 9; background: var(--c-blue-bg); }
+    .x-shot img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .x-shot.cs { background: #e8f5e9; } .x-shot.teams { background: #e3f2fd; }
+    .x-shot.pjson { background: var(--c-purple-bg); } .x-shot.cond { background: var(--c-purple-bg); }
+    .x-shot.date { background: var(--c-teal-bg); } .x-shot.filter { background: var(--c-amber-bg); }
+    .x-shot.ate { background: var(--c-coral-bg); } .x-shot.exp { background: var(--c-amber-bg); }
+    .x-shot.dbg { background: #f1efe8; }
+    .x-cap { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 10px 14px; }
+    .x-vol { font-family: var(--font-mono); font-weight: 500; font-size: 12px; color: var(--c-blue-text); background: var(--c-blue-bg); padding: 2px 8px; border-radius: 5px; flex-shrink: 0; }
+    .tag-code.cs { background: #c8e6c9; color: #1b5e20; }
+    .tag-code.teams { background: #bbdefb; color: #0d47a1; }
+    .x-ttl { font-size: 13px; font-weight: 500; line-height: 1.45; color: var(--c-text); flex: 1 1 100%; margin-top: 2px; }
+    .x-card.hidden { display: none; }
+    .lb { position: fixed; inset: 0; z-index: 999; background: rgba(12,20,32,.92); display: none; align-items: center; justify-content: center; padding: 24px; }
+    .lb.open { display: flex; }
+    .lb-img { max-width: min(1200px, 94vw); max-height: 78vh; width: auto; border-radius: 10px; box-shadow: 0 20px 60px rgba(0,0,0,.5); }
+    .lb-cap { position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%); color: #fff; font-size: 14px; text-align: center; max-width: 90vw; line-height: 1.5; }
+    .lb-cap b { color: #9ecbff; font-family: var(--font-mono); margin-right: 8px; }
+    .lb-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,.14); color: #fff; border: none; width: 52px; height: 52px; border-radius: 50%; font-size: 26px; cursor: pointer; transition: background .15s; }
+    .lb-btn:hover { background: rgba(255,255,255,.28); }
+    .lb-prev { left: 18px; } .lb-next { right: 18px; }
+    .lb-close { position: absolute; top: 16px; right: 20px; background: none; border: none; color: #fff; font-size: 34px; cursor: pointer; line-height: 1; }
+    @media (max-width: 720px) {
+      .x-grid { grid-template-columns: 1fr; gap: 14px; }
+      .lb-btn { width: 42px; height: 42px; font-size: 22px; }
+      .lb-prev { left: 6px; } .lb-next { right: 6px; }
     }
   </style>
 
-  <!-- SEO / OGP -->
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="PA45 — Power Automate 45">
   <meta property="og:locale" content="ja_JP">
   <meta property="og:url" content="https://haru-powerplatform.github.io/pa45/slides/">
-  <meta property="og:title" content="PA45 解説スライド — 全20回分を公開しています">
-  <meta property="og:description" content="PA45で使った解説スライドを回ごとに公開。その場で追いつけなくても、あとから同じ手順をたどれます。登録不要・無料。">
+  <meta property="og:title" content="Xスライド一覧（Vol順）— Power Automate 技術チップス">
+  <meta property="og:description" content="Xで投稿しているPower Automate / Copilot Studioの技術チップスをVol順に一覧。スライドをそのまま大きく並べ、パッと見で追えます。">
   <meta property="og:image" content="https://haru-powerplatform.github.io/pa45/assets/ogp/og-slides.png">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:site" content="@isamu_Automate">
-  <meta name="twitter:title" content="PA45 解説スライド — 全20回分を公開しています">
-  <meta name="twitter:description" content="PA45で使った解説スライドを回ごとに公開。その場で追いつけなくても、あとから同じ手順をたどれます。登録不要・無料。">
+  <meta name="twitter:title" content="Xスライド一覧（Vol順）— Power Automate 技術チップス">
+  <meta name="twitter:description" content="Xで投稿しているPower Automate / Copilot Studioの技術チップスをVol順に一覧。パッと見で追えます。">
   <meta name="twitter:image" content="https://haru-powerplatform.github.io/pa45/assets/ogp/og-slides.png">
   <link rel="canonical" href="https://haru-powerplatform.github.io/pa45/slides/">
 </head>
@@ -109,9 +100,9 @@
 
 <section class="page-hero">
   <div class="container">
-    <span class="page-hero-eyebrow">Slides</span>
-    <h1 class="page-hero-h1">関数の概念を、1枚で整理する</h1>
-    <p class="page-hero-sub">Xで投稿しているPower Automateの技術チップス（1枚スライド）をまとめた、予習・すき間学習用のページです。<br>※ 各回の講座スライド（復習用）は「参加する（Sessions）」の各回カードにまとまっています。</p>
+    <span class="page-hero-eyebrow">X Slides</span>
+    <h1 class="page-hero-h1">Xのスライド投稿を、Vol順にまとめて</h1>
+    <p class="page-hero-sub">Xで投稿しているPower Automate / Copilot Studioの技術チップスをVol順に並べました。<br>スライドをそのまま大きく表示。カードをクリックすると拡大して、パラパラと見比べられます。</p>
   </div>
 </section>
 
@@ -121,7 +112,7 @@
       <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><rect x="3" y="4" width="18" height="13" rx="2"/><line x1="8" y1="20" x2="16" y2="20"/><line x1="12" y1="17" x2="12" y2="20"/></svg>
       <div style="flex:1;min-width:0;">
         <div style="font-size:12px;letter-spacing:.06em;opacity:.85;font-weight:700;">📚 各回の講座スライド（復習用）はこちら</div>
-        <div style="font-size:17px;font-weight:700;margin-top:3px;line-height:1.4;">第1〜20回の解説スライド・サンプルフロー・アンケート結果をまとめています</div>
+        <div style="font-size:17px;font-weight:700;margin-top:3px;line-height:1.4;">第1〜23回の解説スライド・サンプルフロー・アンケート結果をまとめています</div>
       </div>
       <div style="flex-shrink:0;font-weight:700;background:rgba(255,255,255,.18);padding:9px 18px;border-radius:24px;white-space:nowrap;">Sessionsで見る →</div>
     </a>
@@ -131,12 +122,10 @@
 <section class="section">
   <div class="container">
 
-    <!-- 学びの流れ -->
     <p style="font-size:13px;color:var(--c-muted);margin-bottom:18px;line-height:1.7;padding:10px 14px;background:var(--c-blue-bg);border-radius:var(--radius-md);">
-      Xで投稿した技術チップスを、PA45で一緒に手を動かして試す流れで学びを深めています。スライドは予習にも復習にも使えます。
+      左上のVol.1から順に並べています。カテゴリで絞り込みたいときは下のボタンを押してください。
     </p>
 
-    <!-- フィルターバー -->
     <div class="filter-bar">
       <button class="f-pill active" onclick="filterSlides('all', this)">すべて</button>
       <button class="f-pill" onclick="filterSlides('cs', this)">CS</button>
@@ -148,365 +137,242 @@
       <button class="f-pill" onclick="filterSlides('ate', this)">ATE</button>
       <button class="f-pill" onclick="filterSlides('exp', this)">EXP</button>
       <button class="f-pill" onclick="filterSlides('dbg', this)">DBG</button>
-      <button class="f-pill" onclick="filterSlides('var', this)">VAR</button>
-      <button class="f-pill" onclick="filterSlides('select', this)">SELECT</button>
     </div>
 
-    <!-- スライドグリッド -->
-    <!-- ★ここにスライドを追加していきます。data-cat="カテゴリ名" を書くことでフィルターが機能します -->
-    <div class="slides-grid" id="slidesGrid">
-
-      <!-- Vol.1 CS -->
-      <a href="https://www.automate136.com/?p=1294" target="_blank" rel="noopener" class="slide-card" data-cat="cs">
-        <div class="slide-img cs" style="padding:0;overflow:hidden;">
-          <img src="../assets/x/slides/cs_slide01.png" alt="Vol.1" style="width:100%;height:100%;object-fit:cover;display:block;">
-        </div>
-        <div class="slide-body">
+    <div class="x-grid" id="slidesGrid">
+      <figure class="x-card" data-cat="cs" data-vol="1" data-title="Copilot Studio × Power Automate × Word連携　つまずきポイント3選" data-date="2026-02-15" tabindex="0" role="button" aria-label="Vol.1 Copilot Studio × Power Automate × Word連携　つまずきポイント3選 を拡大">
+        <div class="x-shot cs"><img src="../assets/x/2026-02-15-x-vol01.png" alt="Vol.1 Copilot Studio × Power Automate × Word連携　つまずきポイント3選" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap">
+          <span class="x-vol">Vol.1</span>
           <span class="tag-code cs">CS</span>
-          <div class="slide-title">Copilot Studio × Power Automate × Word連携　つまずきポイント3選</div>
-          <div class="slide-meta">2026-02-15 · Vol.1</div>
-          <div class="slide-links"><span class="slide-link">ブログを読む</span></div>
-        </div>
-      </a>
-      <!-- Vol.2 CS -->
-      <a href="https://www.automate136.com/?p=1296" target="_blank" rel="noopener" class="slide-card" data-cat="cs">
-        <div class="slide-img cs" style="padding:0;overflow:hidden;">
-          <img src="../assets/x/slides/cs_slide02.png" alt="Vol.2" style="width:100%;height:100%;object-fit:cover;display:block;">
-        </div>
-        <div class="slide-body">
+          <span class="x-ttl">Copilot Studio × Power Automate × Word連携　つまずきポイント3選</span>
+        </figcaption>
+      </figure>
+      <figure class="x-card" data-cat="cs" data-vol="2" data-title="Copilot Studio × Power Automateの連携ステップ" data-date="2026-02-17" tabindex="0" role="button" aria-label="Vol.2 Copilot Studio × Power Automateの連携ステップ を拡大">
+        <div class="x-shot cs"><img src="../assets/x/2026-02-17-x-vol02.png" alt="Vol.2 Copilot Studio × Power Automateの連携ステップ" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap">
+          <span class="x-vol">Vol.2</span>
           <span class="tag-code cs">CS</span>
-          <div class="slide-title">Copilot Studio × Power Automateの連携ステップ</div>
-          <div class="slide-meta">2026-02-17 · Vol.2</div>
-          <div class="slide-links"><span class="slide-link">ブログを読む</span></div>
-        </div>
-      </a>
-      <!-- Vol.3 CS -->
-      <a href="https://www.automate136.com/?p=1298" target="_blank" rel="noopener" class="slide-card" data-cat="cs">
-        <div class="slide-img cs" style="padding:0;overflow:hidden;">
-          <img src="../assets/x/slides/cs_slide03.png" alt="Vol.3" style="width:100%;height:100%;object-fit:cover;display:block;">
-        </div>
-        <div class="slide-body">
+          <span class="x-ttl">Copilot Studio × Power Automateの連携ステップ</span>
+        </figcaption>
+      </figure>
+      <figure class="x-card" data-cat="cs" data-vol="3" data-title="Wordのコンテンツコントロール設定方法（前編）" data-date="2026-02-19" tabindex="0" role="button" aria-label="Vol.3 Wordのコンテンツコントロール設定方法（前編） を拡大">
+        <div class="x-shot cs"><img src="../assets/x/2026-02-19-x-vol03.png" alt="Vol.3 Wordのコンテンツコントロール設定方法（前編）" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap">
+          <span class="x-vol">Vol.3</span>
           <span class="tag-code cs">CS</span>
-          <div class="slide-title">Wordのコンテンツコントロール設定方法（前編）</div>
-          <div class="slide-meta">2026-02-19 · Vol.3</div>
-          <div class="slide-links"><span class="slide-link">ブログを読む</span></div>
-        </div>
-      </a>
-      <!-- Vol.4 CS -->
-      <a href="https://www.automate136.com/?p=1300" target="_blank" rel="noopener" class="slide-card" data-cat="cs">
-        <div class="slide-img cs" style="padding:0;overflow:hidden;">
-          <img src="../assets/x/slides/cs_slide04.png" alt="Vol.4" style="width:100%;height:100%;object-fit:cover;display:block;">
-        </div>
-        <div class="slide-body">
+          <span class="x-ttl">Wordのコンテンツコントロール設定方法（前編）</span>
+        </figcaption>
+      </figure>
+      <figure class="x-card" data-cat="cs" data-vol="4" data-title="Wordのコンテンツコントロール設定方法（後編）" data-date="2026-02-21" tabindex="0" role="button" aria-label="Vol.4 Wordのコンテンツコントロール設定方法（後編） を拡大">
+        <div class="x-shot cs"><img src="../assets/x/2026-02-21-x-vol04.png" alt="Vol.4 Wordのコンテンツコントロール設定方法（後編）" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap">
+          <span class="x-vol">Vol.4</span>
           <span class="tag-code cs">CS</span>
-          <div class="slide-title">Wordのコンテンツコントロール設定方法（後編）</div>
-          <div class="slide-meta">2026-02-21 · Vol.4</div>
-          <div class="slide-links"><span class="slide-link">ブログを読む</span></div>
-        </div>
-      </a>
-      <!-- Vol.5 CS -->
-      <a href="https://www.automate136.com/?p=1302" target="_blank" rel="noopener" class="slide-card" data-cat="cs">
-        <div class="slide-img cs" style="padding:0;overflow:hidden;">
-          <img src="../assets/x/slides/cs_slide05.png" alt="Vol.5" style="width:100%;height:100%;object-fit:cover;display:block;">
-        </div>
-        <div class="slide-body">
+          <span class="x-ttl">Wordのコンテンツコントロール設定方法（後編）</span>
+        </figcaption>
+      </figure>
+      <figure class="x-card" data-cat="cs" data-vol="5" data-title="Copilot Studio｜質問ノードは聞く順番を意識すると会話が自然になる" data-date="2026-02-23" tabindex="0" role="button" aria-label="Vol.5 Copilot Studio｜質問ノードは聞く順番を意識すると会話が自然になる を拡大">
+        <div class="x-shot cs"><img src="../assets/x/2026-02-23-x-vol05.png" alt="Vol.5 Copilot Studio｜質問ノードは聞く順番を意識すると会話が自然になる" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap">
+          <span class="x-vol">Vol.5</span>
           <span class="tag-code cs">CS</span>
-          <div class="slide-title">Copilot Studio｜質問ノードは聞く順番を意識すると会話が自然になる</div>
-          <div class="slide-meta">2026-02-23 · Vol.5</div>
-          <div class="slide-links"><span class="slide-link">ブログを読む</span></div>
-        </div>
-      </a>
-      <!-- Vol.6 CS -->
-      <a href="https://www.automate136.com/?p=1304" target="_blank" rel="noopener" class="slide-card" data-cat="cs">
-        <div class="slide-img cs" style="padding:0;overflow:hidden;">
-          <img src="../assets/x/slides/cs_slide06.png" alt="Vol.6" style="width:100%;height:100%;object-fit:cover;display:block;">
-        </div>
-        <div class="slide-body">
+          <span class="x-ttl">Copilot Studio｜質問ノードは聞く順番を意識すると会話が自然になる</span>
+        </figcaption>
+      </figure>
+      <figure class="x-card" data-cat="cs" data-vol="6" data-title="Copilot Studio｜Topicsの左右の使い方" data-date="2026-02-25" tabindex="0" role="button" aria-label="Vol.6 Copilot Studio｜Topicsの左右の使い方 を拡大">
+        <div class="x-shot cs"><img src="../assets/x/2026-02-25-x-vol06.png" alt="Vol.6 Copilot Studio｜Topicsの左右の使い方" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap">
+          <span class="x-vol">Vol.6</span>
           <span class="tag-code cs">CS</span>
-          <div class="slide-title">Copilot Studio｜Topicsの左右の使い方</div>
-          <div class="slide-meta">2026-02-25 · Vol.6</div>
-          <div class="slide-links"><span class="slide-link">ブログを読む</span></div>
-        </div>
-      </a>
-      <!-- Vol.7 CS -->
-      <a href="https://www.automate136.com/?p=1306" target="_blank" rel="noopener" class="slide-card" data-cat="cs">
-        <div class="slide-img cs" style="padding:0;overflow:hidden;">
-          <img src="../assets/x/slides/cs_slide07.png" alt="Vol.7" style="width:100%;height:100%;object-fit:cover;display:block;">
-        </div>
-        <div class="slide-body">
+          <span class="x-ttl">Copilot Studio｜Topicsの左右の使い方</span>
+        </figcaption>
+      </figure>
+      <figure class="x-card" data-cat="cs" data-vol="7" data-title="Copilot Studio｜ホーム画面4つのアイコンの役割" data-date="2026-02-27" tabindex="0" role="button" aria-label="Vol.7 Copilot Studio｜ホーム画面4つのアイコンの役割 を拡大">
+        <div class="x-shot cs"><img src="../assets/x/2026-02-27-x-vol07.png" alt="Vol.7 Copilot Studio｜ホーム画面4つのアイコンの役割" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap">
+          <span class="x-vol">Vol.7</span>
           <span class="tag-code cs">CS</span>
-          <div class="slide-title">Copilot Studio｜ホーム画面4つのアイコンの役割</div>
-          <div class="slide-meta">2026-02-27 · Vol.7</div>
-          <div class="slide-links"><span class="slide-link">ブログを読む</span></div>
-        </div>
-      </a>
-      <!-- Vol.8 CS -->
-      <a href="https://www.automate136.com/?p=1308" target="_blank" rel="noopener" class="slide-card" data-cat="cs">
-        <div class="slide-img cs" style="padding:0;overflow:hidden;">
-          <img src="../assets/x/slides/cs_slide08.png" alt="Vol.8" style="width:100%;height:100%;object-fit:cover;display:block;">
-        </div>
-        <div class="slide-body">
+          <span class="x-ttl">Copilot Studio｜ホーム画面4つのアイコンの役割</span>
+        </figcaption>
+      </figure>
+      <figure class="x-card" data-cat="cs" data-vol="8" data-title="Copilot Studio｜ツール（エージェントフロー）の役割" data-date="2026-03-01" tabindex="0" role="button" aria-label="Vol.8 Copilot Studio｜ツール（エージェントフロー）の役割 を拡大">
+        <div class="x-shot cs"><img src="../assets/x/2026-03-01-x-vol08.png" alt="Vol.8 Copilot Studio｜ツール（エージェントフロー）の役割" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap">
+          <span class="x-vol">Vol.8</span>
           <span class="tag-code cs">CS</span>
-          <div class="slide-title">Copilot Studio｜ツール（エージェントフロー）の役割</div>
-          <div class="slide-meta">2026-03-01 · Vol.8</div>
-          <div class="slide-links"><span class="slide-link">ブログを読む</span></div>
-        </div>
-      </a>
-      <!-- Vol.9 CS -->
-      <a href="https://www.automate136.com/?p=1310" target="_blank" rel="noopener" class="slide-card" data-cat="cs">
-        <div class="slide-img cs" style="padding:0;overflow:hidden;">
-          <img src="../assets/x/slides/cs_slide09.png" alt="Vol.9" style="width:100%;height:100%;object-fit:cover;display:block;">
-        </div>
-        <div class="slide-body">
+          <span class="x-ttl">Copilot Studio｜ツール（エージェントフロー）の役割</span>
+        </figcaption>
+      </figure>
+      <figure class="x-card" data-cat="cs" data-vol="9" data-title="Copilot Studio｜カスタムプロンプト画面の役割" data-date="2026-03-03" tabindex="0" role="button" aria-label="Vol.9 Copilot Studio｜カスタムプロンプト画面の役割 を拡大">
+        <div class="x-shot cs"><img src="../assets/x/2026-03-03-x-vol09.png" alt="Vol.9 Copilot Studio｜カスタムプロンプト画面の役割" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap">
+          <span class="x-vol">Vol.9</span>
           <span class="tag-code cs">CS</span>
-          <div class="slide-title">Copilot Studio｜カスタムプロンプト画面の役割</div>
-          <div class="slide-meta">2026-03-03 · Vol.9</div>
-          <div class="slide-links"><span class="slide-link">ブログを読む</span></div>
-        </div>
-      </a>
-      <!-- Vol.10 CS -->
-      <a href="https://www.automate136.com/?p=1312" target="_blank" rel="noopener" class="slide-card" data-cat="cs">
-        <div class="slide-img cs" style="padding:0;overflow:hidden;">
-          <img src="../assets/x/slides/cs_slide10.png" alt="Vol.10" style="width:100%;height:100%;object-fit:cover;display:block;">
-        </div>
-        <div class="slide-body">
+          <span class="x-ttl">Copilot Studio｜カスタムプロンプト画面の役割</span>
+        </figcaption>
+      </figure>
+      <figure class="x-card" data-cat="cs" data-vol="10" data-title="Copilot Studio｜カスタム変数とシステム変数の違い" data-date="2026-03-05" tabindex="0" role="button" aria-label="Vol.10 Copilot Studio｜カスタム変数とシステム変数の違い を拡大">
+        <div class="x-shot cs"><img src="../assets/x/2026-03-05-x-vol10.png" alt="Vol.10 Copilot Studio｜カスタム変数とシステム変数の違い" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap">
+          <span class="x-vol">Vol.10</span>
           <span class="tag-code cs">CS</span>
-          <div class="slide-title">Copilot Studio｜カスタム変数とシステム変数の違い</div>
-          <div class="slide-meta">2026-03-05 · Vol.10</div>
-          <div class="slide-links"><span class="slide-link">ブログを読む</span></div>
-        </div>
-      </a>
-      <!-- Vol.12 PA ATE -->
-      <a href="https://www.automate136.com/?p=1314" target="_blank" rel="noopener" class="slide-card" data-cat="ate">
-        <div class="slide-img ate" style="padding:0;overflow:hidden;">
-          <img src="../assets/x/slides/pa_slide01.png" alt="Vol.12" style="width:100%;height:100%;object-fit:cover;display:block;">
-        </div>
-        <div class="slide-body">
+          <span class="x-ttl">Copilot Studio｜カスタム変数とシステム変数の違い</span>
+        </figcaption>
+      </figure>
+      <figure class="x-card" data-cat="ate" data-vol="12" data-title="Power Automate：結合(JOIN)で配列を1本の文字列にまとめる" data-date="2026-03-07" tabindex="0" role="button" aria-label="Vol.12 Power Automate：結合(JOIN)で配列を1本の文字列にまとめる を拡大">
+        <div class="x-shot ate"><img src="../assets/x/2026-03-07-x-vol12.png" alt="Vol.12 Power Automate：結合(JOIN)で配列を1本の文字列にまとめる" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap">
+          <span class="x-vol">Vol.12</span>
           <span class="tag-code ate">ATE</span>
-          <div class="slide-title">Power Automate：結合(JOIN)で配列を1本の文字列にまとめる</div>
-          <div class="slide-meta">2026-03-07 · Vol.12</div>
-          <div class="slide-links"><span class="slide-link">ブログを読む</span></div>
-        </div>
-      </a>
-      <!-- Vol.13 PA TEAMS -->
-      <a href="https://www.automate136.com/?p=1316" target="_blank" rel="noopener" class="slide-card" data-cat="teams">
-        <div class="slide-img teams" style="padding:0;overflow:hidden;">
-          <img src="../assets/x/slides/pa_slide02.png" alt="Vol.13" style="width:100%;height:100%;object-fit:cover;display:block;">
-        </div>
-        <div class="slide-body">
+          <span class="x-ttl">Power Automate：結合(JOIN)で配列を1本の文字列にまとめる</span>
+        </figcaption>
+      </figure>
+      <figure class="x-card" data-cat="teams" data-vol="13" data-title="Power Automate：1アクションでTeams通知を自動化する" data-date="2026-03-09" tabindex="0" role="button" aria-label="Vol.13 Power Automate：1アクションでTeams通知を自動化する を拡大">
+        <div class="x-shot teams"><img src="../assets/x/2026-03-09-x-vol13.png" alt="Vol.13 Power Automate：1アクションでTeams通知を自動化する" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap">
+          <span class="x-vol">Vol.13</span>
           <span class="tag-code teams">TEAMS</span>
-          <div class="slide-title">Power Automate：1アクションでTeams通知を自動化する</div>
-          <div class="slide-meta">2026-03-09 · Vol.13</div>
-          <div class="slide-links"><span class="slide-link">ブログを読む</span></div>
-        </div>
-      </a>
-      <!-- Vol.14 PA TEAMS -->
-      <a href="https://www.automate136.com/?p=1318" target="_blank" rel="noopener" class="slide-card" data-cat="teams">
-        <div class="slide-img teams" style="padding:0;overflow:hidden;">
-          <img src="../assets/x/slides/pa_slide03.png" alt="Vol.14" style="width:100%;height:100%;object-fit:cover;display:block;">
-        </div>
-        <div class="slide-body">
+          <span class="x-ttl">Power Automate：1アクションでTeams通知を自動化する</span>
+        </figcaption>
+      </figure>
+      <figure class="x-card" data-cat="teams" data-vol="14" data-title="Power Automate：Teams通知・送信1アクションでできること" data-date="2026-03-10" tabindex="0" role="button" aria-label="Vol.14 Power Automate：Teams通知・送信1アクションでできること を拡大">
+        <div class="x-shot teams"><img src="../assets/x/2026-03-10-x-vol14.png" alt="Vol.14 Power Automate：Teams通知・送信1アクションでできること" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap">
+          <span class="x-vol">Vol.14</span>
           <span class="tag-code teams">TEAMS</span>
-          <div class="slide-title">Power Automate：Teams通知・送信1アクションでできること</div>
-          <div class="slide-meta">2026-03-10 · Vol.14</div>
-          <div class="slide-links"><span class="slide-link">ブログを読む</span></div>
-        </div>
-      </a>
-      <!-- Vol.15 PA TEAMS -->
-      <a href="https://www.automate136.com/?p=1320" target="_blank" rel="noopener" class="slide-card" data-cat="teams">
-        <div class="slide-img teams" style="padding:0;overflow:hidden;">
-          <img src="../assets/x/slides/pa_slide04.png" alt="Vol.15" style="width:100%;height:100%;object-fit:cover;display:block;">
-        </div>
-        <div class="slide-body">
+          <span class="x-ttl">Power Automate：Teams通知・送信1アクションでできること</span>
+        </figcaption>
+      </figure>
+      <figure class="x-card" data-cat="teams" data-vol="15" data-title="Power Automate：会議の作成アクションで予定を自動化する" data-date="2026-03-11" tabindex="0" role="button" aria-label="Vol.15 Power Automate：会議の作成アクションで予定を自動化する を拡大">
+        <div class="x-shot teams"><img src="../assets/x/2026-03-11-x-vol15.png" alt="Vol.15 Power Automate：会議の作成アクションで予定を自動化する" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap">
+          <span class="x-vol">Vol.15</span>
           <span class="tag-code teams">TEAMS</span>
-          <div class="slide-title">Power Automate：会議の作成アクションで予定を自動化する</div>
-          <div class="slide-meta">2026-03-11 · Vol.15</div>
-          <div class="slide-links"><span class="slide-link">ブログを読む</span></div>
-        </div>
-      </a>
-      <!-- Vol.16 PA PJSON -->
-      <a href="https://www.automate136.com/?p=1322" target="_blank" rel="noopener" class="slide-card" data-cat="pjson">
-        <div class="slide-img pjson" style="padding:0;overflow:hidden;">
-          <img src="../assets/x/slides/pa_slide05.png" alt="Vol.16" style="width:100%;height:100%;object-fit:cover;display:block;">
-        </div>
-        <div class="slide-body">
+          <span class="x-ttl">Power Automate：会議の作成アクションで予定を自動化する</span>
+        </figcaption>
+      </figure>
+      <figure class="x-card" data-cat="pjson" data-vol="16" data-title="Power Automate：JSONの解析が苦手な人向け・Composeで軽量処理" data-date="2026-03-12" tabindex="0" role="button" aria-label="Vol.16 Power Automate：JSONの解析が苦手な人向け・Composeで軽量処理 を拡大">
+        <div class="x-shot pjson"><img src="../assets/x/2026-03-12-x-vol16.png" alt="Vol.16 Power Automate：JSONの解析が苦手な人向け・Composeで軽量処理" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap">
+          <span class="x-vol">Vol.16</span>
           <span class="tag-code pjson">PJSON</span>
-          <div class="slide-title">Power Automate：JSONの解析が苦手な人向け・Composeで軽量処理</div>
-          <div class="slide-meta">2026-03-12 · Vol.16</div>
-          <div class="slide-links"><span class="slide-link">ブログを読む</span></div>
-        </div>
-      </a>
-      <!-- Vol.17 PA PJSON -->
-      <a href="https://www.automate136.com/?p=1324" target="_blank" rel="noopener" class="slide-card" data-cat="pjson">
-        <div class="slide-img pjson" style="padding:0;overflow:hidden;">
-          <img src="../assets/x/slides/pa_slide06.png" alt="Vol.17" style="width:100%;height:100%;object-fit:cover;display:block;">
-        </div>
-        <div class="slide-body">
+          <span class="x-ttl">Power Automate：JSONの解析が苦手な人向け・Composeで軽量処理</span>
+        </figcaption>
+      </figure>
+      <figure class="x-card" data-cat="pjson" data-vol="17" data-title="Power Automate：【作成】アクションでライトなJSON処理をする" data-date="2026-03-13" tabindex="0" role="button" aria-label="Vol.17 Power Automate：【作成】アクションでライトなJSON処理をする を拡大">
+        <div class="x-shot pjson"><img src="../assets/x/2026-03-13-x-vol17.png" alt="Vol.17 Power Automate：【作成】アクションでライトなJSON処理をする" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap">
+          <span class="x-vol">Vol.17</span>
           <span class="tag-code pjson">PJSON</span>
-          <div class="slide-title">Power Automate：【作成】アクションでライトなJSON処理をする</div>
-          <div class="slide-meta">2026-03-13 · Vol.17</div>
-          <div class="slide-links"><span class="slide-link">ブログを読む</span></div>
-        </div>
-      </a>
-      <!-- Vol.18 PA PJSON -->
-      <a href="https://www.automate136.com/?p=1326" target="_blank" rel="noopener" class="slide-card" data-cat="pjson">
-        <div class="slide-img pjson" style="padding:0;overflow:hidden;">
-          <img src="../assets/x/slides/pa_slide07.png" alt="Vol.18" style="width:100%;height:100%;object-fit:cover;display:block;">
-        </div>
-        <div class="slide-body">
+          <span class="x-ttl">Power Automate：【作成】アクションでライトなJSON処理をする</span>
+        </figcaption>
+      </figure>
+      <figure class="x-card" data-cat="pjson" data-vol="18" data-title="Power Automate：JSONの構造をイラストで理解する" data-date="2026-03-14" tabindex="0" role="button" aria-label="Vol.18 Power Automate：JSONの構造をイラストで理解する を拡大">
+        <div class="x-shot pjson"><img src="../assets/x/2026-03-14-x-vol18.png" alt="Vol.18 Power Automate：JSONの構造をイラストで理解する" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap">
+          <span class="x-vol">Vol.18</span>
           <span class="tag-code pjson">PJSON</span>
-          <div class="slide-title">Power Automate：JSONの構造をイラストで理解する</div>
-          <div class="slide-meta">2026-03-14 · Vol.18</div>
-          <div class="slide-links"><span class="slide-link">ブログを読む</span></div>
-        </div>
-      </a>
-      <!-- Vol.19 PA PJSON -->
-      <a href="https://www.automate136.com/?p=1328" target="_blank" rel="noopener" class="slide-card" data-cat="pjson">
-        <div class="slide-img pjson" style="padding:0;overflow:hidden;">
-          <img src="../assets/x/slides/pa_slide08.png" alt="Vol.19" style="width:100%;height:100%;object-fit:cover;display:block;">
-        </div>
-        <div class="slide-body">
+          <span class="x-ttl">Power Automate：JSONの構造をイラストで理解する</span>
+        </figcaption>
+      </figure>
+      <figure class="x-card" data-cat="pjson" data-vol="19" data-title="Power Automate：【JSONの解析】アクションで動的コンテンツを使う" data-date="2026-03-15" tabindex="0" role="button" aria-label="Vol.19 Power Automate：【JSONの解析】アクションで動的コンテンツを使う を拡大">
+        <div class="x-shot pjson"><img src="../assets/x/2026-03-15-x-vol19.png" alt="Vol.19 Power Automate：【JSONの解析】アクションで動的コンテンツを使う" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap">
+          <span class="x-vol">Vol.19</span>
           <span class="tag-code pjson">PJSON</span>
-          <div class="slide-title">Power Automate：【JSONの解析】アクションで動的コンテンツを使う</div>
-          <div class="slide-meta">2026-03-15 · Vol.19</div>
-          <div class="slide-links"><span class="slide-link">ブログを読む</span></div>
-        </div>
-      </a>
-      <!-- Vol.20 PA FILTER -->
-      <a href="https://www.automate136.com/?p=1330" target="_blank" rel="noopener" class="slide-card" data-cat="filter">
-        <div class="slide-img filter" style="padding:0;overflow:hidden;">
-          <img src="../assets/x/slides/pa_slide09.png" alt="Vol.20" style="width:100%;height:100%;object-fit:cover;display:block;">
-        </div>
-        <div class="slide-body">
+          <span class="x-ttl">Power Automate：【JSONの解析】アクションで動的コンテンツを使う</span>
+        </figcaption>
+      </figure>
+      <figure class="x-card" data-cat="filter" data-vol="20" data-title="Power Automate：【フィルターアレイ】で必要なデータだけを残す" data-date="2026-03-16" tabindex="0" role="button" aria-label="Vol.20 Power Automate：【フィルターアレイ】で必要なデータだけを残す を拡大">
+        <div class="x-shot filter"><img src="../assets/x/2026-03-16-x-vol20.png" alt="Vol.20 Power Automate：【フィルターアレイ】で必要なデータだけを残す" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap">
+          <span class="x-vol">Vol.20</span>
           <span class="tag-code filter">FILTER</span>
-          <div class="slide-title">Power Automate：【フィルターアレイ】で必要なデータだけを残す</div>
-          <div class="slide-meta">2026-03-16 · Vol.20</div>
-          <div class="slide-links"><span class="slide-link">ブログを読む</span></div>
-        </div>
-      </a>
-      <!-- Vol.21 PA DBG -->
-      <a href="https://www.automate136.com/?p=1332" target="_blank" rel="noopener" class="slide-card" data-cat="dbg">
-        <div class="slide-img dbg" style="padding:0;overflow:hidden;">
-          <img src="../assets/x/slides/pa_slide11.png" alt="Vol.21" style="width:100%;height:100%;object-fit:cover;display:block;">
-        </div>
-        <div class="slide-body">
+          <span class="x-ttl">Power Automate：【フィルターアレイ】で必要なデータだけを残す</span>
+        </figcaption>
+      </figure>
+      <figure class="x-card" data-cat="dbg" data-vol="21" data-title="Power Automate：ハマりがちな7つの問題と解決方法" data-date="2026-03-17" tabindex="0" role="button" aria-label="Vol.21 Power Automate：ハマりがちな7つの問題と解決方法 を拡大">
+        <div class="x-shot dbg"><img src="../assets/x/2026-03-17-x-vol21.png" alt="Vol.21 Power Automate：ハマりがちな7つの問題と解決方法" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap">
+          <span class="x-vol">Vol.21</span>
           <span class="tag-code dbg">DBG</span>
-          <div class="slide-title">Power Automate：ハマりがちな7つの問題と解決方法</div>
-          <div class="slide-meta">2026-03-17 · Vol.21</div>
-          <div class="slide-links"><span class="slide-link">ブログを読む</span></div>
-        </div>
-      </a>
-      <!-- Vol.22 PA COND -->
-      <a href="https://www.automate136.com/?p=1334" target="_blank" rel="noopener" class="slide-card" data-cat="cond">
-        <div class="slide-img cond" style="padding:0;overflow:hidden;">
-          <img src="../assets/x/slides/pa_slide12.png" alt="Vol.22" style="width:100%;height:100%;object-fit:cover;display:block;">
-        </div>
-        <div class="slide-body">
+          <span class="x-ttl">Power Automate：ハマりがちな7つの問題と解決方法</span>
+        </figcaption>
+      </figure>
+      <figure class="x-card" data-cat="cond" data-vol="22" data-title="Power Automate：条件(Condition)のequalsとcontainsを正しく使い分ける" data-date="2026-03-18" tabindex="0" role="button" aria-label="Vol.22 Power Automate：条件(Condition)のequalsとcontainsを正しく使い分ける を拡大">
+        <div class="x-shot cond"><img src="../assets/x/2026-03-18-x-vol22.png" alt="Vol.22 Power Automate：条件(Condition)のequalsとcontainsを正しく使い分ける" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap">
+          <span class="x-vol">Vol.22</span>
           <span class="tag-code cond">COND</span>
-          <div class="slide-title">Power Automate：条件(Condition)のequalsとcontainsを正しく使い分ける</div>
-          <div class="slide-meta">2026-03-18 · Vol.22</div>
-          <div class="slide-links"><span class="slide-link">ブログを読む</span></div>
-        </div>
-      </a>
-      <!-- Vol.23 PA TEAMS -->
-      <a href="https://www.automate136.com/?p=1336" target="_blank" rel="noopener" class="slide-card" data-cat="teams">
-        <div class="slide-img teams" style="padding:0;overflow:hidden;">
-          <img src="../assets/x/slides/pa_slide14.png" alt="Vol.23" style="width:100%;height:100%;object-fit:cover;display:block;">
-        </div>
-        <div class="slide-body">
+          <span class="x-ttl">Power Automate：条件(Condition)のequalsとcontainsを正しく使い分ける</span>
+        </figcaption>
+      </figure>
+      <figure class="x-card" data-cat="teams" data-vol="23" data-title="Power Automate：実務で効く通知設計・Before→After" data-date="2026-03-19" tabindex="0" role="button" aria-label="Vol.23 Power Automate：実務で効く通知設計・Before→After を拡大">
+        <div class="x-shot teams"><img src="../assets/x/2026-03-19-x-vol23.png" alt="Vol.23 Power Automate：実務で効く通知設計・Before→After" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap">
+          <span class="x-vol">Vol.23</span>
           <span class="tag-code teams">TEAMS</span>
-          <div class="slide-title">Power Automate：実務で効く通知設計・Before→After</div>
-          <div class="slide-meta">2026-03-19 · Vol.23</div>
-          <div class="slide-links"><span class="slide-link">ブログを読む</span></div>
-        </div>
-      </a>
-      <!-- Vol.24 PA COND -->
-      <a href="https://www.automate136.com/?p=1338" target="_blank" rel="noopener" class="slide-card" data-cat="cond">
-        <div class="slide-img cond" style="padding:0;overflow:hidden;">
-          <img src="../assets/x/slides/pa_slide15.png" alt="Vol.24" style="width:100%;height:100%;object-fit:cover;display:block;">
-        </div>
-        <div class="slide-body">
+          <span class="x-ttl">Power Automate：実務で効く通知設計・Before→After</span>
+        </figcaption>
+      </figure>
+      <figure class="x-card" data-cat="cond" data-vol="24" data-title="Power Automate：Condition（条件）は「質問をつくるアクション」" data-date="2026-03-20" tabindex="0" role="button" aria-label="Vol.24 Power Automate：Condition（条件）は「質問をつくるアクション」 を拡大">
+        <div class="x-shot cond"><img src="../assets/x/2026-03-20-x-vol24.png" alt="Vol.24 Power Automate：Condition（条件）は「質問をつくるアクション」" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap">
+          <span class="x-vol">Vol.24</span>
           <span class="tag-code cond">COND</span>
-          <div class="slide-title">Power Automate：Condition（条件）は「質問をつくるアクション」</div>
-          <div class="slide-meta">2026-03-20 · Vol.24</div>
-          <div class="slide-links"><span class="slide-link">ブログを読む</span></div>
-        </div>
-      </a>
-      <!-- Vol.25 PA DATE -->
-      <a href="https://www.automate136.com/?p=1340" target="_blank" rel="noopener" class="slide-card" data-cat="date">
-        <div class="slide-img date" style="padding:0;overflow:hidden;">
-          <img src="../assets/x/slides/pa_slide16.png" alt="Vol.25" style="width:100%;height:100%;object-fit:cover;display:block;">
-        </div>
-        <div class="slide-body">
+          <span class="x-ttl">Power Automate：Condition（条件）は「質問をつくるアクション」</span>
+        </figcaption>
+      </figure>
+      <figure class="x-card" data-cat="date" data-vol="25" data-title="Power Automate：翌月1日を毎月自動で出す方法" data-date="2026-03-21" tabindex="0" role="button" aria-label="Vol.25 Power Automate：翌月1日を毎月自動で出す方法 を拡大">
+        <div class="x-shot date"><img src="../assets/x/2026-03-21-x-vol25.png" alt="Vol.25 Power Automate：翌月1日を毎月自動で出す方法" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap">
+          <span class="x-vol">Vol.25</span>
           <span class="tag-code date">DATE</span>
-          <div class="slide-title">Power Automate：翌月1日を毎月自動で出す方法</div>
-          <div class="slide-meta">2026-03-21 · Vol.25</div>
-          <div class="slide-links"><span class="slide-link">ブログを読む</span></div>
-        </div>
-      </a>
-      <!-- Vol.26 PA DATE -->
-      <a href="https://www.automate136.com/?p=1342" target="_blank" rel="noopener" class="slide-card" data-cat="date">
-        <div class="slide-img date" style="padding:0;overflow:hidden;">
-          <img src="../assets/x/slides/pa_slide17.png" alt="Vol.26" style="width:100%;height:100%;object-fit:cover;display:block;">
-        </div>
-        <div class="slide-body">
+          <span class="x-ttl">Power Automate：翌月1日を毎月自動で出す方法</span>
+        </figcaption>
+      </figure>
+      <figure class="x-card" data-cat="date" data-vol="26" data-title="Power Automate：前月末は「月初から1日戻る」で一発" data-date="2026-03-22" tabindex="0" role="button" aria-label="Vol.26 Power Automate：前月末は「月初から1日戻る」で一発 を拡大">
+        <div class="x-shot date"><img src="../assets/x/2026-03-22-x-vol26.png" alt="Vol.26 Power Automate：前月末は「月初から1日戻る」で一発" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap">
+          <span class="x-vol">Vol.26</span>
           <span class="tag-code date">DATE</span>
-          <div class="slide-title">Power Automate：前月末は「月初から1日戻る」で一発</div>
-          <div class="slide-meta">2026-03-22 · Vol.26</div>
-          <div class="slide-links"><span class="slide-link">ブログを読む</span></div>
-        </div>
-      </a>
-      <!-- Vol.27 PA DATE (既存) -->
-      <a href="https://x.com/isamu_Automate" target="_blank" rel="noopener" class="slide-card" data-cat="date">
-        <div class="slide-img date" style="padding:0;overflow:hidden;">
-          <img src="../assets/img/slide-vol27-date.png" alt="Vol.27 今月の最終営業日を出す方法" style="width:100%;height:100%;object-fit:cover;display:block;">
-        </div>
-        <div class="slide-body">
+          <span class="x-ttl">Power Automate：前月末は「月初から1日戻る」で一発</span>
+        </figcaption>
+      </figure>
+      <figure class="x-card" data-cat="date" data-vol="27" data-title="Power Automate：今月の最終営業日を出す方法" data-date="2026-03-11" tabindex="0" role="button" aria-label="Vol.27 Power Automate：今月の最終営業日を出す方法 を拡大">
+        <div class="x-shot date"><img src="../assets/img/slide-vol27-date.png" alt="Vol.27 Power Automate：今月の最終営業日を出す方法" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap">
+          <span class="x-vol">Vol.27</span>
           <span class="tag-code date">DATE</span>
-          <div class="slide-title">Power Automate：今月の最終営業日を出す方法</div>
-          <div class="slide-meta">2026-03-11 · Vol.27</div>
-          <div class="slide-links"><span class="slide-link">X投稿を見る</span></div>
-        </div>
-      </a>
-      <!-- Vol.28 PA DATE -->
-      <a href="https://www.automate136.com/?p=1344" target="_blank" rel="noopener" class="slide-card" data-cat="date">
-        <div class="slide-img date" style="padding:0;overflow:hidden;">
-          <img src="../assets/x/slides/pa_slide19.png" alt="Vol.28" style="width:100%;height:100%;object-fit:cover;display:block;">
-        </div>
-        <div class="slide-body">
+          <span class="x-ttl">Power Automate：今月の最終営業日を出す方法</span>
+        </figcaption>
+      </figure>
+      <figure class="x-card" data-cat="date" data-vol="28" data-title="Power Automate：毎月の「◯営業日目」を自動で出す方法" data-date="2026-03-23" tabindex="0" role="button" aria-label="Vol.28 Power Automate：毎月の「◯営業日目」を自動で出す方法 を拡大">
+        <div class="x-shot date"><img src="../assets/x/2026-03-23-x-vol28.png" alt="Vol.28 Power Automate：毎月の「◯営業日目」を自動で出す方法" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap">
+          <span class="x-vol">Vol.28</span>
           <span class="tag-code date">DATE</span>
-          <div class="slide-title">Power Automate：毎月の「◯営業日目」を自動で出す方法</div>
-          <div class="slide-meta">2026-03-23 · Vol.28</div>
-          <div class="slide-links"><span class="slide-link">ブログを読む</span></div>
-        </div>
-      </a>
-      <!-- Vol.29 PA EXP -->
-      <a href="https://www.automate136.com/?p=1346" target="_blank" rel="noopener" class="slide-card" data-cat="exp">
-        <div class="slide-img exp" style="padding:0;overflow:hidden;">
-          <img src="../assets/x/slides/pa_slide20.png" alt="Vol.29" style="width:100%;height:100%;object-fit:cover;display:block;">
-        </div>
-        <div class="slide-body">
+          <span class="x-ttl">Power Automate：毎月の「◯営業日目」を自動で出す方法</span>
+        </figcaption>
+      </figure>
+      <figure class="x-card" data-cat="exp" data-vol="29" data-title="Power Automate：if()で条件分岐をシンプルに書く" data-date="2026-03-24" tabindex="0" role="button" aria-label="Vol.29 Power Automate：if()で条件分岐をシンプルに書く を拡大">
+        <div class="x-shot exp"><img src="../assets/x/2026-03-24-x-vol29.png" alt="Vol.29 Power Automate：if()で条件分岐をシンプルに書く" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap">
+          <span class="x-vol">Vol.29</span>
           <span class="tag-code exp">EXP</span>
-          <div class="slide-title">Power Automate：if()で条件分岐をシンプルに書く</div>
-          <div class="slide-meta">2026-03-24 · Vol.29</div>
-          <div class="slide-links"><span class="slide-link">ブログを読む</span></div>
-        </div>
-      </a>
-      <!-- Vol.30 PA DBG -->
-      <a href="https://www.automate136.com/?p=1348" target="_blank" rel="noopener" class="slide-card" data-cat="dbg">
-        <div class="slide-img dbg" style="padding:0;overflow:hidden;">
-          <img src="../assets/x/slides/pa_slide21.png" alt="Vol.30" style="width:100%;height:100%;object-fit:cover;display:block;">
-        </div>
-        <div class="slide-body">
+          <span class="x-ttl">Power Automate：if()で条件分岐をシンプルに書く</span>
+        </figcaption>
+      </figure>
+      <figure class="x-card" data-cat="dbg" data-vol="30" data-title="Power Automate：空欄のせいでフローが止まる問題を解決する" data-date="2026-03-25" tabindex="0" role="button" aria-label="Vol.30 Power Automate：空欄のせいでフローが止まる問題を解決する を拡大">
+        <div class="x-shot dbg"><img src="../assets/x/2026-03-25-x-vol30.png" alt="Vol.30 Power Automate：空欄のせいでフローが止まる問題を解決する" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap">
+          <span class="x-vol">Vol.30</span>
           <span class="tag-code dbg">DBG</span>
-          <div class="slide-title">Power Automate：空欄のせいでフローが止まる問題を解決する</div>
-          <div class="slide-meta">2026-03-25 · Vol.30</div>
-          <div class="slide-links"><span class="slide-link">ブログを読む</span></div>
-        </div>
-      </a>
-
+          <span class="x-ttl">Power Automate：空欄のせいでフローが止まる問題を解決する</span>
+        </figcaption>
+      </figure>
     </div>
-    <!-- ★ここまでがスライドカード。新しいスライドは上のパターンをコピーして追加する -->
 
     <div class="cta-bar">
       <p>スライドを見て興味が出たら、次回セッションで実際に手を動かしてみませんか</p>
@@ -514,6 +380,14 @@
     </div>
   </div>
 </section>
+
+<div class="lb" id="lb" aria-hidden="true">
+  <button class="lb-close" aria-label="閉じる" onclick="lbClose()">×</button>
+  <button class="lb-btn lb-prev" aria-label="前へ" onclick="lbStep(-1)">‹</button>
+  <img class="lb-img" id="lbImg" src="" alt="">
+  <button class="lb-btn lb-next" aria-label="次へ" onclick="lbStep(1)">›</button>
+  <div class="lb-cap" id="lbCap"></div>
+</div>
 
 <footer class="site-footer">
   <div class="container">
@@ -549,26 +423,64 @@ document.addEventListener('click', function(e) {
   if (nav.classList.contains('open') && !nav.contains(e.target) && !btn.contains(e.target)) nav.classList.remove('open');
 });
 
-// カテゴリフィルター
 function filterSlides(cat, btn) {
   document.querySelectorAll('.f-pill').forEach(p => p.classList.remove('active'));
   btn.classList.add('active');
-  document.querySelectorAll('#slidesGrid .slide-card').forEach(card => {
-    if (cat === 'all' || card.dataset.cat === cat) {
-      card.classList.remove('hidden');
-    } else {
-      card.classList.add('hidden');
-    }
+  document.querySelectorAll('#slidesGrid .x-card').forEach(card => {
+    card.classList.toggle('hidden', !(cat === 'all' || card.dataset.cat === cat));
   });
 }
-
-// URLハッシュでフィルター（learn/#var などからの遷移対応）
 window.addEventListener('DOMContentLoaded', function() {
   const hash = location.hash.replace('#', '');
   if (hash) {
-    const btn = document.querySelector(`.f-pill[onclick*="'${hash}'"]`);
+    const btn = document.querySelector('.f-pill[onclick*="\'' + hash + '\'"]');
     if (btn) filterSlides(hash, btn);
   }
+});
+
+var lbIndex = -1;
+function visibleCards() {
+  return Array.prototype.filter.call(
+    document.querySelectorAll('#slidesGrid .x-card'),
+    function(c){ return !c.classList.contains('hidden'); }
+  );
+}
+function lbShow(i) {
+  var cards = visibleCards();
+  if (!cards.length) return;
+  lbIndex = (i + cards.length) % cards.length;
+  var card = cards[lbIndex];
+  var img = card.querySelector('img');
+  document.getElementById('lbImg').src = img.src;
+  document.getElementById('lbImg').alt = img.alt;
+  document.getElementById('lbCap').innerHTML =
+    '<b>Vol.' + card.dataset.vol + '</b>' + card.dataset.title + ' 〜 ' + card.dataset.date;
+  document.getElementById('lb').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function lbStep(d) { lbShow(lbIndex + d); }
+function lbClose() {
+  document.getElementById('lb').classList.remove('open');
+  document.body.style.overflow = '';
+  lbIndex = -1;
+}
+document.querySelectorAll('#slidesGrid .x-card').forEach(function(card){
+  card.addEventListener('click', function(){
+    var cards = visibleCards();
+    lbShow(cards.indexOf(card));
+  });
+  card.addEventListener('keydown', function(e){
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); card.click(); }
+  });
+});
+document.getElementById('lb').addEventListener('click', function(e){
+  if (e.target.id === 'lb') lbClose();
+});
+document.addEventListener('keydown', function(e){
+  if (lbIndex < 0) return;
+  if (e.key === 'Escape') lbClose();
+  else if (e.key === 'ArrowRight') lbStep(1);
+  else if (e.key === 'ArrowLeft') lbStep(-1);
 });
 </script>
 <script src="../assets/js/motion.js?v=20260718" defer></script>

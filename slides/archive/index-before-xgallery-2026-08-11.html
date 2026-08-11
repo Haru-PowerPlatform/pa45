@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="PA45 スライド一覧 — Xで投稿した1枚スライドをカテゴリ別に整理。関数・概念をひとつずつ学べます。">
+  <title>スライド一覧｜PA45 Power Automate 関数を1枚で整理</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/style.css?v=20260718">
+  <style>
+    .filter-bar { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 20px; }
+    .f-pill {
+      font-size: 12px; padding: 5px 13px; border-radius: 20px;
+      border: 1px solid var(--c-border-md); color: var(--c-muted);
+      cursor: pointer; font-family: var(--font-mono); font-weight: 500;
+      background: var(--c-surface); transition: .15s;
+    }
+    .f-pill:hover, .f-pill.active {
+      background: var(--c-blue-bg); border-color: var(--c-blue-mid); color: var(--c-blue-text);
+    }
+    .slides-grid {
+      display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 12px;
+    }
+    .slide-card {
+      background: var(--c-surface); border-radius: var(--radius-lg);
+      overflow: hidden; box-shadow: var(--shadow-card);
+      transition: box-shadow .2s, transform .2s; display: block;
+    }
+    .slide-card:hover { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
+    .slide-img {
+      height: 90px; display: flex; align-items: center;
+      justify-content: center; font-size: 11px; color: var(--c-hint); letter-spacing: .04em;
+    }
+    .slide-img.var    { background: var(--c-blue-bg); }
+    .slide-img.cond   { background: var(--c-purple-bg); }
+    .slide-img.select { background: var(--c-green-bg); }
+    .slide-img.filter { background: var(--c-amber-bg); }
+    .slide-img.ate    { background: var(--c-coral-bg); }
+    .slide-img.date   { background: var(--c-teal-bg); }
+    .slide-img.exp    { background: var(--c-amber-bg); }
+    .slide-img.pjson  { background: var(--c-purple-bg); }
+    .slide-img.dbg    { background: #f1efe8; }
+    .slide-img.cs     { background: #e8f5e9; }
+    .slide-img.teams  { background: #e3f2fd; }
+    .tag-code.cs      { background: #c8e6c9; color: #1b5e20; }
+    .tag-code.teams   { background: #bbdefb; color: #0d47a1; }
+    .slide-body { padding: 10px 12px; }
+    .slide-title { font-size: 12px; font-weight: 500; line-height: 1.45; margin: 5px 0 4px; }
+    .slide-meta  { font-size: 10px; color: var(--c-hint); margin-bottom: 7px; }
+    .slide-links { display: flex; gap: 6px; flex-wrap: wrap; }
+    .slide-link {
+      font-size: 10px; color: var(--c-blue-mid);
+      border: 1px solid var(--c-border-md); border-radius: 3px;
+      padding: 1px 7px; transition: background .15s;
+    }
+    .slide-link:hover { background: var(--c-blue-bg); border-color: var(--c-blue-mid); }
+    .hidden { display: none; }
+    @media (max-width: 640px) {
+      .slides-grid { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    }
+    @media (max-width: 380px) {
+      .slides-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+
+  <!-- SEO / OGP -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="PA45 — Power Automate 45">
+  <meta property="og:locale" content="ja_JP">
+  <meta property="og:url" content="https://haru-powerplatform.github.io/pa45/slides/">
+  <meta property="og:title" content="PA45 解説スライド — 全20回分を公開しています">
+  <meta property="og:description" content="PA45で使った解説スライドを回ごとに公開。その場で追いつけなくても、あとから同じ手順をたどれます。登録不要・無料。">
+  <meta property="og:image" content="https://haru-powerplatform.github.io/pa45/assets/ogp/og-slides.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@isamu_Automate">
+  <meta name="twitter:title" content="PA45 解説スライド — 全20回分を公開しています">
+  <meta name="twitter:description" content="PA45で使った解説スライドを回ごとに公開。その場で追いつけなくても、あとから同じ手順をたどれます。登録不要・無料。">
+  <meta name="twitter:image" content="https://haru-powerplatform.github.io/pa45/assets/ogp/og-slides.png">
+  <link rel="canonical" href="https://haru-powerplatform.github.io/pa45/slides/">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="container header-inner">
+    <a href="../" class="site-logo">PA45<span>Power Automate 45</span></a>
+    <nav class="header-nav">
+      <a href="../sessions/">参加する</a>
+      <a href="../sessions/#archive">講座アーカイブ</a>
+      <a href="../videos/">動画</a>
+      <a href="../achievements/">活動</a>
+      <a href="../achievements/survey.html">アンケート</a>
+      <a href="../about/">About</a>
+    </nav>
+    <a href="../sessions/" class="header-cta">次回PA45に参加する →</a>
+    <button class="hamburger" aria-label="メニュー" onclick="toggleMenu()"><span></span><span></span><span></span></button>
+  </div>
+  <nav class="mobile-nav" id="mobileNav">
+    <a href="../sessions/">参加する（Sessions）</a>
+    <a href="../sessions/#archive">講座アーカイブ（Archive）</a>
+    <a href="../videos/">動画（Videos）</a>
+    <a href="../achievements/">活動（Activity）</a>
+    <a href="../method/">PA45とは（Method）</a>
+    <a href="../about/">About</a>
+    <a href="../sessions/" style="color:#0b3e72;font-weight:600;margin-top:4px;">→ 次回PA45に参加する</a>
+  </nav>
+</header>
+
+<section class="page-hero">
+  <div class="container">
+    <span class="page-hero-eyebrow">Slides</span>
+    <h1 class="page-hero-h1">関数の概念を、1枚で整理する</h1>
+    <p class="page-hero-sub">Xで投稿しているPower Automateの技術チップス（1枚スライド）をまとめた、予習・すき間学習用のページです。<br>※ 各回の講座スライド（復習用）は「参加する（Sessions）」の各回カードにまとまっています。</p>
+  </div>
+</section>
+
+<section class="section" style="padding-bottom:0;">
+  <div class="container">
+    <a href="../sessions/" style="display:flex;align-items:center;gap:16px;text-decoration:none;background:linear-gradient(135deg,#14528f,#2a7dd4);color:#fff;border-radius:14px;padding:18px 22px;box-shadow:0 6px 18px rgba(20,82,143,.25);">
+      <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><rect x="3" y="4" width="18" height="13" rx="2"/><line x1="8" y1="20" x2="16" y2="20"/><line x1="12" y1="17" x2="12" y2="20"/></svg>
+      <div style="flex:1;min-width:0;">
+        <div style="font-size:12px;letter-spacing:.06em;opacity:.85;font-weight:700;">📚 各回の講座スライド（復習用）はこちら</div>
+        <div style="font-size:17px;font-weight:700;margin-top:3px;line-height:1.4;">第1〜20回の解説スライド・サンプルフロー・アンケート結果をまとめています</div>
+      </div>
+      <div style="flex-shrink:0;font-weight:700;background:rgba(255,255,255,.18);padding:9px 18px;border-radius:24px;white-space:nowrap;">Sessionsで見る →</div>
+    </a>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+
+    <!-- 学びの流れ -->
+    <p style="font-size:13px;color:var(--c-muted);margin-bottom:18px;line-height:1.7;padding:10px 14px;background:var(--c-blue-bg);border-radius:var(--radius-md);">
+      Xで投稿した技術チップスを、PA45で一緒に手を動かして試す流れで学びを深めています。スライドは予習にも復習にも使えます。
+    </p>
+
+    <!-- フィルターバー -->
+    <div class="filter-bar">
+      <button class="f-pill active" onclick="filterSlides('all', this)">すべて</button>
+      <button class="f-pill" onclick="filterSlides('cs', this)">CS</button>
+      <button class="f-pill" onclick="filterSlides('teams', this)">TEAMS</button>
+      <button class="f-pill" onclick="filterSlides('pjson', this)">PJSON</button>
+      <button class="f-pill" onclick="filterSlides('cond', this)">COND</button>
+      <button class="f-pill" onclick="filterSlides('date', this)">DATE</button>
+      <button class="f-pill" onclick="filterSlides('filter', this)">FILTER</button>
+      <button class="f-pill" onclick="filterSlides('ate', this)">ATE</button>
+      <button class="f-pill" onclick="filterSlides('exp', this)">EXP</button>
+      <button class="f-pill" onclick="filterSlides('dbg', this)">DBG</button>
+      <button class="f-pill" onclick="filterSlides('var', this)">VAR</button>
+      <button class="f-pill" onclick="filterSlides('select', this)">SELECT</button>
+    </div>
+
+    <!-- スライドグリッド -->
+    <!-- ★ここにスライドを追加していきます。data-cat="カテゴリ名" を書くことでフィルターが機能します -->
+    <div class="slides-grid" id="slidesGrid">
+
+      <!-- Vol.1 CS -->
+      <a href="https://www.automate136.com/?p=1294" target="_blank" rel="noopener" class="slide-card" data-cat="cs">
+        <div class="slide-img cs" style="padding:0;overflow:hidden;">
+          <img src="../assets/x/slides/cs_slide01.png" alt="Vol.1" style="width:100%;height:100%;object-fit:cover;display:block;">
+        </div>
+        <div class="slide-body">
+          <span class="tag-code cs">CS</span>
+          <div class="slide-title">Copilot Studio × Power Automate × Word連携　つまずきポイント3選</div>
+          <div class="slide-meta">2026-02-15 · Vol.1</div>
+          <div class="slide-links"><span class="slide-link">ブログを読む</span></div>
+        </div>
+      </a>
+      <!-- Vol.2 CS -->
+      <a href="https://www.automate136.com/?p=1296" target="_blank" rel="noopener" class="slide-card" data-cat="cs">
+        <div class="slide-img cs" style="padding:0;overflow:hidden;">
+          <img src="../assets/x/slides/cs_slide02.png" alt="Vol.2" style="width:100%;height:100%;object-fit:cover;display:block;">
+        </div>
+        <div class="slide-body">
+          <span class="tag-code cs">CS</span>
+          <div class="slide-title">Copilot Studio × Power Automateの連携ステップ</div>
+          <div class="slide-meta">2026-02-17 · Vol.2</div>
+          <div class="slide-links"><span class="slide-link">ブログを読む</span></div>
+        </div>
+      </a>
+      <!-- Vol.3 CS -->
+      <a href="https://www.automate136.com/?p=1298" target="_blank" rel="noopener" class="slide-card" data-cat="cs">
+        <div class="slide-img cs" style="padding:0;overflow:hidden;">
+          <img src="../assets/x/slides/cs_slide03.png" alt="Vol.3" style="width:100%;height:100%;object-fit:cover;display:block;">
+        </div>
+        <div class="slide-body">
+          <span class="tag-code cs">CS</span>
+          <div class="slide-title">Wordのコンテンツコントロール設定方法（前編）</div>
+          <div class="slide-meta">2026-02-19 · Vol.3</div>
+          <div class="slide-links"><span class="slide-link">ブログを読む</span></div>
+        </div>
+      </a>
+      <!-- Vol.4 CS -->
+      <a href="https://www.automate136.com/?p=1300" target="_blank" rel="noopener" class="slide-card" data-cat="cs">
+        <div class="slide-img cs" style="padding:0;overflow:hidden;">
+          <img src="../assets/x/slides/cs_slide04.png" alt="Vol.4" style="width:100%;height:100%;object-fit:cover;display:block;">
+        </div>
+        <div class="slide-body">
+          <span class="tag-code cs">CS</span>
+          <div class="slide-title">Wordのコンテンツコントロール設定方法（後編）</div>
+          <div class="slide-meta">2026-02-21 · Vol.4</div>
+          <div class="slide-links"><span class="slide-link">ブログを読む</span></div>
+        </div>
+      </a>
+      <!-- Vol.5 CS -->
+      <a href="https://www.automate136.com/?p=1302" target="_blank" rel="noopener" class="slide-card" data-cat="cs">
+        <div class="slide-img cs" style="padding:0;overflow:hidden;">
+          <img src="../assets/x/slides/cs_slide05.png" alt="Vol.5" style="width:100%;height:100%;object-fit:cover;display:block;">
+        </div>
+        <div class="slide-body">
+          <span class="tag-code cs">CS</span>
+          <div class="slide-title">Copilot Studio｜質問ノードは聞く順番を意識すると会話が自然になる</div>
+          <div class="slide-meta">2026-02-23 · Vol.5</div>
+          <div class="slide-links"><span class="slide-link">ブログを読む</span></div>
+        </div>
+      </a>
+      <!-- Vol.6 CS -->
+      <a href="https://www.automate136.com/?p=1304" target="_blank" rel="noopener" class="slide-card" data-cat="cs">
+        <div class="slide-img cs" style="padding:0;overflow:hidden;">
+          <img src="../assets/x/slides/cs_slide06.png" alt="Vol.6" style="width:100%;height:100%;object-fit:cover;display:block;">
+        </div>
+        <div class="slide-body">
+          <span class="tag-code cs">CS</span>
+          <div class="slide-title">Copilot Studio｜Topicsの左右の使い方</div>
+          <div class="slide-meta">2026-02-25 · Vol.6</div>
+          <div class="slide-links"><span class="slide-link">ブログを読む</span></div>
+        </div>
+      </a>
+      <!-- Vol.7 CS -->
+      <a href="https://www.automate136.com/?p=1306" target="_blank" rel="noopener" class="slide-card" data-cat="cs">
+        <div class="slide-img cs" style="padding:0;overflow:hidden;">
+          <img src="../assets/x/slides/cs_slide07.png" alt="Vol.7" style="width:100%;height:100%;object-fit:cover;display:block;">
+        </div>
+        <div class="slide-body">
+          <span class="tag-code cs">CS</span>
+          <div class="slide-title">Copilot Studio｜ホーム画面4つのアイコンの役割</div>
+          <div class="slide-meta">2026-02-27 · Vol.7</div>
+          <div class="slide-links"><span class="slide-link">ブログを読む</span></div>
+        </div>
+      </a>
+      <!-- Vol.8 CS -->
+      <a href="https://www.automate136.com/?p=1308" target="_blank" rel="noopener" class="slide-card" data-cat="cs">
+        <div class="slide-img cs" style="padding:0;overflow:hidden;">
+          <img src="../assets/x/slides/cs_slide08.png" alt="Vol.8" style="width:100%;height:100%;object-fit:cover;display:block;">
+        </div>
+        <div class="slide-body">
+          <span class="tag-code cs">CS</span>
+          <div class="slide-title">Copilot Studio｜ツール（エージェントフロー）の役割</div>
+          <div class="slide-meta">2026-03-01 · Vol.8</div>
+          <div class="slide-links"><span class="slide-link">ブログを読む</span></div>
+        </div>
+      </a>
+      <!-- Vol.9 CS -->
+      <a href="https://www.automate136.com/?p=1310" target="_blank" rel="noopener" class="slide-card" data-cat="cs">
+        <div class="slide-img cs" style="padding:0;overflow:hidden;">
+          <img src="../assets/x/slides/cs_slide09.png" alt="Vol.9" style="width:100%;height:100%;object-fit:cover;display:block;">
+        </div>
+        <div class="slide-body">
+          <span class="tag-code cs">CS</span>
+          <div class="slide-title">Copilot Studio｜カスタムプロンプト画面の役割</div>
+          <div class="slide-meta">2026-03-03 · Vol.9</div>
+          <div class="slide-links"><span class="slide-link">ブログを読む</span></div>
+        </div>
+      </a>
+      <!-- Vol.10 CS -->
+      <a href="https://www.automate136.com/?p=1312" target="_blank" rel="noopener" class="slide-card" data-cat="cs">
+        <div class="slide-img cs" style="padding:0;overflow:hidden;">
+          <img src="../assets/x/slides/cs_slide10.png" alt="Vol.10" style="width:100%;height:100%;object-fit:cover;display:block;">
+        </div>
+        <div class="slide-body">
+          <span class="tag-code cs">CS</span>
+          <div class="slide-title">Copilot Studio｜カスタム変数とシステム変数の違い</div>
+          <div class="slide-meta">2026-03-05 · Vol.10</div>
+          <div class="slide-links"><span class="slide-link">ブログを読む</span></div>
+        </div>
+      </a>
+      <!-- Vol.12 PA ATE -->
+      <a href="https://www.automate136.com/?p=1314" target="_blank" rel="noopener" class="slide-card" data-cat="ate">
+        <div class="slide-img ate" style="padding:0;overflow:hidden;">
+          <img src="../assets/x/slides/pa_slide01.png" alt="Vol.12" style="width:100%;height:100%;object-fit:cover;display:block;">
+        </div>
+        <div class="slide-body">
+          <span class="tag-code ate">ATE</span>
+          <div class="slide-title">Power Automate：結合(JOIN)で配列を1本の文字列にまとめる</div>
+          <div class="slide-meta">2026-03-07 · Vol.12</div>
+          <div class="slide-links"><span class="slide-link">ブログを読む</span></div>
+        </div>
+      </a>
+      <!-- Vol.13 PA TEAMS -->
+      <a href="https://www.automate136.com/?p=1316" target="_blank" rel="noopener" class="slide-card" data-cat="teams">
+        <div class="slide-img teams" style="padding:0;overflow:hidden;">
+          <img src="../assets/x/slides/pa_slide02.png" alt="Vol.13" style="width:100%;height:100%;object-fit:cover;display:block;">
+        </div>
+        <div class="slide-body">
+          <span class="tag-code teams">TEAMS</span>
+          <div class="slide-title">Power Automate：1アクションでTeams通知を自動化する</div>
+          <div class="slide-meta">2026-03-09 · Vol.13</div>
+          <div class="slide-links"><span class="slide-link">ブログを読む</span></div>
+        </div>
+      </a>
+      <!-- Vol.14 PA TEAMS -->
+      <a href="https://www.automate136.com/?p=1318" target="_blank" rel="noopener" class="slide-card" data-cat="teams">
+        <div class="slide-img teams" style="padding:0;overflow:hidden;">
+          <img src="../assets/x/slides/pa_slide03.png" alt="Vol.14" style="width:100%;height:100%;object-fit:cover;display:block;">
+        </div>
+        <div class="slide-body">
+          <span class="tag-code teams">TEAMS</span>
+          <div class="slide-title">Power Automate：Teams通知・送信1アクションでできること</div>
+          <div class="slide-meta">2026-03-10 · Vol.14</div>
+          <div class="slide-links"><span class="slide-link">ブログを読む</span></div>
+        </div>
+      </a>
+      <!-- Vol.15 PA TEAMS -->
+      <a href="https://www.automate136.com/?p=1320" target="_blank" rel="noopener" class="slide-card" data-cat="teams">
+        <div class="slide-img teams" style="padding:0;overflow:hidden;">
+          <img src="../assets/x/slides/pa_slide04.png" alt="Vol.15" style="width:100%;height:100%;object-fit:cover;display:block;">
+        </div>
+        <div class="slide-body">
+          <span class="tag-code teams">TEAMS</span>
+          <div class="slide-title">Power Automate：会議の作成アクションで予定を自動化する</div>
+          <div class="slide-meta">2026-03-11 · Vol.15</div>
+          <div class="slide-links"><span class="slide-link">ブログを読む</span></div>
+        </div>
+      </a>
+      <!-- Vol.16 PA PJSON -->
+      <a href="https://www.automate136.com/?p=1322" target="_blank" rel="noopener" class="slide-card" data-cat="pjson">
+        <div class="slide-img pjson" style="padding:0;overflow:hidden;">
+          <img src="../assets/x/slides/pa_slide05.png" alt="Vol.16" style="width:100%;height:100%;object-fit:cover;display:block;">
+        </div>
+        <div class="slide-body">
+          <span class="tag-code pjson">PJSON</span>
+          <div class="slide-title">Power Automate：JSONの解析が苦手な人向け・Composeで軽量処理</div>
+          <div class="slide-meta">2026-03-12 · Vol.16</div>
+          <div class="slide-links"><span class="slide-link">ブログを読む</span></div>
+        </div>
+      </a>
+      <!-- Vol.17 PA PJSON -->
+      <a href="https://www.automate136.com/?p=1324" target="_blank" rel="noopener" class="slide-card" data-cat="pjson">
+        <div class="slide-img pjson" style="padding:0;overflow:hidden;">
+          <img src="../assets/x/slides/pa_slide06.png" alt="Vol.17" style="width:100%;height:100%;object-fit:cover;display:block;">
+        </div>
+        <div class="slide-body">
+          <span class="tag-code pjson">PJSON</span>
+          <div class="slide-title">Power Automate：【作成】アクションでライトなJSON処理をする</div>
+          <div class="slide-meta">2026-03-13 · Vol.17</div>
+          <div class="slide-links"><span class="slide-link">ブログを読む</span></div>
+        </div>
+      </a>
+      <!-- Vol.18 PA PJSON -->
+      <a href="https://www.automate136.com/?p=1326" target="_blank" rel="noopener" class="slide-card" data-cat="pjson">
+        <div class="slide-img pjson" style="padding:0;overflow:hidden;">
+          <img src="../assets/x/slides/pa_slide07.png" alt="Vol.18" style="width:100%;height:100%;object-fit:cover;display:block;">
+        </div>
+        <div class="slide-body">
+          <span class="tag-code pjson">PJSON</span>
+          <div class="slide-title">Power Automate：JSONの構造をイラストで理解する</div>
+          <div class="slide-meta">2026-03-14 · Vol.18</div>
+          <div class="slide-links"><span class="slide-link">ブログを読む</span></div>
+        </div>
+      </a>
+      <!-- Vol.19 PA PJSON -->
+      <a href="https://www.automate136.com/?p=1328" target="_blank" rel="noopener" class="slide-card" data-cat="pjson">
+        <div class="slide-img pjson" style="padding:0;overflow:hidden;">
+          <img src="../assets/x/slides/pa_slide08.png" alt="Vol.19" style="width:100%;height:100%;object-fit:cover;display:block;">
+        </div>
+        <div class="slide-body">
+          <span class="tag-code pjson">PJSON</span>
+          <div class="slide-title">Power Automate：【JSONの解析】アクションで動的コンテンツを使う</div>
+          <div class="slide-meta">2026-03-15 · Vol.19</div>
+          <div class="slide-links"><span class="slide-link">ブログを読む</span></div>
+        </div>
+      </a>
+      <!-- Vol.20 PA FILTER -->
+      <a href="https://www.automate136.com/?p=1330" target="_blank" rel="noopener" class="slide-card" data-cat="filter">
+        <div class="slide-img filter" style="padding:0;overflow:hidden;">
+          <img src="../assets/x/slides/pa_slide09.png" alt="Vol.20" style="width:100%;height:100%;object-fit:cover;display:block;">
+        </div>
+        <div class="slide-body">
+          <span class="tag-code filter">FILTER</span>
+          <div class="slide-title">Power Automate：【フィルターアレイ】で必要なデータだけを残す</div>
+          <div class="slide-meta">2026-03-16 · Vol.20</div>
+          <div class="slide-links"><span class="slide-link">ブログを読む</span></div>
+        </div>
+      </a>
+      <!-- Vol.21 PA DBG -->
+      <a href="https://www.automate136.com/?p=1332" target="_blank" rel="noopener" class="slide-card" data-cat="dbg">
+        <div class="slide-img dbg" style="padding:0;overflow:hidden;">
+          <img src="../assets/x/slides/pa_slide11.png" alt="Vol.21" style="width:100%;height:100%;object-fit:cover;display:block;">
+        </div>
+        <div class="slide-body">
+          <span class="tag-code dbg">DBG</span>
+          <div class="slide-title">Power Automate：ハマりがちな7つの問題と解決方法</div>
+          <div class="slide-meta">2026-03-17 · Vol.21</div>
+          <div class="slide-links"><span class="slide-link">ブログを読む</span></div>
+        </div>
+      </a>
+      <!-- Vol.22 PA COND -->
+      <a href="https://www.automate136.com/?p=1334" target="_blank" rel="noopener" class="slide-card" data-cat="cond">
+        <div class="slide-img cond" style="padding:0;overflow:hidden;">
+          <img src="../assets/x/slides/pa_slide12.png" alt="Vol.22" style="width:100%;height:100%;object-fit:cover;display:block;">
+        </div>
+        <div class="slide-body">
+          <span class="tag-code cond">COND</span>
+          <div class="slide-title">Power Automate：条件(Condition)のequalsとcontainsを正しく使い分ける</div>
+          <div class="slide-meta">2026-03-18 · Vol.22</div>
+          <div class="slide-links"><span class="slide-link">ブログを読む</span></div>
+        </div>
+      </a>
+      <!-- Vol.23 PA TEAMS -->
+      <a href="https://www.automate136.com/?p=1336" target="_blank" rel="noopener" class="slide-card" data-cat="teams">
+        <div class="slide-img teams" style="padding:0;overflow:hidden;">
+          <img src="../assets/x/slides/pa_slide14.png" alt="Vol.23" style="width:100%;height:100%;object-fit:cover;display:block;">
+        </div>
+        <div class="slide-body">
+          <span class="tag-code teams">TEAMS</span>
+          <div class="slide-title">Power Automate：実務で効く通知設計・Before→After</div>
+          <div class="slide-meta">2026-03-19 · Vol.23</div>
+          <div class="slide-links"><span class="slide-link">ブログを読む</span></div>
+        </div>
+      </a>
+      <!-- Vol.24 PA COND -->
+      <a href="https://www.automate136.com/?p=1338" target="_blank" rel="noopener" class="slide-card" data-cat="cond">
+        <div class="slide-img cond" style="padding:0;overflow:hidden;">
+          <img src="../assets/x/slides/pa_slide15.png" alt="Vol.24" style="width:100%;height:100%;object-fit:cover;display:block;">
+        </div>
+        <div class="slide-body">
+          <span class="tag-code cond">COND</span>
+          <div class="slide-title">Power Automate：Condition（条件）は「質問をつくるアクション」</div>
+          <div class="slide-meta">2026-03-20 · Vol.24</div>
+          <div class="slide-links"><span class="slide-link">ブログを読む</span></div>
+        </div>
+      </a>
+      <!-- Vol.25 PA DATE -->
+      <a href="https://www.automate136.com/?p=1340" target="_blank" rel="noopener" class="slide-card" data-cat="date">
+        <div class="slide-img date" style="padding:0;overflow:hidden;">
+          <img src="../assets/x/slides/pa_slide16.png" alt="Vol.25" style="width:100%;height:100%;object-fit:cover;display:block;">
+        </div>
+        <div class="slide-body">
+          <span class="tag-code date">DATE</span>
+          <div class="slide-title">Power Automate：翌月1日を毎月自動で出す方法</div>
+          <div class="slide-meta">2026-03-21 · Vol.25</div>
+          <div class="slide-links"><span class="slide-link">ブログを読む</span></div>
+        </div>
+      </a>
+      <!-- Vol.26 PA DATE -->
+      <a href="https://www.automate136.com/?p=1342" target="_blank" rel="noopener" class="slide-card" data-cat="date">
+        <div class="slide-img date" style="padding:0;overflow:hidden;">
+          <img src="../assets/x/slides/pa_slide17.png" alt="Vol.26" style="width:100%;height:100%;object-fit:cover;display:block;">
+        </div>
+        <div class="slide-body">
+          <span class="tag-code date">DATE</span>
+          <div class="slide-title">Power Automate：前月末は「月初から1日戻る」で一発</div>
+          <div class="slide-meta">2026-03-22 · Vol.26</div>
+          <div class="slide-links"><span class="slide-link">ブログを読む</span></div>
+        </div>
+      </a>
+      <!-- Vol.27 PA DATE (既存) -->
+      <a href="https://x.com/isamu_Automate" target="_blank" rel="noopener" class="slide-card" data-cat="date">
+        <div class="slide-img date" style="padding:0;overflow:hidden;">
+          <img src="../assets/img/slide-vol27-date.png" alt="Vol.27 今月の最終営業日を出す方法" style="width:100%;height:100%;object-fit:cover;display:block;">
+        </div>
+        <div class="slide-body">
+          <span class="tag-code date">DATE</span>
+          <div class="slide-title">Power Automate：今月の最終営業日を出す方法</div>
+          <div class="slide-meta">2026-03-11 · Vol.27</div>
+          <div class="slide-links"><span class="slide-link">X投稿を見る</span></div>
+        </div>
+      </a>
+      <!-- Vol.28 PA DATE -->
+      <a href="https://www.automate136.com/?p=1344" target="_blank" rel="noopener" class="slide-card" data-cat="date">
+        <div class="slide-img date" style="padding:0;overflow:hidden;">
+          <img src="../assets/x/slides/pa_slide19.png" alt="Vol.28" style="width:100%;height:100%;object-fit:cover;display:block;">
+        </div>
+        <div class="slide-body">
+          <span class="tag-code date">DATE</span>
+          <div class="slide-title">Power Automate：毎月の「◯営業日目」を自動で出す方法</div>
+          <div class="slide-meta">2026-03-23 · Vol.28</div>
+          <div class="slide-links"><span class="slide-link">ブログを読む</span></div>
+        </div>
+      </a>
+      <!-- Vol.29 PA EXP -->
+      <a href="https://www.automate136.com/?p=1346" target="_blank" rel="noopener" class="slide-card" data-cat="exp">
+        <div class="slide-img exp" style="padding:0;overflow:hidden;">
+          <img src="../assets/x/slides/pa_slide20.png" alt="Vol.29" style="width:100%;height:100%;object-fit:cover;display:block;">
+        </div>
+        <div class="slide-body">
+          <span class="tag-code exp">EXP</span>
+          <div class="slide-title">Power Automate：if()で条件分岐をシンプルに書く</div>
+          <div class="slide-meta">2026-03-24 · Vol.29</div>
+          <div class="slide-links"><span class="slide-link">ブログを読む</span></div>
+        </div>
+      </a>
+      <!-- Vol.30 PA DBG -->
+      <a href="https://www.automate136.com/?p=1348" target="_blank" rel="noopener" class="slide-card" data-cat="dbg">
+        <div class="slide-img dbg" style="padding:0;overflow:hidden;">
+          <img src="../assets/x/slides/pa_slide21.png" alt="Vol.30" style="width:100%;height:100%;object-fit:cover;display:block;">
+        </div>
+        <div class="slide-body">
+          <span class="tag-code dbg">DBG</span>
+          <div class="slide-title">Power Automate：空欄のせいでフローが止まる問題を解決する</div>
+          <div class="slide-meta">2026-03-25 · Vol.30</div>
+          <div class="slide-links"><span class="slide-link">ブログを読む</span></div>
+        </div>
+      </a>
+
+    </div>
+    <!-- ★ここまでがスライドカード。新しいスライドは上のパターンをコピーして追加する -->
+
+    <div class="cta-bar">
+      <p>スライドを見て興味が出たら、次回セッションで実際に手を動かしてみませんか</p>
+      <a href="../sessions/" class="btn-small">次回セッションを確認 →</a>
+    </div>
+  </div>
+</section>
+
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <div class="footer-col-title">学ぶ</div>
+        <a href="../slides/">Slides（スライド一覧）</a>
+        <a href="https://www.automate136.com" target="_blank" rel="noopener">Blog（WordPress）</a>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">参加する</div>
+        <a href="../sessions/">Sessions（次回・過去回）</a>
+        <a href="https://powerautomate-create.connpass.com/" target="_blank" rel="noopener">connpass（外部）</a>
+      </div>
+      <div class="footer-col">
+        <div class="footer-col-title">このサイトについて</div>
+        <a href="../achievements/">Achievements（活動の記録）</a>
+        <a href="../method/">PA45 Method（設計思想）</a>
+        <a href="../about/">About（問い合わせ）</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>PA45 — Power Automate 45</span>
+      <span>GitHub Pages で公開 · 静的サイト</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+function toggleMenu() { document.getElementById('mobileNav').classList.toggle('open'); }
+document.addEventListener('click', function(e) {
+  const nav = document.getElementById('mobileNav'), btn = document.querySelector('.hamburger');
+  if (nav.classList.contains('open') && !nav.contains(e.target) && !btn.contains(e.target)) nav.classList.remove('open');
+});
+
+// カテゴリフィルター
+function filterSlides(cat, btn) {
+  document.querySelectorAll('.f-pill').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('#slidesGrid .slide-card').forEach(card => {
+    if (cat === 'all' || card.dataset.cat === cat) {
+      card.classList.remove('hidden');
+    } else {
+      card.classList.add('hidden');
+    }
+  });
+}
+
+// URLハッシュでフィルター（learn/#var などからの遷移対応）
+window.addEventListener('DOMContentLoaded', function() {
+  const hash = location.hash.replace('#', '');
+  if (hash) {
+    const btn = document.querySelector(`.f-pill[onclick*="'${hash}'"]`);
+    if (btn) filterSlides(hash, btn);
+  }
+});
+</script>
+<script src="../assets/js/motion.js?v=20260718" defer></script>
+</body>
+</html>
