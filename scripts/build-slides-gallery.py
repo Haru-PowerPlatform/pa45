@@ -53,8 +53,10 @@ TEMPLATE = r"""<!DOCTYPE html>
     .x-card:focus-visible { box-shadow: 0 0 0 3px var(--c-blue-mid); }
     .x-card.flash { animation: flash 1.4s ease; }
     @keyframes flash { 0%,100% { box-shadow: var(--shadow-card); } 25% { box-shadow: 0 0 0 3px var(--c-blue-mid); } }
-    .x-shot { aspect-ratio: 16 / 9; background: var(--c-blue-bg); }
+    .x-shot { aspect-ratio: 16 / 9; background: var(--c-blue-bg); position: relative; }
     .x-shot img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .x-multi { position: absolute; right: 8px; bottom: 8px; font-family: var(--font-mono); font-size: 11px; font-weight: 500; color: #fff; background: rgba(16,32,52,.82); padding: 3px 9px 3px 8px; border-radius: 20px; display: flex; align-items: center; gap: 4px; letter-spacing: .02em; }
+    .x-multi::before { content: ""; width: 11px; height: 9px; border: 1.5px solid #fff; border-radius: 2px; box-shadow: 3px 3px 0 -1.5px rgba(16,32,52,.82), 4.5px 4.5px 0 -1.5px #fff; }
     .x-cap { display: flex; align-items: baseline; gap: 8px; padding: 10px 14px; }
     .x-vol { font-family: var(--font-mono); font-weight: 500; font-size: 12px; color: var(--c-blue-text); background: var(--c-blue-bg); padding: 2px 8px; border-radius: 5px; flex-shrink: 0; }
     .x-ttl { font-size: 13px; font-weight: 500; line-height: 1.45; color: var(--c-text); }
@@ -64,9 +66,14 @@ TEMPLATE = r"""<!DOCTYPE html>
     /* ===== ライトボックス ===== */
     .lb { position: fixed; inset: 0; z-index: 999; background: rgba(12,20,32,.92); display: none; align-items: center; justify-content: center; padding: 24px; }
     .lb.open { display: flex; }
-    .lb-img { max-width: min(1200px, 94vw); max-height: 78vh; width: auto; border-radius: 10px; box-shadow: 0 20px 60px rgba(0,0,0,.5); }
-    .lb-cap { position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%); color: #fff; font-size: 14px; text-align: center; max-width: 90vw; line-height: 1.5; }
+    .lb-img { max-width: min(1200px, 94vw); max-height: 74vh; width: auto; border-radius: 10px; box-shadow: 0 20px 60px rgba(0,0,0,.5); touch-action: pan-y; cursor: pointer; }
+    .lb-cap { position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%); color: #fff; font-size: 14px; text-align: center; max-width: 90vw; line-height: 1.5; }
     .lb-cap b { color: #9ecbff; font-family: var(--font-mono); margin-right: 8px; }
+    .lb-pos { display: inline-block; margin-left: 8px; font-family: var(--font-mono); font-size: 12px; color: #cfe0f5; }
+    .lb-dots { display: flex; gap: 7px; justify-content: center; margin-top: 9px; }
+    .lb-dots i { width: 7px; height: 7px; border-radius: 50%; background: rgba(255,255,255,.35); transition: background .15s, transform .15s; }
+    .lb-dots i.on { background: #fff; transform: scale(1.25); }
+    .lb-hint { margin-top: 8px; font-size: 11px; color: rgba(255,255,255,.6); }
     .lb-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,.14); color: #fff; border: none; width: 52px; height: 52px; border-radius: 50%; font-size: 26px; cursor: pointer; transition: background .15s; }
     .lb-btn:hover { background: rgba(255,255,255,.28); }
     .lb-prev { left: 18px; } .lb-next { right: 18px; }
@@ -176,7 +183,11 @@ __CARDS__
   <button class="lb-btn lb-prev" aria-label="前へ" onclick="lbStep(-1)">‹</button>
   <img class="lb-img" id="lbImg" src="" alt="">
   <button class="lb-btn lb-next" aria-label="次へ" onclick="lbStep(1)">›</button>
-  <div class="lb-cap" id="lbCap"></div>
+  <div class="lb-cap">
+    <div><b id="lbVol"></b><span id="lbTtl"></span><span class="lb-pos" id="lbPos"></span></div>
+    <div class="lb-dots" id="lbDots"></div>
+    <div class="lb-hint" id="lbHint"></div>
+  </div>
 </div>
 
 <footer class="site-footer">
@@ -255,34 +266,74 @@ tocItems.forEach(function(t){
   });
 });
 
-// ===== ライトボックス =====
-var lbIndex = -1;
+// ===== ライトボックス（Volごとに1枚目→2枚目…とスライド／続けて次のVolへ） =====
 function visibleCards() { return cards.filter(function(c){ return !c.classList.contains('hidden'); }); }
+var lbEl = document.getElementById('lb');
+var lbImg = document.getElementById('lbImg');
+var lbVol = document.getElementById('lbVol'), lbTtl = document.getElementById('lbTtl');
+var lbPos = document.getElementById('lbPos'), lbDots = document.getElementById('lbDots'), lbHint = document.getElementById('lbHint');
+var flat = [];      // フラットな全スライド列（表示中カードのみ）
+var lbIndex = -1;
+
+function buildFlat() {
+  flat = [];
+  visibleCards().forEach(function(card){
+    var slides = (card.dataset.slides || '').split('|').filter(Boolean);
+    slides.forEach(function(src, i){
+      flat.push({ src: src, vol: card.dataset.vol, title: card.dataset.title, pos: i+1, total: slides.length });
+    });
+  });
+}
 function lbShow(i) {
-  var v = visibleCards();
-  if (!v.length) return;
-  lbIndex = (i + v.length) % v.length;
-  var card = v[lbIndex];
-  var img = card.querySelector('img');
-  document.getElementById('lbImg').src = img.src;
-  document.getElementById('lbImg').alt = img.alt;
-  document.getElementById('lbCap').innerHTML = '<b>Vol.' + card.dataset.vol + '</b>' + card.dataset.title;
-  document.getElementById('lb').classList.add('open');
+  if (!flat.length) return;
+  lbIndex = (i + flat.length) % flat.length;
+  var f = flat[lbIndex];
+  lbImg.src = f.src;
+  lbImg.alt = 'Vol.' + f.vol + ' ' + f.title + '（' + f.pos + '/' + f.total + '）';
+  lbVol.textContent = 'Vol.' + f.vol;
+  lbTtl.textContent = f.title;
+  if (f.total > 1) {
+    lbPos.textContent = f.pos + ' / ' + f.total;
+    var dots = '';
+    for (var k = 1; k <= f.total; k++) dots += '<i class="' + (k === f.pos ? 'on' : '') + '"></i>';
+    lbDots.innerHTML = dots;
+    lbHint.textContent = 'タップ／スワイプ／← →で次のスライド';
+  } else {
+    lbPos.textContent = '';
+    lbDots.innerHTML = '';
+    lbHint.textContent = '';
+  }
+  lbEl.classList.add('open');
   document.body.style.overflow = 'hidden';
 }
 function lbStep(d) { lbShow(lbIndex + d); }
-function lbClose() {
-  document.getElementById('lb').classList.remove('open');
-  document.body.style.overflow = '';
-  lbIndex = -1;
+function lbClose() { lbEl.classList.remove('open'); document.body.style.overflow = ''; lbIndex = -1; }
+
+function lbOpenCard(card) {
+  buildFlat();
+  var first = (card.dataset.slides || '').split('|').filter(Boolean)[0];
+  var idx = 0;
+  for (var i = 0; i < flat.length; i++) {
+    if (flat[i].vol === card.dataset.vol && flat[i].pos === 1 && flat[i].src === first) { idx = i; break; }
+  }
+  lbShow(idx);
 }
 cards.forEach(function(card){
-  card.addEventListener('click', function(){ lbShow(visibleCards().indexOf(card)); });
+  card.addEventListener('click', function(){ lbOpenCard(card); });
   card.addEventListener('keydown', function(e){
     if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); card.click(); }
   });
 });
-document.getElementById('lb').addEventListener('click', function(e){ if (e.target.id === 'lb') lbClose(); });
+// 画像タップで次のスライドへ
+lbImg.addEventListener('click', function(e){ e.stopPropagation(); lbStep(1); });
+// スワイプ
+var tx = 0, ty = 0;
+lbEl.addEventListener('touchstart', function(e){ tx = e.changedTouches[0].clientX; ty = e.changedTouches[0].clientY; }, {passive:true});
+lbEl.addEventListener('touchend', function(e){
+  var dx = e.changedTouches[0].clientX - tx, dy = e.changedTouches[0].clientY - ty;
+  if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) lbStep(dx < 0 ? 1 : -1);
+}, {passive:true});
+lbEl.addEventListener('click', function(e){ if (e.target.id === 'lb') lbClose(); });
 document.addEventListener('keydown', function(e){
   if (lbIndex < 0) return;
   if (e.key === 'Escape') lbClose();
@@ -323,12 +374,24 @@ def main_png(folder_abs, folder_name):
     pngs = sorted(glob.glob(os.path.join(folder_abs, "*.png")), key=len)
     return pngs[0] if pngs else None
 
+def slide_set(base, folder_name, main):
+    """Return ordered [slide1, slide2, ...] for a Vol: concept + b/c/d if present."""
+    num = folder_name.split('-')[1]
+    slides = [main]
+    for suf in ("b", "c", "d"):
+        c1 = os.path.join(base, folder_name, "vol%s%s.png" % (num, suf))       # same folder
+        c2 = os.path.join(base, "vol-%s%s" % (num, suf), "vol%s%s.png" % (num, suf))  # sibling folder
+        pick = c1 if os.path.isfile(c1) else (c2 if os.path.isfile(c2) else None)
+        if pick:
+            slides.append(pick)
+    return slides
+
 def title_of(idx):
     t = io.open(idx, encoding="utf-8", errors="ignore").read()
     m = re.search(r'<title>(.*?)</title>', t, re.S)
     return H.unescape(m.group(1).strip()) if m else ""
 
-items = []  # (vol, title, imgrel)
+items = []  # (vol, title, [slide_rel, ...])
 
 # --- old chips Vol.1-30 ---
 OLD = [
@@ -367,7 +430,7 @@ for vol,date,title,fn in OLD:
         img = "../assets/img/slide-vol27-date.png"
     else:
         img = "../assets/x/" + fn
-    items.append((vol, title, img))
+    items.append((vol, title, [img]))
 
 # --- new series folders (vol-NN primary) + _archive ---
 scan_dirs = [(HTML, "")]
@@ -391,33 +454,38 @@ for base, _tag in scan_dirs:
         png = main_png(fabs, folder)
         if not png:
             continue
-        items.append((dvol, clean_title(title), rel(png)))
+        slides = [rel(p) for p in slide_set(base, folder, png)]
+        items.append((dvol, clean_title(title), slides))
 
-# de-dup exact (vol,img) just in case; keep collisions (same vol, different img)
+# de-dup exact (vol, slide1); keep collisions (same vol, different concept image)
 seen = set(); uniq = []
-for v,t,img in items:
-    key = (v, img)
+for v,t,slides in items:
+    key = (v, slides[0])
     if key in seen: continue
-    seen.add(key); uniq.append((v,t,img))
+    seen.add(key); uniq.append((v,t,slides))
 items = uniq
-items.sort(key=lambda r: (r[0], r[2]))
+items.sort(key=lambda r: (r[0], r[2][0]))
 
 def esc(s):
     return s.replace("&","&amp;").replace("<","&lt;").replace(">","&gt;").replace('"',"&quot;")
 
 cards=[]; toc=[]
 counter={}
-for vol,title,img in items:
+for vol,title,slides in items:
     counter[vol]=counter.get(vol,0)+1
     cid = "vol%d" % vol if counter[vol]==1 else "vol%d-%d" % (vol,counter[vol])
     t = esc(title)
+    n = len(slides)
+    img = slides[0]
+    dataslides = esc("|".join(slides))
     search = ("vol.%d vol%d %s" % (vol, vol, title)).lower()
     search = esc(search)
+    badge = ('<span class="x-multi">%d枚</span>' % n) if n > 1 else ''
     cards.append(
-'      <figure class="x-card" id="%s" data-vol="%d" data-title="%s" data-search="%s" tabindex="0" role="button" aria-label="Vol.%d %s を拡大">\n'
-'        <div class="x-shot"><img src="%s" alt="Vol.%d %s" loading="lazy" width="1200" height="675"></div>\n'
+'      <figure class="x-card" id="%s" data-vol="%d" data-title="%s" data-search="%s" data-slides="%s" data-count="%d" tabindex="0" role="button" aria-label="Vol.%d %s を拡大（%d枚）">\n'
+'        <div class="x-shot"><img src="%s" alt="Vol.%d %s" loading="lazy" width="1200" height="675">%s</div>\n'
 '        <figcaption class="x-cap"><span class="x-vol">Vol.%d</span><span class="x-ttl">%s</span></figcaption>\n'
-'      </figure>' % (cid, vol, t, search, vol, t, img, vol, t, vol, t))
+'      </figure>' % (cid, vol, t, search, dataslides, n, vol, t, n, img, vol, t, badge, vol, t))
     toc.append(
 '        <a class="toc-item" href="#%s" data-search="%s"><span class="toc-vol">%d</span><span class="toc-ttl">%s</span></a>'
         % (cid, search, vol, t))
