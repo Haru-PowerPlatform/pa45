@@ -3,44 +3,61 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="PA45がXで投稿しているPower Automate / Copilot Studioの技術チップスをVol順に一覧。スライド画像をそのまま大きく並べ、パッと見で追えます。">
-  <title>Xスライド一覧（Vol順）｜PA45 Power Automate 技術チップス</title>
+  <meta name="description" content="PA45がXで投稿しているPower Automate / Copilot Studioの技術チップスVol.1〜95をVol順に一覧。目次と検索で目的の回にすぐたどり着けます。スライド画像はそのまま大きく表示。">
+  <title>Xスライド一覧（Vol順・目次つき）｜PA45 Power Automate 技術チップス</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../assets/css/style.css?v=20260718">
   <style>
-    .filter-bar { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 20px; }
-    .f-pill {
-      font-size: 12px; padding: 5px 13px; border-radius: 20px;
-      border: 1px solid var(--c-border-md); color: var(--c-muted);
-      cursor: pointer; font-family: var(--font-mono); font-weight: 500;
-      background: var(--c-surface); transition: .15s;
+    /* ===== 検索バー ===== */
+    .x-toolbar { position: sticky; top: 0; z-index: 40; background: var(--c-bg); padding: 12px 0 10px; margin-bottom: 6px; border-bottom: 1px solid var(--c-border-md); }
+    .x-searchwrap { position: relative; }
+    .x-search {
+      width: 100%; box-sizing: border-box; font-size: 15px; font-family: var(--font-base);
+      padding: 12px 40px 12px 42px; border-radius: 12px; border: 1px solid var(--c-border-md);
+      background: var(--c-surface); color: var(--c-text);
     }
-    .f-pill:hover, .f-pill.active {
-      background: var(--c-blue-bg); border-color: var(--c-blue-mid); color: var(--c-blue-text);
-    }
+    .x-search:focus { outline: none; border-color: var(--c-blue-mid); box-shadow: 0 0 0 3px var(--c-blue-bg); }
+    .x-search-ico { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--c-hint); pointer-events: none; }
+    .x-clear { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; font-size: 20px; color: var(--c-hint); cursor: pointer; display: none; }
+    .x-count { font-size: 12px; color: var(--c-muted); margin: 8px 2px 0; font-family: var(--font-mono); }
+
+    /* ===== 目次 ===== */
+    .toc { margin: 14px 0 26px; border: 1px solid var(--c-border-md); border-radius: var(--radius-lg); background: var(--c-surface); overflow: hidden; }
+    .toc summary { cursor: pointer; padding: 13px 16px; font-weight: 700; font-size: 14px; list-style: none; display: flex; align-items: center; gap: 8px; }
+    .toc summary::-webkit-details-marker { display: none; }
+    .toc summary .chev { transition: transform .2s; color: var(--c-hint); }
+    .toc[open] summary .chev { transform: rotate(90deg); }
+    .toc-list { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 2px 10px; padding: 4px 16px 16px; }
+    .toc-item { display: flex; gap: 8px; align-items: baseline; padding: 5px 4px; border-radius: 6px; text-decoration: none; color: var(--c-text); font-size: 12.5px; line-height: 1.4; }
+    .toc-item:hover { background: var(--c-blue-bg); }
+    .toc-vol { font-family: var(--font-mono); font-weight: 500; font-size: 11px; color: var(--c-blue-text); min-width: 26px; text-align: right; flex-shrink: 0; }
+    .toc-ttl { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .toc-item.hidden { display: none; }
+    @media (max-width: 900px) { .toc-list { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+    @media (max-width: 560px) { .toc-list { grid-template-columns: 1fr; } }
+
+    /* ===== ギャラリー ===== */
     .x-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 18px; }
     .x-card {
       margin: 0; background: var(--c-surface); border-radius: var(--radius-lg);
       overflow: hidden; box-shadow: var(--shadow-card); cursor: zoom-in;
-      transition: box-shadow .2s, transform .2s; outline: none;
+      transition: box-shadow .2s, transform .2s; outline: none; scroll-margin-top: 90px;
     }
     .x-card:hover, .x-card:focus-visible { box-shadow: var(--shadow-hover); transform: translateY(-2px); }
     .x-card:focus-visible { box-shadow: 0 0 0 3px var(--c-blue-mid); }
+    .x-card.flash { animation: flash 1.4s ease; }
+    @keyframes flash { 0%,100% { box-shadow: var(--shadow-card); } 25% { box-shadow: 0 0 0 3px var(--c-blue-mid); } }
     .x-shot { aspect-ratio: 16 / 9; background: var(--c-blue-bg); }
     .x-shot img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .x-shot.cs { background: #e8f5e9; } .x-shot.teams { background: #e3f2fd; }
-    .x-shot.pjson { background: var(--c-purple-bg); } .x-shot.cond { background: var(--c-purple-bg); }
-    .x-shot.date { background: var(--c-teal-bg); } .x-shot.filter { background: var(--c-amber-bg); }
-    .x-shot.ate { background: var(--c-coral-bg); } .x-shot.exp { background: var(--c-amber-bg); }
-    .x-shot.dbg { background: #f1efe8; }
-    .x-cap { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 10px 14px; }
+    .x-cap { display: flex; align-items: baseline; gap: 8px; padding: 10px 14px; }
     .x-vol { font-family: var(--font-mono); font-weight: 500; font-size: 12px; color: var(--c-blue-text); background: var(--c-blue-bg); padding: 2px 8px; border-radius: 5px; flex-shrink: 0; }
-    .tag-code.cs { background: #c8e6c9; color: #1b5e20; }
-    .tag-code.teams { background: #bbdefb; color: #0d47a1; }
-    .x-ttl { font-size: 13px; font-weight: 500; line-height: 1.45; color: var(--c-text); flex: 1 1 100%; margin-top: 2px; }
+    .x-ttl { font-size: 13px; font-weight: 500; line-height: 1.45; color: var(--c-text); }
     .x-card.hidden { display: none; }
+    .x-empty { display: none; text-align: center; color: var(--c-muted); padding: 40px 0; font-size: 14px; }
+
+    /* ===== ライトボックス ===== */
     .lb { position: fixed; inset: 0; z-index: 999; background: rgba(12,20,32,.92); display: none; align-items: center; justify-content: center; padding: 24px; }
     .lb.open { display: flex; }
     .lb-img { max-width: min(1200px, 94vw); max-height: 78vh; width: auto; border-radius: 10px; box-shadow: 0 20px 60px rgba(0,0,0,.5); }
@@ -61,13 +78,13 @@
   <meta property="og:site_name" content="PA45 — Power Automate 45">
   <meta property="og:locale" content="ja_JP">
   <meta property="og:url" content="https://haru-powerplatform.github.io/pa45/slides/">
-  <meta property="og:title" content="Xスライド一覧（Vol順）— Power Automate 技術チップス">
-  <meta property="og:description" content="Xで投稿しているPower Automate / Copilot Studioの技術チップスをVol順に一覧。スライドをそのまま大きく並べ、パッと見で追えます。">
+  <meta property="og:title" content="Xスライド一覧（Vol順・目次つき）— Power Automate 技術チップス">
+  <meta property="og:description" content="Xで投稿しているPower Automate / Copilot Studioの技術チップスVol.1〜95をVol順に一覧。目次と検索ですぐ見つかります。">
   <meta property="og:image" content="https://haru-powerplatform.github.io/pa45/assets/ogp/og-slides.png">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:site" content="@isamu_Automate">
-  <meta name="twitter:title" content="Xスライド一覧（Vol順）— Power Automate 技術チップス">
-  <meta name="twitter:description" content="Xで投稿しているPower Automate / Copilot Studioの技術チップスをVol順に一覧。パッと見で追えます。">
+  <meta name="twitter:title" content="Xスライド一覧（Vol順・目次つき）— Power Automate 技術チップス">
+  <meta name="twitter:description" content="Xで投稿しているPower Automate / Copilot Studioの技術チップスVol.1〜95をVol順に一覧。目次と検索ですぐ見つかります。">
   <meta name="twitter:image" content="https://haru-powerplatform.github.io/pa45/assets/ogp/og-slides.png">
   <link rel="canonical" href="https://haru-powerplatform.github.io/pa45/slides/">
 </head>
@@ -101,8 +118,8 @@
 <section class="page-hero">
   <div class="container">
     <span class="page-hero-eyebrow">X Slides</span>
-    <h1 class="page-hero-h1">Xのスライド投稿を、Vol順にまとめて</h1>
-    <p class="page-hero-sub">Xで投稿しているPower Automate / Copilot Studioの技術チップスをVol順に並べました。<br>スライドをそのまま大きく表示。カードをクリックすると拡大して、パラパラと見比べられます。</p>
+    <h1 class="page-hero-h1">Xのスライド投稿を、Vol順に全部</h1>
+    <p class="page-hero-sub">Xで投稿しているPower Automate / Copilot Studioの技術チップスをVol順に並べました。<br>目次と検索で目的の回にすぐたどり着けます。カードをクリックすると拡大して、パラパラと見比べられます。</p>
   </div>
 </section>
 
@@ -122,257 +139,489 @@
 <section class="section">
   <div class="container">
 
-    <p style="font-size:13px;color:var(--c-muted);margin-bottom:18px;line-height:1.7;padding:10px 14px;background:var(--c-blue-bg);border-radius:var(--radius-md);">
-      左上のVol.1から順に並べています。カテゴリで絞り込みたいときは下のボタンを押してください。
-    </p>
-
-    <div class="filter-bar">
-      <button class="f-pill active" onclick="filterSlides('all', this)">すべて</button>
-      <button class="f-pill" onclick="filterSlides('cs', this)">CS</button>
-      <button class="f-pill" onclick="filterSlides('teams', this)">TEAMS</button>
-      <button class="f-pill" onclick="filterSlides('pjson', this)">PJSON</button>
-      <button class="f-pill" onclick="filterSlides('cond', this)">COND</button>
-      <button class="f-pill" onclick="filterSlides('date', this)">DATE</button>
-      <button class="f-pill" onclick="filterSlides('filter', this)">FILTER</button>
-      <button class="f-pill" onclick="filterSlides('ate', this)">ATE</button>
-      <button class="f-pill" onclick="filterSlides('exp', this)">EXP</button>
-      <button class="f-pill" onclick="filterSlides('dbg', this)">DBG</button>
+    <div class="x-toolbar">
+      <div class="x-searchwrap">
+        <svg class="x-search-ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="search" class="x-search" id="xSearch" placeholder="Vol番号やキーワードで検索（例：Teams、JSON、会議、Vol.85）" autocomplete="off" aria-label="スライドを検索">
+        <button class="x-clear" id="xClear" aria-label="クリア">×</button>
+      </div>
+      <div class="x-count" id="xCount"></div>
     </div>
+
+    <details class="toc" id="toc">
+      <summary><svg class="chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>目次（全93本）— タップで開閉</summary>
+      <div class="toc-list" id="tocList">
+        <a class="toc-item" href="#vol1" data-search="vol.1 vol1 copilot studio × power automate × word連携　つまずきポイント3選"><span class="toc-vol">1</span><span class="toc-ttl">Copilot Studio × Power Automate × Word連携　つまずきポイント3選</span></a>
+        <a class="toc-item" href="#vol2" data-search="vol.2 vol2 copilot studio × power automateの連携ステップ"><span class="toc-vol">2</span><span class="toc-ttl">Copilot Studio × Power Automateの連携ステップ</span></a>
+        <a class="toc-item" href="#vol3" data-search="vol.3 vol3 wordのコンテンツコントロール設定方法（前編）"><span class="toc-vol">3</span><span class="toc-ttl">Wordのコンテンツコントロール設定方法（前編）</span></a>
+        <a class="toc-item" href="#vol4" data-search="vol.4 vol4 wordのコンテンツコントロール設定方法（後編）"><span class="toc-vol">4</span><span class="toc-ttl">Wordのコンテンツコントロール設定方法（後編）</span></a>
+        <a class="toc-item" href="#vol5" data-search="vol.5 vol5 copilot studio｜質問ノードは聞く順番を意識すると会話が自然になる"><span class="toc-vol">5</span><span class="toc-ttl">Copilot Studio｜質問ノードは聞く順番を意識すると会話が自然になる</span></a>
+        <a class="toc-item" href="#vol6" data-search="vol.6 vol6 copilot studio｜topicsの左右の使い方"><span class="toc-vol">6</span><span class="toc-ttl">Copilot Studio｜Topicsの左右の使い方</span></a>
+        <a class="toc-item" href="#vol7" data-search="vol.7 vol7 copilot studio｜ホーム画面4つのアイコンの役割"><span class="toc-vol">7</span><span class="toc-ttl">Copilot Studio｜ホーム画面4つのアイコンの役割</span></a>
+        <a class="toc-item" href="#vol8" data-search="vol.8 vol8 copilot studio｜ツール（エージェントフロー）の役割"><span class="toc-vol">8</span><span class="toc-ttl">Copilot Studio｜ツール（エージェントフロー）の役割</span></a>
+        <a class="toc-item" href="#vol9" data-search="vol.9 vol9 copilot studio｜カスタムプロンプト画面の役割"><span class="toc-vol">9</span><span class="toc-ttl">Copilot Studio｜カスタムプロンプト画面の役割</span></a>
+        <a class="toc-item" href="#vol10" data-search="vol.10 vol10 copilot studio｜カスタム変数とシステム変数の違い"><span class="toc-vol">10</span><span class="toc-ttl">Copilot Studio｜カスタム変数とシステム変数の違い</span></a>
+        <a class="toc-item" href="#vol12" data-search="vol.12 vol12 power automate：結合(join)で配列を1本の文字列にまとめる"><span class="toc-vol">12</span><span class="toc-ttl">Power Automate：結合(JOIN)で配列を1本の文字列にまとめる</span></a>
+        <a class="toc-item" href="#vol13" data-search="vol.13 vol13 power automate：1アクションでteams通知を自動化する"><span class="toc-vol">13</span><span class="toc-ttl">Power Automate：1アクションでTeams通知を自動化する</span></a>
+        <a class="toc-item" href="#vol14" data-search="vol.14 vol14 power automate：teams通知・送信1アクションでできること"><span class="toc-vol">14</span><span class="toc-ttl">Power Automate：Teams通知・送信1アクションでできること</span></a>
+        <a class="toc-item" href="#vol15" data-search="vol.15 vol15 power automate：会議の作成アクションで予定を自動化する"><span class="toc-vol">15</span><span class="toc-ttl">Power Automate：会議の作成アクションで予定を自動化する</span></a>
+        <a class="toc-item" href="#vol16" data-search="vol.16 vol16 power automate：jsonの解析が苦手な人向け・composeで軽量処理"><span class="toc-vol">16</span><span class="toc-ttl">Power Automate：JSONの解析が苦手な人向け・Composeで軽量処理</span></a>
+        <a class="toc-item" href="#vol17" data-search="vol.17 vol17 power automate：【作成】アクションでライトなjson処理をする"><span class="toc-vol">17</span><span class="toc-ttl">Power Automate：【作成】アクションでライトなJSON処理をする</span></a>
+        <a class="toc-item" href="#vol18" data-search="vol.18 vol18 power automate：jsonの構造をイラストで理解する"><span class="toc-vol">18</span><span class="toc-ttl">Power Automate：JSONの構造をイラストで理解する</span></a>
+        <a class="toc-item" href="#vol19" data-search="vol.19 vol19 power automate：【jsonの解析】アクションで動的コンテンツを使う"><span class="toc-vol">19</span><span class="toc-ttl">Power Automate：【JSONの解析】アクションで動的コンテンツを使う</span></a>
+        <a class="toc-item" href="#vol20" data-search="vol.20 vol20 power automate：【フィルターアレイ】で必要なデータだけを残す"><span class="toc-vol">20</span><span class="toc-ttl">Power Automate：【フィルターアレイ】で必要なデータだけを残す</span></a>
+        <a class="toc-item" href="#vol21" data-search="vol.21 vol21 power automate：ハマりがちな7つの問題と解決方法"><span class="toc-vol">21</span><span class="toc-ttl">Power Automate：ハマりがちな7つの問題と解決方法</span></a>
+        <a class="toc-item" href="#vol22" data-search="vol.22 vol22 power automate：条件(condition)のequalsとcontainsを正しく使い分ける"><span class="toc-vol">22</span><span class="toc-ttl">Power Automate：条件(Condition)のequalsとcontainsを正しく使い分ける</span></a>
+        <a class="toc-item" href="#vol23" data-search="vol.23 vol23 power automate：実務で効く通知設計・before→after"><span class="toc-vol">23</span><span class="toc-ttl">Power Automate：実務で効く通知設計・Before→After</span></a>
+        <a class="toc-item" href="#vol24" data-search="vol.24 vol24 power automate：condition（条件）は「質問をつくるアクション」"><span class="toc-vol">24</span><span class="toc-ttl">Power Automate：Condition（条件）は「質問をつくるアクション」</span></a>
+        <a class="toc-item" href="#vol25" data-search="vol.25 vol25 power automate：翌月1日を毎月自動で出す方法"><span class="toc-vol">25</span><span class="toc-ttl">Power Automate：翌月1日を毎月自動で出す方法</span></a>
+        <a class="toc-item" href="#vol26" data-search="vol.26 vol26 power automate：前月末は「月初から1日戻る」で一発"><span class="toc-vol">26</span><span class="toc-ttl">Power Automate：前月末は「月初から1日戻る」で一発</span></a>
+        <a class="toc-item" href="#vol27" data-search="vol.27 vol27 power automate：今月の最終営業日を出す方法"><span class="toc-vol">27</span><span class="toc-ttl">Power Automate：今月の最終営業日を出す方法</span></a>
+        <a class="toc-item" href="#vol28" data-search="vol.28 vol28 power automate：毎月の「◯営業日目」を自動で出す方法"><span class="toc-vol">28</span><span class="toc-ttl">Power Automate：毎月の「◯営業日目」を自動で出す方法</span></a>
+        <a class="toc-item" href="#vol29" data-search="vol.29 vol29 power automate：if()で条件分岐をシンプルに書く"><span class="toc-vol">29</span><span class="toc-ttl">Power Automate：if()で条件分岐をシンプルに書く</span></a>
+        <a class="toc-item" href="#vol30" data-search="vol.30 vol30 power automate：空欄のせいでフローが止まる問題を解決する"><span class="toc-vol">30</span><span class="toc-ttl">Power Automate：空欄のせいでフローが止まる問題を解決する</span></a>
+        <a class="toc-item" href="#vol35" data-search="vol.35 vol35 フローの中身をcopilotに解説させる"><span class="toc-vol">35</span><span class="toc-ttl">フローの中身をCopilotに解説させる</span></a>
+        <a class="toc-item" href="#vol36" data-search="vol.36 vol36 自動化の効果をspoでdb化＋power biで見える化"><span class="toc-vol">36</span><span class="toc-ttl">自動化の効果をSPOでDB化＋Power BIで見える化</span></a>
+        <a class="toc-item" href="#vol37" data-search="vol.37 vol37 viva engageの投稿をteamsにadaptive cardで自動通知"><span class="toc-vol">37</span><span class="toc-ttl">Viva Engageの投稿をTeamsにAdaptive Cardで自動通知</span></a>
+        <a class="toc-item" href="#vol38" data-search="vol.38 vol38 何も起きていないことを検知する"><span class="toc-vol">38</span><span class="toc-ttl">何も起きていないことを検知する</span></a>
+        <a class="toc-item" href="#vol39" data-search="vol.39 vol39 重い添付をクラウド共有リンクに"><span class="toc-vol">39</span><span class="toc-ttl">重い添付をクラウド共有リンクに</span></a>
+        <a class="toc-item" href="#vol40" data-search="vol.40 vol40 届いた重い添付を自動でクラウド保存"><span class="toc-vol">40</span><span class="toc-ttl">届いた重い添付を自動でクラウド保存</span></a>
+        <a class="toc-item" href="#vol41" data-search="vol.41 vol41 copilot cowork従量課金時代の使い分け（図解）"><span class="toc-vol">41</span><span class="toc-ttl">Copilot Cowork従量課金時代の使い分け（図解）</span></a>
+        <a class="toc-item" href="#vol42" data-search="vol.42 vol42 power automateでadaptive cardで1クリック回収"><span class="toc-vol">42</span><span class="toc-ttl">Power AutomateでAdaptive Cardで1クリック回収</span></a>
+        <a class="toc-item" href="#vol43" data-search="vol.43 vol43 重い添付を自動で魔法の箱へ保存（power automate）"><span class="toc-vol">43</span><span class="toc-ttl">重い添付を自動で魔法の箱へ保存（Power Automate）</span></a>
+        <a class="toc-item" href="#vol44" data-search="vol.44 vol44 スマホのボタン1発で現場を記録"><span class="toc-vol">44</span><span class="toc-ttl">スマホのボタン1発で現場を記録</span></a>
+        <a class="toc-item" href="#vol45" data-search="vol.45 vol45 teamsのスタンプでナレッジ自動収集"><span class="toc-vol">45</span><span class="toc-ttl">Teamsのスタンプでナレッジ自動収集</span></a>
+        <a class="toc-item" href="#vol46" data-search="vol.46 vol46 power automate 無料(標準)とプレミアムの境界"><span class="toc-vol">46</span><span class="toc-ttl">Power Automate 無料(標準)とプレミアムの境界</span></a>
+        <a class="toc-item" href="#vol47" data-search="vol.47 vol47 メール重複チェックがすり抜ける問題"><span class="toc-vol">47</span><span class="toc-ttl">メール重複チェックがすり抜ける問題</span></a>
+        <a class="toc-item" href="#vol48" data-search="vol.48 vol48 teamsに予約投稿を自作（指定の日時に自動投稿）"><span class="toc-vol">48</span><span class="toc-ttl">Teamsに予約投稿を自作（指定の日時に自動投稿）</span></a>
+        <a class="toc-item" href="#vol49" data-search="vol.49 vol49 フローが作れなくても大丈夫｜copilotに聞いてそのまま作る"><span class="toc-vol">49</span><span class="toc-ttl">フローが作れなくても大丈夫｜Copilotに聞いてそのまま作る</span></a>
+        <a class="toc-item" href="#vol50" data-search="vol.50 vol50 copilotへの頼み方は“新人への頼み方”と同じ"><span class="toc-vol">50</span><span class="toc-ttl">Copilotへの頼み方は“新人への頼み方”と同じ</span></a>
+        <a class="toc-item" href="#vol51" data-search="vol.51 vol51 aiが作ったフローは“味見”してから動かす"><span class="toc-vol">51</span><span class="toc-ttl">AIが作ったフローは“味見”してから動かす</span></a>
+        <a class="toc-item" href="#vol52" data-search="vol.52 vol52 できたフローは“会話”で育てる"><span class="toc-vol">52</span><span class="toc-ttl">できたフローは“会話”で育てる</span></a>
+        <a class="toc-item" href="#vol53" data-search="vol.53 vol53 赤いエラーはcopilotに貼るだけ"><span class="toc-vol">53</span><span class="toc-ttl">赤いエラーはCopilotに貼るだけ</span></a>
+        <a class="toc-item" href="#vol54" data-search="vol.54 vol54 copilotに頼めること・頼めないこと"><span class="toc-vol">54</span><span class="toc-ttl">Copilotに頼めること・頼めないこと</span></a>
+        <a class="toc-item" href="#vol55" data-search="vol.55 vol55 copilotの言うアクション名がpaで見つからない"><span class="toc-vol">55</span><span class="toc-ttl">Copilotの言うアクション名がPAで見つからない</span></a>
+        <a class="toc-item" href="#vol56" data-search="vol.56 vol56 teamsの合言葉でフローを呼び出す呪文"><span class="toc-vol">56</span><span class="toc-ttl">Teamsの合言葉でフローを呼び出す呪文</span></a>
+        <a class="toc-item" href="#vol57" data-search="vol.57 vol57 毎日ボタン1つで報連相"><span class="toc-vol">57</span><span class="toc-ttl">毎日ボタン1つで報連相</span></a>
+        <a class="toc-item" href="#vol58" data-search="vol.58 vol58 teamsのピコンを黙らせる通知まとめ便"><span class="toc-vol">58</span><span class="toc-ttl">Teamsのピコンを黙らせる通知まとめ便</span></a>
+        <a class="toc-item" href="#vol58-2" data-search="vol.58 vol58 案件名1回で初期セットアップ全部同時"><span class="toc-vol">58</span><span class="toc-ttl">案件名1回で初期セットアップ全部同時</span></a>
+        <a class="toc-item" href="#vol59" data-search="vol.59 vol59 チャットの割り込みから集中を守る"><span class="toc-vol">59</span><span class="toc-ttl">チャットの割り込みから集中を守る</span></a>
+        <a class="toc-item" href="#vol59-2" data-search="vol.59 vol59 日程調整を秘書に丸投げ"><span class="toc-vol">59</span><span class="toc-ttl">日程調整を秘書に丸投げ</span></a>
+        <a class="toc-item" href="#vol60" data-search="vol.60 vol60 ノーコードでチャットボットを自作"><span class="toc-vol">60</span><span class="toc-ttl">ノーコードでチャットボットを自作</span></a>
+        <a class="toc-item" href="#vol61" data-search="vol.61 vol61 入力するだけで書類pdfが自動で完成"><span class="toc-vol">61</span><span class="toc-ttl">入力するだけで書類PDFが自動で完成</span></a>
+        <a class="toc-item" href="#vol61-2" data-search="vol.61 vol61 power automateの効果を見える化"><span class="toc-vol">61</span><span class="toc-ttl">Power Automateの効果を見える化</span></a>
+        <a class="toc-item" href="#vol62" data-search="vol.62 vol62 フォルダに入れるだけで自動リネーム＆自動仕分け"><span class="toc-vol">62</span><span class="toc-ttl">フォルダに入れるだけで自動リネーム＆自動仕分け</span></a>
+        <a class="toc-item" href="#vol63" data-search="vol.63 vol63 猛暑の朝に職場へ自動で熱中症アラート"><span class="toc-vol">63</span><span class="toc-ttl">猛暑の朝に職場へ自動で熱中症アラート</span></a>
+        <a class="toc-item" href="#vol64" data-search="vol.64 vol64 デジタル回覧板で「聞いてない」を撲滅"><span class="toc-vol">64</span><span class="toc-ttl">デジタル回覧板で「聞いてない」を撲滅</span></a>
+        <a class="toc-item" href="#vol65" data-search="vol.65 vol65 休み明け受信トレイ救済便"><span class="toc-vol">65</span><span class="toc-ttl">休み明け受信トレイ救済便</span></a>
+        <a class="toc-item" href="#vol66" data-search="vol.66 vol66 qrで備品の持ち出し管理"><span class="toc-vol">66</span><span class="toc-ttl">QRで備品の持ち出し管理</span></a>
+        <a class="toc-item" href="#vol67" data-search="vol.67 vol67 資料の鮮度チェック"><span class="toc-vol">67</span><span class="toc-ttl">資料の鮮度チェック</span></a>
+        <a class="toc-item" href="#vol68" data-search="vol.68 vol68 レシートを撮るだけで経費台帳"><span class="toc-vol">68</span><span class="toc-ttl">レシートを撮るだけで経費台帳</span></a>
+        <a class="toc-item" href="#vol69" data-search="vol.69 vol69 フォームが届くたびexcelが自動で記録＆集計"><span class="toc-vol">69</span><span class="toc-ttl">フォームが届くたびExcelが自動で記録＆集計</span></a>
+        <a class="toc-item" href="#vol70" data-search="vol.70 vol70 毎日のひとことが金曜に週報の下書きになる"><span class="toc-vol">70</span><span class="toc-ttl">毎日のひとことが金曜に週報の下書きになる</span></a>
+        <a class="toc-item" href="#vol71" data-search="vol.71 vol71 当番表に足が生える"><span class="toc-vol">71</span><span class="toc-ttl">当番表に足が生える</span></a>
+        <a class="toc-item" href="#vol72" data-search="vol.72 vol72 送りっぱなしメールに追跡番号をつける"><span class="toc-vol">72</span><span class="toc-ttl">送りっぱなしメールに追跡番号をつける</span></a>
+        <a class="toc-item" href="#vol73" data-search="vol.73 vol73 いつものexcel集計を1回記録で毎週自動"><span class="toc-vol">73</span><span class="toc-ttl">いつものExcel集計を1回記録で毎週自動</span></a>
+        <a class="toc-item" href="#vol74" data-search="vol.74 vol74 朝9時のつもりが夜18時に届く（utcのズレ）"><span class="toc-vol">74</span><span class="toc-ttl">朝9時のつもりが夜18時に届く（UTCのズレ）</span></a>
+        <a class="toc-item" href="#vol75" data-search="vol.75 vol75 赤くなった時に、最初に見る場所"><span class="toc-vol">75</span><span class="toc-ttl">赤くなった時に、最初に見る場所</span></a>
+        <a class="toc-item" href="#vol76" data-search="vol.76 vol76 excelの見積書が、そのままpdfで届く"><span class="toc-vol">76</span><span class="toc-ttl">Excelの見積書が、そのままPDFで届く</span></a>
+        <a class="toc-item" href="#vol77" data-search="vol.77 vol77 毎朝のリマインド、祝日はお休みする"><span class="toc-vol">77</span><span class="toc-ttl">毎朝のリマインド、祝日はお休みする</span></a>
+        <a class="toc-item" href="#vol78" data-search="vol.78 vol78 戻し忘れのチェックアウトを本人にお知らせ"><span class="toc-vol">78</span><span class="toc-ttl">戻し忘れのチェックアウトを本人にお知らせ</span></a>
+        <a class="toc-item" href="#vol79" data-search="vol.79 vol79 決裁はメールのボタンだけで回る"><span class="toc-vol">79</span><span class="toc-ttl">決裁はメールのボタンだけで回る</span></a>
+        <a class="toc-item" href="#vol80" data-search="vol.80 vol80 上長のメアドを二度と手入力しない"><span class="toc-vol">80</span><span class="toc-ttl">上長のメアドを二度と手入力しない</span></a>
+        <a class="toc-item" href="#vol81" data-search="vol.81 vol81 info@の一次受けが止まらなくなる"><span class="toc-vol">81</span><span class="toc-ttl">info@の一次受けが止まらなくなる</span></a>
+        <a class="toc-item" href="#vol82" data-search="vol.82 vol82 zipは自動で開ける"><span class="toc-vol">82</span><span class="toc-ttl">ZIPは自動で開ける</span></a>
+        <a class="toc-item" href="#vol83" data-search="vol.83 vol83 仕分けルールをフローの外に置く"><span class="toc-vol">83</span><span class="toc-ttl">仕分けルールをフローの外に置く</span></a>
+        <a class="toc-item" href="#vol84" data-search="vol.84 vol84 formsの写真が台帳に自動で添付される"><span class="toc-vol">84</span><span class="toc-ttl">Formsの写真が台帳に自動で添付される</span></a>
+        <a class="toc-item" href="#vol85" data-search="vol.85 vol85 全員の空き時間から会議候補が出る"><span class="toc-vol">85</span><span class="toc-ttl">全員の空き時間から会議候補が出る</span></a>
+        <a class="toc-item" href="#vol86" data-search="vol.86 vol86 テストでメールを飛ばさずに試せる"><span class="toc-vol">86</span><span class="toc-ttl">テストでメールを飛ばさずに試せる</span></a>
+        <a class="toc-item" href="#vol87" data-search="vol.87 vol87 条件がfalseになった理由が行ごとに見える"><span class="toc-vol">87</span><span class="toc-ttl">条件がfalseになった理由が行ごとに見える</span></a>
+        <a class="toc-item" href="#vol88" data-search="vol.88 vol88 消したフローは21日以内なら戻せる"><span class="toc-vol">88</span><span class="toc-ttl">消したフローは21日以内なら戻せる</span></a>
+        <a class="toc-item" href="#vol89" data-search="vol.89 vol89 文字列の式チートシート10選"><span class="toc-vol">89</span><span class="toc-ttl">文字列の式チートシート10選</span></a>
+        <a class="toc-item" href="#vol90" data-search="vol.90 vol90 フィルタークエリ早見表"><span class="toc-vol">90</span><span class="toc-ttl">フィルタークエリ早見表</span></a>
+        <a class="toc-item" href="#vol91" data-search="vol.91 vol91 会議が終わる5分前に決定を1つ回収"><span class="toc-vol">91</span><span class="toc-ttl">会議が終わる5分前に決定を1つ回収</span></a>
+        <a class="toc-item" href="#vol92" data-search="vol.92 vol92 会議開始前に前回の決定と宿題をリマインド"><span class="toc-vol">92</span><span class="toc-ttl">会議開始前に前回の決定と宿題をリマインド</span></a>
+        <a class="toc-item" href="#vol93" data-search="vol.93 vol93 会議が自分の段取りを自分でやる"><span class="toc-vol">93</span><span class="toc-ttl">会議が自分の段取りを自分でやる</span></a>
+        <a class="toc-item" href="#vol94" data-search="vol.94 vol94 祝日は、フローも休む"><span class="toc-vol">94</span><span class="toc-ttl">祝日は、フローも休む</span></a>
+        <a class="toc-item" href="#vol95" data-search="vol.95 vol95 絵文字リアクションで出欠が集まる"><span class="toc-vol">95</span><span class="toc-ttl">絵文字リアクションで出欠が集まる</span></a>
+      </div>
+    </details>
 
     <div class="x-grid" id="slidesGrid">
-      <figure class="x-card" data-cat="cs" data-vol="1" data-title="Copilot Studio × Power Automate × Word連携　つまずきポイント3選" data-date="2026-02-15" tabindex="0" role="button" aria-label="Vol.1 Copilot Studio × Power Automate × Word連携　つまずきポイント3選 を拡大">
-        <div class="x-shot cs"><img src="../assets/x/2026-02-15-x-vol01.png" alt="Vol.1 Copilot Studio × Power Automate × Word連携　つまずきポイント3選" loading="lazy" width="1200" height="675"></div>
-        <figcaption class="x-cap">
-          <span class="x-vol">Vol.1</span>
-          <span class="tag-code cs">CS</span>
-          <span class="x-ttl">Copilot Studio × Power Automate × Word連携　つまずきポイント3選</span>
-        </figcaption>
+      <figure class="x-card" id="vol1" data-vol="1" data-title="Copilot Studio × Power Automate × Word連携　つまずきポイント3選" data-search="vol.1 vol1 copilot studio × power automate × word連携　つまずきポイント3選" tabindex="0" role="button" aria-label="Vol.1 Copilot Studio × Power Automate × Word連携　つまずきポイント3選 を拡大">
+        <div class="x-shot"><img src="../assets/x/2026-02-15-x-vol01.png" alt="Vol.1 Copilot Studio × Power Automate × Word連携　つまずきポイント3選" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.1</span><span class="x-ttl">Copilot Studio × Power Automate × Word連携　つまずきポイント3選</span></figcaption>
       </figure>
-      <figure class="x-card" data-cat="cs" data-vol="2" data-title="Copilot Studio × Power Automateの連携ステップ" data-date="2026-02-17" tabindex="0" role="button" aria-label="Vol.2 Copilot Studio × Power Automateの連携ステップ を拡大">
-        <div class="x-shot cs"><img src="../assets/x/2026-02-17-x-vol02.png" alt="Vol.2 Copilot Studio × Power Automateの連携ステップ" loading="lazy" width="1200" height="675"></div>
-        <figcaption class="x-cap">
-          <span class="x-vol">Vol.2</span>
-          <span class="tag-code cs">CS</span>
-          <span class="x-ttl">Copilot Studio × Power Automateの連携ステップ</span>
-        </figcaption>
+      <figure class="x-card" id="vol2" data-vol="2" data-title="Copilot Studio × Power Automateの連携ステップ" data-search="vol.2 vol2 copilot studio × power automateの連携ステップ" tabindex="0" role="button" aria-label="Vol.2 Copilot Studio × Power Automateの連携ステップ を拡大">
+        <div class="x-shot"><img src="../assets/x/2026-02-17-x-vol02.png" alt="Vol.2 Copilot Studio × Power Automateの連携ステップ" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.2</span><span class="x-ttl">Copilot Studio × Power Automateの連携ステップ</span></figcaption>
       </figure>
-      <figure class="x-card" data-cat="cs" data-vol="3" data-title="Wordのコンテンツコントロール設定方法（前編）" data-date="2026-02-19" tabindex="0" role="button" aria-label="Vol.3 Wordのコンテンツコントロール設定方法（前編） を拡大">
-        <div class="x-shot cs"><img src="../assets/x/2026-02-19-x-vol03.png" alt="Vol.3 Wordのコンテンツコントロール設定方法（前編）" loading="lazy" width="1200" height="675"></div>
-        <figcaption class="x-cap">
-          <span class="x-vol">Vol.3</span>
-          <span class="tag-code cs">CS</span>
-          <span class="x-ttl">Wordのコンテンツコントロール設定方法（前編）</span>
-        </figcaption>
+      <figure class="x-card" id="vol3" data-vol="3" data-title="Wordのコンテンツコントロール設定方法（前編）" data-search="vol.3 vol3 wordのコンテンツコントロール設定方法（前編）" tabindex="0" role="button" aria-label="Vol.3 Wordのコンテンツコントロール設定方法（前編） を拡大">
+        <div class="x-shot"><img src="../assets/x/2026-02-19-x-vol03.png" alt="Vol.3 Wordのコンテンツコントロール設定方法（前編）" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.3</span><span class="x-ttl">Wordのコンテンツコントロール設定方法（前編）</span></figcaption>
       </figure>
-      <figure class="x-card" data-cat="cs" data-vol="4" data-title="Wordのコンテンツコントロール設定方法（後編）" data-date="2026-02-21" tabindex="0" role="button" aria-label="Vol.4 Wordのコンテンツコントロール設定方法（後編） を拡大">
-        <div class="x-shot cs"><img src="../assets/x/2026-02-21-x-vol04.png" alt="Vol.4 Wordのコンテンツコントロール設定方法（後編）" loading="lazy" width="1200" height="675"></div>
-        <figcaption class="x-cap">
-          <span class="x-vol">Vol.4</span>
-          <span class="tag-code cs">CS</span>
-          <span class="x-ttl">Wordのコンテンツコントロール設定方法（後編）</span>
-        </figcaption>
+      <figure class="x-card" id="vol4" data-vol="4" data-title="Wordのコンテンツコントロール設定方法（後編）" data-search="vol.4 vol4 wordのコンテンツコントロール設定方法（後編）" tabindex="0" role="button" aria-label="Vol.4 Wordのコンテンツコントロール設定方法（後編） を拡大">
+        <div class="x-shot"><img src="../assets/x/2026-02-21-x-vol04.png" alt="Vol.4 Wordのコンテンツコントロール設定方法（後編）" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.4</span><span class="x-ttl">Wordのコンテンツコントロール設定方法（後編）</span></figcaption>
       </figure>
-      <figure class="x-card" data-cat="cs" data-vol="5" data-title="Copilot Studio｜質問ノードは聞く順番を意識すると会話が自然になる" data-date="2026-02-23" tabindex="0" role="button" aria-label="Vol.5 Copilot Studio｜質問ノードは聞く順番を意識すると会話が自然になる を拡大">
-        <div class="x-shot cs"><img src="../assets/x/2026-02-23-x-vol05.png" alt="Vol.5 Copilot Studio｜質問ノードは聞く順番を意識すると会話が自然になる" loading="lazy" width="1200" height="675"></div>
-        <figcaption class="x-cap">
-          <span class="x-vol">Vol.5</span>
-          <span class="tag-code cs">CS</span>
-          <span class="x-ttl">Copilot Studio｜質問ノードは聞く順番を意識すると会話が自然になる</span>
-        </figcaption>
+      <figure class="x-card" id="vol5" data-vol="5" data-title="Copilot Studio｜質問ノードは聞く順番を意識すると会話が自然になる" data-search="vol.5 vol5 copilot studio｜質問ノードは聞く順番を意識すると会話が自然になる" tabindex="0" role="button" aria-label="Vol.5 Copilot Studio｜質問ノードは聞く順番を意識すると会話が自然になる を拡大">
+        <div class="x-shot"><img src="../assets/x/2026-02-23-x-vol05.png" alt="Vol.5 Copilot Studio｜質問ノードは聞く順番を意識すると会話が自然になる" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.5</span><span class="x-ttl">Copilot Studio｜質問ノードは聞く順番を意識すると会話が自然になる</span></figcaption>
       </figure>
-      <figure class="x-card" data-cat="cs" data-vol="6" data-title="Copilot Studio｜Topicsの左右の使い方" data-date="2026-02-25" tabindex="0" role="button" aria-label="Vol.6 Copilot Studio｜Topicsの左右の使い方 を拡大">
-        <div class="x-shot cs"><img src="../assets/x/2026-02-25-x-vol06.png" alt="Vol.6 Copilot Studio｜Topicsの左右の使い方" loading="lazy" width="1200" height="675"></div>
-        <figcaption class="x-cap">
-          <span class="x-vol">Vol.6</span>
-          <span class="tag-code cs">CS</span>
-          <span class="x-ttl">Copilot Studio｜Topicsの左右の使い方</span>
-        </figcaption>
+      <figure class="x-card" id="vol6" data-vol="6" data-title="Copilot Studio｜Topicsの左右の使い方" data-search="vol.6 vol6 copilot studio｜topicsの左右の使い方" tabindex="0" role="button" aria-label="Vol.6 Copilot Studio｜Topicsの左右の使い方 を拡大">
+        <div class="x-shot"><img src="../assets/x/2026-02-25-x-vol06.png" alt="Vol.6 Copilot Studio｜Topicsの左右の使い方" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.6</span><span class="x-ttl">Copilot Studio｜Topicsの左右の使い方</span></figcaption>
       </figure>
-      <figure class="x-card" data-cat="cs" data-vol="7" data-title="Copilot Studio｜ホーム画面4つのアイコンの役割" data-date="2026-02-27" tabindex="0" role="button" aria-label="Vol.7 Copilot Studio｜ホーム画面4つのアイコンの役割 を拡大">
-        <div class="x-shot cs"><img src="../assets/x/2026-02-27-x-vol07.png" alt="Vol.7 Copilot Studio｜ホーム画面4つのアイコンの役割" loading="lazy" width="1200" height="675"></div>
-        <figcaption class="x-cap">
-          <span class="x-vol">Vol.7</span>
-          <span class="tag-code cs">CS</span>
-          <span class="x-ttl">Copilot Studio｜ホーム画面4つのアイコンの役割</span>
-        </figcaption>
+      <figure class="x-card" id="vol7" data-vol="7" data-title="Copilot Studio｜ホーム画面4つのアイコンの役割" data-search="vol.7 vol7 copilot studio｜ホーム画面4つのアイコンの役割" tabindex="0" role="button" aria-label="Vol.7 Copilot Studio｜ホーム画面4つのアイコンの役割 を拡大">
+        <div class="x-shot"><img src="../assets/x/2026-02-27-x-vol07.png" alt="Vol.7 Copilot Studio｜ホーム画面4つのアイコンの役割" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.7</span><span class="x-ttl">Copilot Studio｜ホーム画面4つのアイコンの役割</span></figcaption>
       </figure>
-      <figure class="x-card" data-cat="cs" data-vol="8" data-title="Copilot Studio｜ツール（エージェントフロー）の役割" data-date="2026-03-01" tabindex="0" role="button" aria-label="Vol.8 Copilot Studio｜ツール（エージェントフロー）の役割 を拡大">
-        <div class="x-shot cs"><img src="../assets/x/2026-03-01-x-vol08.png" alt="Vol.8 Copilot Studio｜ツール（エージェントフロー）の役割" loading="lazy" width="1200" height="675"></div>
-        <figcaption class="x-cap">
-          <span class="x-vol">Vol.8</span>
-          <span class="tag-code cs">CS</span>
-          <span class="x-ttl">Copilot Studio｜ツール（エージェントフロー）の役割</span>
-        </figcaption>
+      <figure class="x-card" id="vol8" data-vol="8" data-title="Copilot Studio｜ツール（エージェントフロー）の役割" data-search="vol.8 vol8 copilot studio｜ツール（エージェントフロー）の役割" tabindex="0" role="button" aria-label="Vol.8 Copilot Studio｜ツール（エージェントフロー）の役割 を拡大">
+        <div class="x-shot"><img src="../assets/x/2026-03-01-x-vol08.png" alt="Vol.8 Copilot Studio｜ツール（エージェントフロー）の役割" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.8</span><span class="x-ttl">Copilot Studio｜ツール（エージェントフロー）の役割</span></figcaption>
       </figure>
-      <figure class="x-card" data-cat="cs" data-vol="9" data-title="Copilot Studio｜カスタムプロンプト画面の役割" data-date="2026-03-03" tabindex="0" role="button" aria-label="Vol.9 Copilot Studio｜カスタムプロンプト画面の役割 を拡大">
-        <div class="x-shot cs"><img src="../assets/x/2026-03-03-x-vol09.png" alt="Vol.9 Copilot Studio｜カスタムプロンプト画面の役割" loading="lazy" width="1200" height="675"></div>
-        <figcaption class="x-cap">
-          <span class="x-vol">Vol.9</span>
-          <span class="tag-code cs">CS</span>
-          <span class="x-ttl">Copilot Studio｜カスタムプロンプト画面の役割</span>
-        </figcaption>
+      <figure class="x-card" id="vol9" data-vol="9" data-title="Copilot Studio｜カスタムプロンプト画面の役割" data-search="vol.9 vol9 copilot studio｜カスタムプロンプト画面の役割" tabindex="0" role="button" aria-label="Vol.9 Copilot Studio｜カスタムプロンプト画面の役割 を拡大">
+        <div class="x-shot"><img src="../assets/x/2026-03-03-x-vol09.png" alt="Vol.9 Copilot Studio｜カスタムプロンプト画面の役割" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.9</span><span class="x-ttl">Copilot Studio｜カスタムプロンプト画面の役割</span></figcaption>
       </figure>
-      <figure class="x-card" data-cat="cs" data-vol="10" data-title="Copilot Studio｜カスタム変数とシステム変数の違い" data-date="2026-03-05" tabindex="0" role="button" aria-label="Vol.10 Copilot Studio｜カスタム変数とシステム変数の違い を拡大">
-        <div class="x-shot cs"><img src="../assets/x/2026-03-05-x-vol10.png" alt="Vol.10 Copilot Studio｜カスタム変数とシステム変数の違い" loading="lazy" width="1200" height="675"></div>
-        <figcaption class="x-cap">
-          <span class="x-vol">Vol.10</span>
-          <span class="tag-code cs">CS</span>
-          <span class="x-ttl">Copilot Studio｜カスタム変数とシステム変数の違い</span>
-        </figcaption>
+      <figure class="x-card" id="vol10" data-vol="10" data-title="Copilot Studio｜カスタム変数とシステム変数の違い" data-search="vol.10 vol10 copilot studio｜カスタム変数とシステム変数の違い" tabindex="0" role="button" aria-label="Vol.10 Copilot Studio｜カスタム変数とシステム変数の違い を拡大">
+        <div class="x-shot"><img src="../assets/x/2026-03-05-x-vol10.png" alt="Vol.10 Copilot Studio｜カスタム変数とシステム変数の違い" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.10</span><span class="x-ttl">Copilot Studio｜カスタム変数とシステム変数の違い</span></figcaption>
       </figure>
-      <figure class="x-card" data-cat="ate" data-vol="12" data-title="Power Automate：結合(JOIN)で配列を1本の文字列にまとめる" data-date="2026-03-07" tabindex="0" role="button" aria-label="Vol.12 Power Automate：結合(JOIN)で配列を1本の文字列にまとめる を拡大">
-        <div class="x-shot ate"><img src="../assets/x/2026-03-07-x-vol12.png" alt="Vol.12 Power Automate：結合(JOIN)で配列を1本の文字列にまとめる" loading="lazy" width="1200" height="675"></div>
-        <figcaption class="x-cap">
-          <span class="x-vol">Vol.12</span>
-          <span class="tag-code ate">ATE</span>
-          <span class="x-ttl">Power Automate：結合(JOIN)で配列を1本の文字列にまとめる</span>
-        </figcaption>
+      <figure class="x-card" id="vol12" data-vol="12" data-title="Power Automate：結合(JOIN)で配列を1本の文字列にまとめる" data-search="vol.12 vol12 power automate：結合(join)で配列を1本の文字列にまとめる" tabindex="0" role="button" aria-label="Vol.12 Power Automate：結合(JOIN)で配列を1本の文字列にまとめる を拡大">
+        <div class="x-shot"><img src="../assets/x/2026-03-07-x-vol12.png" alt="Vol.12 Power Automate：結合(JOIN)で配列を1本の文字列にまとめる" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.12</span><span class="x-ttl">Power Automate：結合(JOIN)で配列を1本の文字列にまとめる</span></figcaption>
       </figure>
-      <figure class="x-card" data-cat="teams" data-vol="13" data-title="Power Automate：1アクションでTeams通知を自動化する" data-date="2026-03-09" tabindex="0" role="button" aria-label="Vol.13 Power Automate：1アクションでTeams通知を自動化する を拡大">
-        <div class="x-shot teams"><img src="../assets/x/2026-03-09-x-vol13.png" alt="Vol.13 Power Automate：1アクションでTeams通知を自動化する" loading="lazy" width="1200" height="675"></div>
-        <figcaption class="x-cap">
-          <span class="x-vol">Vol.13</span>
-          <span class="tag-code teams">TEAMS</span>
-          <span class="x-ttl">Power Automate：1アクションでTeams通知を自動化する</span>
-        </figcaption>
+      <figure class="x-card" id="vol13" data-vol="13" data-title="Power Automate：1アクションでTeams通知を自動化する" data-search="vol.13 vol13 power automate：1アクションでteams通知を自動化する" tabindex="0" role="button" aria-label="Vol.13 Power Automate：1アクションでTeams通知を自動化する を拡大">
+        <div class="x-shot"><img src="../assets/x/2026-03-09-x-vol13.png" alt="Vol.13 Power Automate：1アクションでTeams通知を自動化する" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.13</span><span class="x-ttl">Power Automate：1アクションでTeams通知を自動化する</span></figcaption>
       </figure>
-      <figure class="x-card" data-cat="teams" data-vol="14" data-title="Power Automate：Teams通知・送信1アクションでできること" data-date="2026-03-10" tabindex="0" role="button" aria-label="Vol.14 Power Automate：Teams通知・送信1アクションでできること を拡大">
-        <div class="x-shot teams"><img src="../assets/x/2026-03-10-x-vol14.png" alt="Vol.14 Power Automate：Teams通知・送信1アクションでできること" loading="lazy" width="1200" height="675"></div>
-        <figcaption class="x-cap">
-          <span class="x-vol">Vol.14</span>
-          <span class="tag-code teams">TEAMS</span>
-          <span class="x-ttl">Power Automate：Teams通知・送信1アクションでできること</span>
-        </figcaption>
+      <figure class="x-card" id="vol14" data-vol="14" data-title="Power Automate：Teams通知・送信1アクションでできること" data-search="vol.14 vol14 power automate：teams通知・送信1アクションでできること" tabindex="0" role="button" aria-label="Vol.14 Power Automate：Teams通知・送信1アクションでできること を拡大">
+        <div class="x-shot"><img src="../assets/x/2026-03-10-x-vol14.png" alt="Vol.14 Power Automate：Teams通知・送信1アクションでできること" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.14</span><span class="x-ttl">Power Automate：Teams通知・送信1アクションでできること</span></figcaption>
       </figure>
-      <figure class="x-card" data-cat="teams" data-vol="15" data-title="Power Automate：会議の作成アクションで予定を自動化する" data-date="2026-03-11" tabindex="0" role="button" aria-label="Vol.15 Power Automate：会議の作成アクションで予定を自動化する を拡大">
-        <div class="x-shot teams"><img src="../assets/x/2026-03-11-x-vol15.png" alt="Vol.15 Power Automate：会議の作成アクションで予定を自動化する" loading="lazy" width="1200" height="675"></div>
-        <figcaption class="x-cap">
-          <span class="x-vol">Vol.15</span>
-          <span class="tag-code teams">TEAMS</span>
-          <span class="x-ttl">Power Automate：会議の作成アクションで予定を自動化する</span>
-        </figcaption>
+      <figure class="x-card" id="vol15" data-vol="15" data-title="Power Automate：会議の作成アクションで予定を自動化する" data-search="vol.15 vol15 power automate：会議の作成アクションで予定を自動化する" tabindex="0" role="button" aria-label="Vol.15 Power Automate：会議の作成アクションで予定を自動化する を拡大">
+        <div class="x-shot"><img src="../assets/x/2026-03-11-x-vol15.png" alt="Vol.15 Power Automate：会議の作成アクションで予定を自動化する" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.15</span><span class="x-ttl">Power Automate：会議の作成アクションで予定を自動化する</span></figcaption>
       </figure>
-      <figure class="x-card" data-cat="pjson" data-vol="16" data-title="Power Automate：JSONの解析が苦手な人向け・Composeで軽量処理" data-date="2026-03-12" tabindex="0" role="button" aria-label="Vol.16 Power Automate：JSONの解析が苦手な人向け・Composeで軽量処理 を拡大">
-        <div class="x-shot pjson"><img src="../assets/x/2026-03-12-x-vol16.png" alt="Vol.16 Power Automate：JSONの解析が苦手な人向け・Composeで軽量処理" loading="lazy" width="1200" height="675"></div>
-        <figcaption class="x-cap">
-          <span class="x-vol">Vol.16</span>
-          <span class="tag-code pjson">PJSON</span>
-          <span class="x-ttl">Power Automate：JSONの解析が苦手な人向け・Composeで軽量処理</span>
-        </figcaption>
+      <figure class="x-card" id="vol16" data-vol="16" data-title="Power Automate：JSONの解析が苦手な人向け・Composeで軽量処理" data-search="vol.16 vol16 power automate：jsonの解析が苦手な人向け・composeで軽量処理" tabindex="0" role="button" aria-label="Vol.16 Power Automate：JSONの解析が苦手な人向け・Composeで軽量処理 を拡大">
+        <div class="x-shot"><img src="../assets/x/2026-03-12-x-vol16.png" alt="Vol.16 Power Automate：JSONの解析が苦手な人向け・Composeで軽量処理" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.16</span><span class="x-ttl">Power Automate：JSONの解析が苦手な人向け・Composeで軽量処理</span></figcaption>
       </figure>
-      <figure class="x-card" data-cat="pjson" data-vol="17" data-title="Power Automate：【作成】アクションでライトなJSON処理をする" data-date="2026-03-13" tabindex="0" role="button" aria-label="Vol.17 Power Automate：【作成】アクションでライトなJSON処理をする を拡大">
-        <div class="x-shot pjson"><img src="../assets/x/2026-03-13-x-vol17.png" alt="Vol.17 Power Automate：【作成】アクションでライトなJSON処理をする" loading="lazy" width="1200" height="675"></div>
-        <figcaption class="x-cap">
-          <span class="x-vol">Vol.17</span>
-          <span class="tag-code pjson">PJSON</span>
-          <span class="x-ttl">Power Automate：【作成】アクションでライトなJSON処理をする</span>
-        </figcaption>
+      <figure class="x-card" id="vol17" data-vol="17" data-title="Power Automate：【作成】アクションでライトなJSON処理をする" data-search="vol.17 vol17 power automate：【作成】アクションでライトなjson処理をする" tabindex="0" role="button" aria-label="Vol.17 Power Automate：【作成】アクションでライトなJSON処理をする を拡大">
+        <div class="x-shot"><img src="../assets/x/2026-03-13-x-vol17.png" alt="Vol.17 Power Automate：【作成】アクションでライトなJSON処理をする" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.17</span><span class="x-ttl">Power Automate：【作成】アクションでライトなJSON処理をする</span></figcaption>
       </figure>
-      <figure class="x-card" data-cat="pjson" data-vol="18" data-title="Power Automate：JSONの構造をイラストで理解する" data-date="2026-03-14" tabindex="0" role="button" aria-label="Vol.18 Power Automate：JSONの構造をイラストで理解する を拡大">
-        <div class="x-shot pjson"><img src="../assets/x/2026-03-14-x-vol18.png" alt="Vol.18 Power Automate：JSONの構造をイラストで理解する" loading="lazy" width="1200" height="675"></div>
-        <figcaption class="x-cap">
-          <span class="x-vol">Vol.18</span>
-          <span class="tag-code pjson">PJSON</span>
-          <span class="x-ttl">Power Automate：JSONの構造をイラストで理解する</span>
-        </figcaption>
+      <figure class="x-card" id="vol18" data-vol="18" data-title="Power Automate：JSONの構造をイラストで理解する" data-search="vol.18 vol18 power automate：jsonの構造をイラストで理解する" tabindex="0" role="button" aria-label="Vol.18 Power Automate：JSONの構造をイラストで理解する を拡大">
+        <div class="x-shot"><img src="../assets/x/2026-03-14-x-vol18.png" alt="Vol.18 Power Automate：JSONの構造をイラストで理解する" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.18</span><span class="x-ttl">Power Automate：JSONの構造をイラストで理解する</span></figcaption>
       </figure>
-      <figure class="x-card" data-cat="pjson" data-vol="19" data-title="Power Automate：【JSONの解析】アクションで動的コンテンツを使う" data-date="2026-03-15" tabindex="0" role="button" aria-label="Vol.19 Power Automate：【JSONの解析】アクションで動的コンテンツを使う を拡大">
-        <div class="x-shot pjson"><img src="../assets/x/2026-03-15-x-vol19.png" alt="Vol.19 Power Automate：【JSONの解析】アクションで動的コンテンツを使う" loading="lazy" width="1200" height="675"></div>
-        <figcaption class="x-cap">
-          <span class="x-vol">Vol.19</span>
-          <span class="tag-code pjson">PJSON</span>
-          <span class="x-ttl">Power Automate：【JSONの解析】アクションで動的コンテンツを使う</span>
-        </figcaption>
+      <figure class="x-card" id="vol19" data-vol="19" data-title="Power Automate：【JSONの解析】アクションで動的コンテンツを使う" data-search="vol.19 vol19 power automate：【jsonの解析】アクションで動的コンテンツを使う" tabindex="0" role="button" aria-label="Vol.19 Power Automate：【JSONの解析】アクションで動的コンテンツを使う を拡大">
+        <div class="x-shot"><img src="../assets/x/2026-03-15-x-vol19.png" alt="Vol.19 Power Automate：【JSONの解析】アクションで動的コンテンツを使う" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.19</span><span class="x-ttl">Power Automate：【JSONの解析】アクションで動的コンテンツを使う</span></figcaption>
       </figure>
-      <figure class="x-card" data-cat="filter" data-vol="20" data-title="Power Automate：【フィルターアレイ】で必要なデータだけを残す" data-date="2026-03-16" tabindex="0" role="button" aria-label="Vol.20 Power Automate：【フィルターアレイ】で必要なデータだけを残す を拡大">
-        <div class="x-shot filter"><img src="../assets/x/2026-03-16-x-vol20.png" alt="Vol.20 Power Automate：【フィルターアレイ】で必要なデータだけを残す" loading="lazy" width="1200" height="675"></div>
-        <figcaption class="x-cap">
-          <span class="x-vol">Vol.20</span>
-          <span class="tag-code filter">FILTER</span>
-          <span class="x-ttl">Power Automate：【フィルターアレイ】で必要なデータだけを残す</span>
-        </figcaption>
+      <figure class="x-card" id="vol20" data-vol="20" data-title="Power Automate：【フィルターアレイ】で必要なデータだけを残す" data-search="vol.20 vol20 power automate：【フィルターアレイ】で必要なデータだけを残す" tabindex="0" role="button" aria-label="Vol.20 Power Automate：【フィルターアレイ】で必要なデータだけを残す を拡大">
+        <div class="x-shot"><img src="../assets/x/2026-03-16-x-vol20.png" alt="Vol.20 Power Automate：【フィルターアレイ】で必要なデータだけを残す" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.20</span><span class="x-ttl">Power Automate：【フィルターアレイ】で必要なデータだけを残す</span></figcaption>
       </figure>
-      <figure class="x-card" data-cat="dbg" data-vol="21" data-title="Power Automate：ハマりがちな7つの問題と解決方法" data-date="2026-03-17" tabindex="0" role="button" aria-label="Vol.21 Power Automate：ハマりがちな7つの問題と解決方法 を拡大">
-        <div class="x-shot dbg"><img src="../assets/x/2026-03-17-x-vol21.png" alt="Vol.21 Power Automate：ハマりがちな7つの問題と解決方法" loading="lazy" width="1200" height="675"></div>
-        <figcaption class="x-cap">
-          <span class="x-vol">Vol.21</span>
-          <span class="tag-code dbg">DBG</span>
-          <span class="x-ttl">Power Automate：ハマりがちな7つの問題と解決方法</span>
-        </figcaption>
+      <figure class="x-card" id="vol21" data-vol="21" data-title="Power Automate：ハマりがちな7つの問題と解決方法" data-search="vol.21 vol21 power automate：ハマりがちな7つの問題と解決方法" tabindex="0" role="button" aria-label="Vol.21 Power Automate：ハマりがちな7つの問題と解決方法 を拡大">
+        <div class="x-shot"><img src="../assets/x/2026-03-17-x-vol21.png" alt="Vol.21 Power Automate：ハマりがちな7つの問題と解決方法" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.21</span><span class="x-ttl">Power Automate：ハマりがちな7つの問題と解決方法</span></figcaption>
       </figure>
-      <figure class="x-card" data-cat="cond" data-vol="22" data-title="Power Automate：条件(Condition)のequalsとcontainsを正しく使い分ける" data-date="2026-03-18" tabindex="0" role="button" aria-label="Vol.22 Power Automate：条件(Condition)のequalsとcontainsを正しく使い分ける を拡大">
-        <div class="x-shot cond"><img src="../assets/x/2026-03-18-x-vol22.png" alt="Vol.22 Power Automate：条件(Condition)のequalsとcontainsを正しく使い分ける" loading="lazy" width="1200" height="675"></div>
-        <figcaption class="x-cap">
-          <span class="x-vol">Vol.22</span>
-          <span class="tag-code cond">COND</span>
-          <span class="x-ttl">Power Automate：条件(Condition)のequalsとcontainsを正しく使い分ける</span>
-        </figcaption>
+      <figure class="x-card" id="vol22" data-vol="22" data-title="Power Automate：条件(Condition)のequalsとcontainsを正しく使い分ける" data-search="vol.22 vol22 power automate：条件(condition)のequalsとcontainsを正しく使い分ける" tabindex="0" role="button" aria-label="Vol.22 Power Automate：条件(Condition)のequalsとcontainsを正しく使い分ける を拡大">
+        <div class="x-shot"><img src="../assets/x/2026-03-18-x-vol22.png" alt="Vol.22 Power Automate：条件(Condition)のequalsとcontainsを正しく使い分ける" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.22</span><span class="x-ttl">Power Automate：条件(Condition)のequalsとcontainsを正しく使い分ける</span></figcaption>
       </figure>
-      <figure class="x-card" data-cat="teams" data-vol="23" data-title="Power Automate：実務で効く通知設計・Before→After" data-date="2026-03-19" tabindex="0" role="button" aria-label="Vol.23 Power Automate：実務で効く通知設計・Before→After を拡大">
-        <div class="x-shot teams"><img src="../assets/x/2026-03-19-x-vol23.png" alt="Vol.23 Power Automate：実務で効く通知設計・Before→After" loading="lazy" width="1200" height="675"></div>
-        <figcaption class="x-cap">
-          <span class="x-vol">Vol.23</span>
-          <span class="tag-code teams">TEAMS</span>
-          <span class="x-ttl">Power Automate：実務で効く通知設計・Before→After</span>
-        </figcaption>
+      <figure class="x-card" id="vol23" data-vol="23" data-title="Power Automate：実務で効く通知設計・Before→After" data-search="vol.23 vol23 power automate：実務で効く通知設計・before→after" tabindex="0" role="button" aria-label="Vol.23 Power Automate：実務で効く通知設計・Before→After を拡大">
+        <div class="x-shot"><img src="../assets/x/2026-03-19-x-vol23.png" alt="Vol.23 Power Automate：実務で効く通知設計・Before→After" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.23</span><span class="x-ttl">Power Automate：実務で効く通知設計・Before→After</span></figcaption>
       </figure>
-      <figure class="x-card" data-cat="cond" data-vol="24" data-title="Power Automate：Condition（条件）は「質問をつくるアクション」" data-date="2026-03-20" tabindex="0" role="button" aria-label="Vol.24 Power Automate：Condition（条件）は「質問をつくるアクション」 を拡大">
-        <div class="x-shot cond"><img src="../assets/x/2026-03-20-x-vol24.png" alt="Vol.24 Power Automate：Condition（条件）は「質問をつくるアクション」" loading="lazy" width="1200" height="675"></div>
-        <figcaption class="x-cap">
-          <span class="x-vol">Vol.24</span>
-          <span class="tag-code cond">COND</span>
-          <span class="x-ttl">Power Automate：Condition（条件）は「質問をつくるアクション」</span>
-        </figcaption>
+      <figure class="x-card" id="vol24" data-vol="24" data-title="Power Automate：Condition（条件）は「質問をつくるアクション」" data-search="vol.24 vol24 power automate：condition（条件）は「質問をつくるアクション」" tabindex="0" role="button" aria-label="Vol.24 Power Automate：Condition（条件）は「質問をつくるアクション」 を拡大">
+        <div class="x-shot"><img src="../assets/x/2026-03-20-x-vol24.png" alt="Vol.24 Power Automate：Condition（条件）は「質問をつくるアクション」" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.24</span><span class="x-ttl">Power Automate：Condition（条件）は「質問をつくるアクション」</span></figcaption>
       </figure>
-      <figure class="x-card" data-cat="date" data-vol="25" data-title="Power Automate：翌月1日を毎月自動で出す方法" data-date="2026-03-21" tabindex="0" role="button" aria-label="Vol.25 Power Automate：翌月1日を毎月自動で出す方法 を拡大">
-        <div class="x-shot date"><img src="../assets/x/2026-03-21-x-vol25.png" alt="Vol.25 Power Automate：翌月1日を毎月自動で出す方法" loading="lazy" width="1200" height="675"></div>
-        <figcaption class="x-cap">
-          <span class="x-vol">Vol.25</span>
-          <span class="tag-code date">DATE</span>
-          <span class="x-ttl">Power Automate：翌月1日を毎月自動で出す方法</span>
-        </figcaption>
+      <figure class="x-card" id="vol25" data-vol="25" data-title="Power Automate：翌月1日を毎月自動で出す方法" data-search="vol.25 vol25 power automate：翌月1日を毎月自動で出す方法" tabindex="0" role="button" aria-label="Vol.25 Power Automate：翌月1日を毎月自動で出す方法 を拡大">
+        <div class="x-shot"><img src="../assets/x/2026-03-21-x-vol25.png" alt="Vol.25 Power Automate：翌月1日を毎月自動で出す方法" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.25</span><span class="x-ttl">Power Automate：翌月1日を毎月自動で出す方法</span></figcaption>
       </figure>
-      <figure class="x-card" data-cat="date" data-vol="26" data-title="Power Automate：前月末は「月初から1日戻る」で一発" data-date="2026-03-22" tabindex="0" role="button" aria-label="Vol.26 Power Automate：前月末は「月初から1日戻る」で一発 を拡大">
-        <div class="x-shot date"><img src="../assets/x/2026-03-22-x-vol26.png" alt="Vol.26 Power Automate：前月末は「月初から1日戻る」で一発" loading="lazy" width="1200" height="675"></div>
-        <figcaption class="x-cap">
-          <span class="x-vol">Vol.26</span>
-          <span class="tag-code date">DATE</span>
-          <span class="x-ttl">Power Automate：前月末は「月初から1日戻る」で一発</span>
-        </figcaption>
+      <figure class="x-card" id="vol26" data-vol="26" data-title="Power Automate：前月末は「月初から1日戻る」で一発" data-search="vol.26 vol26 power automate：前月末は「月初から1日戻る」で一発" tabindex="0" role="button" aria-label="Vol.26 Power Automate：前月末は「月初から1日戻る」で一発 を拡大">
+        <div class="x-shot"><img src="../assets/x/2026-03-22-x-vol26.png" alt="Vol.26 Power Automate：前月末は「月初から1日戻る」で一発" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.26</span><span class="x-ttl">Power Automate：前月末は「月初から1日戻る」で一発</span></figcaption>
       </figure>
-      <figure class="x-card" data-cat="date" data-vol="27" data-title="Power Automate：今月の最終営業日を出す方法" data-date="2026-03-11" tabindex="0" role="button" aria-label="Vol.27 Power Automate：今月の最終営業日を出す方法 を拡大">
-        <div class="x-shot date"><img src="../assets/img/slide-vol27-date.png" alt="Vol.27 Power Automate：今月の最終営業日を出す方法" loading="lazy" width="1200" height="675"></div>
-        <figcaption class="x-cap">
-          <span class="x-vol">Vol.27</span>
-          <span class="tag-code date">DATE</span>
-          <span class="x-ttl">Power Automate：今月の最終営業日を出す方法</span>
-        </figcaption>
+      <figure class="x-card" id="vol27" data-vol="27" data-title="Power Automate：今月の最終営業日を出す方法" data-search="vol.27 vol27 power automate：今月の最終営業日を出す方法" tabindex="0" role="button" aria-label="Vol.27 Power Automate：今月の最終営業日を出す方法 を拡大">
+        <div class="x-shot"><img src="../assets/img/slide-vol27-date.png" alt="Vol.27 Power Automate：今月の最終営業日を出す方法" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.27</span><span class="x-ttl">Power Automate：今月の最終営業日を出す方法</span></figcaption>
       </figure>
-      <figure class="x-card" data-cat="date" data-vol="28" data-title="Power Automate：毎月の「◯営業日目」を自動で出す方法" data-date="2026-03-23" tabindex="0" role="button" aria-label="Vol.28 Power Automate：毎月の「◯営業日目」を自動で出す方法 を拡大">
-        <div class="x-shot date"><img src="../assets/x/2026-03-23-x-vol28.png" alt="Vol.28 Power Automate：毎月の「◯営業日目」を自動で出す方法" loading="lazy" width="1200" height="675"></div>
-        <figcaption class="x-cap">
-          <span class="x-vol">Vol.28</span>
-          <span class="tag-code date">DATE</span>
-          <span class="x-ttl">Power Automate：毎月の「◯営業日目」を自動で出す方法</span>
-        </figcaption>
+      <figure class="x-card" id="vol28" data-vol="28" data-title="Power Automate：毎月の「◯営業日目」を自動で出す方法" data-search="vol.28 vol28 power automate：毎月の「◯営業日目」を自動で出す方法" tabindex="0" role="button" aria-label="Vol.28 Power Automate：毎月の「◯営業日目」を自動で出す方法 を拡大">
+        <div class="x-shot"><img src="../assets/x/2026-03-23-x-vol28.png" alt="Vol.28 Power Automate：毎月の「◯営業日目」を自動で出す方法" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.28</span><span class="x-ttl">Power Automate：毎月の「◯営業日目」を自動で出す方法</span></figcaption>
       </figure>
-      <figure class="x-card" data-cat="exp" data-vol="29" data-title="Power Automate：if()で条件分岐をシンプルに書く" data-date="2026-03-24" tabindex="0" role="button" aria-label="Vol.29 Power Automate：if()で条件分岐をシンプルに書く を拡大">
-        <div class="x-shot exp"><img src="../assets/x/2026-03-24-x-vol29.png" alt="Vol.29 Power Automate：if()で条件分岐をシンプルに書く" loading="lazy" width="1200" height="675"></div>
-        <figcaption class="x-cap">
-          <span class="x-vol">Vol.29</span>
-          <span class="tag-code exp">EXP</span>
-          <span class="x-ttl">Power Automate：if()で条件分岐をシンプルに書く</span>
-        </figcaption>
+      <figure class="x-card" id="vol29" data-vol="29" data-title="Power Automate：if()で条件分岐をシンプルに書く" data-search="vol.29 vol29 power automate：if()で条件分岐をシンプルに書く" tabindex="0" role="button" aria-label="Vol.29 Power Automate：if()で条件分岐をシンプルに書く を拡大">
+        <div class="x-shot"><img src="../assets/x/2026-03-24-x-vol29.png" alt="Vol.29 Power Automate：if()で条件分岐をシンプルに書く" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.29</span><span class="x-ttl">Power Automate：if()で条件分岐をシンプルに書く</span></figcaption>
       </figure>
-      <figure class="x-card" data-cat="dbg" data-vol="30" data-title="Power Automate：空欄のせいでフローが止まる問題を解決する" data-date="2026-03-25" tabindex="0" role="button" aria-label="Vol.30 Power Automate：空欄のせいでフローが止まる問題を解決する を拡大">
-        <div class="x-shot dbg"><img src="../assets/x/2026-03-25-x-vol30.png" alt="Vol.30 Power Automate：空欄のせいでフローが止まる問題を解決する" loading="lazy" width="1200" height="675"></div>
-        <figcaption class="x-cap">
-          <span class="x-vol">Vol.30</span>
-          <span class="tag-code dbg">DBG</span>
-          <span class="x-ttl">Power Automate：空欄のせいでフローが止まる問題を解決する</span>
-        </figcaption>
+      <figure class="x-card" id="vol30" data-vol="30" data-title="Power Automate：空欄のせいでフローが止まる問題を解決する" data-search="vol.30 vol30 power automate：空欄のせいでフローが止まる問題を解決する" tabindex="0" role="button" aria-label="Vol.30 Power Automate：空欄のせいでフローが止まる問題を解決する を拡大">
+        <div class="x-shot"><img src="../assets/x/2026-03-25-x-vol30.png" alt="Vol.30 Power Automate：空欄のせいでフローが止まる問題を解決する" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.30</span><span class="x-ttl">Power Automate：空欄のせいでフローが止まる問題を解決する</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol35" data-vol="35" data-title="フローの中身をCopilotに解説させる" data-search="vol.35 vol35 フローの中身をcopilotに解説させる" tabindex="0" role="button" aria-label="Vol.35 フローの中身をCopilotに解説させる を拡大">
+        <div class="x-shot"><img src="../assets/x/html/vol-35/vol35.png" alt="Vol.35 フローの中身をCopilotに解説させる" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.35</span><span class="x-ttl">フローの中身をCopilotに解説させる</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol36" data-vol="36" data-title="自動化の効果をSPOでDB化＋Power BIで見える化" data-search="vol.36 vol36 自動化の効果をspoでdb化＋power biで見える化" tabindex="0" role="button" aria-label="Vol.36 自動化の効果をSPOでDB化＋Power BIで見える化 を拡大">
+        <div class="x-shot"><img src="../assets/x/html/vol-33/vol33.png" alt="Vol.36 自動化の効果をSPOでDB化＋Power BIで見える化" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.36</span><span class="x-ttl">自動化の効果をSPOでDB化＋Power BIで見える化</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol37" data-vol="37" data-title="Viva Engageの投稿をTeamsにAdaptive Cardで自動通知" data-search="vol.37 vol37 viva engageの投稿をteamsにadaptive cardで自動通知" tabindex="0" role="button" aria-label="Vol.37 Viva Engageの投稿をTeamsにAdaptive Cardで自動通知 を拡大">
+        <div class="x-shot"><img src="../assets/x/html/vol-37/vol37.png" alt="Vol.37 Viva Engageの投稿をTeamsにAdaptive Cardで自動通知" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.37</span><span class="x-ttl">Viva Engageの投稿をTeamsにAdaptive Cardで自動通知</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol38" data-vol="38" data-title="何も起きていないことを検知する" data-search="vol.38 vol38 何も起きていないことを検知する" tabindex="0" role="button" aria-label="Vol.38 何も起きていないことを検知する を拡大">
+        <div class="x-shot"><img src="../assets/x/html/vol-38/vol38.png" alt="Vol.38 何も起きていないことを検知する" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.38</span><span class="x-ttl">何も起きていないことを検知する</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol39" data-vol="39" data-title="重い添付をクラウド共有リンクに" data-search="vol.39 vol39 重い添付をクラウド共有リンクに" tabindex="0" role="button" aria-label="Vol.39 重い添付をクラウド共有リンクに を拡大">
+        <div class="x-shot"><img src="../assets/x/html/vol-39/vol39.png" alt="Vol.39 重い添付をクラウド共有リンクに" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.39</span><span class="x-ttl">重い添付をクラウド共有リンクに</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol40" data-vol="40" data-title="届いた重い添付を自動でクラウド保存" data-search="vol.40 vol40 届いた重い添付を自動でクラウド保存" tabindex="0" role="button" aria-label="Vol.40 届いた重い添付を自動でクラウド保存 を拡大">
+        <div class="x-shot"><img src="../assets/x/html/vol-40/vol40.png" alt="Vol.40 届いた重い添付を自動でクラウド保存" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.40</span><span class="x-ttl">届いた重い添付を自動でクラウド保存</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol41" data-vol="41" data-title="Copilot Cowork従量課金時代の使い分け（図解）" data-search="vol.41 vol41 copilot cowork従量課金時代の使い分け（図解）" tabindex="0" role="button" aria-label="Vol.41 Copilot Cowork従量課金時代の使い分け（図解） を拡大">
+        <div class="x-shot"><img src="../assets/x/html/vol-41/vol41.png" alt="Vol.41 Copilot Cowork従量課金時代の使い分け（図解）" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.41</span><span class="x-ttl">Copilot Cowork従量課金時代の使い分け（図解）</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol42" data-vol="42" data-title="Power AutomateでAdaptive Cardで1クリック回収" data-search="vol.42 vol42 power automateでadaptive cardで1クリック回収" tabindex="0" role="button" aria-label="Vol.42 Power AutomateでAdaptive Cardで1クリック回収 を拡大">
+        <div class="x-shot"><img src="../assets/x/html/vol-42/vol42.png" alt="Vol.42 Power AutomateでAdaptive Cardで1クリック回収" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.42</span><span class="x-ttl">Power AutomateでAdaptive Cardで1クリック回収</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol43" data-vol="43" data-title="重い添付を自動で魔法の箱へ保存（Power Automate）" data-search="vol.43 vol43 重い添付を自動で魔法の箱へ保存（power automate）" tabindex="0" role="button" aria-label="Vol.43 重い添付を自動で魔法の箱へ保存（Power Automate） を拡大">
+        <div class="x-shot"><img src="../assets/x/html/vol-43/vol43.png" alt="Vol.43 重い添付を自動で魔法の箱へ保存（Power Automate）" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.43</span><span class="x-ttl">重い添付を自動で魔法の箱へ保存（Power Automate）</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol44" data-vol="44" data-title="スマホのボタン1発で現場を記録" data-search="vol.44 vol44 スマホのボタン1発で現場を記録" tabindex="0" role="button" aria-label="Vol.44 スマホのボタン1発で現場を記録 を拡大">
+        <div class="x-shot"><img src="../assets/x/html/vol-44/vol44.png" alt="Vol.44 スマホのボタン1発で現場を記録" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.44</span><span class="x-ttl">スマホのボタン1発で現場を記録</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol45" data-vol="45" data-title="Teamsのスタンプでナレッジ自動収集" data-search="vol.45 vol45 teamsのスタンプでナレッジ自動収集" tabindex="0" role="button" aria-label="Vol.45 Teamsのスタンプでナレッジ自動収集 を拡大">
+        <div class="x-shot"><img src="../assets/x/html/vol-45/vol45.png" alt="Vol.45 Teamsのスタンプでナレッジ自動収集" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.45</span><span class="x-ttl">Teamsのスタンプでナレッジ自動収集</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol46" data-vol="46" data-title="Power Automate 無料(標準)とプレミアムの境界" data-search="vol.46 vol46 power automate 無料(標準)とプレミアムの境界" tabindex="0" role="button" aria-label="Vol.46 Power Automate 無料(標準)とプレミアムの境界 を拡大">
+        <div class="x-shot"><img src="../assets/x/html/vol-46/vol46.png" alt="Vol.46 Power Automate 無料(標準)とプレミアムの境界" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.46</span><span class="x-ttl">Power Automate 無料(標準)とプレミアムの境界</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol47" data-vol="47" data-title="メール重複チェックがすり抜ける問題" data-search="vol.47 vol47 メール重複チェックがすり抜ける問題" tabindex="0" role="button" aria-label="Vol.47 メール重複チェックがすり抜ける問題 を拡大">
+        <div class="x-shot"><img src="../assets/x/html/vol-47/vol47.png" alt="Vol.47 メール重複チェックがすり抜ける問題" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.47</span><span class="x-ttl">メール重複チェックがすり抜ける問題</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol48" data-vol="48" data-title="Teamsに予約投稿を自作（指定の日時に自動投稿）" data-search="vol.48 vol48 teamsに予約投稿を自作（指定の日時に自動投稿）" tabindex="0" role="button" aria-label="Vol.48 Teamsに予約投稿を自作（指定の日時に自動投稿） を拡大">
+        <div class="x-shot"><img src="../assets/x/html/vol-48/vol48.png" alt="Vol.48 Teamsに予約投稿を自作（指定の日時に自動投稿）" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.48</span><span class="x-ttl">Teamsに予約投稿を自作（指定の日時に自動投稿）</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol49" data-vol="49" data-title="フローが作れなくても大丈夫｜Copilotに聞いてそのまま作る" data-search="vol.49 vol49 フローが作れなくても大丈夫｜copilotに聞いてそのまま作る" tabindex="0" role="button" aria-label="Vol.49 フローが作れなくても大丈夫｜Copilotに聞いてそのまま作る を拡大">
+        <div class="x-shot"><img src="../assets/x/html/vol-49/vol49.png" alt="Vol.49 フローが作れなくても大丈夫｜Copilotに聞いてそのまま作る" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.49</span><span class="x-ttl">フローが作れなくても大丈夫｜Copilotに聞いてそのまま作る</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol50" data-vol="50" data-title="Copilotへの頼み方は“新人への頼み方”と同じ" data-search="vol.50 vol50 copilotへの頼み方は“新人への頼み方”と同じ" tabindex="0" role="button" aria-label="Vol.50 Copilotへの頼み方は“新人への頼み方”と同じ を拡大">
+        <div class="x-shot"><img src="../assets/x/html/vol-50/vol50.png" alt="Vol.50 Copilotへの頼み方は“新人への頼み方”と同じ" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.50</span><span class="x-ttl">Copilotへの頼み方は“新人への頼み方”と同じ</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol51" data-vol="51" data-title="AIが作ったフローは“味見”してから動かす" data-search="vol.51 vol51 aiが作ったフローは“味見”してから動かす" tabindex="0" role="button" aria-label="Vol.51 AIが作ったフローは“味見”してから動かす を拡大">
+        <div class="x-shot"><img src="../assets/x/html/vol-51/vol51.png" alt="Vol.51 AIが作ったフローは“味見”してから動かす" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.51</span><span class="x-ttl">AIが作ったフローは“味見”してから動かす</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol52" data-vol="52" data-title="できたフローは“会話”で育てる" data-search="vol.52 vol52 できたフローは“会話”で育てる" tabindex="0" role="button" aria-label="Vol.52 できたフローは“会話”で育てる を拡大">
+        <div class="x-shot"><img src="../assets/x/html/vol-52/vol52.png" alt="Vol.52 できたフローは“会話”で育てる" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.52</span><span class="x-ttl">できたフローは“会話”で育てる</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol53" data-vol="53" data-title="赤いエラーはCopilotに貼るだけ" data-search="vol.53 vol53 赤いエラーはcopilotに貼るだけ" tabindex="0" role="button" aria-label="Vol.53 赤いエラーはCopilotに貼るだけ を拡大">
+        <div class="x-shot"><img src="../assets/x/html/vol-53/vol53.png" alt="Vol.53 赤いエラーはCopilotに貼るだけ" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.53</span><span class="x-ttl">赤いエラーはCopilotに貼るだけ</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol54" data-vol="54" data-title="Copilotに頼めること・頼めないこと" data-search="vol.54 vol54 copilotに頼めること・頼めないこと" tabindex="0" role="button" aria-label="Vol.54 Copilotに頼めること・頼めないこと を拡大">
+        <div class="x-shot"><img src="../assets/x/html/vol-54/vol54.png" alt="Vol.54 Copilotに頼めること・頼めないこと" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.54</span><span class="x-ttl">Copilotに頼めること・頼めないこと</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol55" data-vol="55" data-title="Copilotの言うアクション名がPAで見つからない" data-search="vol.55 vol55 copilotの言うアクション名がpaで見つからない" tabindex="0" role="button" aria-label="Vol.55 Copilotの言うアクション名がPAで見つからない を拡大">
+        <div class="x-shot"><img src="../assets/x/html/vol-55/vol55.png" alt="Vol.55 Copilotの言うアクション名がPAで見つからない" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.55</span><span class="x-ttl">Copilotの言うアクション名がPAで見つからない</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol56" data-vol="56" data-title="Teamsの合言葉でフローを呼び出す呪文" data-search="vol.56 vol56 teamsの合言葉でフローを呼び出す呪文" tabindex="0" role="button" aria-label="Vol.56 Teamsの合言葉でフローを呼び出す呪文 を拡大">
+        <div class="x-shot"><img src="../assets/x/html/vol-56/vol56.png" alt="Vol.56 Teamsの合言葉でフローを呼び出す呪文" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.56</span><span class="x-ttl">Teamsの合言葉でフローを呼び出す呪文</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol57" data-vol="57" data-title="毎日ボタン1つで報連相" data-search="vol.57 vol57 毎日ボタン1つで報連相" tabindex="0" role="button" aria-label="Vol.57 毎日ボタン1つで報連相 を拡大">
+        <div class="x-shot"><img src="../assets/x/html/vol-57/vol57.png" alt="Vol.57 毎日ボタン1つで報連相" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.57</span><span class="x-ttl">毎日ボタン1つで報連相</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol58" data-vol="58" data-title="Teamsのピコンを黙らせる通知まとめ便" data-search="vol.58 vol58 teamsのピコンを黙らせる通知まとめ便" tabindex="0" role="button" aria-label="Vol.58 Teamsのピコンを黙らせる通知まとめ便 を拡大">
+        <div class="x-shot"><img src="../assets/x/html/vol-58/vol58.png" alt="Vol.58 Teamsのピコンを黙らせる通知まとめ便" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.58</span><span class="x-ttl">Teamsのピコンを黙らせる通知まとめ便</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol58-2" data-vol="58" data-title="案件名1回で初期セットアップ全部同時" data-search="vol.58 vol58 案件名1回で初期セットアップ全部同時" tabindex="0" role="button" aria-label="Vol.58 案件名1回で初期セットアップ全部同時 を拡大">
+        <div class="x-shot"><img src="../assets/x/html/vol-60/vol60.png" alt="Vol.58 案件名1回で初期セットアップ全部同時" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.58</span><span class="x-ttl">案件名1回で初期セットアップ全部同時</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol59" data-vol="59" data-title="チャットの割り込みから集中を守る" data-search="vol.59 vol59 チャットの割り込みから集中を守る" tabindex="0" role="button" aria-label="Vol.59 チャットの割り込みから集中を守る を拡大">
+        <div class="x-shot"><img src="../assets/x/html/vol-59/vol59.png" alt="Vol.59 チャットの割り込みから集中を守る" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.59</span><span class="x-ttl">チャットの割り込みから集中を守る</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol59-2" data-vol="59" data-title="日程調整を秘書に丸投げ" data-search="vol.59 vol59 日程調整を秘書に丸投げ" tabindex="0" role="button" aria-label="Vol.59 日程調整を秘書に丸投げ を拡大">
+        <div class="x-shot"><img src="../assets/x/html/vol-61/vol61.png" alt="Vol.59 日程調整を秘書に丸投げ" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.59</span><span class="x-ttl">日程調整を秘書に丸投げ</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol60" data-vol="60" data-title="ノーコードでチャットボットを自作" data-search="vol.60 vol60 ノーコードでチャットボットを自作" tabindex="0" role="button" aria-label="Vol.60 ノーコードでチャットボットを自作 を拡大">
+        <div class="x-shot"><img src="../assets/x/html/vol-62/vol62.png" alt="Vol.60 ノーコードでチャットボットを自作" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.60</span><span class="x-ttl">ノーコードでチャットボットを自作</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol61" data-vol="61" data-title="入力するだけで書類PDFが自動で完成" data-search="vol.61 vol61 入力するだけで書類pdfが自動で完成" tabindex="0" role="button" aria-label="Vol.61 入力するだけで書類PDFが自動で完成 を拡大">
+        <div class="x-shot"><img src="../assets/x/html/vol-63/vol63.png" alt="Vol.61 入力するだけで書類PDFが自動で完成" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.61</span><span class="x-ttl">入力するだけで書類PDFが自動で完成</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol61-2" data-vol="61" data-title="Power Automateの効果を見える化" data-search="vol.61 vol61 power automateの効果を見える化" tabindex="0" role="button" aria-label="Vol.61 Power Automateの効果を見える化 を拡大">
+        <div class="x-shot"><img src="../assets/x/html/vol-64/vol64.png" alt="Vol.61 Power Automateの効果を見える化" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.61</span><span class="x-ttl">Power Automateの効果を見える化</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol62" data-vol="62" data-title="フォルダに入れるだけで自動リネーム＆自動仕分け" data-search="vol.62 vol62 フォルダに入れるだけで自動リネーム＆自動仕分け" tabindex="0" role="button" aria-label="Vol.62 フォルダに入れるだけで自動リネーム＆自動仕分け を拡大">
+        <div class="x-shot"><img src="../assets/x/html/vol-65/vol65.png" alt="Vol.62 フォルダに入れるだけで自動リネーム＆自動仕分け" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.62</span><span class="x-ttl">フォルダに入れるだけで自動リネーム＆自動仕分け</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol63" data-vol="63" data-title="猛暑の朝に職場へ自動で熱中症アラート" data-search="vol.63 vol63 猛暑の朝に職場へ自動で熱中症アラート" tabindex="0" role="button" aria-label="Vol.63 猛暑の朝に職場へ自動で熱中症アラート を拡大">
+        <div class="x-shot"><img src="../assets/x/html/vol-66/vol66.png" alt="Vol.63 猛暑の朝に職場へ自動で熱中症アラート" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.63</span><span class="x-ttl">猛暑の朝に職場へ自動で熱中症アラート</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol64" data-vol="64" data-title="デジタル回覧板で「聞いてない」を撲滅" data-search="vol.64 vol64 デジタル回覧板で「聞いてない」を撲滅" tabindex="0" role="button" aria-label="Vol.64 デジタル回覧板で「聞いてない」を撲滅 を拡大">
+        <div class="x-shot"><img src="../assets/x/html/vol-67/vol67.png" alt="Vol.64 デジタル回覧板で「聞いてない」を撲滅" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.64</span><span class="x-ttl">デジタル回覧板で「聞いてない」を撲滅</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol65" data-vol="65" data-title="休み明け受信トレイ救済便" data-search="vol.65 vol65 休み明け受信トレイ救済便" tabindex="0" role="button" aria-label="Vol.65 休み明け受信トレイ救済便 を拡大">
+        <div class="x-shot"><img src="../assets/x/html/vol-68/vol68.png" alt="Vol.65 休み明け受信トレイ救済便" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.65</span><span class="x-ttl">休み明け受信トレイ救済便</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol66" data-vol="66" data-title="QRで備品の持ち出し管理" data-search="vol.66 vol66 qrで備品の持ち出し管理" tabindex="0" role="button" aria-label="Vol.66 QRで備品の持ち出し管理 を拡大">
+        <div class="x-shot"><img src="../assets/x/html/_archive/vol-69/vol69.png" alt="Vol.66 QRで備品の持ち出し管理" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.66</span><span class="x-ttl">QRで備品の持ち出し管理</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol67" data-vol="67" data-title="資料の鮮度チェック" data-search="vol.67 vol67 資料の鮮度チェック" tabindex="0" role="button" aria-label="Vol.67 資料の鮮度チェック を拡大">
+        <div class="x-shot"><img src="../assets/x/html/_archive/vol-70/vol70.png" alt="Vol.67 資料の鮮度チェック" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.67</span><span class="x-ttl">資料の鮮度チェック</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol68" data-vol="68" data-title="レシートを撮るだけで経費台帳" data-search="vol.68 vol68 レシートを撮るだけで経費台帳" tabindex="0" role="button" aria-label="Vol.68 レシートを撮るだけで経費台帳 を拡大">
+        <div class="x-shot"><img src="../assets/x/html/_archive/vol-71/vol71.png" alt="Vol.68 レシートを撮るだけで経費台帳" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.68</span><span class="x-ttl">レシートを撮るだけで経費台帳</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol69" data-vol="69" data-title="フォームが届くたびExcelが自動で記録＆集計" data-search="vol.69 vol69 フォームが届くたびexcelが自動で記録＆集計" tabindex="0" role="button" aria-label="Vol.69 フォームが届くたびExcelが自動で記録＆集計 を拡大">
+        <div class="x-shot"><img src="../assets/x/html/vol-69/vol69.png" alt="Vol.69 フォームが届くたびExcelが自動で記録＆集計" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.69</span><span class="x-ttl">フォームが届くたびExcelが自動で記録＆集計</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol70" data-vol="70" data-title="毎日のひとことが金曜に週報の下書きになる" data-search="vol.70 vol70 毎日のひとことが金曜に週報の下書きになる" tabindex="0" role="button" aria-label="Vol.70 毎日のひとことが金曜に週報の下書きになる を拡大">
+        <div class="x-shot"><img src="../assets/x/html/vol-70/vol70.png" alt="Vol.70 毎日のひとことが金曜に週報の下書きになる" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.70</span><span class="x-ttl">毎日のひとことが金曜に週報の下書きになる</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol71" data-vol="71" data-title="当番表に足が生える" data-search="vol.71 vol71 当番表に足が生える" tabindex="0" role="button" aria-label="Vol.71 当番表に足が生える を拡大">
+        <div class="x-shot"><img src="../assets/x/html/vol-71/vol71.png" alt="Vol.71 当番表に足が生える" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.71</span><span class="x-ttl">当番表に足が生える</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol72" data-vol="72" data-title="送りっぱなしメールに追跡番号をつける" data-search="vol.72 vol72 送りっぱなしメールに追跡番号をつける" tabindex="0" role="button" aria-label="Vol.72 送りっぱなしメールに追跡番号をつける を拡大">
+        <div class="x-shot"><img src="../assets/x/html/vol-72/vol72.png" alt="Vol.72 送りっぱなしメールに追跡番号をつける" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.72</span><span class="x-ttl">送りっぱなしメールに追跡番号をつける</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol73" data-vol="73" data-title="いつものExcel集計を1回記録で毎週自動" data-search="vol.73 vol73 いつものexcel集計を1回記録で毎週自動" tabindex="0" role="button" aria-label="Vol.73 いつものExcel集計を1回記録で毎週自動 を拡大">
+        <div class="x-shot"><img src="../assets/x/html/vol-73/vol73.png" alt="Vol.73 いつものExcel集計を1回記録で毎週自動" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.73</span><span class="x-ttl">いつものExcel集計を1回記録で毎週自動</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol74" data-vol="74" data-title="朝9時のつもりが夜18時に届く（UTCのズレ）" data-search="vol.74 vol74 朝9時のつもりが夜18時に届く（utcのズレ）" tabindex="0" role="button" aria-label="Vol.74 朝9時のつもりが夜18時に届く（UTCのズレ） を拡大">
+        <div class="x-shot"><img src="../assets/x/html/vol-74/vol74.png" alt="Vol.74 朝9時のつもりが夜18時に届く（UTCのズレ）" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.74</span><span class="x-ttl">朝9時のつもりが夜18時に届く（UTCのズレ）</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol75" data-vol="75" data-title="赤くなった時に、最初に見る場所" data-search="vol.75 vol75 赤くなった時に、最初に見る場所" tabindex="0" role="button" aria-label="Vol.75 赤くなった時に、最初に見る場所 を拡大">
+        <div class="x-shot"><img src="../assets/x/html/vol-75/vol75.png" alt="Vol.75 赤くなった時に、最初に見る場所" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.75</span><span class="x-ttl">赤くなった時に、最初に見る場所</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol76" data-vol="76" data-title="Excelの見積書が、そのままPDFで届く" data-search="vol.76 vol76 excelの見積書が、そのままpdfで届く" tabindex="0" role="button" aria-label="Vol.76 Excelの見積書が、そのままPDFで届く を拡大">
+        <div class="x-shot"><img src="../assets/x/html/vol-76/vol76.png" alt="Vol.76 Excelの見積書が、そのままPDFで届く" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.76</span><span class="x-ttl">Excelの見積書が、そのままPDFで届く</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol77" data-vol="77" data-title="毎朝のリマインド、祝日はお休みする" data-search="vol.77 vol77 毎朝のリマインド、祝日はお休みする" tabindex="0" role="button" aria-label="Vol.77 毎朝のリマインド、祝日はお休みする を拡大">
+        <div class="x-shot"><img src="../assets/x/html/vol-77/vol77.png" alt="Vol.77 毎朝のリマインド、祝日はお休みする" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.77</span><span class="x-ttl">毎朝のリマインド、祝日はお休みする</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol78" data-vol="78" data-title="戻し忘れのチェックアウトを本人にお知らせ" data-search="vol.78 vol78 戻し忘れのチェックアウトを本人にお知らせ" tabindex="0" role="button" aria-label="Vol.78 戻し忘れのチェックアウトを本人にお知らせ を拡大">
+        <div class="x-shot"><img src="../assets/x/html/vol-78/vol78.png" alt="Vol.78 戻し忘れのチェックアウトを本人にお知らせ" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.78</span><span class="x-ttl">戻し忘れのチェックアウトを本人にお知らせ</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol79" data-vol="79" data-title="決裁はメールのボタンだけで回る" data-search="vol.79 vol79 決裁はメールのボタンだけで回る" tabindex="0" role="button" aria-label="Vol.79 決裁はメールのボタンだけで回る を拡大">
+        <div class="x-shot"><img src="../assets/x/html/vol-79/vol79.png" alt="Vol.79 決裁はメールのボタンだけで回る" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.79</span><span class="x-ttl">決裁はメールのボタンだけで回る</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol80" data-vol="80" data-title="上長のメアドを二度と手入力しない" data-search="vol.80 vol80 上長のメアドを二度と手入力しない" tabindex="0" role="button" aria-label="Vol.80 上長のメアドを二度と手入力しない を拡大">
+        <div class="x-shot"><img src="../assets/x/html/vol-80/vol80.png" alt="Vol.80 上長のメアドを二度と手入力しない" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.80</span><span class="x-ttl">上長のメアドを二度と手入力しない</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol81" data-vol="81" data-title="info@の一次受けが止まらなくなる" data-search="vol.81 vol81 info@の一次受けが止まらなくなる" tabindex="0" role="button" aria-label="Vol.81 info@の一次受けが止まらなくなる を拡大">
+        <div class="x-shot"><img src="../assets/x/html/vol-81/vol81.png" alt="Vol.81 info@の一次受けが止まらなくなる" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.81</span><span class="x-ttl">info@の一次受けが止まらなくなる</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol82" data-vol="82" data-title="ZIPは自動で開ける" data-search="vol.82 vol82 zipは自動で開ける" tabindex="0" role="button" aria-label="Vol.82 ZIPは自動で開ける を拡大">
+        <div class="x-shot"><img src="../assets/x/html/vol-82/vol82.png" alt="Vol.82 ZIPは自動で開ける" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.82</span><span class="x-ttl">ZIPは自動で開ける</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol83" data-vol="83" data-title="仕分けルールをフローの外に置く" data-search="vol.83 vol83 仕分けルールをフローの外に置く" tabindex="0" role="button" aria-label="Vol.83 仕分けルールをフローの外に置く を拡大">
+        <div class="x-shot"><img src="../assets/x/html/vol-83/vol83.png" alt="Vol.83 仕分けルールをフローの外に置く" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.83</span><span class="x-ttl">仕分けルールをフローの外に置く</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol84" data-vol="84" data-title="Formsの写真が台帳に自動で添付される" data-search="vol.84 vol84 formsの写真が台帳に自動で添付される" tabindex="0" role="button" aria-label="Vol.84 Formsの写真が台帳に自動で添付される を拡大">
+        <div class="x-shot"><img src="../assets/x/html/vol-84/vol84.png" alt="Vol.84 Formsの写真が台帳に自動で添付される" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.84</span><span class="x-ttl">Formsの写真が台帳に自動で添付される</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol85" data-vol="85" data-title="全員の空き時間から会議候補が出る" data-search="vol.85 vol85 全員の空き時間から会議候補が出る" tabindex="0" role="button" aria-label="Vol.85 全員の空き時間から会議候補が出る を拡大">
+        <div class="x-shot"><img src="../assets/x/html/vol-85/vol85.png" alt="Vol.85 全員の空き時間から会議候補が出る" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.85</span><span class="x-ttl">全員の空き時間から会議候補が出る</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol86" data-vol="86" data-title="テストでメールを飛ばさずに試せる" data-search="vol.86 vol86 テストでメールを飛ばさずに試せる" tabindex="0" role="button" aria-label="Vol.86 テストでメールを飛ばさずに試せる を拡大">
+        <div class="x-shot"><img src="../assets/x/html/vol-86/vol86.png" alt="Vol.86 テストでメールを飛ばさずに試せる" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.86</span><span class="x-ttl">テストでメールを飛ばさずに試せる</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol87" data-vol="87" data-title="条件がfalseになった理由が行ごとに見える" data-search="vol.87 vol87 条件がfalseになった理由が行ごとに見える" tabindex="0" role="button" aria-label="Vol.87 条件がfalseになった理由が行ごとに見える を拡大">
+        <div class="x-shot"><img src="../assets/x/html/vol-87/vol87.png" alt="Vol.87 条件がfalseになった理由が行ごとに見える" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.87</span><span class="x-ttl">条件がfalseになった理由が行ごとに見える</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol88" data-vol="88" data-title="消したフローは21日以内なら戻せる" data-search="vol.88 vol88 消したフローは21日以内なら戻せる" tabindex="0" role="button" aria-label="Vol.88 消したフローは21日以内なら戻せる を拡大">
+        <div class="x-shot"><img src="../assets/x/html/vol-88/vol88.png" alt="Vol.88 消したフローは21日以内なら戻せる" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.88</span><span class="x-ttl">消したフローは21日以内なら戻せる</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol89" data-vol="89" data-title="文字列の式チートシート10選" data-search="vol.89 vol89 文字列の式チートシート10選" tabindex="0" role="button" aria-label="Vol.89 文字列の式チートシート10選 を拡大">
+        <div class="x-shot"><img src="../assets/x/html/vol-89/vol89.png" alt="Vol.89 文字列の式チートシート10選" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.89</span><span class="x-ttl">文字列の式チートシート10選</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol90" data-vol="90" data-title="フィルタークエリ早見表" data-search="vol.90 vol90 フィルタークエリ早見表" tabindex="0" role="button" aria-label="Vol.90 フィルタークエリ早見表 を拡大">
+        <div class="x-shot"><img src="../assets/x/html/vol-90/vol90.png" alt="Vol.90 フィルタークエリ早見表" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.90</span><span class="x-ttl">フィルタークエリ早見表</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol91" data-vol="91" data-title="会議が終わる5分前に決定を1つ回収" data-search="vol.91 vol91 会議が終わる5分前に決定を1つ回収" tabindex="0" role="button" aria-label="Vol.91 会議が終わる5分前に決定を1つ回収 を拡大">
+        <div class="x-shot"><img src="../assets/x/html/vol-91/vol91.png" alt="Vol.91 会議が終わる5分前に決定を1つ回収" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.91</span><span class="x-ttl">会議が終わる5分前に決定を1つ回収</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol92" data-vol="92" data-title="会議開始前に前回の決定と宿題をリマインド" data-search="vol.92 vol92 会議開始前に前回の決定と宿題をリマインド" tabindex="0" role="button" aria-label="Vol.92 会議開始前に前回の決定と宿題をリマインド を拡大">
+        <div class="x-shot"><img src="../assets/x/html/vol-92/vol92.png" alt="Vol.92 会議開始前に前回の決定と宿題をリマインド" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.92</span><span class="x-ttl">会議開始前に前回の決定と宿題をリマインド</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol93" data-vol="93" data-title="会議が自分の段取りを自分でやる" data-search="vol.93 vol93 会議が自分の段取りを自分でやる" tabindex="0" role="button" aria-label="Vol.93 会議が自分の段取りを自分でやる を拡大">
+        <div class="x-shot"><img src="../assets/x/html/vol-93/vol93.png" alt="Vol.93 会議が自分の段取りを自分でやる" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.93</span><span class="x-ttl">会議が自分の段取りを自分でやる</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol94" data-vol="94" data-title="祝日は、フローも休む" data-search="vol.94 vol94 祝日は、フローも休む" tabindex="0" role="button" aria-label="Vol.94 祝日は、フローも休む を拡大">
+        <div class="x-shot"><img src="../assets/x/html/vol-94/vol94.png" alt="Vol.94 祝日は、フローも休む" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.94</span><span class="x-ttl">祝日は、フローも休む</span></figcaption>
+      </figure>
+      <figure class="x-card" id="vol95" data-vol="95" data-title="絵文字リアクションで出欠が集まる" data-search="vol.95 vol95 絵文字リアクションで出欠が集まる" tabindex="0" role="button" aria-label="Vol.95 絵文字リアクションで出欠が集まる を拡大">
+        <div class="x-shot"><img src="../assets/x/html/vol-95/vol95.png" alt="Vol.95 絵文字リアクションで出欠が集まる" loading="lazy" width="1200" height="675"></div>
+        <figcaption class="x-cap"><span class="x-vol">Vol.95</span><span class="x-ttl">絵文字リアクションで出欠が集まる</span></figcaption>
       </figure>
     </div>
+    <p class="x-empty" id="xEmpty">該当するスライドが見つかりませんでした。別のキーワードでお試しください。</p>
 
     <div class="cta-bar">
       <p>スライドを見て興味が出たら、次回セッションで実際に手を動かしてみませんか</p>
@@ -423,38 +672,60 @@ document.addEventListener('click', function(e) {
   if (nav.classList.contains('open') && !nav.contains(e.target) && !btn.contains(e.target)) nav.classList.remove('open');
 });
 
-function filterSlides(cat, btn) {
-  document.querySelectorAll('.f-pill').forEach(p => p.classList.remove('active'));
-  btn.classList.add('active');
-  document.querySelectorAll('#slidesGrid .x-card').forEach(card => {
-    card.classList.toggle('hidden', !(cat === 'all' || card.dataset.cat === cat));
+// ===== 検索（カード＋目次を同時に絞り込み） =====
+var cards = Array.prototype.slice.call(document.querySelectorAll('#slidesGrid .x-card'));
+var tocItems = Array.prototype.slice.call(document.querySelectorAll('#tocList .toc-item'));
+var totalCount = cards.length;
+var searchEl = document.getElementById('xSearch');
+var clearEl = document.getElementById('xClear');
+var countEl = document.getElementById('xCount');
+var emptyEl = document.getElementById('xEmpty');
+
+function normalize(s){ return (s||'').toLowerCase().replace(/\s+/g,''); }
+function applyFilter() {
+  var q = normalize(searchEl.value);
+  clearEl.style.display = searchEl.value ? 'block' : 'none';
+  var shown = 0;
+  cards.forEach(function(c){
+    var hit = !q || normalize(c.dataset.search).indexOf(q) !== -1;
+    c.classList.toggle('hidden', !hit);
+    if (hit) shown++;
   });
+  tocItems.forEach(function(t){
+    var hit = !q || normalize(t.dataset.search).indexOf(q) !== -1;
+    t.classList.toggle('hidden', !hit);
+  });
+  emptyEl.style.display = shown ? 'none' : 'block';
+  countEl.textContent = q ? (shown + ' / ' + totalCount + ' 本を表示') : ('全 ' + totalCount + ' 本');
 }
-window.addEventListener('DOMContentLoaded', function() {
-  const hash = location.hash.replace('#', '');
-  if (hash) {
-    const btn = document.querySelector('.f-pill[onclick*="\'' + hash + '\'"]');
-    if (btn) filterSlides(hash, btn);
-  }
+searchEl.addEventListener('input', applyFilter);
+clearEl.addEventListener('click', function(){ searchEl.value=''; applyFilter(); searchEl.focus(); });
+
+// 目次クリック → 該当カードへスクロール＆ハイライト
+tocItems.forEach(function(t){
+  t.addEventListener('click', function(e){
+    var id = t.getAttribute('href').slice(1);
+    var card = document.getElementById(id);
+    if (!card) return;
+    e.preventDefault();
+    if (card.classList.contains('hidden')) { searchEl.value=''; applyFilter(); }
+    card.scrollIntoView({behavior:'smooth', block:'center'});
+    card.classList.remove('flash'); void card.offsetWidth; card.classList.add('flash');
+  });
 });
 
+// ===== ライトボックス =====
 var lbIndex = -1;
-function visibleCards() {
-  return Array.prototype.filter.call(
-    document.querySelectorAll('#slidesGrid .x-card'),
-    function(c){ return !c.classList.contains('hidden'); }
-  );
-}
+function visibleCards() { return cards.filter(function(c){ return !c.classList.contains('hidden'); }); }
 function lbShow(i) {
-  var cards = visibleCards();
-  if (!cards.length) return;
-  lbIndex = (i + cards.length) % cards.length;
-  var card = cards[lbIndex];
+  var v = visibleCards();
+  if (!v.length) return;
+  lbIndex = (i + v.length) % v.length;
+  var card = v[lbIndex];
   var img = card.querySelector('img');
   document.getElementById('lbImg').src = img.src;
   document.getElementById('lbImg').alt = img.alt;
-  document.getElementById('lbCap').innerHTML =
-    '<b>Vol.' + card.dataset.vol + '</b>' + card.dataset.title + ' 〜 ' + card.dataset.date;
+  document.getElementById('lbCap').innerHTML = '<b>Vol.' + card.dataset.vol + '</b>' + card.dataset.title;
   document.getElementById('lb').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
@@ -464,24 +735,21 @@ function lbClose() {
   document.body.style.overflow = '';
   lbIndex = -1;
 }
-document.querySelectorAll('#slidesGrid .x-card').forEach(function(card){
-  card.addEventListener('click', function(){
-    var cards = visibleCards();
-    lbShow(cards.indexOf(card));
-  });
+cards.forEach(function(card){
+  card.addEventListener('click', function(){ lbShow(visibleCards().indexOf(card)); });
   card.addEventListener('keydown', function(e){
     if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); card.click(); }
   });
 });
-document.getElementById('lb').addEventListener('click', function(e){
-  if (e.target.id === 'lb') lbClose();
-});
+document.getElementById('lb').addEventListener('click', function(e){ if (e.target.id === 'lb') lbClose(); });
 document.addEventListener('keydown', function(e){
   if (lbIndex < 0) return;
   if (e.key === 'Escape') lbClose();
   else if (e.key === 'ArrowRight') lbStep(1);
   else if (e.key === 'ArrowLeft') lbStep(-1);
 });
+
+applyFilter();
 </script>
 <script src="../assets/js/motion.js?v=20260718" defer></script>
 </body>
