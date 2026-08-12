@@ -14,8 +14,12 @@ TEMPLATE = r"""<!DOCTYPE html>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../assets/css/style.css?v=20260718">
   <style>
-    /* ===== 検索バー ===== */
-    .x-toolbar { position: sticky; top: 0; z-index: 40; background: var(--c-bg); padding: 12px 0 10px; margin-bottom: 6px; border-bottom: 1px solid var(--c-border-md); }
+    /* ===== レイアウト（PCはサイドバー＋本文） ===== */
+    .x-layout { display: flex; align-items: flex-start; gap: 30px; }
+    .x-side { flex: 0 0 288px; min-width: 0; position: sticky; top: 68px; align-self: flex-start; max-height: calc(100vh - 84px); display: flex; flex-direction: column; }
+    .x-main { flex: 1 1 0; min-width: 0; }
+
+    /* 検索バー */
     .x-searchwrap { position: relative; }
     .x-search {
       width: 100%; box-sizing: border-box; font-size: 15px; font-family: var(--font-base);
@@ -25,25 +29,33 @@ TEMPLATE = r"""<!DOCTYPE html>
     .x-search:focus { outline: none; border-color: var(--c-blue-mid); box-shadow: 0 0 0 3px var(--c-blue-bg); }
     .x-search-ico { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--c-hint); pointer-events: none; }
     .x-clear { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; font-size: 20px; color: var(--c-hint); cursor: pointer; display: none; }
-    .x-count { font-size: 12px; color: var(--c-muted); margin: 8px 2px 0; font-family: var(--font-mono); }
+    .x-count { font-size: 12px; color: var(--c-muted); margin: 9px 2px 12px; font-family: var(--font-mono); }
 
-    /* ===== 目次 ===== */
-    .toc { margin: 14px 0 26px; border: 1px solid var(--c-border-md); border-radius: var(--radius-lg); background: var(--c-surface); overflow: hidden; }
-    .toc summary { cursor: pointer; padding: 13px 16px; font-weight: 700; font-size: 14px; list-style: none; display: flex; align-items: center; gap: 8px; }
-    .toc summary::-webkit-details-marker { display: none; }
-    .toc summary .chev { transition: transform .2s; color: var(--c-hint); }
-    .toc[open] summary .chev { transform: rotate(90deg); }
-    .toc-list { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 2px 10px; padding: 4px 16px 16px; }
-    .toc-item { display: flex; gap: 8px; align-items: baseline; padding: 5px 4px; border-radius: 6px; text-decoration: none; color: var(--c-text); font-size: 12.5px; line-height: 1.4; }
+    /* 目次（サイドバー） */
+    .toc { border: 1px solid var(--c-border-md); border-radius: var(--radius-lg); background: var(--c-surface); overflow: hidden; display: flex; flex-direction: column; min-height: 0; }
+    .toc-toggle { display: none; width: 100%; cursor: pointer; padding: 13px 16px; font-weight: 700; font-size: 14px; align-items: center; gap: 8px; background: none; border: none; color: var(--c-text); font-family: inherit; text-align: left; }
+    .toc-toggle .chev { transition: transform .2s; color: var(--c-hint); margin-left: auto; }
+    .toc.open .toc-toggle .chev { transform: rotate(90deg); }
+    .toc-head { padding: 12px 16px 8px; font-weight: 700; font-size: 12px; letter-spacing: .04em; color: var(--c-muted); border-bottom: 1px solid var(--c-border); }
+    .toc-list { overflow-y: auto; padding: 6px; display: flex; flex-direction: column; gap: 1px; }
+    .toc-item { display: flex; gap: 8px; align-items: baseline; min-width: 0; padding: 6px 8px; border-radius: 7px; text-decoration: none; color: var(--c-text); font-size: 12.5px; line-height: 1.4; }
     .toc-item:hover { background: var(--c-blue-bg); }
-    .toc-vol { font-family: var(--font-mono); font-weight: 500; font-size: 11px; color: var(--c-blue-text); min-width: 26px; text-align: right; flex-shrink: 0; }
-    .toc-ttl { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .toc-vol { font-family: var(--font-mono); font-weight: 500; font-size: 11px; color: var(--c-blue-text); min-width: 30px; text-align: right; flex-shrink: 0; }
+    .toc-ttl { flex: 1 1 0; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .toc-item.hidden { display: none; }
-    @media (max-width: 900px) { .toc-list { grid-template-columns: repeat(2, minmax(0,1fr)); } }
-    @media (max-width: 560px) { .toc-list { grid-template-columns: 1fr; } }
 
-    /* ===== ギャラリー ===== */
-    .x-grid { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 18px; }
+    /* タブレット/スマホ：サイドバーを上に畳む */
+    @media (max-width: 900px) {
+      .x-layout { display: block; }
+      .x-side { position: static; max-height: none; flex: none; margin-bottom: 22px; }
+      .toc-head { display: none; }
+      .toc-toggle { display: flex; }
+      .toc-list { max-height: 46vh; }
+      .toc:not(.open) .toc-list { display: none; }
+    }
+
+    /* ===== ギャラリー（本文カラム内は2列、狭ければ自動で1列） ===== */
+    .x-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 18px; }
     .x-card {
       margin: 0; background: var(--c-surface); border-radius: var(--radius-lg);
       overflow: hidden; box-shadow: var(--shadow-card); cursor: zoom-in;
@@ -150,30 +162,34 @@ TEMPLATE = r"""<!DOCTYPE html>
 <section class="section">
   <div class="container">
 
-    <div class="x-toolbar">
-      <div class="x-searchwrap">
-        <svg class="x-search-ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="search" class="x-search" id="xSearch" placeholder="Vol番号やキーワードで検索（例：Teams、JSON、会議、Vol.85）" autocomplete="off" aria-label="スライドを検索">
-        <button class="x-clear" id="xClear" aria-label="クリア">×</button>
-      </div>
-      <div class="x-count" id="xCount"></div>
-    </div>
-
-    <details class="toc" id="toc">
-      <summary><svg class="chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg>目次（全__COUNT__本）— タップで開閉</summary>
-      <div class="toc-list" id="tocList">
+    <div class="x-layout">
+      <aside class="x-side">
+        <div class="x-searchwrap">
+          <svg class="x-search-ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input type="search" class="x-search" id="xSearch" placeholder="Vol番号・キーワードで検索" autocomplete="off" aria-label="スライドを検索">
+          <button class="x-clear" id="xClear" aria-label="クリア">×</button>
+        </div>
+        <div class="x-count" id="xCount"></div>
+        <div class="toc" id="toc">
+          <button class="toc-toggle" id="tocToggle" aria-expanded="false">目次（全__COUNT__本）<svg class="chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"/></svg></button>
+          <div class="toc-head">目次（全__COUNT__本）</div>
+          <nav class="toc-list" id="tocList">
 __TOC__
-      </div>
-    </details>
+          </nav>
+        </div>
+      </aside>
 
-    <div class="x-grid" id="slidesGrid">
+      <div class="x-main">
+        <div class="x-grid" id="slidesGrid">
 __CARDS__
-    </div>
-    <p class="x-empty" id="xEmpty">該当するスライドが見つかりませんでした。別のキーワードでお試しください。</p>
+        </div>
+        <p class="x-empty" id="xEmpty">該当するスライドが見つかりませんでした。別のキーワードでお試しください。</p>
 
-    <div class="cta-bar">
-      <p>スライドを見て興味が出たら、次回セッションで実際に手を動かしてみませんか</p>
-      <a href="../sessions/" class="btn-small">次回セッションを確認 →</a>
+        <div class="cta-bar">
+          <p>スライドを見て興味が出たら、次回セッションで実際に手を動かしてみませんか</p>
+          <a href="../sessions/" class="btn-small">次回セッションを確認 →</a>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -252,6 +268,13 @@ function applyFilter() {
 }
 searchEl.addEventListener('input', applyFilter);
 clearEl.addEventListener('click', function(){ searchEl.value=''; applyFilter(); searchEl.focus(); });
+
+// 目次の開閉（スマホ時のみ表示されるボタン）
+var tocEl = document.getElementById('toc');
+document.getElementById('tocToggle').addEventListener('click', function(){
+  var open = tocEl.classList.toggle('open');
+  this.setAttribute('aria-expanded', open ? 'true' : 'false');
+});
 
 // 目次クリック → 該当カードへスクロール＆ハイライト
 tocItems.forEach(function(t){
