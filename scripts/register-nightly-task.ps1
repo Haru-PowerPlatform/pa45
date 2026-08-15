@@ -8,7 +8,10 @@ $script   = Join-Path $PSScriptRoot "nightly-site-refresh.ps1"
 
 $action    = New-ScheduledTaskAction -Execute "powershell.exe" -Argument ("-NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File `"{0}`"" -f $script)
 $trigger   = New-ScheduledTaskTrigger -Daily -At ([datetime]"23:30")
-$settings  = New-ScheduledTaskSettingsSet -StartWhenAvailable -ExecutionTimeLimit (New-TimeSpan -Minutes 30)
+# バッテリー駆動でも実行する。既定（DisallowStartIfOnBatteries=True）のままだと
+# ノートPCを電源に挿していない夜はタスクが Queued のまま走らない。
+$settings  = New-ScheduledTaskSettingsSet -StartWhenAvailable -ExecutionTimeLimit (New-TimeSpan -Minutes 30) `
+             -AllowStartIfOnBatteries -DontStopIfGoingOnBatteries
 # 現在ユーザーで実行（-UserId 明示。省略すると環境により SID 解決に失敗する）
 $principal = New-ScheduledTaskPrincipal -UserId (whoami) -LogonType Interactive -RunLevel Limited
 

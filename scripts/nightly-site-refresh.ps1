@@ -42,6 +42,10 @@ if (-not $py) { $py = (Get-Command py -ErrorAction SilentlyContinue).Source }
 
 Set-Location $repo
 $env:PYTHONUTF8 = "1"
+$env:PYTHONIOENCODING = "utf-8"
+# タスクスケジューラ（非対話）だと既定のコードページがCP932で、
+# python の日本語出力をログに書くと文字化けする。UTF-8で受け取る。
+try { [Console]::OutputEncoding = [System.Text.Encoding]::UTF8 } catch {}
 Log "=== nightly 開始 (py=$py) ==="
 
 if (-not $py) { Log "python が見つからない → 中止"; exit 1 }
