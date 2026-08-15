@@ -29,7 +29,9 @@ def get_pac_solutions() -> set[str]:
     try:
         result = subprocess.run(
             ['pac', 'solution', 'list'],
-            capture_output=True, text=True, encoding='utf-8',
+            # errors='replace' が無いと、pac の出力に非UTF-8バイトが混ざった環境で
+            # stdout が None になり AttributeError で落ちる（2026-08-15）
+            capture_output=True, text=True, encoding='utf-8', errors='replace',
             shell=True, timeout=60
         )
     except FileNotFoundError:
