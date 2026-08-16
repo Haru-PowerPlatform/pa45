@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=1280, initial-scale=1">
-<title>X技術Tips Vol.76-2 そのまま使えるフィルタークエリ集</title>
+<title>X技術Tips Vol.76-2 見積書をPDFにして送る作り方</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --blue:#2563EB; --blue-bg:#EFF6FF; --blue-dark:#1E40AF;
-    --green:#16A34A; --green-dark:#064E3B;
-    --red:#DC2626; --red-dark:#991B1B; --orange:#EA580C;
+    --green:#16A34A; --green-dark:#065F46;
+    --orange:#EA580C; --od:#0364B8; --ol:#0F6CBD;
     --ink:#1F2937; --gray:#374151; --weak:#6B7280; --line:#E5E7EB;
   }
   *{margin:0;padding:0;box-sizing:border-box;}
@@ -26,120 +26,149 @@
   .title-text .hl{color:#FFE08A;}
   .title-chara{position:absolute;right:14px;bottom:-40px;height:142px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
 
-  .concl{margin:10px 16px 0;background:var(--blue-bg);border:2.5px solid var(--blue);border-radius:13px;display:flex;align-items:center;gap:13px;padding:10px 18px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
-  .concl .chip{flex:0 0 auto;width:40px;height:40px;border-radius:11px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;padding:8px;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
-  .concl .txt{font-weight:800;font-size:19.5px;color:var(--blue-dark);line-height:1.36;padding-right:100px;}
+  .concl{margin:10px 16px 0;background:var(--blue-bg);border:2.5px solid var(--blue);border-radius:13px;display:flex;align-items:center;gap:13px;padding:9px 18px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;width:38px;height:38px;border-radius:11px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;padding:8px;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
+  .concl .txt{font-weight:800;font-size:18.5px;color:var(--blue-dark);line-height:1.34;}
   .concl .txt b{color:var(--orange);}
 
-  .stage{flex:1 1 auto;margin:11px 16px 0;display:flex;gap:14px;min-height:0;}
-  .lz{flex:1;display:flex;flex-direction:column;min-height:0;}
-  .rz{flex:0 0 336px;display:flex;flex-direction:column;min-height:0;gap:9px;}
-  .hd{font-weight:900;font-size:23px;color:var(--ink);margin-bottom:7px;display:flex;align-items:center;gap:9px;letter-spacing:-.01em;}
-  .hd .b{flex:0 0 auto;width:31px;height:31px;border-radius:50%;background:var(--blue);color:#fff;font-weight:900;font-size:17px;display:flex;align-items:center;justify-content:center;}
+  .cols{flex:1 1 auto;margin:11px 16px 0;display:grid;grid-template-columns:1fr 1fr 1fr;gap:26px;min-height:0;}
+  .col{position:relative;display:flex;flex-direction:column;min-height:0;}
+  .cnum{position:absolute;top:-9px;left:-11px;width:32px;height:32px;border-radius:50%;background:var(--blue);color:#fff;font-weight:900;font-size:18px;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 2px 5px rgba(0,0,0,.28);}
+  .carrow{position:absolute;top:44%;right:-22px;width:22px;height:22px;color:var(--blue);z-index:6;}
 
-  .qs{flex:1;display:grid;grid-template-columns:1fr;grid-auto-rows:1fr;gap:6px;min-height:0;}
-  .q{display:flex;align-items:center;gap:11px;background:#F8F9FA;border:1px solid var(--line);border-left:6px solid var(--blue);border-radius:9px;padding:7px 12px;min-height:0;}
-  .q .lbl{flex:0 0 168px;font-size:17px;font-weight:900;color:var(--ink);line-height:1.2;}
-  .q .val{flex:1;font-family:'Roboto Mono',monospace;font-size:16px;font-weight:700;color:#0B3A8F;line-height:1.3;word-break:break-all;}
-  .q.d{border-left-color:var(--orange);} .q.d .val{color:#9A3412;}
-  .q.s{border-left-color:#7C3AED;} .q.s .val{color:#5B21B6;}
-  .q.o{border-left-color:var(--green);} .q.o .val{color:var(--green-dark);}
+  .card{flex:1;display:flex;flex-direction:column;min-height:0;background:#fff;border:2px solid #C7CFDA;border-radius:12px;box-shadow:0 5px 13px rgba(0,0,0,.13);overflow:hidden;}
+  .col.hot .card{border-color:var(--green);box-shadow:0 5px 15px rgba(6,95,70,.2);}
+  .ch{flex:0 0 auto;display:flex;align-items:center;gap:9px;padding:9px 11px;background:linear-gradient(180deg,#FBFCFE,#EEF2F8);border-bottom:1px solid #E2E8F1;min-height:58px;}
+  .ch .sq{flex:0 0 auto;width:38px;height:38px;border-radius:9px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);display:flex;align-items:center;justify-content:center;overflow:hidden;}
+  .ch .sq img{width:34px;height:34px;object-fit:contain;}
+  .ch .nm{font-weight:900;font-size:16.5px;color:var(--ink);line-height:1.15;}
+  .ch .cn{font-size:11.5px;font-weight:800;color:var(--weak);margin-top:1px;}
+  .col.hot .ch{background:linear-gradient(180deg,#F0FDF7,#DCFCE7);}
+  .col.hot .ch .nm{color:var(--green-dark);}
 
-  .ops{background:#F8F9FA;border:1px solid var(--line);border-radius:11px;padding:10px 12px;}
-  .ops .oh{font-weight:900;font-size:17px;color:var(--ink);margin-bottom:7px;}
-  .opg{display:grid;grid-template-columns:1fr 1fr;gap:7px 10px;}
-  .op{display:flex;align-items:baseline;gap:7px;font-size:15.5px;font-weight:800;color:var(--gray);}
-  .op code{font-family:'Roboto Mono',monospace;font-size:16px;font-weight:700;color:var(--blue-dark);background:#EFF6FF;border-radius:5px;padding:1px 7px;flex:0 0 auto;}
+  .ptop{flex:0 0 224px;margin:9px;background:#F3F6FB;border:1px solid #DCE4F0;border-radius:9px;padding:9px;display:flex;flex-direction:column;gap:7px;overflow:hidden;}
+  .sect{font-size:11.5px;font-weight:900;color:#5B6B82;letter-spacing:.02em;display:flex;align-items:center;gap:6px;}
+  .sect::before{content:"";width:9px;height:9px;border-radius:2px;background:var(--od);}
+  .fld{background:#fff;border:1px solid #D7DEE9;border-radius:7px;overflow:hidden;}
+  .fld .fl{font-size:12px;font-weight:800;color:#64748B;background:#F8FAFC;padding:3px 8px;border-bottom:1px solid #EBEFF5;}
+  .fld .fi{font-size:14.5px;font-weight:800;color:#243B58;padding:7px 9px;display:flex;align-items:center;gap:6px;justify-content:space-between;line-height:1.1;}
+  .fld .fi .cr{color:#8A93A2;font-size:12px;}
+  .fld.hot{border:2px solid var(--green);}
+  .dyn{display:inline-flex;align-items:center;gap:4px;background:#EAF2FF;border:1px solid #9DC1F5;border-radius:6px;padding:2px 7px;font-size:13.5px;font-weight:800;color:#0B3A8F;font-family:'Roboto Mono','Noto Sans JP',monospace;}
+  .dyn::before{content:"⚡";font-size:12px;}
+  .mono{font-family:'Roboto Mono',monospace;font-size:14px;color:#0B3A8F;}
 
-  .wall{flex:1;background:linear-gradient(180deg,#FFF7ED,#FFEDD5);border:2.5px solid #FB923C;border-radius:12px;padding:11px 13px;display:flex;flex-direction:column;gap:8px;position:relative;min-height:0;}
-  .wall .wh{font-weight:900;font-size:21px;color:#9A3412;line-height:1.25;}
-  .wall .wt{font-size:16px;font-weight:800;color:#7C2D12;line-height:1.5;}
-  .wall .wt b{color:#C2410C;}
-  .wall .steps{display:flex;flex-direction:column;gap:5px;}
-  .wall .stp{display:flex;align-items:center;gap:8px;font-size:15.5px;font-weight:800;color:#7C2D12;background:#fff;border:1px solid #FDBA74;border-radius:8px;padding:6px 9px;}
-  .wall .stp .n{flex:0 0 auto;width:21px;height:21px;border-radius:50%;background:#EA580C;color:#fff;font-size:12.5px;font-weight:900;display:flex;align-items:center;justify-content:center;}
-  .wall .stp:last-child{padding-right:104px;}
-  .wmascot{position:absolute;right:-10px;bottom:-8px;height:116px;z-index:30;filter:drop-shadow(0 3px 7px rgba(0,0,0,.4));}
+  .howsteps{flex:1;margin:0 9px 9px;background:#EFF5FF;border:1px solid #C9DCF7;border-radius:9px;padding:9px 10px 9px 11px;display:flex;flex-direction:column;min-height:0;}
+  .hh{font-weight:900;font-size:13px;color:var(--blue-dark);padding-left:9px;position:relative;margin-bottom:5px;}
+  .hh::before{content:"";position:absolute;left:0;top:1px;bottom:1px;width:4px;border-radius:3px;background:var(--blue);}
+  .howsteps ol{list-style:none;flex:1;display:flex;flex-direction:column;justify-content:space-evenly;counter-reset:s;}
+  .howsteps li{counter-increment:s;position:relative;padding-left:26px;font-size:15px;font-weight:800;color:#243B58;line-height:1.32;}
+  .howsteps li::before{content:counter(s);position:absolute;left:0;top:0;width:20px;height:20px;border-radius:50%;background:var(--blue);color:#fff;font-size:12.5px;display:flex;align-items:center;justify-content:center;}
+  .howsteps li b{color:#C2410C;}
+  .col.hot .howsteps{background:#F0FDF7;border-color:#A7E3C4;}
+  .col.hot .hh{color:var(--green-dark);} .col.hot .hh::before{background:var(--green);}
+  .col.hot .howsteps li::before{background:var(--green);}
 
-  .warn{flex:0 0 auto;margin:10px 16px 18px;background:#EFF6FF;border:2px solid #93C5FD;border-radius:12px;padding:9px 16px;display:flex;align-items:center;gap:14px;}
-  .warn .wt2{flex:0 0 auto;font-weight:900;font-size:17px;color:var(--blue-dark);}
-  .warn .wl{display:flex;gap:18px;flex-wrap:wrap;font-size:16px;font-weight:800;color:#1E3A8A;line-height:1.35;}
-  .warn code{font-family:'Roboto Mono',monospace;font-size:15px;background:#fff;border:1px solid #BFDBFE;border-radius:5px;padding:1px 6px;}
-  .src{position:absolute;left:16px;bottom:4px;font-size:10px;color:#AEB6C2;font-weight:700;z-index:3;}
+  .warn{flex:0 0 auto;margin:10px 16px 16px;background:linear-gradient(180deg,#FFF7ED,#FFEDD5);border:2px solid #FB923C;border-radius:12px;padding:9px 16px;display:flex;align-items:center;gap:13px;}
+  .warn .wt2{flex:0 0 auto;font-weight:900;font-size:16.5px;color:#9A3412;}
+  .warn .wl{font-size:15.5px;font-weight:800;color:#7C2D12;line-height:1.4;}
+  .warn .wl b{color:#C2410C;}
+  .src{position:absolute;left:16px;bottom:3px;font-size:10px;color:#AEB6C2;font-weight:700;z-index:3;}
 </style>
 </head>
 <body>
 <div id="slide"></div>
 <script>
 const A="../../pptx/_assets/";
-const svgBulb='<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/></svg>';
-
-const Q=[
- ['','完了以外を取る',"Status ne '完了'"],
- ['','2つとも満たす',"Status eq '未完了' and Priority eq '高'"],
- ['','どちらかを満たす',"Status eq '申請中' or Status eq '差戻し'"],
- ['s','「見積」で始まる',"startswith(Title,'見積')"],
- ['s','「見積」を含む',"substringof('見積',Title)"],
- ['d','今日以降のもの',"Due_x0020_Date ge '@{utcNow()}'"],
- ['d','7日以内のもの',"Due_x0020_Date le '@{addDays(utcNow(),7)}'"],
- ['o','並べ替え（期限が近い順）',"Due_x0020_Date asc"]
-];
+const ICON={arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',bulb:'<path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/>'};
+const svg=(n)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${ICON[n]}</svg>`;
 
 document.getElementById('slide').innerHTML=`
   <div class="titlebar">
     <div class="vol-pill">Vol.76-2</div>
     <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
-    <div class="title-text">フィルター クエリ｜<span class="hl">そのまま使える8個と、5000件の壁</span></div>
+    <div class="title-text">作り方は3ステップ｜<span class="hl">“変換したら、必ず作成する”がコツ</span></div>
     <img class="title-chara" src="${A}chara/chara_point.png" alt="">
   </div>
 
   <div class="concl">
-    <div class="chip">${svgBulb}</div>
-    <div class="txt">書き方は<b>「内部名 演算子 値」</b>だけ。文字列はシングルクォートで囲み、日付は<b>式をそのまま入れて</b>比較できます。</div>
+    <div class="chip">${svg('bulb')}</div>
+    <div class="txt">「ファイルの変換」の出力は<b>まだ保存されていません</b>。すぐ後ろに<b>「ファイルを作成する」</b>を置くのが唯一にして最大のコツです。</div>
   </div>
 
-  <div class="stage">
-    <div class="lz">
-      <div class="hd"><span class="b">1</span>コピーして使う8個</div>
-      <div class="qs">
-        ${Q.map(([c,l,v])=>`<div class="q ${c}"><span class="lbl">${l}</span><span class="val">${v}</span></div>`).join('')}
+  <div class="cols">
+    <!-- ① 変換 -->
+    <div class="col">
+      <span class="cnum">1</span><span class="carrow">${svg('arrow')}</span>
+      <div class="card">
+        <div class="ch"><span class="sq"><img src="${A}icons/pa_onedrive.png" alt=""></span><div><div class="nm">ファイルの変換</div><div class="cn">OneDrive for Business ・ 標準</div></div></div>
+        <div class="ptop">
+          <div class="sect">実際の設定画面</div>
+          <div class="fld"><div class="fl">File（元ファイル）</div><div class="fi">御見積書_2026-08.xlsx<span class="cr">▾</span></div></div>
+          <div class="fld hot"><div class="fl">対象の種類</div><div class="fi"><span class="mono">PDF</span><span class="cr">▾</span></div></div>
+          <div class="fld"><div class="fl">出力（自動でできる）</div><div class="fi"><span class="dyn">ファイル コンテンツ</span></div></div>
+        </div>
+        <div class="howsteps">
+          <div class="hh">操作手順</div>
+          <ol>
+            <li>OneDriveの「ファイルの変換」を追加</li>
+            <li>File に元の Excel／Word を指定</li>
+            <li>対象の種類で <b>PDF</b> を選ぶだけ</li>
+          </ol>
+        </div>
       </div>
     </div>
 
-    <div class="rz">
-      <div class="hd" style="margin-bottom:0"><span class="b">2</span>演算子と“壁”</div>
-      <div class="ops">
-        <div class="oh">使える演算子</div>
-        <div class="opg">
-          <div class="op"><code>eq</code>等しい</div>
-          <div class="op"><code>ne</code>等しくない</div>
-          <div class="op"><code>gt</code>より大きい</div>
-          <div class="op"><code>ge</code>以上</div>
-          <div class="op"><code>lt</code>より小さい</div>
-          <div class="op"><code>le</code>以下</div>
-          <div class="op" style="grid-column:1/3"><code>startswith / substringof</code>文字列</div>
+    <!-- ② 作成（肝） -->
+    <div class="col hot">
+      <span class="cnum" style="background:#16A34A">2</span><span class="carrow">${svg('arrow')}</span>
+      <div class="card">
+        <div class="ch"><span class="sq"><img src="${A}icons/pa_onedrive.png" alt=""></span><div><div class="nm">ファイルを作成する</div><div class="cn">OneDrive for Business ・ ここが肝</div></div></div>
+        <div class="ptop">
+          <div class="sect">実際の設定画面</div>
+          <div class="fld"><div class="fl">フォルダー パス</div><div class="fi">/見積書PDF<span class="cr">▾</span></div></div>
+          <div class="fld"><div class="fl">ファイル名</div><div class="fi"><span class="mono">御見積書_2026-08.pdf</span></div></div>
+          <div class="fld hot"><div class="fl">ファイル コンテンツ</div><div class="fi"><span class="dyn">ファイル コンテンツ</span></div></div>
+        </div>
+        <div class="howsteps">
+          <div class="hh">操作手順</div>
+          <ol>
+            <li>すぐ後ろに「ファイルを作成する」</li>
+            <li>ファイル名の拡張子を <b>.pdf</b> に</li>
+            <li>コンテンツに①の<b>⚡</b>を入れる＝保存完了</li>
+          </ol>
         </div>
       </div>
-      <div class="wall">
-        <div class="wh">⚠ 5000件の壁</div>
-        <div class="wt">既定<b>100件</b>／最大<b>5000件</b>。5000件超のリストは<b>最初の5000件に該当が無いと0件</b>で返ることも。</div>
-        <div class="steps">
-          <div class="stp"><span class="n">1</span><span><b>ページ分割</b>をオンにする</span></div>
-          <div class="stp"><span class="n">2</span><span>列に<b>インデックス</b></span></div>
+    </div>
+
+    <!-- ③ 送信 -->
+    <div class="col">
+      <span class="cnum">3</span>
+      <div class="card">
+        <div class="ch"><span class="sq"><img src="${A}icons/pa_outlook.png" alt=""></span><div><div class="nm">メールの送信 (V2)</div><div class="cn">Office 365 Outlook ・ 標準</div></div></div>
+        <div class="ptop">
+          <div class="sect">実際の設定画面</div>
+          <div class="fld"><div class="fl">宛先／件名</div><div class="fi">取引先へ・御見積書の送付</div></div>
+          <div class="fld"><div class="fl">添付ファイル － 名前</div><div class="fi"><span class="mono">御見積書.pdf</span></div></div>
+          <div class="fld hot"><div class="fl">添付ファイル － コンテンツ</div><div class="fi"><span class="dyn">ファイル コンテンツ</span></div></div>
         </div>
-        <img class="wmascot" src="${A}chara/chara_guts.png" alt="">
+        <div class="howsteps">
+          <div class="hh">操作手順</div>
+          <ol>
+            <li>Outlook「メールの送信 (V2)」を追加</li>
+            <li>詳細オプションで<b>添付ファイル</b>を1つ追加</li>
+            <li>名前とコンテンツに <b>⚡</b> を入れる</li>
+          </ol>
+        </div>
       </div>
     </div>
   </div>
 
   <div class="warn">
-    <span class="wt2">💡 覚えておくと早い</span>
-    <span class="wl">
-      <span>列名のスペースは <code>_x0020_</code></span>
-      <span>並べ替えは <code>列名 asc / desc</code></span>
-    </span>
+    <span class="wt2">⚠ 使う前に確認</span>
+    <span class="wl">電子署名済み・パスワード保護・IRM保護の Word は変換できません。変換直後に <b>Bad gateway</b> が出たら、間に「<b>遅延</b>」を数秒はさむと安定します（公式の回避策）。</span>
   </div>
-  <div class="src">出典：Microsoft Learn（アイテムの取得とファイルの取得アクションの詳細な分析）／列名・データは架空</div>
+  <div class="src">出典：Microsoft Learn（OneDrive for Business コネクタ／既知の問題と制限事項）／画面は再現・データは架空</div>
 `;
 </script>
 <script>

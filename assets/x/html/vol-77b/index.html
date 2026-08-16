@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=1280, initial-scale=1">
-<title>X技術Tips Vol.77-2 列の種類ごとのトリガー条件</title>
+<title>X技術Tips Vol.77-2 祝日をスキップする作り方</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --blue:#2563EB; --blue-bg:#EFF6FF; --blue-dark:#1E40AF;
-    --green:#16A34A; --green-dark:#064E3B;
-    --red:#DC2626; --red-dark:#991B1B; --orange:#EA580C; --purple:#7C3AED;
+    --green:#16A34A; --green-dark:#065F46;
+    --orange:#EA580C; --od:#0364B8; --ol:#0F6CBD; --ctrl:#486FE0;
     --ink:#1F2937; --gray:#374151; --weak:#6B7280; --line:#E5E7EB;
   }
   *{margin:0;padding:0;box-sizing:border-box;}
@@ -26,104 +26,161 @@
   .title-text .hl{color:#FFE08A;}
   .title-chara{position:absolute;right:14px;bottom:-40px;height:142px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
 
-  .concl{margin:10px 16px 0;background:var(--blue-bg);border:2.5px solid var(--blue);border-radius:13px;display:flex;align-items:center;gap:13px;padding:10px 18px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
-  .concl .chip{flex:0 0 auto;width:40px;height:40px;border-radius:11px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;padding:8px;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
-  .concl .txt{font-weight:800;font-size:19.5px;color:var(--blue-dark);line-height:1.36;padding-right:100px;}
+  .concl{margin:10px 16px 0;background:var(--blue-bg);border:2.5px solid var(--blue);border-radius:13px;display:flex;align-items:center;gap:13px;padding:9px 18px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;width:38px;height:38px;border-radius:11px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;padding:8px;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
+  .concl .txt{font-weight:800;font-size:18.5px;color:var(--blue-dark);line-height:1.34;padding-right:150px;}
   .concl .txt b{color:var(--orange);}
 
-  .stage{flex:1 1 auto;margin:11px 16px 0;display:flex;gap:14px;min-height:0;}
-  .lz{flex:1;display:flex;flex-direction:column;min-height:0;}
-  .rz{flex:0 0 330px;display:flex;flex-direction:column;min-height:0;gap:9px;}
-  .hd{font-weight:900;font-size:23px;color:var(--ink);margin-bottom:7px;display:flex;align-items:center;gap:9px;letter-spacing:-.01em;}
-  .hd .b{flex:0 0 auto;width:31px;height:31px;border-radius:50%;background:var(--blue);color:#fff;font-weight:900;font-size:17px;display:flex;align-items:center;justify-content:center;}
+  .cols{flex:1 1 auto;margin:11px 16px 0;display:grid;grid-template-columns:1fr 1fr 1fr;gap:26px;min-height:0;}
+  .col{position:relative;display:flex;flex-direction:column;min-height:0;}
+  .cnum{position:absolute;top:-9px;left:-11px;width:32px;height:32px;border-radius:50%;background:var(--blue);color:#fff;font-weight:900;font-size:18px;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 2px 5px rgba(0,0,0,.28);}
+  .carrow{position:absolute;top:44%;right:-22px;width:22px;height:22px;color:var(--blue);z-index:6;}
 
-  .qs{flex:1;display:grid;grid-template-columns:1fr;grid-auto-rows:1fr;gap:7px;min-height:0;}
-  .q{display:flex;align-items:center;gap:12px;background:#F8F9FA;border:1px solid var(--line);border-left:6px solid var(--blue);border-radius:9px;padding:7px 12px;min-height:0;}
-  .q .lbl{flex:0 0 150px;font-size:16.5px;font-weight:900;color:var(--ink);line-height:1.2;}
-  .q .lbl small{display:block;font-size:12.5px;font-weight:800;color:var(--weak);margin-top:1px;}
-  .q .val{flex:1;font-family:'Roboto Mono',monospace;font-size:15.5px;font-weight:700;color:#0B3A8F;line-height:1.3;word-break:break-all;}
-  .q.p{border-left-color:var(--purple);} .q.p .val{color:#5B21B6;}
-  .q.o{border-left-color:var(--orange);} .q.o .val{color:#9A3412;}
-  .q.g{border-left-color:var(--green);} .q.g .val{color:var(--green-dark);}
+  .card{flex:1;display:flex;flex-direction:column;min-height:0;background:#fff;border:2px solid #C7CFDA;border-radius:12px;box-shadow:0 5px 13px rgba(0,0,0,.13);overflow:hidden;}
+  .col.hot .card{border-color:var(--ctrl);box-shadow:0 5px 15px rgba(72,111,224,.22);}
+  .ch{flex:0 0 auto;display:flex;align-items:center;gap:9px;padding:9px 11px;background:linear-gradient(180deg,#FBFCFE,#EEF2F8);border-bottom:1px solid #E2E8F1;min-height:58px;}
+  .ch .sq{flex:0 0 auto;width:38px;height:38px;border-radius:9px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);display:flex;align-items:center;justify-content:center;overflow:hidden;}
+  .ch .sq img{width:34px;height:34px;object-fit:contain;}
+  .ch .sq.real img{width:38px;height:38px;border-radius:9px;}
+  .ch .nm{font-weight:900;font-size:16px;color:var(--ink);line-height:1.15;}
+  .ch .cn{font-size:11.5px;font-weight:800;color:var(--weak);margin-top:1px;}
+  .col.hot .ch{background:linear-gradient(180deg,#F3F6FF,#E3EAFF);}
+  .col.hot .ch .nm{color:#2440A8;}
 
-  .and{flex:1;background:#fff;border:1px solid #D7DEE8;border-radius:12px;box-shadow:0 6px 15px rgba(0,0,0,.14);overflow:visible;font-family:'Segoe UI','Noto Sans JP',sans-serif;display:flex;flex-direction:column;min-height:0;position:relative;}
-  .and-h{flex:0 0 auto;display:flex;align-items:center;gap:9px;padding:9px 12px;background:#F3F6FB;border-bottom:1px solid #E3E9F1;}
-  .and-h img{width:19px;height:19px;object-fit:contain;}
-  .and-h span{font-weight:900;font-size:15.5px;color:#243B58;}
-  .and-b{flex:1;padding:11px 12px;display:flex;flex-direction:column;gap:9px;min-height:0;justify-content:center;}
-  .cline{display:flex;align-items:center;gap:9px;font-family:'Roboto Mono',monospace;font-size:14.5px;font-weight:700;color:#0B3A8F;background:#EFF6FF;border:1px solid #C7DBF7;border-radius:8px;padding:8px 10px;word-break:break-all;line-height:1.35;}
-  .cline .no{flex:0 0 auto;width:22px;height:22px;border-radius:6px;background:#2563EB;color:#fff;font-size:13px;font-weight:900;display:flex;align-items:center;justify-content:center;}
-  .andtag{align-self:center;font-weight:900;font-size:15px;color:#166534;background:#DCFCE7;border:1.5px solid #86EFAC;border-radius:999px;padding:4px 16px;}
-  .andnote{font-size:14px;font-weight:800;color:var(--gray);line-height:1.5;text-align:center;}
-  .andnote b{color:var(--blue-dark);}
+  .ptop{flex:0 0 224px;margin:9px;background:#F3F6FB;border:1px solid #DCE4F0;border-radius:9px;padding:9px;display:flex;flex-direction:column;gap:7px;overflow:hidden;}
+  .sect{font-size:11.5px;font-weight:900;color:#5B6B82;letter-spacing:.02em;display:flex;align-items:center;gap:6px;}
+  .sect::before{content:"";width:9px;height:9px;border-radius:2px;background:var(--od);}
+  .fld{background:#fff;border:1px solid #D7DEE9;border-radius:7px;overflow:hidden;}
+  .fld .fl{font-size:12px;font-weight:800;color:#64748B;background:#F8FAFC;padding:3px 8px;border-bottom:1px solid #EBEFF5;}
+  .fld .fi{font-size:14.5px;font-weight:800;color:#243B58;padding:7px 9px;display:flex;align-items:center;gap:6px;justify-content:space-between;line-height:1.1;}
+  .fld .fi .cr{color:#8A93A2;font-size:12px;}
+  .fld.hot{border:2px solid var(--ctrl);}
+  .dyn{display:inline-flex;align-items:center;gap:4px;background:#EAF2FF;border:1px solid #9DC1F5;border-radius:6px;padding:2px 7px;font-size:13.5px;font-weight:800;color:#0B3A8F;font-family:'Roboto Mono','Noto Sans JP',monospace;}
+  .dyn::before{content:"⚡";font-size:12px;}
+  .mono{font-family:'Roboto Mono',monospace;font-size:13.5px;color:#0B3A8F;}
+  /* 条件の判定行 */
+  .cond{display:flex;flex-direction:column;gap:5px;}
+  .crow{display:flex;align-items:center;gap:6px;background:#fff;border:1px solid #D7DEE9;border-radius:7px;padding:6px 8px;font-size:13.5px;font-weight:800;color:#243B58;}
+  .crow .op{flex:0 0 auto;background:#FFEDD5;color:#9A3412;border-radius:5px;padding:2px 7px;font-size:12.5px;}
+  .branch{display:flex;gap:6px;}
+  .br{flex:1;border-radius:8px;padding:6px 7px;font-size:13px;font-weight:900;text-align:center;line-height:1.2;}
+  .br.y{background:#FEF2F2;border:1.5px solid #F3B4B4;color:#991B1B;}
+  .br.n{background:#ECFDF5;border:1.5px solid #9FE3C2;color:#065F46;}
 
-  .warn{flex:0 0 auto;margin:10px 16px 18px;background:#FFF7ED;border:2px solid #FDBA74;border-radius:12px;padding:9px 16px;display:flex;align-items:center;gap:16px;}
-  .warn .wt{flex:0 0 auto;font-weight:900;font-size:17px;color:#9A3412;}
-  .warn .wl{display:flex;gap:20px;flex-wrap:wrap;font-size:16px;font-weight:800;color:#7C2D12;line-height:1.35;}
-  .warn code{font-family:'Roboto Mono',monospace;font-size:15px;background:#fff;border:1px solid #FDBA74;border-radius:5px;padding:1px 6px;}
-  .amascot{position:absolute;right:-12px;bottom:-10px;height:114px;z-index:30;filter:drop-shadow(0 3px 7px rgba(0,0,0,.4));}
-  .src{position:absolute;left:16px;bottom:4px;font-size:10px;color:#AEB6C2;font-weight:700;z-index:3;}
+  .howsteps{flex:1;margin:0 9px 9px;background:#EFF5FF;border:1px solid #C9DCF7;border-radius:9px;padding:9px 10px 9px 11px;display:flex;flex-direction:column;min-height:0;}
+  .hh{font-weight:900;font-size:13px;color:var(--blue-dark);padding-left:9px;position:relative;margin-bottom:5px;}
+  .hh::before{content:"";position:absolute;left:0;top:1px;bottom:1px;width:4px;border-radius:3px;background:var(--blue);}
+  .howsteps ol{list-style:none;flex:1;display:flex;flex-direction:column;justify-content:space-evenly;counter-reset:s;}
+  .howsteps li{counter-increment:s;position:relative;padding-left:26px;font-size:15px;font-weight:800;color:#243B58;line-height:1.32;}
+  .howsteps li::before{content:counter(s);position:absolute;left:0;top:0;width:20px;height:20px;border-radius:50%;background:var(--blue);color:#fff;font-size:12.5px;display:flex;align-items:center;justify-content:center;}
+  .howsteps li b{color:#C2410C;}
+  .col.hot .howsteps{background:#F2F5FF;border-color:#C0CEF7;}
+
+  .warn{flex:0 0 auto;margin:10px 16px 16px;background:linear-gradient(180deg,#FFF7ED,#FFEDD5);border:2px solid #FB923C;border-radius:12px;padding:9px 16px;display:flex;align-items:center;gap:13px;}
+  .warn .wt2{flex:0 0 auto;font-weight:900;font-size:16.5px;color:#9A3412;}
+  .warn .wl{font-size:15.5px;font-weight:800;color:#7C2D12;line-height:1.4;}
+  .warn .wl b{color:#C2410C;} .warn code{font-family:'Roboto Mono',monospace;font-size:14px;background:#fff;border:1px solid #FBBF77;border-radius:5px;padding:1px 5px;}
+  .src{position:absolute;left:16px;bottom:3px;font-size:10px;color:#AEB6C2;font-weight:700;z-index:3;}
 </style>
 </head>
 <body>
 <div id="slide"></div>
 <script>
 const A="../../pptx/_assets/";
-const svgBulb='<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/></svg>';
-
-const Q=[
- ['','空でないとき','', "@not(empty(triggerBody()?['担当者']))"],
- ['','値が一致','（1行テキスト）', "@equals(triggerBody()?['状態'],'承認待ち')"],
- ['','言葉を含む','（件名など）', "@contains(triggerBody()?['件名'],'至急')"],
- ['o','金額が10万以上','（数値）', "@greaterOrEquals(triggerBody()?['金額'],100000)"],
- ['g','はい/いいえが「はい」','', "@equals(triggerBody()?['重要'],true)"],
- ['p','選択肢が一致','（Value が要る）', "@equals(triggerBody()?['区分']?['Value'],'外部')"]
-];
+const ICON={arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',bulb:'<path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/>'};
+const svg=(n)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${ICON[n]}</svg>`;
 
 document.getElementById('slide').innerHTML=`
   <div class="titlebar">
     <div class="vol-pill">Vol.77-2</div>
     <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
-    <div class="title-text">トリガーの条件｜<span class="hl">列の種類ごとの書き方6つ</span></div>
+    <div class="title-text">作り方は標準2個＋条件｜<span class="hl">“予定が0件なら平日”で見分ける</span></div>
     <img class="title-chara" src="${A}chara/chara_point.png" alt="">
   </div>
 
   <div class="concl">
-    <div class="chip">${svgBulb}</div>
-    <div class="txt">式は必ず<b>「@」で始める</b>。<b>triggerBody()?['列名']</b> で回答の中身を取り出し、その値を判定します。</div>
+    <div class="chip">${svg('bulb')}</div>
+    <div class="txt">祝日カレンダーに<b>今日の予定があれば祝日</b>、<b>0件なら平日</b>。この1回の判定を、いつものフローの先頭に足すだけです。</div>
   </div>
 
-  <div class="stage">
-    <div class="lz">
-      <div class="hd"><span class="b">1</span>コピーして使う6つ</div>
-      <div class="qs">
-        ${Q.map(([c,l,sub,v])=>`<div class="q ${c}"><span class="lbl">${l}${sub?`<small>${sub}</small>`:''}</span><span class="val">${v}</span></div>`).join('')}
+  <div class="cols">
+    <!-- ① 繰り返し -->
+    <div class="col">
+      <span class="cnum">1</span><span class="carrow">${svg('arrow')}</span>
+      <div class="card">
+        <div class="ch"><span class="sq real"><img src="${A}icons/pa_schedule.png" alt=""></span><div><div class="nm">繰り返し</div><div class="cn">スケジュール ・ 標準</div></div></div>
+        <div class="ptop">
+          <div class="sect">実際の設定画面</div>
+          <div class="fld"><div class="fl">間隔／頻度</div><div class="fi">1 ／ 日<span class="cr">▾</span></div></div>
+          <div class="fld"><div class="fl">設定時刻（時）</div><div class="fi"><span class="mono">9</span></div></div>
+          <div class="fld"><div class="fl">タイム ゾーン</div><div class="fi">(UTC+09:00) 東京<span class="cr">▾</span></div></div>
+        </div>
+        <div class="howsteps">
+          <div class="hh">操作手順</div>
+          <ol>
+            <li>いつもの毎朝トリガーでOK</li>
+            <li>タイムゾーンを<b>東京</b>にしておく</li>
+            <li>ここは今のフローのまま</li>
+          </ol>
+        </div>
       </div>
     </div>
 
-    <div class="rz">
-      <div class="hd" style="margin-bottom:0"><span class="b">2</span>2つ以上の条件は</div>
-      <div class="and">
-        <div class="and-h"><img src="${A}icons/pa_logo.png" alt=""><span>トリガーの条件</span></div>
-        <div class="and-b">
-          <div class="cline"><span class="no">1</span>@equals(...,'外部')</div>
-          <div class="cline"><span class="no">2</span>@greaterOrEquals(...,100000)</div>
-          <span class="andtag">両方そろって起動（AND）</span>
-          <div class="andnote" style="padding-right:84px">条件を<b>複数行に分けて足す</b>と、<b>全部を満たしたときだけ</b>フローが動きます。1行に and を詰めなくてOK。</div>
-        <img class="amascot" src="${A}chara/chara_guts.png" alt="">
+    <!-- ② 予定表ビューの取得 -->
+    <div class="col">
+      <span class="cnum">2</span><span class="carrow">${svg('arrow')}</span>
+      <div class="card">
+        <div class="ch"><span class="sq"><img src="${A}icons/pa_outlook.png" alt=""></span><div><div class="nm">イベントの予定表ビューを取得する (V3)</div><div class="cn">Office 365 Outlook ・ 標準</div></div></div>
+        <div class="ptop">
+          <div class="sect">実際の設定画面</div>
+          <div class="fld hot"><div class="fl">予定表 ID</div><div class="fi">日本の休日<span class="cr">▾</span></div></div>
+          <div class="fld"><div class="fl">開始時刻（UTC）</div><div class="fi"><span class="mono">今日 0:00</span></div></div>
+          <div class="fld"><div class="fl">終了時刻（UTC）</div><div class="fi"><span class="mono">今日 23:59</span></div></div>
+        </div>
+        <div class="howsteps">
+          <div class="hh">操作手順</div>
+          <ol>
+            <li>予定表IDで<b>「日本の休日」</b>を選ぶ</li>
+            <li>開始・終了を<b>今日1日ぶん</b>に</li>
+            <li>祝日ならここに予定が入る</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- ③ 条件 -->
+    <div class="col hot">
+      <span class="cnum" style="background:#486FE0">3</span>
+      <div class="card">
+        <div class="ch"><span class="sq real"><img src="${A}icons/pa_condition.png" alt=""></span><div><div class="nm">条件</div><div class="cn">コントロール ・ ここで見分ける</div></div></div>
+        <div class="ptop">
+          <div class="sect">実際の設定画面</div>
+          <div class="cond">
+            <div class="crow"><span class="mono">length(...value)</span><span class="op">＝</span><span class="mono">0</span></div>
+            <div class="branch">
+              <div class="br y">いいえ＝祝日<br>何もしない</div>
+              <div class="br n">はい＝平日<br>いつもの通知</div>
+            </div>
+          </div>
+          <div class="fld"><div class="fl">祝日名も取れる（任意）</div><div class="fi"><span class="mono">first(...)?['件名']</span></div></div>
+        </div>
+        <div class="howsteps">
+          <div class="hh">操作手順</div>
+          <ol>
+            <li>条件を追加し、式で<b>件数を0と比較</b></li>
+            <li><b>0件＝平日</b>→ いつもの処理へ</li>
+            <li>祝日側は空でOK（動かない）</li>
+          </ol>
         </div>
       </div>
     </div>
   </div>
 
   <div class="warn">
-    <span class="wt">⚠ 使う前に確認</span>
-    <span class="wl">
-      <span>選択肢・人の列は <code>?['Value']</code> / <code>?['Email']</code> が要る</span>
-      <span>保存後に一度、条件に合う入力で<b>動くか試す</b></span>
-    </span>
+    <span class="wt2">⚠ 使う前に確認</span>
+    <span class="wl">開始・終了時刻は<b>UTC基準</b>（式 <code>convertTimeZone</code> でJSTを補正）。「日本の休日」は予定表の一覧から選択。自分で祝日予定を足していると誤判定するので、専用カレンダーを使うのが安全です。</span>
   </div>
-  <div class="src">出典：Microsoft Learn（トリガー）／ワークフロー定義言語の関数を使用／列名・データは架空</div>
+  <div class="src">出典：Microsoft Learn（Office 365 Outlook コネクタ／イベントの予定表ビューを取得する V3）／画面は再現・データは架空</div>
 `;
 </script>
 <script>

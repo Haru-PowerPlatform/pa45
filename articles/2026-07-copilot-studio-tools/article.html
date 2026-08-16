@@ -76,12 +76,22 @@
 .ui-mail .mbody .mline-hi{background:#fff3bf;font-weight:700;border-radius:3px;padding:0 2px;}
 .redbox{border:3px solid #e0342f;border-radius:10px;padding:1px;position:relative;}
 .redbox .rl{position:absolute;top:-15px;left:-3px;background:linear-gradient(180deg,#f5504b,#df332e);color:#fff;font-size:12px;font-weight:800;padding:2px 10px;border-radius:7px;white-space:nowrap;box-shadow:0 3px 7px rgba(0,0,0,.3);}
+.cs-preface{background:#eef7f1;border:1px solid #cfe8db;border-left:5px solid #5f8a6e;border-radius:10px;padding:14px 18px;margin:0 0 26px;font-size:.86em;color:#3d5647;line-height:1.85;}
+.cs-preface b{color:#2f6b4f;}
+.cs-preface a{color:#1d4ed8;font-weight:700;}
+.csflow-w{margin:30px 0;padding:20px 18px 18px;background:#faf8ff;border:1px solid #e6ddf7;border-radius:14px;}
+.csflow-t{font-size:.92em;font-weight:800;color:#5B21B6;margin:0 0 15px;text-align:center;}
+.csflow{display:flex;flex-wrap:wrap;align-items:stretch;justify-content:center;gap:9px;}
+.csflow .stp{flex:1 1 140px;min-width:120px;background:#fff;border:2px solid #ddd0f2;border-radius:12px;padding:13px 11px;text-align:center;}
+.csflow .stp .sn{display:inline-block;font-size:.76em;font-weight:800;color:#fff;background:#7C3AED;border-radius:999px;padding:2px 10px;margin-bottom:8px;}
+.csflow .stp .st{font-size:.9em;font-weight:700;color:#2b2540;line-height:1.55;}
+.csflow .ar{align-self:center;color:#a78bda;font-weight:900;font-size:1.3em;}
 </style>
 
 
-<div class="mb-body">
+<div class="mb-body"><div class="cs-preface">📝 実際に <b>Copilot Studio を触って検証</b>し、スクショを撮りながら気づいたことをまとめた記録です。<br>機能・画面・料金は更新が続きます。<br>最新の正確な情報は <a href="https://learn.microsoft.com/ja-jp/microsoft-copilot-studio/" target="_blank" rel="noopener">Microsoft 公式（Microsoft Learn）</a> をご確認ください。</div>
 
-<div class="mb-intro">この記事は、筆者が実際に Copilot Studio でエージェントに「ツール」を足しながら、気づいたことを AI と壁打ち（相談）しつつまとめたものです。「初めての人が、読みながら同じことを試せる」ことを目指しています。</div>
+<div class="mb-intro">この記事は、筆者が実際に Copilot Studio でエージェントに「ツール」を足しながら、気づいたことを AI と壁打ち（相談）しつつまとめました。<br>「初めての人が、読みながら同じことを試せる」ことを目指しています。</div>
 
 <p class="mb-lead">前回の記事では、Copilot Studio で<span class="hl-marker">「質問に答えてくれる AI（受付エージェント）」</span>を作りました。<br>ただ、それだけだと AI にできるのは「調べて答える」ことまでです。</p>
 
@@ -117,6 +127,12 @@
 
 <h2>作り方（実画面つき）</h2>
 
+<p>操作に入る前に、どこから始めるかを確認します。<br>Copilot Studio（copilotstudio.microsoft.com）に会社のアカウントでサインインし、前回つくった受付エージェントを一覧から開きます。<br>開くと編集画面（Build）になり、画面の右側にコンポーネントのパネルが並びます。</p>
+
+<div class="csflow-w"><p class="csflow-t">ツールを足す画面にたどり着くまで</p><div class="csflow"><div class="stp"><span class="sn">①</span><div class="st">Copilot Studioを開く<br>（copilotstudio.microsoft.com）</div></div><div class="ar">→</div><div class="stp"><span class="sn">②</span><div class="st">受付エージェントを開く<br>（前回つくったもの）</div></div><div class="ar">→</div><div class="stp"><span class="sn">③</span><div class="st">編集画面（Build）が開く</div></div><div class="ar">→</div><div class="stp"><span class="sn">④</span><div class="st">右パネルの Tools の「＋」</div></div></div></div>
+
+<figure style="margin:32px 0;background:#eceef2;border:1px solid #d9dce3;border-radius:14px;padding:14px;box-shadow:0 3px 12px rgba(15,23,42,.09);"><span style="display:inline-block;font-size:12.5px;font-weight:800;color:#475569;background:#dde1e9;border-radius:999px;padding:5px 14px;margin-bottom:10px;">&#x1f5a5;&#xfe0f; 実際の画面</span><br><img src="file:///C:/Users/isamu/Documents/pa45/articles/2026-07-copilot-studio-tools/assets/shot-overview.png" alt="" style="max-width:100%;height:auto;border-radius:8px;border:1px solid #c7cad3;box-shadow:0 6px 18px rgba(15,23,42,.14);" /><figcaption style="font-size:1.02em;color:#5b4a7a;margin-top:12px;line-height:1.65;">&#x25b2; 編集画面（Build）。右側に Skills／Tools／Knowledge が並ぶ。赤枠が今回さわる Tools</figcaption></figure><figure style="margin:32px 0;background:#eceef2;border:1px solid #d9dce3;border-radius:14px;padding:14px;box-shadow:0 3px 12px rgba(15,23,42,.09);"><span style="display:inline-block;font-size:12.5px;font-weight:800;color:#475569;background:#dde1e9;border-radius:999px;padding:5px 14px;margin-bottom:10px;">&#x1f5a5;&#xfe0f; 実際の画面</span><br><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-tools-instr-thin.png" alt="" style="max-width:100%;height:auto;border-radius:8px;border:1px solid #c7cad3;box-shadow:0 6px 18px rgba(15,23,42,.14);" /><figcaption style="font-size:1.02em;color:#5b4a7a;margin-top:12px;line-height:1.65;">&#x25b2; 受付エージェントの Instructions。右パネルの Tools に「メールの送信(V2)」を追加してあり、この指示文で「いつ・どんな内容でメールを送るか」を日本語で書いておく</figcaption></figure>
+
 <h3>ステップ①：ツールの一覧を開く</h3>
 
 <p>エージェントの編集画面（Build）を開きます。<br>右側のパネルに <strong>「Tools（ツール）」</strong> という欄があるので、その <strong>＋</strong> を押します。</p>
@@ -141,9 +157,9 @@
 
 <p>道具を足したので、さっそくテストしました。<br>Preview で <strong>「コパスタ45に申し込みたいです」</strong> と話しかけてみます。</p>
 
-<p>ところが──案内係は、<strong>メールを送ってくれませんでした</strong>。<br>「申し込み方法はわかりません。<br>告知ページをご確認ください」と答えて終わり。<br>メールを送る、という発想が出てこないのです。</p>
+<p>ところが──案内係は、<strong>メールを送ってくれませんでした</strong>。<br>「申し込み方法はわかりません。<br>告知ページをご確認ください」と答えて終わり。<br>メールを送る、という発想が出てきませんでした。</p>
 
-<div class="mb-point">理由はシンプルでした。<span class="hl-marker">道具を棚に置いただけでは、AI は「いつ使えばいいか」を知らない</span>のです。<br>人間でいえば、机に電話を置かれても「どんな時にかけるか」を言われないと使わないのと同じです。</div>
+<div class="mb-point">理由はシンプルでした。<span class="hl-marker">道具を棚に置いただけでは、AI は「いつ使えばいいか」を知らない</span>からでした。<br>人間でいえば、机に電話を置かれても「どんな時にかけるか」を言われないと使わないのと同じです。</div>
 
 <p>そこで、<strong>指示文（Instructions）に「こういう時は、この道具を使ってね」と一文足します</strong>。<br>これがツールを活かす一番のポイントでした。</p>
 
@@ -175,7 +191,7 @@
 
 <h2>この文面、だれが書いたの？── ここが Power Automate との大きな違い</h2>
 
-<p>届いたメールを見て、正直「あれ？」と思いました。<br>文面を、私は一度も書いていないのです。<br>指示文で伝えたのは「件名」と「本文に相手の希望を書く」ことだけ。<br>それなのに、あいさつから結びまで、ちゃんとした文章になって届きました。</p>
+<p>届いたメールを見て、正直「あれ？」と思いました。<br>文面を、私は一度も書いていません。<br>指示文で伝えたのは「件名」と「本文に相手の希望を書く」ことだけ。<br>それなのに、あいさつから結びまで、ちゃんとした文章になって届きました。</p>
 
 <h3>Power Automate なら、文面は自分で組み立てる</h3>
 
@@ -187,7 +203,7 @@
 
 <h3>便利だけど、少し不安 ── その気持ちも正直に</h3>
 
-<p>一方で、「指定していないのに、勝手に書かれた」ことに、少し不安も感じました。<br>便利なのは間違いないのですが、「知らないうちに、意図とちがう文章を送ってしまわないか」と考えると、そわそわします。<br>この感覚は、たぶん多くの人が持つのではないかと思います。</p>
+<p>一方で、「指定していないのに、勝手に書かれた」ことに、少し不安も感じました。<br>便利なのは確かですが、「知らないうちに、意図とちがう文章を送ってしまわないか」と考えると、そわそわします。<br>この感覚は、たぶん多くの人が持つのではないかと思います。</p>
 
 <h3>では、この文面はどうやって出てきたのか</h3>
 
@@ -196,10 +212,10 @@
 <ul>
 <li>AI は「会話の内容（相手が“申し込みたい”と言った）」と「指示文（件名はこれ、本文に相手の希望を書いてね）」の<strong>2つを材料</strong>にします。</li>
 <li>その材料をもとに、<strong>頭脳の AI モデルが、自然な日本語の文章に組み立てて</strong>います。</li>
-<li>つまり、どこかにテンプレートがあったわけではなく、<strong>その場で書き起こしている</strong>のです。</li>
+<li>つまり、どこかにテンプレートがあったわけではなく、<strong>その場で書き起こしています</strong>。</li>
 </ul>
 
-<div class="mb-point">だから、送られる文面は毎回まったく同じではありません。<br>会話がちがえば、書かれ方も少し変わります。<span class="hl-marker">「決まった文章を送る」のではなく「その時の内容に合わせて書く」</span>のが、この仕組みの特徴です。<br>これが便利さの正体であり、同時に「勝手に書かれた」と感じる理由でもあります。</div>
+<div class="mb-point">だから、送られる文面は毎回まったく同じではありません。<br>会話がちがえば、書かれ方も少し変わります。<span class="hl-marker">「決まった文章を送る」のではなく「その時の内容に合わせて書く」</span>のが、この仕組みの特徴です。<br>これが便利さにつながっている一方で、「勝手に書かれた」と感じる理由にもなっています。</div>
 
 <h3>不安なら、手綱は握れる</h3>
 
@@ -254,7 +270,7 @@
 
 <div class="mb-cta yt"><p class="cta-ttl">&#x25b6; 動きは動画で見るのが早いです</p><p>エージェントの作り方や実演は、PA45の各回をYouTubeにアーカイブしています。</p><a class="mb-btn yt" href="https://www.youtube.com/@Haru_PowerAutomate136" target="_blank" rel="noopener">PA45のYouTubeチャンネルを見る</a></div>
 
-<p style="font-size:13px;color:#888;line-height:1.9;">※ 本記事は公開日時点の情報をもとに、筆者が実際に学んで試した内容を整理したものです。Copilot Studio の画面や仕様は更新されることがあるため、最新の状況は公式情報（Microsoft Learn）もあわせてご確認ください。画面の項目名・挙動は実機（Copilot Studio）で確認しています。</p>
+<p style="font-size:13px;color:#888;line-height:1.9;">※ 本記事は公開日時点の情報をもとに、筆者が実際に学んで試した内容を整理しました。Copilot Studio の画面や仕様は更新されることがあるため、最新の状況は公式情報（Microsoft Learn）もあわせてご確認ください。画面の項目名・挙動は実機（Copilot Studio）で確認しています。</p>
 
 <p style="font-size:13px;color:#888;line-height:1.9;">※ 掲載している画面は、実際の操作画面をもとに、個人情報などを避けて描き直した再現イメージです。構成や図解の一部は、AI と壁打ちしながら作成しています。</p>
 

@@ -77,7 +77,7 @@ CSS = """
 .mb-shot .sh-tag{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:800;color:#475569;background:#dde1e9;border-radius:999px;padding:5px 14px;margin-bottom:12px;letter-spacing:.02em;}
 .mb-shot .sh-frame{position:relative;line-height:0;}
 .mb-shot .sh-frame img{width:100%;height:auto;display:block;border-radius:10px;border:1px solid #c7cad3;box-shadow:0 6px 18px rgba(15,23,42,.20);}
-.mb-shot figcaption{font-size:.85em;color:#5b4a7a;margin-top:14px;line-height:1.65;}
+.mb-shot figcaption{font-size:1.02em;color:#5b4a7a;margin-top:14px;line-height:1.8;}
 /* 赤い角丸・影つきの注目マーカー（見るべき場所を囲む） */
 .mb-anno{position:absolute;border:3px solid #e0342f;border-radius:12px;background:rgba(224,52,47,.04);box-shadow:0 5px 14px rgba(224,52,47,.40),0 0 0 4px rgba(224,52,47,.10);}
 .mb-anno .an-lb{position:absolute;top:-16px;left:-4px;background:linear-gradient(180deg,#f5504b,#df332e);color:#fff;font-size:12.5px;font-weight:800;line-height:1.4;padding:3px 10px;border-radius:7px;white-space:nowrap;box-shadow:0 3px 7px rgba(0,0,0,.32);}
@@ -87,6 +87,9 @@ CSS = """
 .mb-cards .cd .cd-t{display:block;color:#5b21b6;font-weight:800;font-size:1.02em;margin-bottom:6px;}
 .mb-cards .cd .cd-d{font-size:.9em;color:#4b5563;line-height:1.65;}
 @media(max-width:600px){.mb-cards{grid-template-columns:1fr;}}
+.cs-preface{background:#eef7f1;border:1px solid #cfe8db;border-left:5px solid #5f8a6e;border-radius:10px;padding:14px 18px;margin:0 0 26px;font-size:.86em;color:#3d5647;line-height:1.85;}
+.cs-preface b{color:#2f6b4f;}
+.cs-preface a{color:#1d4ed8;font-weight:700;}
 </style>
 """
 
@@ -182,11 +185,12 @@ STATE.write_text(json.dumps(state,ensure_ascii=False,indent=2),encoding="utf-8")
 
 # ================= 本文 =================
 H_=[]; a=H_.append
+a('<div class="cs-preface">📝 実際に <b>Copilot Studio を触って検証</b>し、スクショを撮りながら気づいたことをまとめた記録です。<br>機能・画面・料金は更新が続きます。<br>最新の正確な情報は <a href="https://learn.microsoft.com/ja-jp/microsoft-copilot-studio/" target="_blank" rel="noopener">Microsoft 公式（Microsoft Learn）</a> をご確認ください。</div>')
 
-a('\n\n<div class="mb-intro">この記事は、筆者が実際に Copilot Studio でエージェントを作りながら、気になったポイントを AI と壁打ち（相談）しつつまとめたものです。「初めての人が、読みながら同じものを作れる」ことを目指して書いています。</div>')
+a('\n\n<div class="mb-intro">この記事は、筆者が実際に Copilot Studio でエージェントを作りながら、気になったポイントを AI と壁打ち（相談）しつつまとめた記録です。<br>「初めての人が、読みながら同じものを作れる」ことを目指して書いています。</div>')
 
 a(PL('Copilot Studio を使って、<span class="hl-marker">よくある質問に日本語で答えてくれる AI（エージェント）</span>を作ります。プログラミングは不要で、やることは「どんな役割か」を文章で書くだけです。'))
-a(PL('2026年に画面が新しくなり、以前は必要だった<strong>「トピック（会話の分岐）を自分で設計する」作業がなくなりました</strong>。ゴールを指示文で渡せば、あとの段取りは AI が自分で組んでくれます。'))
+a(PL('2026年に画面が新しくなってから触ってみると、以前は必要だった<strong>「トピック（会話の分岐）を自分で設計する」作業がなくなっていました</strong>。ゴールを指示文で渡せば、あとの段取りは AI が自分で組んでくれます。'))
 a(PL('Power Automate が「決めた手順をそのままくり返す」自動化なら、Copilot Studio は「会話して自分で考えて動く」AI です。<strong>Copilot Studio を初めて触る人でも、画面のどこを押すかまで分かるように</strong>、手順をひとつずつ書いていきます。'))
 
 a(fig(U["concept"], "▲ このあと作る「AI受付」のイメージ。台本（トピック）は書かず、指示文と道具を渡すだけ", "Copilot Studioの新オーケストレーターの概念図"))
@@ -306,10 +310,10 @@ a(step('&#x2713;','テストして確認する',[
  'たとえば <strong>「初参加を考えています。PA45 がどんな会か教えて。あと、まったく触ったことがなくても大丈夫か、準備することも合わせて教えて」</strong> と、まとめて3つ聞いてみる',
  '送信して、答えが返ってくるのを待つ',
 ]))
-a(P('すると、答えを返す前に、<strong>「ユーザーは3つのことを聞いている…」と AI が自分で考え、ナレッジを検索し、順番を組み立てている様子</strong>が画面に出ます。トピック（会話の分岐）を1つも作っていないのに、です。'))
+a(P('すると、答えを返す前に、<strong>「ユーザーは3つのことを聞いている…」と AI が自分で考え、ナレッジを検索し、順番を組み立てている様子</strong>が画面に出ました。トピック（会話の分岐）を1つも作っていないのに、です。'))
 a(shot(U["plan"], "▲ 回答の前に、AI が質問を分解して「何を調べるか」を自分で段取りしている（Searched knowledge の表示）", "Copilot Studioが回答前に段取りを組んでいる様子",
    annos=[(7.5,67,84,31,"AIが自分で段取り中")]))
-a(point('この<span class="hl-marker">「質問を分解 → 調べる → 順番に答える」を自動でやってくれる仕組み</span>が、新しい Copilot Studio の“新オーケストレーター”です。昔のように会話の分岐を手で用意しなくても、指示文とゴールだけで複雑な質問に対応できます。'))
+a(point('この<span class="hl-marker">「質問を分解 → 調べる → 順番に答える」を自動でやってくれる仕組み</span>が、新しい Copilot Studio の“新オーケストレーター”だと分かってきました。昔のように会話の分岐を手で用意しなくても、指示文とゴールだけで複雑な質問に対応できました。'))
 
 a(NB)
 a(H2('つまずきポイント（先に知っておくと安心）'))
@@ -349,7 +353,7 @@ a(cta_pa('&#x1f64c; こういうのを、毎週みんなで作っています',
 a(P(f'過去回のまとめや、PA45がどんな勉強会かは <a href="{PA45_URL}" target="_blank" rel="noopener">PA45の紹介ページ</a> にまとめています。また次回、一緒に「できた！」を作りましょう。'))
 a(cta_yt())
 
-a('\n\n<p style="font-size:13px;color:#888;line-height:1.9;">※ 本記事は公開日時点の情報をもとに、筆者が実際に学んで試した内容を整理したものです。Copilot Studio の画面や仕様は更新されることがあるため、最新の状況は公式情報（Microsoft Learn）もあわせてご確認ください。画面の項目名・挙動は実機（Copilot Studio）で確認しています。</p>')
+a('\n\n<p style="font-size:13px;color:#888;line-height:1.9;">※ 本記事は公開日時点の情報をもとに、筆者が実際に学んで試した内容を整理しました。Copilot Studio の画面や仕様は更新されることがあるため、最新の状況は公式情報（Microsoft Learn）もあわせてご確認ください。画面の項目名・挙動は実機（Copilot Studio）で確認しています。</p>')
 a('\n\n<p style="font-size:13px;color:#888;line-height:1.9;">※ 本記事の構成や図解の一部は、AI と壁打ちしながら作成しています。</p>')
 
 content=CSS+'\n\n<div class="mb-body">'+"".join(H_)+'\n\n</div>'

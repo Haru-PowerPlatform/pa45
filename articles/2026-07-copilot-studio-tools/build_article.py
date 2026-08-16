@@ -97,6 +97,16 @@ CSS = """
 .ui-mail .mbody .mline-hi{background:#fff3bf;font-weight:700;border-radius:3px;padding:0 2px;}
 .redbox{border:3px solid #e0342f;border-radius:10px;padding:1px;position:relative;}
 .redbox .rl{position:absolute;top:-15px;left:-3px;background:linear-gradient(180deg,#f5504b,#df332e);color:#fff;font-size:12px;font-weight:800;padding:2px 10px;border-radius:7px;white-space:nowrap;box-shadow:0 3px 7px rgba(0,0,0,.3);}
+.cs-preface{background:#eef7f1;border:1px solid #cfe8db;border-left:5px solid #5f8a6e;border-radius:10px;padding:14px 18px;margin:0 0 26px;font-size:.86em;color:#3d5647;line-height:1.85;}
+.cs-preface b{color:#2f6b4f;}
+.cs-preface a{color:#1d4ed8;font-weight:700;}
+.csflow-w{margin:30px 0;padding:20px 18px 18px;background:#faf8ff;border:1px solid #e6ddf7;border-radius:14px;}
+.csflow-t{font-size:.92em;font-weight:800;color:#5B21B6;margin:0 0 15px;text-align:center;}
+.csflow{display:flex;flex-wrap:wrap;align-items:stretch;justify-content:center;gap:9px;}
+.csflow .stp{flex:1 1 140px;min-width:120px;background:#fff;border:2px solid #ddd0f2;border-radius:12px;padding:13px 11px;text-align:center;}
+.csflow .stp .sn{display:inline-block;font-size:.76em;font-weight:800;color:#fff;background:#7C3AED;border-radius:999px;padding:2px 10px;margin-bottom:8px;}
+.csflow .stp .st{font-size:.9em;font-weight:700;color:#2b2540;line-height:1.55;}
+.csflow .ar{align-self:center;color:#a78bda;font-weight:900;font-size:1.3em;}
 </style>
 """
 
@@ -163,10 +173,41 @@ MAIL = ('<div class="ui-mail"><div class="mh"><div class="msub">コパスタ45 �
  '<div class="mbody">担当者さま、<br><br>コパスタ45への<span class="mline-hi">申し込み希望のお問い合わせ</span>が届きました。<br><br>'
  '【内容】<br>「コパスタ45に申し込みたい」とのご希望です。<br><br>ご確認の上、ご連絡をお願いします。<br><br>コパスタ45 案内係より</div></div>')
 
+# ===== 画像（実機スクショ）アップロード =====
+PUSH = "--push" in sys.argv
+state = json.loads(STATE.read_text(encoding="utf-8")) if STATE.exists() else {"post_id": None, "media": {}}
+state.setdefault("media", {})
+WP = H = None
+if PUSH:
+    env = {}
+    for line in (ROOT/".env").read_text(encoding="utf-8").splitlines():
+        if "=" in line and not line.strip().startswith("#"):
+            k,v=line.split("=",1); env[k.strip()]=v.strip()
+    WP = env["WP_URL"].rstrip("/")
+    H = {"Authorization":"Basic "+base64.b64encode(f"{env['WP_USER']}:{env['WP_PASS']}".encode()).decode()}
+
+IMG = {"overview": HERE/"assets"/"shot-overview.png"}
+def upload(key):
+    p = IMG[key]
+    if not p.exists(): print("WARN missing:", p); return ""
+    if not PUSH: return p.as_uri()
+    if key in state["media"]: return state["media"][key]["url"]
+    mh = dict(H); mh["Content-Disposition"]=f'attachment; filename="cs-tools-{key}.png"'; mh["Content-Type"]="image/png"
+    r = requests.post(f"{WP}/wp-json/wp/v2/media",headers=mh,data=p.read_bytes(),timeout=180); r.raise_for_status(); j=r.json()
+    state["media"][key]={"id":j["id"],"url":j["source_url"]}; print("uploaded",key,"->",j["id"]); return j["source_url"]
+U = {k: upload(k) for k in IMG}
+def real_shot(url, caption):
+    if not url: return ""
+    return ('\n\n<figure style="margin:32px 0;background:#eceef2;border:1px solid #d9dce3;border-radius:14px;padding:14px;box-shadow:0 3px 12px rgba(15,23,42,.09);">'
+            '<span style="display:inline-block;font-size:12.5px;font-weight:800;color:#475569;background:#dde1e9;border-radius:999px;padding:5px 14px;margin-bottom:10px;">&#x1f5a5;&#xfe0f; 実際の画面</span><br>'
+            f'<img src="{url}" alt="" style="max-width:100%;height:auto;border-radius:8px;border:1px solid #c7cad3;box-shadow:0 6px 18px rgba(15,23,42,.14);" />'
+            f'<figcaption style="font-size:1.02em;color:#5b4a7a;margin-top:12px;line-height:1.65;">{caption}</figcaption></figure>')
+
 # ===== 本文 =====
 H_=[]; a=H_.append
+a('<div class="cs-preface">📝 実際に <b>Copilot Studio を触って検証</b>し、スクショを撮りながら気づいたことをまとめた記録です。<br>機能・画面・料金は更新が続きます。<br>最新の正確な情報は <a href="https://learn.microsoft.com/ja-jp/microsoft-copilot-studio/" target="_blank" rel="noopener">Microsoft 公式（Microsoft Learn）</a> をご確認ください。</div>')
 
-a('\n\n<div class="mb-intro">この記事は、筆者が実際に Copilot Studio でエージェントに「ツール」を足しながら、気づいたことを AI と壁打ち（相談）しつつまとめたものです。「初めての人が、読みながら同じことを試せる」ことを目指しています。</div>')
+a('\n\n<div class="mb-intro">この記事は、筆者が実際に Copilot Studio でエージェントに「ツール」を足しながら、気づいたことを AI と壁打ち（相談）しつつまとめました。<br>「初めての人が、読みながら同じことを試せる」ことを目指しています。</div>')
 
 a(PL('前回の記事では、Copilot Studio で<span class="hl-marker">「質問に答えてくれる AI（受付エージェント）」</span>を作りました。ただ、それだけだと AI にできるのは「調べて答える」ことまでです。'))
 a(PL('今回は、その AI に<strong>「ツール（道具）」</strong>を持たせて、<span class="hl-marker">実際に手を動かす＝“やっておく”</span>ところまで進めます。題材として、「答えられない質問や“申し込みたい”という声が来たら、担当者にメールで知らせる」手を付けてみます。'))
@@ -206,6 +247,18 @@ a(note('&#x26a0;&#xfe0f; テストで“本当に”メールが飛びます','�
 
 a(NB)
 a(H2('作り方（実画面つき）'))
+a(P('操作に入る前に、どこから始めるかを確認します。Copilot Studio（copilotstudio.microsoft.com）に会社のアカウントでサインインし、前回つくった受付エージェントを一覧から開きます。開くと編集画面（Build）になり、画面の右側にコンポーネントのパネルが並びます。'))
+a('\n\n<div class="csflow-w"><p class="csflow-t">ツールを足す画面にたどり着くまで</p><div class="csflow">'
+  '<div class="stp"><span class="sn">①</span><div class="st">Copilot Studioを開く<br>（copilotstudio.microsoft.com）</div></div>'
+  '<div class="ar">→</div>'
+  '<div class="stp"><span class="sn">②</span><div class="st">受付エージェントを開く<br>（前回つくったもの）</div></div>'
+  '<div class="ar">→</div>'
+  '<div class="stp"><span class="sn">③</span><div class="st">編集画面（Build）が開く</div></div>'
+  '<div class="ar">→</div>'
+  '<div class="stp"><span class="sn">④</span><div class="st">右パネルの Tools の「＋」</div></div>'
+  '</div></div>')
+a(real_shot(U["overview"], '&#x25b2; 編集画面（Build）。右側に Skills／Tools／Knowledge が並ぶ。赤枠が今回さわる Tools'))
+a('<figure style="margin:32px 0;background:#eceef2;border:1px solid #d9dce3;border-radius:14px;padding:14px;box-shadow:0 3px 12px rgba(15,23,42,.09);"><span style="display:inline-block;font-size:12.5px;font-weight:800;color:#475569;background:#dde1e9;border-radius:999px;padding:5px 14px;margin-bottom:10px;">&#x1f5a5;&#xfe0f; 実際の画面</span><br><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-tools-instr-thin.png" alt="" style="max-width:100%;height:auto;border-radius:8px;border:1px solid #c7cad3;box-shadow:0 6px 18px rgba(15,23,42,.14);" /><figcaption style="font-size:1.02em;color:#5b4a7a;margin-top:12px;line-height:1.65;">&#x25b2; 受付エージェントの Instructions。右パネルの Tools に「メールの送信(V2)」を追加してあり、この指示文で「いつ・どんな内容でメールを送るか」を日本語で書いておく</figcaption></figure>')
 
 a(H3('ステップ①：ツールの一覧を開く'))
 a(P('エージェントの編集画面（Build）を開きます。右側のパネルに <strong>「Tools（ツール）」</strong> という欄があるので、その <strong>＋</strong> を押します。'))
@@ -230,8 +283,8 @@ a(note('&#x1f4a1; アクションはたくさんある','Outlook だけでも「
 a(NB)
 a(H2('&#x26a0;&#xfe0f; ここが今回の山：道具を足しただけでは、使ってくれない'))
 a(P('道具を足したので、さっそくテストしました。Preview で <strong>「コパスタ45に申し込みたいです」</strong> と話しかけてみます。'))
-a(P('ところが──案内係は、<strong>メールを送ってくれませんでした</strong>。「申し込み方法はわかりません。告知ページをご確認ください」と答えて終わり。メールを送る、という発想が出てこないのです。'))
-a(point('理由はシンプルでした。<span class="hl-marker">道具を棚に置いただけでは、AI は「いつ使えばいいか」を知らない</span>のです。人間でいえば、机に電話を置かれても「どんな時にかけるか」を言われないと使わないのと同じです。'))
+a(P('ところが──案内係は、<strong>メールを送ってくれませんでした</strong>。「申し込み方法はわかりません。告知ページをご確認ください」と答えて終わり。メールを送る、という発想が出てきませんでした。'))
+a(point('理由はシンプルでした。<span class="hl-marker">道具を棚に置いただけでは、AI は「いつ使えばいいか」を知らない</span>からでした。人間でいえば、机に電話を置かれても「どんな時にかけるか」を言われないと使わないのと同じです。'))
 a(P('そこで、<strong>指示文（Instructions）に「こういう時は、この道具を使ってね」と一文足します</strong>。これがツールを活かす一番のポイントでした。'))
 a(step('3','いつ使うかを、指示文に書く',[
  '編集画面の <strong>Instructions</strong>（指示文）の欄をひらく',
@@ -260,7 +313,7 @@ a(P('件名も本文も、こちらでテンプレートを渡していないの
 
 a(NB)
 a(H2('この文面、だれが書いたの？── ここが Power Automate との大きな違い'))
-a(P('届いたメールを見て、正直「あれ？」と思いました。文面を、私は一度も書いていないのです。指示文で伝えたのは「件名」と「本文に相手の希望を書く」ことだけ。それなのに、あいさつから結びまで、ちゃんとした文章になって届きました。'))
+a(P('届いたメールを見て、正直「あれ？」と思いました。文面を、私は一度も書いていません。指示文で伝えたのは「件名」と「本文に相手の希望を書く」ことだけ。それなのに、あいさつから結びまで、ちゃんとした文章になって届きました。'))
 a(H3('Power Automate なら、文面は自分で組み立てる'))
 a(P('ふだんの Power Automate でメールを送るときは、本文を自分で用意します。「〇〇さん、〜のお問い合わせがありました」という文章のかたちを先に作って、動的コンテンツ（差し込み）で名前や内容を埋めていきます。つまり、文章の骨組みは人が先に決めておくのがふつうです。'))
 a(P('Copilot Studio では、そこが違いました。文章の骨組みごと、AI が会話の流れから考えて書いてくれる。ここが、今回いちばん「おっ」と思った差でした。'))
@@ -269,13 +322,13 @@ a(cards([
  ('&#x1f916; Copilot Studio', '文面も AI が会話から考えて書く。テンプレートを渡さなくても、文章になって送られる。'),
 ]))
 a(H3('便利だけど、少し不安 ── その気持ちも正直に'))
-a(P('一方で、「指定していないのに、勝手に書かれた」ことに、少し不安も感じました。便利なのは間違いないのですが、「知らないうちに、意図とちがう文章を送ってしまわないか」と考えると、そわそわします。この感覚は、たぶん多くの人が持つのではないかと思います。'))
+a(P('一方で、「指定していないのに、勝手に書かれた」ことに、少し不安も感じました。便利なのは確かですが、「知らないうちに、意図とちがう文章を送ってしまわないか」と考えると、そわそわします。この感覚は、たぶん多くの人が持つのではないかと思います。'))
 a(H3('では、この文面はどうやって出てきたのか'))
 a(P('気になったので、仕組みを自分なりに整理してみました。むずかしくはありませんでした。'))
 a(ul(['AI は「会話の内容（相手が“申し込みたい”と言った）」と「指示文（件名はこれ、本文に相手の希望を書いてね）」の<strong>2つを材料</strong>にします。',
       'その材料をもとに、<strong>頭脳の AI モデルが、自然な日本語の文章に組み立てて</strong>います。',
-      'つまり、どこかにテンプレートがあったわけではなく、<strong>その場で書き起こしている</strong>のです。']))
-a(point('だから、送られる文面は毎回まったく同じではありません。会話がちがえば、書かれ方も少し変わります。<span class="hl-marker">「決まった文章を送る」のではなく「その時の内容に合わせて書く」</span>のが、この仕組みの特徴です。これが便利さの正体であり、同時に「勝手に書かれた」と感じる理由でもあります。'))
+      'つまり、どこかにテンプレートがあったわけではなく、<strong>その場で書き起こしています</strong>。']))
+a(point('だから、送られる文面は毎回まったく同じではありません。会話がちがえば、書かれ方も少し変わります。<span class="hl-marker">「決まった文章を送る」のではなく「その時の内容に合わせて書く」</span>のが、この仕組みの特徴です。これが便利さにつながっている一方で、「勝手に書かれた」と感じる理由にもなっています。'))
 a(H3('不安なら、手綱は握れる'))
 a(P('「お任せは少しこわい」という場合は、こちらで決めておくこともできます。<strong>お任せか、きっちり指定か、両方えらべる</strong>のが安心なところです。'))
 a(cards([
@@ -328,7 +381,7 @@ a(cta_pa('&#x1f64c; こういうのを、毎週みんなで作っています',
 a(P(f'過去回のまとめや、PA45がどんな勉強会かは <a href="{PA45_URL}" target="_blank" rel="noopener">PA45の紹介ページ</a> にまとめています。また次回、一緒に「できた！」を作りましょう。'))
 a(cta_yt())
 
-a('\n\n<p style="font-size:13px;color:#888;line-height:1.9;">※ 本記事は公開日時点の情報をもとに、筆者が実際に学んで試した内容を整理したものです。Copilot Studio の画面や仕様は更新されることがあるため、最新の状況は公式情報（Microsoft Learn）もあわせてご確認ください。画面の項目名・挙動は実機（Copilot Studio）で確認しています。</p>')
+a('\n\n<p style="font-size:13px;color:#888;line-height:1.9;">※ 本記事は公開日時点の情報をもとに、筆者が実際に学んで試した内容を整理しました。Copilot Studio の画面や仕様は更新されることがあるため、最新の状況は公式情報（Microsoft Learn）もあわせてご確認ください。画面の項目名・挙動は実機（Copilot Studio）で確認しています。</p>')
 a('\n\n<p style="font-size:13px;color:#888;line-height:1.9;">※ 掲載している画面は、実際の操作画面をもとに、個人情報などを避けて描き直した再現イメージです。構成や図解の一部は、AI と壁打ちしながら作成しています。</p>')
 
 content=CSS+'\n\n<div class="mb-body">'+"".join(H_)+'\n\n</div>'
@@ -336,15 +389,7 @@ content=CSS+'\n\n<div class="mb-body">'+"".join(H_)+'\n\n</div>'
 print("article.html:",len(content),"chars")
 
 # ================= WP 下書き作成/更新（--push のときだけ） =================
-if "--push" in sys.argv:
-    env={}
-    for line in (ROOT/".env").read_text(encoding="utf-8").splitlines():
-        if "=" in line and not line.strip().startswith("#"):
-            k,v=line.split("=",1); env[k.strip()]=v.strip()
-    WP=env["WP_URL"].rstrip("/")
-    auth=base64.b64encode(f"{env['WP_USER']}:{env['WP_PASS']}".encode()).decode()
-    H={"Authorization":f"Basic {auth}"}
-    state=json.loads(STATE.read_text(encoding="utf-8")) if STATE.exists() else {"post_id":None,"media":{}}
+if PUSH:
     payload={"title":TITLE,"slug":SLUG,"status":"draft","content":content,"categories":[CAT]}
     if state.get("post_id"):
         r=requests.post(f"{WP}/wp-json/wp/v2/posts/{state['post_id']}",headers=H,json=payload,timeout=120)

@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=1280, initial-scale=1">
-<title>X技術Tips Vol.78-2 標準／プレミアム コネクタ早見表</title>
+<title>X技術Tips Vol.78-2 チェックアウト戻し忘れ通知の作り方</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --blue:#2563EB; --blue-bg:#EFF6FF; --blue-dark:#1E40AF;
-    --green:#16A34A; --green-dark:#064E3B;
-    --red:#DC2626; --red-dark:#991B1B; --orange:#EA580C; --amber:#9A3412;
+    --green:#16A34A; --green-dark:#065F46;
+    --orange:#EA580C; --spo:#0F6CBD; --ctrl:#486FE0; --teams:#5B5FC7;
     --ink:#1F2937; --gray:#374151; --weak:#6B7280; --line:#E5E7EB;
   }
   *{margin:0;padding:0;box-sizing:border-box;}
@@ -24,117 +24,164 @@
   .vol-logo{height:50px;width:50px;object-fit:contain;flex:0 0 auto;background:#fff;border-radius:12px;padding:5px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
   .title-text{color:#fff;font-weight:900;font-size:27px;line-height:1.14;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:150px;}
   .title-text .hl{color:#FFE08A;}
-  .title-chara{position:absolute;right:14px;bottom:-44px;height:146px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+  .title-chara{position:absolute;right:14px;bottom:-40px;height:142px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
 
-  .concl{margin:10px 16px 0;background:var(--blue-bg);border:2.5px solid var(--blue);border-radius:13px;display:flex;align-items:center;gap:13px;padding:10px 18px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
-  .concl .chip{flex:0 0 auto;width:40px;height:40px;border-radius:11px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;padding:8px;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
-  .concl .txt{font-weight:800;font-size:19.5px;color:var(--blue-dark);line-height:1.36;padding-right:100px;}
+  .concl{margin:10px 16px 0;background:var(--blue-bg);border:2.5px solid var(--blue);border-radius:13px;display:flex;align-items:center;gap:13px;padding:9px 18px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;width:38px;height:38px;border-radius:11px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;padding:8px;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
+  .concl .txt{font-weight:800;font-size:18.5px;color:var(--blue-dark);line-height:1.34;padding-right:150px;}
   .concl .txt b{color:var(--orange);}
 
-  .stage{flex:1 1 auto;margin:11px 16px 0;display:flex;gap:14px;min-height:0;}
-  .col{flex:1;display:flex;flex-direction:column;min-height:0;}
-  .colhd{flex:0 0 auto;font-weight:900;font-size:18px;color:#fff;border-radius:11px 11px 0 0;padding:9px 14px;display:flex;align-items:center;gap:8px;}
-  .col.free .colhd{background:linear-gradient(90deg,#0B7A4B,#16A34A);}
-  .col.prem .colhd{background:linear-gradient(90deg,#9A3412,#EA580C);}
-  .colhd .tag{margin-left:auto;font-size:14px;font-weight:900;background:rgba(255,255,255,.25);border-radius:999px;padding:3px 13px;}
-  .list{flex:1;border:2px solid;border-top:none;border-radius:0 0 11px 11px;padding:9px 11px;display:grid;grid-template-columns:1fr 1fr;grid-auto-rows:1fr;gap:7px 9px;min-height:0;}
-  .col.free .list{border-color:#9BE0BE;background:#F5FCF8;}
-  .col.prem .list{border-color:#FDBA74;background:#FFFBF5;}
-  .ci{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid var(--line);border-radius:8px;padding:7px 10px;font-size:16.5px;font-weight:800;color:#243B58;min-height:0;}
-  .ci img{width:29px;height:29px;object-fit:contain;flex:0 0 auto;}
-  .ci .em{font-size:24px;flex:0 0 auto;width:29px;text-align:center;}
+  .cols{flex:1 1 auto;margin:11px 16px 0;display:grid;grid-template-columns:1fr 1fr 1fr;gap:26px;min-height:0;}
+  .col{position:relative;display:flex;flex-direction:column;min-height:0;}
+  .cnum{position:absolute;top:-9px;left:-11px;width:32px;height:32px;border-radius:50%;background:var(--blue);color:#fff;font-weight:900;font-size:18px;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 2px 5px rgba(0,0,0,.28);}
+  .carrow{position:absolute;top:44%;right:-22px;width:22px;height:22px;color:var(--blue);z-index:6;}
 
-  .rz{flex:0 0 316px;display:flex;flex-direction:column;min-height:0;gap:9px;}
-  .nums{background:#F8F9FA;border:1px solid var(--line);border-radius:12px;padding:10px 12px;}
-  .nums .nh{font-weight:900;font-size:17px;color:var(--ink);margin-bottom:7px;}
-  .nrow{display:flex;align-items:baseline;gap:9px;padding:4px 0;border-bottom:1px dashed var(--line);}
-  .nrow:last-child{border-bottom:none;}
-  .nrow .nl{font-size:15px;font-weight:800;color:var(--gray);flex:1;line-height:1.3;}
-  .nrow .nv{font-family:'Roboto Mono',monospace;font-size:16px;font-weight:700;color:var(--blue-dark);white-space:nowrap;}
-  .tip{flex:1;background:linear-gradient(180deg,#EFF6FF,#DCEAFE);border:2px solid #93C5FD;border-radius:12px;padding:11px 13px;display:flex;flex-direction:column;gap:6px;position:relative;min-height:0;justify-content:center;}
-  .tip .th{font-weight:900;font-size:17px;color:var(--blue-dark);}
-  .tip .tt{font-size:14.5px;font-weight:800;color:#1E3A8A;line-height:1.5;padding-right:80px;}
-  .tip .tt b{color:#9A3412;}
-  .tmascot{position:absolute;right:-8px;bottom:-8px;height:112px;z-index:30;filter:drop-shadow(0 3px 7px rgba(0,0,0,.4));}
+  .card{flex:1;display:flex;flex-direction:column;min-height:0;background:#fff;border:2px solid #C7CFDA;border-radius:12px;box-shadow:0 5px 13px rgba(0,0,0,.13);overflow:hidden;}
+  .col.hot .card{border-color:var(--ctrl);box-shadow:0 5px 15px rgba(72,111,224,.22);}
+  .ch{flex:0 0 auto;display:flex;align-items:center;gap:9px;padding:9px 11px;background:linear-gradient(180deg,#FBFCFE,#EEF2F8);border-bottom:1px solid #E2E8F1;min-height:58px;}
+  .ch .sq{flex:0 0 auto;width:38px;height:38px;border-radius:9px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);display:flex;align-items:center;justify-content:center;overflow:hidden;}
+  .ch .sq img{width:34px;height:34px;object-fit:contain;}
+  .ch .sq.real img{width:38px;height:38px;border-radius:9px;}
+  .ch .nm{font-weight:900;font-size:16px;color:var(--ink);line-height:1.15;}
+  .ch .cn{font-size:11.5px;font-weight:800;color:var(--weak);margin-top:1px;}
+  .col.hot .ch{background:linear-gradient(180deg,#F3F6FF,#E3EAFF);} .col.hot .ch .nm{color:#2440A8;}
+  .col.c3 .ch{background:linear-gradient(180deg,#F4F4FD,#E7E8FA);} .col.c3 .ch .nm{color:#3A3E8C;}
 
-  .warn{flex:0 0 auto;margin:10px 16px 18px;background:#FFF7ED;border:2px solid #FDBA74;border-radius:12px;padding:9px 16px;display:flex;align-items:center;gap:16px;}
-  .warn .wt{flex:0 0 auto;font-weight:900;font-size:17px;color:#9A3412;}
-  .warn .wl{display:flex;gap:22px;flex-wrap:wrap;font-size:16px;font-weight:800;color:#7C2D12;line-height:1.35;}
-  .warn b{color:#C2410C;}
-  .src{position:absolute;left:16px;bottom:4px;font-size:10px;color:#AEB6C2;font-weight:700;z-index:3;}
+  .ptop{flex:0 0 224px;margin:9px;background:#F3F6FB;border:1px solid #DCE4F0;border-radius:9px;padding:9px;display:flex;flex-direction:column;gap:7px;overflow:hidden;}
+  .sect{font-size:11.5px;font-weight:900;color:#5B6B82;letter-spacing:.02em;display:flex;align-items:center;gap:6px;}
+  .sect::before{content:"";width:9px;height:9px;border-radius:2px;background:var(--spo);}
+  .fld{background:#fff;border:1px solid #D7DEE9;border-radius:7px;overflow:hidden;}
+  .fld .fl{font-size:12px;font-weight:800;color:#64748B;background:#F8FAFC;padding:3px 8px;border-bottom:1px solid #EBEFF5;}
+  .fld .fi{font-size:14.5px;font-weight:800;color:#243B58;padding:7px 9px;display:flex;align-items:center;gap:6px;justify-content:space-between;line-height:1.1;}
+  .fld .fi .cr{color:#8A93A2;font-size:12px;}
+  .fld.hot{border:2px solid var(--ctrl);}
+  .dyn{display:inline-flex;align-items:center;gap:4px;background:#EAF2FF;border:1px solid #9DC1F5;border-radius:6px;padding:2px 7px;font-size:13px;font-weight:800;color:#0B3A8F;font-family:'Roboto Mono','Noto Sans JP',monospace;}
+  .dyn::before{content:"⚡";font-size:12px;}
+  .mono{font-family:'Roboto Mono',monospace;font-size:13.5px;color:#0B3A8F;}
+  .loopband{background:#EEF2FF;border:1px dashed #A9B8EE;border-radius:7px;padding:5px 8px;font-size:12.5px;font-weight:900;color:#3A46A8;text-align:center;}
+  .cond{display:flex;flex-direction:column;gap:6px;}
+  .crow{display:flex;align-items:center;gap:6px;background:#fff;border:1px solid #D7DEE9;border-radius:7px;padding:7px 8px;font-size:13px;font-weight:800;color:#243B58;flex-wrap:wrap;}
+  .crow .op{flex:0 0 auto;background:#FFEDD5;color:#9A3412;border-radius:5px;padding:2px 7px;font-size:12px;}
+  .branch{display:flex;gap:6px;}
+  .br{flex:1;border-radius:8px;padding:6px 7px;font-size:12.5px;font-weight:900;text-align:center;line-height:1.2;}
+  .br.y{background:#ECFDF5;border:1.5px solid #9FE3C2;color:#065F46;}
+  .br.n{background:#F8FAFC;border:1.5px solid #D8DEE6;color:#64748B;}
+
+  .howsteps{flex:1;margin:0 9px 9px;background:#EFF5FF;border:1px solid #C9DCF7;border-radius:9px;padding:9px 10px 9px 11px;display:flex;flex-direction:column;min-height:0;}
+  .hh{font-weight:900;font-size:13px;color:var(--blue-dark);padding-left:9px;position:relative;margin-bottom:5px;}
+  .hh::before{content:"";position:absolute;left:0;top:1px;bottom:1px;width:4px;border-radius:3px;background:var(--blue);}
+  .howsteps ol{list-style:none;flex:1;display:flex;flex-direction:column;justify-content:space-evenly;counter-reset:s;}
+  .howsteps li{counter-increment:s;position:relative;padding-left:26px;font-size:15px;font-weight:800;color:#243B58;line-height:1.32;}
+  .howsteps li::before{content:counter(s);position:absolute;left:0;top:0;width:20px;height:20px;border-radius:50%;background:var(--blue);color:#fff;font-size:12.5px;display:flex;align-items:center;justify-content:center;}
+  .howsteps li b{color:#C2410C;}
+  .col.hot .howsteps{background:#F2F5FF;border-color:#C0CEF7;}
+  .col.c3 .howsteps{background:#F5F5FE;border-color:#D5D6F5;} .col.c3 .hh{color:#3A3E8C;} .col.c3 .hh::before{background:var(--teams);} .col.c3 .howsteps li::before{background:var(--teams);}
+
+  .warn{flex:0 0 auto;margin:10px 16px 16px;background:linear-gradient(180deg,#FFF7ED,#FFEDD5);border:2px solid #FB923C;border-radius:12px;padding:9px 16px;display:flex;align-items:center;gap:13px;}
+  .warn .wt2{flex:0 0 auto;font-weight:900;font-size:16.5px;color:#9A3412;}
+  .warn .wl{font-size:15.5px;font-weight:800;color:#7C2D12;line-height:1.4;}
+  .warn .wl b{color:#C2410C;}
+  .src{position:absolute;left:16px;bottom:3px;font-size:10px;color:#AEB6C2;font-weight:700;z-index:3;}
 </style>
 </head>
 <body>
 <div id="slide"></div>
 <script>
 const A="../../pptx/_assets/";
-const svgBulb='<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/></svg>';
-
-const FREE=[
- [A+'icons/pa_sharepoint.png','SharePoint'],[A+'icons/pa_outlook.png','Outlook'],
- [A+'icons/pa_teams.png','Teams'],[A+'icons/pa_forms.png','Forms'],
- [A+'icons/pa_onedrive.png','OneDrive'],[A+'icons/pa_excel.png','Excel Online'],
- [A+'icons/pa_schedule.png','スケジュール'],['emoji:✅','承認 (Approvals)'],
- ['emoji:📋','Planner'],['emoji:📰','RSS'],
-];
-const PREM=[
- ['emoji:🌐','HTTP'],['emoji:🗄️','SQL Server'],
- ['emoji:⚙️','Dataverse'],['emoji:🔧','カスタムコネクタ'],
- ['emoji:🤖','AI Builder'],['emoji:☁️','Azure 各種'],
-];
-
-function ci(a){
-  const icon = a[0].startsWith('emoji:') ? `<span class="em">${a[0].slice(6)}</span>` : `<img src="${a[0]}" alt="">`;
-  return `<div class="ci">${icon}${a[1]}</div>`;
-}
+const ICON={arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',bulb:'<path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/>'};
+const svg=(n)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${ICON[n]}</svg>`;
 
 document.getElementById('slide').innerHTML=`
   <div class="titlebar">
     <div class="vol-pill">Vol.78-2</div>
     <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
-    <div class="title-text">コネクタ早見表｜<span class="hl">M365で無料の“標準”と、有料の“プレミアム”</span></div>
+    <div class="title-text">作り方は取得→判定→通知｜<span class="hl">“チェックアウト ユーザー”が主役</span></div>
     <img class="title-chara" src="${A}chara/chara_point.png" alt="">
   </div>
 
   <div class="concl">
-    <div class="chip">${svgBulb}</div>
-    <div class="txt">迷ったら<b>コネクタを選ぶ画面で「プレミアム」タブ</b>を見れば分かります。よく使う顔ぶれを並べました。</div>
+    <div class="chip">${svg('bulb')}</div>
+    <div class="txt">ライブラリの項目を取得し、<b>チェックアウト ユーザーが入っているファイル</b>だけを、その<b>本人にチャットで通知</b>します。</div>
   </div>
 
-  <div class="stage">
-    <div class="col free">
-      <div class="colhd">✓ 標準（M365で追加費用なし）<span class="tag">無料</span></div>
-      <div class="list">${FREE.map(ci).join('')}</div>
-    </div>
-
-    <div class="col prem" style="flex:0 0 236px">
-      <div class="colhd">＄ プレミアム（有料）</div>
-      <div class="list" style="grid-template-columns:1fr;">${PREM.map(ci).join('')}</div>
-    </div>
-
-    <div class="rz">
-      <div class="nums">
-        <div class="nh">数字でざっくり</div>
-        <div class="nrow"><span class="nl">Premium（1人あたり月ぎめ）</span><span class="nv">有料</span></div>
-        <div class="nrow"><span class="nl">1日のアクション上限（Premium）</span><span class="nv">40,000</span></div>
-        <div class="nrow"><span class="nl">AI Builder クレジット</span><span class="nv">5,000/月</span></div>
+  <div class="cols">
+    <!-- ① 複数の項目の取得 -->
+    <div class="col">
+      <span class="cnum">1</span><span class="carrow">${svg('arrow')}</span>
+      <div class="card">
+        <div class="ch"><span class="sq"><img src="${A}icons/pa_sharepoint.png" alt=""></span><div><div class="nm">複数の項目の取得</div><div class="cn">SharePoint ・ 標準</div></div></div>
+        <div class="ptop">
+          <div class="sect">実際の設定画面</div>
+          <div class="fld"><div class="fl">サイトのアドレス</div><div class="fi">営業部サイト<span class="cr">▾</span></div></div>
+          <div class="fld"><div class="fl">リスト名（ライブラリ）</div><div class="fi">ドキュメント<span class="cr">▾</span></div></div>
+          <div class="fld"><div class="fl">取得できる列</div><div class="fi"><span class="dyn">チェックアウト ユーザー</span></div></div>
+        </div>
+        <div class="howsteps">
+          <div class="hh">操作手順</div>
+          <ol>
+            <li>毎朝の<b>繰り返し</b>トリガーを置く</li>
+            <li>「複数の項目の取得」でライブラリを指定</li>
+            <li>出力に<b>チェックアウト ユーザー</b>が入る</li>
+          </ol>
+        </div>
       </div>
-      <div class="tip">
-        <div class="th">💡 まず標準だけで組む</div>
-        <div class="tt">この保存シリーズのフローは<b>ほぼ全部が標準</b>。HTTPやDataverseは、標準で無理なときの最後の手段くらいで十分です。</div>
-        <img class="tmascot" src="${A}chara/chara_guts.png" alt="">
+    </div>
+
+    <!-- ② 条件 -->
+    <div class="col hot">
+      <span class="cnum" style="background:#486FE0">2</span><span class="carrow">${svg('arrow')}</span>
+      <div class="card">
+        <div class="ch"><span class="sq real"><img src="${A}icons/pa_condition.png" alt=""></span><div><div class="nm">条件（各アイテムに適用）</div><div class="cn">コントロール ・ ここで絞る</div></div></div>
+        <div class="ptop">
+          <div class="sect">実際の設定画面</div>
+          <div class="loopband">🔁 Apply to each で1件ずつ</div>
+          <div class="cond">
+            <div class="crow"><span class="dyn">チェックアウト ユーザー Email</span><span class="op">≠ 空</span></div>
+            <div class="branch">
+              <div class="br y">はい＝編集中<br>本人へ通知</div>
+              <div class="br n">いいえ<br>スルー</div>
+            </div>
+          </div>
+        </div>
+        <div class="howsteps">
+          <div class="hh">操作手順</div>
+          <ol>
+            <li>取得結果を<b>Apply to each</b>で回す</li>
+            <li>条件＝<b>Email が空でない</b></li>
+            <li>空でない＝<b>誰かが握っている</b></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- ③ Teams通知 -->
+    <div class="col c3">
+      <span class="cnum" style="background:#5B5FC7">3</span>
+      <div class="card">
+        <div class="ch"><span class="sq real"><img src="${A}icons/pa_teams.png" alt=""></span><div><div class="nm">チャットでメッセージを投稿</div><div class="cn">Teams ・ 標準</div></div></div>
+        <div class="ptop">
+          <div class="sect">実際の設定画面</div>
+          <div class="fld"><div class="fl">投稿者</div><div class="fi">フロー ボット<span class="cr">▾</span></div></div>
+          <div class="fld hot"><div class="fl">宛先（Recipient）</div><div class="fi"><span class="dyn">チェックアウト ユーザー Email</span></div></div>
+          <div class="fld"><div class="fl">メッセージ</div><div class="fi"><span style="font-size:13px">「〇〇.xlsx」チェックインをお願いします</span></div></div>
+        </div>
+        <div class="howsteps">
+          <div class="hh">操作手順</div>
+          <ol>
+            <li>Teams「チャットでメッセージを投稿」</li>
+            <li>宛先に<b>本人のEmail</b>の⚡を入れる</li>
+            <li>ファイル名を入れて本文を作る</li>
+          </ol>
+        </div>
       </div>
     </div>
   </div>
 
   <div class="warn">
-    <span class="wt">⚠ 使う前に確認</span>
-    <span class="wl">
-      <span>価格・上限は<b>変わります</b>。最新はMicrosoftの価格ページで</span>
-      <span>PAD（デスクトップ）は<b>別ライセンス</b>の話</span>
-    </span>
+    <span class="wt2">⚠ 使う前に確認</span>
+    <span class="wl">対象は<b>チェックアウトされたファイル</b>（ただ開いているだけの共同編集ロックは対象外）。長期放置は「<b>チェックアウトを破棄</b>」で強制解除もできますが、<b>未保存の変更は失われる</b>ので通知だけが安全です。</span>
   </div>
-  <div class="src">出典：Microsoft Learn（Power Automate ライセンスの種類・2026-07更新）／価格は目安・アイコンは一部イメージ</div>
+  <div class="src">出典：Microsoft Learn（SharePoint「複数の項目の取得」「チェックアウトを破棄」／Teams コネクタ）／画面は再現・データは架空</div>
 `;
 </script>
 <script>

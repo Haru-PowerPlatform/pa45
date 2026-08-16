@@ -151,6 +151,20 @@ def card_tips(it):
     else:
         img2 = img2_old
         rel2 = f"pa45/assets/x/html/{f}b/{img2.name}"
+    # 3枚目・4枚目（4枚組Tips対応）。同フォルダの …c.png / …d.png があれば追加。
+    extra_shots = ""
+    extra_btns = ""
+    for suf, lbl in (("c", "3枚目"), ("d", "4枚目")):
+        same = ROOT / "assets" / "x" / "html" / f / f"{f.replace('-', '')}{suf}.png"
+        sep = ROOT / "assets" / "x" / "html" / f"{f}{suf}" / f"{f.replace('-', '')}{suf}.png"
+        if same.exists():
+            imgx, relx = same, f"pa45/assets/x/html/{f}/{same.name}"
+        elif sep.exists():
+            imgx, relx = sep, f"pa45/assets/x/html/{f}{suf}/{sep.name}"
+        else:
+            continue
+        extra_shots += f'\n    <a href="{relx}" target="_blank"><img src="{relx}" alt="{lbl}" loading="lazy"></a>'
+        extra_btns += f'\n    <button class="btn copyp" data-p="{html.escape(str(imgx))}">{lbl}パス</button>'
     label, cls = STATUS.get(it["status"], ("―", "st-todo"))
     miss = "" if img1.exists() and img2.exists() else '<div class="warn">PNGが見つかりません</div>'
 
@@ -171,7 +185,7 @@ def card_tips(it):
   <div class="sub">{html.escape(it['sub'])}</div>
   <div class="shots">
     <a href="{rel1}" target="_blank"><img src="{rel1}" alt="1枚目" loading="lazy"></a>
-    <a href="{rel2}" target="_blank"><img src="{rel2}" alt="2枚目" loading="lazy"></a>
+    <a href="{rel2}" target="_blank"><img src="{rel2}" alt="2枚目" loading="lazy"></a>{extra_shots}
   </div>
   {miss}
   <pre class="body" id="{key}{it['vol']}">{html.escape(it['body'])}</pre>
@@ -179,7 +193,7 @@ def card_tips(it):
   <div class="acts">
     <button class="btn copy" data-t="{key}{it['vol']}">X用をコピー</button>
     <button class="btn copyp" data-p="{html.escape(str(img1))}">1枚目パス</button>
-    <button class="btn copyp" data-p="{html.escape(str(img2))}">2枚目パス</button>
+    <button class="btn copyp" data-p="{html.escape(str(img2))}">2枚目パス</button>{extra_btns}
     <a class="btn go" href="{html.escape(intent(it['body']))}" target="_blank" rel="noopener">Xの下書きを開く →</a>
     {li_copy}<a class="btn li" href="{LI_COMPOSE}" target="_blank" rel="noopener">LinkedInを開く →</a>
   </div>

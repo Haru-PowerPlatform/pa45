@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=1280, initial-scale=1">
-<title>X技術Tips Vol.79-1 欲しい値が候補に出てこない時</title>
+<title>X技術Tips Vol.79-1 決裁はメールのボタンだけで回る</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --blue:#2563EB; --blue-bg:#EFF6FF; --blue-dark:#1E40AF;
-    --green:#16A34A; --green-bg:#ECFDF5; --green-dark:#064E3B;
-    --red:#DC2626; --red-dark:#991B1B; --orange:#EA580C; --teams:#5B5FC7; --teams-dark:#4347A8;
+    --green:#16A34A; --green-dark:#065F46;
+    --red:#DC2626; --orange:#EA580C; --ol:#0F6CBD; --spo:#0F6CBD;
     --ink:#1F2937; --gray:#374151; --weak:#6B7280; --line:#E5E7EB;
   }
   *{margin:0;padding:0;box-sizing:border-box;}
@@ -22,126 +22,164 @@
   .titlebar{height:90px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:16px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
   .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:26px;border-radius:999px;padding:7px 20px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
   .vol-logo{height:50px;width:50px;object-fit:contain;flex:0 0 auto;background:#fff;border-radius:12px;padding:5px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
-  .title-text{color:#fff;font-weight:900;font-size:26.5px;line-height:1.14;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:158px;}
+  .title-text{color:#fff;font-weight:900;font-size:27px;line-height:1.14;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:150px;}
   .title-text .hl{color:#FFE08A;}
-  .title-chara{position:absolute;right:14px;bottom:-44px;height:146px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+  .title-chara{position:absolute;right:14px;bottom:-40px;height:142px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
 
-  .concl{margin:10px 16px 0;background:var(--blue-bg);border:2.5px solid var(--blue);border-radius:13px;display:flex;align-items:center;gap:13px;padding:11px 18px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
-  .concl .chip{flex:0 0 auto;width:42px;height:42px;border-radius:11px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;padding:8px;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
-  .concl .txt{font-weight:800;font-size:20px;color:var(--blue-dark);line-height:1.36;padding-right:100px;}
+  .concl{margin:10px 16px 0;background:var(--blue-bg);border:2.5px solid var(--blue);border-radius:13px;display:flex;align-items:center;gap:13px;padding:10px 18px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;width:40px;height:40px;border-radius:11px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;padding:8px;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
+  .concl .txt{font-weight:800;font-size:19.5px;color:var(--blue-dark);line-height:1.34;padding-right:150px;}
   .concl .txt b{color:var(--orange);}
 
-  .stage{flex:1 1 auto;margin:12px 16px 0;display:flex;gap:16px;min-height:0;}
+  .strip{flex:1 1 auto;margin:12px 16px 0;display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:11px;min-height:0;}
+  .frame{position:relative;display:flex;flex-direction:column;min-height:0;background:#FBFCFE;border:2px solid #D3DCEA;border-radius:13px;overflow:hidden;box-shadow:0 4px 10px rgba(0,0,0,.09);}
+  .frame.star{border-color:#F6B24A;box-shadow:0 5px 14px rgba(234,131,10,.18);}
+  .ft{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:8px 10px;background:linear-gradient(180deg,#F3F7FC,#E9F0F9);border-bottom:1px solid #DEE6F1;}
+  .ft .kk{flex:0 0 auto;width:26px;height:26px;border-radius:50%;background:var(--blue);color:#fff;font-weight:900;font-size:15px;display:flex;align-items:center;justify-content:center;}
+  .frame.star .ft{background:linear-gradient(180deg,#FFF6E9,#FDEBCF);border-color:#F6D19B;} .frame.star .kk{background:var(--orange);}
+  .ft .tt{font-weight:900;font-size:16px;color:var(--ink);line-height:1.1;}
+  .ft .tm{margin-left:auto;font-size:12px;font-weight:900;color:var(--weak);font-family:'Roboto Mono',monospace;background:#fff;border:1px solid #E1E8F2;border-radius:6px;padding:2px 6px;}
+  .fb{flex:1;padding:9px;display:flex;flex-direction:column;min-height:0;}
+  .fcap{flex:0 0 auto;margin-top:auto;font-size:13.5px;font-weight:800;color:var(--gray);line-height:1.35;background:#fff;border-left:4px solid var(--blue);border-radius:0 7px 7px 0;padding:6px 8px;}
+  .frame.star .fcap{border-left-color:var(--orange);}
+  .fcap b{color:var(--blue-dark);} .frame.star .fcap b{color:#B45309;}
+  .krow{position:absolute;top:50%;right:-9px;transform:translateY(-50%);z-index:8;width:18px;height:18px;color:var(--blue);}
 
-  /* 左：Before/After 対比 */
-  .lz{flex:0 0 512px;display:flex;flex-direction:column;min-height:0;}
-  .hd{font-weight:900;font-size:23px;color:var(--ink);margin-bottom:9px;display:flex;align-items:center;gap:9px;letter-spacing:-.01em;}
-  .hd .b{flex:0 0 auto;width:32px;height:32px;border-radius:50%;background:var(--blue);color:#fff;font-weight:900;font-size:18px;display:flex;align-items:center;justify-content:center;}
-  .steps{flex:1;display:flex;flex-direction:column;gap:11px;min-height:0;}
+  /* ミニ申請フォーム(①) */
+  .miniform{background:#fff;border:1px solid #DCE4EF;border-radius:9px;padding:8px;box-shadow:0 2px 5px rgba(0,0,0,.06);}
+  .miniform .mt{font-size:13px;font-weight:900;color:#243B58;margin-bottom:6px;display:flex;align-items:center;gap:6px;}
+  .ff{background:#F4F7FB;border:1px solid #E2E9F2;border-radius:6px;padding:4px 7px;font-size:12px;font-weight:800;color:#3B4859;margin-bottom:5px;}
+  .ff b{color:#0B3A8F;}
+  .fsubmit{margin-top:2px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;text-align:center;font-size:12.5px;font-weight:900;border-radius:7px;padding:6px;box-shadow:0 2px 4px rgba(37,99,235,.35);}
+  .route{margin-top:9px;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:12px;font-weight:800;color:var(--weak);text-align:center;line-height:1.35;}
+  .route svg{width:20px;height:20px;color:var(--blue);}
+  .route b{color:var(--blue-dark);}
 
-  /* 動的コンテンツ パネル（欲しい値が無い） */
-  .dc{flex:1;background:#fff;border:1px solid #D7DEE8;border-radius:13px;box-shadow:0 5px 14px rgba(0,0,0,.14);overflow:hidden;font-family:'Segoe UI','Noto Sans JP',sans-serif;display:flex;flex-direction:column;min-height:0;}
-  .dc-h{flex:0 0 auto;display:flex;align-items:center;gap:9px;padding:9px 13px;background:#F3F6FB;border-bottom:1px solid #E3E9F1;}
-  .dc-h img{width:22px;height:22px;object-fit:contain;}
-  .dc-h span{font-weight:800;font-size:16px;color:#243B58;}
-  .tabs{flex:0 0 auto;display:flex;border-bottom:1px solid #E3E9F1;}
-  .tab{font-size:15px;font-weight:800;color:#6B7280;padding:8px 15px;border-bottom:3px solid transparent;}
-  .tab.on{color:var(--blue);border-bottom-color:var(--blue);background:#F7FAFF;}
-  .search{margin:10px 12px 6px;background:#F1F5F9;border:1.5px solid #CBD5E1;border-radius:8px;padding:7px 11px;font-size:14.5px;color:#64748B;font-weight:700;}
-  .cand{padding:2px 12px 10px;display:flex;flex-direction:column;gap:5px;flex:1;min-height:0;}
-  .citem{display:flex;align-items:center;gap:9px;font-size:15px;font-weight:700;color:#475569;padding:4px 2px;}
-  .citem img{width:20px;height:20px;object-fit:contain;flex:0 0 auto;}
-  .noval{margin:auto 6px;background:#FEF2F2;border:2px dashed #FCA5A5;border-radius:10px;padding:11px;text-align:center;}
-  .noval .nt{font-weight:900;font-size:17px;color:var(--red-dark);line-height:1.35;}
-  .noval .ns{font-size:14px;font-weight:800;color:#B91C1C;margin-top:4px;line-height:1.4;}
+  /* 承認メール(②) 主役 */
+  .amail{background:#fff;border:1px solid #E1E8F2;border-radius:9px;box-shadow:0 3px 8px rgba(0,0,0,.1);overflow:hidden;}
+  .amh{display:flex;align-items:center;gap:6px;padding:6px 8px;background:#EFF4FB;border-bottom:1px solid #E1E8F2;font-size:12px;font-weight:900;color:#1B3A5B;}
+  .amh img{width:18px;height:18px;}
+  .amb{padding:8px;}
+  .amsub{font-size:13px;font-weight:900;color:#243B58;line-height:1.3;margin-bottom:7px;}
+  .abtns{display:flex;flex-direction:column;gap:6px;}
+  .abtn{text-align:center;font-size:14px;font-weight:900;border-radius:8px;padding:8px;box-shadow:0 2px 4px rgba(0,0,0,.14);}
+  .abtn.ok{background:linear-gradient(180deg,#22C55E,#16A34A);color:#fff;}
+  .abtn.ng{background:#fff;color:#B91C1C;border:1.5px solid #F0A9A9;box-shadow:none;}
+  .abtn.hold{background:#fff;color:#B45309;border:1.5px solid #F6C889;box-shadow:none;font-size:12.5px;padding:5px;}
 
-  .why{flex:0 0 auto;background:#FFFBF5;border:2px solid #FDBA74;border-radius:12px;padding:10px 13px;display:flex;align-items:center;gap:11px;}
-  .why .wi{flex:0 0 auto;font-size:28px;}
-  .why .wt{font-size:15.5px;font-weight:800;color:#7C2D12;line-height:1.45;}
-  .why .wt b{color:#9A3412;}
+  /* ポチッ(③) */
+  .press{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;}
+  .bigbtn{position:relative;background:linear-gradient(180deg,#22C55E,#15803D);color:#fff;font-size:19px;font-weight:900;border-radius:12px;padding:14px 26px;box-shadow:0 6px 0 #0E5B2C,0 8px 12px rgba(0,0,0,.28);}
+  .finger{position:absolute;right:-14px;bottom:-20px;font-size:34px;filter:drop-shadow(0 2px 3px rgba(0,0,0,.3));}
+  .noapp{font-size:12.5px;font-weight:900;color:var(--green-dark);background:#ECFDF5;border:1.5px solid #A7E3C4;border-radius:8px;padding:6px 8px;text-align:center;line-height:1.3;}
+  .recv{font-size:11.5px;font-weight:900;color:var(--weak);text-align:center;line-height:1.4;}
+  .selopt{margin-top:4px;background:#EAF2FF;border:1px solid #9DC1F5;border-radius:7px;padding:4px 8px;font-size:12px;font-weight:900;color:#0B3A8F;}
+  .mono2{font-family:'Roboto Mono',monospace;}
 
-  /* 右：式で取り出す */
-  .rz{flex:1;display:flex;flex-direction:column;min-height:0;position:relative;}
-  .fxcard{flex:1;background:linear-gradient(180deg,#F1FCF6,#E4F8EE);border:2.5px solid #6EE7A8;border-radius:14px;padding:11px 14px;display:flex;flex-direction:column;gap:9px;min-height:0;}
-  .fxstep{background:#fff;border:1px solid #BBF7D0;border-radius:11px;padding:9px 13px;flex:1;display:flex;flex-direction:column;justify-content:center;}
-  .fxstep .fs-t{font-weight:900;font-size:17px;color:var(--green-dark);display:flex;align-items:center;gap:9px;line-height:1.25;}
-  .fxstep .fs-t .n{flex:0 0 auto;width:26px;height:26px;border-radius:50%;background:#16A34A;color:#fff;font-size:15px;font-weight:900;display:flex;align-items:center;justify-content:center;}
-  .fxstep .fs-d{font-size:14px;font-weight:800;color:#166534;margin-top:4px;line-height:1.4;padding-left:35px;}
-  .fxbox{margin:7px 0 0 35px;font-family:'Roboto Mono',monospace;font-size:15px;font-weight:700;color:#065F46;background:#ECFDF5;border:1.5px solid #86EFAC;border-radius:8px;padding:8px 11px;word-break:break-all;line-height:1.4;}
-  .fxbox .cur{display:inline-block;width:2px;height:16px;background:#16A34A;vertical-align:-2px;margin-left:1px;}
-  .rmascot{position:absolute;right:-8px;bottom:-8px;height:118px;z-index:30;filter:drop-shadow(0 3px 7px rgba(0,0,0,.4));}
+  /* 記録＆通知(④) */
+  .ledger{background:#fff;border:1px solid #DCE4EF;border-radius:9px;overflow:hidden;box-shadow:0 2px 5px rgba(0,0,0,.06);margin-bottom:8px;}
+  .lgh{display:flex;align-items:center;gap:6px;padding:5px 8px;background:#EFF4FB;border-bottom:1px solid #E1E8F2;font-size:11.5px;font-weight:900;color:#1B3A5B;}
+  .lgh img{width:16px;height:16px;}
+  .lrow{display:flex;align-items:center;gap:6px;padding:5px 8px;font-size:11.5px;font-weight:800;color:#3B4859;border-bottom:1px solid #F1F4F8;}
+  .lrow.new{background:#ECFDF5;}
+  .lrow .st{margin-left:auto;font-size:10.5px;font-weight:900;color:#15803D;background:#DCFCE7;border-radius:5px;padding:1px 6px;}
+  .lrow .pen{font-size:12px;}
+  .notify{display:flex;align-items:center;gap:7px;background:#F3F0FF;border:1px solid #D9CEF6;border-radius:8px;padding:6px 8px;font-size:12px;font-weight:800;color:#4C1D95;line-height:1.3;}
+  .notify .av{flex:0 0 auto;width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#6366F1,#4F46E5);color:#fff;font-size:10px;font-weight:900;display:flex;align-items:center;justify-content:center;}
 
-  .next{flex:0 0 auto;margin:11px 16px 18px;background:linear-gradient(180deg,#EAF2FF,#DCEAFE);border:2.5px solid var(--blue);border-radius:13px;padding:12px 18px;display:flex;align-items:center;gap:11px;font-weight:900;font-size:20px;color:var(--blue-dark);box-shadow:0 3px 9px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .next{flex:0 0 auto;margin:10px 16px 15px;background:linear-gradient(180deg,#EAF2FF,#DCEAFE);border:2.5px solid var(--blue);border-radius:13px;padding:11px 18px;display:flex;align-items:center;gap:11px;font-weight:900;font-size:20px;color:var(--blue-dark);box-shadow:0 3px 9px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
   .next .na{flex:0 0 auto;width:26px;height:26px;color:var(--blue);}
   .next b{color:var(--orange);}
-  .src{position:absolute;left:16px;bottom:5px;font-size:10px;color:#AEB6C2;font-weight:700;z-index:3;}
+  .src{position:absolute;left:16px;bottom:4px;font-size:10px;color:#AEB6C2;font-weight:700;z-index:3;}
 </style>
 </head>
 <body>
 <div id="slide"></div>
 <script>
 const A="../../pptx/_assets/";
-const svgArrow='<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
-const svgBulb='<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/></svg>';
+const ICON={arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',bulb:'<path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/>'};
+const svg=(n)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">${ICON[n]}</svg>`;
 
 document.getElementById('slide').innerHTML=`
   <div class="titlebar">
     <div class="vol-pill">Vol.79-1</div>
     <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
-    <div class="title-text">欲しい値が、候補に出てこない｜<span class="hl">“式”タブなら取り出せる</span></div>
-    <img class="title-chara" src="${A}chara/chara_trouble.png" alt="">
+    <div class="title-text">承認アプリは要らない｜<span class="hl">決裁は“メールのボタン”だけで回る</span></div>
+    <img class="title-chara" src="${A}chara/chara_guts.png" alt="">
   </div>
 
   <div class="concl">
-    <div class="chip">${svgBulb}</div>
-    <div class="txt">動的なコンテンツに<b>目当ての値が無い</b>ことがあります。そんな時は<b>「式」タブ</b>で、アクションの出力を直接ほじくり出せます。</div>
+    <div class="chip">${svg('bulb')}</div>
+    <div class="txt">承認のために<b>専用アプリを入れる</b>話で止まりがち。実は<b>メールに承認ボタンを付けて送る</b>だけで、決裁が回ります。</div>
   </div>
 
-  <div class="stage">
-    <div class="lz">
-      <div class="hd"><span class="b">✕</span>動的なコンテンツを探しても…</div>
-      <div class="steps">
-        <div class="dc">
-          <div class="dc-h"><img src="${A}icons/pa_logo.png" alt=""><span>値の選択 － 動的なコンテンツ</span></div>
-          <div class="tabs"><span class="tab on">動的なコンテンツ</span><span class="tab">式</span></div>
-          <div class="search">🔎 担当者のメール …と入力しても</div>
-          <div class="noval">
-            <div class="nt">欲しい「担当者のメール」が、<br>候補リストに出てこない</div>
-            <div class="ns">ネストした値・配列の中身などは、一覧に並ばないことがある</div>
+  <div class="strip">
+    <div class="frame">
+      <span class="krow">${svg('arrow')}</span>
+      <div class="ft"><span class="kk">1</span><span class="tt">申請する</span><span class="tm">9:00</span></div>
+      <div class="fb">
+        <div class="miniform">
+          <div class="mt">📝 休暇申請</div>
+          <div class="ff">申請者：<b>鈴木 一郎</b></div>
+          <div class="ff">期間：8/15〜8/16</div>
+          <div class="ff">理由：私用のため</div>
+          <div class="ff">承認者：<b>山田 部長</b></div>
+          <div class="fsubmit">送信する</div>
+        </div>
+        <div class="route">${svg('down')}<span>フローが<b>承認者あて</b>にメールを作る</span></div>
+        <div class="fcap">フォームやメールで<b>いつもどおり申請</b>。</div>
+      </div>
+    </div>
+
+    <div class="frame star">
+      <span class="krow" style="color:#EA580C">${svg('arrow')}</span>
+      <div class="ft"><span class="kk">2</span><span class="tt">ボタンが届く</span><span class="tm">9:01</span></div>
+      <div class="fb">
+        <div class="amail">
+          <div class="amh"><img src="${A}icons/pa_outlook.png" alt="">承認依頼</div>
+          <div class="amb">
+            <div class="amsub">鈴木さんの休暇申請（8/15〜16）です。ご確認ください。</div>
+            <div class="abtns">
+              <div class="abtn ok">✔ 承認する</div>
+              <div class="abtn ng">✕ 却下する</div>
+              <div class="abtn hold">△ 保留（要相談）</div>
+            </div>
           </div>
         </div>
-        <div class="why">
-          <span class="wi">🧩</span>
-          <span class="wt">動的なコンテンツは<b>“よく使う値”の近道リスト</b>。奥まった値や配列の中身は、ここに載らないだけ。<b>データが取れないわけではありません</b>。</span>
-        </div>
+        <div class="fcap">承認者のメールに<b>選べるボタン</b>が届く。</div>
       </div>
     </div>
 
-    <div class="rz">
-      <div class="hd"><span class="b">✓</span>「式」タブで、直接取り出す</div>
-      <div class="fxcard">
-        <div class="fxstep">
-          <div class="fs-t"><span class="n">1</span>本文まるごと → <b>body( )</b></div>
-          <div class="fs-d">そのアクションが返した中身の全体。</div>
-          <div class="fxbox">body('担当者を取得')<span class="cur"></span></div>
+    <div class="frame">
+      <span class="krow">${svg('arrow')}</span>
+      <div class="ft"><span class="kk">3</span><span class="tt">その場でポチッ</span><span class="tm">9:03</span></div>
+      <div class="fb">
+        <div class="press">
+          <div class="bigbtn">✔ 承認する<span class="finger">👆</span></div>
+          <div class="noapp">専用アプリ不要／スマホでもOK<br><b>社外の人にも回せる</b></div>
+          <div class="recv">押した結果 → フローが受け取る<div class="selopt"><span class="mono2">SelectedOption</span> = 承認</div></div>
         </div>
-        <div class="fxstep">
-          <div class="fs-t"><span class="n">2</span>その中の1つ → <b>?['名前']</b></div>
-          <div class="fs-d">「? かぎカッコ」で、奥の項目を安全に掘る。</div>
-          <div class="fxbox">body('担当者を取得')?['mail']</div>
-        </div>
-        <div class="fxstep">
-          <div class="fs-t"><span class="n">3</span>配列の◯番目 → <b>[0]</b></div>
-          <div class="fs-d">複数あるとき、先頭は 0 番。</div>
-          <div class="fxbox" style="margin-right:96px">body('一覧を取得')?['value'][0]?['Title']</div>
-        </div>
+        <div class="fcap">メールのボタンを<b>押すだけ</b>で決裁完了。</div>
       </div>
-      <img class="rmascot" src="${A}chara/chara_guts.png" alt="">
+    </div>
+
+    <div class="frame">
+      <div class="ft"><span class="kk">4</span><span class="tt">記録＆自動連絡</span><span class="tm">9:03</span></div>
+      <div class="fb">
+        <div class="ledger">
+          <div class="lgh"><img src="${A}icons/pa_sharepoint.png" alt="">承認台帳</div>
+          <div class="lrow">田中の残業申請<span class="st">承認</span></div>
+          <div class="lrow">佐藤の出張申請<span class="st">承認</span></div>
+          <div class="lrow new"><span class="pen">✍️</span>鈴木の休暇申請<span class="st">承認</span></div>
+        </div>
+        <div class="notify"><span class="av">B</span><div><b>鈴木さんへ自動で連絡</b><br>「休暇申請が承認されました ✅」</div></div>
+        <div class="fcap">結果が<b>台帳に記録</b>され、申請者にも自動で連絡。</div>
+      </div>
     </div>
   </div>
 
-  <div class="next"><span class="na">${svgArrow}</span>outputs と body の違い、アクション名のスペース…<b>取り出しチートシート</b>は <b>2枚目</b>へ！</div>
-  <div class="src">出典：Microsoft Learn（ワークフロー定義言語の関数リファレンス）／画面は再現・名称は架空</div>
+  <div class="next"><span class="na">${svg('arrow')}</span>使うのは Outlook の<b>「オプション付きメールを送信します」</b>1個。<b>作り方</b>は <b>2枚目</b>へ！</div>
+  <div class="src">出典：Microsoft Learn（Office 365 Outlook「オプション付きメールを送信します」）／画面は再現・氏名は架空</div>
 `;
 </script>
 <script>

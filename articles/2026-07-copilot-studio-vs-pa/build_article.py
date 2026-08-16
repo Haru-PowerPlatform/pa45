@@ -38,7 +38,7 @@ CSS = """
 .mb-shot .sh-tag{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:800;color:#475569;background:#dde1e9;border-radius:999px;padding:5px 14px;margin-bottom:12px;letter-spacing:.02em;}
 .mb-shot .sh-frame{position:relative;line-height:0;}
 .mb-shot .sh-frame img{width:100%;height:auto;display:block;border-radius:10px;border:1px solid #c7cad3;box-shadow:0 6px 18px rgba(15,23,42,.20);}
-.mb-shot figcaption{font-size:.85em;color:#5b4a7a;margin-top:14px;line-height:1.65;}
+.mb-shot figcaption{font-size:1.02em;color:#5b4a7a;margin-top:14px;line-height:1.8;}
 .mb-anno{position:absolute;border:3px solid #e0342f;border-radius:12px;background:rgba(224,52,47,.04);box-shadow:0 5px 14px rgba(224,52,47,.40),0 0 0 4px rgba(224,52,47,.10);}
 .mb-anno .an-lb{position:absolute;top:-16px;left:-4px;background:linear-gradient(180deg,#f5504b,#df332e);color:#fff;font-size:12.5px;font-weight:800;line-height:1.4;padding:3px 10px;border-radius:7px;white-space:nowrap;box-shadow:0 3px 7px rgba(0,0,0,.32);}
 .mb-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:30px 0;}
@@ -76,6 +76,9 @@ CSS = """
 .mb-btn.yt{background:linear-gradient(135deg,#ef4444,#b91c1c);box-shadow:0 4px 14px rgba(239,68,68,.35);}
 .mb-cta .cta-sub{display:block;margin-top:10px;font-size:.82em;color:#64748b;}
 .speech-balloon{line-height:1.95;}
+.cs-preface{background:#eef7f1;border:1px solid #cfe8db;border-left:5px solid #5f8a6e;border-radius:10px;padding:14px 18px;margin:0 0 26px;font-size:.86em;color:#3d5647;line-height:1.85;}
+.cs-preface b{color:#2f6b4f;}
+.cs-preface a{color:#1d4ed8;font-weight:700;}
 </style>
 """
 
@@ -139,7 +142,8 @@ STATE.write_text(json.dumps(state,ensure_ascii=False,indent=2),encoding="utf-8")
 
 # ---- 本文 ----
 H_=[]; a=H_.append
-a('\n\n<div class="mb-intro">この記事は、筆者が実際に Copilot Studio をさわりながら、気になったポイントを AI と壁打ち（相談）しつつ整理したものです。「Power Automate は知っているけれど、Copilot Studio は…」という方に向けて、両者の違いをたとえ話でまとめます。</div>')
+a('<div class="cs-preface">📝 実際に <b>Copilot Studio を触って検証</b>し、スクショを撮りながら気づいたことをまとめた記録です。<br>機能・画面・料金は更新が続きます。<br>最新の正確な情報は <a href="https://learn.microsoft.com/ja-jp/microsoft-copilot-studio/" target="_blank" rel="noopener">Microsoft 公式（Microsoft Learn）</a> をご確認ください。</div>')
+a('\n\n<div class="mb-intro">この記事は、筆者が実際に Copilot Studio をさわりながら、気になったポイントを AI と壁打ち（相談）しつつ整理しました。<br>「Power Automate は知っているけれど、Copilot Studio は…」という方に向けて、両者の違いをたとえ話でまとめます。</div>')
 
 a(PL('「Power Automate は使っているけれど、<span class="hl-marker">Copilot Studio って何が違うの？</span>」── よく聞かれます。'))
 a(PL('ざっくり言うと、Power Automate は<strong>「決めた手順をそのままくり返す」自動化</strong>、Copilot Studio は<strong>「会話して自分で考えて動く」AI</strong>です。'))
@@ -170,7 +174,9 @@ a(P('どちらが上・下ではなく、<strong>得意分野がちがう</stron
 
 a(NB)
 a(H2('実際の画面で見ると（Copilot Studio の入口）'))
-a(P('Copilot Studio を開くと、最初に<strong>「何を作るか」を2つから選びます</strong>。この2択に、さっきの違いがそのまま表れています。'))
+a('<figure style="margin:32px 0;background:#eceef2;border:1px solid #d9dce3;border-radius:14px;padding:14px;box-shadow:0 3px 12px rgba(15,23,42,.09);"><span style="display:inline-block;font-size:12.5px;font-weight:800;color:#475569;background:#dde1e9;border-radius:999px;padding:5px 14px;margin-bottom:10px;">&#x1f5a5;&#xfe0f; 実際の画面</span><br><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-vspa-thin.png" alt="" style="max-width:100%;height:auto;border-radius:8px;border:1px solid #c7cad3;box-shadow:0 6px 18px rgba(15,23,42,.14);" /><figcaption style="font-size:1.02em;color:#5b4a7a;margin-top:12px;line-height:1.65;">&#x25b2; Copilot Studio のエージェント Build 画面。左に指示文、右に道具（Tools）や資料（Knowledge）を足していく。Power Automate の“フロー画面”とは考え方が違う</figcaption></figure>')
+a(P('Copilot Studio は会社（職場）のアカウントで copilotstudio.microsoft.com から入れます（エージェントの詳しい作り方は第2弾で解説）。'))
+a(P('Copilot Studio を開くと、最初に<strong>「何を作るか」を2つから選びます</strong>。触ってみると、この2択に、さっきの違いがそのまま出ていました。'))
 a(shot(U_HOME, "▲ Copilot Studio の新しいホーム。「Agent（会話するAI）」と「Workflow（手順の自動化）」の2つが入口", "Copilot Studioの新しいホーム画面",
    annos=[(27.5,33.5,31.5,37,"会話するAI（エージェント）"),(60.5,33.5,31,37,"手順の自動化（PAに近い）")]))
 a(P('左の <strong>「Agent（エージェント）」</strong> が、会話して答える AI。右の <strong>「Workflow（ワークフロー）」</strong> は手順の自動化で、こちらは<strong>使い慣れた Power Automate に近いもの</strong>です。'))
@@ -216,7 +222,7 @@ a(cta_pa('&#x1f64c; まずは、さわってみるのがいちばん',
 a(P(f'なお、PA45 がどんな勉強会かは <a href="{PA45_URL}" target="_blank" rel="noopener">PA45の紹介ページ</a> にまとめています。<strong>PA45</strong> は、筆者が運営している「Power Automate を45分で学ぶ、無料のオンライン勉強会」です（毎週木曜の夜・初心者歓迎）。'))
 a(cta_yt())
 
-a('\n\n<p style="font-size:13px;color:#888;line-height:1.9;">※ 本記事は公開日時点の情報をもとに、筆者が実際に学んで試した内容を整理したものです。Power Automate・Copilot Studio の画面や仕様は更新されることがあるため、最新の状況は公式情報（Microsoft Learn）もあわせてご確認ください。画面の項目名・挙動は実機で確認しています。</p>')
+a('\n\n<p style="font-size:13px;color:#888;line-height:1.9;">※ 本記事は公開日時点の情報をもとに、筆者が実際に学んで試した内容を整理しました。Power Automate・Copilot Studio の画面や仕様は更新されることがあるため、最新の状況は公式情報（Microsoft Learn）もあわせてご確認ください。画面の項目名・挙動は実機で確認しています。</p>')
 a('\n\n<p style="font-size:13px;color:#888;line-height:1.9;">※ 本記事の構成や図解の一部は、AI と壁打ちしながら作成しています。</p>')
 
 content=CSS+'\n\n<div class="mb-body">'+"".join(H_)+'\n\n</div>'

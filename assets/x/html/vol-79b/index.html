@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=1280, initial-scale=1">
-<title>X技術Tips Vol.79-2 値の取り出しチートシート</title>
+<title>X技術Tips Vol.79-2 メール承認ボタンの作り方</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --blue:#2563EB; --blue-bg:#EFF6FF; --blue-dark:#1E40AF;
-    --green:#16A34A; --green-dark:#064E3B;
-    --red:#DC2626; --red-dark:#991B1B; --orange:#EA580C; --purple:#7C3AED;
+    --green:#16A34A; --green-dark:#065F46;
+    --orange:#EA580C; --ol:#0F6CBD; --ctrl:#486FE0; --spo:#0F6CBD;
     --ink:#1F2937; --gray:#374151; --weak:#6B7280; --line:#E5E7EB;
   }
   *{margin:0;padding:0;box-sizing:border-box;}
@@ -24,114 +24,161 @@
   .vol-logo{height:50px;width:50px;object-fit:contain;flex:0 0 auto;background:#fff;border-radius:12px;padding:5px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
   .title-text{color:#fff;font-weight:900;font-size:27px;line-height:1.14;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:150px;}
   .title-text .hl{color:#FFE08A;}
-  .title-chara{position:absolute;right:14px;bottom:-44px;height:146px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+  .title-chara{position:absolute;right:14px;bottom:-40px;height:142px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
 
-  .concl{margin:10px 16px 0;background:var(--blue-bg);border:2.5px solid var(--blue);border-radius:13px;display:flex;align-items:center;gap:13px;padding:10px 18px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
-  .concl .chip{flex:0 0 auto;width:40px;height:40px;border-radius:11px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;padding:8px;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
-  .concl .txt{font-weight:800;font-size:19.5px;color:var(--blue-dark);line-height:1.36;padding-right:100px;}
+  .concl{margin:10px 16px 0;background:var(--blue-bg);border:2.5px solid var(--blue);border-radius:13px;display:flex;align-items:center;gap:13px;padding:9px 18px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;width:38px;height:38px;border-radius:11px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;padding:8px;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
+  .concl .txt{font-weight:800;font-size:18.5px;color:var(--blue-dark);line-height:1.34;padding-right:150px;}
   .concl .txt b{color:var(--orange);}
 
-  .stage{flex:1 1 auto;margin:11px 16px 0;display:flex;gap:14px;min-height:0;}
-  .lz{flex:1;display:flex;flex-direction:column;min-height:0;}
-  .rz{flex:0 0 344px;display:flex;flex-direction:column;min-height:0;gap:9px;}
-  .hd{font-weight:900;font-size:23px;color:var(--ink);margin-bottom:7px;display:flex;align-items:center;gap:9px;letter-spacing:-.01em;}
-  .hd .b{flex:0 0 auto;width:31px;height:31px;border-radius:50%;background:var(--blue);color:#fff;font-weight:900;font-size:17px;display:flex;align-items:center;justify-content:center;}
+  .cols{flex:1 1 auto;margin:11px 16px 0;display:grid;grid-template-columns:1fr 1fr 1fr;gap:26px;min-height:0;}
+  .col{position:relative;display:flex;flex-direction:column;min-height:0;}
+  .cnum{position:absolute;top:-9px;left:-11px;width:32px;height:32px;border-radius:50%;background:var(--blue);color:#fff;font-weight:900;font-size:18px;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 2px 5px rgba(0,0,0,.28);}
+  .carrow{position:absolute;top:44%;right:-22px;width:22px;height:22px;color:var(--blue);z-index:6;}
 
-  .qs{flex:1;display:grid;grid-template-columns:1fr;grid-auto-rows:1fr;gap:8px;min-height:0;}
-  .q{display:flex;align-items:center;gap:13px;background:#F8F9FA;border:1px solid var(--line);border-left:6px solid var(--blue);border-radius:9px;padding:8px 13px;min-height:0;}
-  .q .lbl{flex:0 0 186px;font-size:16.5px;font-weight:900;color:var(--ink);line-height:1.25;}
-  .q .lbl small{display:block;font-size:13px;font-weight:800;color:var(--weak);margin-top:1px;}
-  .q .val{flex:1;font-family:'Roboto Mono',monospace;font-size:16px;font-weight:700;color:#0B3A8F;line-height:1.3;word-break:break-all;}
-  .q.t{border-left-color:var(--purple);} .q.t .val{color:#5B21B6;}
-  .q.o{border-left-color:var(--orange);} .q.o .val{color:#9A3412;}
-  .q.g{border-left-color:var(--green);} .q.g .val{color:var(--green-dark);}
+  .card{flex:1;display:flex;flex-direction:column;min-height:0;background:#fff;border:2px solid #C7CFDA;border-radius:12px;box-shadow:0 5px 13px rgba(0,0,0,.13);overflow:hidden;}
+  .col.hot .card{border-color:var(--ctrl);box-shadow:0 5px 15px rgba(72,111,224,.22);}
+  .ch{flex:0 0 auto;display:flex;align-items:center;gap:9px;padding:9px 11px;background:linear-gradient(180deg,#FBFCFE,#EEF2F8);border-bottom:1px solid #E2E8F1;min-height:58px;}
+  .ch .sq{flex:0 0 auto;width:38px;height:38px;border-radius:9px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);display:flex;align-items:center;justify-content:center;overflow:hidden;}
+  .ch .sq img{width:34px;height:34px;object-fit:contain;}
+  .ch .sq.real img{width:38px;height:38px;border-radius:9px;}
+  .ch .nm{font-weight:900;font-size:16px;color:var(--ink);line-height:1.15;}
+  .ch .cn{font-size:11.5px;font-weight:800;color:var(--weak);margin-top:1px;}
+  .col.hot .ch{background:linear-gradient(180deg,#F3F6FF,#E3EAFF);} .col.hot .ch .nm{color:#2440A8;}
 
-  /* 右上：outputs と body の違い（図解） */
-  .diff{background:#fff;border:2.5px solid var(--blue);border-radius:13px;box-shadow:0 5px 13px rgba(37,99,235,.14);overflow:hidden;}
-  .diff-h{font-weight:900;font-size:16.5px;color:var(--blue-dark);background:#EEF4FF;padding:8px 13px;border-bottom:1px solid #C7DBF7;}
-  .diff-b{padding:10px 12px;display:flex;flex-direction:column;gap:7px;}
-  .drow{display:flex;align-items:center;gap:9px;}
-  .drow .dk{flex:0 0 auto;font-family:'Roboto Mono',monospace;font-weight:700;font-size:15px;border-radius:7px;padding:4px 10px;white-space:nowrap;}
-  .drow.out .dk{background:#EDE9FE;color:#5B21B6;}
-  .drow.bod .dk{background:#DCFCE7;color:#166534;}
-  .drow .dd{font-size:14.5px;font-weight:800;color:var(--gray);line-height:1.35;}
-  .drow .dd b{color:var(--ink);}
-  .diff-note{font-size:13.5px;font-weight:800;color:#1E40AF;background:#EFF6FF;border-top:1px dashed #93C5FD;padding:8px 12px;line-height:1.45;}
+  .ptop{flex:0 0 224px;margin:9px;background:#F3F6FB;border:1px solid #DCE4F0;border-radius:9px;padding:9px;display:flex;flex-direction:column;gap:7px;overflow:hidden;}
+  .sect{font-size:11.5px;font-weight:900;color:#5B6B82;letter-spacing:.02em;display:flex;align-items:center;gap:6px;}
+  .sect::before{content:"";width:9px;height:9px;border-radius:2px;background:var(--ol);}
+  .fld{background:#fff;border:1px solid #D7DEE9;border-radius:7px;overflow:hidden;}
+  .fld .fl{font-size:12px;font-weight:800;color:#64748B;background:#F8FAFC;padding:3px 8px;border-bottom:1px solid #EBEFF5;}
+  .fld .fi{font-size:14.5px;font-weight:800;color:#243B58;padding:7px 9px;display:flex;align-items:center;gap:6px;justify-content:space-between;line-height:1.1;}
+  .fld .fi .cr{color:#8A93A2;font-size:12px;}
+  .fld.hot{border:2px solid var(--ctrl);}
+  .opts{display:flex;gap:5px;flex-wrap:wrap;}
+  .opt{font-size:12.5px;font-weight:900;border-radius:6px;padding:4px 9px;}
+  .opt.a{background:#DCFCE7;color:#15803D;border:1px solid #9FE3C2;}
+  .opt.b{background:#FEE2E2;color:#B91C1C;border:1px solid #F0A9A9;}
+  .opt.c{background:#FEF3C7;color:#92400E;border:1px solid #F6D08A;}
+  .dyn{display:inline-flex;align-items:center;gap:4px;background:#EAF2FF;border:1px solid #9DC1F5;border-radius:6px;padding:2px 7px;font-size:13px;font-weight:800;color:#0B3A8F;font-family:'Roboto Mono','Noto Sans JP',monospace;}
+  .dyn::before{content:"⚡";font-size:12px;}
+  .mono{font-family:'Roboto Mono',monospace;font-size:13px;color:#0B3A8F;}
+  .swrows{display:flex;flex-direction:column;gap:5px;}
+  .swrow{display:flex;align-items:center;gap:7px;background:#fff;border:1px solid #D7DEE9;border-radius:7px;padding:6px 8px;font-size:13px;font-weight:800;color:#243B58;}
+  .swrow .case{flex:0 0 auto;font-family:'Roboto Mono',monospace;font-size:12.5px;border-radius:5px;padding:2px 7px;}
+  .swrow.a .case{background:#DCFCE7;color:#15803D;} .swrow.b .case{background:#FEE2E2;color:#B91C1C;} .swrow.c .case{background:#FEF3C7;color:#92400E;}
 
-  .tip{flex:1;background:linear-gradient(180deg,#FFF7ED,#FFEAD5);border:2.5px solid #FDBA74;border-radius:13px;padding:11px 13px;display:flex;flex-direction:column;gap:6px;position:relative;min-height:0;justify-content:center;}
-  .tip .th{font-weight:900;font-size:17px;color:#9A3412;}
-  .tip .tt{font-size:14.5px;font-weight:800;color:#7C2D12;line-height:1.5;padding-right:96px;}
-  .tip .tt code{font-family:'Roboto Mono',monospace;font-size:14px;background:#fff;border:1px solid #FDBA74;border-radius:5px;padding:1px 6px;}
-  .tmascot{position:absolute;right:-10px;bottom:-8px;height:116px;z-index:30;filter:drop-shadow(0 3px 7px rgba(0,0,0,.4));}
+  .howsteps{flex:1;margin:0 9px 9px;background:#EFF5FF;border:1px solid #C9DCF7;border-radius:9px;padding:9px 10px 9px 11px;display:flex;flex-direction:column;min-height:0;}
+  .hh{font-weight:900;font-size:13px;color:var(--blue-dark);padding-left:9px;position:relative;margin-bottom:5px;}
+  .hh::before{content:"";position:absolute;left:0;top:1px;bottom:1px;width:4px;border-radius:3px;background:var(--blue);}
+  .howsteps ol{list-style:none;flex:1;display:flex;flex-direction:column;justify-content:space-evenly;counter-reset:s;}
+  .howsteps li{counter-increment:s;position:relative;padding-left:26px;font-size:15px;font-weight:800;color:#243B58;line-height:1.32;}
+  .howsteps li::before{content:counter(s);position:absolute;left:0;top:0;width:20px;height:20px;border-radius:50%;background:var(--blue);color:#fff;font-size:12.5px;display:flex;align-items:center;justify-content:center;}
+  .howsteps li b{color:#C2410C;}
+  .col.hot .howsteps{background:#F2F5FF;border-color:#C0CEF7;} .col.hot .hh{color:#2440A8;} .col.hot .hh::before{background:var(--ctrl);} .col.hot .howsteps li::before{background:var(--ctrl);}
 
-  .warn{flex:0 0 auto;margin:10px 16px 18px;background:#FFF7ED;border:2px solid #FDBA74;border-radius:12px;padding:9px 16px;display:flex;align-items:center;gap:16px;}
-  .warn .wt{flex:0 0 auto;font-weight:900;font-size:17px;color:#9A3412;}
-  .warn .wl{display:flex;gap:22px;flex-wrap:wrap;font-size:16px;font-weight:800;color:#7C2D12;line-height:1.35;}
-  .warn code{font-family:'Roboto Mono',monospace;font-size:15px;background:#fff;border:1px solid #FDBA74;border-radius:5px;padding:1px 6px;}
-  .src{position:absolute;left:16px;bottom:4px;font-size:10px;color:#AEB6C2;font-weight:700;z-index:3;}
+  .warn{flex:0 0 auto;margin:10px 16px 16px;background:linear-gradient(180deg,#FFF7ED,#FFEDD5);border:2px solid #FB923C;border-radius:12px;padding:9px 16px;display:flex;align-items:center;gap:13px;}
+  .warn .wt2{flex:0 0 auto;font-weight:900;font-size:16.5px;color:#9A3412;}
+  .warn .wl{font-size:15.5px;font-weight:800;color:#7C2D12;line-height:1.4;}
+  .warn .wl b{color:#C2410C;}
+  .src{position:absolute;left:16px;bottom:3px;font-size:10px;color:#AEB6C2;font-weight:700;z-index:3;}
 </style>
 </head>
 <body>
 <div id="slide"></div>
 <script>
 const A="../../pptx/_assets/";
-const svgBulb='<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/></svg>';
-
-const Q=[
- ['','アクションの本文','（いちばん使う）', "body('担当者を取得')"],
- ['t','トリガーの中身','', "triggerBody()?['件名']"],
- ['','奥の項目を安全に','（? を付ける）', "body('項目取得')?['作成者']?['mail']"],
- ['o','配列の先頭','（0 番から）', "body('一覧取得')?['value'][0]"],
- ['g','繰り返しの中の今の値','（Apply to each）', "item()?['Title']"]
-];
+const ICON={arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',bulb:'<path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/>'};
+const svg=(n)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${ICON[n]}</svg>`;
 
 document.getElementById('slide').innerHTML=`
   <div class="titlebar">
     <div class="vol-pill">Vol.79-2</div>
     <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
-    <div class="title-text">値の取り出し｜<span class="hl">コピーして使う式と、outputs / body の違い</span></div>
+    <div class="title-text">作り方は送信→分岐→記録｜<span class="hl">ボタンは“ユーザー オプション”で作る</span></div>
     <img class="title-chara" src="${A}chara/chara_point.png" alt="">
   </div>
 
   <div class="concl">
-    <div class="chip">${svgBulb}</div>
-    <div class="txt">形は<b>関数(‘アクション名’)?['項目']</b> だけ。<b>アクション名のスペースは「_」</b>に変わる点だけ注意します。</div>
+    <div class="chip">${svg('bulb')}</div>
+    <div class="txt">承認ボタンの正体は<b>「ユーザー オプション」</b>。カンマ区切りで書いた選択肢が、そのまま<b>メールのボタン</b>になります。</div>
   </div>
 
-  <div class="stage">
-    <div class="lz">
-      <div class="hd"><span class="b">1</span>コピーして使う5つ</div>
-      <div class="qs">
-        ${Q.map(([c,l,sub,v])=>`<div class="q ${c}"><span class="lbl">${l}${sub?`<small>${sub}</small>`:''}</span><span class="val">${v}</span></div>`).join('')}
+  <div class="cols">
+    <!-- ① オプション付きメール -->
+    <div class="col">
+      <span class="cnum">1</span><span class="carrow">${svg('arrow')}</span>
+      <div class="card">
+        <div class="ch"><span class="sq"><img src="${A}icons/pa_outlook.png" alt=""></span><div><div class="nm">オプション付きメールを送信します</div><div class="cn">Office 365 Outlook ・ 標準</div></div></div>
+        <div class="ptop">
+          <div class="sect">実際の設定画面</div>
+          <div class="fld"><div class="fl">宛先</div><div class="fi">承認者（山田 部長）</div></div>
+          <div class="fld hot"><div class="fl">ユーザー オプション</div><div class="fi"><div class="opts"><span class="opt a">承認</span><span class="opt b">却下</span><span class="opt c">保留</span></div></div></div>
+          <div class="fld"><div class="fl">件名／本文</div><div class="fi"><span style="font-size:13px">承認依頼：休暇申請</span></div></div>
+        </div>
+        <div class="howsteps">
+          <div class="hh">操作手順</div>
+          <ol>
+            <li>Outlook「オプション付きメールを送信します」</li>
+            <li>宛先に<b>承認者</b>を入れる</li>
+            <li>オプションに<b>承認,却下,保留</b>とカンマ区切り</li>
+          </ol>
+        </div>
       </div>
     </div>
 
-    <div class="rz">
-      <div class="hd" style="margin-bottom:0"><span class="b">2</span>outputs と body</div>
-      <div class="diff">
-        <div class="diff-h">同じアクションでも、返る中身が違う</div>
-        <div class="diff-b">
-          <div class="drow out"><span class="dk">outputs()</span><span class="dd"><b>まるごと</b>（状態・ヘッダー・本文）</span></div>
-          <div class="drow bod"><span class="dk">body()</span><span class="dd"><b>本文だけ</b>。ふだんはこっち</span></div>
+    <!-- ② スイッチ -->
+    <div class="col hot">
+      <span class="cnum" style="background:#486FE0">2</span><span class="carrow">${svg('arrow')}</span>
+      <div class="card">
+        <div class="ch"><span class="sq real"><img src="${A}icons/pa_control.png" alt=""></span><div><div class="nm">スイッチ（分岐）</div><div class="cn">コントロール ・ 押した結果で分ける</div></div></div>
+        <div class="ptop">
+          <div class="sect">実際の設定画面</div>
+          <div class="fld hot"><div class="fl">オン（分岐のもと）</div><div class="fi"><span class="dyn">SelectedOption</span></div></div>
+          <div class="swrows">
+            <div class="swrow a"><span class="case">承認</span>台帳に記録＋申請者へ連絡</div>
+            <div class="swrow b"><span class="case">却下</span>理由を添えて差し戻し</div>
+            <div class="swrow c"><span class="case">保留</span>担当者へ相談メール</div>
+          </div>
         </div>
-        <div class="diff-note">💡 body で欲しい物が無い時だけ、<b>outputs(...)?['body']</b> と一段深く取りに行く。</div>
+        <div class="howsteps">
+          <div class="hh">操作手順</div>
+          <ol>
+            <li>スイッチのオンに <b>⚡SelectedOption</b></li>
+            <li>ケースを<b>承認／却下／保留</b>で作る</li>
+            <li>押されたボタンの枝だけ動く</li>
+          </ol>
+        </div>
       </div>
-      <div class="tip">
-        <div class="th">🔧 名前が分からない時は</div>
-        <div class="tt">実行履歴でそのアクションを開き、<code>本文</code>の中のキー名（<code>mail</code>など）を見てから <code>?['mail']</code> と書く。</div>
-        <img class="tmascot" src="${A}chara/chara_guts.png" alt="">
+    </div>
+
+    <!-- ③ 記録＆通知 -->
+    <div class="col">
+      <span class="cnum">3</span>
+      <div class="card">
+        <div class="ch"><span class="sq"><img src="${A}icons/pa_sharepoint.png" alt=""></span><div><div class="nm">項目の作成＋メール</div><div class="cn">SharePoint / Outlook ・ 標準</div></div></div>
+        <div class="ptop">
+          <div class="sect">実際の設定画面</div>
+          <div class="fld"><div class="fl">台帳へ記録（項目の作成）</div><div class="fi">承認台帳<span class="cr">▾</span></div></div>
+          <div class="fld"><div class="fl">状態</div><div class="fi"><span class="dyn">SelectedOption</span></div></div>
+          <div class="fld"><div class="fl">申請者へ結果メール</div><div class="fi"><span style="font-size:13px">承認されました ✅</span></div></div>
+        </div>
+        <div class="howsteps">
+          <div class="hh">操作手順</div>
+          <ol>
+            <li>SharePoint「項目の作成」で台帳に記録</li>
+            <li>状態に<b>押した結果</b>を入れる</li>
+            <li>申請者へ<b>結果メール</b>を送る</li>
+          </ol>
+        </div>
       </div>
     </div>
   </div>
 
   <div class="warn">
-    <span class="wt">⚠ 使う前に確認</span>
-    <span class="wl">
-      <span>アクション名の空白は <code>_</code>（「項目 取得」→<code>'項目_取得'</code>）</span>
-      <span>無い項目は <code>?</code> を付けてエラー回避</span>
-    </span>
+    <span class="wt2">⚠ 使う前に確認</span>
+    <span class="wl">待機は<b>最大30日</b>。承認者が<b>コメントを書き込むことはできず</b>、選択肢を押すだけ。Approvalsアプリのような<b>一元管理の履歴は残らない</b>ので、記録は台帳側で持ちます。</span>
   </div>
-  <div class="src">出典：Microsoft Learn（ワークフロー定義言語の関数リファレンス）／アクション名・データは架空</div>
+  <div class="src">出典：Microsoft Learn（Office 365 Outlook「オプション付きメールを送信します」）／画面は再現・氏名は架空</div>
 `;
 </script>
 <script>

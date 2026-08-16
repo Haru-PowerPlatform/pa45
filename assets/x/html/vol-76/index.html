@@ -3,15 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=1280, initial-scale=1">
-<title>X技術Tips Vol.76-1 全部取ってから選ぶのをやめる（フィルタークエリ）</title>
+<title>X技術Tips Vol.76-1 Excelの見積書が、そのままPDFで届く</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --blue:#2563EB; --blue-bg:#EFF6FF; --blue-dark:#1E40AF;
-    --green:#16A34A; --green-dark:#064E3B;
-    --red:#DC2626; --red-dark:#991B1B; --orange:#EA580C; --spo:#0F6CBD; --spo-dark:#0A4F8A;
+    --green:#16A34A; --green-dark:#065F46;
+    --red:#DC2626; --orange:#EA580C;
+    --xls:#217346; --pdf:#C4241C; --od:#0364B8; --ol:#0F6CBD;
     --ink:#1F2937; --gray:#374151; --weak:#6B7280; --line:#E5E7EB;
   }
   *{margin:0;padding:0;box-sizing:border-box;}
@@ -28,54 +29,52 @@
 
   .concl{margin:10px 16px 0;background:var(--blue-bg);border:2.5px solid var(--blue);border-radius:13px;display:flex;align-items:center;gap:13px;padding:10px 18px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
   .concl .chip{flex:0 0 auto;width:40px;height:40px;border-radius:11px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;padding:8px;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
-  .concl .txt{font-weight:800;font-size:19.5px;color:var(--blue-dark);line-height:1.36;padding-right:100px;}
+  .concl .txt{font-weight:800;font-size:19.5px;color:var(--blue-dark);line-height:1.34;padding-right:150px;}
   .concl .txt b{color:var(--orange);}
 
-  .cols{flex:1 1 auto;margin:11px 16px 0;display:grid;grid-template-columns:1fr 1fr 1fr;gap:13px;min-height:0;}
-  .col{display:flex;flex-direction:column;min-height:0;gap:7px;}
-  .ch{font-weight:900;font-size:22px;color:var(--ink);display:flex;align-items:flex-start;gap:9px;line-height:1.2;letter-spacing:-.01em;}
-  .ch .n{flex:0 0 auto;width:31px;height:31px;border-radius:50%;background:var(--blue);color:#fff;font-weight:900;font-size:18px;display:flex;align-items:center;justify-content:center;}
-  .cap{font-size:16px;font-weight:800;color:var(--gray);line-height:1.45;background:#F8F9FA;border-left:4px solid var(--blue);border-radius:0 8px 8px 0;padding:7px 10px;}
-  .cap b{color:var(--blue-dark);}
-  .col.rel .cap{padding-right:100px;}
+  .stage{flex:1 1 auto;margin:11px 16px 0;display:flex;gap:15px;min-height:0;}
 
-  .mock{flex:1;background:#fff;border:1px solid #D7DEE8;border-radius:11px;box-shadow:0 5px 13px rgba(0,0,0,.14);overflow:hidden;font-family:'Segoe UI','Noto Sans JP',sans-serif;display:flex;flex-direction:column;min-height:0;}
-  .mh{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:8px 11px;background:#F3F6FB;border-bottom:1px solid #E3E9F1;}
-  .mh img{width:22px;height:22px;object-fit:contain;}
-  .mh span{font-weight:800;font-size:16px;color:#243B58;}
-  .mb{flex:1;padding:9px 11px;display:flex;flex-direction:column;gap:6px;min-height:0;}
+  /* 左：主役メール＋PDFプレビュー */
+  .hero{flex:1.28;display:flex;flex-direction:column;min-height:0;}
+  .herocap{font-weight:900;font-size:16.5px;color:var(--green-dark);background:#ECFDF5;border:1.5px solid #6EE7B7;border-radius:9px;padding:6px 12px;margin-bottom:8px;display:flex;align-items:center;gap:8px;flex:0 0 auto;}
+  .herocap .bd{background:var(--green);color:#fff;font-size:13px;border-radius:6px;padding:2px 8px;}
+  .mail{flex:1;background:#fff;border:1px solid #D7DEE8;border-radius:13px;box-shadow:0 8px 20px rgba(0,0,0,.16);overflow:hidden;font-family:'Segoe UI','Noto Sans JP',sans-serif;display:flex;flex-direction:column;min-height:0;}
+  .mail .mh{flex:0 0 auto;display:flex;align-items:center;gap:9px;padding:9px 14px;background:linear-gradient(180deg,#F7FAFF,#EEF3FB);border-bottom:1px solid #E1E8F2;}
+  .mail .mh img{width:26px;height:26px;object-fit:contain;}
+  .mail .mh span{font-weight:800;font-size:16px;color:#1B3A5B;}
+  .mail .mh .sent{margin-left:auto;font-size:13px;font-weight:800;color:#fff;background:var(--ol);border-radius:6px;padding:3px 10px;}
+  .mbody{flex:1;padding:11px 15px 12px;display:flex;flex-direction:column;gap:9px;min-height:0;justify-content:space-between;}
+  .mrow{display:flex;gap:9px;align-items:baseline;font-size:15.5px;}
+  .mrow .l{flex:0 0 46px;color:var(--weak);font-weight:800;}
+  .mrow .r{font-weight:800;color:#243B58;}
+  .mtext{font-size:15px;font-weight:600;color:#4B5563;line-height:1.6;}
+  .msign{border-top:1px solid #EEF1F5;padding-top:8px;font-size:13px;font-weight:700;color:#94A3B8;line-height:1.5;}
+  .msign b{color:#64748B;}
+  /* 添付：PDFプレビュー＋カード */
+  .attwrap{display:flex;gap:12px;align-items:stretch;}
+  .pdfprev{flex:0 0 128px;position:relative;filter:drop-shadow(0 5px 10px rgba(0,0,0,.18));}
+  .attcard{flex:1;display:flex;flex-direction:column;justify-content:center;gap:8px;background:linear-gradient(180deg,#FFF8F7,#FFEEEC);border:2px solid #F3B4AE;border-radius:12px;padding:12px 14px;}
+  .attcard .an{display:flex;align-items:center;gap:9px;}
+  .attcard .pdfmini{flex:0 0 auto;width:30px;height:36px;}
+  .att-name{font-weight:900;font-size:18px;color:#1F2937;}
+  .att-meta{font-size:13.5px;font-weight:800;color:var(--weak);}
+  .att-badge{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;background:var(--green);color:#fff;border-radius:8px;padding:6px 11px;font-weight:900;font-size:14px;box-shadow:0 3px 7px rgba(6,95,70,.3);}
 
-  /* ①URLバー */
-  .urlbar{background:#F1F5F9;border:1.5px solid #CBD5E1;border-radius:8px;padding:8px 10px;font-family:'Roboto Mono',monospace;font-size:14px;color:#475569;word-break:break-all;line-height:1.45;}
-  .urlbar b{background:#FEF08A;color:#854D0E;border-radius:3px;padding:1px 3px;}
-  .kv{display:flex;gap:8px;align-items:center;font-size:15px;font-weight:800;}
-  .kv .k{flex:0 0 62px;color:var(--weak);}
-  .kv .v{flex:1;font-family:'Roboto Mono',monospace;color:#0B3A8F;background:#EFF6FF;border-radius:6px;padding:5px 8px;font-size:14.5px;word-break:break-all;}
-  .warnmini{font-size:14px;font-weight:800;color:#9A3412;background:#FFF7ED;border:1px solid #FDBA74;border-radius:7px;padding:6px 8px;line-height:1.4;}
+  /* 右：リッチSVGの3ステップ */
+  .side{flex:1;display:flex;flex-direction:column;gap:7px;min-height:0;}
+  .stepcard{flex:1;display:flex;align-items:center;gap:13px;background:linear-gradient(180deg,#FCFDFF,#F3F7FC);border:2px solid #D3DCEA;border-radius:13px;padding:9px 14px;box-shadow:0 3px 9px rgba(0,0,0,.09),inset 0 1px 0 rgba(255,255,255,.8);min-height:0;position:relative;}
+  .stepcard.s2{border-color:#8AC4EE;background:linear-gradient(180deg,#F3FAFF,#E7F3FD);}
+  .stepcard .num{position:absolute;top:-9px;left:-9px;width:30px;height:30px;border-radius:50%;background:var(--blue);color:#fff;font-weight:900;font-size:17px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 5px rgba(0,0,0,.3);z-index:3;}
+  .stepcard.s2 .num{background:var(--od);}
+  .scn{flex:0 0 auto;width:88px;height:78px;display:flex;align-items:center;justify-content:center;}
+  .stepcard .tx{min-width:0;}
+  .stepcard .tt{font-weight:900;font-size:18.5px;color:var(--ink);line-height:1.22;}
+  .stepcard .ss{font-weight:700;font-size:13.5px;color:var(--weak);line-height:1.3;margin-top:3px;}
+  .stepcard .ss b{color:var(--od);}
+  .conn{flex:0 0 auto;height:14px;display:flex;align-items:center;justify-content:center;}
+  .conn svg{width:22px;height:14px;color:var(--blue);}
 
-  /* ②フィルター入力 */
-  .fld{border:1px solid #DCE3EC;border-radius:8px;overflow:hidden;}
-  .fld .fl{font-size:12.5px;font-weight:800;color:#64748B;background:#F8FAFC;padding:3px 8px;border-bottom:1px solid #E8EDF3;}
-  .fld .fi{font-size:15.5px;font-weight:700;color:#243B58;padding:8px 10px;}
-  .fld.hot{border:2px solid var(--blue);box-shadow:0 2px 7px rgba(37,99,235,.2);}
-  .fld.hot .fi{font-family:'Roboto Mono',monospace;font-size:14.5px;color:#0B3A8F;word-break:break-all;line-height:1.45;}
-
-  /* ③結果 */
-  .cnt{display:flex;align-items:center;gap:9px;}
-  .cnt .big{font-weight:900;font-size:33px;line-height:1;}
-  .cnt .lb{font-size:15px;font-weight:800;color:var(--weak);line-height:1.25;}
-  .cnt.ng .big{color:var(--red);} .cnt.ok .big{color:var(--green);}
-  .arrowdown{align-self:center;width:26px;height:26px;color:var(--blue);}
-  .rows{flex:1;display:flex;flex-direction:column;border:1px solid #E8EDF3;border-radius:8px;overflow:hidden;min-height:0;}
-  .rw{flex:1;display:flex;align-items:center;gap:7px;padding:0 10px;font-size:15px;font-weight:700;color:#243B58;border-bottom:1px solid #F1F4F8;min-height:0;}
-  .rw:last-child{border-bottom:none;}
-  .rw .dot{flex:0 0 auto;width:8px;height:8px;border-radius:50%;background:var(--green);}
-  .rw .dt{margin-left:auto;font-family:'Roboto Mono',monospace;font-size:13.5px;color:var(--weak);}
-
-  .cmascot{position:absolute;right:-8px;bottom:-6px;height:116px;z-index:30;filter:drop-shadow(0 3px 7px rgba(0,0,0,.4));}
-  .col.rel{position:relative;}
-
-  .next{flex:0 0 auto;margin:10px 16px 18px;background:linear-gradient(180deg,#EAF2FF,#DCEAFE);border:2.5px solid var(--blue);border-radius:13px;padding:12px 18px;display:flex;align-items:center;gap:11px;font-weight:900;font-size:20px;color:var(--blue-dark);box-shadow:0 3px 9px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .next{flex:0 0 auto;margin:9px 16px 15px;background:linear-gradient(180deg,#EAF2FF,#DCEAFE);border:2.5px solid var(--blue);border-radius:13px;padding:11px 18px;display:flex;align-items:center;gap:11px;font-weight:900;font-size:20px;color:var(--blue-dark);box-shadow:0 3px 9px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
   .next .na{flex:0 0 auto;width:26px;height:26px;color:var(--blue);}
   .next b{color:var(--orange);}
   .src{position:absolute;left:16px;bottom:4px;font-size:10px;color:#AEB6C2;font-weight:700;z-index:3;}
@@ -86,74 +85,124 @@
 <script>
 const A="../../pptx/_assets/";
 const ICON={arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',down:'<path d="M12 5v14M6 13l6 6 6-6"/>',bulb:'<path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/>'};
-const svg=(n)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${ICON[n]}</svg>`;
+const svg=(n)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">${ICON[n]}</svg>`;
+
+/* ---- 高品質SVG図解 ---- */
+// Excel見積書ドキュメント
+const svgExcel=`<svg viewBox="0 0 80 78" width="80" height="78">
+  <defs><linearGradient id="xg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2A8C57"/><stop offset="1" stop-color="#1C6A41"/></linearGradient></defs>
+  <rect x="9" y="4" width="58" height="70" rx="6" fill="#fff" stroke="#CBD5E1" stroke-width="1.5" filter="drop-shadow(0 3px 4px rgba(0,0,0,.14))"/>
+  <rect x="9" y="4" width="58" height="17" rx="6" fill="url(#xg)"/>
+  <rect x="9" y="14" width="58" height="7" fill="url(#xg)"/>
+  <text x="16" y="17" fill="#fff" font-family="Segoe UI,Arial" font-weight="900" font-size="10">見積書.xlsx</text>
+  <g fill="none" stroke="#DCE6F0" stroke-width="1">
+    <line x1="16" y1="32" x2="60" y2="32"/><line x1="16" y1="42" x2="60" y2="42"/><line x1="16" y1="52" x2="60" y2="52"/><line x1="38" y1="27" x2="38" y2="66"/>
+  </g>
+  <rect x="16" y="27" width="44" height="5.5" fill="#D6EBDF"/>
+  <rect x="17" y="35" width="17" height="4.5" rx="1" fill="#94A3B8"/><rect x="42" y="35" width="15" height="4.5" rx="1" fill="#94A3B8"/>
+  <rect x="17" y="45" width="17" height="4.5" rx="1" fill="#94A3B8"/><rect x="42" y="45" width="15" height="4.5" rx="1" fill="#94A3B8"/>
+  <rect x="16" y="56" width="44" height="9" fill="#DCFCE7"/>
+  <text x="19" y="63" fill="#15803D" font-family="Segoe UI" font-weight="900" font-size="7.5">合計</text>
+  <text x="57" y="63" text-anchor="end" fill="#15803D" font-family="Segoe UI" font-weight="900" font-size="8">¥1,500,000</text>
+</svg>`;
+// 変換：Excel→PDF ＋ ⚡
+const svgConv=`<svg viewBox="0 0 88 78" width="88" height="78">
+  <defs>
+    <linearGradient id="cg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2A8C57"/><stop offset="1" stop-color="#1C6A41"/></linearGradient>
+    <linearGradient id="pg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E0473F"/><stop offset="1" stop-color="#B41E17"/></linearGradient>
+  </defs>
+  <g filter="drop-shadow(0 2px 3px rgba(0,0,0,.16))"><rect x="4" y="18" width="30" height="40" rx="4" fill="#fff" stroke="#CBD5E1"/><rect x="4" y="18" width="30" height="10" rx="4" fill="url(#cg)"/><text x="9" y="26" fill="#fff" font-weight="900" font-size="6.5" font-family="Segoe UI">XLSX</text><rect x="9" y="34" width="20" height="3" rx="1" fill="#B6C2D1"/><rect x="9" y="41" width="20" height="3" rx="1" fill="#B6C2D1"/><rect x="9" y="48" width="14" height="3" rx="1" fill="#B6C2D1"/></g>
+  <g><path d="M40 38h9" stroke="#2563EB" stroke-width="3.4" stroke-linecap="round"/><path d="M46 33l6 5-6 5" fill="none" stroke="#2563EB" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/><circle cx="44.5" cy="24" r="8" fill="#FACC15"/><path d="M45 19l-4 6h3l-1 5 4-6h-3z" fill="#B45309"/></g>
+  <g filter="drop-shadow(0 2px 3px rgba(0,0,0,.16))"><rect x="54" y="18" width="30" height="40" rx="4" fill="#fff" stroke="#E4A8A3"/><rect x="54" y="46" width="30" height="12" rx="4" fill="url(#pg)"/><text x="69" y="55" text-anchor="middle" fill="#fff" font-weight="900" font-size="7.5" font-family="Segoe UI">PDF</text><rect x="59" y="26" width="20" height="3" rx="1" fill="#E7B7B3"/><rect x="59" y="33" width="20" height="3" rx="1" fill="#E7B7B3"/><rect x="59" y="40" width="14" height="3" rx="1" fill="#E7B7B3"/></g>
+</svg>`;
+// 送信：封筒＋PDF＋send弧
+const svgSend=`<svg viewBox="0 0 88 78" width="88" height="78">
+  <defs><linearGradient id="eg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3B82F6"/><stop offset="1" stop-color="#1D4ED8"/></linearGradient></defs>
+  <path d="M18 60 C34 46 52 40 74 30" fill="none" stroke="#93C5FD" stroke-width="2.4" stroke-dasharray="3 4" stroke-linecap="round"/>
+  <g filter="drop-shadow(0 4px 6px rgba(0,0,0,.2))">
+    <rect x="16" y="30" width="52" height="36" rx="5" fill="url(#eg)"/>
+    <path d="M16 33 L42 52 L68 33" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="46" y="14" width="24" height="30" rx="3" fill="#fff" stroke="#E4A8A3" transform="rotate(8 58 29)"/>
+    <rect x="49" y="34" width="20" height="8" rx="2" fill="#C4241C" transform="rotate(8 58 29)"/>
+    <text x="59" y="41" text-anchor="middle" fill="#fff" font-weight="900" font-size="5.5" font-family="Segoe UI" transform="rotate(8 58 29)">PDF</text>
+  </g>
+</svg>`;
+// メール内PDFプレビュー(A4)
+const pdfPreview=`<svg viewBox="0 0 128 150" width="128" height="150" preserveAspectRatio="xMidYMid meet">
+  <rect x="6" y="4" width="116" height="142" rx="6" fill="#fff" stroke="#E2C4C1" stroke-width="1.5"/>
+  <rect x="6" y="4" width="116" height="24" rx="6" fill="#FBEEEC"/><rect x="6" y="16" width="116" height="12" fill="#FBEEEC"/>
+  <text x="16" y="21" fill="#B41E17" font-family="Noto Sans JP,Segoe UI" font-weight="900" font-size="12">御 見 積 書</text>
+  <text x="112" y="40" text-anchor="end" fill="#94A3B8" font-size="7.5" font-weight="700">2026/08/01</text>
+  <text x="16" y="40" fill="#334155" font-size="8" font-weight="800">みらい商事 御中</text>
+  <g stroke="#EDE1E0" stroke-width="1"><line x1="16" y1="52" x2="112" y2="52"/><line x1="16" y1="66" x2="112" y2="66"/><line x1="16" y1="80" x2="112" y2="80"/><line x1="16" y1="94" x2="112" y2="94"/></g>
+  <rect x="16" y="46" width="96" height="7" fill="#F6E3E1"/>
+  <rect x="20" y="57" width="40" height="4.5" rx="1" fill="#B6C2D1"/><rect x="86" y="57" width="24" height="4.5" rx="1" fill="#B6C2D1"/>
+  <rect x="20" y="71" width="44" height="4.5" rx="1" fill="#B6C2D1"/><rect x="86" y="71" width="24" height="4.5" rx="1" fill="#B6C2D1"/>
+  <rect x="20" y="85" width="34" height="4.5" rx="1" fill="#B6C2D1"/><rect x="86" y="85" width="24" height="4.5" rx="1" fill="#B6C2D1"/>
+  <rect x="16" y="100" width="96" height="14" rx="2" fill="#FDECEA"/>
+  <text x="22" y="110" fill="#B41E17" font-weight="900" font-size="9" font-family="Noto Sans JP">合計</text>
+  <text x="110" y="110" text-anchor="end" fill="#B41E17" font-weight="900" font-size="10" font-family="Segoe UI">¥1,500,000</text>
+  <rect x="16" y="122" width="70" height="4" rx="1" fill="#D8DEE6"/><rect x="16" y="131" width="54" height="4" rx="1" fill="#D8DEE6"/>
+  <rect x="86" y="120" width="30" height="16" rx="3" fill="#C4241C"/><text x="101" y="131" text-anchor="middle" fill="#fff" font-weight="900" font-size="8" font-family="Segoe UI">PDF</text>
+</svg>`;
+const pdfMini=`<svg viewBox="0 0 30 36" width="30" height="36"><rect x="1" y="1" width="24" height="34" rx="3" fill="#fff" stroke="#E4A8A3"/><path d="M18 1l7 7h-7z" fill="#F3D3D0"/><rect x="1" y="21" width="28" height="11" rx="2" fill="#C4241C"/><text x="15" y="29" text-anchor="middle" fill="#fff" font-weight="900" font-size="7" font-family="Segoe UI">PDF</text></svg>`;
 
 document.getElementById('slide').innerHTML=`
   <div class="titlebar">
     <div class="vol-pill">Vol.76-1</div>
     <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
-    <div class="title-text">全部取ってから選ぶのをやめる｜<span class="hl">SharePointは“絞ってから”取る</span></div>
+    <div class="title-text">手作業のPDF保存はもう卒業｜Excelの見積書が、<span class="hl">そのままPDFで届く</span></div>
     <img class="title-chara" src="${A}chara/chara_confident.png" alt="">
   </div>
 
   <div class="concl">
     <div class="chip">${svg('bulb')}</div>
-    <div class="txt">「複数の項目の取得」は<b>既定で100件</b>しか返しません。ループの中で選り分けるより、<b>フィルター クエリ</b>で最初から絞るほうが速くて安全です。</div>
+    <div class="txt">「PDF化は<b>有料コネクタ</b>が要る」と思われがちですが、OneDriveの標準アクション<b>「ファイルの変換」</b>ひとつで、Excel や Word を PDF にできます。</div>
   </div>
 
-  <div class="cols">
-    <div class="col">
-      <div class="ch"><span class="n">1</span>列の“内部名”を調べる</div>
-      <div class="mock">
-        <div class="mh"><img src="${A}icons/pa_sharepoint.png" alt=""><span>リストの設定 － 列</span></div>
-        <div class="mb">
-          <div class="urlbar">…&amp;<b>Field=Start_x0020_Date</b></div>
-          <div class="kv"><span class="k">表示名</span><span class="v">開始 日付</span></div>
-          <div class="kv"><span class="k">内部名</span><span class="v">Start_x0020_Date</span></div>
-          <div class="warnmini">⚠ 画面の表示名では動きません。スペースは <b>_x0020_</b> に化けます。</div>
-          <div class="kv"><span class="k">日本語名</span><span class="v">_x65e5__x4ed8_</span></div>
-          <div class="warnmini" style="background:#EFF6FF;border-color:#93C5FD;color:#1E40AF;">💡 日本語で作った列は記号の羅列になります。<b>あとから列名を英語に変えても内部名は変わりません</b>。作るときに英語にしておくと楽です。</div>
-        </div>
-      </div>
-      <div class="cap">列名をクリックし、<b>URLの「Field=」の後ろ</b>を見ます。これがクエリに書く名前です。</div>
-    </div>
-
-    <div class="col">
-      <div class="ch"><span class="n">2</span>フィルター クエリに書く</div>
-      <div class="mock">
-        <div class="mh"><img src="${A}icons/pa_sharepoint.png" alt=""><span>複数の項目の取得 － 詳細設定</span></div>
-        <div class="mb">
-          <div class="fld"><div class="fl">サイトのアドレス</div><div class="fi">営業部サイト</div></div>
-          <div class="fld"><div class="fl">リスト名</div><div class="fi">案件管理</div></div>
-          <div class="fld hot"><div class="fl">フィルター クエリ</div><div class="fi">Status eq '未完了' and Start_x0020_Date le '@{utcNow()}'</div></div>
-          <div class="fld"><div class="fl">上位カウント</div><div class="fi">100</div></div>
-        </div>
-      </div>
-      <div class="cap"><b>列名 演算子 値</b> の順で書くだけ。文字列は<b>シングルクォート</b>で囲みます。</div>
-    </div>
-
-    <div class="col rel">
-      <div class="ch"><span class="n">3</span>必要な分だけ返ってくる</div>
-      <div class="mock">
-        <div class="mh"><img src="${A}icons/pa_logo.png" alt=""><span>実行結果</span></div>
-        <div class="mb">
-          <div class="cnt ng"><span class="big">100</span><span class="lb">件ぜんぶ取ってから<br>ループで選り分け</span></div>
-          <span class="arrowdown">${svg('down')}</span>
-          <div class="cnt ok"><span class="big">12</span><span class="lb">件だけ返ってくる</span></div>
-          <div class="rows">
-            <div class="rw"><span class="dot"></span>A社 見積提出<span class="dt">07/24</span></div>
-            <div class="rw"><span class="dot"></span>B社 訪問<span class="dt">07/25</span></div>
-            <div class="rw"><span class="dot"></span>C社 契約更新<span class="dt">07/28</span></div>
+  <div class="stage">
+    <div class="hero">
+      <div class="herocap">できあがるのはコレ<span class="bd">自動送信メール</span>見積書が PDF で添付されて届く</div>
+      <div class="mail">
+        <div class="mh"><img src="${A}icons/pa_outlook.png" alt=""><span>お見積書の送付</span><span class="sent">送信済み</span></div>
+        <div class="mbody">
+          <div class="mrow"><span class="l">宛先</span><span class="r">株式会社みらい商事 ご担当者様</span></div>
+          <div class="mtext">いつもお世話になっております。<br>ご依頼いただいた御見積書を添付にてお送りいたします。ご確認のほど、よろしくお願いいたします。</div>
+          <div class="attwrap">
+            <div class="pdfprev">${pdfPreview}</div>
+            <div class="attcard">
+              <div class="an"><span class="pdfmini">${pdfMini}</span><div><div class="att-name">御見積書_2026-08.pdf</div><div class="att-meta">PDF ファイル ・ 128 KB</div></div></div>
+              <div class="att-badge">⚡ Excel から自動でPDF化</div>
+            </div>
           </div>
+          <div class="msign">──────────<br><b>みらい産業株式会社 営業部</b> ／ 山田 太郎<br>TEL 082-XXX-XXXX ／ yamada@example.co.jp</div>
         </div>
       </div>
-      <div class="cap">ループの回数が減るので<b>速くなり、実行回数の節約</b>にもなります。</div>
-      <img class="cmascot" src="${A}chara/chara_guts.png" alt="">
+    </div>
+
+    <div class="side">
+      <div class="stepcard">
+        <span class="num">1</span>
+        <div class="scn">${svgExcel}</div>
+        <div class="tx"><div class="tt">Excelで見積書を作る</div><div class="ss">いつものテンプレに金額を入力するだけ</div></div>
+      </div>
+      <div class="conn">${svg('down')}</div>
+      <div class="stepcard s2">
+        <span class="num">2</span>
+        <div class="scn">${svgConv}</div>
+        <div class="tx"><div class="tt">「ファイルの変換」でPDFに</div><div class="ss"><b>OneDrive の標準アクション</b>／追加料金なし</div></div>
+      </div>
+      <div class="conn">${svg('down')}</div>
+      <div class="stepcard">
+        <span class="num">3</span>
+        <div class="scn">${svgSend}</div>
+        <div class="tx"><div class="tt">メールに添付して送る</div><div class="ss">相手にはPDFだけが届く。Excelは渡さない</div></div>
+      </div>
     </div>
   </div>
 
-  <div class="next"><span class="na">${svg('arrow')}</span>等しい・含む・日付・並べ替え…<b>そのまま使えるクエリ文</b>と<b>5000件の壁</b>は <b>2枚目</b>へ！</div>
-  <div class="src">出典：Microsoft Learn（アイテムの取得とファイルの取得アクションの詳細な分析）／画面は再現・データは架空</div>
+  <div class="next"><span class="na">${svg('arrow')}</span>実は<b>変換しただけでは保存されません</b>。全員がつまずく“正しいつなぎ方”は <b>2枚目</b>へ！</div>
+  <div class="src">出典：Microsoft Learn（OneDrive for Business コネクタ「ファイルの変換」）／画面は再現・会社名や金額は架空</div>
 `;
 </script>
 <script>

@@ -34,7 +34,7 @@ CSS = """
 .mb-shot{margin:52px 0;background:#eceef2;border:1px solid #d9dce3;border-radius:16px;padding:16px 16px 13px;box-shadow:0 3px 12px rgba(15,23,42,.09);}
 .mb-shot .sh-tag{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:800;color:#475569;background:#dde1e9;border-radius:999px;padding:5px 14px;margin-bottom:12px;letter-spacing:.02em;}
 .mb-shot img{width:100%;height:auto;display:block;border-radius:10px;border:1px solid #c7cad3;box-shadow:0 6px 18px rgba(15,23,42,.20);}
-.mb-shot figcaption{font-size:.85em;color:#5b4a7a;margin-top:14px;line-height:1.65;}
+.mb-shot figcaption{font-size:1.02em;color:#5b4a7a;margin-top:14px;line-height:1.8;}
 .mb-body > p{margin:1.9em 0!important;line-height:2.05!important;}
 .mb-body > h2{margin-top:2.8em!important;}
 .mb-body > h3{margin-top:2.4em!important;}
@@ -117,6 +117,9 @@ CSS = """
 .vtbl td.ok{color:#166534;font-weight:700;}
 .vtbl td.ng{color:#991b1b;font-weight:700;}
 .vtbl td.er{color:#555;font-weight:700;}
+.cs-preface{background:#eef7f1;border:1px solid #cfe8db;border-left:5px solid #5f8a6e;border-radius:10px;padding:14px 18px;margin:0 0 26px;font-size:.86em;color:#3d5647;line-height:1.85;}
+.cs-preface b{color:#2f6b4f;}
+.cs-preface a{color:#1d4ed8;font-weight:700;}
 </style>
 """
 
@@ -223,8 +226,9 @@ RES3 = ('<div class="res3">'
 
 # ===== 本文 =====
 H_=[]; a=H_.append
+a('<div class="cs-preface">📝 実際に <b>Copilot Studio を触って検証</b>し、スクショを撮りながら気づいたことをまとめた記録です。<br>機能・画面・料金は更新が続きます。<br>最新の正確な情報は <a href="https://learn.microsoft.com/ja-jp/microsoft-copilot-studio/" target="_blank" rel="noopener">Microsoft 公式（Microsoft Learn）</a> をご確認ください。</div>')
 
-a('\n\n<div class="mb-intro">この記事は、筆者が実際に Copilot Studio の評価機能を動かしながら、つまずいた所を AI と壁打ち（相談）しつつまとめたものです。うまくいった話だけでなく、<b>0%と出て原因を切り分けた過程</b>も含めて書いています。</div>')
+a('\n\n<div class="mb-intro">この記事は、筆者が実際に Copilot Studio の評価機能を動かしながら、つまずいた所を AI と壁打ち（相談）しつつまとめた記録です。<br>うまくいった話だけでなく、<b>0%と出て原因を切り分けた過程</b>も含めて書いています。</div>')
 
 a(PL('Copilot Studio でエージェントを作っていると、指示文を1行いじるたびに「さっきまで答えられていたことが、答えられなくなっていないか」が気になります。'))
 a(PL('とはいえ、毎回すべての質問を手で打ち直して確かめるのは現実的ではありません。そこで使うのが <span class="hl-marker">評価（Evaluate）</span>です。よく来る質問をセットにしておいて、<strong>まとめて流して点数で見る</strong>機能です。'))
@@ -286,7 +290,7 @@ a(NB)
 a(H2('作り方（実画面つき）'))
 
 a(H3('ステップ①：質問セットを作る'))
-a(P('「Evaluate」タブを開くと、最初は3つの入口が出てきます。'))
+a(P('「Evaluate」タブを開くと、最初は3つの入口が出てきました。'))
 a(ul(['<strong>CSVをアップロード</strong>（テンプレートあり）',
       '<strong>Quick conversation set</strong>（エージェントの指示文をもとに、AIが10問を自動生成）',
       '<strong>自分で質問を書く</strong>（Or, write some questions yourself）']))
@@ -312,10 +316,10 @@ a(P('実行すると1〜2分ほどで結果が出ます。右側に <strong>Scor
 
 a(NB)
 a(H2('&#x26a0;&#xfe0f; ここでつまずいた ── 0% と出た'))
-a(P('筆者が最初に作ったのは、これまで手で確かめてきた<strong>5つの質問</strong>を1セットにしたものでした。講座の内容を聞く質問が3つ、申し込みの質問が1つ、そして「今日の天気は？」（＝答えてはいけない質問）が1つです。'))
+a(P('筆者は最初、これまで手で確かめてきた<strong>5つの質問</strong>を1セットにしました。講座の内容を聞く質問が3つ、申し込みの質問が1つ、そして「今日の天気は？」（＝答えてはいけない質問）が1つです。'))
 a(P('実行した結果は <strong>Score 0%</strong>。'))
 a(shot(U["error"], "▲ 5つの質問を1セットで流した結果。Score 0% で、その下に小さく「Error」と出ている"))
-a(P('回答そのものを見に行くと、<strong>5問すべてにきちんと答えていました</strong>。講座の内容は出典つきで正確、申し込みには丁寧に対応し、天気の質問はきちんと断っている。<strong>中身は問題ないのに0%</strong>だったのです。'))
+a(P('回答そのものを見に行くと、<strong>5問すべてにきちんと答えていました</strong>。講座の内容は出典つきで正確、申し込みには丁寧に対応し、天気の質問はきちんと断っている。<strong>中身は問題ないのに0%</strong>でした。'))
 a(bubble('ここで「指示文が悪いのかな」と直しに行きかけました。結論から言うと、それは完全に無駄足でした&#x1f605; <strong>0%の意味を読み違えていた</strong>んです。'))
 
 a(NB)
@@ -400,7 +404,7 @@ a(cta_pa('&#x1f64c; こういうのを、毎週みんなで作っています',
 a(P(f'過去回のまとめや、PA45がどんな勉強会かは <a href="{PA45_URL}" target="_blank" rel="noopener">PA45の紹介ページ</a> にまとめています。また次回、一緒に「できた！」を作りましょう。'))
 a(cta_yt())
 
-a('\n\n<p style="font-size:13px;color:#888;line-height:1.9;">※ 本記事は公開日時点の情報をもとに、筆者が実際に学んで試した内容を整理したものです。評価（Evaluation）はプレビュー機能であり、画面や挙動は更新されることがあります。最新の状況は公式情報（Microsoft Learn）もあわせてご確認ください。記事中の結果は筆者の環境で実行したもので、7回の実行のうち同じ条件を複数回くり返して確認しています。</p>')
+a('\n\n<p style="font-size:13px;color:#888;line-height:1.9;">※ 本記事は公開日時点の情報をもとに、筆者が実際に学んで試した内容を整理しました。評価（Evaluation）はプレビュー機能であり、画面や挙動は更新されることがあります。最新の状況は公式情報（Microsoft Learn）もあわせてご確認ください。記事中の結果は筆者の環境で実行したもので、7回の実行のうち同じ条件を複数回くり返して確認しています。</p>')
 a('\n\n<p style="font-size:13px;color:#888;line-height:1.9;">※ 掲載している画面は、実際の操作画面をもとに、個人情報などを避けて描き直した再現イメージです。構成や図解の一部は、AI と壁打ちしながら作成しています。</p>')
 
 content=CSS+'\n\n<div class="mb-body">'+"".join(H_)+'\n\n</div>'

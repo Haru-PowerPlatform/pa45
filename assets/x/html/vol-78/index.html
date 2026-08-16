@@ -3,15 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=1280, initial-scale=1">
-<title>X技術Tips Vol.78-1 そのフロー、追加のお金がいる？いらない？</title>
+<title>X技術Tips Vol.78-1 戻し忘れのチェックアウトを本人にお知らせ</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --blue:#2563EB; --blue-bg:#EFF6FF; --blue-dark:#1E40AF;
-    --green:#16A34A; --green-bg:#ECFDF5; --green-dark:#064E3B;
-    --red:#DC2626; --red-dark:#991B1B; --orange:#EA580C; --amber:#9A3412;
+    --green:#16A34A; --green-dark:#065F46;
+    --red:#DC2626; --orange:#EA580C; --spo:#0F6CBD; --spo-dark:#0A4F8A; --teams:#5B5FC7;
     --ink:#1F2937; --gray:#374151; --weak:#6B7280; --line:#E5E7EB;
   }
   *{margin:0;padding:0;box-sizing:border-box;}
@@ -22,180 +22,167 @@
   .titlebar{height:90px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:16px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
   .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:26px;border-radius:999px;padding:7px 20px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
   .vol-logo{height:50px;width:50px;object-fit:contain;flex:0 0 auto;background:#fff;border-radius:12px;padding:5px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
-  .title-text{color:#fff;font-weight:900;font-size:26.5px;line-height:1.14;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:158px;}
+  .title-text{color:#fff;font-weight:900;font-size:27px;line-height:1.14;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:150px;}
   .title-text .hl{color:#FFE08A;}
-  .title-chara{position:absolute;right:14px;bottom:-44px;height:146px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+  .title-chara{position:absolute;right:14px;bottom:-40px;height:142px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
 
-  .concl{margin:10px 16px 0;background:var(--blue-bg);border:2.5px solid var(--blue);border-radius:13px;display:flex;align-items:center;gap:13px;padding:11px 18px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
-  .concl .chip{flex:0 0 auto;width:42px;height:42px;border-radius:11px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;padding:8px;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
-  .concl .txt{font-weight:800;font-size:20px;color:var(--blue-dark);line-height:1.36;padding-right:100px;}
+  .concl{margin:10px 16px 0;background:var(--blue-bg);border:2.5px solid var(--blue);border-radius:13px;display:flex;align-items:center;gap:13px;padding:10px 18px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;width:40px;height:40px;border-radius:11px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;padding:8px;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
+  .concl .txt{font-weight:800;font-size:19.5px;color:var(--blue-dark);line-height:1.34;padding-right:150px;}
   .concl .txt b{color:var(--orange);}
 
-  .stage{flex:1 1 auto;margin:12px 16px 0;display:flex;gap:16px;min-height:0;}
+  .cols{flex:1 1 auto;margin:12px 16px 0;display:grid;grid-template-columns:1fr 1fr 1fr;gap:15px;min-height:0;}
+  .col{position:relative;display:flex;flex-direction:column;min-height:0;gap:9px;}
+  .ch{font-weight:900;font-size:21px;color:var(--ink);display:flex;align-items:center;gap:9px;line-height:1.15;letter-spacing:-.01em;flex:0 0 auto;}
+  .ch .n{flex:0 0 auto;width:32px;height:32px;border-radius:50%;background:var(--blue);color:#fff;font-weight:900;font-size:18px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 4px rgba(0,0,0,.22);}
+  .col.c3 .ch .n{background:var(--teams);}
+  .scene{flex:1;background:#fff;border:1px solid #D7DEE8;border-radius:13px;box-shadow:0 5px 13px rgba(0,0,0,.13);overflow:hidden;display:flex;flex-direction:column;min-height:0;}
+  .sh{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:8px 11px;background:#F3F6FB;border-bottom:1px solid #E3E9F1;}
+  .sh img{width:22px;height:22px;object-fit:contain;}
+  .sh span{font-weight:800;font-size:14.5px;color:#243B58;}
+  .sh.tm{background:#EEF0FB;border-color:#DBDEF6;} .sh.tm span{color:#3A3E8C;}
+  .sb{flex:1;padding:10px;display:flex;flex-direction:column;min-height:0;}
+  .cap{flex:0 0 auto;font-size:15.5px;font-weight:800;color:var(--gray);line-height:1.4;background:#F8F9FA;border-left:4px solid var(--blue);border-radius:0 9px 9px 0;padding:8px 11px;}
+  .cap b{color:var(--blue-dark);}
+  .col.c3 .cap{border-left-color:var(--teams);} .col.c3 .cap b{color:#3A3E8C;}
+  .carrow{position:absolute;top:52%;right:-12px;width:22px;height:22px;color:var(--blue);z-index:6;}
 
-  /* 左：判定（SVG分岐図解） */
-  .flowz{flex:0 0 486px;display:flex;flex-direction:column;min-height:0;}
-  .hd{font-weight:900;font-size:23px;color:var(--ink);margin-bottom:9px;display:flex;align-items:center;gap:9px;letter-spacing:-.01em;}
-  .hd .b{flex:0 0 auto;width:32px;height:32px;border-radius:50%;background:var(--blue);color:#fff;font-weight:900;font-size:18px;display:flex;align-items:center;justify-content:center;}
-  .flow{flex:1;display:flex;flex-direction:column;gap:10px;min-height:0;}
-  .qbox{background:#fff;border:3px solid var(--blue);border-radius:14px;padding:13px 16px;box-shadow:0 5px 13px rgba(37,99,235,.18);text-align:center;flex:0 0 auto;}
-  .qbox .qq{font-weight:900;font-size:22px;color:var(--blue-dark);line-height:1.32;}
-  .qbox .qq .diamond{color:var(--orange);}
-  .split{flex:1;display:flex;gap:13px;min-height:0;}
-  .road{flex:1;border-radius:15px;padding:12px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:4px;position:relative;overflow:hidden;}
-  .road.free{background:linear-gradient(180deg,#F1FCF6,#DEF5E8);border:3px solid #6EE7A8;}
-  .road.pay{background:linear-gradient(180deg,#FFF7ED,#FFE7CE);border:3px solid #FDBA74;}
-  .road .rimg{width:100%;height:112px;flex:0 0 auto;}
-  .road .rans{font-weight:900;font-size:19px;line-height:1.2;}
-  .road.free .rans{color:var(--green-dark);}
-  .road.pay .rans{color:var(--amber);}
-  .road .rdesc{font-size:15.5px;font-weight:800;line-height:1.4;}
-  .road.free .rdesc{color:#166534;}
-  .road.pay .rdesc{color:#7C2D12;}
-  .road .rbadge{margin-top:auto;font-weight:900;font-size:16px;border-radius:999px;padding:5px 15px;}
-  .road.free .rbadge{background:#16A34A;color:#fff;}
-  .road.pay .rbadge{background:#EA580C;color:#fff;}
+  /* ①ライブラリの行 */
+  .frow{display:flex;align-items:center;gap:8px;padding:8px 9px;border-radius:8px;font-size:14px;font-weight:800;color:#243B58;border:1px solid #EDF1F6;margin-bottom:6px;}
+  .frow:last-child{margin-bottom:0;}
+  .frow .xi{flex:0 0 auto;width:22px;height:26px;}
+  .frow .fn{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .frow .who{font-size:12px;font-weight:800;color:#94A3B8;}
+  .frow.lock{background:#FFF5F5;border:1.6px solid #F3B4B4;}
+  .frow.lock .who{color:#B91C1C;}
+  .scanbar{margin-top:auto;font-size:14px;font-weight:900;color:var(--spo-dark);background:#EAF4FD;border:1.5px dashed #8CC1EC;border-radius:8px;padding:7px 9px;text-align:center;}
+  .lockpill{flex:0 0 auto;display:inline-flex;align-items:center;gap:3px;background:#FEE2E2;color:#B91C1C;font-size:11.5px;font-weight:900;border-radius:6px;padding:2px 7px;}
 
-  .miss{flex:0 0 auto;background:#FFFBF5;border:2px solid #FDBA74;border-radius:12px;padding:9px 13px;display:flex;align-items:center;gap:11px;}
-  .miss .mi{flex:0 0 auto;font-size:26px;}
-  .miss .mtx{font-size:15px;font-weight:800;color:#7C2D12;line-height:1.42;}
-  .miss .mtx b{color:#9A3412;}
+  /* ②本人特定 */
+  .found{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;}
+  .idcard{width:100%;background:#FFF8F7;border:2px solid #F3B4AE;border-radius:12px;padding:11px 12px;display:flex;align-items:center;gap:11px;box-shadow:0 3px 8px rgba(196,36,28,.1);}
+  .idcard .who2{min-width:0;}
+  .idcard .lb{font-size:12.5px;font-weight:800;color:var(--weak);}
+  .idcard .nm{font-size:19px;font-weight:900;color:#B91C1C;line-height:1.15;}
+  .idcard .em{font-size:12.5px;font-weight:700;color:#94A3B8;font-family:'Roboto Mono',monospace;}
+  .idnote{font-size:14px;font-weight:800;color:#7C2D12;background:#FFF7ED;border:1px solid #FDBA74;border-radius:8px;padding:7px 9px;line-height:1.35;text-align:center;}
 
-  /* 右：実例カード */
-  .exz{flex:1;display:flex;flex-direction:column;min-height:0;position:relative;}
-  .ex{flex:1;display:flex;flex-direction:column;gap:10px;min-height:0;}
-  .card{flex:1;background:#fff;border:1px solid #D7DEE8;border-radius:13px;box-shadow:0 5px 14px rgba(0,0,0,.14);overflow:hidden;display:flex;flex-direction:column;min-height:0;}
-  .card-h{flex:0 0 auto;display:flex;align-items:center;gap:9px;padding:10px 14px;font-weight:900;font-size:18px;color:#fff;}
-  .card.free .card-h{background:linear-gradient(90deg,#0B7A4B,#16A34A);}
-  .card.prem .card-h{background:linear-gradient(90deg,#9A3412,#EA580C);}
-  .card-h .tag{margin-left:auto;font-size:14.5px;font-weight:900;background:rgba(255,255,255,.25);border-radius:999px;padding:3px 13px;}
-  .cbody{flex:1;padding:11px 14px;display:flex;flex-direction:column;gap:10px;justify-content:center;min-height:0;}
-  .cn{display:flex;align-items:center;gap:10px;font-size:17px;font-weight:800;color:#243B58;flex-wrap:wrap;}
-  .cn img{width:30px;height:30px;object-fit:contain;flex:0 0 auto;}
-  .cn .em{font-size:26px;flex:0 0 auto;}
-  .cn .op{color:#B6C0CC;font-weight:900;}
-  .cn .plus{margin-left:auto;font-family:'Roboto Mono',monospace;font-size:15px;font-weight:700;white-space:nowrap;}
-  .card.free .cn .plus{color:var(--green-dark);}
-  .card.prem .cn .plus{color:#9A3412;}
-  .exmascot{position:absolute;right:-6px;bottom:-6px;height:120px;z-index:30;filter:drop-shadow(0 3px 7px rgba(0,0,0,.4));}
+  /* ③Teams DM */
+  .dm{flex:1;display:flex;flex-direction:column;justify-content:center;gap:12px;}
+  .msg{display:flex;gap:9px;align-items:flex-start;}
+  .msg.reply{flex-direction:row-reverse;}
+  .msg.reply .av{background:linear-gradient(135deg,#F59E0B,#D97706);}
+  .msg.reply .bub{border-radius:12px 4px 12px 12px;background:#F3F0FF;border-color:#D9CEF6;}
+  .msg.reply .bt{color:#4C1D95;}
+  .msg .av{flex:0 0 auto;width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#6366F1,#4F46E5);color:#fff;font-weight:900;font-size:14px;display:flex;align-items:center;justify-content:center;}
+  .bub{background:#fff;border:1px solid #E1E4F2;border-radius:4px 12px 12px 12px;padding:9px 11px;box-shadow:0 2px 6px rgba(0,0,0,.08);}
+  .bub .bn{font-size:13px;font-weight:900;color:#3A3E8C;margin-bottom:3px;}
+  .bub .bt{font-size:14.5px;font-weight:700;color:#293241;line-height:1.4;}
+  .bub .bt b{color:#B91C1C;}
+  .bub .file{margin-top:7px;display:flex;align-items:center;gap:7px;background:#F3F6FB;border:1px solid #E3E9F1;border-radius:7px;padding:5px 8px;font-size:12.5px;font-weight:800;color:#243B58;}
 
-  .next{flex:0 0 auto;margin:11px 16px 18px;background:linear-gradient(180deg,#EAF2FF,#DCEAFE);border:2.5px solid var(--blue);border-radius:13px;padding:12px 18px;display:flex;align-items:center;gap:11px;font-weight:900;font-size:20px;color:var(--blue-dark);box-shadow:0 3px 9px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .next{flex:0 0 auto;margin:10px 16px 15px;background:linear-gradient(180deg,#EAF2FF,#DCEAFE);border:2.5px solid var(--blue);border-radius:13px;padding:11px 18px;display:flex;align-items:center;gap:11px;font-weight:900;font-size:20px;color:var(--blue-dark);box-shadow:0 3px 9px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
   .next .na{flex:0 0 auto;width:26px;height:26px;color:var(--blue);}
   .next b{color:var(--orange);}
-  .src{position:absolute;left:16px;bottom:5px;font-size:10px;color:#AEB6C2;font-weight:700;z-index:3;}
+  .src{position:absolute;left:16px;bottom:4px;font-size:10px;color:#AEB6C2;font-weight:700;z-index:3;}
 </style>
 </head>
 <body>
 <div id="slide"></div>
 <script>
 const A="../../pptx/_assets/";
-const svgArrow='<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
-const svgBulb='<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/></svg>';
-
-/* 貯金箱＝無料で貯まる */
-const piggy=`<svg class="ic" viewBox="0 0 120 112" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="pig" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4ADE80"/><stop offset="1" stop-color="#16A34A"/></linearGradient>
-    <radialGradient id="coinG" cx="38%" cy="30%"><stop offset="0" stop-color="#FEF08A"/><stop offset="1" stop-color="#EAB308"/></radialGradient>
-  </defs>
-  <ellipse cx="60" cy="98" rx="40" ry="7" fill="#000" opacity=".08"/>
-  <!-- 落ちるコイン -->
-  <circle cx="60" cy="20" r="12" fill="url(#coinG)" stroke="#CA8A04" stroke-width="2"/>
-  <text x="60" y="26" font-size="15" font-weight="900" fill="#92400E" text-anchor="middle">¥</text>
-  <!-- 貯金箱本体 -->
-  <ellipse cx="60" cy="66" rx="42" ry="32" fill="url(#pig)" stroke="#0B7A4B" stroke-width="2.5"/>
-  <rect x="52" y="34" width="16" height="5" rx="2.5" fill="#0B7A4B"/>
-  <circle cx="78" cy="58" r="4" fill="#0B7A4B"/>
-  <path d="M92 60 q10 -4 12 6 q-6 2 -12 -2z" fill="url(#pig)" stroke="#0B7A4B" stroke-width="2"/>
-  <rect x="34" y="92" width="9" height="12" rx="3" fill="#0B7A4B"/>
-  <rect x="77" y="92" width="9" height="12" rx="3" fill="#0B7A4B"/>
-  <circle cx="46" cy="60" r="5" fill="#fff"/><circle cx="47" cy="61" r="2.4" fill="#0B3A26"/>
-  <text x="60" y="74" font-size="20" font-weight="900" fill="#fff" text-anchor="middle">¥0</text>
-</svg>`;
-
-/* 財布から飛び出すコイン＝支払い */
-const wallet=`<svg class="ic" viewBox="0 0 120 112" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="wal" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FB923C"/><stop offset="1" stop-color="#EA580C"/></linearGradient>
-    <radialGradient id="coinO" cx="38%" cy="30%"><stop offset="0" stop-color="#FEF08A"/><stop offset="1" stop-color="#F59E0B"/></radialGradient>
-  </defs>
-  <ellipse cx="60" cy="100" rx="40" ry="7" fill="#000" opacity=".08"/>
-  <!-- 飛び出すコイン3枚 -->
-  <circle cx="34" cy="26" r="11" fill="url(#coinO)" stroke="#B45309" stroke-width="2"/><text x="34" y="31" font-size="13" font-weight="900" fill="#7C2D12" text-anchor="middle">¥</text>
-  <circle cx="62" cy="16" r="12" fill="url(#coinO)" stroke="#B45309" stroke-width="2"/><text x="62" y="22" font-size="14" font-weight="900" fill="#7C2D12" text-anchor="middle">¥</text>
-  <circle cx="88" cy="28" r="10" fill="url(#coinO)" stroke="#B45309" stroke-width="2"/><text x="88" y="33" font-size="12" font-weight="900" fill="#7C2D12" text-anchor="middle">¥</text>
-  <!-- 財布 -->
-  <rect x="24" y="52" width="72" height="48" rx="10" fill="url(#wal)" stroke="#9A3412" stroke-width="2.5"/>
-  <rect x="24" y="52" width="72" height="15" rx="8" fill="#C2410C" opacity=".5"/>
-  <rect x="70" y="70" width="30" height="20" rx="6" fill="#FDBA74" stroke="#9A3412" stroke-width="2"/>
-  <circle cx="82" cy="80" r="4" fill="#9A3412"/>
+const ICON={arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',bulb:'<path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/>'};
+const svg=(n)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">${ICON[n]}</svg>`;
+// Excelファイル小アイコン
+const xls=`<svg viewBox="0 0 22 26" width="22" height="26"><rect x="1" y="1" width="20" height="24" rx="3" fill="#fff" stroke="#B7C3D2"/><path d="M15 1l6 6h-6z" fill="#DDE6EF"/><rect x="1" y="14" width="15" height="11" rx="2" fill="#217346"/><text x="8.5" y="22.5" text-anchor="middle" fill="#fff" font-weight="900" font-size="7.5" font-family="Segoe UI">X</text></svg>`;
+// 大きめ 鍵つきExcel（②用）
+const lockFile=`<svg viewBox="0 0 92 84" width="92" height="84">
+  <defs><linearGradient id="xg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2A8C57"/><stop offset="1" stop-color="#1C6A41"/></linearGradient></defs>
+  <rect x="14" y="6" width="52" height="66" rx="6" fill="#fff" stroke="#CBD5E1" stroke-width="1.6" filter="drop-shadow(0 4px 6px rgba(0,0,0,.15))"/>
+  <path d="M52 6l14 14h-14z" fill="#DDE6EF"/>
+  <rect x="14" y="46" width="52" height="26" rx="6" fill="url(#xg)"/><rect x="14" y="46" width="52" height="8" fill="url(#xg)"/>
+  <text x="40" y="64" text-anchor="middle" fill="#fff" font-weight="900" font-size="15" font-family="Segoe UI">X</text>
+  <rect x="20" y="16" width="30" height="4" rx="1.5" fill="#C6D2DF"/><rect x="20" y="25" width="30" height="4" rx="1.5" fill="#C6D2DF"/><rect x="20" y="34" width="20" height="4" rx="1.5" fill="#C6D2DF"/>
+  <g filter="drop-shadow(0 3px 4px rgba(0,0,0,.25))">
+    <circle cx="68" cy="60" r="19" fill="#DC2626"/>
+    <rect x="60" y="58" width="16" height="13" rx="2.5" fill="#fff"/>
+    <path d="M63 58v-3a5 5 0 0 1 10 0v3" fill="none" stroke="#fff" stroke-width="2.6"/>
+    <circle cx="68" cy="64" r="2" fill="#DC2626"/>
+  </g>
 </svg>`;
 
 document.getElementById('slide').innerHTML=`
   <div class="titlebar">
     <div class="vol-pill">Vol.78-1</div>
     <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
-    <div class="title-text">そのフロー、追加のお金がいる？｜<span class="hl">見分け方は“1つのこと”だけ</span></div>
-    <img class="title-chara" src="${A}chara/chara_think.png" alt="">
+    <div class="title-text">戻し忘れの“チェックアウト”を、<span class="hl">握っている本人に自動でお知らせ</span></div>
+    <img class="title-chara" src="${A}chara/chara_smile.png" alt="">
   </div>
 
   <div class="concl">
-    <div class="chip">${svgBulb}</div>
-    <div class="txt">Microsoft 365があれば<b>標準コネクタは追加費用なし</b>。<b>プレミアムを1つでも</b>使うと、そのフロー全体が有料（Premium）扱いになります。</div>
+    <div class="chip">${svg('bulb')}</div>
+    <div class="txt">「誰かが編集中で開けない」ファイル。<b>チェックアウトしたのは誰か</b>をフローが調べて、<b>その本人にそっとリマインド</b>できます。</div>
   </div>
 
-  <div class="stage">
-    <div class="flowz">
-      <div class="hd"><span class="b">?</span>判定は、この分かれ道だけ</div>
-      <div class="flow">
-        <div class="qbox">
-          <div class="qq">使うコネクタに <span class="diamond">◆プレミアム</span> が1つでもある？</div>
-        </div>
-        <div class="split">
-          <div class="road free">
-            <div class="rimg">${piggy}</div>
-            <div class="rans">いいえ＝標準だけ</div>
-            <div class="rdesc">M365の範囲。<br>追加費用なしで動く。</div>
-            <div class="rbadge">✓ 追加費用なし</div>
-          </div>
-          <div class="road pay">
-            <div class="rimg">${wallet}</div>
-            <div class="rans">はい＝1つでも</div>
-            <div class="rdesc">作る人・動かす人の<br>両方にPremium。</div>
-            <div class="rbadge">＄ Premium が必要</div>
-          </div>
-        </div>
-        <div class="miss">
-          <span class="mi">🙅</span>
-          <span class="mtx">よくある勘違い：「作るだけ」ならM365でもOK。でも<b>動かす（実行する）にはPremiumが要る</b>。作れた＝無料、ではありません。</span>
+  <div class="cols">
+    <div class="col">
+      <span class="carrow">${svg('arrow')}</span>
+      <div class="ch"><span class="n">1</span>ライブラリを見回る</div>
+      <div class="scene">
+        <div class="sh"><img src="${A}icons/pa_sharepoint.png" alt=""><span>営業部 ドキュメント</span></div>
+        <div class="sb">
+          <div class="frow"><span class="xi">${xls}</span><span class="fn">商品カタログ.xlsx</span><span class="who">空き</span></div>
+          <div class="frow lock"><span class="xi">${xls}</span><span class="fn">見積テンプレ.xlsx</span><span class="lockpill">🔒 編集中</span></div>
+          <div class="frow"><span class="xi">${xls}</span><span class="fn">売上集計.xlsx</span><span class="who">空き</span></div>
+          <div class="frow"><span class="xi">${xls}</span><span class="fn">単価表_2026.xlsx</span><span class="who">空き</span></div>
+          <div class="frow"><span class="xi">${xls}</span><span class="fn">提案書ひな型.xlsx</span><span class="who">空き</span></div>
+          <div class="scanbar">🔄 毎朝、ぜんぶ自動で見回り</div>
         </div>
       </div>
+      <div class="cap">チェックアウトされたまま<b>戻ってこない</b>ファイルを、定期的に見つけます。</div>
     </div>
 
-    <div class="exz">
-      <div class="hd"><span class="b">例</span>身近なフローで見ると</div>
-      <div class="ex">
-        <div class="card free">
-          <div class="card-h">この組み合わせなら 追加費用なし<span class="tag">✓ 標準だけ</span></div>
-          <div class="cbody">
-            <div class="cn"><img src="${A}icons/pa_forms.png" alt="">Forms<span class="op">＋</span><img src="${A}icons/pa_sharepoint.png" alt="">SharePoint<span class="op">＋</span><img src="${A}icons/pa_teams.png" alt="">Teams<span class="plus">全部 標準</span></div>
-            <div class="cn"><img src="${A}icons/pa_outlook.png" alt="">Outlook<span class="op">＋</span><img src="${A}icons/pa_excel.png" alt="">Excel<span class="op">＋</span><img src="${A}icons/pa_schedule.png" alt="">スケジュール<span class="plus">全部 標準</span></div>
+    <div class="col">
+      <span class="carrow">${svg('arrow')}</span>
+      <div class="ch"><span class="n">2</span>握っている本人が分かる</div>
+      <div class="scene">
+        <div class="sh"><img src="${A}icons/pa_sharepoint.png" alt=""><span>ファイルのプロパティ</span></div>
+        <div class="sb"><div class="found">
+          <div>${lockFile}</div>
+          <div class="idcard">
+            <div class="who2"><div class="lb">チェックアウト ユーザー</div><div class="nm">佐藤 花子</div><div class="em">sato@example.co.jp</div></div>
           </div>
-        </div>
-        <div class="card prem">
-          <div class="card-h">これが1つでも混じると Premium<span class="tag">＄ 有料</span></div>
-          <div class="cbody">
-            <div class="cn"><span class="em">🌐</span>HTTP<span class="op">／</span><span class="em">🗄️</span>SQL Server<span class="op">／</span><span class="em">⚙️</span>Dataverse<span class="plus" style="padding-right:118px">◆プレミアム</span></div>
-            <div class="cn" style="padding-right:118px"><span class="em">🔧</span>カスタムコネクタ<span class="op">／</span><span class="em">🤖</span>AI Builder<span class="plus">◆プレミアム</span></div>
-          </div>
-        </div>
+          <div class="idnote">「チェックアウト ユーザー」に<b>本人の名前とメール</b>が入っています。</div>
+        </div></div>
       </div>
-      <img class="exmascot" src="${A}chara/chara_point.png" alt="">
+      <div class="cap"><b>誰が握っているか</b>が、ファイルの情報に記録されています。</div>
+    </div>
+
+    <div class="col c3">
+      <div class="ch"><span class="n">3</span>本人にそっとお知らせ</div>
+      <div class="scene">
+        <div class="sh tm"><img src="${A}icons/pa_teams.png" alt=""><span>チャット</span></div>
+        <div class="sb"><div class="dm">
+          <div class="msg">
+            <span class="av">Bot</span>
+            <div class="bub">
+              <div class="bn">ファイル番人 Bot</div>
+              <div class="bt">おつかれさまです。下のファイルを<b>3日チェックアウト中</b>です。編集が終わっていれば<b>チェックイン</b>をお願いします🙏</div>
+              <div class="file"><span style="width:22px;height:26px;display:inline-flex;flex:0 0 auto">${xls}</span>見積テンプレ.xlsx</div>
+            </div>
+          </div>
+          <div class="msg reply">
+            <span class="av">佐</span>
+            <div class="bub"><div class="bn">佐藤 花子</div><div class="bt">あっ、すみません！今すぐチェックインします🙇</div></div>
+          </div>
+        </div></div>
+      </div>
+      <div class="cap">本人だけに届くから、<b>角が立たず</b>にそっと促せます。</div>
     </div>
   </div>
 
-  <div class="next"><span class="na">${svgArrow}</span>標準／プレミアムの<b>コネクタ早見表</b>と<b>ライセンスの数字</b>は <b>2枚目</b>にまとめました！</div>
-  <div class="src">出典：Microsoft Learn（Power Automate ライセンスの種類・2026-07更新）／アイコンは一部イメージ</div>
+  <div class="next"><span class="na">${svg('arrow')}</span>使うのは<b>標準アクションだけ</b>。見回りから通知までの<b>作り方</b>は <b>2枚目</b>へ！</div>
+  <div class="src">出典：Microsoft Learn（SharePoint「ファイルのプロパティの取得」「チェックアウトを破棄」）／画面は再現・氏名は架空</div>
 `;
 </script>
 <script>

@@ -42,7 +42,7 @@ CSS = """
 .mb-shot .sh-tag{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:800;color:#475569;background:#dde1e9;border-radius:999px;padding:5px 14px;margin-bottom:12px;letter-spacing:.02em;}
 .mb-shot .sh-frame{position:relative;line-height:0;}
 .mb-shot .sh-frame img{width:100%;height:auto;display:block;border-radius:10px;border:1px solid #c7cad3;box-shadow:0 6px 18px rgba(15,23,42,.20);}
-.mb-shot figcaption{font-size:.85em;color:#5b4a7a;margin-top:14px;line-height:1.65;}
+.mb-shot figcaption{font-size:1.02em;color:#5b4a7a;margin-top:14px;line-height:1.8;}
 .mb-anno{position:absolute;border:3px solid #e0342f;border-radius:12px;background:rgba(224,52,47,.04);box-shadow:0 5px 14px rgba(224,52,47,.40),0 0 0 4px rgba(224,52,47,.10);}
 .mb-anno .an-lb{position:absolute;top:-16px;left:-4px;background:linear-gradient(180deg,#f5504b,#df332e);color:#fff;font-size:12.5px;font-weight:800;line-height:1.4;padding:3px 10px;border-radius:7px;white-space:nowrap;box-shadow:0 3px 7px rgba(0,0,0,.32);}
 .mb-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:30px 0;}
@@ -74,6 +74,9 @@ CSS = """
 .mb-btn.yt{background:linear-gradient(135deg,#ef4444,#b91c1c);box-shadow:0 4px 14px rgba(239,68,68,.35);}
 .mb-cta .cta-sub{display:block;margin-top:10px;font-size:.82em;color:#64748b;}
 .speech-balloon{line-height:1.95;}
+.cs-preface{background:#eef7f1;border:1px solid #cfe8db;border-left:5px solid #5f8a6e;border-radius:10px;padding:14px 18px;margin:0 0 26px;font-size:.86em;color:#3d5647;line-height:1.85;}
+.cs-preface b{color:#2f6b4f;}
+.cs-preface a{color:#1d4ed8;font-weight:700;}
 </style>
 """
 
@@ -136,7 +139,8 @@ STATE.write_text(json.dumps(state,ensure_ascii=False,indent=2),encoding="utf-8")
 
 # ---- 本文 ----
 H_=[]; a=H_.append
-a('\n\n<div class="mb-intro">この記事は、筆者が実際に Copilot Studio で作った AI を試しながら、気になったポイントを AI と壁打ち（相談）しつつまとめたものです。「なぜこう動くのか」を、実際の画面で追いかけていきます。</div>')
+a('<div class="cs-preface">📝 実際に <b>Copilot Studio を触って検証</b>し、スクショを撮りながら気づいたことをまとめた記録です。<br>機能・画面・料金は更新が続きます。<br>最新の正確な情報は <a href="https://learn.microsoft.com/ja-jp/microsoft-copilot-studio/" target="_blank" rel="noopener">Microsoft 公式（Microsoft Learn）</a> をご確認ください。</div>')
+a('\n\n<div class="mb-intro">この記事は、筆者が実際に Copilot Studio で作った AI を試しながら、気になったポイントを AI と壁打ち（相談）しつつまとめた記録です。<br>「なぜこう動くのか」を、実際の画面で追いかけていきます。</div>')
 
 a(PL('前回、Copilot Studio で「質問に答える受付 AI」を作りました。今回は、その AI に <span class="hl-marker">"まとめて3つ"の質問を一度に投げてみます</span>。'))
 a(PL('おどろいたのは、こちらが書いたのは<strong>指示文4行だけ</strong>なのに、AI が<strong>自分で質問を分解し、必要な情報を調べて、出典つきで答えた</strong>こと。「会話の台本（分岐）」は1つも作っていません。'))
@@ -164,7 +168,8 @@ a(quote('初参加を考えています。PA45 がどんな会か教えて。あ
 a(P('ふつうのチャットボットなら「どれか1つ」しか拾えなさそうな質問です。さて、どうなったか。'))
 
 a(H3('AI は、まず"段取り"を組んだ'))
-a(P('答えを返す<strong>前に</strong>、AI 自身が「ユーザーは3つ聞いている」と気づき、何をどの順で調べるかを決めていました。その思考の様子が、画面にそのまま出ます。'))
+a(P('答えを返す<strong>前に</strong>、AI 自身が「ユーザーは3つ聞いている」と気づき、何をどの順で調べるかを決めていました。その思考の様子が、画面にそのまま出ました。'))
+a(P('これは編集画面（Build）のタブを「Preview」に切り替えて、右側のチャットに質問を入れたときの様子です。'))
 a(shot(U_PLAN, "▲ 回答の前に、質問を3つに分解し「何を調べるか」を自分で段取りしている", "Copilot Studioが回答前に段取りを組んでいる様子",
    annos=[(7.5,67,84,31,"AIが自分で段取り中")]))
 a(point('くり返しますが、<span class="hl-marker">会話の分岐（トピック）は1つも作っていません</span>。それでも「3つ聞かれている」と理解し、調べる順番まで自分で決めています。ここが新オーケストレーターの一番の見どころです。'))
@@ -173,7 +178,7 @@ a(H3('そして、出典つきで整理して答えた'))
 a(P('段取りのあと、返ってきた答えがこちらです。3つの用件が<strong>見出しに分かれ</strong>、表で整理され、右上には<strong>出典番号①</strong>まで付いていました。'))
 a(shot(U_ANSWER, "▲ 3つの用件が見出しで整理され、表つき・出典つきで返ってきた", "Copilot Studioエージェントが整理して回答している画面",
    annos=[(4.5,40,86,15,"見出しに整理＋出典①つき")]))
-a(P('指示文には「毎週木曜」や「connpass で申込」とは書いていません。それでも正しく答えられたのは、AI が<strong>ナレッジ（今回は Web 検索）を自分で調べて</strong>補ったからです。しかも、どこを参照したかを出典で示してくれます。'))
+a(P('指示文には「毎週木曜」や「connpass で申込」とは書いていません。それでも正しく答えられたのは、AI が<strong>ナレッジ（今回は Web 検索）を自分で調べて</strong>補ったからです。しかも、どこを参照したかを出典で示してくれました。'))
 
 a(NB)
 a(H2('なぜ4行で動くの？── 昔の"台本方式"との違い'))
@@ -216,7 +221,7 @@ a(cta_pa('&#x1f64c; こういうのを、毎週みんなで試しています',
 a(P(f'過去回のまとめや、PA45がどんな勉強会かは <a href="{PA45_URL}" target="_blank" rel="noopener">PA45の紹介ページ</a> にまとめています。また次回、一緒に「できた！」を作りましょう。'))
 a(cta_yt())
 
-a('\n\n<p style="font-size:13px;color:#888;line-height:1.9;">※ 本記事は公開日時点の情報をもとに、筆者が実際に学んで試した内容を整理したものです。Copilot Studio の画面や仕様は更新されることがあるため、最新の状況は公式情報（Microsoft Learn）もあわせてご確認ください。画面の項目名・挙動は実機（Copilot Studio）で確認しています。</p>')
+a('\n\n<p style="font-size:13px;color:#888;line-height:1.9;">※ 本記事は公開日時点の情報をもとに、筆者が実際に学んで試した内容を整理しました。Copilot Studio の画面や仕様は更新されることがあるため、最新の状況は公式情報（Microsoft Learn）もあわせてご確認ください。画面の項目名・挙動は実機（Copilot Studio）で確認しています。</p>')
 a('\n\n<p style="font-size:13px;color:#888;line-height:1.9;">※ 本記事の構成や図解の一部は、AI と壁打ちしながら作成しています。</p>')
 
 content=CSS+'\n\n<div class="mb-body">'+"".join(H_)+'\n\n</div>'

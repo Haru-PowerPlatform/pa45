@@ -23,6 +23,8 @@ PA45_URL = "https://www.automate136.com/pa45/"
 IMG = {
     "concept": ROOT/"assets"/"x"/"html"/"cs-vol-04"/"csvol04.png",
     "steps":   ROOT/"assets"/"x"/"html"/"cs-vol-04b"/"csvol04b.png",
+    "ksrc":    HERE/"assets"/"shot-k-source.png",
+    "kdesc":   HERE/"assets"/"shot-k-desc.png",
 }
 # 既にWPにある実機スクショ（第2弾でアップ済み）を再利用
 U_BUILD = "https://www.automate136.com/wp-content/uploads/2026/07/cs-first-agent-build-scaled.png"
@@ -37,6 +39,13 @@ CSS = """
 .mb-lead{line-height:2.1;}
 .hl-marker{background:linear-gradient(transparent 58%,#e9d5ff 58%);font-weight:700;padding:0 .12em;border-radius:2px;}
 .mb-intro{background:#f6f4fb;border:1px solid #e0d7f3;border-left:5px solid #a78bda;border-radius:10px;padding:13px 18px;margin:4px 0 30px;font-size:.9em;color:#5b4a7a;line-height:1.8;}
+.csflow-w{margin:30px 0;padding:20px 18px 18px;background:#faf8ff;border:1px solid #e6ddf7;border-radius:14px;}
+.csflow-t{font-size:.92em;font-weight:800;color:#5B21B6;margin:0 0 15px;text-align:center;}
+.csflow{display:flex;flex-wrap:wrap;align-items:stretch;justify-content:center;gap:9px;}
+.csflow .stp{flex:1 1 140px;min-width:120px;background:#fff;border:2px solid #ddd0f2;border-radius:12px;padding:13px 11px;text-align:center;}
+.csflow .stp .sn{display:inline-block;font-size:.76em;font-weight:800;color:#fff;background:#7C3AED;border-radius:999px;padding:2px 10px;margin-bottom:8px;}
+.csflow .stp .st{font-size:.9em;font-weight:700;color:#2b2540;line-height:1.55;}
+.csflow .ar{align-self:center;color:#a78bda;font-weight:900;font-size:1.3em;}
 .mb-fig{margin:44px 0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#e7e0f5;border:1px solid #d0c4ec;border-radius:16px;padding:18px 16px 12px;box-shadow:0 2px 8px rgba(76,29,149,.08);}
 .mb-fig img{width:100%;max-width:860px;height:auto;display:block;margin:0 auto;background:#fff;border-radius:10px;box-shadow:0 4px 14px rgba(91,33,182,.16);}
 .mb-fig figcaption{font-size:.85em;color:#5b4a7a;margin-top:12px;}
@@ -44,7 +53,7 @@ CSS = """
 .mb-shot .sh-tag{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:800;color:#475569;background:#dde1e9;border-radius:999px;padding:5px 14px;margin-bottom:12px;letter-spacing:.02em;}
 .mb-shot .sh-frame{position:relative;line-height:0;}
 .mb-shot .sh-frame img{width:100%;height:auto;display:block;border-radius:10px;border:1px solid #c7cad3;box-shadow:0 6px 18px rgba(15,23,42,.20);}
-.mb-shot figcaption{font-size:.85em;color:#5b4a7a;margin-top:14px;line-height:1.65;}
+.mb-shot figcaption{font-size:1.02em;color:#5b4a7a;margin-top:14px;line-height:1.8;}
 .mb-anno{position:absolute;border:3px solid #e0342f;border-radius:12px;background:rgba(224,52,47,.04);box-shadow:0 5px 14px rgba(224,52,47,.40),0 0 0 4px rgba(224,52,47,.10);}
 .mb-anno .an-lb{position:absolute;top:-16px;left:-4px;background:linear-gradient(180deg,#f5504b,#df332e);color:#fff;font-size:12.5px;font-weight:800;line-height:1.4;padding:3px 10px;border-radius:7px;white-space:nowrap;box-shadow:0 3px 7px rgba(0,0,0,.32);}
 .mb-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:30px 0;}
@@ -80,6 +89,9 @@ CSS = """
 .mb-btn.yt{background:linear-gradient(135deg,#ef4444,#b91c1c);box-shadow:0 4px 14px rgba(239,68,68,.35);}
 .mb-cta .cta-sub{display:block;margin-top:10px;font-size:.82em;color:#64748b;}
 .speech-balloon{line-height:1.95;}
+.cs-preface{background:#eef7f1;border:1px solid #cfe8db;border-left:5px solid #5f8a6e;border-radius:10px;padding:14px 18px;margin:0 0 26px;font-size:.86em;color:#3d5647;line-height:1.85;}
+.cs-preface b{color:#2f6b4f;}
+.cs-preface a{color:#1d4ed8;font-weight:700;}
 </style>
 """
 
@@ -138,14 +150,17 @@ def upload(key):
 
 U_CONCEPT=upload("concept")
 U_STEPS=upload("steps")
+U_KSRC=upload("ksrc")
+U_KDESC=upload("kdesc")
 STATE.write_text(json.dumps(state,ensure_ascii=False,indent=2),encoding="utf-8")
 
 # ---- 本文 ----
 H_=[]; a=H_.append
-a('\n\n<div class="mb-intro">この記事は、筆者が Copilot Studio を実際にさわりながら、公式ドキュメント（Microsoft Learn）で仕様を確かめつつ整理したものです。専門用語はなるべく使わず、はじめてさわる方向けの言葉で書いています。</div>')
+a('<div class="cs-preface">📝 実際に <b>Copilot Studio を触って検証</b>し、スクショを撮りながら気づいたことをまとめた記録です。<br>機能・画面・料金は更新が続きます。<br>最新の正確な情報は <a href="https://learn.microsoft.com/ja-jp/microsoft-copilot-studio/" target="_blank" rel="noopener">Microsoft 公式（Microsoft Learn）</a> をご確認ください。</div>')
+a('\n\n<div class="mb-intro">この記事は、筆者が Copilot Studio を実際にさわりながら、公式ドキュメント（Microsoft Learn）で仕様を確かめつつ整理した記録です。<br>専門用語はなるべく使わず、はじめてさわる方向けの言葉で書いています。</div>')
 
 a(PL('前回までで、Copilot Studio に<strong>指示文を4行書いただけ</strong>のエージェント（AI）を作りました。まとめて質問しても自分で分解して答えてくれる、なかなか賢い子です。'))
-a(PL('ただ、ひとつ足りないものがありました。<span class="hl-marker">会社のことは答えられない</span>のです。'))
+a(PL('ただ、ひとつ足りないものがありました。<span class="hl-marker">会社のことは答えられませんでした</span>。'))
 a(PL('「有給って何日前までに申請するの？」と聞いても、返ってくるのは「一般的には…」という話。結局は自分で就業規則を開くことになります。'))
 a(PL('ここで足すのが<strong>ナレッジ（Knowledge）</strong>です。エージェントに"参考資料"として会社の文書を渡すと、答えが一気に社内基準に変わります。'))
 
@@ -180,7 +195,17 @@ a(P('新しい画面（新エクスペリエンス）での手順です。ここ
 a(fig(U_STEPS, "▲ ナレッジの足し方。追加ダイアログから資料を選び、名前と説明を書いて追加するだけ", "Copilot Studioのナレッジ追加ダイアログと3ステップの図解"))
 
 a(H3('① Buildタブの右パネルで「Knowledge」の＋を押す'))
-a(P('エージェントを開くと、画面の右側にコンポーネントのパネルが並んでいます。Model（モデル）、Tools（ツール）と続いて、<strong>Knowledge</strong> の行があります。その右端の <strong>＋</strong> が入口です。'))
+a(P('操作に入る前に、どこから始めるかを確認します。Copilot Studio（copilotstudio.microsoft.com）に会社のアカウントでサインインし、前回つくった受付エージェントを一覧から開きます。開くと下のような編集画面（Build）になり、画面の右側にコンポーネントのパネルが並びます。'))
+a('\n\n<div class="csflow-w"><p class="csflow-t">ナレッジを足す画面にたどり着くまで</p><div class="csflow">'
+  '<div class="stp"><span class="sn">①</span><div class="st">Copilot Studio<br>を開く</div></div>'
+  '<div class="ar">→</div>'
+  '<div class="stp"><span class="sn">②</span><div class="st">受付エージェント<br>を開く（前回）</div></div>'
+  '<div class="ar">→</div>'
+  '<div class="stp"><span class="sn">③</span><div class="st">編集画面（Build）<br>が開く</div></div>'
+  '<div class="ar">→</div>'
+  '<div class="stp"><span class="sn">④</span><div class="st">右パネルの<br>Knowledge の「＋」</div></div>'
+  '</div></div>')
+a(P('パネルは Model（モデル）、Tools（ツール）と続いて、<strong>Knowledge</strong> の行があります。その右端の <strong>＋</strong> が入口です。'))
 a(shot(U_BUILD, "▲ 右パネルの Knowledge。既定では「Search all websites（Web検索）」だけが入っている", "Copilot StudioのBuildタブ右パネルにあるKnowledgeの項目",
    annos=[(70.5,44,28.5,17,"① ここの＋から追加")]))
 a(P('作ったばかりのエージェントには、たいてい <strong>Search all websites</strong>（Web を検索する）だけが入っています。冒頭の「一般論しか返ってこない」は、これが理由です。'))
@@ -188,7 +213,8 @@ a(P('作ったばかりのエージェントには、たいてい <strong>Search
 a(H3('②「Add knowledge」で追加元を選ぶ'))
 a(P('＋を押すと <strong>Add knowledge</strong>（ナレッジの追加）というダイアログが開きます。'))
 a(P('いちばん目立つ場所に<strong>ファイルの投入エリア</strong>があり、そこへ PDF や Word をドラッグするだけで追加できます。OneDrive や SharePoint にあるファイルを指定することもできます。'))
-a(P('その下には <strong>Featured</strong>（おすすめ）と <strong>Advanced</strong> のタブがあり、SharePoint、公開Webサイト、Dataverse などのカードが並びます。使いたい追加元をここから選びます。'))
+a(P('その下には <strong>Featured</strong>（おすすめ）と <strong>Advanced</strong> のタブがあり、SharePoint、公開Webサイト、Dataverse などのカードが並んでいました。使いたい追加元をここから選びます。'))
+a(shot(U_KSRC, "▲ Add knowledge のダイアログ。上のエリアにファイルをドラッグして追加でき、下に Public websites・SharePoint・OneDrive などの追加元カードが並ぶ", "Copilot StudioのAdd knowledgeダイアログ"))
 a(copybox('&#x1f4c2; ファイルで追加するときの対応形式', [
  'Word（doc / docx）、Excel（xls / xlsx）、PowerPoint（ppt / pptx）、PDF',
  'テキスト（txt / md / log）、HTML、CSV、XML、JSON、YAML など',
@@ -198,6 +224,7 @@ a(copybox('&#x1f4c2; ファイルで追加するときの対応形式', [
 a(H3('③ 名前と「説明」を書いて追加する'))
 a(P('資料を選んだあとは、名前と説明を入力して「エージェントに追加」で完了です。'))
 a(P('ここでいちばん大事なのが<strong>説明</strong>です。エージェントは、質問を受けたときに「どの資料を見にいくか」を自分で判断します。その判断材料が、この説明文です。'))
+a(shot(U_KDESC, "▲ 資料を選んだあとの一覧。右の Description（説明）欄が、エージェントが『どの資料を見るか』を判断する材料になる（左のリンク・名前は伏せています）", "SharePointナレッジの説明欄"))
 a(cards([
  ('&#x274c; もったいない説明', '「就業規則」だけ。何が書いてあるのか分からないので、AI が参照すべき場面を判断しづらい。', 'old'),
  ('&#x2b55; 効く説明', '「有給休暇・特別休暇・勤務時間・申請期限など、社員の勤務に関する社内規程。休暇や勤怠の質問はこの資料を参照する」と具体的に書く。', ''),
@@ -209,7 +236,7 @@ a(H2('追加すると、答えはこう変わる'))
 a(P('同じ質問をもう一度投げてみます。'))
 a(quote('有給って、何日前までに申請すればいいですか？'))
 a(P('ナレッジを足す前は「一般的には数日前から2週間前まで…」という一般論でした。'))
-a(P('足したあとは、<strong>就業規則の中身</strong>をもとに「原則5営業日前まで」と答えます。しかも回答の下に<strong>出典</strong>が付き、どのファイルの何条を見たのかが分かります。'))
+a(P('足したあとは、<strong>就業規則の中身</strong>をもとに「原則5営業日前まで」と答えました。しかも回答の下に<strong>出典</strong>が付き、どのファイルの何条を見たのかが分かりました。'))
 a(point('この<span class="hl-marker">出典が付くところ</span>が、社内で使ううえではかなり重要です。AI の答えをうのみにせず、元の資料をその場で確認できるからです。'))
 
 a(NB)
@@ -264,7 +291,7 @@ a(cta_pa('&#x1f64c; こういうのを、毎週みんなで試しています',
 a(P(f'過去回のまとめや、PA45がどんな勉強会かは <a href="{PA45_URL}" target="_blank" rel="noopener">PA45の紹介ページ</a> にまとめています。また次回、一緒に「できた！」を作りましょう。'))
 a(cta_yt())
 
-a('\n\n<p style="font-size:13px;color:#888;line-height:1.9;">※ 本記事は公開日時点の情報をもとに、筆者が実際に学んで試した内容を整理したものです。Copilot Studio の画面や仕様は更新されることがあるため、最新の状況は公式情報（Microsoft Learn）もあわせてご確認ください。ファイル形式・容量・件数などの制限は Microsoft Learn の記載を参照しています。</p>')
+a('\n\n<p style="font-size:13px;color:#888;line-height:1.9;">※ 本記事は公開日時点の情報をもとに、筆者が実際に学んで試した内容を整理しました。Copilot Studio の画面や仕様は更新されることがあるため、最新の状況は公式情報（Microsoft Learn）もあわせてご確認ください。ファイル形式・容量・件数などの制限は Microsoft Learn の記載を参照しています。</p>')
 a('\n\n<p style="font-size:13px;color:#888;line-height:1.9;">※ 本記事の構成や図解の一部は、AI と壁打ちしながら作成しています。</p>')
 
 content=CSS+'\n\n<div class="mb-body">'+"".join(H_)+'\n\n</div>'
