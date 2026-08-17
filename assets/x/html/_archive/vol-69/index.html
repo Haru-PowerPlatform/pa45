@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.66-1 QRで備品の持ち出し管理</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB;--blue-dark:#1E40AF;--green:#16A34A;--green-dark:#0B5E37;
+    --ink:#1F2937;--gray:#374151;--weak:#6B7280;--orange:#EA580C;--red:#DC2626;--teal:#128486;--teal-dark:#0B5E60;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+
+  .titlebar{height:86px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:14px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:25px;border-radius:999px;padding:7px 19px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .logos{display:flex;align-items:center;gap:7px;flex:0 0 auto;}
+  .logos .ll{height:47px;width:47px;object-fit:contain;background:#fff;border-radius:12px;padding:6px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
+  .logos .plus{color:#fff;font-weight:900;font-size:23px;text-shadow:0 1px 2px rgba(0,0,0,.25);line-height:1;}
+  .title-text{color:#fff;font-weight:900;font-size:27px;line-height:1.15;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:150px;}
+  .title-text .hl{color:#FFE08A;}
+  .title-chara{position:absolute;right:14px;bottom:-42px;height:142px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .concl{margin:9px 16px 0;background:#EFF6FF;border:2.5px solid var(--blue);border-radius:13px;display:flex;align-items:center;gap:13px;padding:9px 18px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;width:42px;height:42px;border-radius:12px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;font-size:23px;box-shadow:0 3px 6px rgba(0,0,0,.26);}
+  .concl .txt{font-weight:800;font-size:19.5px;color:var(--blue-dark);line-height:1.4;padding-right:96px;}
+  .concl .txt b{color:var(--red);}
+  .concl .txt .g{color:var(--green-dark);}
+
+  .stage{flex:1 1 auto;margin:12px 15px 0;display:flex;align-items:stretch;gap:0;min-height:0;}
+  .col{flex:1;display:flex;flex-direction:column;min-height:0;position:relative;}
+  .carrow{flex:0 0 30px;display:flex;align-items:center;justify-content:center;color:#9AA7B8;font-size:26px;font-weight:900;}
+  .carrow.pa{flex:0 0 78px;flex-direction:column;gap:5px;}
+  .carrow.pa .paeng{width:48px;height:48px;border-radius:13px;background:linear-gradient(180deg,#EAF2FF,#D3E4FF);border:2.5px solid #2563EB;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 10px rgba(37,99,235,.28),inset 0 1px 0 rgba(255,255,255,.85);}
+  .carrow.pa .paeng img{width:31px;height:31px;object-fit:contain;}
+  .carrow.pa .palabel{font-size:11px;font-weight:900;color:#1E40AF;text-align:center;line-height:1.2;}
+  .carrow.pa .ar{color:#2563EB;font-size:22px;font-weight:900;line-height:.5;}
+  .colcard{flex:1;background:#F8FAFC;border:1.5px solid #C9D2E0;border-radius:14px;box-shadow:0 5px 13px rgba(0,0,0,.12);overflow:hidden;display:flex;flex-direction:column;}
+  .cnum{position:absolute;top:-11px;left:-9px;width:34px;height:34px;border-radius:50%;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;font-weight:900;font-size:18px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 5px rgba(0,0,0,.3);z-index:6;border:2.5px solid #fff;}
+  .chd{flex:0 0 auto;text-align:center;font-weight:900;font-size:17px;color:#fff;padding:9px 8px;line-height:1.2;}
+  .c1 .chd{background:linear-gradient(180deg,#F97316,#EA580C);}
+  .c2 .chd{background:linear-gradient(180deg,#1AA0A2,#0B7173);}
+  .c3 .chd{background:linear-gradient(180deg,#22A366,#15803D);}
+  .cbd{flex:1;padding:10px;display:flex;flex-direction:column;gap:8px;min-height:0;font-family:'Segoe UI','Noto Sans JP',sans-serif;justify-content:flex-start;}
+
+  .scene{flex:0 0 auto;height:150px;border-radius:11px;display:flex;align-items:center;justify-content:center;gap:8px;padding:6px;border:1.5px solid;position:relative;overflow:hidden;}
+  .c1 .scene{background:linear-gradient(180deg,#FFF3EA,#FCE1CE);border-color:#F6C69E;}
+  .c2 .scene{background:linear-gradient(180deg,#E7F7F7,#CFEFEF);border-color:#9BDADB;}
+  .c3 .scene{background:linear-gradient(180deg,#EAF7EF,#D4F1DE);border-color:#A6E1BC;}
+  .scene svg{height:100%;width:auto;}
+  .sc-chara{position:relative;z-index:2;height:120px;width:auto;flex:0 0 auto;filter:drop-shadow(0 3px 5px rgba(0,0,0,.3));}
+
+  .ccap{flex:0 0 auto;margin-top:auto;text-align:center;font-size:14.5px;font-weight:800;line-height:1.3;padding:0 2px;}
+  .c1 .ccap{color:#9A3412;} .c2 .ccap{color:#0B5E60;} .c3 .ccap{color:#15803D;}
+  .ccap b{color:#111;}
+
+  /* ① QR準備カード */
+  .prep{flex:1 1 auto;background:#fff;border:1.5px solid #F6C69E;border-radius:11px;box-shadow:0 3px 7px rgba(0,0,0,.1);padding:11px 13px;display:flex;flex-direction:column;justify-content:center;gap:11px;}
+  .prep .pt{flex:0 0 auto;text-align:center;font-size:13.5px;font-weight:900;color:#fff;background:linear-gradient(180deg,#FB923C,#EA580C);border-radius:8px;padding:5px 8px;line-height:1.2;}
+  .prep .pstep{display:flex;align-items:center;gap:9px;font-size:14px;font-weight:800;color:#5B4636;line-height:1.28;}
+  .prep .pstep .pn{flex:0 0 auto;width:23px;height:23px;border-radius:50%;background:#EA580C;color:#fff;font-size:13px;font-weight:900;display:flex;align-items:center;justify-content:center;}
+  .prep .pstep b{color:#B45309;}
+  .prep .pstep .em{font-size:17px;flex:0 0 auto;}
+
+  /* Forms モック（②） */
+  .forms{flex:1 1 auto;background:#fff;border:1.5px solid #A9DDDE;border-radius:11px;overflow:hidden;box-shadow:0 3px 7px rgba(0,0,0,.1);display:flex;flex-direction:column;}
+  .forms .fh{flex:0 0 auto;display:flex;align-items:center;gap:8px;background:#E7F7F7;padding:7px 11px;border-bottom:1px solid #CFEFEF;}
+  .forms .fh img{width:20px;height:20px;object-fit:contain;}
+  .forms .fh b{font-size:13px;font-weight:900;color:#0B5E60;}
+  .forms .fbd{flex:1;padding:9px 12px;display:flex;flex-direction:column;justify-content:center;gap:8px;}
+  .forms .frow{display:flex;flex-direction:column;gap:3px;}
+  .forms .frow .fl{font-size:12.5px;font-weight:800;color:#41474F;}
+  .forms .autoval{display:inline-flex;align-items:center;gap:6px;background:#E7F7F7;border:1.5px solid #6FC9CB;border-radius:6px;padding:6px 10px;font-size:15px;font-weight:900;color:#0B5E60;}
+  .forms .autoval .tag{font-size:10px;font-weight:800;color:#fff;background:#128486;border-radius:4px;padding:1px 6px;}
+  .forms .choices{display:flex;gap:8px;}
+  .forms .ch2{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;font-size:14px;font-weight:900;border-radius:8px;padding:8px;border:2px solid;}
+  .forms .ch2.on{background:#EA580C;color:#fff;border-color:#EA580C;box-shadow:0 2px 5px rgba(234,88,12,.35);}
+  .forms .ch2.off{background:#fff;color:#8A8886;border-color:#D8DADE;}
+
+  /* SharePoint 台帳（③） */
+  .ledger{flex:1 1 auto;background:#fff;border:1.5px solid #C7E6D3;border-radius:11px;overflow:hidden;box-shadow:0 3px 7px rgba(0,0,0,.1);display:flex;flex-direction:column;}
+  .ledger .lh{flex:0 0 auto;display:flex;background:#EAF7EF;border-bottom:1.5px solid #CDEBD8;}
+  .ledger .lh span{padding:6px 8px;font-size:12px;font-weight:900;color:#15803D;}
+  .ledger .lh .n1{flex:1.2;} .ledger .lh .n2{flex:1;border-left:1px solid #CDEBD8;} .ledger .lh .n3{flex:0 0 66px;text-align:center;border-left:1px solid #CDEBD8;}
+  .lrow{flex:1;display:flex;border-bottom:1px solid #EDF3EF;align-items:center;}
+  .lrow:last-child{border-bottom:none;}
+  .lrow .c-item{flex:1.2;padding:5px 8px;font-size:13px;font-weight:800;color:#243;}
+  .lrow .c-user{flex:1;padding:5px 8px;font-size:12.5px;font-weight:700;color:#41474F;border-left:1px solid #EDF3EF;}
+  .lrow .c-st{flex:0 0 66px;text-align:center;padding:5px 3px;font-size:11.5px;font-weight:900;border-left:1px solid #EDF3EF;align-self:stretch;display:flex;align-items:center;justify-content:center;}
+  .lrow .c-st.out{color:#B45309;background:#FEF6E7;}
+  .lrow .c-st.in{color:#15803D;background:#EAF7EF;}
+
+  .uses{flex:0 0 auto;margin:11px 15px 12px;display:flex;align-items:stretch;gap:9px;}
+  .ulabel{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;font-weight:900;font-size:15px;border-radius:11px;padding:0 15px;text-align:center;line-height:1.25;box-shadow:0 3px 8px rgba(37,99,235,.32);}
+  .uc{flex:1;background:#F8F9FA;border:2px solid #D7E0EC;border-radius:11px;padding:9px 12px;box-shadow:0 2px 6px rgba(0,0,0,.07);display:flex;align-items:center;gap:10px;}
+  .uc .em{font-size:24px;flex:0 0 auto;}
+  .uc .ut{font-size:16px;font-weight:800;color:#33405a;line-height:1.28;}
+  .uc .ut b{color:var(--blue-dark);}
+  .src{position:absolute;left:16px;bottom:3px;font-size:10px;color:#AEB6C2;font-weight:700;z-index:3;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+
+// リアルなQRコード（21モジュール・位置検出3隅＋データ）
+function qr(unit){
+  const M=21, cells=[];
+  const finder=(ox,oy)=>{
+    cells.push(`<rect x="${ox*unit}" y="${oy*unit}" width="${7*unit}" height="${7*unit}" fill="#111"/>`);
+    cells.push(`<rect x="${(ox+1)*unit}" y="${(oy+1)*unit}" width="${5*unit}" height="${5*unit}" fill="#fff"/>`);
+    cells.push(`<rect x="${(ox+2)*unit}" y="${(oy+2)*unit}" width="${3*unit}" height="${3*unit}" fill="#111"/>`);
+  };
+  const inFinder=(r,c)=>((r<8&&c<8)||(r<8&&c>M-9)||(r>M-9&&c<8));
+  for(let r=0;r<M;r++)for(let c=0;c<M;c++){
+    if(inFinder(r,c))continue;
+    if(((r*7 + c*13 + r*c*3 + (r%4)*(c%3)) % 3)===0){
+      cells.push(`<rect x="${c*unit}" y="${r*unit}" width="${unit}" height="${unit}" fill="#111"/>`);
+    }
+  }
+  finder(0,0);finder(0,M-7);finder(M-7,0);
+  return cells.join('');
+}
+const qrSvg=(size)=>{const u=size/21;return `<svg viewBox="0 0 ${size} ${size}" xmlns="http://www.w3.org/2000/svg"><rect x="-3" y="-3" width="${size+6}" height="${size+6}" rx="5" fill="#fff" stroke="#D8DADE" stroke-width="1.5"/>${qr(u)}</svg>`;}
+
+// 情景①：貸出ノートPC＋QRシール（崩れ解消・QRは画面内にきれい）
+const scene1=`<svg viewBox="0 0 200 150" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="lidG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#515A69"/><stop offset="1" stop-color="#363E4A"/></linearGradient>
+    <linearGradient id="scrG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#BAD3F5"/><stop offset="1" stop-color="#8FB2E6"/></linearGradient>
+    <linearGradient id="baseG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E6EBF0"/><stop offset="1" stop-color="#B6BEC8"/></linearGradient>
+  </defs>
+  <ellipse cx="100" cy="131" rx="88" ry="10" fill="rgba(40,60,90,.13)"/>
+  <!-- 画面 -->
+  <rect x="42" y="16" width="116" height="80" rx="7" fill="url(#lidG)" stroke="#242B36" stroke-width="2.5"/>
+  <rect x="49" y="23" width="102" height="66" rx="3" fill="url(#scrG)"/>
+  <rect x="49" y="23" width="102" height="12" rx="3" fill="#5C8BD1"/>
+  <circle cx="56" cy="29" r="2" fill="#fff"/><circle cx="63" cy="29" r="2" fill="#fff"/>
+  <rect x="56" y="44" width="50" height="6" rx="3" fill="#fff" opacity=".9"/>
+  <rect x="56" y="56" width="58" height="5" rx="2.5" fill="#fff" opacity=".62"/>
+  <rect x="56" y="66" width="42" height="5" rx="2.5" fill="#fff" opacity=".62"/>
+  <rect x="56" y="76" width="52" height="5" rx="2.5" fill="#fff" opacity=".62"/>
+  <!-- QRシール（画面右下・白フチで一体） -->
+  <g transform="translate(122 60)"><rect x="-3" y="-3" width="30" height="30" rx="3" fill="#fff" stroke="#CFD3D9" stroke-width="1.3"/>${qr(24/21)}</g>
+  <!-- キーボードベース -->
+  <path d="M28 96 L172 96 L188 122 L12 122 Z" fill="url(#baseG)" stroke="#8E97A2" stroke-width="2"/>
+  <rect x="84" y="100" width="32" height="5" rx="2.5" fill="#9AA3AF"/>
+  <text x="100" y="117" text-anchor="middle" font-size="11" fill="#4B5560" font-weight="900" font-family="'Noto Sans JP',sans-serif">PC-05</text>
+</svg>`;
+
+// 情景②：スマホでQRを読む
+const scene2=`<svg viewBox="0 0 150 150" xmlns="http://www.w3.org/2000/svg">
+  <defs><linearGradient id="phG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2B3240"/><stop offset="1" stop-color="#1A2029"/></linearGradient></defs>
+  <ellipse cx="75" cy="140" rx="52" ry="8" fill="rgba(11,94,96,.12)"/>
+  <rect x="40" y="14" width="70" height="126" rx="14" fill="url(#phG)" stroke="#0B1016" stroke-width="2.5"/>
+  <rect x="46" y="24" width="58" height="106" rx="6" fill="#EAF7F7"/>
+  <!-- スキャン枠 --><g transform="translate(56 44)">${qrSvg(38)}</g>
+  <path d="M50 40 h10 M50 40 v10 M100 40 h-10 M100 40 v10 M50 92 h10 M50 92 v-10 M100 92 h-10 M100 92 v-10" stroke="#128486" stroke-width="3" stroke-linecap="round"/>
+  <!-- スキャンビーム --><rect x="52" y="66" width="46" height="4" rx="2" fill="#F97316" opacity=".85"/>
+  <text x="75" y="122" text-anchor="middle" font-size="12" fill="#0B5E60" font-weight="900" font-family="'Noto Sans JP',sans-serif">ピッ！</text>
+</svg>`;
+
+// 情景③：台帳に自動で1行 記入されるイラスト
+const scene3=`<svg viewBox="0 0 200 150" xmlns="http://www.w3.org/2000/svg">
+  <defs><linearGradient id="hlG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E1F7E9"/><stop offset="1" stop-color="#C4EED4"/></linearGradient></defs>
+  <ellipse cx="86" cy="143" rx="74" ry="7" fill="rgba(20,120,60,.10)"/>
+  <!-- 台帳(クリップボード) -->
+  <rect x="20" y="10" width="132" height="128" rx="9" fill="#fff" stroke="#15803D" stroke-width="2.6"/>
+  <rect x="70" y="4" width="32" height="12" rx="4" fill="#15803D"/>
+  <!-- ヘッダ -->
+  <rect x="28" y="22" width="116" height="17" rx="4" fill="#EAF7EF"/>
+  <text x="38" y="34" font-size="10.5" fill="#15803D" font-weight="900" font-family="'Noto Sans JP',sans-serif">備品</text>
+  <text x="110" y="34" font-size="10.5" fill="#15803D" font-weight="900" font-family="'Noto Sans JP',sans-serif">状態</text>
+  <!-- 行1・行2(既存) -->
+  <rect x="36" y="46" width="50" height="6" rx="3" fill="#DDE2E7"/>
+  <rect x="102" y="44" width="42" height="12" rx="6" fill="#FDEEDD"/><text x="123" y="53" text-anchor="middle" font-size="9" fill="#B45309" font-weight="900" font-family="'Noto Sans JP',sans-serif">貸出中</text>
+  <rect x="36" y="61" width="42" height="6" rx="3" fill="#DDE2E7"/>
+  <rect x="102" y="59" width="42" height="12" rx="6" fill="#FDEEDD"/><text x="123" y="68" text-anchor="middle" font-size="9" fill="#B45309" font-weight="900" font-family="'Noto Sans JP',sans-serif">貸出中</text>
+  <!-- 行3(新規・自動記入・緑ハイライト) -->
+  <rect x="26" y="75" width="120" height="20" rx="5" fill="url(#hlG)" stroke="#7FD8A0" stroke-width="1.6"/>
+  <rect x="36" y="81" width="46" height="6" rx="3" fill="#A9E1C0"/>
+  <g transform="translate(102 78)"><rect x="0" y="0" width="42" height="13" rx="6" fill="#16A34A"/><path d="M7 6.5 l3 3 l6 -7" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><text x="27" y="10" text-anchor="middle" font-size="8.5" fill="#fff" font-weight="900" font-family="'Noto Sans JP',sans-serif">記録</text></g>
+  <!-- ⚡自動で1行記入 バッジ -->
+  <g transform="translate(40 104)"><rect x="0" y="0" width="92" height="22" rx="11" fill="#FEF3C7" stroke="#F59E0B" stroke-width="1.5"/><path d="M17 5 l-7 9 h4.5 l-1.5 7 7.5 -9.5 h-4.5 z" fill="#EA580C"/><text x="56" y="15" text-anchor="middle" font-size="10.5" fill="#B45309" font-weight="900" font-family="'Noto Sans JP',sans-serif">自動で1行記入</text></g>
+  <!-- ペン(右から緑行を指す) -->
+  <g transform="translate(150 64) rotate(34)"><rect x="0" y="0" width="7" height="30" rx="2.5" fill="#2563EB"/><rect x="0" y="0" width="7" height="8" rx="2" fill="#F59E0B"/><path d="M0 30 L7 30 L3.5 39 Z" fill="#1E3A8A"/></g>
+</svg>`;
+
+const s=document.getElementById('slide');
+s.innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.66-1</div>
+    <div class="logos"><img class="ll" src="${A}icons/pa_logo.png" alt=""><span class="plus">＋</span><img class="ll" src="${A}icons/pa_forms.png" alt=""></div>
+    <div class="title-text">備品の持ち出し、<span class="hl">QRピッで30秒記録</span></div>
+    <img class="title-chara" src="${A}chara/chara_smile.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">📦</div>
+    <div class="txt">持ち出しノート、<b>誰も書かない</b>んですよね…「<b>あの貸出PC、今どこ？</b>」問題。<br>備品のQRを<span class="g">スマホでピッ</span>とするだけで、<b>誰が持ち出し中か</b>台帳に自動で残ります。</div>
+  </div>
+
+  <div class="stage">
+    <div class="col c1">
+      <div class="cnum">1</div>
+      <div class="colcard">
+        <div class="chd">備品にQRを貼る</div>
+        <div class="cbd">
+          <div class="scene">${scene1}<img class="sc-chara" src="${A}chara/chara_point.png" alt=""></div>
+          <div class="prep">
+            <div class="pt">QRは “1回だけ” 準備</div>
+            <div class="pstep"><span class="pn">1</span><span>フォームの<b>事前入力URL</b>を作る</span></div>
+            <div class="pstep"><span class="pn">2</span><span><b>無料のQRツール</b>でQRに変換</span></div>
+            <div class="pstep"><span class="pn">3</span><span>備品に貼る＝<b>あとは貼るだけ</b></span></div>
+          </div>
+          <div class="ccap">備品ごとに<b>一度ペタッと貼るだけ</b></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="carrow">▶</div>
+
+    <div class="col c2">
+      <div class="cnum">2</div>
+      <div class="colcard">
+        <div class="chd">スマホでピッ → フォーム</div>
+        <div class="cbd">
+          <div class="scene">${scene2}</div>
+          <div class="forms">
+            <div class="fh"><img src="${A}icons/pa_forms.png" alt=""><b>備品 貸出／返却</b></div>
+            <div class="fbd">
+              <div class="frow"><span class="fl">備品名</span><span class="autoval">貸出ノートPC-05 <span class="tag">自動入力</span></span></div>
+              <div class="frow"><span class="fl">操作を選択</span>
+                <div class="choices"><span class="ch2 on">📤 借りる</span><span class="ch2 off">📥 返す</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="ccap">かざすと<b>備品名が入った状態</b>で開く</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="carrow pa">
+      <div class="paeng"><img src="${A}icons/pa_logo.png" alt=""></div>
+      <div class="palabel">ここで<br>Power<br>Automate<br>が自動連携</div>
+      <div class="ar">▶</div>
+    </div>
+
+    <div class="col c3">
+      <div class="cnum">3</div>
+      <div class="colcard">
+        <div class="chd">台帳に自動で記録</div>
+        <div class="cbd">
+          <div class="scene">${scene3}<img class="sc-chara" src="${A}chara/chara_guts.png" alt=""></div>
+          <div class="ledger">
+            <div class="lh"><span class="n1">備品</span><span class="n2">利用者</span><span class="n3">状態</span></div>
+            <div class="lrow"><span class="c-item">貸出ノートPC-05</span><span class="c-user">田中 一郎</span><span class="c-st out">貸出中</span></div>
+            <div class="lrow"><span class="c-item">プロジェクター PJ-02</span><span class="c-user">佐藤 花子</span><span class="c-st out">貸出中</span></div>
+            <div class="lrow"><span class="c-item">モバイルWi-Fi-03</span><span class="c-user">—</span><span class="c-st in">返却済</span></div>
+          </div>
+          <div class="ccap"><b>誰が持ち出し中か</b>ひと目でわかる</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="uses">
+    <div class="ulabel">こんな<br>備品に</div>
+    <div class="uc"><span class="em">💻</span><span class="ut">貸出<b>ノートPC</b></span></div>
+    <div class="uc"><span class="em">📽️</span><span class="ut"><b>プロジェクター</b></span></div>
+    <div class="uc"><span class="em">📶</span><span class="ut"><b>モバイルWi-Fi</b></span></div>
+    <div class="uc"><span class="em">📱</span><span class="ut">社用<b>タブレット</b></span></div>
+  </div>
+  <div class="src">出典：Microsoft Learn（Microsoft Forms コネクタ）／Power Automate 実機（PA45 Demo）　※作り方は2枚目</div>
+`;
+</script>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>

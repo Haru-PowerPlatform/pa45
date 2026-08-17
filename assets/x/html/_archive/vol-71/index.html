@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.68-1 レシートを撮るだけで経費台帳</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB;--blue-dark:#1E40AF;--green:#16A34A;--green-dark:#0B5E37;
+    --ink:#1F2937;--gray:#374151;--weak:#6B7280;--orange:#EA580C;--red:#DC2626;
+    --purple:#7C3AED;--purple-dark:#5B21B6;--sp:#0B7C66;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+
+  .titlebar{height:86px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:14px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:25px;border-radius:999px;padding:7px 19px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .logos{display:flex;align-items:center;gap:7px;flex:0 0 auto;}
+  .logos .ll{height:47px;width:47px;object-fit:contain;background:#fff;border-radius:12px;padding:6px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);display:flex;align-items:center;justify-content:center;}
+  .logos .ll svg{width:100%;height:100%;}
+  .logos .plus{color:#fff;font-weight:900;font-size:23px;text-shadow:0 1px 2px rgba(0,0,0,.25);line-height:1;}
+  .title-text{color:#fff;font-weight:900;font-size:27px;line-height:1.15;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:150px;}
+  .title-text .hl{color:#FFE08A;}
+  .title-chara{position:absolute;right:14px;bottom:-42px;height:142px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .concl{margin:9px 16px 0;background:#EFF6FF;border:2.5px solid var(--blue);border-radius:13px;display:flex;align-items:center;gap:13px;padding:9px 18px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;width:42px;height:42px;border-radius:12px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;font-size:23px;box-shadow:0 3px 6px rgba(0,0,0,.26);}
+  .concl .txt{font-weight:800;font-size:19.5px;color:var(--blue-dark);line-height:1.4;padding-right:96px;}
+  .concl .txt b{color:var(--red);}
+  .concl .txt .g{color:var(--green-dark);}
+  .concl .txt .p{color:var(--purple-dark);}
+
+  .stage{flex:1 1 auto;margin:12px 15px 0;display:flex;align-items:stretch;gap:0;min-height:0;}
+  .col{flex:1;display:flex;flex-direction:column;min-height:0;position:relative;}
+  .carrow{flex:0 0 30px;display:flex;align-items:center;justify-content:center;color:#9AA7B8;font-size:26px;font-weight:900;}
+  .colcard{flex:1;background:#F8FAFC;border:1.5px solid #C9D2E0;border-radius:14px;box-shadow:0 5px 13px rgba(0,0,0,.12);overflow:hidden;display:flex;flex-direction:column;}
+  .cnum{position:absolute;top:-11px;left:-9px;width:34px;height:34px;border-radius:50%;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;font-weight:900;font-size:18px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 5px rgba(0,0,0,.3);z-index:6;border:2.5px solid #fff;}
+  .chd{flex:0 0 auto;text-align:center;font-weight:900;font-size:17px;color:#fff;padding:9px 8px;line-height:1.2;}
+  .c1 .chd{background:linear-gradient(180deg,#12937A,#0B6B58);}
+  .c2 .chd{background:linear-gradient(180deg,#8B5CF6,#6D28D9);}
+  .c3 .chd{background:linear-gradient(180deg,#22A366,#15803D);}
+  .cbd{flex:1;padding:10px;display:flex;flex-direction:column;gap:8px;min-height:0;font-family:'Segoe UI','Noto Sans JP',sans-serif;justify-content:flex-start;}
+
+  .scene{flex:0 0 auto;height:150px;border-radius:11px;display:flex;align-items:center;justify-content:center;gap:8px;padding:6px;border:1.5px solid;position:relative;overflow:hidden;}
+  .c1 .scene{background:linear-gradient(180deg,#E6F5F1,#CFEDE5);border-color:#9BD8CB;}
+  .c2 .scene{background:linear-gradient(180deg,#F1EBFE,#E0D2FB);border-color:#C4B0F2;}
+  .c3 .scene{background:linear-gradient(180deg,#EAF7EF,#D4F1DE);border-color:#A6E1BC;}
+  .scene svg{height:100%;width:auto;}
+  .sc-chara{position:relative;z-index:2;height:118px;width:auto;flex:0 0 auto;filter:drop-shadow(0 3px 5px rgba(0,0,0,.3));}
+
+  .ccap{flex:0 0 auto;margin-top:auto;text-align:center;font-size:14.5px;font-weight:800;line-height:1.3;padding:0 2px;}
+  .c1 .ccap{color:#0B5E4C;} .c2 .ccap{color:#5B21B6;} .c3 .ccap{color:#15803D;}
+  .ccap b{color:#111;}
+
+  /* ① スマホ撮影mock */
+  .phone{flex:1 1 auto;display:flex;align-items:center;justify-content:center;}
+  .phone .dev{width:132px;height:100%;max-height:190px;background:#111827;border-radius:20px;padding:7px 7px 9px;box-shadow:0 6px 14px rgba(0,0,0,.3);display:flex;flex-direction:column;}
+  .phone .scr{flex:1;background:#0B1220;border-radius:12px;overflow:hidden;display:flex;flex-direction:column;position:relative;}
+  .phone .vf{flex:1;position:relative;background:linear-gradient(160deg,#1F2937,#0B1220);display:flex;align-items:center;justify-content:center;overflow:hidden;}
+  .phone .rc{width:60px;height:78px;background:#fff;border-radius:3px;transform:rotate(-4deg);box-shadow:0 3px 8px rgba(0,0,0,.5);position:relative;padding:8px 7px;}
+  .phone .rc::after{content:"";position:absolute;left:0;right:0;bottom:-4px;height:6px;background:repeating-linear-gradient(90deg,#fff 0 4px,transparent 4px 8px);}
+  .phone .rc .rl{height:3px;background:#C7CDD6;border-radius:2px;margin-bottom:4px;}
+  .phone .rc .rl.s{width:70%;} .phone .rc .rl.m{width:90%;} .phone .rc .rl.big{height:5px;background:#8A93A1;width:55%;margin-top:5px;}
+  .phone .corner{position:absolute;width:15px;height:15px;border:2.5px solid #38E0C0;}
+  .phone .corner.tl{top:14px;left:16px;border-right:none;border-bottom:none;}
+  .phone .corner.tr{top:14px;right:16px;border-left:none;border-bottom:none;}
+  .phone .corner.bl{bottom:44px;left:16px;border-right:none;border-top:none;}
+  .phone .corner.br{bottom:44px;right:16px;border-left:none;border-top:none;}
+  .phone .shutter{flex:0 0 auto;height:38px;display:flex;align-items:center;justify-content:center;background:#0B1220;}
+  .phone .shutter .sb{width:26px;height:26px;border-radius:50%;background:#fff;box-shadow:0 0 0 3px #0B1220,0 0 0 5px #fff;}
+
+  /* ② AI抽出mock */
+  .extract{flex:1 1 auto;display:flex;gap:8px;align-items:stretch;}
+  .extract .rcp{flex:0 0 74px;background:#fff;border:1.5px solid #C4B0F2;border-radius:9px;position:relative;padding:9px 7px 12px;box-shadow:0 3px 7px rgba(0,0,0,.12);overflow:hidden;}
+  .extract .rcp .rl{height:3px;background:#D8DBE2;border-radius:2px;margin-bottom:5px;}
+  .extract .rcp .hlbox{position:absolute;left:5px;right:5px;height:15px;border:2px solid #7C3AED;border-radius:4px;background:rgba(124,58,237,.10);}
+  .extract .rcp .hl1{top:20px;} .extract .rcp .hl2{top:56px;} .extract .rcp .hl3{bottom:12px;background:rgba(124,58,237,.16);}
+  .extract .rcp .scan{position:absolute;left:0;right:0;height:14px;top:44px;background:linear-gradient(180deg,rgba(56,224,192,0),rgba(124,58,237,.35),rgba(56,224,192,0));}
+  .extract .out{flex:1;background:#fff;border:1.5px solid #C4B0F2;border-radius:9px;box-shadow:0 3px 7px rgba(0,0,0,.1);display:flex;flex-direction:column;overflow:hidden;}
+  .extract .out .oh{flex:0 0 auto;background:#F1EBFE;color:#5B21B6;font-size:12px;font-weight:900;padding:6px 9px;border-bottom:1.5px solid #DCCDF7;display:flex;align-items:center;gap:6px;}
+  .extract .out .orow{flex:1;display:flex;align-items:center;padding:5px 9px;border-bottom:1px solid #F1EDFA;gap:6px;}
+  .extract .out .orow:last-child{border-bottom:none;}
+  .extract .out .orow .k{flex:0 0 46px;font-size:11px;font-weight:800;color:#7C6BA8;}
+  .extract .out .orow .val{flex:1;font-size:13.5px;font-weight:900;color:#2A1B48;text-align:right;}
+  .extract .out .orow.total{background:#F6F1FE;}
+  .extract .out .orow.total .val{color:#6D28D9;font-size:15px;}
+
+  /* ③ 台帳mock */
+  .ledger{flex:1 1 auto;background:#fff;border:1.5px solid #BDE6CD;border-radius:11px;overflow:hidden;box-shadow:0 3px 7px rgba(0,0,0,.1);display:flex;flex-direction:column;}
+  .ledger .lh{flex:0 0 auto;display:flex;background:#EAF7EF;border-bottom:1.5px solid #CDEBD8;}
+  .ledger .lh span{padding:6px 8px;font-size:11.5px;font-weight:900;color:#15803D;}
+  .ledger .lh .d{flex:0 0 62px;} .ledger .lh .n{flex:1;} .ledger .lh .a{flex:0 0 66px;text-align:right;border-left:1px solid #CDEBD8;}
+  .lrow{flex:1;display:flex;border-bottom:1px solid #EDF6F0;align-items:center;font-size:12px;font-weight:700;color:#2C3B33;}
+  .lrow:last-child{border-bottom:none;}
+  .lrow .d{flex:0 0 62px;padding:4px 8px;color:#5B6270;font-size:11px;}
+  .lrow .n{flex:1;padding:4px 8px;font-weight:800;}
+  .lrow .a{flex:0 0 66px;padding:4px 8px;text-align:right;font-weight:900;border-left:1px solid #EDF6F0;align-self:stretch;display:flex;align-items:center;justify-content:flex-end;}
+  .lrow.new{background:#EAF9F0;position:relative;}
+  .lrow.new .n{color:#0B5E37;}
+  .lrow.new .newtag{position:absolute;right:4px;top:-9px;background:#16A34A;color:#fff;font-size:9px;font-weight:900;border-radius:6px;padding:1px 6px;box-shadow:0 1px 3px rgba(0,0,0,.25);}
+
+  .uses{flex:0 0 auto;margin:11px 15px 12px;display:flex;align-items:stretch;gap:9px;}
+  .ulabel{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;font-weight:900;font-size:15px;border-radius:11px;padding:0 15px;text-align:center;line-height:1.25;box-shadow:0 3px 8px rgba(37,99,235,.32);}
+  .uc{flex:1;background:#F8F9FA;border:2px solid #D7E0EC;border-radius:11px;padding:9px 12px;box-shadow:0 2px 6px rgba(0,0,0,.07);display:flex;align-items:center;gap:10px;}
+  .uc .em{font-size:24px;flex:0 0 auto;}
+  .uc .ut{font-size:16px;font-weight:800;color:#33405a;line-height:1.28;}
+  .uc .ut b{color:var(--blue-dark);}
+  .src{position:absolute;left:16px;bottom:3px;font-size:10px;color:#AEB6C2;font-weight:700;z-index:3;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+
+// AI Builder アイコン（紫グラデ＋白スパークル）
+const AIBLD=`<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <defs><linearGradient id="abg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#A78BFA"/><stop offset="1" stop-color="#6D28D9"/></linearGradient></defs>
+  <rect x="1" y="1" width="30" height="30" rx="7" fill="url(#abg)"/>
+  <path d="M16 6 L18.4 13.6 L26 16 L18.4 18.4 L16 26 L13.6 18.4 L6 16 L13.6 13.6 Z" fill="#fff"/>
+  <path d="M24.5 6 L25.6 9.4 L29 10.5 L25.6 11.6 L24.5 15 L23.4 11.6 L20 10.5 L23.4 9.4 Z" fill="#fff" opacity=".9"/>
+</svg>`;
+
+// 情景①：スマホでレシートを撮る（手＋スマホ＋レシート＋フラッシュ）
+const scene1=`<svg viewBox="0 0 140 150" xmlns="http://www.w3.org/2000/svg">
+  <ellipse cx="70" cy="142" rx="50" ry="7" fill="rgba(11,94,76,.10)"/>
+  <!-- キラッ（フラッシュ） -->
+  <g stroke="#F59E0B" stroke-width="3" stroke-linecap="round" opacity=".85"><line x1="26" y1="20" x2="26" y2="6"/><line x1="14" y1="30" x2="4" y2="24"/><line x1="40" y1="14" x2="46" y2="5"/></g>
+  <!-- レシート（立て掛け） -->
+  <g transform="rotate(-7 44 74)"><rect x="24" y="30" width="40" height="86" rx="3" fill="#fff" stroke="#B7BEC9" stroke-width="1.6"/>
+    <path d="M24 116 l5 5 l5 -5 l5 5 l5 -5 l5 5 l5 -5 l5 5 l0 -5 z" fill="#fff" stroke="#B7BEC9" stroke-width="1.2"/>
+    <g fill="#C7CDD6"><rect x="30" y="40" width="28" height="4" rx="2"/><rect x="30" y="50" width="22" height="3" rx="1.5"/><rect x="30" y="58" width="26" height="3" rx="1.5"/><rect x="30" y="66" width="20" height="3" rx="1.5"/></g>
+    <rect x="30" y="98" width="20" height="6" rx="2" fill="#8A93A1"/>
+  </g>
+  <!-- スマホ本体 -->
+  <g transform="rotate(6 100 82)"><rect x="76" y="34" width="52" height="98" rx="12" fill="#111827" stroke="#0B1220" stroke-width="2"/>
+    <rect x="81" y="42" width="42" height="82" rx="5" fill="#0B1220"/>
+    <!-- カメラビュー：レシートが写る -->
+    <rect x="86" y="52" width="32" height="52" rx="2" fill="#fff" opacity=".9"/>
+    <g fill="#AEB6C2"><rect x="90" y="58" width="20" height="3" rx="1.5"/><rect x="90" y="65" width="16" height="2.4" rx="1.2"/><rect x="90" y="71" width="18" height="2.4" rx="1.2"/></g>
+    <!-- コーナーマーカー -->
+    <g stroke="#38E0C0" stroke-width="2.4" fill="none"><path d="M85 51 h6 M85 51 v6"/><path d="M119 51 h-6 M119 51 v6"/><path d="M85 105 h6 M85 105 v-6"/><path d="M119 105 h-6 M119 105 v-6"/></g>
+    <!-- シャッター -->
+    <circle cx="102" cy="118" r="6.5" fill="#fff"/><circle cx="102" cy="118" r="4.6" fill="none" stroke="#111827" stroke-width="1.4"/>
+  </g>
+</svg>`;
+
+// 情景②：AIがレシートを読み取る（レシート＋走査線＋抽出線＋AIバッジ）
+const scene2=`<svg viewBox="0 0 140 150" xmlns="http://www.w3.org/2000/svg">
+  <defs><linearGradient id="scanG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="rgba(124,58,237,0)"/><stop offset=".5" stop-color="rgba(124,58,237,.5)"/><stop offset="1" stop-color="rgba(124,58,237,0)"/></linearGradient></defs>
+  <ellipse cx="66" cy="142" rx="48" ry="7" fill="rgba(91,33,182,.12)"/>
+  <!-- レシート -->
+  <rect x="34" y="20" width="62" height="108" rx="4" fill="#fff" stroke="#B7A6E0" stroke-width="1.8"/>
+  <path d="M34 128 l7 6 l7 -6 l7 6 l7 -6 l7 6 l7 -6 l7 6 l7 -6 l0 -6 z" fill="#fff" stroke="#B7A6E0" stroke-width="1.4"/>
+  <g fill="#CFCADB"><rect x="44" y="30" width="42" height="4" rx="2"/><rect x="44" y="40" width="30" height="3" rx="1.5"/></g>
+  <!-- 抽出ハイライト -->
+  <g><rect x="41" y="52" width="48" height="14" rx="3" fill="rgba(124,58,237,.10)" stroke="#7C3AED" stroke-width="2"/>
+     <rect x="41" y="76" width="48" height="14" rx="3" fill="rgba(124,58,237,.10)" stroke="#7C3AED" stroke-width="2"/>
+     <rect x="41" y="102" width="48" height="16" rx="3" fill="rgba(124,58,237,.18)" stroke="#7C3AED" stroke-width="2.4"/></g>
+  <g fill="#9A8FC0"><rect x="46" y="57" width="30" height="4" rx="2"/><rect x="46" y="81" width="24" height="4" rx="2"/></g>
+  <rect x="46" y="106" width="34" height="7" rx="2.5" fill="#6D28D9"/>
+  <!-- 走査線 -->
+  <rect x="34" y="66" width="62" height="16" fill="url(#scanG)"/>
+  <!-- AIバッジ -->
+  <g transform="translate(92 14)"><circle cx="16" cy="16" r="16" fill="#7C3AED" stroke="#fff" stroke-width="2"/>
+    <path d="M16 7 L17.6 13 L23 15 L17.6 17 L16 23 L14.4 17 L9 15 L14.4 13 Z" fill="#fff"/></g>
+</svg>`;
+
+// 情景③：台帳に自動で1行入る（表＋✓＋キラッ）
+const scene3=`<svg viewBox="0 0 150 150" xmlns="http://www.w3.org/2000/svg">
+  <ellipse cx="74" cy="142" rx="52" ry="7" fill="rgba(21,128,61,.10)"/>
+  <!-- 台帳（表） -->
+  <rect x="26" y="24" width="98" height="98" rx="7" fill="#fff" stroke="#7FC79C" stroke-width="2.4"/>
+  <rect x="26" y="24" width="98" height="20" rx="7" fill="#DFF3E7"/><rect x="26" y="36" width="98" height="8" fill="#DFF3E7"/>
+  <g stroke="#CDEBD8" stroke-width="1.4"><line x1="26" y1="64" x2="124" y2="64"/><line x1="26" y1="82" x2="124" y2="82"/><line x1="66" y1="24" x2="66" y2="122"/><line x1="98" y1="24" x2="98" y2="122"/></g>
+  <g fill="#9DBBA9"><rect x="32" y="50" width="26" height="5" rx="2.5"/><rect x="72" y="50" width="18" height="5" rx="2.5"/><rect x="104" y="50" width="14" height="5" rx="2.5"/>
+    <rect x="32" y="68" width="26" height="5" rx="2.5"/><rect x="72" y="68" width="18" height="5" rx="2.5"/><rect x="104" y="68" width="14" height="5" rx="2.5"/></g>
+  <!-- 新規行（緑ハイライト） -->
+  <rect x="27" y="100" width="96" height="20" fill="#C9EFD7"/>
+  <g fill="#2E9E63"><rect x="32" y="107" width="26" height="6" rx="3"/><rect x="72" y="107" width="18" height="6" rx="3"/><rect x="104" y="107" width="14" height="6" rx="3"/></g>
+  <!-- チェック -->
+  <g transform="translate(108 96)"><circle cx="14" cy="14" r="14" fill="#16A34A" stroke="#fff" stroke-width="2"/><path d="M8 14.5 l4 4 l8 -9" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></g>
+  <!-- キラッ -->
+  <g stroke="#F59E0B" stroke-width="2.6" stroke-linecap="round" opacity=".85"><line x1="30" y1="16" x2="30" y2="6"/><line x1="20" y1="22" x2="12" y2="17"/><line x1="42" y1="16" x2="47" y2="8"/></g>
+</svg>`;
+
+const s=document.getElementById('slide');
+s.innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.68-1</div>
+    <div class="logos"><img class="ll" src="${A}icons/pa_logo.png" alt=""><span class="plus">＋</span><span class="ll">${AIBLD}</span></div>
+    <div class="title-text">レシートを撮るだけで、<span class="hl">経費台帳が“勝手に”埋まる</span></div>
+    <img class="title-chara" src="${A}chara/chara_surprise.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">📸</div>
+    <div class="txt">経費精算、レシートの金額と日付を<b>ポチポチ手入力</b>…地味に時間かかりますよね。<br>スマホで撮るだけで、<span class="p">AIが店名・日付・合計を読み取り</span>、台帳に<span class="g">自動で記入</span>します。</div>
+  </div>
+
+  <div class="stage">
+    <div class="col c1">
+      <div class="cnum">1</div>
+      <div class="colcard">
+        <div class="chd">スマホでレシートを撮る</div>
+        <div class="cbd">
+          <div class="scene">${scene1}<img class="sc-chara" src="${A}chara/chara_smile.png" alt=""></div>
+          <div class="phone">
+            <div class="dev"><div class="scr">
+              <div class="vf">
+                <div class="rc"><div class="rl m"></div><div class="rl s"></div><div class="rl m"></div><div class="rl big"></div></div>
+                <div class="corner tl"></div><div class="corner tr"></div><div class="corner bl"></div><div class="corner br"></div>
+              </div>
+              <div class="shutter"><div class="sb"></div></div>
+            </div></div>
+          </div>
+          <div class="ccap">専用の経理ソフト不要／スマホで<b>1枚パシャッ</b></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="carrow">▶</div>
+
+    <div class="col c2">
+      <div class="cnum">2</div>
+      <div class="colcard">
+        <div class="chd">AIが中身を読み取る</div>
+        <div class="cbd">
+          <div class="scene">${scene2}<img class="sc-chara" src="${A}chara/chara_think.png" alt="" style="height:110px"></div>
+          <div class="extract">
+            <div class="rcp"><div class="rl" style="width:80%"></div><div class="rl" style="width:60%"></div><div class="rl" style="width:70%"></div><div class="rl" style="width:50%"></div><div class="rl" style="width:65%"></div>
+              <div class="hlbox hl1"></div><div class="hlbox hl2"></div><div class="hlbox hl3"></div><div class="scan"></div></div>
+            <div class="out">
+              <div class="oh">✨ AIが抽出</div>
+              <div class="orow"><span class="k">店舗名</span><span class="val">スーパーやまだ</span></div>
+              <div class="orow"><span class="k">日付</span><span class="val">2026/07/15</span></div>
+              <div class="orow total"><span class="k">合計</span><span class="val">¥3,480</span></div>
+            </div>
+          </div>
+          <div class="ccap"><b>AI Builder</b>が文字を読み取り／<b>手入力ゼロ</b></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="carrow">▶</div>
+
+    <div class="col c3">
+      <div class="cnum">3</div>
+      <div class="colcard">
+        <div class="chd">経費台帳に自動で記入</div>
+        <div class="cbd">
+          <div class="scene">${scene3}<img class="sc-chara" src="${A}chara/chara_guts.png" alt="" style="height:122px"></div>
+          <div class="ledger">
+            <div class="lh"><span class="d">日付</span><span class="n">店名</span><span class="a">金額</span></div>
+            <div class="lrow"><span class="d">07/09</span><span class="n">〇〇タクシー</span><span class="a">¥1,200</span></div>
+            <div class="lrow"><span class="d">07/12</span><span class="n">カフェ ソレイユ</span><span class="a">¥980</span></div>
+            <div class="lrow new"><span class="newtag">＋自動追加</span><span class="d">07/15</span><span class="n">スーパーやまだ</span><span class="a">¥3,480</span></div>
+          </div>
+          <div class="ccap">気づけば台帳に<b>1行できてる</b></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="uses">
+    <div class="ulabel">こんな<br>経費に</div>
+    <div class="uc"><span class="em">🚃</span><span class="ut"><b>交通費</b>の精算</span></div>
+    <div class="uc"><span class="em">🍴</span><span class="ut">出張の<b>飲食・宿泊</b></span></div>
+    <div class="uc"><span class="em">🛒</span><span class="ut"><b>備品・消耗品</b>の購入</span></div>
+    <div class="uc"><span class="em">🧾</span><span class="ut">接待費・<b>立替金</b></span></div>
+  </div>
+  <div class="src">出典：Microsoft Learn（AI Builder／領収書処理の事前構築モデル）　※作り方は2枚目</div>
+`;
+</script>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>

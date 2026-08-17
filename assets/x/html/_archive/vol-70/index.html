@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.67-1 資料の鮮度チェック</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB;--blue-dark:#1E40AF;--green:#16A34A;--green-dark:#0B5E37;
+    --ink:#1F2937;--gray:#374151;--weak:#6B7280;--orange:#EA580C;--red:#DC2626;--sp:#0B7C66;--sp-dark:#075A4A;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+
+  .titlebar{height:86px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:14px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:25px;border-radius:999px;padding:7px 19px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .logos{display:flex;align-items:center;gap:7px;flex:0 0 auto;}
+  .logos .ll{height:47px;width:47px;object-fit:contain;background:#fff;border-radius:12px;padding:6px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
+  .logos .plus{color:#fff;font-weight:900;font-size:23px;text-shadow:0 1px 2px rgba(0,0,0,.25);line-height:1;}
+  .title-text{color:#fff;font-weight:900;font-size:27px;line-height:1.15;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:150px;}
+  .title-text .hl{color:#FFE08A;}
+  .title-chara{position:absolute;right:14px;bottom:-42px;height:142px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .concl{margin:9px 16px 0;background:#EFF6FF;border:2.5px solid var(--blue);border-radius:13px;display:flex;align-items:center;gap:13px;padding:9px 18px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;width:42px;height:42px;border-radius:12px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;font-size:23px;box-shadow:0 3px 6px rgba(0,0,0,.26);}
+  .concl .txt{font-weight:800;font-size:19.5px;color:var(--blue-dark);line-height:1.4;padding-right:96px;}
+  .concl .txt b{color:var(--red);}
+  .concl .txt .g{color:var(--green-dark);}
+
+  .stage{flex:1 1 auto;margin:12px 15px 0;display:flex;align-items:stretch;gap:0;min-height:0;}
+  .col{flex:1;display:flex;flex-direction:column;min-height:0;position:relative;}
+  .carrow{flex:0 0 30px;display:flex;align-items:center;justify-content:center;color:#9AA7B8;font-size:26px;font-weight:900;}
+  .colcard{flex:1;background:#F8FAFC;border:1.5px solid #C9D2E0;border-radius:14px;box-shadow:0 5px 13px rgba(0,0,0,.12);overflow:hidden;display:flex;flex-direction:column;}
+  .cnum{position:absolute;top:-11px;left:-9px;width:34px;height:34px;border-radius:50%;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;font-weight:900;font-size:18px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 5px rgba(0,0,0,.3);z-index:6;border:2.5px solid #fff;}
+  .chd{flex:0 0 auto;text-align:center;font-weight:900;font-size:17px;color:#fff;padding:9px 8px;line-height:1.2;}
+  .c1 .chd{background:linear-gradient(180deg,#12937A,#0B6B58);}
+  .c2 .chd{background:linear-gradient(180deg,#F97316,#EA580C);}
+  .c3 .chd{background:linear-gradient(180deg,#22A366,#15803D);}
+  .cbd{flex:1;padding:10px;display:flex;flex-direction:column;gap:8px;min-height:0;font-family:'Segoe UI','Noto Sans JP',sans-serif;justify-content:flex-start;}
+
+  .scene{flex:0 0 auto;height:150px;border-radius:11px;display:flex;align-items:center;justify-content:center;gap:8px;padding:6px;border:1.5px solid;position:relative;overflow:hidden;}
+  .c1 .scene{background:linear-gradient(180deg,#E6F5F1,#CFEDE5);border-color:#9BD8CB;}
+  .c2 .scene{background:linear-gradient(180deg,#FCEDE0,#F6D9C0);border-color:#F1B892;}
+  .c3 .scene{background:linear-gradient(180deg,#EAF7EF,#D4F1DE);border-color:#A6E1BC;}
+  .scene svg{height:100%;width:auto;}
+  .sc-chara{position:relative;z-index:2;height:118px;width:auto;flex:0 0 auto;filter:drop-shadow(0 3px 5px rgba(0,0,0,.3));}
+
+  .ccap{flex:0 0 auto;margin-top:auto;text-align:center;font-size:14.5px;font-weight:800;line-height:1.3;padding:0 2px;}
+  .c1 .ccap{color:#0B5E4C;} .c2 .ccap{color:#9A3412;} .c3 .ccap{color:#15803D;}
+  .ccap b{color:#111;}
+
+  /* ① SharePointライブラリmock */
+  .lib{flex:1 1 auto;background:#fff;border:1.5px solid #A9DDD3;border-radius:11px;overflow:hidden;box-shadow:0 3px 7px rgba(0,0,0,.1);display:flex;flex-direction:column;}
+  .lib .lh{flex:0 0 auto;display:flex;background:#E6F5F1;border-bottom:1.5px solid #CDEBE2;}
+  .lib .lh span{padding:6px 10px;font-size:12.5px;font-weight:900;color:#0B5E4C;}
+  .lib .lh .n1{flex:1;} .lib .lh .n2{flex:0 0 96px;text-align:center;border-left:1px solid #CDEBE2;}
+  .lrow{flex:1;display:flex;border-bottom:1px solid #EDF3F1;align-items:center;}
+  .lrow:last-child{border-bottom:none;}
+  .lrow .fn{flex:1;padding:5px 10px;font-size:13.5px;font-weight:800;color:#243;display:flex;align-items:center;gap:7px;}
+  .lrow .fn .fi{font-size:15px;}
+  .lrow .md{flex:0 0 96px;text-align:center;padding:5px 4px;font-size:12.5px;font-weight:800;border-left:1px solid #EDF3F1;align-self:stretch;display:flex;align-items:center;justify-content:center;color:#5B6270;}
+  .lrow .md.old{color:#B91C1C;background:#FEF2F2;}
+
+  /* ② あぶり出し結果mock */
+  .found{flex:1 1 auto;background:#fff;border:1.5px solid #F3B892;border-radius:11px;overflow:hidden;box-shadow:0 3px 7px rgba(0,0,0,.1);display:flex;flex-direction:column;}
+  .found .fh2{flex:0 0 auto;background:#FDECE0;color:#9A3412;font-size:13.5px;font-weight:900;padding:7px 11px;border-bottom:1.5px solid #F5D3BC;display:flex;align-items:center;gap:7px;}
+  .found .fr{flex:1;display:flex;align-items:center;justify-content:space-between;padding:6px 11px;border-bottom:1px solid #F7EDE5;}
+  .found .fr:last-child{border-bottom:none;}
+  .found .fr .nm{font-size:14px;font-weight:800;color:#243;display:flex;align-items:center;gap:7px;}
+  .found .fr .nm .fi{font-size:15px;}
+  .found .fr .dt{font-size:12.5px;font-weight:900;color:#B91C1C;background:#FEF2F2;border-radius:6px;padding:3px 9px;white-space:nowrap;}
+
+  /* ③ Teams通知mock */
+  .notif{flex:1 1 auto;background:#fff;border:1.5px solid #BDE6CD;border-radius:11px;overflow:hidden;box-shadow:0 3px 7px rgba(0,0,0,.1);display:flex;flex-direction:column;}
+  .notif .nh{flex:0 0 auto;display:flex;align-items:center;gap:8px;background:#EAF7EF;padding:7px 11px;border-bottom:1px solid #CDEBD8;}
+  .notif .nh img{width:19px;height:19px;object-fit:contain;}
+  .notif .nh b{font-size:12.5px;font-weight:900;color:#15803D;}
+  .notif .nb{flex:1;padding:10px 12px;display:flex;flex-direction:column;justify-content:center;gap:8px;}
+  .notif .bubble{background:#F3F8FF;border:1.5px solid #CBDDF3;border-radius:12px;border-top-left-radius:3px;padding:10px 12px;}
+  .notif .bubble .who{display:flex;align-items:center;gap:6px;font-size:12px;font-weight:900;color:#1E40AF;margin-bottom:6px;}
+  .notif .bubble .who .bot{font-size:10px;background:#E5EDFB;border:1px solid #BBD0EE;border-radius:4px;padding:1px 6px;}
+  .notif .bubble .msg{font-size:14px;font-weight:700;color:#243;line-height:1.42;}
+  .notif .bubble .msg b{color:#B91C1C;}
+  .notif .yn{display:flex;gap:8px;}
+  .notif .yn .b{flex:1;text-align:center;font-size:12.5px;font-weight:900;border-radius:7px;padding:6px;}
+  .notif .yn .b.ok{background:#16A34A;color:#fff;}
+  .notif .yn .b.up{background:#fff;color:#B45309;border:1.5px solid #F5B570;}
+
+  .uses{flex:0 0 auto;margin:11px 15px 12px;display:flex;align-items:stretch;gap:9px;}
+  .ulabel{flex:0 0 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;font-weight:900;font-size:15px;border-radius:11px;padding:0 15px;text-align:center;line-height:1.25;box-shadow:0 3px 8px rgba(37,99,235,.32);}
+  .uc{flex:1;background:#F8F9FA;border:2px solid #D7E0EC;border-radius:11px;padding:9px 12px;box-shadow:0 2px 6px rgba(0,0,0,.07);display:flex;align-items:center;gap:10px;}
+  .uc .em{font-size:24px;flex:0 0 auto;}
+  .uc .ut{font-size:16px;font-weight:800;color:#33405a;line-height:1.28;}
+  .uc .ut b{color:var(--blue-dark);}
+  .src{position:absolute;left:16px;bottom:3px;font-size:10px;color:#AEB6C2;font-weight:700;z-index:3;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+
+// 情景①：更新日を虫めがねでチェック（カレンダー＋ルーペ）
+const scene1=`<svg viewBox="0 0 150 150" xmlns="http://www.w3.org/2000/svg">
+  <defs><linearGradient id="calG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#EAF2EF"/></linearGradient></defs>
+  <ellipse cx="72" cy="140" rx="52" ry="7" fill="rgba(11,94,76,.10)"/>
+  <!-- カレンダー -->
+  <rect x="30" y="26" width="84" height="86" rx="9" fill="url(#calG)" stroke="#0B7C66" stroke-width="2.6"/>
+  <rect x="30" y="26" width="84" height="22" rx="9" fill="#12937A"/>
+  <rect x="30" y="40" width="84" height="8" fill="#12937A"/>
+  <rect x="44" y="18" width="7" height="16" rx="3.5" fill="#0B5E4C"/><rect x="93" y="18" width="7" height="16" rx="3.5" fill="#0B5E4C"/>
+  <g fill="#B8CFC8"><rect x="40" y="56" width="12" height="9" rx="2"/><rect x="58" y="56" width="12" height="9" rx="2"/><rect x="76" y="56" width="12" height="9" rx="2"/><rect x="94" y="56" width="10" height="9" rx="2"/>
+  <rect x="40" y="70" width="12" height="9" rx="2"/><rect x="58" y="70" width="12" height="9" rx="2"/></g>
+  <rect x="76" y="70" width="12" height="9" rx="2" fill="#12937A"/>
+  <g fill="#B8CFC8"><rect x="94" y="70" width="10" height="9" rx="2"/><rect x="40" y="84" width="12" height="9" rx="2"/><rect x="58" y="84" width="12" height="9" rx="2"/></g>
+  <!-- ルーペ -->
+  <circle cx="96" cy="94" r="22" fill="rgba(255,255,255,.55)" stroke="#F59E0B" stroke-width="5.5"/>
+  <line x1="112" y1="110" x2="130" y2="130" stroke="#F59E0B" stroke-width="7" stroke-linecap="round"/>
+</svg>`;
+
+// 情景②：ほこり／クモの巣をかぶった“放置された古い書類”＋180日バッジ
+const scene2=`<svg viewBox="0 0 160 150" xmlns="http://www.w3.org/2000/svg">
+  <defs><linearGradient id="paperG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F3F0E9"/><stop offset="1" stop-color="#DED8CB"/></linearGradient></defs>
+  <ellipse cx="76" cy="142" rx="58" ry="7" fill="rgba(90,60,20,.12)"/>
+  <!-- 重なった古い紙 -->
+  <rect x="34" y="34" width="80" height="100" rx="5" fill="#E7E1D4" stroke="#B7AF9C" stroke-width="2" transform="rotate(-5 74 84)"/>
+  <rect x="40" y="28" width="80" height="100" rx="5" fill="url(#paperG)" stroke="#B0A892" stroke-width="2.4"/>
+  <!-- 折れ角 -->
+  <path d="M100 28 L120 28 L120 48 Z" fill="#CFC8B6" stroke="#B0A892" stroke-width="1.6"/>
+  <!-- 色あせたテキスト行 -->
+  <g fill="#BDB4A0"><rect x="50" y="44" width="46" height="5" rx="2.5"/><rect x="50" y="56" width="58" height="4" rx="2"/><rect x="50" y="66" width="52" height="4" rx="2"/><rect x="50" y="76" width="58" height="4" rx="2"/><rect x="50" y="86" width="44" height="4" rx="2"/></g>
+  <!-- ほこり -->
+  <g fill="#9E958200" ><circle cx="0" cy="0" r="0"/></g>
+  <g fill="#A79E88" opacity=".8"><circle cx="52" cy="34" r="2"/><circle cx="70" cy="31" r="1.5"/><circle cx="90" cy="35" r="2.2"/><circle cx="106" cy="33" r="1.6"/><circle cx="60" cy="38" r="1.4"/></g>
+  <!-- クモの巣（右上角） -->
+  <g stroke="#9AA0A6" stroke-width="1.2" fill="none" opacity=".85">
+    <path d="M120 28 L120 60 M120 28 L92 28 M120 28 L100 48 M120 28 L112 54 M120 28 L120 28"/>
+    <path d="M120 38 L104 34 M120 46 L100 42 M120 54 L98 50"/>
+    <path d="M108 30 Q104 40 100 48 M114 30 Q112 44 108 54"/>
+  </g>
+  <!-- 180日 更新なし バッジ -->
+  <g transform="translate(20 96)"><rect x="0" y="0" width="98" height="26" rx="13" fill="#DC2626" stroke="#991B1B" stroke-width="1.6"/><text x="49" y="17" text-anchor="middle" font-size="12" fill="#fff" font-weight="900" font-family="'Noto Sans JP',sans-serif">180日 更新なし</text></g>
+</svg>`;
+
+const s=document.getElementById('slide');
+s.innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.67-1</div>
+    <div class="logos"><img class="ll" src="${A}icons/pa_logo.png" alt=""><span class="plus">＋</span><img class="ll" src="${A}icons/pa_sharepoint.png" alt=""></div>
+    <div class="title-text">その手順書、<span class="hl">“いつの情報のまま”？</span></div>
+    <img class="title-chara" src="${A}chara/chara_think.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">📄</div>
+    <div class="txt">気づけば<b>半年前のマニュアル</b>で仕事してた…って、地味にこわいんですよね。<br>ほったらかしの資料を見つけて、担当者に<span class="g">「まだ最新ですか？」</span>と自動で確認します。</div>
+  </div>
+
+  <div class="stage">
+    <div class="col c1">
+      <div class="cnum">1</div>
+      <div class="colcard">
+        <div class="chd">毎週 更新日をチェック</div>
+        <div class="cbd">
+          <div class="scene">${scene1}<img class="sc-chara" src="${A}chara/chara_laptop.png" alt=""></div>
+          <div class="lib">
+            <div class="lh"><span class="n1">資料</span><span class="n2">更新日</span></div>
+            <div class="lrow"><span class="fn"><span class="fi">📘</span>就業規則</span><span class="md">先週</span></div>
+            <div class="lrow"><span class="fn"><span class="fi">📗</span>営業マニュアル</span><span class="md">2か月前</span></div>
+            <div class="lrow"><span class="fn"><span class="fi">📕</span>旧・価格表</span><span class="md old">1年前</span></div>
+          </div>
+          <div class="ccap">中身を開かず<b>「更新日」だけ</b>で鮮度を判定</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="carrow">▶</div>
+
+    <div class="col c2">
+      <div class="cnum">2</div>
+      <div class="colcard">
+        <div class="chd">半年ほったらかしを発見</div>
+        <div class="cbd">
+          <div class="scene">${scene2}<img class="sc-chara" src="${A}chara/chara_trouble.png" alt=""></div>
+          <div class="found">
+            <div class="fh2">⚠️ 見直しが必要な資料</div>
+            <div class="fr"><span class="nm"><span class="fi">📕</span>旧・価格表</span><span class="dt">1年 更新なし</span></div>
+            <div class="fr"><span class="nm"><span class="fi">📄</span>旧・申請様式</span><span class="dt">8か月 更新なし</span></div>
+          </div>
+          <div class="ccap"><b>更新が止まった資料</b>を自動であぶり出す</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="carrow">▶</div>
+
+    <div class="col c3">
+      <div class="cnum">3</div>
+      <div class="colcard">
+        <div class="chd">「まだ最新？」と自動で確認</div>
+        <div class="cbd">
+          <div class="scene"><img class="sc-chara" src="${A}chara/chara_point.png" alt="" style="height:126px"></div>
+          <div class="notif">
+            <div class="nh"><img src="${A}icons/pa_teams_official.png" alt=""><b>山田 太郎さんへ 通知</b></div>
+            <div class="nb">
+              <div class="bubble">
+                <div class="who"><img src="${A}icons/pa_logo.png" style="width:14px;height:14px;object-fit:contain" alt="">Power Automate <span class="bot">フローボット</span></div>
+                <div class="msg"><b>「旧・価格表」</b>が1年 更新されていません。まだ最新ですか？📄</div>
+              </div>
+              <div class="yn"><span class="b ok">✅ 最新です</span><span class="b up">🔄 更新する</span></div>
+            </div>
+          </div>
+          <div class="ccap">最終更新者に<b>そっとお伺い</b>／放置を防ぐ</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="uses">
+    <div class="ulabel">こんな<br>資料に</div>
+    <div class="uc"><span class="em">📘</span><span class="ut">就業規則・<b>社内規程</b></span></div>
+    <div class="uc"><span class="em">📗</span><span class="ut">業務<b>マニュアル・手順書</b></span></div>
+    <div class="uc"><span class="em">💴</span><span class="ut"><b>価格表・料金表</b></span></div>
+    <div class="uc"><span class="em">📋</span><span class="ut">申請<b>フォーム・様式</b></span></div>
+  </div>
+  <div class="src">出典：Microsoft Learn（SharePoint コネクタ／OData フィルター）／Power Automate 実機（PA45 Demo）　※作り方は2枚目</div>
+`;
+</script>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>
