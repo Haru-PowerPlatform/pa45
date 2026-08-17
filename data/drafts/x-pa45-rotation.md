@@ -505,4 +505,6 @@ https://haru-powerplatform.github.io/pa45/achievements/vol-23-survey.html
 - 開催週は 16（募集）を必ず入れて、それ以外の日に在庫を消化する。
 - 新しい回が終わったら `python scripts/build-insights.py` → `python scripts/make-insight-ogp.py` を回す。
   数字が変わるので、1・2・4・15の本文の数値も更新する。
+- 回別アンケート（36）は `python scripts/parse-survey.py` → `achievements/vol-N-survey.html` を前回分からコピーして差し替え →
+  `python scripts/make-vol-survey-ogp.py N`（見出し・引用は同スクリプトの `VOL_TEXT` に足す）。
 - OGPカードが古いまま出るときは https://cards-dev.twitter.com/validator でキャッシュを更新。
