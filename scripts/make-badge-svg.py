@@ -46,6 +46,7 @@ SESSIONS = {
     20: ("Adaptive Cards", "2026-07-23", "card"),
     21: ("First Steps", "2026-07-30", "firststep"),
     22: ("Office Scripts × Copilot", "2026-08-06", "excelscript"),
+    23: ("Return Value & Condition", "2026-08-15", "branch"),
 }
 
 
@@ -75,6 +76,10 @@ PALETTE_OVERRIDE = {
     #          青(21)からの変化で、表計算シート＋Copilotのきらめきiconを主役に。
     22: dict(ring=("#8ef0ab", "#0a3b1c"), disc=("#16a34a", "#052e13"),
              gold=GOLD, title="#ffffff", sub="#b7f3c8"),
+    # Vol.23：戻り値で条件分岐＝判断して道が分かれる。グリーン(22)からの変化で、
+    #          判断のバイオレット×ゴールド。菱形の条件から2本に分かれる分岐iconが主役。
+    23: dict(ring=("#d7c7ff", "#2a1a5e"), disc=("#7c3aed", "#1e0f45"),
+             gold=GOLD, title="#ffffff", sub="#e6dcff"),
 }
 
 
@@ -288,10 +293,47 @@ def icon_excelscript(g):
   </g>'''
 
 
+def icon_branch(g):
+    """戻り値で条件分岐 = 条件の菱形から2本に分かれ、はい(✓)/いいえ に振り分ける。"""
+    gl, gm, gd = g
+    cx = 445
+    dY, ds = 322, 34            # 菱形の中心・半径
+    lX, rX = 372, 518           # 左右ノードの中心X
+    nY, nw, nh = 470, 74, 56    # ノードの中心Y・幅・高さ
+    # 菱形の下頂点から左右ノードへ分かれる2本のライン
+    lines = (
+        f'<path d="M{cx} {dY+ds} C {cx} {dY+ds+52}, {lX} {nY-96}, {lX} {nY-nh/2-6}" '
+        f'fill="none" stroke="{gd}" stroke-width="7" stroke-linecap="round"/>'
+        f'<path d="M{cx} {dY+ds} C {cx} {dY+ds+52}, {rX} {nY-96}, {rX} {nY-nh/2-6}" '
+        f'fill="none" stroke="{gd}" stroke-width="7" stroke-linecap="round"/>'
+    )
+    check = (f'<path d="M{lX-16} {nY} l11 12 l20 -23" fill="none" stroke="{gd}" '
+             f'stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>')
+    dot = f'<circle cx="{rX}" cy="{nY}" r="9" fill="{gd}"/>'
+    return f'''
+  <g filter="url(#ishadow)">
+    {lines}
+    <!-- 左ノード（はい＝金） -->
+    <rect x="{lX-nw/2:.0f}" y="{nY-nh/2:.0f}" width="{nw}" height="{nh}" rx="12"
+          fill="url(#sparkgrad)" stroke="{gd}" stroke-width="4"/>
+    {check}
+    <!-- 右ノード（いいえ＝クリーム） -->
+    <rect x="{rX-nw/2:.0f}" y="{nY-nh/2:.0f}" width="{nw}" height="{nh}" rx="12"
+          fill="#fffaf0" stroke="{gd}" stroke-width="4"/>
+    {dot}
+    <!-- 条件の菱形 -->
+    <polygon points="{cx},{dY-ds} {cx+ds},{dY} {cx},{dY+ds} {cx-ds},{dY}"
+             fill="url(#sparkgrad)" stroke="{gd}" stroke-width="4.5" stroke-linejoin="round"/>
+    <polygon points="{cx},{dY-ds+8} {cx+ds-8},{dY} {cx},{dY+ds-8} {cx-ds+8},{dY}"
+             fill="{gl}" opacity="0.35"/>
+  </g>'''
+
+
 ICONS = {"foldermail": icon_foldermail, "copilot": icon_copilot,
          "deadline": icon_deadline, "approval": icon_approval,
          "dashboard": icon_dashboard, "card": icon_card,
-         "firststep": icon_firststep, "excelscript": icon_excelscript}
+         "firststep": icon_firststep, "excelscript": icon_excelscript,
+         "branch": icon_branch}
 
 
 def knurl_dots(cx, cy, r, n, color):

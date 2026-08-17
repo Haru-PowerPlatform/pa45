@@ -258,10 +258,10 @@ def _next_connpass_url():
 
 
 # ─── メール送信 ───────────────────────────────────
-def send_email(to_email: str, session_num: int, badge_path: Path):
+def send_email(to_email: str, session_num: int, badge_path: Path, next_url_override: str = None):
     smtp_user = os.environ.get("SMTP_USER", "").strip()
     smtp_pass = os.environ.get("SMTP_PASSWORD", "").strip()
-    next_url  = _next_connpass_url()
+    next_url  = next_url_override or _next_connpass_url()
 
     if not smtp_user or smtp_user.startswith("←"):
         print("ERROR: .env に SMTP_USER が設定されていません")
@@ -280,6 +280,7 @@ def send_email(to_email: str, session_num: int, badge_path: Path):
         20: "アダプティブカードの作り方",
         21: "はじめる前の基礎と環境準備",
         22: "OfficeスクリプトとCopilotでExcel自動化",
+        23: "Officeスクリプトの戻り値で条件分岐（自動振り分け）",
     }
     theme = THEMES_JP.get(session_num)
     theme_part = f"『{theme}』" if theme else ""
@@ -364,6 +365,8 @@ def main():
                         help="次回イベント未設定でも本番送信を強行する（非推奨）")
     parser.add_argument("--dry-run",  action="store_true",
                         help="送信先リストを表示するだけ（送信しない）")
+    parser.add_argument("--next-url", type=str, default=None,
+                        help="メールの「次回」リンクを明示指定（Vol.N+1未作成時にグループURL等を渡す）")
     args = parser.parse_args()
 
     session_num = args.session
@@ -399,7 +402,11 @@ def main():
 
     # ── 次回イベントが立っているか（メールの「次回」リンク）──
     ok, nvol, nurl, nmsg = check_next_event(session_num)
-    print(f"  次回リンク: {nurl or '(なし)'}" + (f"  ← Vol.{nvol}" if nvol else ""))
+    if args.next_url:
+        nurl, ok, nvol = args.next_url, True, None
+        print(f"  次回リンク: {nurl}  ← --next-url で明示指定")
+    else:
+        print(f"  次回リンク: {nurl or '(なし)'}" + (f"  ← Vol.{nvol}" if nvol else ""))
     if not ok:
         print(f"\n⚠️  {nmsg}")
         print(f"    → メールの「次回案内」に正しいリンクが入りません。")
@@ -469,7 +476,7 @@ def main():
     for i, entry in enumerate(to_send, 1):
         email = entry["email"]
         try:
-            send_email(email, session_num, badge_path)
+            send_email(email, session_num, badge_path, args.next_url)
             print(f"  [{i}/{len(to_send)}] ✅ {email}")
             newly_sent.add(email)
         except Exception as e:
