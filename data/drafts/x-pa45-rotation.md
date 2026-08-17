@@ -42,7 +42,7 @@
 | 33 | 全部無料・登録なし | slides/ | og-slides.png |
 | 34 | どこで知って来たのか | sessions/ | og-sessions.png |
 | 35 | {{N}}回の積み上げ方（3段階） | videos/ | og-videos.png |
-| 36 | 第22回アンケート結果 | achievements/vol-22-survey.html | pa45-vol22-survey-ogp.png |
+| 36 | 第23回アンケート結果 | achievements/vol-23-survey.html | pa45-vol23-survey-ogp.png |
 
 ---
 
@@ -481,15 +481,15 @@ PA45の{{N}}回は、3段階で積んできました。
 https://haru-powerplatform.github.io/pa45/videos/
 ```
 
-## 36. 第22回アンケート結果
+## 36. 第23回アンケート結果
 ```
 【#PowerAutomate 45分ハンズオン講座＝PA45】
 
-第22回のアンケート結果です。OfficeスクリプトとCopilotで、Excelの手作業を自動化する回。
+第23回のアンケート結果です。Officeスクリプトの戻り値で、フローを振り分ける回。
 
-14名回答で、理解できた89%、役立ちそう82%。「実務にすぐ活かせる濃い内容でした」という声も。コメントはそのまま載せています。
+15名回答で、理解できた92%、役立ちそう83%。「今まで扱ったことが無いフロー」という声も。コメントはそのまま載せています。
 
-https://haru-powerplatform.github.io/pa45/achievements/vol-22-survey.html
+https://haru-powerplatform.github.io/pa45/achievements/vol-23-survey.html
 ```
 ※開催直後に出す用。回ごとの単発なので、次の回が終わったら差し替えていく。
 
