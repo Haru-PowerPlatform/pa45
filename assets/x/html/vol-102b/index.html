@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.102-2 トリガー条件の書き方</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB; --blue-bg:#EFF6FF; --blue-dark:#1E40AF;
+    --green:#16A34A; --green-bg:#ECFDF5; --green-dark:#065F46;
+    --red:#DC2626; --orange:#EA580C; --violet:#7C3AED;
+    --ink:#1F2937; --gray:#374151; --weak:#6B7280; --line:#E5E7EB;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+  .ic{display:block;width:100%;height:100%;}
+
+  .titlebar{height:90px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:16px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:26px;border-radius:999px;padding:7px 20px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .vol-logo{height:50px;width:50px;object-fit:contain;flex:0 0 auto;background:#fff;border-radius:12px;padding:5px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
+  .title-text{color:#fff;font-weight:900;font-size:27px;line-height:1.14;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:158px;}
+  .title-text .hl{color:#FFE08A;}
+  .title-chara{position:absolute;right:14px;bottom:-44px;height:146px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .concl{margin:9px 16px 0;background:var(--blue-bg);border:2.5px solid var(--blue);border-radius:13px;display:flex;align-items:center;gap:13px;padding:8px 18px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;width:40px;height:40px;border-radius:11px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;padding:8px;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
+  .concl .txt{font-weight:800;font-size:19px;color:var(--blue-dark);line-height:1.3;padding-right:158px;}
+  .concl .txt b{color:var(--orange);}
+
+  .stage{flex:1 1 auto;margin:10px 16px 0;display:flex;align-items:stretch;gap:11px;min-height:0;}
+  .col{flex:1;display:flex;flex-direction:column;gap:7px;min-height:0;background:#F8FAFC;border:2.5px solid #DCE3EE;border-radius:14px;padding:8px 10px 9px;}
+  .col.hot{border-color:var(--violet);background:#F9F5FE;box-shadow:0 5px 12px rgba(124,58,237,.14);}
+  .col.fin{border-color:#7FCEA9;background:var(--green-bg);}
+  .ch2{flex:0 0 auto;display:flex;align-items:center;gap:9px;font-weight:900;font-size:19.5px;color:#1B2A44;line-height:1.18;}
+  .ch2 .n{flex:0 0 auto;width:32px;height:32px;border-radius:9px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;box-shadow:0 2px 4px rgba(0,0,0,.22);}
+  .col.hot .ch2 .n{background:linear-gradient(180deg,#8B5CF6,#7C3AED);}
+  .col.fin .ch2 .n{background:linear-gradient(180deg,#34D399,#16A34A);}
+  .cbody{flex:1;display:flex;flex-direction:column;gap:7px;min-height:0;}
+  .cap{flex:0 0 auto;font-size:15.5px;font-weight:900;line-height:1.32;border-radius:9px;padding:7px 10px;color:#334155;background:#E7EEF7;}
+  .col.hot .cap{color:#5B21B6;background:#EEE4FC;}
+  .col.fin .cap{color:var(--green-dark);background:#CFEFE0;}
+  .cap b{color:var(--orange);}
+
+  .fig{flex:0 0 auto;height:104px;border-radius:10px;position:relative;overflow:hidden;background:#EDF3FA;}
+  .col.hot .fig{background:#F1E9FD;}
+  .col.fin .fig{background:#DCF3E7;}
+  .fig svg{position:absolute;inset:0;width:100%;height:100%;}
+
+  /* 設定パネル */
+  .panel{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:2.5px solid #D6C7EF;border-radius:11px;overflow:hidden;box-shadow:0 5px 12px rgba(124,58,237,.18);}
+  .ph{flex:0 0 auto;padding:8px 11px;background:linear-gradient(90deg,#5B21B6,#7C3AED);color:#fff;font-weight:900;font-size:16px;}
+  .pb{flex:1;padding:8px 10px;display:flex;flex-direction:column;gap:6px;min-height:0;}
+  .plabel{font-size:14px;font-weight:900;color:var(--weak);}
+  .pin{background:#F7F9FC;border:2px solid #B79BEE;border-radius:8px;padding:7px 9px;font-family:'Roboto Mono',monospace;font-size:14px;font-weight:700;color:#4C1D95;line-height:1.42;word-break:break-all;}
+  .padd{align-self:flex-start;font-size:14.5px;font-weight:900;color:#5B21B6;background:#F1E9FD;border:1.5px solid #C9B4EC;border-radius:8px;padding:5px 11px;}
+
+  /* 式の早見 */
+  .fx{flex:1;min-height:0;display:flex;flex-direction:column;gap:6px;}
+  .fxi{flex:1;display:flex;flex-direction:column;justify-content:center;gap:2px;background:#fff;border:1.5px solid var(--line);border-left:6px solid var(--blue);border-radius:9px;padding:5px 9px;min-height:0;}
+  .fxi .t{font-size:15px;font-weight:900;color:var(--blue-dark);line-height:1.22;}
+  .fxi .c{font-family:'Roboto Mono',monospace;font-size:13.8px;font-weight:700;color:#475569;line-height:1.3;word-break:break-all;}
+  .fxi.v2{border-left-color:var(--violet);} .fxi.v2 .t{color:#5B21B6;}
+  .fxi.v3{border-left-color:var(--orange);} .fxi.v3 .t{color:#9A3412;}
+
+  .warn{flex:0 0 auto;margin:9px 16px 0;display:flex;align-items:center;gap:12px;background:#FFFBEB;border:2.5px solid #FCD34D;border-radius:12px;padding:8px 14px;}
+  .warn .wt{flex:0 0 auto;font-size:14.5px;font-weight:900;color:#B45309;}
+  .warn .wl{flex:1;display:flex;gap:8px;}
+  .warn .wl span{flex:1;font-size:14.5px;font-weight:900;color:#92400E;background:#fff;border:1.5px solid #F6D08A;border-radius:8px;padding:6px 9px;line-height:1.3;}
+  .warn .wl code{font-family:'Roboto Mono',monospace;font-size:13.5px;color:#B45309;}
+
+  .next{flex:0 0 auto;margin:8px 16px 18px;background:linear-gradient(180deg,#EAF2FF,#DCEAFE);border:2.5px solid var(--blue);border-radius:13px;padding:8px 18px;display:flex;align-items:center;gap:11px;font-weight:900;font-size:19px;color:var(--blue-dark);box-shadow:0 3px 9px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .next .na{flex:0 0 auto;width:26px;height:26px;color:var(--blue);}
+  .next b{color:var(--orange);}
+  .src{position:absolute;left:16px;bottom:3px;font-size:10px;color:#AEB6C2;font-weight:700;z-index:3;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const ICON={
+  arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',
+  gear:'<circle cx="12" cy="12" r="3.2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1"/>'
+};
+const svg=(n,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${ICON[n]}</svg>`;
+
+/* ① トリガーの「…」→ 設定 → トリガーの条件 の道すじ */
+const figPath=`<svg viewBox="0 0 340 118" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="p1" x="-40%" y="-40%" width="180%" height="190%"><feDropShadow dx="0" dy="2.5" stdDeviation="2.4" flood-color="#1B2A44" flood-opacity=".22"/></filter>
+    <marker id="mkp" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" refX="8" refY="6" orient="auto"><path d="M0 0 L12 6 L0 12 z" fill="#2563EB"/></marker>
+  </defs>
+  <g filter="url(#p1)">
+    <rect x="8" y="34" width="96" height="42" rx="9" fill="#fff" stroke="#2563EB" stroke-width="2.6"/>
+    <circle cx="26" cy="55" r="9" fill="#2563EB"/>
+    <line x1="42" y1="55" x2="86" y2="55" stroke="#C3D6F2" stroke-width="5" stroke-linecap="round"/>
+    <text x="94" y="30" font-family="Noto Sans JP" font-size="20" font-weight="900" fill="#5B6472">…</text>
+  </g>
+  <text x="56" y="94" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#1E40AF" text-anchor="middle">トリガー</text>
+  <path d="M110 55 H 134" stroke="#2563EB" stroke-width="4.5" stroke-linecap="round" marker-end="url(#mkp)"/>
+  <g filter="url(#p1)">
+    <rect x="146" y="36" width="74" height="38" rx="9" fill="#EAF2FF" stroke="#2563EB" stroke-width="2.6"/>
+    <text x="183" y="60" font-family="Noto Sans JP" font-size="16" font-weight="900" fill="#1E40AF" text-anchor="middle">設定</text>
+  </g>
+  <path d="M226 55 H 250" stroke="#2563EB" stroke-width="4.5" stroke-linecap="round" marker-end="url(#mkp)"/>
+  <g filter="url(#p1)">
+    <rect x="258" y="30" width="76" height="50" rx="9" fill="#7C3AED" stroke="#5B21B6" stroke-width="2.6"/>
+    <text x="296" y="50" font-family="Noto Sans JP" font-size="14.5" font-weight="900" fill="#fff" text-anchor="middle">トリガー</text>
+    <text x="296" y="68" font-family="Noto Sans JP" font-size="14.5" font-weight="900" fill="#fff" text-anchor="middle">の条件</text>
+  </g>
+</svg>`;
+
+/* ② true のときだけ通す門 */
+const figGate=`<svg viewBox="0 0 340 118" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+  <defs><marker id="mkg2b" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" refX="8" refY="6" orient="auto"><path d="M0 0 L12 6 L0 12 z" fill="#16A34A"/></marker></defs>
+  <rect x="8" y="16" width="72" height="34" rx="8" fill="#EAF9F1" stroke="#16A34A" stroke-width="2.6"/>
+  <text x="44" y="39" font-family="Roboto Mono" font-size="16" font-weight="700" fill="#0B5136" text-anchor="middle">true</text>
+  <path d="M86 33 H 132" stroke="#16A34A" stroke-width="4.5" stroke-linecap="round" marker-end="url(#mkg2b)"/>
+  <rect x="144" y="14" width="96" height="38" rx="9" fill="#fff" stroke="#16A34A" stroke-width="2.8"/>
+  <text x="192" y="39" font-family="Noto Sans JP" font-size="16" font-weight="900" fill="#0B5136" text-anchor="middle">起動する</text>
+
+  <rect x="8" y="70" width="72" height="34" rx="8" fill="#F1F3F7" stroke="#B9C2D2" stroke-width="2.6"/>
+  <text x="44" y="93" font-family="Roboto Mono" font-size="16" font-weight="700" fill="#6B7280" text-anchor="middle">false</text>
+  <path d="M86 87 H 126" stroke="#C3CAD6" stroke-width="4.5" stroke-linecap="round" stroke-dasharray="7 6"/>
+  <g transform="translate(132,73)"><circle cx="14" cy="14" r="14" fill="#9AA5B5"/><path d="M9 9 l10 10 M19 9 l-10 10" stroke="#fff" stroke-width="3" stroke-linecap="round"/></g>
+  <text x="228" y="94" font-family="Noto Sans JP" font-size="16" font-weight="900" fill="#6B7280" text-anchor="middle">起動しない</text>
+</svg>`;
+
+/* ③ 更新者を見て自分の更新は無視 */
+const figSelf=`<svg viewBox="0 0 340 118" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+  <defs><marker id="mko" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" refX="8" refY="6" orient="auto"><path d="M0 0 L12 6 L0 12 z" fill="#16A34A"/></marker></defs>
+  <g transform="translate(10,22)">
+    <circle cx="20" cy="16" r="13" fill="#16A34A"/><path d="M2 52a18 18 0 0 1 36 0z" fill="#16A34A"/>
+    <text x="20" y="72" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#0B5136" text-anchor="middle">人</text>
+  </g>
+  <path d="M62 48 H 96" stroke="#16A34A" stroke-width="4.5" stroke-linecap="round" marker-end="url(#mko)"/>
+  <rect x="106" y="30" width="94" height="38" rx="9" fill="#fff" stroke="#16A34A" stroke-width="2.8"/>
+  <text x="153" y="55" font-family="Noto Sans JP" font-size="16" font-weight="900" fill="#0B5136" text-anchor="middle">起動する</text>
+
+  <g transform="translate(214,20)">
+    <rect x="0" y="8" width="52" height="42" rx="8" fill="#FFF1F1" stroke="#DC2626" stroke-width="2.6"/>
+    <circle cx="14" cy="29" r="7" fill="#DC2626"/>
+    <line x1="26" y1="29" x2="44" y2="29" stroke="#F0BFBF" stroke-width="4" stroke-linecap="round"/>
+    <text x="26" y="74" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#991B1B" text-anchor="middle">フロー</text>
+  </g>
+  <g transform="translate(280,34)"><circle cx="16" cy="16" r="16" fill="#DC2626"/><path d="M10 10 l12 12 M22 10 l-12 12" stroke="#fff" stroke-width="3.4" stroke-linecap="round"/></g>
+  <text x="296" y="76" font-family="Noto Sans JP" font-size="14.5" font-weight="900" fill="#991B1B" text-anchor="middle">は無視</text>
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.102-2</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">書く場所と、<span class="hl">そのまま使える式3つ</span></div>
+    <img class="title-chara" src="${A}chara/chara_point.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svg('gear')}</div>
+    <div class="txt">書くのは<b>1行だけ</b>。<b>true になったときだけ</b>フローが起動します。アクションは1つも増えません。</div>
+  </div>
+
+  <div class="stage">
+    <div class="col hot">
+      <div class="ch2"><span class="n">1</span>書く場所</div>
+      <div class="fig">${figPath}</div>
+      <div class="cbody">
+        <div class="panel">
+          <div class="ph">トリガーの条件</div>
+          <div class="pb">
+            <div class="plabel">条件（1行に1つ）</div>
+            <div class="pin">@equals(triggerOutputs()<br>?['body/Status'],'承認')</div>
+            <div class="padd">＋ 新規追加</div>
+          </div>
+        </div>
+      </div>
+      <div class="cap">トリガーの<b>「…」→ 設定</b>の中にあります。</div>
+    </div>
+
+    <div class="col fin">
+      <div class="ch2"><span class="n">2</span>読み方</div>
+      <div class="fig">${figGate}</div>
+      <div class="cbody">
+        <div class="fx">
+          <div class="fxi"><span class="t">先頭は必ず <b>@</b> から</span><span class="c">@equals( … , … )</span></div>
+          <div class="fxi v2"><span class="t">結果が true のときだけ起動</span><span class="c">false のときは実行履歴にも残らない</span></div>
+          <div class="fxi v3"><span class="t">複数書くと「全部満たす」</span><span class="c">1行に1条件で並べる</span></div>
+        </div>
+      </div>
+      <div class="cap">条件アクションと違い、<b>実行そのものが起きません</b>。</div>
+    </div>
+
+    <div class="col">
+      <div class="ch2"><span class="n">3</span>そのまま使える3つ</div>
+      <div class="fig">${figSelf}</div>
+      <div class="cbody">
+        <div class="fx">
+          <div class="fxi"><span class="t">特定の状態のときだけ</span><span class="c">@equals(triggerOutputs()?['body/Status'],'承認')</span></div>
+          <div class="fxi v2"><span class="t">空欄でないときだけ</span><span class="c">@not(empty(triggerOutputs()?['body/担当者']))</span></div>
+          <div class="fxi v3"><span class="t">自分の更新では動かさない</span><span class="c">@not(equals(triggerOutputs()?['body/Editor/Email'],'flow@…'))</span></div>
+        </div>
+      </div>
+      <div class="cap">3つ目が<b>無限ループ止め</b>。列名は台帳に合わせて変えます。</div>
+    </div>
+  </div>
+
+  <div class="warn">
+    <div class="wt">使う前に確認</div>
+    <div class="wl">
+      <span>列名は<b>内部名</b>。<code>body/Status</code> のように書きます</span>
+      <span>条件が合わない実行は<b>履歴に残らない</b>ので、動かない時はまず条件を疑う</span>
+      <span>同時実行制御は<b>あとから元に戻せません</b>（公式に明記）</span>
+    </div>
+  </div>
+
+  <div class="next"><span class="na">${svg('arrow')}</span>「保存したら無限ループの警告が出た」時は、<b>ここに1行足す</b>だけで直ります！</div>
+  <div class="src">出典：Microsoft Learn「Power Automate トリガーを最適化する」「アンチ パターンを回避する」／画面は再現・式は例</div>
+`;
+</script>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>

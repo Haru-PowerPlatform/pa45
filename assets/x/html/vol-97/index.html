@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.97-1 自動メールの時刻が9時間ずれる</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB; --blue-bg:#EFF6FF; --blue-dark:#1E40AF;
+    --green:#16A34A; --green-bg:#ECFDF5; --green-dark:#065F46;
+    --red:#DC2626; --red-bg:#FEF2F2; --red-dark:#991B1B;
+    --orange:#EA580C; --violet:#7C3AED;
+    --ink:#1F2937; --gray:#374151; --weak:#6B7280; --line:#E5E7EB;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+  .ic{display:block;width:100%;height:100%;}
+
+  .titlebar{height:90px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:16px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:26px;border-radius:999px;padding:7px 20px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .vol-logo{height:50px;width:50px;object-fit:contain;flex:0 0 auto;background:#fff;border-radius:12px;padding:5px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
+  .title-text{color:#fff;font-weight:900;font-size:27px;line-height:1.14;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:158px;}
+  .title-text .hl{color:#FFE08A;}
+  .title-chara{position:absolute;right:14px;bottom:-44px;height:146px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .concl{margin:9px 16px 0;background:var(--blue-bg);border:2.5px solid var(--blue);border-radius:13px;display:flex;align-items:center;gap:13px;padding:8px 18px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;width:38px;height:38px;border-radius:11px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;padding:8px;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
+  .concl .txt{font-weight:800;font-size:19px;color:var(--blue-dark);line-height:1.3;padding-right:158px;}
+  .concl .txt b{color:var(--orange);}
+
+  .stage{flex:1 1 auto;margin:10px 16px 0;display:flex;align-items:stretch;gap:11px;min-height:0;}
+
+  .pane{flex:1;display:flex;flex-direction:column;gap:7px;border-radius:14px;padding:9px 11px 10px;min-height:0;position:relative;}
+  .pane.bad{background:var(--red-bg);border:2.5px solid #F2B8B8;}
+  .pane.good{background:var(--green-bg);border:2.5px solid #A7E3C7;}
+  .ph{flex:0 0 auto;display:flex;align-items:center;gap:8px;font-weight:900;font-size:25px;line-height:1.15;}
+  .pane.bad .ph{color:var(--red-dark);}
+  .pane.good .ph{color:var(--green-dark);}
+  .ph .bdg{flex:0 0 auto;font-size:13px;font-weight:900;color:#fff;border-radius:999px;padding:3px 11px;}
+  .pane.bad .ph .bdg{background:var(--red);}
+  .pane.good .ph .bdg{background:var(--green);}
+
+  .scene{flex:0 0 auto;height:112px;border-radius:11px;position:relative;overflow:hidden;}
+  .pane.bad .scene{background:#FDE8E8;}
+  .pane.good .scene{background:#DFF6E9;}
+  .scene .sc-bg{position:absolute;inset:0;width:100%;height:100%;}
+  .scene .chara{position:absolute;right:6px;bottom:0;height:112px;z-index:2;filter:drop-shadow(0 3px 5px rgba(0,0,0,.22));}
+
+  /* Outlook メールモック */
+  .mail{flex:1;display:flex;flex-direction:column;min-height:0;background:#fff;border:2px solid #C7D6EE;border-radius:11px;overflow:hidden;box-shadow:0 4px 10px rgba(20,40,90,.10);}
+  .mh{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:7px 11px;background:linear-gradient(90deg,#0F6CBD,#1E88E5);color:#fff;font-weight:900;font-size:15.5px;}
+  .mh img{height:28px;width:28px;object-fit:contain;background:#fff;border-radius:5px;padding:2px;}
+  .mb{flex:1;padding:7px 11px;display:flex;flex-direction:column;gap:4px;min-height:0;}
+  .msub{font-size:16px;font-weight:900;color:#1B2A44;}
+  .mfrom{font-size:14px;font-weight:800;color:var(--weak);}
+  .mline{font-size:15.5px;font-weight:800;color:#243B58;line-height:1.4;}
+  .mtime{margin-top:auto;font-family:'Roboto Mono',monospace;font-size:21px;font-weight:700;border-radius:9px;padding:6px 11px;display:flex;align-items:center;gap:9px;}
+  .pane.bad .mtime{background:#FEE9E9;border:2px solid #F3B3B3;color:var(--red-dark);}
+  .pane.good .mtime{background:#E4F7EE;border:2px solid #9EDCC0;color:var(--green-dark);}
+  .mtime .tg{font-family:'Noto Sans JP';font-size:14px;font-weight:900;border-radius:6px;padding:2px 8px;color:#fff;flex:0 0 auto;}
+  .pane.bad .mtime .tg{background:var(--red);}
+  .pane.good .mtime .tg{background:var(--green);}
+  .pcap{flex:0 0 auto;font-size:15.5px;font-weight:900;line-height:1.35;border-radius:9px;padding:7px 10px;}
+  .pane.bad .pcap{color:var(--red-dark);background:#FDE0E0;}
+  .pane.good .pcap{color:var(--green-dark);background:#D6F2E4;}
+
+  /* 中央：直し方 */
+  .mid{flex:1.12;display:flex;flex-direction:column;gap:6px;min-height:0;background:linear-gradient(180deg,#F5F0FD,#EFE7FB);border:2.5px solid #C9B4EC;border-radius:14px;padding:10px 11px;box-shadow:0 5px 13px rgba(124,58,237,.14);}
+  .midh{flex:0 0 auto;display:flex;align-items:center;gap:8px;font-weight:900;font-size:18px;color:#5B21B6;line-height:1.2;}
+  .midh .n{flex:0 0 auto;width:28px;height:28px;border-radius:9px;background:linear-gradient(180deg,#8B5CF6,#7C3AED);color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;}
+  .why{flex:0 0 auto;background:#fff;border:1.5px solid #D6C7EF;border-radius:9px;padding:7px 10px;font-size:15px;font-weight:800;color:#4C1D95;line-height:1.38;}
+  .why b{color:var(--orange);}
+  .fxbox{flex:0 0 auto;background:#1E293B;border-radius:10px;padding:9px 11px;font-family:'Roboto Mono',monospace;font-size:14.5px;font-weight:700;color:#93C5FD;line-height:1.45;word-break:break-all;}
+  .fxbox .k{color:#FDE68A;}
+  .fxbox .s{color:#FCA5A5;}
+  .arw{flex:0 0 auto;display:flex;align-items:center;justify-content:center;color:#7C3AED;height:16px;}
+  .arw svg{width:20px;height:16px;}
+  .out{flex:0 0 auto;background:#fff;border:2px solid #A7E3C7;border-radius:9px;padding:6px 10px;font-family:'Roboto Mono',monospace;font-size:19px;font-weight:700;color:var(--green-dark);text-align:center;}
+  .midmemo{flex:1;display:flex;flex-direction:column;justify-content:center;gap:5px;min-height:0;background:#FFFBEB;border:2px solid #FCD34D;border-radius:10px;padding:7px 10px;}
+  .midmemo .m{display:flex;align-items:flex-start;gap:8px;font-size:14.5px;font-weight:900;color:#92400E;line-height:1.32;}
+  .midmemo .m .e{flex:0 0 auto;font-size:18px;line-height:1.2;}
+  .midmemo .m .t{flex:1;min-width:0;}
+  .midmemo .m .t b{color:#B45309;}
+  .midmemo .m code{font-family:'Roboto Mono',monospace;font-size:13.5px;background:#fff;border:1px solid #F6D08A;border-radius:5px;padding:0 5px;color:#B45309;}
+
+  .foot{flex:0 0 auto;margin:9px 16px 0;background:linear-gradient(180deg,#F8FAFC,#EEF2F7);border:2px solid #D9E1EC;border-radius:12px;padding:7px 14px;display:flex;align-items:center;gap:10px;}
+  .foot .fl{flex:0 0 auto;font-size:15.5px;font-weight:900;color:var(--weak);}
+  .foot .fi{flex:1;display:flex;gap:7px;}
+  .foot .fi span{flex:1;text-align:center;background:#fff;border:1.5px solid #D9E1EC;border-radius:8px;padding:6px 4px;font-size:15.5px;font-weight:900;color:#334155;}
+
+  .next{flex:0 0 auto;margin:8px 16px 18px;background:linear-gradient(180deg,#EAF2FF,#DCEAFE);border:2.5px solid var(--blue);border-radius:13px;padding:9px 18px;display:flex;align-items:center;gap:11px;font-weight:900;font-size:19px;color:var(--blue-dark);box-shadow:0 3px 9px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .next .na{flex:0 0 auto;width:25px;height:25px;color:var(--blue);}
+  .next b{color:var(--orange);}
+  .src{position:absolute;left:16px;bottom:3px;font-size:10px;color:#AEB6C2;font-weight:700;z-index:3;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const ICON={arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',bulb:'<path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/>',down:'<path d="M12 5v14M6 13l6 6 6-6"/>'};
+const svg=(n)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">${ICON[n]}</svg>`;
+
+/* 情景SVG：時計＋封筒。ズレ版は針が9時間ずれ、赤いギャップ弧＋「-9h」 */
+function clockScene(bad){
+  const face = bad ? '#FFF1F1' : '#F2FCF7';
+  const rim  = bad ? '#E88A8A' : '#7FCEA9';
+  const hand = bad ? '#DC2626' : '#16A34A';
+  const gap  = bad
+    ? `<path d="M64 24 A40 40 0 0 1 92 62" fill="none" stroke="#DC2626" stroke-width="5" stroke-linecap="round" opacity=".55"/>
+       <text x="104" y="40" font-family="Noto Sans JP" font-size="17" font-weight="900" fill="#DC2626">-9h</text>`
+    : `<circle cx="100" cy="30" r="16" fill="#16A34A"/>
+       <path d="M92 30 l6 6 11-12" fill="none" stroke="#fff" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/>`;
+  /* 針：ズレ版は 0:30、正常版は 9:30（短針＝時、長針＝分） */
+  const hands = bad
+    ? `<line x1="64" y1="64" x2="70" y2="43" stroke="${hand}" stroke-width="5" stroke-linecap="round"/>
+       <line x1="64" y1="64" x2="64" y2="94" stroke="${hand}" stroke-width="3.4" stroke-linecap="round"/>`
+    : `<line x1="64" y1="64" x2="43" y2="58" stroke="${hand}" stroke-width="5" stroke-linecap="round"/>
+       <line x1="64" y1="64" x2="64" y2="94" stroke="${hand}" stroke-width="3.4" stroke-linecap="round"/>`;
+  const ticks = Array.from({length:12},(_,i)=>{
+    const a=i*30*Math.PI/180, r1=34, r2=39, cx=64, cy=64;
+    return `<line x1="${(cx+r1*Math.sin(a)).toFixed(1)}" y1="${(cy-r1*Math.cos(a)).toFixed(1)}" x2="${(cx+r2*Math.sin(a)).toFixed(1)}" y2="${(cy-r2*Math.cos(a)).toFixed(1)}" stroke="${rim}" stroke-width="2.4" stroke-linecap="round"/>`;
+  }).join('');
+  return `<svg class="sc-bg" viewBox="0 0 300 132" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <linearGradient id="env${bad?'b':'g'}" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#DCE7F7"/>
+      </linearGradient>
+      <linearGradient id="fc${bad?'b':'g'}" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="${face}"/>
+      </linearGradient>
+      <filter id="sh${bad?'b':'g'}" x="-30%" y="-30%" width="160%" height="170%">
+        <feDropShadow dx="0" dy="2.5" stdDeviation="2.6" flood-color="#1B2A44" flood-opacity=".22"/>
+      </filter>
+    </defs>
+    <g transform="translate(6,2)" filter="url(#sh${bad?'b':'g'})">
+      <circle cx="64" cy="64" r="46" fill="url(#fc${bad?'b':'g'})" stroke="${rim}" stroke-width="3.5"/>
+      ${ticks}${hands}
+      <circle cx="64" cy="64" r="4.6" fill="${hand}"/>
+      ${gap}
+    </g>
+    <g transform="translate(150,30)" filter="url(#sh${bad?'b':'g'})">
+      <rect x="0" y="0" width="112" height="72" rx="8" fill="url(#env${bad?'b':'g'})" stroke="#9FB6D8" stroke-width="2.6"/>
+      <path d="M0 8 L56 44 L112 8" fill="none" stroke="#9FB6D8" stroke-width="2.6" stroke-linejoin="round"/>
+      <rect x="80" y="8" width="24" height="17" rx="3" fill="${bad?'#F6C3C3':'#BEE9D5'}" stroke="${rim}" stroke-width="1.8"/>
+      <line x1="14" y1="56" x2="62" y2="56" stroke="#B9C8DF" stroke-width="4" stroke-linecap="round"/>
+    </g>
+  </svg>`;
+}
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.97-1</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">自動メールの時刻が<span class="hl">9時間ずれる</span>のは、<span class="hl">式1行</span>で直る</div>
+    <img class="title-chara" src="${A}chara/chara_confident.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svg('bulb')}</div>
+    <div class="txt">壊れているわけではありません。Power Automate の日時は<b>もともと世界標準時（UTC）</b>。日本時間に直す式を<b>1行はさむだけ</b>です。</div>
+  </div>
+
+  <div class="stage">
+    <div class="pane bad">
+      <div class="ph"><span class="bdg">before</span>9時間ずれて届く</div>
+      <div class="scene">${clockScene(true)}<img class="chara" src="${A}chara/chara_trouble.png" alt=""></div>
+      <div class="mail">
+        <div class="mh"><img src="${A}icons/pa_outlook.png" alt="">日報メール（自動送信）</div>
+        <div class="mb">
+          <div class="msub">【日報】本日の実績</div>
+          <div class="mfrom">差出人：Power Automate（自動送信）</div>
+          <div class="mtime"><span class="tg">本文</span>2026/08/16 00:30</div>
+        </div>
+      </div>
+      <div class="pcap">朝9時半に動いたのに、本文は 00:30。前の日の日付になることも。</div>
+    </div>
+
+    <div class="mid">
+      <div class="midh"><span class="n">fx</span>直し方は、この1行だけ</div>
+      <div class="why">理由は<b>時差そのもの</b>。UTCは日本より<b>9時間おそい</b>ので、そのまま出すと9時間ずれます。</div>
+      <div class="fxbox"><span class="k">convertTimeZone</span>(<span class="k">utcNow</span>(),<br><span class="s">'UTC'</span>,<span class="s">'Tokyo Standard Time'</span>,<br><span class="s">'yyyy/MM/dd HH:mm'</span>)</div>
+      <div class="arw">${svg('down')}</div>
+      <div class="out">2026/08/16 09:30</div>
+      <div class="midmemo">
+        <div class="m"><span class="e">⚡</span><span class="t">動的コンテンツを直すなら <code>utcNow()</code> をそれに差し替え</span></div>
+        <div class="m"><span class="e">🖱️</span><span class="t">式が苦手なら <b>「タイム ゾーンの変換」</b> アクションでも同じ</span></div>
+        <div class="m"><span class="e">📅</span><span class="t">4つめの <code>'yyyy/MM/dd HH:mm'</code> が見た目。省くと英語表記</span></div>
+      </div>
+    </div>
+
+    <div class="pane good">
+      <div class="ph"><span class="bdg">after</span>日本時間で届く</div>
+      <div class="scene">${clockScene(false)}<img class="chara" src="${A}chara/chara_guts.png" alt=""></div>
+      <div class="mail">
+        <div class="mh"><img src="${A}icons/pa_outlook.png" alt="">日報メール（自動送信）</div>
+        <div class="mb">
+          <div class="msub">【日報】本日の実績</div>
+          <div class="mfrom">差出人：Power Automate（自動送信）</div>
+          <div class="mtime"><span class="tg">本文</span>2026/08/16 09:30</div>
+        </div>
+      </div>
+      <div class="pcap">見た日付もそのまま。「ずれてますよ」と言われなくなります。</div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <div class="fl">ずれていたら、ここを疑う</div>
+    <div class="fi"><span>メール本文の日時</span><span>台帳に記録する日時</span><span>ファイル名の日付</span><span>リマインドの文面</span></div>
+  </div>
+
+  <div class="next"><span class="na">${svg('arrow')}</span>7日後・30日前・今日の0時——<b>日付と時刻の式ぜんぶ</b>は <b>2枚目</b>へ！</div>
+  <div class="src">出典：Microsoft Learn「タイム ゾーンを変換する」「フローで使用する日時の値をカスタマイズまたは形式設定する」／画面は再現・データは架空</div>
+`;
+</script>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>

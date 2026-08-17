@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.93-1 会議が自分の段取りを自分でやる</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB; --blue-bg:#EFF6FF; --blue-dark:#1E40AF;
+    --green:#16A34A; --green-dark:#065F46; --green-bg:#F0FDF4;
+    --red:#DC2626; --orange:#EA580C; --ol:#0F6CBD; --teams:#5059C9;
+    --ink:#1F2937; --gray:#374151; --weak:#6B7280; --line:#E5E7EB;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+  .ic{display:block;width:100%;height:100%;}
+
+  .titlebar{height:90px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:16px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:26px;border-radius:999px;padding:7px 20px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .vol-logo{height:50px;width:50px;object-fit:contain;flex:0 0 auto;background:#fff;border-radius:12px;padding:5px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
+  .title-text{color:#fff;font-weight:900;font-size:27px;line-height:1.14;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:156px;}
+  .title-text .hl{color:#FFE08A;}
+  .title-chara{position:absolute;right:14px;bottom:-40px;height:142px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .concl{margin:10px 16px 0;background:var(--blue-bg);border:2.5px solid var(--blue);border-radius:13px;display:flex;align-items:center;gap:13px;padding:10px 18px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;width:40px;height:40px;border-radius:11px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;padding:8px;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
+  .concl .txt{font-weight:800;font-size:19.5px;color:var(--blue-dark);line-height:1.32;padding-right:150px;}
+  .concl .txt b{color:var(--orange);}
+
+  .stage{flex:1 1 auto;margin:11px 16px 0;display:flex;align-items:stretch;gap:12px;min-height:0;}
+  .col{flex:1;display:flex;flex-direction:column;min-height:0;border-radius:14px;padding:10px 11px 11px;position:relative;}
+  .col.c1{background:#F5F8FD;border:1.5px solid #DCE7F5;}
+  .col.c2{background:#F2FBF5;border:1.5px solid #CFEBD8;}
+  .col.c3{flex:1.12;background:#F3F6FF;border:2px solid #C7D6F5;}
+  .ch{flex:0 0 auto;display:flex;align-items:center;gap:9px;font-weight:900;font-size:19px;color:#243B58;line-height:1.12;margin-bottom:7px;}
+  .ch .no{flex:0 0 auto;width:32px;height:32px;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;box-shadow:0 2px 4px rgba(0,0,0,.22);}
+  .c1 .no{background:linear-gradient(180deg,#60A5FA,#3B82F6);}
+  .c2 .no{background:linear-gradient(180deg,#4ADE80,#16A34A);}
+  .c3 .no{background:linear-gradient(180deg,#818CF8,#5059C9);}
+
+  .scene{flex:0 0 auto;height:104px;border-radius:11px;background:rgba(255,255,255,.7);border:1px solid rgba(0,0,0,.05);position:relative;overflow:hidden;margin-bottom:9px;}
+  .scene svg{display:block;width:100%;height:100%;}
+  .scene .mini{position:absolute;right:6px;bottom:-4px;height:92px;z-index:3;filter:drop-shadow(0 2px 4px rgba(0,0,0,.28));}
+
+  .body{flex:1 1 auto;display:flex;flex-direction:column;min-height:0;gap:8px;}
+  .cap{flex:0 0 auto;margin-top:auto;font-weight:800;font-size:15.5px;line-height:1.34;color:#334155;background:rgba(255,255,255,.72);border-radius:9px;padding:8px 11px;}
+  .cap b{color:var(--orange);}
+  .c3 .cap{background:#FFF7ED;border:1.5px solid #FCD9A8;color:#7C3A0B;}
+  .c3 .cap .k{color:#C2410C;}
+
+  /* ①エンジン行 */
+  .engine{flex:0 0 auto;background:#fff;border:1.5px solid #DCE7F5;border-radius:10px;padding:9px 10px;display:flex;flex-direction:column;gap:7px;}
+  .erow{display:flex;align-items:center;gap:8px;font-weight:800;font-size:14.5px;color:#334155;}
+  .erow .eic{flex:0 0 auto;width:27px;height:27px;object-fit:contain;}
+  .erow .estep{flex:0 0 auto;width:20px;height:20px;border-radius:6px;background:#EEF2F7;color:#475569;font-size:12px;font-weight:900;display:flex;align-items:center;justify-content:center;}
+  .erow b{color:var(--blue-dark);}
+
+  /* ②候補台帳 */
+  .ledger{flex:1 1 auto;display:flex;flex-direction:column;min-height:0;background:#fff;border:1px solid #D9EAE0;border-radius:11px;overflow:hidden;box-shadow:0 3px 8px rgba(0,0,0,.07);position:relative;}
+  .lg-hd{flex:0 0 auto;display:flex;align-items:center;gap:7px;padding:7px 10px;background:#ECFBF1;border-bottom:1px solid #D9EAE0;font-weight:900;font-size:12.5px;color:#15803D;}
+  .lg-hd img{width:22px;height:22px;object-fit:contain;}
+  .lg-hd .filt{margin-left:auto;font-size:10.5px;font-weight:900;color:#0B3A8F;background:#EAF2FF;border:1px solid #A9C8F2;border-radius:6px;padding:2px 7px;}
+  .ltab{flex:1 1 auto;display:flex;flex-direction:column;min-height:0;}
+  .ltab .lr{flex:1;display:grid;grid-template-columns:1.25fr .95fr .9fr;gap:0;align-items:center;border-bottom:1px solid #EEF2F0;min-height:0;}
+  .ltab .lr:last-child{border-bottom:none;}
+  .ltab .lr.hd{flex:0 0 auto;background:#F4F7F5;color:#5B6270;font-weight:900;font-size:11px;}
+  .ltab .lr .cell{padding:6px 8px;font-size:12.5px;font-weight:800;color:#334155;line-height:1.18;}
+  .ltab .lr.pick{background:#DCFCE7;}
+  .ltab .lr.pick .cell{color:#14532D;}
+  .ltab .lr.dim .cell{color:#9AA6B2;}
+
+  /* ③Teams会議アシストカード */
+  .rcard{flex:1 1 auto;display:flex;flex-direction:column;min-height:0;background:#fff;border:1px solid #E1E4EA;border-radius:12px;box-shadow:0 4px 12px rgba(30,40,90,.12);overflow:hidden;}
+  .rc-bar{flex:0 0 auto;height:5px;background:var(--teams);}
+  .rc-in{flex:1 1 auto;display:flex;flex-direction:column;min-height:0;padding:9px 11px 10px;gap:7px;}
+  .rc-hd{flex:0 0 auto;display:flex;align-items:center;gap:8px;}
+  .rc-hd .bot{width:30px;height:30px;border-radius:7px;object-fit:contain;background:#fff;}
+  .rc-hd .who{font-weight:900;font-size:13.5px;color:#242424;line-height:1.1;}
+  .rc-hd .who span{font-weight:700;color:#8A8F98;font-size:11.5px;}
+  .rc-ttl{flex:0 0 auto;font-weight:900;font-size:15px;color:#1E40AF;display:flex;align-items:center;gap:6px;}
+  .rc-line{flex:0 0 auto;background:#F7F8FA;border:1px solid #E4E7EC;border-radius:8px;padding:7px 10px;font-size:13.5px;font-weight:800;color:#334155;line-height:1.28;}
+  .rc-line .lb{font-size:11.5px;font-weight:900;color:#6B7280;display:block;margin-bottom:1px;}
+  .rc-line.hw{background:#FFF7ED;border-color:#FCD9A8;color:#7C2D12;}
+  .rc-line.hw b{color:#C2410C;}
+  .rc-foot{flex:0 0 auto;margin-top:2px;font-size:12.5px;font-weight:900;color:var(--teams);text-align:center;}
+
+  .foot{flex:0 0 auto;margin:9px 16px 0;display:flex;align-items:center;gap:10px;}
+  .foot .fl{flex:0 0 auto;font-weight:900;font-size:14.5px;color:var(--weak);}
+  .foot .tags{flex:1;display:flex;gap:8px;}
+  .foot .tag{flex:1;text-align:center;background:#fff;border:1.5px solid var(--line);border-radius:9px;padding:8px 4px;font-weight:900;font-size:15px;color:#334155;box-shadow:0 1px 3px rgba(0,0,0,.05);}
+
+  .next{flex:0 0 auto;margin:9px 16px 12px;background:linear-gradient(180deg,#EAF2FF,#DCEAFE);border:2.5px solid var(--blue);border-radius:13px;padding:10px 18px;display:flex;align-items:center;gap:11px;font-weight:900;font-size:20px;color:var(--blue-dark);box-shadow:0 3px 9px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .next .na{flex:0 0 auto;width:26px;height:26px;color:var(--blue);}
+  .next b{color:var(--orange);}
+  .src{position:absolute;left:16px;bottom:3px;font-size:9.5px;color:#AEB6C2;font-weight:700;z-index:3;padding-right:16px;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const ICON={arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',bulb:'<path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/>'};
+const svg=(n)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">${ICON[n]}</svg>`;
+
+// ① 情景：日程調整（3人の予定表を重ねて“全員の空き”を探す）
+const scene1=`<svg viewBox="0 0 300 104" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="150" y="10" width="34" height="88" rx="6" fill="#DCFCE7" stroke="#4ADE80" stroke-width="2"/>
+  <text x="167" y="22" text-anchor="middle" font-family="Noto Sans JP" font-weight="900" font-size="9" fill="#15803D">空き</text>
+  <g font-family="Noto Sans JP" font-weight="900" font-size="10">
+    <circle cx="20" cy="34" r="9" fill="#60A5FA"/>
+    <rect x="34" y="28" width="222" height="12" rx="4" fill="#EEF2F7"/>
+    <rect x="40" y="28" width="40" height="12" rx="3" fill="#93C5FD"/>
+    <rect x="100" y="28" width="40" height="12" rx="3" fill="#93C5FD"/>
+    <rect x="196" y="28" width="46" height="12" rx="3" fill="#93C5FD"/>
+    <circle cx="20" cy="58" r="9" fill="#34D399"/>
+    <rect x="34" y="52" width="222" height="12" rx="4" fill="#EEF2F7"/>
+    <rect x="60" y="52" width="50" height="12" rx="3" fill="#6EE7B7"/>
+    <rect x="196" y="52" width="30" height="12" rx="3" fill="#6EE7B7"/>
+    <circle cx="20" cy="82" r="9" fill="#A78BFA"/>
+    <rect x="34" y="76" width="222" height="12" rx="4" fill="#EEF2F7"/>
+    <rect x="40" y="76" width="34" height="12" rx="3" fill="#C4B5FD"/>
+    <rect x="120" y="76" width="24" height="12" rx="3" fill="#C4B5FD"/>
+    <rect x="200" y="76" width="42" height="12" rx="3" fill="#C4B5FD"/>
+  </g>
+  <path d="M158 50 l6 7 l12 -16" stroke="#16A34A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+</svg>`;
+// ② 情景：開始前（ベル＋書類）
+const scene2=`<svg viewBox="0 0 300 104" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="150" y="24" width="60" height="72" rx="6" fill="#fff" stroke="#5059C9" stroke-width="2.5"/>
+  <line x1="160" y1="40" x2="200" y2="40" stroke="#C7CBEC" stroke-width="3"/>
+  <line x1="160" y1="52" x2="200" y2="52" stroke="#C7CBEC" stroke-width="3"/>
+  <line x1="160" y1="64" x2="188" y2="64" stroke="#C7CBEC" stroke-width="3"/>
+  <rect x="158" y="76" width="44" height="12" rx="3" fill="#EEF0FF"/>
+  <text x="180" y="86" text-anchor="middle" font-family="Noto Sans JP" font-weight="900" font-size="8.5" fill="#5059C9">前回メモ</text>
+  <g transform="translate(74,26)">
+    <path d="M20 4 C10 4 6 12 6 22 C6 34 2 38 2 38 L38 38 C38 38 34 34 34 22 C34 12 30 4 20 4 Z" fill="#F59E0B" stroke="#B45309" stroke-width="2"/>
+    <circle cx="20" cy="44" r="4" fill="#B45309"/>
+    <path d="M40 14 l8 -4 M40 22 l9 0 M40 30 l8 4" stroke="#F59E0B" stroke-width="3" stroke-linecap="round"/>
+  </g>
+  <rect x="60" y="82" width="72" height="18" rx="9" fill="#EEF0FF"/>
+  <text x="96" y="95" text-anchor="middle" font-family="Noto Sans JP" font-weight="900" font-size="11.5" fill="#4348A8">開始15分前</text>
+</svg>`;
+// ③ 情景：会議後（メモのTODO→タスクへ）
+const scene3=`<svg viewBox="0 0 300 104" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="30" y="18" width="96" height="74" rx="7" fill="#fff" stroke="#94A3B8" stroke-width="2"/>
+  <text x="42" y="36" font-family="Noto Sans JP" font-weight="900" font-size="10" fill="#475569">議事メモ</text>
+  <rect x="42" y="44" width="10" height="10" rx="2" fill="none" stroke="#16A34A" stroke-width="2"/><path d="M44 49 l3 3 l5 -6" stroke="#16A34A" stroke-width="2" fill="none" stroke-linecap="round"/><text x="58" y="53" font-family="Noto Sans JP" font-weight="800" font-size="9" fill="#334155">見積を提出</text>
+  <rect x="42" y="60" width="10" height="10" rx="2" fill="none" stroke="#16A34A" stroke-width="2"/><path d="M44 65 l3 3 l5 -6" stroke="#16A34A" stroke-width="2" fill="none" stroke-linecap="round"/><text x="58" y="69" font-family="Noto Sans JP" font-weight="800" font-size="9" fill="#334155">日程を確定</text>
+  <path d="M132 55 l24 0 M148 49 l8 6 l-8 6" stroke="#2563EB" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="162" y="24" width="72" height="62" rx="7" fill="#EAF7EF" stroke="#16A34A" stroke-width="2.5"/>
+  <text x="198" y="40" text-anchor="middle" font-family="Noto Sans JP" font-weight="900" font-size="10" fill="#15803D">タスク</text>
+  <rect x="170" y="48" width="56" height="14" rx="4" fill="#fff" stroke="#BBE9C9"/><text x="176" y="58" font-family="Noto Sans JP" font-weight="800" font-size="8.5" fill="#166534">見積を提出</text>
+  <rect x="170" y="66" width="56" height="14" rx="4" fill="#fff" stroke="#BBE9C9"/><text x="176" y="76" font-family="Noto Sans JP" font-weight="800" font-size="8.5" fill="#166534">日程を確定</text>
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.93-1</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">会議が、<span class="hl">自分の段取りを自分でやる</span>｜幹事は“3つのしくみ”</div>
+    <img class="title-chara" src="${A}chara/chara_confident.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svg('bulb')}</div>
+    <div class="txt">会議室の空き探し、開始前の資料集め、議事の宿題の書き忘れ…。<b>日程調整→開始前の資料→会議後の宿題</b>まで、フローに“幹事”をやらせます。</div>
+  </div>
+
+  <div class="stage">
+    <div class="col c1">
+      <div class="ch"><span class="no">1</span>日程調整して予約する</div>
+      <div class="scene">${scene1}<img class="mini" src="${A}chara/chara_point.png" alt=""></div>
+      <div class="body">
+        <div class="ledger">
+          <div class="lg-hd"><img src="${A}icons/pa_outlook.png">候補と会議室<span class="filt">全員OKだけ</span></div>
+          <div class="ltab">
+            <div class="lr hd"><div class="cell">候補時間</div><div class="cell">参加</div><div class="cell">会議室</div></div>
+            <div class="lr pick"><div class="cell">火 14:00</div><div class="cell">◎全員</div><div class="cell">A室</div></div>
+            <div class="lr pick"><div class="cell">水 10:00</div><div class="cell">◎全員</div><div class="cell">B室</div></div>
+            <div class="lr dim"><div class="cell">木 16:00</div><div class="cell">△1名</div><div class="cell">満室</div></div>
+          </div>
+        </div>
+        <div class="cap">全員の空きから候補→<b>会議室ごと予約</b>。<span style="color:#2563EB">作り方②へ</span></div>
+      </div>
+    </div>
+
+    <div class="col c2">
+      <div class="ch"><span class="no">2</span>開始前に資料を届ける</div>
+      <div class="scene">${scene2}<img class="mini" src="${A}chara/chara_think.png" alt=""></div>
+      <div class="body">
+        <div class="rcard" style="box-shadow:0 3px 8px rgba(30,40,90,.10)">
+          <div class="rc-bar"></div>
+          <div class="rc-in">
+            <div class="rc-hd"><img class="bot" src="${A}icons/pa_teams.png"><div class="who">Power Automate<br><span>フローボット・15分前</span></div></div>
+            <div class="rc-line"><span class="lb">まもなく「週次定例」</span>関連資料はこちら 📎</div>
+            <div class="rc-line hw"><span class="lb">前回の決定</span><b>A案で進める／見積を提出</b></div>
+          </div>
+        </div>
+        <div class="cap">“あの資料どこ”をなくす。<span style="color:#2563EB">作り方③へ</span></div>
+      </div>
+    </div>
+
+    <div class="col c3">
+      <div class="ch"><span class="no">3</span>会議後、宿題をタスクに</div>
+      <div class="scene">${scene3}<img class="mini" src="${A}chara/chara_guts.png" alt=""></div>
+      <div class="body">
+        <div class="ledger" style="border-color:#BBE9C9">
+          <div class="lg-hd" style="background:#ECFBF1;color:#15803D"><img src="${A}icons/pa_dataoperation.png">議事メモのTODO<span class="filt">→タスク化</span></div>
+          <div class="ltab">
+            <div class="lr hd"><div class="cell">やること</div><div class="cell">担当</div><div class="cell">期日</div></div>
+            <div class="lr pick"><div class="cell">見積を提出</div><div class="cell">佐藤</div><div class="cell">8/15</div></div>
+            <div class="lr pick"><div class="cell">日程を確定</div><div class="cell">田中</div><div class="cell">8/13</div></div>
+          </div>
+        </div>
+        <div class="cap">「TODO」行が<b>タスクに化ける</b>。<span style="color:#2563EB">作り方④へ</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <div class="fl">こんな会議に効く▶</div>
+    <div class="tags"><div class="tag">週次定例</div><div class="tag">採用面接</div><div class="tag">PJ会議</div><div class="tag">委員会</div></div>
+  </div>
+
+  <div class="next"><span class="na">${svg('arrow')}</span>幹事の中身は<b>3つのしくみ</b>｜<b>作り方</b>は <b>2・3・4枚目</b> へ！</div>
+  <div class="src">出典：Microsoft Learn（Office 365 Outlook「会議の時間を検索/会議室を取得/イベントの作成/予定が間もなく開始」／Planner）／画面は再現・データは架空</div>
+`;
+</script>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>

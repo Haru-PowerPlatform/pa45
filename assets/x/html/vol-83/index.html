@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.83-1 仕分けルールをフローの外に置く</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB; --blue-bg:#EFF6FF; --blue-dark:#1E40AF;
+    --green:#16A34A; --green-dark:#065F46; --xls:#217346;
+    --red:#DC2626; --orange:#EA580C; --od:#0364B8;
+    --ink:#1F2937; --gray:#374151; --weak:#6B7280; --line:#E5E7EB;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+  .ic{display:block;width:100%;height:100%;}
+
+  .titlebar{height:90px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:16px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:26px;border-radius:999px;padding:7px 20px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .vol-logo{height:50px;width:50px;object-fit:contain;flex:0 0 auto;background:#fff;border-radius:12px;padding:5px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
+  .title-text{color:#fff;font-weight:900;font-size:27px;line-height:1.14;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:150px;}
+  .title-text .hl{color:#FFE08A;}
+  .title-chara{position:absolute;right:14px;bottom:-40px;height:142px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .concl{margin:10px 16px 0;background:var(--blue-bg);border:2.5px solid var(--blue);border-radius:13px;display:flex;align-items:center;gap:13px;padding:10px 18px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;width:40px;height:40px;border-radius:11px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;padding:8px;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
+  .concl .txt{font-weight:800;font-size:19.5px;color:var(--blue-dark);line-height:1.34;padding-right:150px;}
+  .concl .txt b{color:var(--orange);}
+
+  .stage{flex:1 1 auto;margin:12px 16px 0;display:flex;align-items:stretch;gap:11px;min-height:0;}
+
+  /* 左：Excel ルール表（主役） */
+  .rulebook{flex:1.12;display:flex;flex-direction:column;min-height:0;}
+  .rbcap{flex:0 0 auto;font-weight:900;font-size:15.5px;color:var(--green-dark);background:#ECFDF5;border:1.5px solid #7EDCAD;border-radius:9px;padding:6px 11px;margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+  .rbcap .bd{margin-left:auto;background:var(--xls);color:#fff;font-size:12px;border-radius:6px;padding:2px 9px;}
+  .xls{flex:1;display:flex;flex-direction:column;min-height:0;background:#fff;border:1px solid #CBD5E1;border-radius:11px;overflow:hidden;box-shadow:0 6px 14px rgba(0,0,0,.13);font-family:'Segoe UI','Noto Sans JP',sans-serif;}
+  .xtop{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:7px 11px;background:var(--xls);color:#fff;font-weight:900;font-size:14px;}
+  .xtop .x{width:20px;height:20px;background:#fff;color:var(--xls);border-radius:4px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px;}
+  .xgrid{flex:1;display:flex;flex-direction:column;min-height:0;}
+  .xr{display:grid;grid-template-columns:34px 1.1fr 1.3fr;border-bottom:1px solid #E6EBF1;min-height:0;}
+  .xr>div{padding:0 11px;display:flex;align-items:center;font-size:17px;font-weight:800;color:#243B58;border-right:1px solid #EEF1F5;}
+  .xr .rn{background:#F3F6FA;color:#94A3B8;font-size:13px;font-weight:900;justify-content:center;}
+  .xr.head>div{background:#E7F2EC;color:#15603A;font-weight:900;font-size:15px;}
+  .xr.head .rn{background:#DCE9E1;}
+  .xr .kw{color:#0B3A8F;font-weight:900;font-size:17.5px;}
+  .xr .fd{font-family:'Roboto Mono',monospace;font-size:15.5px;color:#334155;}
+  .xr.body{flex:1;}
+  .xr.add>div{background:#DCFCE7;color:#15803D;}
+  .xr.add .rn{background:#BBF7D0;color:#15803D;}
+  .xr.add .kw{color:#15803D;}
+  .addtag{margin-left:auto;font-size:11px;font-weight:900;color:#fff;background:var(--green);border-radius:5px;padding:1px 7px;}
+
+  /* 中央 */
+  .mid{flex:0 0 186px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;}
+  .readbadge{background:#fff;border:2.5px solid var(--blue);border-radius:12px;padding:11px 13px;text-align:center;box-shadow:0 4px 10px rgba(37,99,235,.16);font-size:15.5px;font-weight:900;color:var(--blue-dark);line-height:1.35;}
+  .bigarrow{width:66px;height:38px;color:var(--blue);}
+  .lockbadge{background:#EEF2F7;border:2.5px dashed #A9B6C8;border-radius:12px;padding:12px 13px;text-align:center;font-size:15.5px;font-weight:900;color:#475569;line-height:1.35;}
+  .lockbadge .lk{font-size:30px;}
+
+  /* 右：結果（フォルダに仕分け） */
+  .result{flex:1.02;display:flex;flex-direction:column;min-height:0;gap:9px;}
+  .rcap{flex:0 0 auto;font-weight:900;font-size:17px;color:var(--gray);}
+  .fol{flex:1;display:flex;flex-direction:column;gap:12px;min-height:0;}
+  .folder{flex:1;display:flex;align-items:center;gap:13px;background:#F8FAFC;border:2.5px solid #E2E8F1;border-radius:13px;padding:12px 16px;box-shadow:0 3px 8px rgba(0,0,0,.08);min-height:0;}
+  .folder .fi{font-size:44px;flex:0 0 auto;}
+  .folder .ftx{min-width:0;}
+  .folder .path{font-family:'Roboto Mono',monospace;font-size:19px;font-weight:900;color:#243B58;}
+  .folder .file{font-size:15px;font-weight:800;color:var(--weak);margin-top:4px;}
+  .folder .in{margin-left:auto;flex:0 0 auto;font-size:14px;font-weight:900;color:#15803D;background:#DCFCE7;border:1.5px solid #A7E3C4;border-radius:8px;padding:5px 11px;}
+  .folder.k1{border-color:#9DC1F5;} .folder.k2{border-color:#A7E3C4;} .folder.k3{border-color:#F6C58A;}
+  .folder.k3 .in{color:#9A3412;background:#FFEDD5;border-color:#F6C58A;}
+
+  .next{flex:0 0 auto;margin:9px 16px 14px;background:linear-gradient(180deg,#EAF2FF,#DCEAFE);border:2.5px solid var(--blue);border-radius:13px;padding:11px 18px;display:flex;align-items:center;gap:11px;font-weight:900;font-size:20px;color:var(--blue-dark);box-shadow:0 3px 9px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .next .na{flex:0 0 auto;width:26px;height:26px;color:var(--blue);}
+  .next b{color:var(--orange);}
+  .src{position:absolute;left:16px;bottom:4px;font-size:10px;color:#AEB6C2;font-weight:700;z-index:3;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const ICON={arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',bulb:'<path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/>'};
+const svg=(n)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">${ICON[n]}</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.83-1</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">ルールが増えても<span class="hl">フローは一度も開かない</span>｜設定はExcelに外出し</div>
+    <img class="title-chara" src="${A}chara/chara_confident.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svg('bulb')}</div>
+    <div class="txt">振り分けルールを<b>フローの中に書かない</b>。<b>Excelの対応表</b>に持たせれば、ルール追加は<b>Excelに1行</b>足すだけ。</div>
+  </div>
+
+  <div class="stage">
+    <div class="rulebook">
+      <div class="rbcap">📗 このExcelが“ルールブック”<span class="bd">キーワード ⇔ 保存先</span></div>
+      <div class="xls">
+        <div class="xtop"><span class="x">X</span>振り分けルール.xlsx</div>
+        <div class="xgrid">
+          <div class="xr head"><div class="rn"></div><div>キーワード</div><div>保存先フォルダ</div></div>
+          <div class="xr body"><div class="rn">1</div><div class="kw">見積・注文</div><div class="fd">/営業/見積</div></div>
+          <div class="xr body"><div class="rn">2</div><div class="kw">請求・支払</div><div class="fd">/経理/請求書</div></div>
+          <div class="xr body"><div class="rn">3</div><div class="kw">契約・覚書</div><div class="fd">/法務/契約</div></div>
+          <div class="xr body add"><div class="rn">4</div><div class="kw">採用・履歴書<span class="addtag">＋ 追加</span></div><div class="fd">/人事/採用</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mid">
+      <div class="readbadge">⚡ フローは<br>この表を<b>読むだけ</b></div>
+      <span class="bigarrow">${svg('arrow')}</span>
+      <div class="lockbadge"><div class="lk">🔒</div>フロー本体は<br><b>1回も触らない</b></div>
+    </div>
+
+    <div class="result">
+      <div class="rcap">📎 添付ファイルが自動で正しい場所へ</div>
+      <div class="fol">
+        <div class="folder k2"><span class="fi">📂</span><div class="ftx"><div class="path">/経理/請求書</div><div class="file">請求書_9月.pdf を保存</div></div><span class="in">✓ 仕分け</span></div>
+        <div class="folder k1"><span class="fi">📂</span><div class="ftx"><div class="path">/営業/見積</div><div class="file">御見積_A社.xlsx を保存</div></div><span class="in">✓ 仕分け</span></div>
+        <div class="folder k3"><span class="fi">📂</span><div class="ftx"><div class="path">/人事/採用</div><div class="file">履歴書_山田.pdf を保存</div></div><span class="in">✓ 新ルール</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="next"><span class="na">${svg('arrow')}</span>Excelを読んで<b>該当フォルダに保存</b>するまでの<b>作り方</b>は <b>2枚目</b>へ！</div>
+  <div class="src">出典：Microsoft Learn（Excel Online「表内に存在する行を一覧表示」／OneDrive・SharePoint）／画面は再現・データは架空</div>
+`;
+</script>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>

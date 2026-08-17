@@ -1,0 +1,183 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.103-1 CSVの文字化けは、1行足すだけで直る</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB; --blue-bg:#EFF6FF; --blue-dark:#1E40AF;
+    --green:#16A34A; --green-bg:#ECFDF5; --green-dark:#065F46;
+    --red:#DC2626; --red-bg:#FEF2F2; --red-dark:#991B1B;
+    --orange:#EA580C; --violet:#7C3AED;
+    --ink:#1F2937; --gray:#374151; --weak:#6B7280; --line:#E5E7EB;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+  .ic{display:block;width:100%;height:100%;}
+
+  .titlebar{height:90px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:16px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:26px;border-radius:999px;padding:7px 20px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .vol-logo{height:50px;width:50px;object-fit:contain;flex:0 0 auto;background:#fff;border-radius:12px;padding:5px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
+  .title-text{color:#fff;font-weight:900;font-size:27px;line-height:1.14;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:158px;}
+  .title-text .hl{color:#FFE08A;}
+  .title-chara{position:absolute;right:14px;bottom:-44px;height:146px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .concl{margin:9px 16px 0;background:var(--blue-bg);border:2.5px solid var(--blue);border-radius:13px;display:flex;align-items:center;gap:13px;padding:8px 18px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;width:40px;height:40px;border-radius:11px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;padding:8px;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
+  .concl .txt{font-weight:800;font-size:19px;color:var(--blue-dark);line-height:1.3;padding-right:158px;}
+  .concl .txt b{color:var(--orange);}
+
+  .stage{flex:1 1 auto;margin:10px 16px 0;display:flex;align-items:stretch;gap:11px;min-height:0;}
+
+  .pane{flex:1.08;display:flex;flex-direction:column;gap:8px;border-radius:14px;padding:9px 11px 10px;min-height:0;}
+  .pane.bad{background:var(--red-bg);border:2.5px solid #F2B8B8;}
+  .pane.good{background:var(--green-bg);border:2.5px solid #A7E3C7;}
+  .ph{flex:0 0 auto;display:flex;align-items:center;gap:9px;font-weight:900;font-size:24px;line-height:1.14;}
+  .pane.bad .ph{color:var(--red-dark);}
+  .pane.good .ph{color:var(--green-dark);}
+  .ph .bdg{flex:0 0 auto;font-size:14px;font-weight:900;color:#fff;border-radius:999px;padding:3px 12px;}
+  .pane.bad .ph .bdg{background:var(--red);}
+  .pane.good .ph .bdg{background:var(--green);}
+
+  /* Excel風モック */
+  .xls{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:2.5px solid #C9D6EA;border-radius:11px;overflow:hidden;box-shadow:0 5px 12px rgba(20,40,90,.15);}
+  .xh{flex:0 0 auto;display:flex;align-items:center;gap:9px;padding:8px 11px;background:#107C41;color:#fff;font-weight:900;font-size:15.5px;}
+  .xh .xi{width:30px;height:30px;flex:0 0 auto;}
+  .grid{flex:1;display:flex;flex-direction:column;min-height:0;}
+  .grow{flex:1;display:flex;min-height:0;border-bottom:1px solid #E4E9F0;}
+  .grow:last-child{border-bottom:none;}
+  .grow.hd{background:#F2F6FB;font-weight:900;}
+  .cell{flex:1;display:flex;align-items:center;padding:0 9px;border-right:1px solid #E4E9F0;font-size:15.5px;font-weight:800;color:#243B58;overflow:hidden;white-space:nowrap;}
+  .cell:last-child{border-right:none;}
+  .pane.bad .cell.mj{font-family:'Roboto Mono',monospace;font-size:14.5px;color:#8A1F1F;letter-spacing:-.3px;}
+  .pcap{flex:0 0 auto;font-size:15.5px;font-weight:900;line-height:1.32;border-radius:9px;padding:7px 10px;padding-right:118px;}
+  .pane.bad .pcap{color:var(--red-dark);background:#FBD9D9;}
+  .pane.good .pcap{color:var(--green-dark);background:#CFEFE0;}
+
+  /* 中央：原因の図解 */
+  .mid{flex:1;display:flex;flex-direction:column;gap:8px;min-height:0;background:linear-gradient(180deg,#F7F4FE,#EFE7FB);border:2.5px solid #C9B4EC;border-radius:14px;padding:10px 11px;box-shadow:0 5px 13px rgba(124,58,237,.14);}
+  .midh{flex:0 0 auto;text-align:center;font-weight:900;font-size:19px;color:#5B21B6;line-height:1.2;}
+  .midfig{flex:1;min-height:0;border-radius:10px;position:relative;overflow:hidden;background:#fff;border:1.5px solid #DFD2F5;}
+  .midfig svg{position:absolute;inset:0;width:100%;height:100%;}
+  .midnote{flex:0 0 auto;font-size:15px;font-weight:900;color:#4C1D95;background:#fff;border:1.5px solid #D6C7EF;border-radius:9px;padding:7px 9px;line-height:1.34;}
+  .midnote b{color:var(--orange);}
+
+  .charabox{position:absolute;right:6px;bottom:0;height:112px;z-index:3;filter:drop-shadow(0 3px 5px rgba(0,0,0,.22));}
+  .pane{position:relative;}
+
+  .next{flex:0 0 auto;margin:9px 16px 18px;background:linear-gradient(180deg,#EAF2FF,#DCEAFE);border:2.5px solid var(--blue);border-radius:13px;padding:9px 18px;display:flex;align-items:center;gap:11px;font-weight:900;font-size:19px;color:var(--blue-dark);box-shadow:0 3px 9px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .next .na{flex:0 0 auto;width:26px;height:26px;color:var(--blue);}
+  .next b{color:var(--orange);}
+  .src{position:absolute;left:16px;bottom:3px;font-size:10px;color:#AEB6C2;font-weight:700;z-index:3;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const ICON={
+  arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',
+  file:'<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/>'
+};
+const svg=(n,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${ICON[n]}</svg>`;
+
+/* Excelアイコン（資産に無いため自作） */
+const XLSICON=`<svg class="ic" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <rect x="1.5" y="1.5" width="29" height="29" rx="5" fill="#fff"/>
+  <rect x="4.5" y="4.5" width="23" height="23" rx="3" fill="#107C41"/>
+  <path d="M10 10.5 L22 21.5 M22 10.5 L10 21.5" stroke="#fff" stroke-width="3.4" stroke-linecap="round"/>
+</svg>`;
+
+/* 原因図解：UTF-8のファイルを、Excelが別の文字コードだと思い込む */
+const figWhy=`<svg viewBox="0 0 300 260" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="w1" x="-40%" y="-40%" width="180%" height="190%"><feDropShadow dx="0" dy="2.5" stdDeviation="2.6" flood-color="#2A1450" flood-opacity=".2"/></filter>
+    <marker id="mkw" markerUnits="userSpaceOnUse" markerWidth="13" markerHeight="13" refX="9" refY="6.5" orient="auto"><path d="M0 0 L13 6.5 L0 13 z" fill="#7C3AED"/></marker>
+  </defs>
+
+  <!-- ファイル -->
+  <g transform="translate(96,8)" filter="url(#w1)">
+    <path d="M0 0 h64 l24 24 v66 a6 6 0 0 1-6 6 H6 a6 6 0 0 1-6-6 V6 a6 6 0 0 1 6-6z" fill="#fff" stroke="#7C3AED" stroke-width="2.8"/>
+    <path d="M64 0 v24 h24" fill="none" stroke="#7C3AED" stroke-width="2.8" stroke-linejoin="round"/>
+    <text x="44" y="60" font-family="Noto Sans JP" font-size="17" font-weight="900" fill="#5B21B6" text-anchor="middle">CSV</text>
+    <text x="44" y="82" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#16A34A" text-anchor="middle">UTF-8</text>
+  </g>
+  <text x="150" y="124" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#5B21B6" text-anchor="middle">中身は正しい</text>
+
+  <path d="M150 134 V 158" stroke="#7C3AED" stroke-width="4.5" stroke-linecap="round" marker-end="url(#mkw)"/>
+
+  <!-- Excel が思い込む -->
+  <g transform="translate(46,170)" filter="url(#w1)">
+    <rect x="0" y="0" width="208" height="54" rx="10" fill="#FFF1F1" stroke="#DC2626" stroke-width="2.8"/>
+    <g transform="translate(12,11)"><rect x="0" y="0" width="32" height="32" rx="6" fill="#107C41"/><path d="M9 9 l14 14 M23 9 l-14 14" stroke="#fff" stroke-width="3.2" stroke-linecap="round"/></g>
+    <text x="130" y="24" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#991B1B" text-anchor="middle">Excelは別の文字コード</text>
+    <text x="130" y="43" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#991B1B" text-anchor="middle">だと思って開く</text>
+  </g>
+  <text x="150" y="248" font-family="Noto Sans JP" font-size="17" font-weight="900" fill="#991B1B" text-anchor="middle">→ 文字化け</text>
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.103-1</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">CSVの文字化けは、<span class="hl">1行足すだけ</span>で直る</div>
+    <img class="title-chara" src="${A}chara/chara_confident.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svg('file')}</div>
+    <div class="txt">フローが作ったCSVをExcelで開くと、日本語が記号の羅列に。<b>ファイルは壊れていません</b>。開き方の問題です。</div>
+  </div>
+
+  <div class="stage">
+    <div class="pane bad">
+      <div class="ph"><span class="bdg">before</span>記号の羅列になる</div>
+      <div class="xls">
+        <div class="xh"><span class="xi">${XLSICON}</span>売上一覧.csv</div>
+        <div class="grid">
+          <div class="grow hd"><span class="cell mj">譌･莉�</span><span class="cell mj">諡�蠖�</span><span class="cell mj">驥大��</span></div>
+          <div class="grow"><span class="cell mj">2026/08/16</span><span class="cell mj">菴占陸</span><span class="cell mj">12,000</span></div>
+          <div class="grow"><span class="cell mj">2026/08/16</span><span class="cell mj">逕ｰ荳ｭ</span><span class="cell mj">8,400</span></div>
+          <div class="grow"><span class="cell mj">2026/08/15</span><span class="cell mj">驫ｴ譛ｨ</span><span class="cell mj">23,500</span></div>
+        </div>
+      </div>
+      <div class="pcap">数字だけ読める。<b>日本語の列だけ全部こわれて見える</b>のが特徴。</div>
+      <img class="charabox" src="${A}chara/chara_trouble.png" alt="">
+    </div>
+
+    <div class="mid">
+      <div class="midh">なぜ起きる？</div>
+      <div class="midfig">${figWhy}</div>
+      <div class="midnote">先頭に<b>「これはUTF-8です」の目印</b>を付けると、Excelが正しく開きます。</div>
+    </div>
+
+    <div class="pane good">
+      <div class="ph"><span class="bdg">after</span>そのまま読める</div>
+      <div class="xls">
+        <div class="xh"><span class="xi">${XLSICON}</span>売上一覧.csv</div>
+        <div class="grid">
+          <div class="grow hd"><span class="cell">日付</span><span class="cell">担当</span><span class="cell">金額</span></div>
+          <div class="grow"><span class="cell">2026/08/16</span><span class="cell">佐藤</span><span class="cell">12,000</span></div>
+          <div class="grow"><span class="cell">2026/08/16</span><span class="cell">田中</span><span class="cell">8,400</span></div>
+          <div class="grow"><span class="cell">2026/08/15</span><span class="cell">鈴木</span><span class="cell">23,500</span></div>
+        </div>
+      </div>
+      <div class="pcap">開き直しも、名前を付けて保存も<b>不要</b>。渡した相手の手元でも読めます。</div>
+      <img class="charabox" src="${A}chara/chara_guts.png" alt="">
+    </div>
+  </div>
+
+  <div class="next"><span class="na">${svg('arrow')}</span>足すのは<b>式1行</b>だけ。どこに書くかは <b>2枚目</b>へ！</div>
+  <div class="src">出典：Microsoft Learn「Power Automate でデータ操作を使用する」（CSV テーブルの作成）／BOM付与の対処は Japan Dynamics CRM &amp; Power Platform Support Blog ほか／画面は再現・データは架空</div>
+`;
+</script>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.104-2 タイムアウトの入れ方</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB; --blue-bg:#EFF6FF; --blue-dark:#1E40AF;
+    --green:#16A34A; --green-bg:#ECFDF5; --green-dark:#065F46;
+    --red:#DC2626; --orange:#EA580C; --violet:#7C3AED;
+    --ink:#1F2937; --gray:#374151; --weak:#6B7280; --line:#E5E7EB;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+  .ic{display:block;width:100%;height:100%;}
+
+  .titlebar{height:90px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:16px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:26px;border-radius:999px;padding:7px 20px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .vol-logo{height:50px;width:50px;object-fit:contain;flex:0 0 auto;background:#fff;border-radius:12px;padding:5px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
+  .title-text{color:#fff;font-weight:900;font-size:27px;line-height:1.14;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:158px;}
+  .title-text .hl{color:#FFE08A;}
+  .title-chara{position:absolute;right:14px;bottom:-44px;height:146px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .concl{margin:9px 16px 0;background:var(--blue-bg);border:2.5px solid var(--blue);border-radius:13px;display:flex;align-items:center;gap:13px;padding:8px 18px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;width:40px;height:40px;border-radius:11px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;padding:8px;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
+  .concl .txt{font-weight:800;font-size:19px;color:var(--blue-dark);line-height:1.3;padding-right:158px;}
+  .concl .txt b{color:var(--orange);}
+
+  .stage{flex:1 1 auto;margin:10px 16px 0;display:flex;align-items:stretch;gap:11px;min-height:0;}
+  .col{flex:1;display:flex;flex-direction:column;gap:7px;min-height:0;background:#F8FAFC;border:2.5px solid #DCE3EE;border-radius:14px;padding:8px 10px 9px;}
+  .col.hot{border-color:var(--violet);background:#F9F5FE;box-shadow:0 5px 12px rgba(124,58,237,.14);}
+  .col.fin{border-color:#7FCEA9;background:var(--green-bg);}
+  .ch2{flex:0 0 auto;display:flex;align-items:center;gap:9px;font-weight:900;font-size:19.5px;color:#1B2A44;line-height:1.18;}
+  .ch2 .n{flex:0 0 auto;width:32px;height:32px;border-radius:9px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;box-shadow:0 2px 4px rgba(0,0,0,.22);}
+  .col.hot .ch2 .n{background:linear-gradient(180deg,#8B5CF6,#7C3AED);}
+  .col.fin .ch2 .n{background:linear-gradient(180deg,#34D399,#16A34A);}
+  .cbody{flex:1;display:flex;flex-direction:column;gap:7px;min-height:0;}
+  .cap{flex:0 0 auto;font-size:15.5px;font-weight:900;line-height:1.32;border-radius:9px;padding:7px 10px;color:#334155;background:#E7EEF7;}
+  .col.hot .cap{color:#5B21B6;background:#EEE4FC;}
+  .col.fin .cap{color:var(--green-dark);background:#CFEFE0;}
+  .cap b{color:var(--orange);}
+
+  .fig{flex:0 0 auto;height:104px;border-radius:10px;position:relative;overflow:hidden;background:#EDF3FA;}
+  .col.hot .fig{background:#F1E9FD;}
+  .col.fin .fig{background:#DCF3E7;}
+  .fig svg{position:absolute;inset:0;width:100%;height:100%;}
+
+  .card{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:2.5px solid #C7D6EE;border-radius:11px;overflow:hidden;box-shadow:0 4px 10px rgba(20,40,90,.13);}
+  .col.hot .card{border-color:#D6C7EF;}
+  .cardh{flex:0 0 auto;display:flex;align-items:center;gap:9px;padding:8px 11px;font-weight:900;font-size:16px;color:#1B2A44;background:#F2F7FD;border-bottom:1.5px solid #E2EAF5;}
+  .col.hot .cardh{background:linear-gradient(90deg,#5B21B6,#7C3AED);color:#fff;border-bottom:none;}
+  .cardh .ci{width:28px;height:28px;flex:0 0 auto;}
+  .cardb{flex:1;padding:7px 10px;display:flex;flex-direction:column;gap:5px;min-height:0;}
+  .fld{display:flex;flex-direction:column;gap:2px;}
+  .fld .k{font-size:14px;font-weight:900;color:var(--weak);}
+  .fld .v{background:#F7F9FC;border:1.5px solid #D9E1EC;border-radius:7px;padding:5px 8px;font-size:15px;font-weight:900;color:#243B58;line-height:1.28;}
+  .fld .v.hot{background:#F5EFFE;border-color:#B79BEE;box-shadow:0 0 0 2px #EDE4FB;font-family:'Roboto Mono',monospace;color:#4C1D95;}
+
+  .cbx{display:flex;align-items:center;gap:9px;font-size:15.5px;font-weight:900;color:#475569;border-radius:8px;padding:4px 9px;background:#F7F8FB;border:1.5px solid #E6E9F0;}
+  .cbx .bx{flex:0 0 auto;width:21px;height:21px;border-radius:5px;border:2.5px solid #B9C2D2;background:#fff;}
+  .cbx.on{background:#F1E9FD;border-color:#B79BEE;color:#4C1D95;}
+  .cbx.on .bx{border-color:#7C3AED;background:#7C3AED;color:#fff;}
+
+  .kv{flex:1;min-height:0;display:flex;flex-direction:column;gap:6px;}
+  .kvi{flex:1;display:flex;flex-direction:column;justify-content:center;gap:2px;background:#fff;border:1.5px solid var(--line);border-left:6px solid var(--green);border-radius:9px;padding:6px 10px;min-height:0;}
+  .kvi .t{font-size:15.5px;font-weight:900;color:var(--green-dark);line-height:1.22;}
+  .kvi .d{font-size:14px;font-weight:800;color:#5B6472;line-height:1.3;}
+  .kvi.o{border-left-color:var(--orange);} .kvi.o .t{color:#9A3412;}
+
+  .warn{flex:0 0 auto;margin:9px 16px 0;display:flex;align-items:center;gap:12px;background:#FFFBEB;border:2.5px solid #FCD34D;border-radius:12px;padding:8px 14px;}
+  .warn .wt{flex:0 0 auto;font-size:14.5px;font-weight:900;color:#B45309;}
+  .warn .wl{flex:1;display:flex;gap:8px;}
+  .warn .wl span{flex:1;font-size:14.5px;font-weight:900;color:#92400E;background:#fff;border:1.5px solid #F6D08A;border-radius:8px;padding:6px 9px;line-height:1.3;}
+  .warn .wl code{font-family:'Roboto Mono',monospace;font-size:13.5px;color:#B45309;}
+
+  .next{flex:0 0 auto;margin:8px 16px 18px;background:linear-gradient(180deg,#EAF2FF,#DCEAFE);border:2.5px solid var(--blue);border-radius:13px;padding:8px 18px;display:flex;align-items:center;gap:11px;font-weight:900;font-size:19px;color:var(--blue-dark);box-shadow:0 3px 9px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .next .na{flex:0 0 auto;width:26px;height:26px;color:var(--blue);}
+  .next b{color:var(--orange);}
+  .src{position:absolute;left:16px;bottom:3px;font-size:10px;color:#AEB6C2;font-weight:700;z-index:3;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const ICON={arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/>',check:'<path d="M20 6L9 17l-5-5"/>',split:'<path d="M12 3v6"/><path d="M12 9L5 15v6"/><path d="M12 9l7 6v6"/>'};
+const svg=(n,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${ICON[n]}</svg>`;
+
+/* ① ISO 8601 の書き方（砂時計＋期間チップ） */
+const figIso=`<svg viewBox="0 0 320 104" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+  <defs><filter id="i1" x="-40%" y="-40%" width="180%" height="190%"><feDropShadow dx="0" dy="2.5" stdDeviation="2.4" flood-color="#2A1450" flood-opacity=".2"/></filter></defs>
+  <g transform="translate(14,20)" filter="url(#i1)">
+    <path d="M5 3 h44 v9 L33 30 L49 48 v9 H5 V48 L21 30 L5 12 z" fill="#fff" stroke="#7C3AED" stroke-width="3" stroke-linejoin="round"/>
+    <path d="M13 9 h28 L29 25 z" fill="#C9B4EC"/>
+    <path d="M20 51 h14 L27 39 z" fill="#C9B4EC"/>
+  </g>
+  ${[['PT4H','4時間'],['P1D','1日'],['P3D','3日']].map((p,i)=>`<g transform="translate(${86+i*78},22)" filter="url(#i1)">
+    <rect x="0" y="0" width="70" height="56" rx="9" fill="#7C3AED"/>
+    <text x="35" y="25" font-family="Roboto Mono" font-size="18" font-weight="700" fill="#fff" text-anchor="middle">${p[0]}</text>
+    <text x="35" y="45" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#E9DDFB" text-anchor="middle">${p[1]}</text></g>`).join('')}
+  <text x="180" y="96" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#5B21B6" text-anchor="middle">Pで始めて、時間はTのあと</text>
+</svg>`;
+
+/* ② 押された／時間切れ の二股 */
+const figFork=`<svg viewBox="0 0 320 104" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <marker id="mgo" markerUnits="userSpaceOnUse" markerWidth="13" markerHeight="13" refX="9" refY="6.5" orient="auto"><path d="M0 0 L13 6.5 L0 13 z" fill="#16A34A"/></marker>
+    <marker id="mor" markerUnits="userSpaceOnUse" markerWidth="13" markerHeight="13" refX="9" refY="6.5" orient="auto"><path d="M0 0 L13 6.5 L0 13 z" fill="#D97706"/></marker>
+  </defs>
+  <rect x="10" y="34" width="88" height="38" rx="9" fill="#fff" stroke="#64748B" stroke-width="2.6"/>
+  <text x="54" y="58" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#334155" text-anchor="middle">承認を待つ</text>
+  <path d="M104 48 C 140 22, 160 22, 190 22" fill="none" stroke="#16A34A" stroke-width="4.5" stroke-linecap="round" marker-end="url(#mgo)"/>
+  <path d="M104 60 C 140 86, 160 86, 190 86" fill="none" stroke="#D97706" stroke-width="4.5" stroke-linecap="round" marker-end="url(#mor)"/>
+  <g transform="translate(202,6)"><rect x="0" y="0" width="108" height="32" rx="8" fill="#EAF9F1" stroke="#16A34A" stroke-width="2.4"/>
+    <text x="54" y="22" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#0B5136" text-anchor="middle">押された → 先へ</text></g>
+  <g transform="translate(202,70)"><rect x="0" y="0" width="108" height="32" rx="8" fill="#FDF0D5" stroke="#D97706" stroke-width="2.4"/>
+    <text x="54" y="22" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#8A5A00" text-anchor="middle">時間切れ → 催促</text></g>
+</svg>`;
+
+/* ③ 催促 or 次の人 */
+const figEsc=`<svg viewBox="0 0 320 104" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+  <defs><marker id="mg3" markerUnits="userSpaceOnUse" markerWidth="13" markerHeight="13" refX="9" refY="6.5" orient="auto"><path d="M0 0 L13 6.5 L0 13 z" fill="#16A34A"/></marker></defs>
+  <g transform="translate(16,24)">
+    <circle cx="18" cy="15" r="12" fill="#D97706"/><path d="M2 52a16 16 0 0 1 32 0z" fill="#D97706"/>
+    <text x="18" y="72" font-family="Noto Sans JP" font-size="14.5" font-weight="900" fill="#8A5A00" text-anchor="middle">承認者</text>
+  </g>
+  <path d="M64 50 H 100" stroke="#16A34A" stroke-width="4.5" stroke-linecap="round" marker-end="url(#mg3)"/>
+  <g transform="translate(112,20)">
+    <rect x="0" y="0" width="76" height="34" rx="8" fill="#FDF0D5" stroke="#D97706" stroke-width="2.4"/>
+    <text x="38" y="23" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#8A5A00" text-anchor="middle">催促</text>
+  </g>
+  <g transform="translate(112,58)">
+    <rect x="0" y="0" width="76" height="34" rx="8" fill="#EAF9F1" stroke="#16A34A" stroke-width="2.4"/>
+    <text x="38" y="23" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#0B5136" text-anchor="middle">回付</text>
+  </g>
+  <path d="M194 75 H 226" stroke="#16A34A" stroke-width="4.5" stroke-linecap="round" marker-end="url(#mg3)"/>
+  <g transform="translate(240,24)">
+    <circle cx="18" cy="15" r="12" fill="#16A34A"/><path d="M2 52a16 16 0 0 1 32 0z" fill="#16A34A"/>
+    <text x="18" y="72" font-family="Noto Sans JP" font-size="14.5" font-weight="900" fill="#0B5136" text-anchor="middle">次の人</text>
+  </g>
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.104-2</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">入れるのは<span class="hl">タイムアウト1つ</span>と、その先の分岐</div>
+    <img class="title-chara" src="${A}chara/chara_point.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svg('clock')}</div>
+    <div class="txt">承認アクションに<b>期限</b>を入れ、時間切れの先を<b>Vol.99の「実行条件の構成」</b>で拾います。</div>
+  </div>
+
+  <div class="stage">
+    <div class="col hot">
+      <div class="ch2"><span class="n">1</span>期限を入れる</div>
+      <div class="fig">${figIso}</div>
+      <div class="cbody">
+        <div class="card">
+          <div class="cardh"><span class="ci">${svg('clock',2.2)}</span>承認アクションの設定</div>
+          <div class="cardb">
+            <div class="fld"><span class="k">タイムアウト</span><span class="v hot">P3D</span></div>
+            <div class="fld"><span class="k">意味</span><span class="v">3日待って、返事がなければ先へ</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="cap">アクションの<b>設定（詳細オプション）</b>の中にあります。</div>
+    </div>
+
+    <div class="col">
+      <div class="ch2"><span class="n">2</span>時間切れを拾う</div>
+      <div class="fig">${figFork}</div>
+      <div class="cbody">
+        <div class="card">
+          <div class="cardh"><span class="ci">${svg('split',2.2)}</span>実行条件の構成</div>
+          <div class="cardb">
+            <div class="cbx"><span class="bx"></span>成功しました</div>
+            <div class="cbx on"><span class="bx">${svg('check',4)}</span>タイムアウトしました</div>
+            <div class="cbx"><span class="bx"></span>失敗しました</div>
+          </div>
+        </div>
+      </div>
+      <div class="cap">Vol.99と同じ場所。<b>時間切れの時だけ</b>動く枝を作ります。</div>
+    </div>
+
+    <div class="col fin">
+      <div class="ch2"><span class="n">3</span>その先を決める</div>
+      <div class="fig">${figEsc}</div>
+      <div class="cbody">
+        <div class="kv">
+          <div class="kvi o"><span class="t">まずは催促だけ</span><span class="d">止めている本人にだけ通知を送る</span></div>
+          <div class="kvi"><span class="t">それでも動かなければ回付</span><span class="d">代理の承認者へ、新しい承認を出す</span></div>
+          <div class="kvi"><span class="t">記録も残す</span><span class="d">誰で何日止まったかを台帳に1行</span></div>
+        </div>
+      </div>
+      <div class="cap">いきなり回付せず、<b>催促を挟む</b>と角が立ちません。</div>
+    </div>
+  </div>
+
+  <div class="warn">
+    <div class="wt">使う前に確認</div>
+    <div class="wl">
+      <span>フロー実行そのものが<b>最大30日</b>。それより長い期限は置けません</span>
+      <span>期間は <code>P3D</code>（3日）<code>PT4H</code>（4時間）の形で書きます</span>
+      <span>時間切れ後に<b>元の承認依頼がどう残るか</b>は、実機で確かめてから運用ルールを決める</span>
+    </div>
+  </div>
+
+  <div class="next"><span class="na">${svg('arrow')}</span>「あの承認、まだですか」と聞きに行く仕事が<b>まるごと消えます</b>！</div>
+  <div class="src">出典：Microsoft Learn（承認／フロー実行の最大は30日）／タイムアウト設定とエスカレーションの組み方はコミュニティの定番手法（動作は要確認）／画面は再現</div>
+`;
+</script>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>

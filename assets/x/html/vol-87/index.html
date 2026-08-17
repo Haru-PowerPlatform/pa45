@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.87-1 条件がfalseになった理由が行ごとに見える</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB; --blue-bg:#EFF6FF; --blue-dark:#1E40AF;
+    --green:#16A34A; --green-dark:#065F46;
+    --red:#DC2626; --red-dark:#991B1B; --orange:#EA580C; --ctrl:#486FE0;
+    --ink:#1F2937; --gray:#374151; --weak:#6B7280; --line:#E5E7EB;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+  .ic{display:block;width:100%;height:100%;}
+
+  .titlebar{height:90px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:16px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:26px;border-radius:999px;padding:7px 20px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .vol-logo{height:50px;width:50px;object-fit:contain;flex:0 0 auto;background:#fff;border-radius:12px;padding:5px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
+  .title-text{color:#fff;font-weight:900;font-size:27px;line-height:1.14;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:150px;}
+  .title-text .hl{color:#FFE08A;}
+  .title-chara{position:absolute;right:14px;bottom:-40px;height:142px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .concl{margin:10px 16px 0;background:var(--blue-bg);border:2.5px solid var(--blue);border-radius:13px;display:flex;align-items:center;gap:13px;padding:10px 18px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;width:40px;height:40px;border-radius:11px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;padding:8px;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
+  .concl .txt{font-weight:800;font-size:19.5px;color:var(--blue-dark);line-height:1.34;padding-right:150px;}
+  .concl .txt b{color:var(--orange);}
+
+  .stage{flex:1 1 auto;margin:12px 16px 0;display:flex;align-items:stretch;gap:14px;min-height:0;}
+
+  /* 左：これまで（Compose地獄） */
+  .before{flex:.72;display:flex;flex-direction:column;min-height:0;background:#FCF7F7;border:2px solid #F0C9C9;border-radius:14px;padding:11px 12px;box-shadow:0 4px 10px rgba(0,0,0,.08);}
+  .bfh{flex:0 0 auto;font-weight:900;font-size:19px;color:var(--red-dark);display:flex;align-items:center;gap:8px;margin-bottom:11px;}
+  .bfh .tag{margin-left:auto;font-size:14px;font-weight:900;color:#fff;background:var(--red);border-radius:7px;padding:4px 11px;}
+  .compose{display:flex;flex-direction:column;gap:11px;flex:1;min-height:0;}
+  .cbox{flex:1;display:flex;align-items:center;gap:12px;background:#fff;border:2px dashed #E0A9A9;border-radius:12px;padding:12px 15px;box-shadow:0 2px 5px rgba(0,0,0,.05);}
+  .cbox .ci{width:46px;height:46px;border-radius:10px;background:#EEF1F5;display:flex;align-items:center;justify-content:center;font-size:26px;flex:0 0 auto;}
+  .cbox .ct{font-size:19px;font-weight:900;color:#7A2C2C;}
+  .cbox .cv{margin-left:auto;font-family:'Roboto Mono',monospace;font-size:16px;font-weight:800;color:#B08585;}
+  .bnote{flex:0 0 auto;margin-top:11px;font-size:17px;font-weight:900;color:var(--red-dark);text-align:center;line-height:1.4;background:#fff;border:1.5px solid #F0C9C9;border-radius:10px;padding:10px;}
+
+  /* 右：これから（条件を展開） */
+  .after{flex:1.28;display:flex;flex-direction:column;min-height:0;}
+  .afh{flex:0 0 auto;font-weight:900;font-size:16px;color:var(--green-dark);display:flex;align-items:center;gap:8px;margin-bottom:9px;}
+  .afh .tag{margin-left:auto;font-size:12px;font-weight:900;color:#fff;background:var(--green);border-radius:6px;padding:2px 8px;}
+  .runcard{flex:1;display:flex;flex-direction:column;min-height:0;background:#fff;border:2px solid #C7CFDA;border-radius:13px;box-shadow:0 6px 15px rgba(0,0,0,.13);overflow:hidden;}
+  .rch{flex:0 0 auto;display:flex;align-items:center;gap:9px;padding:9px 13px;background:linear-gradient(180deg,#F3F6FF,#E3EAFF);border-bottom:1px solid #C0CEF7;}
+  .rch .di{width:30px;height:30px;border-radius:7px;background:#486FE0;color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;}
+  .rch .nm{font-weight:900;font-size:16.5px;color:#2440A8;}
+  .rch .st{margin-left:auto;font-size:13.5px;font-weight:900;color:#fff;background:var(--red);border-radius:7px;padding:3px 11px;}
+  .rcb{flex:1;padding:14px 16px;display:flex;flex-direction:column;gap:12px;min-height:0;}
+  .andlabel{flex:0 0 auto;font-size:17px;font-weight:900;color:#475569;}
+  .crow{flex:1;display:flex;align-items:center;gap:14px;border-radius:13px;padding:14px 18px;border:2.5px solid;min-height:0;}
+  .crow.t{background:#F0FDF4;border-color:#8CD9AC;} .crow.f{background:#FEF2F2;border-color:#F0A9A9;}
+  .crow .field{font-size:22px;font-weight:900;color:#243B58;flex:0 0 130px;}
+  .crow .actual{font-family:'Roboto Mono',monospace;font-size:21px;font-weight:900;border-radius:9px;padding:6px 14px;}
+  .crow.t .actual{background:#DCFCE7;color:#15803D;} .crow.f .actual{background:#FEE2E2;color:#B91C1C;}
+  .crow .op{font-size:19px;font-weight:900;color:#475569;}
+  .crow .expect{font-family:'Roboto Mono',monospace;font-size:19px;font-weight:800;color:#334155;}
+  .crow .tf{margin-left:auto;font-size:34px;font-weight:900;}
+  .crow.t .tf{color:var(--green);} .crow.f .tf{color:var(--red);}
+  .total{flex:1;display:flex;align-items:center;gap:14px;background:#FEF2F2;border:3px solid #DC2626;border-radius:13px;padding:12px 18px;min-height:0;}
+  .total .lbl{font-size:20px;font-weight:900;color:var(--red-dark);}
+  .total .res{font-family:'Roboto Mono',monospace;font-size:24px;font-weight:900;color:#fff;background:var(--red);border-radius:9px;padding:5px 18px;}
+  .total .why{margin-left:auto;font-size:18px;font-weight:900;color:var(--red-dark);}
+
+  .next{flex:0 0 auto;margin:9px 16px 14px;background:linear-gradient(180deg,#EAF2FF,#DCEAFE);border:2.5px solid var(--blue);border-radius:13px;padding:11px 18px;display:flex;align-items:center;gap:11px;font-weight:900;font-size:20px;color:var(--blue-dark);box-shadow:0 3px 9px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .next .na{flex:0 0 auto;width:26px;height:26px;color:var(--blue);}
+  .next b{color:var(--orange);}
+  .src{position:absolute;left:16px;bottom:4px;font-size:10px;color:#AEB6C2;font-weight:700;z-index:3;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const ICON={arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',bulb:'<path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/>'};
+const svg=(n)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">${ICON[n]}</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.87-1</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">条件が通らない理由さがし｜<span class="hl">展開するだけで“行ごと”に見える</span></div>
+    <img class="title-chara" src="${A}chara/chara_confident.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svg('bulb')}</div>
+    <div class="txt">条件が「はい」に進まない理由、<b>もうCompose を挟まなくていい</b>。実行履歴で<b>条件を開くと、行ごとの実際の値とtrue/false</b>が見えます。</div>
+  </div>
+
+  <div class="stage">
+    <div class="before">
+      <div class="bfh">これまで<span class="tag">😩 面倒</span></div>
+      <div class="compose">
+        <div class="cbox"><span class="ci">🔧</span><span class="ct">Compose 1</span><span class="cv">Status?</span></div>
+        <div class="cbox"><span class="ci">🔧</span><span class="ct">Compose 2</span><span class="cv">金額?</span></div>
+        <div class="cbox"><span class="ci">🔧</span><span class="ct">Compose 3</span><span class="cv">日付?</span></div>
+      </div>
+      <div class="bnote">値を覗くために<br>Compose を何個も挿入…</div>
+    </div>
+
+    <div class="after">
+      <div class="afh">これから<span class="tag">✓ 開くだけ</span></div>
+      <div class="runcard">
+        <div class="rch"><span class="di">◆</span><span class="nm">条件（実行履歴を展開）</span><span class="st">結果：false</span></div>
+        <div class="rcb">
+          <div class="andlabel">すべてに当てはまる（AND）</div>
+          <div class="crow f"><span class="field">Status</span><span class="actual">"申請中"</span><span class="op">＝</span><span class="expect">"完了"</span><span class="tf">✕</span></div>
+          <div class="crow t"><span class="field">金額</span><span class="actual">15000</span><span class="op">＞</span><span class="expect">10000</span><span class="tf">✓</span></div>
+          <div class="total"><span class="lbl">総合</span><span class="res">false</span><span class="why">← Status が原因だと一目で分かる</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="next"><span class="na">${svg('arrow')}</span>実行履歴のどこを開けば出る?<b>見方の手順</b>と使いどころは <b>2枚目</b>へ！</div>
+  <div class="src">出典：Microsoft Learn（実行履歴での条件のインライン評価表示・2025年12月）／画面は再現・データは架空</div>
+`;
+</script>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>

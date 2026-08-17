@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.105-2 作り方と、知らないと取りこぼす点</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB; --blue-bg:#EFF6FF; --blue-dark:#1E40AF;
+    --green:#16A34A; --green-bg:#ECFDF5; --green-dark:#065F46;
+    --red:#DC2626; --orange:#EA580C; --violet:#7C3AED;
+    --ink:#1F2937; --gray:#374151; --weak:#6B7280; --line:#E5E7EB;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+  .ic{display:block;width:100%;height:100%;}
+
+  .titlebar{height:90px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:16px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:26px;border-radius:999px;padding:7px 20px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .vol-logo{height:50px;width:50px;object-fit:contain;flex:0 0 auto;background:#fff;border-radius:12px;padding:5px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
+  .title-text{color:#fff;font-weight:900;font-size:27px;line-height:1.14;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:158px;}
+  .title-text .hl{color:#FFE08A;}
+  .title-chara{position:absolute;right:14px;bottom:-44px;height:146px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .concl{margin:9px 16px 0;background:var(--blue-bg);border:2.5px solid var(--blue);border-radius:13px;display:flex;align-items:center;gap:13px;padding:8px 18px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;width:40px;height:40px;border-radius:11px;background:linear-gradient(180deg,#F0A83A,#EA580C);color:#fff;display:flex;align-items:center;justify-content:center;padding:8px;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
+  .concl .txt{font-weight:800;font-size:19px;color:var(--blue-dark);line-height:1.3;padding-right:158px;}
+  .concl .txt b{color:var(--orange);}
+
+  .stage{flex:1 1 auto;margin:10px 16px 0;display:flex;align-items:stretch;gap:11px;min-height:0;}
+  .col{flex:1;display:flex;flex-direction:column;gap:7px;min-height:0;background:#F8FAFC;border:2.5px solid #DCE3EE;border-radius:14px;padding:8px 10px 9px;}
+  .col.hot{border-color:#F0C868;background:#FFFCF2;box-shadow:0 5px 12px rgba(217,119,6,.14);}
+  .col.fin{border-color:#7FCEA9;background:var(--green-bg);}
+  .ch2{flex:0 0 auto;display:flex;align-items:center;gap:9px;font-weight:900;font-size:19.5px;color:#1B2A44;line-height:1.18;}
+  .ch2 .n{flex:0 0 auto;width:32px;height:32px;border-radius:9px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;box-shadow:0 2px 4px rgba(0,0,0,.22);}
+  .col.hot .ch2 .n{background:linear-gradient(180deg,#F0B23A,#D97706);}
+  .col.fin .ch2 .n{background:linear-gradient(180deg,#34D399,#16A34A);}
+  .cbody{flex:1;display:flex;flex-direction:column;gap:7px;min-height:0;}
+  .cap{flex:0 0 auto;font-size:15.5px;font-weight:900;line-height:1.32;border-radius:9px;padding:7px 10px;color:#334155;background:#E7EEF7;}
+  .col.hot .cap{color:#8A5A00;background:#FDF0D5;}
+  .col.fin .cap{color:var(--green-dark);background:#CFEFE0;}
+  .cap b{color:var(--orange);}
+
+  .fig{flex:0 0 auto;height:100px;border-radius:10px;position:relative;overflow:hidden;background:#EDF3FA;}
+  .col.hot .fig{background:#FDF6E3;}
+  .col.fin .fig{background:#DCF3E7;}
+  .fig svg{position:absolute;inset:0;width:100%;height:100%;}
+
+  .card{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:2.5px solid #C7D6EE;border-radius:11px;overflow:hidden;box-shadow:0 4px 10px rgba(20,40,90,.13);}
+  .col.hot .card{border-color:#F0C868;}
+  .cardh{flex:0 0 auto;display:flex;align-items:center;gap:9px;padding:8px 10px;font-weight:900;font-size:15.5px;color:#1B2A44;background:#F2F7FD;border-bottom:1.5px solid #E2EAF5;}
+  .col.hot .cardh{background:linear-gradient(90deg,#B45309,#EA580C);color:#fff;border-bottom:none;}
+  .cardh .ci{width:26px;height:26px;flex:0 0 auto;}
+  .cardh img{width:26px;height:26px;object-fit:contain;flex:0 0 auto;}
+  .cardb{flex:1;padding:8px 10px;display:flex;flex-direction:column;gap:5px;min-height:0;}
+  .fld{display:flex;flex-direction:column;gap:2px;}
+  .fld .k{font-size:14px;font-weight:900;color:var(--weak);}
+  .fld .v{background:#F7F9FC;border:1.5px solid #D9E1EC;border-radius:7px;padding:5px 8px;font-size:14.5px;font-weight:900;color:#243B58;line-height:1.28;word-break:break-all;}
+  .fld .v.hot{background:#FFF7E6;border-color:#EBB55A;box-shadow:0 0 0 2px #FDF0D5;font-family:'Roboto Mono',monospace;font-size:13.8px;color:#8A5A00;}
+
+  .dyn{display:flex;flex-wrap:wrap;gap:5px;}
+  .dyn span{display:inline-flex;align-items:center;gap:3px;background:#EAF2FF;border:1.5px solid #9DC1F5;border-radius:6px;padding:3px 8px;font-size:14px;color:#0B3A8F;font-weight:900;}
+  .dyn span::before{content:"⚡";font-size:12px;}
+
+  .kv{flex:1;min-height:0;display:flex;flex-direction:column;gap:6px;}
+  .kvi{flex:1;display:flex;align-items:center;gap:10px;background:#fff;border:1.5px solid var(--line);border-left:6px solid var(--green);border-radius:9px;padding:6px 10px;min-height:0;}
+  .kvi .kg{flex:0 0 96px;align-self:stretch;border-radius:7px;background:#F6FAF8;border:1.5px solid #DCEBE3;position:relative;overflow:hidden;}
+  .kvi .kg svg{position:absolute;inset:0;width:100%;height:100%;}
+  .kvi .kb{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px;}
+  .kvi .t{font-size:15.5px;font-weight:900;color:var(--green-dark);line-height:1.22;}
+  .kvi .d{font-size:14px;font-weight:800;color:#5B6472;line-height:1.3;}
+
+  .warn{flex:0 0 auto;margin:9px 16px 0;display:flex;align-items:center;gap:12px;background:#FFFBEB;border:2.5px solid #FCD34D;border-radius:12px;padding:8px 14px;}
+  .warn .wt{flex:0 0 auto;font-size:14.5px;font-weight:900;color:#B45309;}
+  .warn .wl{flex:1;display:flex;gap:8px;}
+  .warn .wl span{flex:1;font-size:14.5px;font-weight:900;color:#92400E;background:#fff;border:1.5px solid #F6D08A;border-radius:8px;padding:6px 9px;line-height:1.3;}
+
+  .next{flex:0 0 auto;margin:8px 16px 18px;background:linear-gradient(180deg,#EAF2FF,#DCEAFE);border:2.5px solid var(--blue);border-radius:13px;padding:8px 18px;display:flex;align-items:center;gap:11px;font-weight:900;font-size:19px;color:var(--blue-dark);box-shadow:0 3px 9px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .next .na{flex:0 0 auto;width:26px;height:26px;color:var(--blue);}
+  .next b{color:var(--orange);}
+  .src{position:absolute;left:16px;bottom:3px;font-size:10px;color:#AEB6C2;font-weight:700;z-index:3;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const ICON={arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',rss:'<path d="M4 11a9 9 0 0 1 9 9"/><path d="M4 4a16 16 0 0 1 16 16"/><circle cx="5" cy="19" r="1.6" fill="currentColor"/>',filter:'<path d="M3 4h18l-7 8v7l-4 2v-9z"/>'};
+const svg=(n,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${ICON[n]}</svg>`;
+
+/* ① トリガー1つだけ */
+const f1=`<svg viewBox="0 0 320 100" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+  <defs><filter id="a1" x="-40%" y="-40%" width="180%" height="190%"><feDropShadow dx="0" dy="2.5" stdDeviation="2.4" flood-color="#4A3410" flood-opacity=".2"/></filter>
+  <marker id="ma1" markerUnits="userSpaceOnUse" markerWidth="13" markerHeight="13" refX="9" refY="6.5" orient="auto"><path d="M0 0 L13 6.5 L0 13 z" fill="#D97706"/></marker></defs>
+  <g transform="translate(12,24)" filter="url(#a1)">
+    <rect x="0" y="0" width="118" height="52" rx="10" fill="#fff" stroke="#EA580C" stroke-width="2.8"/>
+    <g transform="translate(12,14)" stroke="#EA580C" stroke-width="3.2" fill="none" stroke-linecap="round"><path d="M0 14a14 14 0 0 1 14 14"/><path d="M0 6a22 22 0 0 1 22 22"/></g>
+    <circle cx="14" cy="42" r="3.4" fill="#EA580C"/>
+    <text x="78" y="32" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#9A3412" text-anchor="middle">RSS</text>
+  </g>
+  <path d="M138 50 H 172" stroke="#D97706" stroke-width="4.5" stroke-linecap="round" marker-end="url(#ma1)"/>
+  <g transform="translate(184,20)" filter="url(#a1)">
+    <rect x="0" y="0" width="124" height="60" rx="10" fill="#FDF0D5" stroke="#D97706" stroke-width="2.8"/>
+    <text x="62" y="26" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#8A5A00" text-anchor="middle">新しい項目が</text>
+    <text x="62" y="46" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#8A5A00" text-anchor="middle">出たら起動</text>
+  </g>
+</svg>`;
+
+/* ② 取れる中身 */
+const f2=`<svg viewBox="0 0 320 100" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+  <defs><filter id="a2" x="-40%" y="-40%" width="180%" height="190%"><feDropShadow dx="0" dy="2.5" stdDeviation="2.4" flood-color="#1B2A44" flood-opacity=".2"/></filter></defs>
+  <g transform="translate(16,12)" filter="url(#a2)">
+    <rect x="0" y="0" width="132" height="76" rx="9" fill="#fff" stroke="#2563EB" stroke-width="2.6"/>
+    <rect x="12" y="14" width="94" height="10" rx="4" fill="#2563EB"/>
+    <rect x="12" y="32" width="108" height="7" rx="3.5" fill="#C3D6F2"/>
+    <rect x="12" y="46" width="88" height="7" rx="3.5" fill="#C3D6F2"/>
+    <rect x="12" y="60" width="56" height="7" rx="3.5" fill="#9DC1F5"/>
+  </g>
+  ${['タイトル','リンク','公開日','概要'].map((t,i)=>`<g transform="translate(168,${6+i*23})"><rect x="0" y="0" width="140" height="19" rx="9.5" fill="#EAF2FF" stroke="#9DC1F5" stroke-width="1.8"/><text x="70" y="14" font-family="Noto Sans JP" font-size="13.5" font-weight="900" fill="#0B3A8F" text-anchor="middle">${t}</text></g>`).join('')}
+</svg>`;
+
+/* ③ ミニ図解：30分間隔／pubDate／5MB */
+const mPoll=`<svg viewBox="0 0 96 60" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="30" cy="30" r="21" fill="#fff" stroke="#16A34A" stroke-width="3"/>
+  <line x1="30" y1="30" x2="30" y2="15" stroke="#16A34A" stroke-width="3.4" stroke-linecap="round"/>
+  <line x1="30" y1="30" x2="42" y2="34" stroke="#16A34A" stroke-width="2.8" stroke-linecap="round"/>
+  <text x="74" y="27" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#0B5136" text-anchor="middle">30</text>
+  <text x="74" y="43" font-family="Noto Sans JP" font-size="13" font-weight="900" fill="#0B5136" text-anchor="middle">分</text>
+</svg>`;
+const mDate=`<svg viewBox="0 0 96 60" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+  <rect x="8" y="10" width="38" height="40" rx="6" fill="#fff" stroke="#16A34A" stroke-width="2.6"/>
+  <rect x="8" y="10" width="38" height="11" rx="6" fill="#16A34A"/><rect x="8" y="16" width="38" height="5" fill="#16A34A"/>
+  <text x="27" y="41" font-family="Roboto Mono" font-size="14" font-weight="700" fill="#0B5136" text-anchor="middle">16</text>
+  <g transform="translate(56,18)"><circle cx="12" cy="12" r="12" fill="#DC2626"/><path d="M8 8 l8 8 M16 8 l-8 8" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/></g>
+</svg>`;
+const mSize=`<svg viewBox="0 0 96 60" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+  <path d="M18 8 h32 l14 14 v30 a5 5 0 0 1-5 5 H18 a5 5 0 0 1-5-5 V13 a5 5 0 0 1 5-5z" fill="#fff" stroke="#16A34A" stroke-width="2.6"/>
+  <path d="M50 8 v14 h14" fill="none" stroke="#16A34A" stroke-width="2.6" stroke-linejoin="round"/>
+  <text x="40" y="45" font-family="Noto Sans JP" font-size="14" font-weight="900" fill="#0B5136" text-anchor="middle">5MB</text>
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.105-2</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">作り方と、<span class="hl">知らないと取りこぼす点</span></div>
+    <img class="title-chara" src="${A}chara/chara_point.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svg('rss')}</div>
+    <div class="txt">使うのは<b>トリガー1つ</b>だけ。接続の設定もアカウントも要らない、いちばん覚えることが少ないコネクタです。</div>
+  </div>
+
+  <div class="stage">
+    <div class="col hot">
+      <div class="ch2"><span class="n">1</span>トリガーを置く</div>
+      <div class="fig">${f1}</div>
+      <div class="cbody">
+        <div class="card">
+          <div class="cardh"><span class="ci">${svg('rss',2.4)}</span>フィード項目が発行されたとき</div>
+          <div class="cardb">
+            <div class="fld"><span class="k">RSS フィードの URL</span><span class="v hot">https://…/news/index.rss</span></div>
+            <div class="fld"><span class="k">選択したプロパティ</span><span class="v">PublishDate（公開日）</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="cap">Power Automate では<b>Standard</b>。追加料金はかかりません。</div>
+    </div>
+
+    <div class="col">
+      <div class="ch2"><span class="n">2</span>取れる中身</div>
+      <div class="fig">${f2}</div>
+      <div class="cbody">
+        <div class="card">
+          <div class="cardh"><img src="${A}icons/pa_teams.png" alt="">そのまま差し込める</div>
+          <div class="cardb">
+            <div class="dyn"><span>フィード タイトル</span><span>プライマリ フィード リンク</span><span>フィードの概要</span><span>公開日のフィード</span><span>フィード カテゴリ</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="cap">本文を全部流さず、<b>タイトルとリンク</b>だけが読まれます。</div>
+    </div>
+
+    <div class="col fin">
+      <div class="ch2"><span class="n">3</span>取りこぼす条件</div>
+      <div class="fig">${f1.replace(/#EA580C/g,'#16A34A').replace(/#D97706/g,'#16A34A').replace(/#9A3412/g,'#0B5136').replace(/#8A5A00/g,'#0B5136').replace(/#FDF0D5/g,'#EAF9F1').replace(/a1/g,'a3').replace(/新しい項目が/,'ここを知らないと').replace(/出たら起動/,'取りこぼす')}</div>
+      <div class="cbody">
+        <div class="kv">
+          <div class="kvi"><span class="kg">${mPoll}</span><span class="kb"><span class="t">確認は30分に1回</span><span class="d">出た瞬間ではなく、最短30分間隔</span></span></div>
+          <div class="kvi"><span class="kg">${mDate}</span><span class="kb"><span class="t">公開日が進まないと飛ばす</span><span class="d">新旧を見分けられず、抜けることがある</span></span></div>
+          <div class="kvi"><span class="kg">${mSize}</span><span class="kb"><span class="t">中身は5MBまで</span><span class="d">大きすぎるフィードは扱えない</span></span></div>
+        </div>
+      </div>
+      <div class="cap">どれも<b>公式に明記</b>されている制限です。</div>
+    </div>
+  </div>
+
+  <div class="warn">
+    <div class="wt">使う前に確認</div>
+    <div class="wl">
+      <span>速報性が要るものには向きません（<b>最短30分間隔</b>）</span>
+      <span>公開日が正しく入っていないサイトは<b>抜けることがある</b></span>
+      <span>接続ごとの呼び出しは<b>60秒あたり100回</b>まで</span>
+    </div>
+  </div>
+
+  <div class="next"><span class="na">${svg('arrow')}</span>「見張り役」を1人ぶん減らせます。<b>まず1サイト</b>から試すのがおすすめ！</div>
+  <div class="src">出典：Microsoft Learn「RSS」コネクタ リファレンス（Standard／最小ポーリング間隔1800秒／pubDateによる判定／最大コンテンツ長5MB／100回・60秒）／画面は再現</div>
+`;
+</script>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>

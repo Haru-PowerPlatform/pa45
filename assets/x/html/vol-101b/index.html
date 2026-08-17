@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.101-2 暴走の止め方と、ハマる点</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB; --blue-bg:#EFF6FF; --blue-dark:#1E40AF;
+    --green:#16A34A; --green-bg:#ECFDF5; --green-dark:#065F46;
+    --red:#DC2626; --red-bg:#FEF2F2; --red-dark:#991B1B;
+    --orange:#EA580C; --violet:#7C3AED;
+    --ink:#1F2937; --gray:#374151; --weak:#6B7280; --line:#E5E7EB;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+  .ic{display:block;width:100%;height:100%;}
+
+  .titlebar{height:90px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:16px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:26px;border-radius:999px;padding:7px 20px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .vol-logo{height:50px;width:50px;object-fit:contain;flex:0 0 auto;background:#fff;border-radius:12px;padding:5px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
+  .title-text{color:#fff;font-weight:900;font-size:27px;line-height:1.14;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:158px;}
+  .title-text .hl{color:#FFE08A;}
+  .title-chara{position:absolute;right:14px;bottom:-44px;height:146px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .concl{margin:9px 16px 0;background:var(--blue-bg);border:2.5px solid var(--blue);border-radius:13px;display:flex;align-items:center;gap:13px;padding:8px 18px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;width:40px;height:40px;border-radius:11px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;padding:8px;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
+  .concl .txt{font-weight:800;font-size:19px;color:var(--blue-dark);line-height:1.3;padding-right:158px;}
+  .concl .txt b{color:var(--orange);}
+
+  .stage{flex:1 1 auto;margin:10px 16px 0;display:flex;align-items:stretch;gap:12px;min-height:0;}
+
+  /* 左：一括キャンセル */
+  .cancel{flex:1.16;display:flex;flex-direction:column;min-height:0;background:#fff;border:2.5px solid #F0AEAE;border-radius:13px;overflow:hidden;box-shadow:0 5px 13px rgba(220,38,38,.13);}
+  .cah{flex:0 0 auto;display:flex;align-items:center;gap:9px;padding:8px 12px;background:linear-gradient(90deg,#B91C1C,#DC2626);color:#fff;font-weight:900;font-size:18px;}
+  .cah .wi{flex:0 0 auto;width:26px;height:26px;}
+  .cab{flex:1;display:flex;flex-direction:column;gap:8px;min-height:0;padding:9px 11px;}
+  .menu{flex:0 0 auto;background:#FDF6F6;border:2px solid #E6BEBE;border-radius:10px;padding:8px 10px;display:flex;flex-direction:column;gap:6px;}
+  .menu .ml{font-size:14.5px;font-weight:900;color:var(--weak);}
+  .menu .mb{display:flex;align-items:center;gap:9px;background:#fff;border:2px solid #DC2626;border-radius:9px;padding:8px 10px;font-size:16.5px;font-weight:900;color:var(--red-dark);}
+  .menu .mb .mi{flex:0 0 auto;width:24px;height:24px;color:var(--red);}
+  .menu .cbx{display:flex;align-items:center;gap:8px;font-size:14.5px;font-weight:900;color:#7F1D1D;}
+  .menu .cbx .bx{flex:0 0 auto;width:20px;height:20px;border-radius:5px;border:2.5px solid #DC2626;background:#DC2626;color:#fff;}
+
+  .cscene{flex:1;min-height:0;border-radius:10px;position:relative;overflow:hidden;background:#FCEDED;}
+  .cscene svg{position:absolute;inset:0;width:100%;height:100%;}
+  .cscene .chara{position:absolute;right:5px;bottom:0;height:114px;z-index:2;filter:drop-shadow(0 3px 5px rgba(0,0,0,.22));}
+  .flowline{flex:0 0 auto;display:flex;align-items:center;justify-content:center;gap:8px;background:#FBF7F7;border:2px solid #EED9D9;border-radius:10px;padding:8px 9px;}
+  .flowline .st{flex:1;text-align:center;font-size:15px;font-weight:900;border-radius:9px;padding:9px 4px;line-height:1.25;}
+  .flowline .st.w{background:#FEF3C7;color:#92400E;border:2px solid #F0C868;}
+  .flowline .st.c{background:#FDE0E0;color:var(--red-dark);border:2px solid #F0AEAE;}
+  .flowline .st.d{background:#E7EAEF;color:#475569;border:2px solid #CDD5E0;}
+  .flowline .ar{flex:0 0 auto;width:22px;height:22px;color:#B0808A;}
+  .catime{flex:0 0 auto;display:flex;align-items:center;gap:9px;background:#FFFBEB;border:2px solid #FCD34D;border-radius:10px;padding:7px 10px;font-size:15px;font-weight:900;color:#92400E;line-height:1.3;}
+  .catime .ti{flex:0 0 auto;width:24px;height:24px;color:#D97706;}
+
+  /* 右：ハマる点 */
+  .side{flex:1;display:flex;flex-direction:column;gap:8px;min-height:0;}
+  .sh{flex:0 0 auto;font-weight:900;font-size:18px;color:var(--blue-dark);}
+  .g{flex:1;display:flex;flex-direction:column;gap:8px;min-height:0;}
+  .gi{flex:1;display:flex;align-items:center;gap:11px;background:#F8FAFC;border:2px solid #DCE3EE;border-left:7px solid var(--blue);border-radius:11px;padding:7px 11px;min-height:0;}
+  .gi .gc{flex:0 0 156px;align-self:stretch;border-radius:9px;background:#fff;border:1.5px solid #E2E8F1;position:relative;overflow:hidden;}
+  .gi .gc svg{position:absolute;inset:0;width:100%;height:100%;}
+  .gi .gb{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px;}
+  .gi .gt{font-size:16.5px;font-weight:900;color:var(--blue-dark);line-height:1.2;}
+  .gi .gd{font-size:14.5px;font-weight:800;color:#5B6472;line-height:1.3;}
+  .gi.v2{border-left-color:var(--violet);} .gi.v2 .gt{color:#5B21B6;} .gi.v2 .gc{color:var(--violet);}
+  .gi.v3{border-left-color:var(--orange);} .gi.v3 .gt{color:#9A3412;} .gi.v3 .gc{color:var(--orange);}
+  .gi.v4{border-left-color:var(--green);} .gi.v4 .gt{color:var(--green-dark);} .gi.v4 .gc{color:var(--green);}
+
+  .next{flex:0 0 auto;margin:9px 16px 18px;background:linear-gradient(180deg,#EAF2FF,#DCEAFE);border:2.5px solid var(--blue);border-radius:13px;padding:9px 18px;display:flex;align-items:center;gap:11px;font-weight:900;font-size:19px;color:var(--blue-dark);box-shadow:0 3px 9px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .next .na{flex:0 0 auto;width:26px;height:26px;color:var(--blue);}
+  .next b{color:var(--orange);}
+  .src{position:absolute;left:16px;bottom:3px;font-size:10px;color:#AEB6C2;font-weight:700;z-index:3;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const ICON={
+  arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',
+  stop:'<circle cx="12" cy="12" r="9"/><rect x="9" y="9" width="6" height="6" rx="1"/>',
+  check:'<path d="M20 6L9 17l-5-5"/>',
+  clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/>',
+  num:'<path d="M6 4v16M18 4v16"/><path d="M3 9h18M3 15h18"/>',
+  plug:'<path d="M9 2v6M15 2v6"/><path d="M6 8h12v3a6 6 0 0 1-12 0z"/><path d="M12 17v5"/>',
+  user:'<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+  power:'<path d="M12 3v9"/><path d="M6.3 6.3a9 9 0 1 0 11.4 0"/>'
+};
+const svg=(n,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${ICON[n]}</svg>`;
+
+/* ---- ハマる点のミニ図解（線アイコンではなく"内容そのもの"を描く） ---- */
+/* ① 20個は枠に入り、21個目は入らない */
+const mini20=`<svg viewBox="0 0 156 76" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+  <rect x="4" y="6" width="112" height="64" rx="9" fill="#EAF2FF" stroke="#2563EB" stroke-width="2.8"/>
+  <text x="60" y="22" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#1E40AF" text-anchor="middle">20件</text>
+  ${Array.from({length:20},(_,i)=>`<rect x="${12+(i%5)*21}" y="${30+Math.floor(i/5)*10}" width="16" height="7" rx="2.5" fill="#2563EB"/>`).join('')}
+  <g transform="translate(124,24)">
+    <rect x="0" y="0" width="18" height="8" rx="2.5" fill="#D1D9E4"/>
+    <g transform="translate(0,16)"><circle cx="9" cy="9" r="10" fill="#DC2626"/><path d="M5.5 5.5 l7 7 M12.5 5.5 l-7 7" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/></g>
+  </g>
+</svg>`;
+/* ② 太い流れが細いパイプで絞られる */
+const miniApi=`<svg viewBox="0 0 156 76" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+  ${Array.from({length:5},(_,i)=>`<rect x="4" y="${9+i*12}" width="38" height="8" rx="3.5" fill="#C4B0EE"/>`).join('')}
+  <path d="M48 10 L96 30 L96 46 L48 66 Z" fill="#EDE4FB" stroke="#7C3AED" stroke-width="2.6" stroke-linejoin="round"/>
+  <text x="72" y="43" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#5B21B6" text-anchor="middle">API</text>
+  ${Array.from({length:2},(_,i)=>`<rect x="104" y="${29+i*12}" width="42" height="8" rx="3.5" fill="#7C3AED"/>`).join('')}
+</svg>`;
+/* ③ 自分はOK、他人は鍵 */
+const miniUser=`<svg viewBox="0 0 156 76" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+  <g transform="translate(12,8)">
+    <circle cx="17" cy="13" r="11" fill="#EA580C"/><path d="M2 44a15 15 0 0 1 30 0z" fill="#EA580C"/>
+    <text x="17" y="60" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#9A3412" text-anchor="middle">自分</text>
+    <g transform="translate(30,2)"><circle cx="9" cy="9" r="9.5" fill="#16A34A"/><path d="M4.5 9.5 l3 3 6-6.5" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>
+  </g>
+  <line x1="80" y1="8" x2="80" y2="66" stroke="#E4D6CB" stroke-width="2" stroke-dasharray="5 4"/>
+  <g transform="translate(94,8)">
+    <circle cx="17" cy="13" r="11" fill="#C9CFD9"/><path d="M2 44a15 15 0 0 1 30 0z" fill="#C9CFD9"/>
+    <text x="17" y="60" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#6B7280" text-anchor="middle">他の人</text>
+    <g transform="translate(28,0)">
+      <rect x="0" y="9" width="18" height="13" rx="3" fill="#DC2626"/>
+      <path d="M4 9V6.5a5 5 0 0 1 10 0V9" fill="none" stroke="#DC2626" stroke-width="2.8"/>
+    </g>
+  </g>
+</svg>`;
+/* ④ トグルOFF → レンチで直す → トグルON */
+const miniFix=`<svg viewBox="0 0 156 76" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+  <g transform="translate(4,22)">
+    <rect x="0" y="0" width="40" height="22" rx="11" fill="#C9CFD9"/><circle cx="11" cy="11" r="8" fill="#fff"/>
+    <text x="20" y="42" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#6B7280" text-anchor="middle">オフ</text>
+  </g>
+  <g transform="translate(56,15)">
+    <circle cx="22" cy="18" r="20" fill="#FEF3C7" stroke="#F0C868" stroke-width="2.4"/>
+    <path d="M28 10a6.5 6.5 0 0 0-8.3 8.3l-7 7 4 4 7-7A6.5 6.5 0 0 0 32 14l-3.8 3.8-4.1-4.1z" fill="#B45309"/>
+  </g>
+  <g transform="translate(112,22)">
+    <rect x="0" y="0" width="40" height="22" rx="11" fill="#16A34A"/><circle cx="29" cy="11" r="8" fill="#fff"/>
+    <text x="20" y="42" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#0B5136" text-anchor="middle">オン</text>
+  </g>
+</svg>`;
+
+/* 情景：暴走して次々に走る実行が、停止標識で止まる */
+const stopScene=`<svg viewBox="0 0 400 150" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="ssd" x="-40%" y="-40%" width="180%" height="190%"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#3B1414" flood-opacity=".24"/></filter>
+    <marker id="mkr101" markerUnits="userSpaceOnUse" markerWidth="14" markerHeight="14" refX="9" refY="7" orient="auto"><path d="M0 0 L14 7 L0 14 z" fill="#DC2626"/></marker>
+  </defs>
+  <!-- 走ってくる実行 -->
+  <g>
+    ${Array.from({length:8},(_,i)=>{const x=(i%4)*44, y=Math.floor(i/4)*36;
+      return `<g transform="translate(${8+x},${16+y})" filter="url(#ssd)"><rect x="0" y="0" width="36" height="26" rx="7" fill="#fff" stroke="#DC2626" stroke-width="2.4"/><circle cx="11" cy="13" r="5.5" fill="#DC2626"/><line x1="20" y1="13" x2="30" y2="13" stroke="#F0BFBF" stroke-width="3.6" stroke-linecap="round"/></g>`;}).join('')}
+  </g>
+  <text x="94" y="128" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#991B1B" text-anchor="middle">次々に動き出す</text>
+
+  <path d="M192 68 H 218" stroke="#DC2626" stroke-width="5" stroke-linecap="round" marker-end="url(#mkr101)"/>
+
+  <!-- 停止標識（八角形） -->
+  <g transform="translate(236,26)" filter="url(#ssd)">
+    <polygon points="26,0 58,0 84,26 84,58 58,84 26,84 0,58 0,26" fill="#DC2626" stroke="#fff" stroke-width="4"/>
+    <rect x="26" y="34" width="32" height="16" rx="3" fill="#fff"/>
+  </g>
+  <text x="278" y="128" font-family="Noto Sans JP" font-size="16" font-weight="900" fill="#991B1B" text-anchor="middle">まとめて停止</text>
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.101-2</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">動きすぎた時の<span class="hl">止め方</span>と、知らないとハマる点</div>
+    <img class="title-chara" src="${A}chara/chara_point.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svg('stop')}</div>
+    <div class="txt">逆に<b>誤って大量に動き出した</b>ときは、1件ずつ止めなくて大丈夫。<b>まとめてキャンセル</b>できます。</div>
+  </div>
+
+  <div class="stage">
+    <div class="cancel">
+      <div class="cah"><span class="wi">${svg('stop',2.4)}</span>まとめて止める</div>
+      <div class="cab">
+        <div class="menu">
+          <div class="ml">実行履歴メニューから</div>
+          <div class="mb"><span class="mi">${svg('stop',2.4)}</span>すべてのフロー実行をキャンセル</div>
+          <div class="cbx"><span class="bx">${svg('check',4)}</span>あわせてフローをオフにする（原因を直すまで）</div>
+        </div>
+        <div class="cscene">${stopScene}<img class="chara" src="${A}chara/chara_trouble.png" alt=""></div>
+        <div class="flowline">
+          <span class="st w">待機中</span>
+          <span class="ar">${svg('arrow',3)}</span>
+          <span class="st c">キャンセル中</span>
+          <span class="ar">${svg('arrow',3)}</span>
+          <span class="st d">キャンセル済み</span>
+        </div>
+        <div class="catime"><span class="ti">${svg('clock',2.4)}</span>状態が変わりきるまで<b>最大24時間</b>かかることがあります</div>
+      </div>
+    </div>
+
+    <div class="side">
+      <div class="sh">知らないとハマる4つ</div>
+      <div class="g">
+        <div class="gi"><span class="gc">${mini20}</span><span class="gb"><span class="gt">一度に選べるのは20件まで</span><span class="gd">再送信もキャンセルも同じ上限</span></span></div>
+        <div class="gi v2"><span class="gc">${miniApi}</span><span class="gb"><span class="gt">再送信の数はAPI上限にも縛られる</span><span class="gd">使っているコネクタの呼び出し回数まで</span></span></div>
+        <div class="gi v3"><span class="gc">${miniUser}</span><span class="gb"><span class="gt">他の人が始めた実行は既定で不可</span><span class="gd">手動起動ぶんは管理センターの設定が要る</span></span></div>
+        <div class="gi v4"><span class="gc">${miniFix}</span><span class="gb"><span class="gt">止めるだけでは再発する</span><span class="gd">オフにして原因を直してから戻す</span></span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="next"><span class="na">${svg('arrow')}</span>障害のあとの復旧が<b>数クリック</b>で済みます。場所だけ覚えておくと安心！</div>
+  <div class="src">出典：Microsoft Learn「Power Automateでフロー実行を一括でキャンセルまたは再送信する」（最大20件・API呼び出し上限・テナント設定「Power Automate フロー実行の再送信」・最大24時間）／画面は再現</div>
+`;
+</script>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>

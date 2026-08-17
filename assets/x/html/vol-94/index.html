@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.94-1 祝日は、フローも休む</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB; --blue-bg:#EFF6FF; --blue-dark:#1E40AF;
+    --green:#16A34A; --green-dark:#065F46; --green-bg:#F0FDF4;
+    --red:#DC2626; --orange:#EA580C; --ol:#0F6CBD; --teams:#5059C9;
+    --ink:#1F2937; --gray:#374151; --weak:#6B7280; --line:#E5E7EB;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+  .ic{display:block;width:100%;height:100%;}
+
+  .titlebar{height:90px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:16px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:26px;border-radius:999px;padding:7px 20px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .vol-logo{height:50px;width:50px;object-fit:contain;flex:0 0 auto;background:#fff;border-radius:12px;padding:5px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
+  .title-text{color:#fff;font-weight:900;font-size:27px;line-height:1.14;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:156px;}
+  .title-text .hl{color:#FFE08A;}
+  .title-chara{position:absolute;right:14px;bottom:-40px;height:142px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .concl{margin:10px 16px 0;background:var(--blue-bg);border:2.5px solid var(--blue);border-radius:13px;display:flex;align-items:center;gap:13px;padding:10px 18px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;width:40px;height:40px;border-radius:11px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;padding:8px;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
+  .concl .txt{font-weight:800;font-size:19.5px;color:var(--blue-dark);line-height:1.32;padding-right:150px;}
+  .concl .txt b{color:var(--orange);}
+
+  .stage{flex:1 1 auto;margin:11px 16px 0;display:flex;align-items:stretch;gap:12px;min-height:0;}
+  .col{flex:1;display:flex;flex-direction:column;min-height:0;border-radius:14px;padding:10px 11px 11px;position:relative;}
+  .col.c1{background:#F5F8FD;border:1.5px solid #DCE7F5;}
+  .col.c2{background:#FBF6F2;border:1.5px solid #F0DCCB;}
+  .col.c3{flex:1.12;background:#F3F6FF;border:2px solid #C7D6F5;}
+  .ch{flex:0 0 auto;display:flex;align-items:center;gap:9px;font-weight:900;font-size:19px;color:#243B58;line-height:1.12;margin-bottom:7px;}
+  .ch .no{flex:0 0 auto;width:32px;height:32px;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;box-shadow:0 2px 4px rgba(0,0,0,.22);}
+  .c1 .no{background:linear-gradient(180deg,#60A5FA,#3B82F6);}
+  .c2 .no{background:linear-gradient(180deg,#FB923C,#EA580C);}
+  .c3 .no{background:linear-gradient(180deg,#818CF8,#5059C9);}
+
+  .scene{flex:0 0 auto;height:104px;border-radius:11px;background:rgba(255,255,255,.7);border:1px solid rgba(0,0,0,.05);position:relative;overflow:hidden;margin-bottom:9px;}
+  .scene svg{display:block;width:100%;height:100%;}
+  .scene .mini{position:absolute;right:6px;bottom:-4px;height:92px;z-index:3;filter:drop-shadow(0 2px 4px rgba(0,0,0,.28));}
+
+  .body{flex:1 1 auto;display:flex;flex-direction:column;min-height:0;gap:8px;}
+  .cap{flex:0 0 auto;margin-top:auto;font-weight:800;font-size:15.5px;line-height:1.34;color:#334155;background:rgba(255,255,255,.72);border-radius:9px;padding:8px 11px;}
+  .cap b{color:var(--orange);}
+  .c3 .cap{background:#FFF7ED;border:1.5px solid #FCD9A8;color:#7C3A0B;}
+  .c3 .cap .k{color:#C2410C;}
+
+  .engine{flex:0 0 auto;background:#fff;border:1.5px solid #DCE7F5;border-radius:10px;padding:9px 10px;display:flex;flex-direction:column;gap:7px;}
+  .erow{display:flex;align-items:center;gap:8px;font-weight:800;font-size:14.5px;color:#334155;}
+  .erow .eic{flex:0 0 auto;width:27px;height:27px;object-fit:contain;}
+  .erow .estep{flex:0 0 auto;width:20px;height:20px;border-radius:6px;background:#EEF2F7;color:#475569;font-size:12px;font-weight:900;display:flex;align-items:center;justify-content:center;}
+  .erow b{color:var(--blue-dark);}
+
+  /* ②祝日カレンダー台帳 */
+  .ledger{flex:1 1 auto;display:flex;flex-direction:column;min-height:0;background:#fff;border:1px solid #EAD9C8;border-radius:11px;overflow:hidden;box-shadow:0 3px 8px rgba(0,0,0,.07);position:relative;}
+  .lg-hd{flex:0 0 auto;display:flex;align-items:center;gap:7px;padding:7px 10px;background:#FDF3EA;border-bottom:1px solid #EAD9C8;font-weight:900;font-size:12.5px;color:#B45309;}
+  .lg-hd img{width:22px;height:22px;object-fit:contain;}
+  .lg-hd .filt{margin-left:auto;font-size:10.5px;font-weight:900;color:#0B3A8F;background:#EAF2FF;border:1px solid #A9C8F2;border-radius:6px;padding:2px 7px;}
+  .ltab{flex:1 1 auto;display:flex;flex-direction:column;min-height:0;}
+  .ltab .lr{flex:1;display:grid;grid-template-columns:.95fr 1.2fr .85fr;gap:0;align-items:center;border-bottom:1px solid #F2ECE4;min-height:0;}
+  .ltab .lr:last-child{border-bottom:none;}
+  .ltab .lr.hd{flex:0 0 auto;background:#FAF5EF;color:#7A6A55;font-weight:900;font-size:11px;}
+  .ltab .lr .cell{padding:6px 8px;font-size:12.5px;font-weight:800;color:#334155;line-height:1.18;}
+  .ltab .lr.today{background:#FEE2E2;}
+  .ltab .lr.today .cell{color:#B91C1C;}
+  .ltab .lr.wk .cell{color:#64748B;}
+
+  /* ③判定カード */
+  .rcard{flex:1 1 auto;display:flex;flex-direction:column;min-height:0;background:#fff;border:1px solid #E1E4EA;border-radius:12px;box-shadow:0 4px 12px rgba(30,40,90,.12);overflow:hidden;}
+  .rc-bar{flex:0 0 auto;height:5px;background:var(--teams);}
+  .rc-in{flex:1 1 auto;display:flex;flex-direction:column;min-height:0;padding:9px 11px 10px;gap:7px;}
+  .rc-hd{flex:0 0 auto;display:flex;align-items:center;gap:8px;}
+  .rc-hd .bot{width:30px;height:30px;border-radius:7px;object-fit:contain;background:#fff;}
+  .rc-hd .who{font-weight:900;font-size:13.5px;color:#242424;line-height:1.1;}
+  .rc-hd .who span{font-weight:700;color:#8A8F98;font-size:11.5px;}
+  .rc-ttl{flex:0 0 auto;font-weight:900;font-size:15.5px;color:#B45309;display:flex;align-items:center;gap:6px;}
+  .rc-line{flex:0 0 auto;background:#F7F8FA;border:1px solid #E4E7EC;border-radius:8px;padding:7px 10px;font-size:13.5px;font-weight:800;color:#334155;line-height:1.28;}
+  .rc-line .lb{font-size:11.5px;font-weight:900;color:#6B7280;display:block;margin-bottom:1px;}
+  .rc-line.rest{background:#FEF3E7;border-color:#FBD5A8;color:#8A4B10;}
+  .rc-line.go{background:#F0FDF4;border-color:#BBE9C9;color:#14603A;}
+  .rc-line.go b{color:#16A34A;}
+  .rc-foot{flex:0 0 auto;margin-top:2px;font-size:12.5px;font-weight:900;color:var(--teams);text-align:center;}
+
+  .foot{flex:0 0 auto;margin:9px 16px 0;display:flex;align-items:center;gap:10px;}
+  .foot .fl{flex:0 0 auto;font-weight:900;font-size:14.5px;color:var(--weak);}
+  .foot .tags{flex:1;display:flex;gap:8px;}
+  .foot .tag{flex:1;text-align:center;background:#fff;border:1.5px solid var(--line);border-radius:9px;padding:8px 4px;font-weight:900;font-size:15px;color:#334155;box-shadow:0 1px 3px rgba(0,0,0,.05);}
+
+  .next{flex:0 0 auto;margin:9px 16px 12px;background:linear-gradient(180deg,#EAF2FF,#DCEAFE);border:2.5px solid var(--blue);border-radius:13px;padding:10px 18px;display:flex;align-items:center;gap:11px;font-weight:900;font-size:20px;color:var(--blue-dark);box-shadow:0 3px 9px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .next .na{flex:0 0 auto;width:26px;height:26px;color:var(--blue);}
+  .next b{color:var(--orange);}
+  .src{position:absolute;left:16px;bottom:3px;font-size:9.5px;color:#AEB6C2;font-weight:700;z-index:3;padding-right:16px;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const ICON={arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',bulb:'<path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/>'};
+const svg=(n)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">${ICON[n]}</svg>`;
+
+// ① 情景：毎朝9時の目覚まし時計
+const scene1=`<svg viewBox="0 0 300 104" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="150" cy="58" r="38" fill="#fff" stroke="#2563EB" stroke-width="4"/>
+  <circle cx="150" cy="58" r="30" fill="#EFF6FF"/>
+  <!-- ベル -->
+  <path d="M120 24 a18 12 0 0 1 24 -6" fill="none" stroke="#F59E0B" stroke-width="5" stroke-linecap="round"/>
+  <path d="M180 24 a18 12 0 0 0 -24 -6" fill="none" stroke="#F59E0B" stroke-width="5" stroke-linecap="round"/>
+  <circle cx="122" cy="24" r="7" fill="#F59E0B"/><circle cx="178" cy="24" r="7" fill="#F59E0B"/>
+  <!-- 針 9:00 -->
+  <line x1="150" y1="58" x2="150" y2="36" stroke="#1E40AF" stroke-width="4" stroke-linecap="round"/>
+  <line x1="150" y1="58" x2="128" y2="58" stroke="#1E40AF" stroke-width="4" stroke-linecap="round"/>
+  <circle cx="150" cy="58" r="4" fill="#1E40AF"/>
+  <rect x="120" y="88" width="60" height="18" rx="9" fill="#DBEAFE"/>
+  <text x="150" y="101" text-anchor="middle" font-family="Noto Sans JP" font-weight="900" font-size="12" fill="#1D4ED8">毎朝 9:00</text>
+</svg>`;
+// ② 情景：カレンダーの祝日ページ
+const scene2=`<svg viewBox="0 0 300 104" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="96" y="12" width="108" height="86" rx="9" fill="#fff" stroke="#EA580C" stroke-width="3"/>
+  <rect x="96" y="12" width="108" height="24" rx="9" fill="#EA580C"/>
+  <text x="150" y="29" text-anchor="middle" font-family="Noto Sans JP" font-weight="900" font-size="13" fill="#fff">8月</text>
+  <text x="150" y="72" text-anchor="middle" font-family="Noto Sans JP" font-weight="900" font-size="34" fill="#DC2626">11</text>
+  <rect x="106" y="80" width="88" height="15" rx="4" fill="#FEE2E2"/>
+  <text x="150" y="91" text-anchor="middle" font-family="Noto Sans JP" font-weight="900" font-size="11" fill="#B91C1C">山の日</text>
+  <circle cx="204" cy="20" r="12" fill="#DC2626"/><text x="204" y="24" text-anchor="middle" font-family="Noto Sans JP" font-weight="900" font-size="12" fill="#fff">祝</text>
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.94-1</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">祝日は、<span class="hl">フローも休む</span>｜毎朝の通知が“今日は休みか”を自分で判断</div>
+    <img class="title-chara" src="${A}chara/chara_smile.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svg('bulb')}</div>
+    <div class="txt">毎朝のリマインドが祝日にも飛んで、だんだん<b>誰も読まなくなる</b>…。Outlookに最初から入っている<b>「日本の休日」</b>を見て、送る/休むをフローが決めます。</div>
+  </div>
+
+  <div class="stage">
+    <div class="col c1">
+      <div class="ch"><span class="no">1</span>毎朝、時間になったら動く</div>
+      <div class="scene">${scene1}<img class="mini" src="${A}chara/chara_point.png" alt=""></div>
+      <div class="body">
+        <div class="engine">
+          <div class="erow"><span class="estep">A</span><img class="eic" src="${A}icons/pa_schedule.png"><b>毎朝9時</b>にスケジュール起動</div>
+          <div class="erow"><span class="estep">B</span><img class="eic" src="${A}icons/pa_schedule.png">タイムゾーンは<b>東京</b></div>
+        </div>
+        <div class="cap">まずはいつも通り、毎朝きっかり動き出す。</div>
+      </div>
+    </div>
+
+    <div class="col c2">
+      <div class="ch"><span class="no">2</span>今日が祝日か、カレンダーで見る</div>
+      <div class="scene">${scene2}<img class="mini" src="${A}chara/chara_think.png" alt=""></div>
+      <div class="body">
+        <div class="ledger">
+          <div class="lg-hd"><img src="${A}icons/pa_outlook.png">日本の休日<span class="filt">今日を照会</span></div>
+          <div class="ltab">
+            <div class="lr hd"><div class="cell">日付</div><div class="cell">日本の休日</div><div class="cell">判定</div></div>
+            <div class="lr today"><div class="cell">8/11 月</div><div class="cell">山の日</div><div class="cell">今日・休</div></div>
+            <div class="lr wk"><div class="cell">8/12 火</div><div class="cell">（なし）</div><div class="cell">平日</div></div>
+            <div class="lr wk"><div class="cell">8/13 水</div><div class="cell">（なし）</div><div class="cell">平日</div></div>
+          </div>
+        </div>
+        <div class="cap">祝日リストを<b>自分で持たなくていい</b>。祝日名も取れる。</div>
+      </div>
+    </div>
+
+    <div class="col c3">
+      <div class="ch"><span class="no">3</span>祝日なら送らない・平日だけ届く</div>
+      <div class="body">
+        <div class="rcard">
+          <div class="rc-bar"></div>
+          <div class="rc-in">
+            <div class="rc-hd"><img class="bot" src="${A}icons/pa_teams.png"><div class="who">Power Automate<br><span>フローボット・カレンダー係</span></div></div>
+            <div class="rc-ttl">⛱ 今日は「山の日」</div>
+            <div class="rc-line rest">祝日なので、この朝のリマインドは <b>お休み</b></div>
+            <div class="rc-line go"><span class="lb">平日は</span>いつもの通知が <b>ちゃんと届く</b></div>
+            <div class="rc-foot">「祝日にも飛ぶ」で流し読みされなくなる 👍</div>
+          </div>
+        </div>
+        <div class="cap">通知が<span class="k">“動くべき日だけ”</span>届く。信頼が戻る。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <div class="fl">こんな通知に効く▶</div>
+    <div class="tags"><div class="tag">朝礼ボード</div><div class="tag">定例リマインド</div><div class="tag">請求書催促</div><div class="tag">日報の督促</div></div>
+  </div>
+
+  <div class="next"><span class="na">${svg('arrow')}</span>Outlookに<b>日本の祝日が最初から入っている</b>｜<b>作り方</b>は <b>2枚目</b>へ！</div>
+  <div class="src">出典：Microsoft Learn（Office 365 Outlook「イベントのカレンダー ビューの取得 (V3)」／「日本の休日」カレンダー）／画面は再現・データは架空</div>
+`;
+</script>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>

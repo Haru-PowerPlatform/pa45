@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.101-1 止まった何十件、まとめて動かし直せる</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB; --blue-bg:#EFF6FF; --blue-dark:#1E40AF;
+    --green:#16A34A; --green-bg:#ECFDF5; --green-dark:#065F46;
+    --red:#DC2626; --red-bg:#FEF2F2; --red-dark:#991B1B;
+    --orange:#EA580C; --violet:#7C3AED;
+    --ink:#1F2937; --gray:#374151; --weak:#6B7280; --line:#E5E7EB;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+  .ic{display:block;width:100%;height:100%;}
+
+  .titlebar{height:90px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:16px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:26px;border-radius:999px;padding:7px 20px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .vol-logo{height:50px;width:50px;object-fit:contain;flex:0 0 auto;background:#fff;border-radius:12px;padding:5px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
+  .title-text{color:#fff;font-weight:900;font-size:27px;line-height:1.14;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:158px;}
+  .title-text .hl{color:#FFE08A;}
+  .title-chara{position:absolute;right:14px;bottom:-44px;height:146px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .concl{margin:9px 16px 0;background:var(--blue-bg);border:2.5px solid var(--blue);border-radius:13px;display:flex;align-items:center;gap:13px;padding:8px 18px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;width:40px;height:40px;border-radius:11px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;padding:8px;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
+  .concl .txt{font-weight:800;font-size:19px;color:var(--blue-dark);line-height:1.3;padding-right:158px;}
+  .concl .txt b{color:var(--orange);}
+
+  .stage{flex:1 1 auto;margin:10px 16px 0;display:flex;align-items:stretch;gap:11px;min-height:0;}
+  .col{flex:1;display:flex;flex-direction:column;gap:7px;min-height:0;background:#F8FAFC;border:2.5px solid #DCE3EE;border-radius:14px;padding:8px 10px 9px;}
+  .col.bad{border-color:#F2B8B8;background:var(--red-bg);}
+  .col.hot{border-color:var(--violet);background:#F9F5FE;box-shadow:0 5px 12px rgba(124,58,237,.14);}
+  .col.fin{border-color:#7FCEA9;background:var(--green-bg);}
+  .ch2{flex:0 0 auto;display:flex;align-items:center;gap:9px;font-weight:900;font-size:21px;color:#1B2A44;line-height:1.16;}
+  .col.bad .ch2{color:var(--red-dark);}
+  .col.fin .ch2{color:var(--green-dark);}
+  .ch2 .n{flex:0 0 auto;width:32px;height:32px;border-radius:9px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;box-shadow:0 2px 4px rgba(0,0,0,.22);}
+  .col.bad .ch2 .n{background:linear-gradient(180deg,#EF6A6A,#DC2626);}
+  .col.hot .ch2 .n{background:linear-gradient(180deg,#8B5CF6,#7C3AED);}
+  .col.fin .ch2 .n{background:linear-gradient(180deg,#34D399,#16A34A);}
+
+  .scene{flex:0 0 auto;height:120px;border-radius:11px;position:relative;overflow:hidden;background:#EDF3FA;}
+  .col.bad .scene{background:#FCE4E4;}
+  .col.hot .scene{background:#F1E9FD;}
+  .col.fin .scene{background:#DCF3E7;}
+  .scene svg{position:absolute;inset:0;width:100%;height:100%;}
+  .scene .chara{position:absolute;right:4px;bottom:0;height:114px;z-index:2;filter:drop-shadow(0 3px 5px rgba(0,0,0,.22));}
+
+  /* 実行履歴グリッド */
+  .runs{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:2.5px solid #C7D6EE;border-radius:11px;overflow:hidden;box-shadow:0 4px 10px rgba(20,40,90,.13);}
+  .rh{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:7px 10px;background:#F2F7FD;border-bottom:1.5px solid #E2EAF5;font-weight:900;font-size:15px;color:#1B2A44;}
+  .rh .rt{margin-left:auto;font-size:13.5px;font-weight:900;color:var(--weak);}
+  .rrow{flex:1;display:flex;align-items:center;gap:8px;padding:0 10px;border-bottom:1px solid #EEF2F7;font-size:14.5px;font-weight:900;min-height:0;}
+  .rrow:last-child{border-bottom:none;}
+  .rrow .cb{flex:0 0 auto;width:20px;height:20px;border-radius:5px;border:2.5px solid #B9C2D2;background:#fff;}
+  .rrow .cb.on{border-color:#7C3AED;background:#7C3AED;color:#fff;}
+  .rrow .st{flex:0 0 auto;display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:2px 9px;font-size:13.5px;}
+  .rrow .st.ng{background:#FDE0E0;color:var(--red-dark);}
+  .rrow .st.ok{background:#D3F1E1;color:var(--green-dark);}
+  .rrow .tm{margin-left:auto;font-family:'Roboto Mono',monospace;font-size:13.5px;color:var(--weak);font-weight:700;}
+  .rrow.sel{background:#F6F1FE;}
+
+  .btnbar{flex:0 0 auto;display:flex;align-items:center;gap:9px;background:#F7F2FE;border:2px solid #D6C7EF;border-radius:10px;padding:7px 9px;}
+  .btnbar .b{flex:1;text-align:center;font-size:15.5px;font-weight:900;color:#fff;background:linear-gradient(180deg,#8B5CF6,#7C3AED);border-radius:8px;padding:8px 6px;box-shadow:0 3px 7px rgba(124,58,237,.32);}
+  .btnbar .c{flex:0 0 auto;font-size:14.5px;font-weight:900;color:#5B21B6;}
+
+  .cap{flex:0 0 auto;font-size:15.5px;font-weight:900;line-height:1.32;border-radius:9px;padding:7px 10px;color:#334155;background:#E7EEF7;}
+  .col.bad .cap{color:var(--red-dark);background:#FBD9D9;}
+  .col.hot .cap{color:#5B21B6;background:#EEE4FC;}
+  .col.fin .cap{color:var(--green-dark);background:#CFEFE0;}
+  .cap b{color:var(--orange);}
+
+  .next{flex:0 0 auto;margin:9px 16px 18px;background:linear-gradient(180deg,#EAF2FF,#DCEAFE);border:2.5px solid var(--blue);border-radius:13px;padding:9px 18px;display:flex;align-items:center;gap:11px;font-weight:900;font-size:19px;color:var(--blue-dark);box-shadow:0 3px 9px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .next .na{flex:0 0 auto;width:26px;height:26px;color:var(--blue);}
+  .next b{color:var(--orange);}
+  .src{position:absolute;left:16px;bottom:3px;font-size:10px;color:#AEB6C2;font-weight:700;z-index:3;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const ICON={
+  arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',
+  refresh:'<path d="M21 2v6h-6"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M3 22v-6h6"/><path d="M21 12a9 9 0 0 1-15 6.7L3 16"/>',
+  check:'<path d="M20 6L9 17l-5-5"/>',
+  hist:'<path d="M3 3v6h6"/><path d="M3.5 9a9 9 0 1 0 2.1-3.4L3 8"/><path d="M12 7v5l4 2"/>'
+};
+const svg=(n,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${ICON[n]}</svg>`;
+
+/* ① 障害で一斉に赤くなる */
+const sc1=`<svg viewBox="0 0 300 120" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+  <defs><filter id="s1" x="-40%" y="-40%" width="180%" height="190%"><feDropShadow dx="0" dy="2.5" stdDeviation="2.6" flood-color="#3B1414" flood-opacity=".22"/></filter></defs>
+  <g transform="translate(10,12)">
+    ${Array.from({length:9},(_,i)=>{const x=(i%3)*56, y=Math.floor(i/3)*32;
+      return `<g transform="translate(${x},${y})" filter="url(#s1)"><rect x="0" y="0" width="48" height="24" rx="6" fill="#fff" stroke="#DC2626" stroke-width="2.4"/><circle cx="12" cy="12" r="6.5" fill="#DC2626"/><path d="M9 9 l6 6 M15 9 l-6 6" stroke="#fff" stroke-width="2" stroke-linecap="round"/><line x1="24" y1="12" x2="42" y2="12" stroke="#F0BFBF" stroke-width="4" stroke-linecap="round"/></g>`;}).join('')}
+  </g>
+  <text x="94" y="116" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#991B1B" text-anchor="middle">障害で一斉に失敗</text>
+</svg>`;
+
+/* ② チェックしてまとめて選ぶ */
+const sc2=`<svg viewBox="0 0 300 120" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+  <defs><filter id="s2" x="-40%" y="-40%" width="180%" height="190%"><feDropShadow dx="0" dy="2.5" stdDeviation="2.6" flood-color="#2A1450" flood-opacity=".2"/></filter></defs>
+  <g transform="translate(16,14)">
+    ${Array.from({length:4},(_,i)=>`<g transform="translate(0,${i*24})" filter="url(#s2)"><rect x="0" y="0" width="150" height="18" rx="5" fill="#fff" stroke="#7C3AED" stroke-width="2.2"/><rect x="5" y="4" width="10" height="10" rx="3" fill="#7C3AED"/><path d="M7.5 9 l2 2 3.5-4" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/><line x1="22" y1="9" x2="140" y2="9" stroke="#DCCEF6" stroke-width="4" stroke-linecap="round"/></g>`).join('')}
+  </g>
+  <g transform="translate(190,40)" filter="url(#s2)">
+    <rect x="0" y="0" width="96" height="38" rx="9" fill="#7C3AED"/>
+    <text x="48" y="24" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#fff" text-anchor="middle">再送信</text>
+  </g>
+  <text x="94" y="116" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#4C1D95" text-anchor="middle">最大20件まで選べる</text>
+</svg>`;
+
+/* ③ まとめて成功に変わる */
+const sc3=`<svg viewBox="0 0 300 120" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+  <defs><filter id="s3" x="-40%" y="-40%" width="180%" height="190%"><feDropShadow dx="0" dy="2.5" stdDeviation="2.6" flood-color="#0B3B24" flood-opacity=".2"/></filter></defs>
+  <g transform="translate(10,12)">
+    ${Array.from({length:6},(_,i)=>{const x=(i%2)*56, y=Math.floor(i/2)*32;
+      return `<g transform="translate(${x},${y})" filter="url(#s3)"><rect x="0" y="0" width="48" height="24" rx="6" fill="#fff" stroke="#16A34A" stroke-width="2.4"/><circle cx="12" cy="12" r="6.5" fill="#16A34A"/><path d="M8.5 12 l2.5 2.5 5-5.5" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><line x1="24" y1="12" x2="42" y2="12" stroke="#BFE7D3" stroke-width="4" stroke-linecap="round"/></g>`;}).join('')}
+  </g>
+  <text x="70" y="116" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#0B5136" text-anchor="middle">まとめて動き直す</text>
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.101-1</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">止まった何十件、<span class="hl">まとめて動かし直せる</span></div>
+    <img class="title-chara" src="${A}chara/chara_confident.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svg('refresh')}</div>
+    <div class="txt">障害のあと、実行履歴を1件ずつ開いて再送信していませんか。<b>チェックを入れて、まとめて</b>送り直せます。</div>
+  </div>
+
+  <div class="stage">
+    <div class="col bad">
+      <div class="ch2"><span class="n">1</span>一斉に失敗している</div>
+      <div class="scene">${sc1}<img class="chara" src="${A}chara/chara_trouble.png" alt=""></div>
+      <div class="runs">
+        <div class="rh"><span>実行履歴</span><span class="rt">失敗 18件</span></div>
+        <div class="rrow"><span class="st ng">失敗</span><span class="tm">09:02</span></div>
+        <div class="rrow"><span class="st ng">失敗</span><span class="tm">09:07</span></div>
+        <div class="rrow"><span class="st ng">失敗</span><span class="tm">09:12</span></div>
+        <div class="rrow"><span class="st ng">失敗</span><span class="tm">09:17</span></div>
+      </div>
+      <div class="cap">接続やサービス側の障害だと、その間の実行が<b>まるごと落ちます</b>。</div>
+    </div>
+
+    <div class="col hot">
+      <div class="ch2"><span class="n">2</span>チェックして選ぶ</div>
+      <div class="scene">${sc2}</div>
+      <div class="runs">
+        <div class="rh"><span>すべての実行</span><span class="rt">4件を選択中</span></div>
+        <div class="rrow sel"><span class="cb on">${svg('check',4)}</span><span class="st ng">失敗</span><span class="tm">09:02</span></div>
+        <div class="rrow sel"><span class="cb on">${svg('check',4)}</span><span class="st ng">失敗</span><span class="tm">09:07</span></div>
+        <div class="rrow sel"><span class="cb on">${svg('check',4)}</span><span class="st ng">失敗</span><span class="tm">09:12</span></div>
+      </div>
+      <div class="btnbar"><span class="b">フロー実行を再送信する</span></div>
+      <div class="cap">マイ フロー →<b>「すべての実行」</b>を開いて、直したい行にチェック。</div>
+    </div>
+
+    <div class="col fin">
+      <div class="ch2"><span class="n">3</span>まとめて動き直す</div>
+      <div class="scene">${sc3}<img class="chara" src="${A}chara/chara_guts.png" alt=""></div>
+      <div class="runs">
+        <div class="rh"><span>実行履歴</span><span class="rt">成功に更新</span></div>
+        <div class="rrow"><span class="st ok">成功</span><span class="tm">09:02</span></div>
+        <div class="rrow"><span class="st ok">成功</span><span class="tm">09:07</span></div>
+        <div class="rrow"><span class="st ok">成功</span><span class="tm">09:12</span></div>
+        <div class="rrow"><span class="st ok">成功</span><span class="tm">09:17</span></div>
+      </div>
+      <div class="cap">未送信だった通知や記録が、<b>数クリックで追いつきます</b>。</div>
+    </div>
+  </div>
+
+  <div class="next"><span class="na">${svg('arrow')}</span>逆に<b>暴走して動きすぎた時の止め方</b>と、知らないとハマる点は <b>2枚目</b>へ！</div>
+  <div class="src">出典：Microsoft Learn「Power Automateでフロー実行を一括でキャンセルまたは再送信する」／画面は再現・データは架空</div>
+`;
+</script>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>

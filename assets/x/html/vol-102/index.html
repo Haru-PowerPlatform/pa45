@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.102-1 通知の洪水と、自分で自分を呼ぶループ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB; --blue-bg:#EFF6FF; --blue-dark:#1E40AF;
+    --green:#16A34A; --green-bg:#ECFDF5; --green-dark:#065F46;
+    --red:#DC2626; --red-bg:#FEF2F2; --red-dark:#991B1B;
+    --orange:#EA580C; --violet:#7C3AED;
+    --ink:#1F2937; --gray:#374151; --weak:#6B7280; --line:#E5E7EB;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+  .ic{display:block;width:100%;height:100%;}
+
+  .titlebar{height:90px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:16px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:26px;border-radius:999px;padding:7px 20px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .vol-logo{height:50px;width:50px;object-fit:contain;flex:0 0 auto;background:#fff;border-radius:12px;padding:5px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
+  .title-text{color:#fff;font-weight:900;font-size:27px;line-height:1.14;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:158px;}
+  .title-text .hl{color:#FFE08A;}
+  .title-chara{position:absolute;right:14px;bottom:-44px;height:146px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .concl{margin:9px 16px 0;background:var(--blue-bg);border:2.5px solid var(--blue);border-radius:13px;display:flex;align-items:center;gap:13px;padding:8px 18px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;width:40px;height:40px;border-radius:11px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;padding:8px;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
+  .concl .txt{font-weight:800;font-size:19px;color:var(--blue-dark);line-height:1.3;padding-right:158px;}
+  .concl .txt b{color:var(--orange);}
+
+  .stage{flex:1 1 auto;margin:10px 16px 0;display:flex;align-items:stretch;gap:12px;min-height:0;}
+  .box{flex:1;display:flex;flex-direction:column;gap:8px;min-height:0;border-radius:14px;padding:9px 11px 10px;background:#F8FAFC;border:2.5px solid #DCE3EE;}
+  .box.a{border-color:#F0C868;background:#FFFCF2;}
+  .box.b{border-color:#F2B8B8;background:var(--red-bg);}
+  .bh{flex:0 0 auto;display:flex;align-items:center;gap:9px;font-weight:900;font-size:23px;line-height:1.16;}
+  .box.a .bh{color:#8A5A00;}
+  .box.b .bh{color:var(--red-dark);}
+  .bh .n{flex:0 0 auto;width:32px;height:32px;border-radius:9px;color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;box-shadow:0 2px 4px rgba(0,0,0,.22);}
+  .box.a .bh .n{background:linear-gradient(180deg,#F0B23A,#D97706);}
+  .box.b .bh .n{background:linear-gradient(180deg,#EF6A6A,#DC2626);}
+
+  .fig{flex:1;min-height:0;border-radius:11px;position:relative;overflow:hidden;}
+  .box.a .fig{background:#FDF6E3;}
+  .box.b .fig{background:#FCE4E4;}
+  .fig svg{position:absolute;inset:0;width:100%;height:100%;}
+  .fig .chara{position:absolute;right:5px;bottom:0;height:116px;z-index:2;filter:drop-shadow(0 3px 5px rgba(0,0,0,.22));}
+
+  /* 保存時の警告バナー（実物の文言） */
+  .warnban{flex:0 0 auto;display:flex;align-items:flex-start;gap:10px;background:#fff;border:2.5px solid #F0AEAE;border-left:8px solid var(--red);border-radius:10px;padding:9px 11px;box-shadow:0 3px 8px rgba(220,38,38,.14);}
+  .warnban .wi{flex:0 0 auto;width:28px;height:28px;color:var(--red);}
+  .warnban .wt{flex:1;min-width:0;font-size:15px;font-weight:900;color:var(--red-dark);line-height:1.36;}
+
+  .fixrow{flex:0 0 auto;display:flex;align-items:center;gap:10px;background:#EAF9F1;border:2.5px solid #7FCEA9;border-radius:10px;padding:8px 11px;}
+  .fixrow .fi{flex:0 0 auto;width:28px;height:28px;color:var(--green);}
+  .fixrow .ft{flex:1;min-width:0;font-size:16px;font-weight:900;color:var(--green-dark);line-height:1.32;}
+  .fixrow .ft b{color:var(--orange);}
+
+  .next{flex:0 0 auto;margin:9px 16px 18px;background:linear-gradient(180deg,#EAF2FF,#DCEAFE);border:2.5px solid var(--blue);border-radius:13px;padding:9px 18px;display:flex;align-items:center;gap:11px;font-weight:900;font-size:19px;color:var(--blue-dark);box-shadow:0 3px 9px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .next .na{flex:0 0 auto;width:26px;height:26px;color:var(--blue);}
+  .next b{color:var(--orange);}
+  .src{position:absolute;left:16px;bottom:3px;font-size:10px;color:#AEB6C2;font-weight:700;z-index:3;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const ICON={
+  arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',
+  bell:'<path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/>',
+  warn:'<path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>',
+  shield:'<path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z"/><path d="M9 12l2 2 4-4"/>'
+};
+const svg=(n,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${ICON[n]}</svg>`;
+
+/* ① 条件アクションだと"毎回動いてから捨てる"／トリガー条件なら"そもそも動かない" */
+const figFlood=`<svg viewBox="0 0 400 250" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="f1sd" x="-40%" y="-40%" width="180%" height="190%"><feDropShadow dx="0" dy="2.5" stdDeviation="2.6" flood-color="#4A3410" flood-opacity=".22"/></filter>
+    <marker id="mkA" markerUnits="userSpaceOnUse" markerWidth="13" markerHeight="13" refX="9" refY="6.5" orient="auto"><path d="M0 0 L13 6.5 L0 13 z" fill="#D97706"/></marker>
+    <marker id="mkB" markerUnits="userSpaceOnUse" markerWidth="13" markerHeight="13" refX="9" refY="6.5" orient="auto"><path d="M0 0 L13 6.5 L0 13 z" fill="#16A34A"/></marker>
+  </defs>
+
+  <!-- 上段：条件アクション -->
+  <text x="10" y="18" font-family="Noto Sans JP" font-size="16" font-weight="900" fill="#8A5A00">条件アクションで弾くと</text>
+  ${Array.from({length:6},(_,i)=>`<rect x="${10+i*22}" y="30" width="16" height="26" rx="4" fill="#F0C868"/>`).join('')}
+  <path d="M148 43 H 176" stroke="#D97706" stroke-width="4.5" stroke-linecap="round" marker-end="url(#mkA)"/>
+  <g filter="url(#f1sd)"><rect x="186" y="26" width="74" height="34" rx="8" fill="#fff" stroke="#D97706" stroke-width="2.6"/>
+    <text x="223" y="48" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#8A5A00" text-anchor="middle">フロー</text></g>
+  <path d="M266 43 H 292" stroke="#D97706" stroke-width="4.5" stroke-linecap="round" marker-end="url(#mkA)"/>
+  ${Array.from({length:6},(_,i)=>`<rect x="${302+ (i%3)*22}" y="${30+Math.floor(i/3)*14}" width="16" height="10" rx="3" fill="#E9B14C"/>`).join('')}
+  <text x="200" y="80" font-family="Noto Sans JP" font-size="16" font-weight="900" fill="#8A5A00" text-anchor="middle">6回とも実行される（回数を消費）</text>
+
+  <line x1="10" y1="96" x2="390" y2="96" stroke="#E7D9B6" stroke-width="2.5" stroke-dasharray="7 6"/>
+
+  <!-- 下段：トリガー条件 -->
+  <text x="10" y="122" font-family="Noto Sans JP" font-size="16" font-weight="900" fill="#0B5136">トリガー条件で弾くと</text>
+  ${Array.from({length:6},(_,i)=>`<rect x="${10+i*22}" y="134" width="16" height="26" rx="4" fill="${i===1?'#16A34A':'#CBD5E1'}"/>`).join('')}
+  <!-- ふるい -->
+  <g filter="url(#f1sd)">
+    <rect x="148" y="128" width="18" height="38" rx="5" fill="#EAF9F1" stroke="#16A34A" stroke-width="2.6"/>
+    <line x1="157" y1="134" x2="157" y2="160" stroke="#16A34A" stroke-width="2.4" stroke-dasharray="4 4"/>
+  </g>
+  <text x="157" y="182" font-family="Noto Sans JP" font-size="14.5" font-weight="900" fill="#0B5136" text-anchor="middle">条件</text>
+  <path d="M172 147 H 198" stroke="#16A34A" stroke-width="4.5" stroke-linecap="round" marker-end="url(#mkB)"/>
+  <g filter="url(#f1sd)"><rect x="208" y="130" width="74" height="34" rx="8" fill="#fff" stroke="#16A34A" stroke-width="2.6"/>
+    <text x="245" y="152" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#0B5136" text-anchor="middle">フロー</text></g>
+  <path d="M288 147 H 312" stroke="#16A34A" stroke-width="4.5" stroke-linecap="round" marker-end="url(#mkB)"/>
+  <rect x="322" y="140" width="16" height="14" rx="3" fill="#16A34A"/>
+  <text x="200" y="210" font-family="Noto Sans JP" font-size="18" font-weight="900" fill="#0B5136" text-anchor="middle">動くのは1回だけ</text>
+  <text x="200" y="234" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#5B6472" text-anchor="middle">通知も実行履歴も、あふれない</text>
+</svg>`;
+
+/* ② 自分の更新で自分をまた呼ぶ（無限ループ） */
+const figLoop=`<svg viewBox="0 0 400 220" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="f2sd" x="-40%" y="-40%" width="180%" height="190%"><feDropShadow dx="0" dy="2.5" stdDeviation="2.6" flood-color="#3B1414" flood-opacity=".24"/></filter>
+    <marker id="mkR" markerUnits="userSpaceOnUse" markerWidth="15" markerHeight="15" refX="10" refY="7.5" orient="auto"><path d="M0 0 L15 7.5 L0 15 z" fill="#DC2626"/></marker>
+  </defs>
+  <!-- 台帳 -->
+  <g transform="translate(20,66)" filter="url(#f2sd)">
+    <rect x="0" y="0" width="112" height="84" rx="9" fill="#fff" stroke="#DC2626" stroke-width="2.8"/>
+    <rect x="0" y="0" width="112" height="18" rx="9" fill="#DC2626"/><rect x="0" y="12" width="112" height="6" fill="#DC2626"/>
+    <text x="56" y="14" font-family="Noto Sans JP" font-size="13" font-weight="900" fill="#fff" text-anchor="middle">台帳</text>
+    ${Array.from({length:3},(_,i)=>`<line x1="12" y1="${34+i*16}" x2="100" y2="${34+i*16}" stroke="#F0BFBF" stroke-width="5" stroke-linecap="round"/>`).join('')}
+  </g>
+  <text x="76" y="170" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#991B1B" text-anchor="middle">行が更新される</text>
+
+  <!-- フロー -->
+  <g transform="translate(212,66)" filter="url(#f2sd)">
+    <rect x="0" y="0" width="108" height="84" rx="9" fill="#FFF1F1" stroke="#DC2626" stroke-width="2.8"/>
+    <circle cx="26" cy="30" r="10" fill="#DC2626"/>
+    <line x1="44" y1="30" x2="92" y2="30" stroke="#F0BFBF" stroke-width="5.5" stroke-linecap="round"/>
+    <line x1="16" y1="56" x2="92" y2="56" stroke="#F0BFBF" stroke-width="5.5" stroke-linecap="round"/>
+    <line x1="16" y1="70" x2="68" y2="70" stroke="#F0BFBF" stroke-width="5.5" stroke-linecap="round"/>
+  </g>
+  <text x="266" y="170" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#991B1B" text-anchor="middle">フローが起動</text>
+
+  <!-- ぐるぐる -->
+  <path d="M140 84 C 172 48, 186 48, 206 84" fill="none" stroke="#DC2626" stroke-width="5" stroke-linecap="round" marker-end="url(#mkR)"/>
+  <path d="M206 132 C 186 168, 172 168, 142 132" fill="none" stroke="#DC2626" stroke-width="5" stroke-linecap="round" marker-end="url(#mkR)"/>
+  <text x="173" y="42" font-family="Noto Sans JP" font-size="16" font-weight="900" fill="#991B1B" text-anchor="middle">起動する</text>
+  <text x="150" y="200" font-family="Noto Sans JP" font-size="16" font-weight="900" fill="#991B1B" text-anchor="middle">同じ行をまた更新する</text>
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.102-1</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">通知があふれる・<span class="hl">自分で自分を呼ぶ</span>——どちらも条件1行で止まる</div>
+    <img class="title-chara" src="${A}chara/chara_confident.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svg('bell')}</div>
+    <div class="txt">フローの中で弾いても<b>実行そのものは起きています</b>。トリガー側で弾けば、<b>そもそも動きません</b>。</div>
+  </div>
+
+  <div class="stage">
+    <div class="box a">
+      <div class="bh"><span class="n">1</span>通知があふれる</div>
+      <div class="fig">${figFlood}</div>
+      <div class="fixrow"><span class="fi">${svg('shield',2.4)}</span><span class="ft">必要なときだけ起動＝<b>実行回数もアクション数も減る</b></span></div>
+    </div>
+
+    <div class="box b">
+      <div class="bh"><span class="n">2</span>自分で自分を呼ぶ</div>
+      <div class="fig">${figLoop}<img class="chara" src="${A}chara/chara_trouble.png" alt=""></div>
+      <div class="warnban"><span class="wi">${svg('warn',2.4)}</span><span class="wt">このフローのアクションは、無限トリガー ループになる可能性があります。このフローがトリガーされないように、適切な条件チェックを追加してください。</span></div>
+    </div>
+  </div>
+
+  <div class="next"><span class="na">${svg('arrow')}</span>書く場所は<b>トリガーの設定にある「トリガーの条件」</b>。書き方は <b>2枚目</b>へ！</div>
+  <div class="src">出典：Microsoft Learn「Power Automate トリガーを最適化する」「アンチ パターンを回避する」（警告文は公式ドキュメント記載のもの）／画面は再現</div>
+`;
+</script>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>

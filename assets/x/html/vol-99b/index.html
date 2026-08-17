@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.99-2 作り方：実行条件の構成</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB; --blue-bg:#EFF6FF; --blue-dark:#1E40AF;
+    --green:#16A34A; --green-bg:#ECFDF5; --green-dark:#065F46;
+    --red:#DC2626; --red-bg:#FEF2F2; --red-dark:#991B1B;
+    --orange:#EA580C; --violet:#7C3AED;
+    --ink:#1F2937; --gray:#374151; --weak:#6B7280; --line:#E5E7EB;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+  .ic{display:block;width:100%;height:100%;}
+
+  .titlebar{height:90px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:16px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:26px;border-radius:999px;padding:7px 20px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .vol-logo{height:50px;width:50px;object-fit:contain;flex:0 0 auto;background:#fff;border-radius:12px;padding:5px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
+  .title-text{color:#fff;font-weight:900;font-size:27px;line-height:1.14;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:158px;}
+  .title-text .hl{color:#FFE08A;}
+  .title-chara{position:absolute;right:14px;bottom:-44px;height:146px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .concl{margin:9px 16px 0;background:var(--blue-bg);border:2.5px solid var(--blue);border-radius:13px;display:flex;align-items:center;gap:13px;padding:8px 18px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;width:40px;height:40px;border-radius:11px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;padding:8px;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
+  .concl .txt{font-weight:800;font-size:19px;color:var(--blue-dark);line-height:1.3;padding-right:158px;}
+  .concl .txt b{color:var(--orange);}
+
+  .stage{flex:1 1 auto;margin:10px 16px 0;display:flex;align-items:stretch;gap:11px;min-height:0;}
+  .col{flex:1;display:flex;flex-direction:column;gap:7px;min-height:0;background:#F8FAFC;border:2.5px solid #DCE3EE;border-radius:14px;padding:8px 10px 9px;}
+  .col.hot{border-color:var(--violet);background:#F9F5FE;box-shadow:0 5px 12px rgba(124,58,237,.14);}
+  .ch2{flex:0 0 auto;display:flex;align-items:center;gap:9px;font-weight:900;font-size:19.5px;color:#1B2A44;line-height:1.18;}
+  .ch2 .n{flex:0 0 auto;width:32px;height:32px;border-radius:9px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;box-shadow:0 2px 4px rgba(0,0,0,.22);}
+  .col.hot .ch2 .n{background:linear-gradient(180deg,#8B5CF6,#7C3AED);}
+  .cbody{flex:1;display:flex;flex-direction:column;gap:7px;min-height:0;}
+  .cap{flex:0 0 auto;font-size:15.5px;font-weight:900;line-height:1.32;border-radius:9px;padding:7px 10px;color:#334155;background:#E7EEF7;}
+  .col.hot .cap{color:#5B21B6;background:#EEE4FC;}
+  .cap b{color:var(--orange);}
+
+  /* フローのカード */
+  .fcard{background:#fff;border:2.5px solid #C7D6EE;border-radius:11px;overflow:hidden;box-shadow:0 4px 10px rgba(20,40,90,.13);}
+  .fcard.err{border-color:#F0AEAE;}
+  .fcard.add{border-color:var(--green);box-shadow:0 0 0 3px #CFEFE0,0 4px 10px rgba(20,40,90,.13);}
+  .fch{display:flex;align-items:center;gap:9px;padding:8px 10px;font-weight:900;font-size:15.5px;color:#1B2A44;}
+  .fch img{width:28px;height:28px;object-fit:contain;flex:0 0 auto;}
+  .fch .fi{width:28px;height:28px;flex:0 0 auto;}
+  .fch .dots{margin-left:auto;font-weight:900;color:var(--weak);letter-spacing:2px;font-size:19px;flex:0 0 auto;}
+  .link{align-self:center;width:4px;height:16px;background:#C3D2E6;border-radius:2px;flex:0 0 auto;}
+  .link.red{background:#F0AEAE;}
+
+  /* 実行条件の構成 パネル */
+  .rpanel{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:2.5px solid #D6C7EF;border-radius:11px;overflow:hidden;box-shadow:0 5px 12px rgba(124,58,237,.2);}
+  .rph{flex:0 0 auto;padding:8px 11px;background:linear-gradient(90deg,#5B21B6,#7C3AED);color:#fff;font-weight:900;font-size:16px;}
+  .rpb{flex:1;padding:7px 10px;display:flex;flex-direction:column;gap:5px;min-height:0;}
+  .cbx{display:flex;align-items:center;gap:9px;font-size:16px;font-weight:900;color:#475569;border-radius:8px;padding:5px 9px;background:#F7F8FB;border:1.5px solid #E6E9F0;}
+  .cbx .bx{flex:0 0 auto;width:22px;height:22px;border-radius:5px;border:2.5px solid #B9C2D2;background:#fff;}
+  .cbx.on{background:#F1E9FD;border-color:#B79BEE;color:#4C1D95;}
+  .cbx.on .bx{border-color:#7C3AED;background:#7C3AED;position:relative;}
+  .cbx.on .bx svg{color:#fff;}
+  .rhint{margin-top:auto;font-size:14.5px;font-weight:900;color:#B45309;background:#FFFBEB;border:1.5px solid #FCD34D;border-radius:8px;padding:7px 9px;line-height:1.32;}
+
+  /* 本文の作り */
+  .msg{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:2.5px solid #C7D6EE;border-radius:11px;overflow:hidden;box-shadow:0 4px 10px rgba(20,40,90,.13);}
+  .msgh{flex:0 0 auto;display:flex;align-items:center;gap:9px;padding:8px 11px;background:#F2F7FD;border-bottom:1.5px solid #E2EAF5;font-weight:900;font-size:15.5px;color:#1B2A44;}
+  .msgh img{width:28px;height:28px;object-fit:contain;flex:0 0 auto;}
+  .msgb{flex:1;padding:8px 10px;display:flex;flex-direction:column;gap:6px;min-height:0;}
+  .ml{display:flex;gap:8px;align-items:baseline;font-size:15px;line-height:1.3;flex-wrap:wrap;}
+  .ml .k{flex:0 0 auto;font-weight:900;color:var(--weak);}
+  .ml .v{font-weight:900;color:#243B58;}
+  .dynp{display:inline-flex;align-items:center;gap:3px;background:#EAF2FF;border:1.5px solid #9DC1F5;border-radius:6px;padding:0 7px;font-size:14px;color:#0B3A8F;font-weight:900;}
+  .dynp::before{content:"⚡";font-size:13px;}
+  .fxc{font-family:'Roboto Mono',monospace;font-size:14px;font-weight:700;color:#5B21B6;background:#F5F0FD;border:1.5px solid #DFD2F5;border-radius:6px;padding:1px 7px;}
+
+  .warn{flex:0 0 auto;margin:9px 16px 0;display:flex;align-items:center;gap:12px;background:#FFFBEB;border:2.5px solid #FCD34D;border-radius:12px;padding:8px 14px;}
+  .warn .wt{flex:0 0 auto;font-size:14.5px;font-weight:900;color:#B45309;}
+  .warn .wl{flex:1;display:flex;gap:8px;}
+  .warn .wl span{flex:1;font-size:14.5px;font-weight:900;color:#92400E;background:#fff;border:1.5px solid #F6D08A;border-radius:8px;padding:6px 9px;line-height:1.3;}
+
+  .next{flex:0 0 auto;margin:8px 16px 18px;background:linear-gradient(180deg,#EAF2FF,#DCEAFE);border:2.5px solid var(--blue);border-radius:13px;padding:8px 18px;display:flex;align-items:center;gap:11px;font-weight:900;font-size:19px;color:var(--blue-dark);box-shadow:0 3px 9px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .next .na{flex:0 0 auto;width:26px;height:26px;color:var(--blue);}
+  .next b{color:var(--orange);}
+  .src{position:absolute;left:16px;bottom:3px;font-size:10px;color:#AEB6C2;font-weight:700;z-index:3;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const ICON={
+  arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',
+  check:'<path d="M20 6L9 17l-5-5"/>',
+  wrench:'<path d="M14.7 6.3a4 4 0 0 0 5 5l-9 9a2.8 2.8 0 0 1-4-4z"/>',
+  sp:'<circle cx="12" cy="12" r="9"/><path d="M8 12h8M12 8v8"/>'
+};
+const svg=(n,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${ICON[n]}</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.99-2</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">やることは<span class="hl">チェックを1つ</span>だけ｜実行条件の構成</div>
+    <img class="title-chara" src="${A}chara/chara_point.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svg('wrench')}</div>
+    <div class="txt">新しいアクションは、ふつう<b>前が成功したときだけ</b>動きます。そこを<b>「失敗したとき」に変える</b>だけです。</div>
+  </div>
+
+  <div class="stage">
+    <div class="col">
+      <div class="ch2"><span class="n">1</span>通知を1個、下に足す</div>
+      <div class="cbody">
+        <div class="fcard err">
+          <div class="fch"><img src="${A}icons/pa_sharepoint.png" alt="">項目の作成<span class="dots">…</span></div>
+        </div>
+        <div class="link red"></div>
+        <div class="fcard add">
+          <div class="fch"><img src="${A}icons/pa_teams.png" alt="">チャットまたはチャネルでメッセージを投稿する<span class="dots">…</span></div>
+        </div>
+      </div>
+      <div class="cap">見張りたいアクションの<b>すぐ下</b>に、Teams投稿かメール送信を足します。</div>
+    </div>
+
+    <div class="col hot">
+      <div class="ch2"><span class="n">2</span>「実行条件の構成」</div>
+      <div class="cbody">
+        <div class="rpanel">
+          <div class="rph">実行条件の構成</div>
+          <div class="rpb">
+            <div class="cbx"><span class="bx"></span>成功しました</div>
+            <div class="cbx on"><span class="bx">${svg('check',4)}</span>失敗しました</div>
+            <div class="cbx"><span class="bx"></span>スキップされました</div>
+            <div class="cbx"><span class="bx"></span>タイムアウトしました</div>
+            <div class="rhint">「成功しました」のチェックを外すのを忘れずに。付けたままだと毎回飛びます。</div>
+          </div>
+        </div>
+      </div>
+      <div class="cap">足した通知の<b>「…」</b>から開いて、<b>「失敗しました」だけ</b>にします。</div>
+    </div>
+
+    <div class="col">
+      <div class="ch2"><span class="n">3</span>中身に手がかりを入れる</div>
+      <div class="cbody">
+        <div class="msg">
+          <div class="msgh"><img src="${A}icons/pa_teams.png" alt="">メッセージの中身</div>
+          <div class="msgb">
+            <div class="ml"><span class="k">見出し</span><span class="v">フローが失敗しました</span></div>
+            <div class="ml"><span class="k">フロー名</span><span class="fxc">workflow()?['tags']?['flowDisplayName']</span></div>
+            <div class="ml"><span class="k">止まった所</span><span class="v">アクション名を手で書く</span></div>
+            <div class="ml"><span class="k">時刻</span><span class="fxc">convertTimeZone(utcNow(),…)</span></div>
+            <div class="ml"><span class="k">宛先</span><span class="dynp">自分</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="cap">フロー名は<b>workflow() 関数</b>で自動。時刻はVol.97の式で日本時間に。</div>
+    </div>
+  </div>
+
+  <div class="warn">
+    <div class="wt">使う前に確認</div>
+    <div class="wl">
+      <span>全部のアクションに付けると通知が洪水に。まずは<b>止まって困る1個</b>だけ</span>
+      <span>接続切れなど重大な失敗は、<b>所有者に公式のメール</b>も届きます</span>
+      <span>まとめて拾うなら<b>スコープでTry / Catch</b>にする手もあります</span>
+    </div>
+  </div>
+
+  <div class="next"><span class="na">${svg('arrow')}</span>止まって困るフローが1本でもあるなら、<b>今日つけておく</b>のがおすすめ！</div>
+  <div class="src">出典：Microsoft Learn「堅牢なエラー処理を採用する」（実行後／実行条件の構成・スコープでのtry-catch・再試行ポリシー）／画面は再現・データは架空</div>
+`;
+</script>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>

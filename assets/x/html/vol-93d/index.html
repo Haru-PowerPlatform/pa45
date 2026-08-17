@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.93-4 議事メモのTODOをタスクにする</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB; --blue-bg:#EFF6FF; --blue-dark:#1E40AF;
+    --green:#16A34A; --green-dark:#065F46; --ol:#0F6CBD; --od:#0364B8;
+    --sp:#0F7A4D; --orange:#EA580C;
+    --ink:#1F2937; --gray:#374151; --weak:#6B7280; --line:#E5E7EB;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+  .ic{display:block;width:100%;height:100%;}
+
+  .titlebar{height:90px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:16px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:26px;border-radius:999px;padding:7px 20px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .vol-logo{height:50px;width:50px;object-fit:contain;flex:0 0 auto;background:#fff;border-radius:12px;padding:5px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
+  .title-text{color:#fff;font-weight:900;font-size:27px;line-height:1.14;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:150px;}
+  .title-text .hl{color:#FFE08A;}
+  .title-chara{position:absolute;right:14px;bottom:-40px;height:142px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .concl{margin:10px 16px 0;background:var(--blue-bg);border:2.5px solid var(--blue);border-radius:13px;display:flex;align-items:center;gap:13px;padding:9px 18px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;width:38px;height:38px;border-radius:11px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;padding:8px;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
+  .concl .txt{font-weight:800;font-size:18.5px;color:var(--blue-dark);line-height:1.34;padding-right:150px;}
+  .concl .txt b{color:var(--orange);}
+
+  .cols{flex:1 1 auto;margin:11px 16px 0;display:grid;grid-template-columns:1fr 1fr 1fr;gap:26px;min-height:0;}
+  .col{position:relative;display:flex;flex-direction:column;min-height:0;}
+  .cnum{position:absolute;top:-9px;left:-11px;width:32px;height:32px;border-radius:50%;background:var(--blue);color:#fff;font-weight:900;font-size:18px;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 2px 5px rgba(0,0,0,.28);}
+  .carrow{position:absolute;top:44%;right:-22px;width:22px;height:22px;color:var(--blue);z-index:6;}
+
+  .card{flex:1;display:flex;flex-direction:column;min-height:0;background:#fff;border:2px solid #C7CFDA;border-radius:12px;box-shadow:0 5px 13px rgba(0,0,0,.13);overflow:hidden;}
+  .col.hot .card{border-color:var(--sp);box-shadow:0 5px 15px rgba(15,122,77,.22);}
+  .ch{flex:0 0 auto;display:flex;align-items:center;gap:9px;padding:9px 11px;background:linear-gradient(180deg,#FBFCFE,#EEF2F8);border-bottom:1px solid #E2E8F1;min-height:58px;}
+  .ch .sq{flex:0 0 auto;width:38px;height:38px;border-radius:9px;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);display:flex;align-items:center;justify-content:center;overflow:hidden;}
+  .ch .sq img{width:34px;height:34px;object-fit:contain;}
+  .ch .sq svg{width:32px;height:32px;}
+  .ch .nm{font-weight:900;font-size:14.5px;color:var(--ink);line-height:1.15;}
+  .ch .cn{font-size:11.5px;font-weight:800;color:var(--weak);margin-top:1px;}
+  .col.hot .ch{background:linear-gradient(180deg,#EEFaF3,#DBF2E4);} .col.hot .ch .nm{color:#0E5C38;}
+
+  .ptop{flex:0 0 232px;margin:9px;background:#F3F6FB;border:1px solid #DCE4F0;border-radius:9px;padding:9px;display:flex;flex-direction:column;gap:7px;overflow:hidden;}
+  .col.hot .ptop{background:#F1FBF5;border-color:#CBEBD8;}
+  .sect{font-size:11.5px;font-weight:900;color:#5B6B82;letter-spacing:.02em;display:flex;align-items:center;gap:6px;}
+  .sect::before{content:"";width:9px;height:9px;border-radius:2px;background:var(--ol);}
+  .col.hot .sect::before{background:var(--sp);}
+  .fld{background:#fff;border:1px solid #D7DEE9;border-radius:7px;overflow:hidden;}
+  .fld .fl{font-size:12px;font-weight:800;color:#64748B;background:#F8FAFC;padding:3px 8px;border-bottom:1px solid #EBEFF5;}
+  .fld .fi{font-size:13px;font-weight:800;color:#243B58;padding:7px 9px;display:flex;align-items:center;gap:6px;justify-content:space-between;line-height:1.18;}
+  .fld .fi .cr{color:#8A93A2;font-size:12px;}
+  .fld.hot{border:2px solid var(--sp);}
+  .mono{font-family:'Roboto Mono','Noto Sans JP',monospace;font-size:11px;color:#0E5C38;font-weight:700;}
+  .dyn{display:inline-flex;align-items:center;gap:4px;background:#EAF2FF;border:1px solid #9DC1F5;border-radius:6px;padding:2px 7px;font-size:12px;font-weight:800;color:#0B3A8F;font-family:'Roboto Mono','Noto Sans JP',monospace;}
+  .dyn::before{content:"⚡";font-size:12px;}
+  .dyn.sp{background:#EAF7EF;border-color:#A7DABE;color:#0E5C38;}
+
+  .howsteps{flex:1;margin:0 9px 9px;background:#EFF5FF;border:1px solid #C9DCF7;border-radius:9px;padding:9px 10px 9px 11px;display:flex;flex-direction:column;min-height:0;}
+  .hh{font-weight:900;font-size:13px;color:var(--blue-dark);padding-left:9px;position:relative;margin-bottom:5px;}
+  .hh::before{content:"";position:absolute;left:0;top:1px;bottom:1px;width:4px;border-radius:3px;background:var(--blue);}
+  .howsteps ol{list-style:none;flex:1;display:flex;flex-direction:column;justify-content:space-evenly;counter-reset:s;}
+  .howsteps li{counter-increment:s;position:relative;padding-left:26px;font-size:14px;font-weight:800;color:#243B58;line-height:1.3;}
+  .howsteps li::before{content:counter(s);position:absolute;left:0;top:0;width:20px;height:20px;border-radius:50%;background:var(--blue);color:#fff;font-size:12.5px;display:flex;align-items:center;justify-content:center;}
+  .howsteps li b{color:#C2410C;}
+  .col.hot .howsteps{background:#F1FBF5;border-color:#CBEBD8;} .col.hot .hh{color:#0E5C38;} .col.hot .hh::before{background:var(--sp);} .col.hot .howsteps li::before{background:var(--sp);}
+
+  .warn{flex:0 0 auto;margin:10px 16px 16px;background:linear-gradient(180deg,#FFF7ED,#FFEDD5);border:2px solid #FB923C;border-radius:12px;padding:9px 16px;display:flex;align-items:center;gap:13px;}
+  .warn .wt2{flex:0 0 auto;font-weight:900;font-size:16px;color:#9A3412;}
+  .warn .wl{font-size:13.5px;font-weight:800;color:#7C2D12;line-height:1.38;}
+  .warn .wl b{color:#C2410C;}
+  .src{position:absolute;left:16px;bottom:3px;font-size:9.5px;color:#AEB6C2;font-weight:700;z-index:3;padding-right:16px;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const ICON={arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',bulb:'<path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/>'};
+const svg=(n)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${ICON[n]}</svg>`;
+// Planner風アイコン（自作SVG）
+const planner=`<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="28" height="28" rx="7" fill="#0F7A4D"/><rect x="7" y="8" width="7.5" height="16" rx="2" fill="#7FE3B0"/><rect x="17.5" y="8" width="7.5" height="9" rx="2" fill="#B7F0D3"/><path d="M18 22.5 l2.6 2.6 l5.4 -6.4" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.93-4</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">作り方③ 会議後｜<span class="hl">議事メモの「TODO」がタスクに化ける</span></div>
+    <img class="title-chara" src="${A}chara/chara_guts.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svg('bulb')}</div>
+    <div class="txt">議事メモを<b>行に分けて「TODO」の行だけ抜き</b>、Plannerタスクに。<b>宿題の取りこぼしゼロ</b>。ここまでで会議の“幹事”が完成します。</div>
+  </div>
+
+  <div class="cols">
+    <!-- ① きっかけ：議事メモを受け取る -->
+    <div class="col">
+      <span class="cnum">1</span><span class="carrow">${svg('arrow')}</span>
+      <div class="card">
+        <div class="ch"><span class="sq"><img src="${A}icons/pa_teams.png" alt=""></span><div><div class="nm">選択したメッセージに対する処理</div><div class="cn">Microsoft Teams ・ トリガー</div></div></div>
+        <div class="ptop">
+          <div class="sect">議事メモを受け取る</div>
+          <div class="fld"><div class="fl">きっかけ</div><div class="fi"><span>メモを選んでフロー実行</span></div></div>
+          <div class="fld"><div class="fl">受け取る内容</div><div class="fi"><span>メッセージ本文（TODO付き）</span></div></div>
+          <div class="fld"><div class="fl">メモの書式例</div><div class="fi"><span class="mono">TODO: 見積を提出 @佐藤</span></div></div>
+        </div>
+        <div class="howsteps">
+          <div class="hh">操作手順</div>
+          <ol>
+            <li>会議後、<b>議事メモを投稿</b></li>
+            <li>そのメモを<b>選んで実行</b></li>
+            <li>本文を<b>次で行に分ける</b></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- ② TODO行を抽出（HOT） -->
+    <div class="col hot">
+      <span class="cnum" style="background:#0F7A4D">2</span><span class="carrow">${svg('arrow')}</span>
+      <div class="card">
+        <div class="ch"><span class="sq"><img src="${A}icons/pa_dataoperation.png" alt=""></span><div><div class="nm">選択 ＋ アレイのフィルター処理</div><div class="cn">データ操作 ・ 組み込み ・ 主役</div></div></div>
+        <div class="ptop">
+          <div class="sect">「TODO」の行だけ抜く</div>
+          <div class="fld hot"><div class="fl">行に分ける（ここがミソ）</div><div class="fi"><span class="mono">split(本文, '改行')</span></div></div>
+          <div class="fld hot"><div class="fl">フィルター条件</div><div class="fi"><span class="mono">item() contains 'TODO'</span></div></div>
+          <div class="fld"><div class="fl">残るもの</div><div class="fi"><span>TODOの行だけの配列</span></div></div>
+        </div>
+        <div class="howsteps">
+          <div class="hh">操作手順</div>
+          <ol>
+            <li>本文を<b>改行で分割</b>して配列に</li>
+            <li><b>「TODO」を含む行</b>だけ残す</li>
+            <li>各行を次でタスクにする</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+
+    <!-- ③ タスクの作成 -->
+    <div class="col">
+      <span class="cnum">3</span>
+      <div class="card">
+        <div class="ch"><span class="sq">${planner}</span><div><div class="nm">タスクの作成</div><div class="cn">Planner ・ 標準</div></div></div>
+        <div class="ptop">
+          <div class="sect">TODOごとにタスク化</div>
+          <div class="fld"><div class="fl">プラン / バケット</div><div class="fi">会議の宿題<span class="cr">▾</span></div></div>
+          <div class="fld"><div class="fl">タイトル</div><div class="fi"><span class="dyn sp">TODOの行</span></div></div>
+          <div class="fld"><div class="fl">担当 / 期日</div><div class="fi"><span>行から差し込む</span></div></div>
+        </div>
+        <div class="howsteps">
+          <div class="hh">操作手順</div>
+          <ol>
+            <li>各TODOを<b>Apply to each</b></li>
+            <li>タイトルに<b>行の内容</b></li>
+            <li>担当・期日を<b>割り当てる</b></li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="warn">
+    <span class="wt2">⚠ 使う前に確認</span>
+    <span class="wl"><b>Plannerは basic plans のみ</b>。TODO抽出は<b>書式ルールを先に決める</b>（「TODO:」や「- [ ]」）。担当・期日は行に埋めておくと自動で割り当てられる。<b>チェックリストは「タスクの詳細の更新」</b>が別途必要。タイトルは255文字まで。</span>
+  </div>
+  <div class="src">出典：Microsoft Learn（Microsoft Teams トリガー／データ操作「選択・アレイのフィルター処理」／Planner「タスクの作成・タスクの詳細の更新」）／画面は再現・データは架空</div>
+`;
+</script>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>

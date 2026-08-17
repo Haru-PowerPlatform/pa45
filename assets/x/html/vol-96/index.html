@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.96-1 コメントのリアクションでナイスコメント賞を自動表彰</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB; --blue-bg:#EFF6FF; --blue-dark:#1E40AF;
+    --green:#16A34A; --green-dark:#065F46; --green-bg:#F0FDF4;
+    --red:#DC2626; --orange:#EA580C; --ol:#0F6CBD; --teams:#5059C9; --gold:#B7791F;
+    --ink:#1F2937; --gray:#374151; --weak:#6B7280; --line:#E5E7EB;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+  .ic{display:block;width:100%;height:100%;}
+
+  .titlebar{height:90px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:16px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:26px;border-radius:999px;padding:7px 20px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .vol-logo{height:50px;width:50px;object-fit:contain;flex:0 0 auto;background:#fff;border-radius:12px;padding:5px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
+  .title-text{color:#fff;font-weight:900;font-size:27px;line-height:1.14;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:156px;}
+  .title-text .hl{color:#FFE08A;}
+  .title-chara{position:absolute;right:14px;bottom:-40px;height:142px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .concl{margin:10px 16px 0;background:var(--blue-bg);border:2.5px solid var(--blue);border-radius:13px;display:flex;align-items:center;gap:13px;padding:10px 18px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;width:40px;height:40px;border-radius:11px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;padding:8px;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
+  .concl .txt{font-weight:800;font-size:19.5px;color:var(--blue-dark);line-height:1.32;padding-right:150px;}
+  .concl .txt b{color:var(--orange);}
+
+  .stage{flex:1 1 auto;margin:11px 16px 0;display:flex;align-items:stretch;gap:12px;min-height:0;}
+  .col{flex:1;display:flex;flex-direction:column;min-height:0;border-radius:14px;padding:10px 11px 11px;position:relative;}
+  .col.c1{background:#F5F6FF;border:1.5px solid #D7DAF3;}
+  .col.c2{background:#FFFBEB;border:1.5px solid #F3E3B3;}
+  .col.c3{flex:1.14;background:#FFFBEA;border:2px solid #EAD08A;}
+  .ch{flex:0 0 auto;display:flex;align-items:center;gap:9px;font-weight:900;font-size:19px;color:#243B58;line-height:1.12;margin-bottom:7px;}
+  .ch .no{flex:0 0 auto;width:32px;height:32px;border-radius:50%;color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;box-shadow:0 2px 4px rgba(0,0,0,.22);}
+  .c1 .no{background:linear-gradient(180deg,#818CF8,#5059C9);}
+  .c2 .no{background:linear-gradient(180deg,#FBBF24,#D97706);}
+  .c3 .no{background:linear-gradient(180deg,#FBBF24,#B7791F);}
+
+  .scene{flex:0 0 auto;height:104px;border-radius:11px;background:rgba(255,255,255,.7);border:1px solid rgba(0,0,0,.05);position:relative;overflow:hidden;margin-bottom:9px;}
+  .scene svg{display:block;width:100%;height:100%;}
+  .scene .mini{position:absolute;right:6px;bottom:-4px;height:92px;z-index:3;filter:drop-shadow(0 2px 4px rgba(0,0,0,.28));}
+
+  .body{flex:1 1 auto;display:flex;flex-direction:column;min-height:0;gap:8px;}
+  .cap{flex:0 0 auto;margin-top:auto;font-weight:800;font-size:15.5px;line-height:1.34;color:#334155;background:rgba(255,255,255,.72);border-radius:9px;padding:8px 11px;}
+  .cap b{color:var(--orange);}
+  .c3 .cap{background:#FFF7ED;border:1.5px solid #FCD9A8;color:#7C3A0B;}
+  .c3 .cap .k{color:#C2410C;}
+
+  /* Teamsコメントスレッド＋リアクション */
+  .tcard{flex:1 1 auto;display:flex;flex-direction:column;min-height:0;background:#fff;border:1px solid #E1E4EA;border-radius:12px;box-shadow:0 4px 12px rgba(30,40,90,.12);overflow:hidden;}
+  .tc-bar{flex:0 0 auto;height:5px;background:var(--teams);}
+  .tc-in{flex:1 1 auto;display:flex;flex-direction:column;min-height:0;padding:8px 10px 9px;gap:7px;}
+  .tc-topic{flex:0 0 auto;font-weight:900;font-size:13px;color:#475569;background:#F1F5FB;border:1px solid #E2E8F1;border-radius:7px;padding:5px 9px;}
+  .tc-topic span{color:var(--teams);}
+  .cmt{flex:1 1 auto;display:flex;flex-direction:column;min-height:0;justify-content:center;gap:5px;background:#F8FAFC;border:1px solid #E7EBF1;border-radius:9px;padding:7px 9px;}
+  .cmt.win{background:#FFFBEB;border:1.6px solid #EAD08A;box-shadow:0 0 0 2px #FBF0CF;}
+  .cmt .cm-hd{display:flex;align-items:center;gap:7px;}
+  .cmt .av{width:26px;height:26px;border-radius:50%;color:#fff;font-weight:900;font-size:12px;display:flex;align-items:center;justify-content:center;flex:0 0 auto;}
+  .cmt .av.a{background:linear-gradient(180deg,#F59E0B,#EA580C);}
+  .cmt .av.b{background:linear-gradient(180deg,#60A5FA,#2563EB);}
+  .cmt .nm{font-weight:900;font-size:12.5px;color:#242424;}
+  .cmt .tx{font-weight:800;font-size:13px;color:#334155;line-height:1.24;}
+  .cmt .rxns{display:flex;gap:6px;margin-top:1px;}
+  .rx{display:flex;align-items:center;gap:4px;background:#EEF0FF;border:1.4px solid #C7CBEC;border-radius:999px;padding:2px 9px;font-weight:900;font-size:12.5px;color:#3B3F9E;}
+  .rx .em{font-size:14px;}
+  .cmt.win .rx{background:#FEF3D6;border-color:#E7C877;color:#8A5A0B;}
+  .tc-tap{flex:0 0 auto;text-align:center;font-size:12px;font-weight:900;color:var(--teams);}
+
+  /* リーダーボード */
+  .board{flex:1 1 auto;display:flex;flex-direction:column;min-height:0;background:#fff;border:1px solid #EAD9A8;border-radius:11px;overflow:hidden;box-shadow:0 3px 8px rgba(0,0,0,.07);}
+  .bd-hd{flex:0 0 auto;display:flex;align-items:center;gap:7px;padding:7px 10px;background:#FEF6E0;border-bottom:1px solid #EAD9A8;font-weight:900;font-size:12.5px;color:#8A5A0B;}
+  .bd-hd .auto{margin-left:auto;font-size:10.5px;font-weight:900;color:#0B3A8F;background:#EAF2FF;border:1px solid #A9C8F2;border-radius:6px;padding:2px 7px;}
+  .btab{flex:1 1 auto;display:flex;flex-direction:column;min-height:0;}
+  .brow{flex:1;display:flex;align-items:center;gap:8px;padding:5px 10px;border-bottom:1px solid #F1ECDD;min-height:0;}
+  .brow:last-child{border-bottom:none;}
+  .brow .rk{flex:0 0 auto;width:22px;height:22px;border-radius:50%;background:#EEF2F6;color:#64748B;font-weight:900;font-size:12px;display:flex;align-items:center;justify-content:center;}
+  .brow .pn{flex:1;font-weight:900;font-size:13.5px;color:#334155;}
+  .brow .bar{flex:0 0 auto;height:11px;border-radius:6px;background:linear-gradient(90deg,#FBBF24,#F59E0B);}
+  .brow .ct{flex:0 0 auto;font-weight:900;font-size:14px;color:#8A5A0B;width:44px;text-align:right;}
+  .brow.win{background:#FFF9E8;}
+  .brow.win .rk{background:linear-gradient(180deg,#FBBF24,#D97706);color:#fff;}
+  .brow.win .pn{color:#7A4E08;}
+
+  /* 表彰カード（hero） */
+  .award{flex:1 1 auto;display:flex;flex-direction:column;min-height:0;background:#fff;border:1px solid #E1E4EA;border-radius:12px;box-shadow:0 4px 12px rgba(30,40,90,.12);overflow:hidden;}
+  .aw-bar{flex:0 0 auto;height:5px;background:var(--teams);}
+  .aw-in{flex:1 1 auto;display:flex;flex-direction:column;min-height:0;padding:9px 11px 10px;gap:7px;}
+  .aw-hd{flex:0 0 auto;display:flex;align-items:center;gap:8px;}
+  .aw-hd .bot{width:30px;height:30px;border-radius:7px;object-fit:contain;background:#fff;}
+  .aw-hd .who{font-weight:900;font-size:13px;color:#242424;line-height:1.1;}
+  .aw-hd .who span{font-weight:700;color:#8A8F98;font-size:11px;}
+  .cert{flex:1 1 auto;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;min-height:0;background:linear-gradient(180deg,#FFFDF5,#FEF6DE);border:2px solid #EAD08A;border-radius:11px;padding:8px 10px;box-shadow:inset 0 1px 0 rgba(255,255,255,.8);}
+  .cert .rb{font-weight:900;font-size:12px;color:#B7791F;letter-spacing:.06em;}
+  .cert .aw-ttl{font-weight:900;font-size:22px;color:#8A5A0B;line-height:1.05;}
+  .cert .trophy{font-size:30px;line-height:1;}
+  .cert .win-nm{font-weight:900;font-size:17px;color:#242424;}
+  .cert .win-nm b{color:#B7791F;}
+  .cert .score{font-weight:900;font-size:13px;color:#7C3A0B;background:#FDECC4;border:1px solid #EAD08A;border-radius:999px;padding:3px 12px;}
+  .aw-foot{flex:0 0 auto;margin-top:1px;font-size:12.5px;font-weight:900;color:var(--teams);text-align:center;}
+
+  .foot{flex:0 0 auto;margin:9px 16px 0;display:flex;align-items:center;gap:10px;}
+  .foot .fl{flex:0 0 auto;font-weight:900;font-size:14.5px;color:var(--weak);}
+  .foot .tags{flex:1;display:flex;gap:8px;}
+  .foot .tag{flex:1;text-align:center;background:#fff;border:1.5px solid var(--line);border-radius:9px;padding:8px 4px;font-weight:900;font-size:15px;color:#334155;box-shadow:0 1px 3px rgba(0,0,0,.05);}
+
+  .next{flex:0 0 auto;margin:9px 16px 12px;background:linear-gradient(180deg,#EAF2FF,#DCEAFE);border:2.5px solid var(--blue);border-radius:13px;padding:10px 18px;display:flex;align-items:center;gap:11px;font-weight:900;font-size:20px;color:var(--blue-dark);box-shadow:0 3px 9px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .next .na{flex:0 0 auto;width:26px;height:26px;color:var(--blue);}
+  .next b{color:var(--orange);}
+  .src{position:absolute;left:16px;bottom:3px;font-size:9.5px;color:#AEB6C2;font-weight:700;z-index:3;padding-right:16px;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const ICON={arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',bulb:'<path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/>'};
+const svg=(n)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">${ICON[n]}</svg>`;
+
+// ① 情景：登壇スクリーン＋コメント吹き出しにリアクション
+const scene1=`<svg viewBox="0 0 300 104" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- スクリーン -->
+  <rect x="20" y="16" width="104" height="66" rx="7" fill="#EAF2FF" stroke="#2563EB" stroke-width="2.5"/>
+  <rect x="20" y="16" width="104" height="14" rx="7" fill="#2563EB"/>
+  <text x="72" y="27" text-anchor="middle" font-family="Noto Sans JP" font-weight="900" font-size="9" fill="#fff">登壇LT</text>
+  <rect x="31" y="40" width="60" height="7" rx="3.5" fill="#9DC1F5"/>
+  <rect x="31" y="53" width="82" height="7" rx="3.5" fill="#C7D7F0"/>
+  <rect x="31" y="66" width="46" height="7" rx="3.5" fill="#C7D7F0"/>
+  <!-- コメント吹き出し1 -->
+  <g><rect x="140" y="14" width="132" height="30" rx="9" fill="#fff" stroke="#C7CBEC" stroke-width="2"/><path d="M150 44 l0 12 l12 -10 z" fill="#fff" stroke="#C7CBEC" stroke-width="2"/>
+  <rect x="149" y="22" width="80" height="6" rx="3" fill="#C7CBEC"/>
+  <g><rect x="149" y="31" width="26" height="12" rx="6" fill="#EEF0FF" stroke="#5059C9" stroke-width="1.4"/><text x="153" y="40" font-size="9">👍</text><text x="165" y="40" font-family="Noto Sans JP" font-weight="900" font-size="8" fill="#3B3F9E">8</text></g>
+  <g><rect x="178" y="31" width="24" height="12" rx="6" fill="#EEF0FF" stroke="#5059C9" stroke-width="1.4"/><text x="182" y="40" font-size="9">❤️</text><text x="193" y="40" font-family="Noto Sans JP" font-weight="900" font-size="8" fill="#3B3F9E">5</text></g></g>
+  <!-- コメント吹き出し2（勝者・金） -->
+  <g><rect x="162" y="60" width="126" height="30" rx="9" fill="#FFFBEB" stroke="#EAD08A" stroke-width="2.2"/>
+  <rect x="171" y="68" width="70" height="6" rx="3" fill="#E7C877"/>
+  <g><rect x="171" y="77" width="26" height="12" rx="6" fill="#FEF3D6" stroke="#E7C877" stroke-width="1.4"/><text x="175" y="86" font-size="9">👍</text><text x="187" y="86" font-family="Noto Sans JP" font-weight="900" font-size="8" fill="#8A5A0B">12</text></g>
+  <g><rect x="200" y="77" width="24" height="12" rx="6" fill="#FEF3D6" stroke="#E7C877" stroke-width="1.4"/><text x="204" y="86" font-size="9">😆</text><text x="215" y="86" font-family="Noto Sans JP" font-weight="900" font-size="8" fill="#8A5A0B">9</text></g></g>
+</svg>`;
+// ② 情景：積み上がる票（トロフィー＋バー）
+const scene2=`<svg viewBox="0 0 300 104" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- 集計バー -->
+  <rect x="24" y="70" width="30" height="20" rx="4" fill="#FCD34D"/>
+  <rect x="62" y="50" width="30" height="40" rx="4" fill="#FBBF24"/>
+  <rect x="100" y="30" width="30" height="60" rx="4" fill="#F59E0B"/>
+  <path d="M20 92 L150 92" stroke="#E7C877" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- 数字が飛ぶ -->
+  <text x="112" y="24" text-anchor="middle" font-family="Noto Sans JP" font-weight="900" font-size="12" fill="#B7791F">最多!</text>
+  <!-- トロフィー -->
+  <g transform="translate(196,26)">
+    <path d="M14 6 h32 v10 a16 16 0 0 1 -32 0 z" fill="#FBBF24" stroke="#D97706" stroke-width="2.5"/>
+    <path d="M14 8 h-9 a7 7 0 0 0 9 12 z" fill="none" stroke="#D97706" stroke-width="2.5"/>
+    <path d="M46 8 h9 a7 7 0 0 1 -9 12 z" fill="none" stroke="#D97706" stroke-width="2.5"/>
+    <rect x="26" y="32" width="8" height="12" fill="#E0A31E"/>
+    <rect x="18" y="44" width="24" height="8" rx="2" fill="#D97706"/>
+    <path d="M24 20 l4 6 l4 -6" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/>
+  </g>
+  <g transform="translate(190,66)"><path d="M8 4 l3 6 6 1 -4.5 4 1 6 -5.5 -3 -5.5 3 1 -6 -4.5 -4 6 -1 z" fill="#FDE68A" stroke="#F59E0B" stroke-width="1.5"/></g>
+  <g transform="translate(250,60)"><path d="M8 4 l3 6 6 1 -4.5 4 1 6 -5.5 -3 -5.5 3 1 -6 -4.5 -4 6 -1 z" fill="#FDE68A" stroke="#F59E0B" stroke-width="1.5"/></g>
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.96-1</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">登壇のコメント、“いいね”を数えて<span class="hl">ナイスコメント賞を自動表彰</span></div>
+    <img class="title-chara" src="${A}chara/chara_confident.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svg('bulb')}</div>
+    <div class="txt">Vol.95の応用編。登壇イベントで<b>コメントに付いたリアクション</b>を人ごとに集計。終了後、一番集めた人へ<b>「ナイスコメント賞🏆」を自動でお届け</b>。</div>
+  </div>
+
+  <div class="stage">
+    <div class="col c1">
+      <div class="ch"><span class="no">1</span>コメントにリアクションが集まる</div>
+      <div class="scene">${scene1}<img class="mini" src="${A}chara/chara_smile.png" alt=""></div>
+      <div class="body">
+        <div class="tcard">
+          <div class="tc-bar"></div>
+          <div class="tc-in">
+            <div class="tc-topic">💬 <span>登壇チャネル</span>｜感想コメント歓迎!</div>
+            <div class="cmt">
+              <div class="cm-hd"><span class="av b">田</span><span class="nm">田中さん</span></div>
+              <div class="tx">明日から使います！神ワザでした</div>
+              <div class="rxns"><span class="rx"><span class="em">👍</span>8</span><span class="rx"><span class="em">❤️</span>5</span></div>
+            </div>
+            <div class="cmt win">
+              <div class="cm-hd"><span class="av a">佐</span><span class="nm">佐藤さん</span></div>
+              <div class="tx">ここが目からウロコ！図が神…</div>
+              <div class="rxns"><span class="rx"><span class="em">👍</span>12</span><span class="rx"><span class="em">😆</span>9</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col c2">
+      <div class="ch"><span class="no">2</span>人ごとに自動で数える</div>
+      <div class="scene">${scene2}<img class="mini" src="${A}chara/chara_think.png" alt=""></div>
+      <div class="body">
+        <div class="board">
+          <div class="bd-hd">🏅 👍いいね獲得ランキング<span class="auto">自動集計</span></div>
+          <div class="btab">
+            <div class="brow win"><span class="rk">1</span><span class="pn">佐藤さん</span><span class="bar" style="width:74px"></span><span class="ct">24</span></div>
+            <div class="brow"><span class="rk">2</span><span class="pn">田中さん</span><span class="bar" style="width:52px"></span><span class="ct">18</span></div>
+            <div class="brow"><span class="rk">3</span><span class="pn">鈴木さん</span><span class="bar" style="width:32px"></span><span class="ct">11</span></div>
+          </div>
+        </div>
+        <div class="cap">誰のコメントが<b>一番ウケたか</b>が自動で分かる。</div>
+      </div>
+    </div>
+
+    <div class="col c3">
+      <div class="ch"><span class="no">3</span>終了後、優勝者へ自動で賞状</div>
+      <div class="body">
+        <div class="award">
+          <div class="aw-bar"></div>
+          <div class="aw-in">
+            <div class="aw-hd"><img class="bot" src="${A}icons/pa_teams.png"><div class="who">Power Automate<br><span>フローボット・イベント終了後</span></div></div>
+            <div class="cert">
+              <div class="rb">✦ CONGRATULATIONS ✦</div>
+              <div class="trophy">🏆</div>
+              <div class="aw-ttl">ナイスコメント賞</div>
+              <div class="win-nm"><b>佐藤さん</b> おめでとうございます！</div>
+              <div class="score">獲得リアクション 24個 で1位</div>
+            </div>
+            <div class="aw-foot">数えて選んで送る作業、まるごとゼロ 👍</div>
+          </div>
+        </div>
+        <div class="cap">主催は<span class="k">盛り上げに集中</span>、表彰は自動で。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <div class="fl">こんな場に効く▶</div>
+    <div class="tags"><div class="tag">社内LT</div><div class="tag">勉強会</div><div class="tag">ウェビナー</div><div class="tag">全社集会</div></div>
+  </div>
+
+  <div class="next"><span class="na">${svg('arrow')}</span>Vol.95のリアクション集計を“表彰”に応用｜<b>作り方</b>は <b>2・3・4枚目</b>へ！</div>
+  <div class="src">出典：Microsoft Learn／Teams コネクタ「チャットでメッセージに応答があったとき」（2025-08 追加）／SharePoint「項目の作成・更新・複数の項目の取得」／画面は再現・データは架空</div>
+`;
+</script>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>

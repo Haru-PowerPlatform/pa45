@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.106-2 直す場所と、もう1つの手</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB; --blue-bg:#EFF6FF; --blue-dark:#1E40AF;
+    --green:#16A34A; --green-bg:#ECFDF5; --green-dark:#065F46;
+    --red:#DC2626; --red-bg:#FEF2F2; --red-dark:#991B1B;
+    --orange:#EA580C; --violet:#7C3AED;
+    --ink:#1F2937; --gray:#374151; --weak:#6B7280; --line:#E5E7EB;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+  .ic{display:block;width:100%;height:100%;}
+
+  .titlebar{height:90px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:16px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:26px;border-radius:999px;padding:7px 20px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .vol-logo{height:50px;width:50px;object-fit:contain;flex:0 0 auto;background:#fff;border-radius:12px;padding:5px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
+  .title-text{color:#fff;font-weight:900;font-size:27px;line-height:1.14;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:158px;}
+  .title-text .hl{color:#FFE08A;}
+  .title-chara{position:absolute;right:14px;bottom:-44px;height:146px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .concl{margin:9px 16px 0;background:var(--blue-bg);border:2.5px solid var(--blue);border-radius:13px;display:flex;align-items:center;gap:13px;padding:8px 18px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;width:40px;height:40px;border-radius:11px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;padding:8px;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
+  .concl .txt{font-weight:800;font-size:19px;color:var(--blue-dark);line-height:1.3;padding-right:158px;}
+  .concl .txt b{color:var(--orange);}
+
+  .stage{flex:1 1 auto;margin:10px 16px 0;display:flex;align-items:stretch;gap:11px;min-height:0;}
+  .col{flex:1;display:flex;flex-direction:column;gap:7px;min-height:0;background:#F8FAFC;border:2.5px solid #DCE3EE;border-radius:14px;padding:8px 10px 9px;}
+  .col.hot{border-color:var(--violet);background:#F9F5FE;box-shadow:0 5px 12px rgba(124,58,237,.14);}
+  .col.fin{border-color:#7FCEA9;background:var(--green-bg);}
+  .ch2{flex:0 0 auto;display:flex;align-items:center;gap:9px;font-weight:900;font-size:19.5px;color:#1B2A44;line-height:1.18;}
+  .ch2 .n{flex:0 0 auto;width:32px;height:32px;border-radius:9px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;box-shadow:0 2px 4px rgba(0,0,0,.22);}
+  .col.hot .ch2 .n{background:linear-gradient(180deg,#8B5CF6,#7C3AED);}
+  .col.fin .ch2 .n{background:linear-gradient(180deg,#34D399,#16A34A);}
+  .cbody{flex:1;display:flex;flex-direction:column;gap:7px;min-height:0;}
+  .cap{flex:0 0 auto;font-size:15.5px;font-weight:900;line-height:1.32;border-radius:9px;padding:7px 10px;color:#334155;background:#E7EEF7;}
+  .col.hot .cap{color:#5B21B6;background:#EEE4FC;}
+  .col.fin .cap{color:var(--green-dark);background:#CFEFE0;}
+  .cap b{color:var(--orange);}
+
+  .fig{flex:0 0 auto;height:104px;border-radius:10px;position:relative;overflow:hidden;background:#EDF3FA;}
+  .col.hot .fig{background:#F1E9FD;}
+  .col.fin .fig{background:#DCF3E7;}
+  .fig svg{position:absolute;inset:0;width:100%;height:100%;}
+
+  .card{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:2.5px solid #C7D6EE;border-radius:11px;overflow:hidden;box-shadow:0 4px 10px rgba(20,40,90,.13);}
+  .col.hot .card{border-color:#D6C7EF;}
+  .cardh{flex:0 0 auto;display:flex;align-items:center;gap:9px;padding:8px 10px;font-weight:900;font-size:15.5px;color:#1B2A44;background:#F2F7FD;border-bottom:1.5px solid #E2EAF5;}
+  .col.hot .cardh{background:linear-gradient(90deg,#5B21B6,#7C3AED);color:#fff;border-bottom:none;}
+  .cardh .ci{width:26px;height:26px;flex:0 0 auto;}
+  .cardb{flex:1;padding:8px 10px;display:flex;flex-direction:column;gap:6px;min-height:0;}
+
+  .step{display:flex;align-items:center;gap:9px;background:#F7F9FC;border:1.5px solid #D9E1EC;border-radius:8px;padding:6px 9px;font-size:14.5px;font-weight:900;color:#243B58;line-height:1.28;}
+  .step .sn{flex:0 0 auto;width:22px;height:22px;border-radius:6px;background:#2563EB;color:#fff;display:flex;align-items:center;justify-content:center;font-size:13.5px;font-weight:900;}
+  .step.ng{background:#FDF1F1;border-color:#F0AEAE;color:var(--red-dark);}
+  .step.ng .sn{background:var(--red);}
+
+  .code{background:#1E293B;border-radius:8px;padding:8px 10px;font-family:'Roboto Mono',monospace;font-size:13.8px;font-weight:700;color:#93C5FD;line-height:1.42;word-break:break-all;}
+  .code .g{color:#86EFAC;} .code .r{color:#FCA5A5;} .code .y{color:#FDE68A;}
+
+  .kv{flex:1;min-height:0;display:flex;flex-direction:column;gap:6px;}
+  .kvi{flex:1;display:flex;flex-direction:column;justify-content:center;gap:2px;background:#fff;border:1.5px solid var(--line);border-left:6px solid var(--green);border-radius:9px;padding:6px 10px;min-height:0;}
+  .kvi .t{font-size:15.5px;font-weight:900;color:var(--green-dark);line-height:1.22;}
+  .kvi .d{font-size:14px;font-weight:800;color:#5B6472;line-height:1.3;}
+  .kvi .d code{font-family:'Roboto Mono',monospace;font-size:13.5px;color:#0B5136;}
+
+  .warn{flex:0 0 auto;margin:9px 16px 0;display:flex;align-items:center;gap:12px;background:#FFFBEB;border:2.5px solid #FCD34D;border-radius:12px;padding:8px 14px;}
+  .warn .wt{flex:0 0 auto;font-size:14.5px;font-weight:900;color:#B45309;}
+  .warn .wl{flex:1;display:flex;gap:8px;}
+  .warn .wl span{flex:1;font-size:14.5px;font-weight:900;color:#92400E;background:#fff;border:1.5px solid #F6D08A;border-radius:8px;padding:6px 9px;line-height:1.3;}
+  .warn .wl code{font-family:'Roboto Mono',monospace;font-size:13.5px;color:#B45309;}
+
+  .next{flex:0 0 auto;margin:8px 16px 18px;background:linear-gradient(180deg,#EAF2FF,#DCEAFE);border:2.5px solid var(--blue);border-radius:13px;padding:8px 18px;display:flex;align-items:center;gap:11px;font-weight:900;font-size:19px;color:var(--blue-dark);box-shadow:0 3px 9px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .next .na{flex:0 0 auto;width:26px;height:26px;color:var(--blue);}
+  .next b{color:var(--orange);}
+  .src{position:absolute;left:16px;bottom:3px;font-size:10px;color:#AEB6C2;font-weight:700;z-index:3;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const ICON={arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',brace:'<path d="M8 3H7a2 2 0 0 0-2 2v4a2 2 0 0 1-2 2 2 2 0 0 1 2 2v4a2 2 0 0 0 2 2h1"/><path d="M16 3h1a2 2 0 0 1 2 2v4a2 2 0 0 0 2 2 2 2 0 0 0-2 2v4a2 2 0 0 1-2 2h-1"/>',hist:'<path d="M3 3v6h6"/><path d="M3.5 9a9 9 0 1 0 2.1-3.4L3 8"/><path d="M12 7v5l4 2"/>',shield:'<path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z"/><path d="M9 12l2 2 4-4"/>'};
+const svg=(n,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${ICON[n]}</svg>`;
+
+/* ① 実行履歴で赤い所を探す */
+const f1=`<svg viewBox="0 0 320 104" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+  <defs><filter id="z1" x="-40%" y="-40%" width="180%" height="190%"><feDropShadow dx="0" dy="2.5" stdDeviation="2.4" flood-color="#1B2A44" flood-opacity=".2"/></filter></defs>
+  ${[['#16A34A',6],['#16A34A',34],['#DC2626',62]].map((s,i)=>`<g transform="translate(50,${s[1]})" filter="url(#z1)"><rect x="0" y="0" width="150" height="26" rx="7" fill="${i===2?'#FFF1F1':'#fff'}" stroke="${s[0]}" stroke-width="${i===2?'3':'2.2'}"/><circle cx="16" cy="13" r="7" fill="${s[0]}"/>${i===2?'<path d="M12.5 9.5 l7 7 M19.5 9.5 l-7 7" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/>':'<path d="M12.5 13.5 l2.5 2.5 5-5.5" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>'}<rect x="30" y="10" width="${i===2?'96':'80'}" height="6" rx="3" fill="${i===2?'#F0BFBF':'#D8E3F2'}"/></g>`).join('')}
+  <g transform="translate(212,60)"><circle cx="22" cy="16" r="16" fill="#DC2626"/><path d="M22 8v9M22 21h.01" stroke="#fff" stroke-width="3.4" stroke-linecap="round"/></g>
+  <text x="252" y="40" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#991B1B" text-anchor="middle">ここが赤い</text>
+</svg>`;
+
+/* ② スキーマの中の1行を直す */
+const f2=`<svg viewBox="0 0 320 104" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+  <defs><marker id="mz" markerUnits="userSpaceOnUse" markerWidth="13" markerHeight="13" refX="9" refY="6.5" orient="auto"><path d="M0 0 L13 6.5 L0 13 z" fill="#7C3AED"/></marker></defs>
+  <rect x="10" y="12" width="126" height="80" rx="9" fill="#1E293B"/>
+  ${Array.from({length:5},(_,i)=>`<rect x="22" y="${24+i*13}" width="${i===2?'92':'70'}" height="6" rx="3" fill="${i===2?'#FCA5A5':'#3E5372'}"/>`).join('')}
+  <path d="M144 52 H 174" stroke="#7C3AED" stroke-width="4.5" stroke-linecap="round" marker-end="url(#mz)"/>
+  <rect x="186" y="12" width="126" height="80" rx="9" fill="#1E293B"/>
+  ${Array.from({length:5},(_,i)=>`<rect x="198" y="${24+i*13}" width="${i===2?'102':'70'}" height="6" rx="3" fill="${i===2?'#86EFAC':'#3E5372'}"/>`).join('')}
+  <text x="249" y="104" font-family="Noto Sans JP" font-size="14" font-weight="900" fill="#0B5136" text-anchor="middle">1行だけ書き換える</text>
+</svg>`;
+
+/* ③ もう1つの手＝先に埋める */
+const f3=`<svg viewBox="0 0 320 104" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+  <defs><marker id="mz2" markerUnits="userSpaceOnUse" markerWidth="13" markerHeight="13" refX="9" refY="6.5" orient="auto"><path d="M0 0 L13 6.5 L0 13 z" fill="#16A34A"/></marker></defs>
+  <rect x="8" y="34" width="70" height="40" rx="9" fill="#fff" stroke="#94A3B8" stroke-width="2.6"/>
+  <text x="43" y="59" font-family="Roboto Mono" font-size="16" font-weight="700" fill="#64748B" text-anchor="middle">null</text>
+  <path d="M86 54 H 112" stroke="#16A34A" stroke-width="4.5" stroke-linecap="round" marker-end="url(#mz2)"/>
+  <g transform="translate(124,28)">
+    <rect x="0" y="0" width="88" height="52" rx="10" fill="#EAF9F1" stroke="#16A34A" stroke-width="2.8"/>
+    <text x="44" y="22" font-family="Roboto Mono" font-size="14" font-weight="700" fill="#0B5136" text-anchor="middle">coalesce</text>
+    <text x="44" y="40" font-family="Noto Sans JP" font-size="13.5" font-weight="900" fill="#0B5136" text-anchor="middle">で埋める</text>
+  </g>
+  <path d="M220 54 H 244" stroke="#16A34A" stroke-width="4.5" stroke-linecap="round" marker-end="url(#mz2)"/>
+  <g transform="translate(254,34)">
+    <rect x="0" y="0" width="58" height="40" rx="9" fill="#16A34A"/>
+    <text x="29" y="25" font-family="Noto Sans JP" font-size="14" font-weight="900" fill="#fff" text-anchor="middle">未入力</text>
+  </g>
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.106-2</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">直す場所と、<span class="hl">もう1つの手</span></div>
+    <img class="title-chara" src="${A}chara/chara_point.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svg('brace')}</div>
+    <div class="txt">直すのは<b>スキーマの1行</b>。作り直しは要りません。空欄が来ても止まらない形にします。</div>
+  </div>
+
+  <div class="stage">
+    <div class="col">
+      <div class="ch2"><span class="n">1</span>場所を見つける</div>
+      <div class="fig">${f1}</div>
+      <div class="cbody">
+        <div class="card">
+          <div class="cardh"><span class="ci">${svg('hist',2.2)}</span>実行履歴をひらく</div>
+          <div class="cardb">
+            <div class="step"><span class="sn">1</span>失敗した実行を開く</div>
+            <div class="step ng"><span class="sn">2</span>赤いアクションを見る</div>
+            <div class="step"><span class="sn">3</span>どの項目かメッセージで分かる</div>
+          </div>
+        </div>
+      </div>
+      <div class="cap">エラー文に<b>項目名が出る</b>ので、そこを直します。</div>
+    </div>
+
+    <div class="col hot">
+      <div class="ch2"><span class="n">2</span>スキーマを直す</div>
+      <div class="fig">${f2}</div>
+      <div class="cbody">
+        <div class="card">
+          <div class="cardh"><span class="ci">${svg('brace',2.2)}</span>JSON の解析 のスキーマ</div>
+          <div class="cardb">
+            <div class="code"><span class="y">"担当者"</span>: {<br>&nbsp;&nbsp;<span class="g">"type": ["string","null"]</span><br>}</div>
+            <div class="code"><span class="r">"required": [… ,"担当者"]</span> → <span class="g">外す</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="cap">型に<b>null を足す</b>／必須から<b>外す</b>。この2か所だけ。</div>
+    </div>
+
+    <div class="col fin">
+      <div class="ch2"><span class="n">3</span>もう1つの手</div>
+      <div class="fig">${f3}</div>
+      <div class="cbody">
+        <div class="kv">
+          <div class="kvi"><span class="t">先に埋めてしまう</span><span class="d"><code>coalesce(値,'未入力')</code> で空欄を言葉に</span></div>
+          <div class="kvi"><span class="t">取る前に絞る</span><span class="d">空欄の行はフィルターで除いておく</span></div>
+          <div class="kvi"><span class="t">そもそも入れてもらう</span><span class="d">Formsや入力欄を必須にする</span></div>
+        </div>
+      </div>
+      <div class="cap">スキーマを触りたくなければ、<b>この3つ</b>でも回避できます。</div>
+    </div>
+  </div>
+
+  <div class="warn">
+    <div class="wt">使う前に確認</div>
+    <div class="wl">
+      <span>「サンプルから生成」を<b>やり直すと元に戻る</b>ので、直した後は触らない</span>
+      <span>数値なら <code>["integer","null"]</code>、入れ子は<b>その階層で</b>直します</span>
+      <span>公式に載っている手順ではなく、<b>広く使われている対処</b>です</span>
+    </div>
+  </div>
+
+  <div class="next"><span class="na">${svg('arrow')}</span>「昨日まで動いていたのに」の原因、<b>だいたいこれ</b>です！</div>
+  <div class="src">出典：Microsoft Learn「Power Automate でデータ操作を使用する」（JSON の解析）／null エラーの対処はコミュニティの定番手法（動作は要確認）／画面は再現</div>
+`;
+</script>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>

@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.98-1 先月つくった処理は、コピペで使い回せる</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB; --blue-bg:#EFF6FF; --blue-dark:#1E40AF;
+    --green:#16A34A; --green-bg:#ECFDF5; --green-dark:#065F46;
+    --red:#DC2626; --orange:#EA580C; --violet:#7C3AED;
+    --ink:#1F2937; --gray:#374151; --weak:#6B7280; --line:#E5E7EB;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+  .ic{display:block;width:100%;height:100%;}
+
+  .titlebar{height:90px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:16px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:26px;border-radius:999px;padding:7px 20px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .vol-logo{height:50px;width:50px;object-fit:contain;flex:0 0 auto;background:#fff;border-radius:12px;padding:5px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
+  .title-text{color:#fff;font-weight:900;font-size:27px;line-height:1.14;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:158px;}
+  .title-text .hl{color:#FFE08A;}
+  .title-chara{position:absolute;right:14px;bottom:-44px;height:146px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .concl{margin:9px 16px 0;background:var(--blue-bg);border:2.5px solid var(--blue);border-radius:13px;display:flex;align-items:center;gap:13px;padding:8px 18px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;width:40px;height:40px;border-radius:11px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;padding:8px;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
+  .concl .txt{font-weight:800;font-size:19px;color:var(--blue-dark);line-height:1.3;padding-right:158px;}
+  .concl .txt b{color:var(--orange);}
+
+  .stage{flex:1 1 auto;margin:10px 16px 0;display:flex;align-items:stretch;gap:11px;min-height:0;}
+  .col{flex:1;display:flex;flex-direction:column;gap:7px;min-height:0;background:#F8FAFC;border:2.5px solid #DCE3EE;border-radius:14px;padding:8px 10px 9px;position:relative;}
+  .col.hot{border-color:var(--violet);background:#F9F5FE;box-shadow:0 5px 12px rgba(124,58,237,.14);}
+  .col.fin{border-color:#7FCEA9;background:var(--green-bg);box-shadow:0 5px 12px rgba(22,163,74,.12);}
+  .ch2{flex:0 0 auto;display:flex;align-items:center;gap:9px;font-weight:900;font-size:22px;color:#1B2A44;line-height:1.16;}
+  .ch2 .n{flex:0 0 auto;width:32px;height:32px;border-radius:9px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;box-shadow:0 2px 4px rgba(0,0,0,.22);}
+  .col.hot .ch2 .n{background:linear-gradient(180deg,#8B5CF6,#7C3AED);}
+  .col.fin .ch2 .n{background:linear-gradient(180deg,#34D399,#16A34A);}
+
+  .scene{flex:0 0 auto;height:126px;border-radius:11px;position:relative;overflow:hidden;background:#EDF3FA;}
+  .col.hot .scene{background:#F1E9FD;}
+  .col.fin .scene{background:#DCF3E7;}
+  .scene .sc-bg{position:absolute;inset:0;width:100%;height:100%;}
+  .scene .chara{position:absolute;right:4px;bottom:0;height:114px;z-index:2;filter:drop-shadow(0 3px 5px rgba(0,0,0,.22));}
+
+  .body{flex:1;display:flex;flex-direction:column;gap:7px;min-height:0;}
+
+  /* アクションカード */
+  .card{background:#fff;border:2.5px solid #C7D6EE;border-radius:11px;overflow:hidden;box-shadow:0 4px 10px rgba(20,40,90,.13);display:flex;flex-direction:column;}
+  .card.grow{flex:1;min-height:0;}
+  .card.sel{border-color:var(--violet);box-shadow:0 0 0 3px #EADDFB,0 4px 10px rgba(20,40,90,.13);}
+  .card.new{border-color:var(--green);box-shadow:0 0 0 3px #CFEFE0,0 4px 10px rgba(20,40,90,.13);}
+  .cardh{flex:0 0 auto;display:flex;align-items:center;gap:9px;padding:7px 10px;background:#F2F7FD;border-bottom:1.5px solid #E2EAF5;font-weight:900;font-size:15.5px;color:#1B2A44;}
+  .cardh img{width:28px;height:28px;object-fit:contain;flex:0 0 auto;}
+  .cardh .dots{margin-left:auto;font-weight:900;color:var(--weak);letter-spacing:2px;flex:0 0 auto;font-size:19px;}
+  .cardb{flex:1;padding:7px 10px;display:flex;flex-direction:column;gap:6px;min-height:0;}
+  .cf{display:flex;gap:8px;align-items:baseline;font-size:15px;line-height:1.3;}
+  .cf .k{flex:0 0 52px;font-weight:900;color:var(--weak);}
+  .cf .v{flex:1;min-width:0;font-weight:800;color:#243B58;}
+  .dynp{display:inline-flex;align-items:center;gap:3px;background:#EAF2FF;border:1.5px solid #9DC1F5;border-radius:6px;padding:0 7px;font-size:14px;color:#0B3A8F;font-weight:900;}
+  .dynp::before{content:"⚡";font-size:13px;}
+
+  /* …メニュー */
+  .menu{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:2.5px solid #D6C7EF;border-radius:11px;overflow:hidden;box-shadow:0 5px 12px rgba(124,58,237,.2);}
+  .mi{flex:1;display:flex;align-items:center;gap:10px;padding:0 11px;font-size:15px;font-weight:800;color:#475569;border-bottom:1.5px solid #F1F0F8;min-height:0;}
+  .mi:last-child{border-bottom:none;}
+  .mi .mic{flex:0 0 auto;width:24px;height:24px;color:#8B93A5;}
+  .mi.on{background:linear-gradient(90deg,#7C3AED,#8B5CF6);color:#fff;font-weight:900;font-size:15.5px;}
+  .mi.on .mic{color:#fff;}
+
+  /* 新しいステップ パネル */
+  .panel{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:2.5px solid #C7D6EE;border-radius:11px;overflow:hidden;box-shadow:0 4px 10px rgba(20,40,90,.13);}
+  .ptab{flex:0 0 auto;display:flex;background:#F2F7FD;border-bottom:1.5px solid #E2EAF5;}
+  .ptab span{flex:0 0 auto;text-align:center;font-size:14px;font-weight:900;color:var(--weak);padding:7px 11px;white-space:nowrap;}
+  .ptab span.on{flex:1;color:#5B21B6;background:#fff;border-bottom:3.5px solid var(--violet);}
+  .pbody{flex:1;padding:8px 9px;display:flex;flex-direction:column;gap:7px;min-height:0;}
+  .clip{display:flex;align-items:center;gap:9px;background:#F7F2FE;border:2px solid #D6C7EF;border-radius:9px;padding:7px 9px;font-size:15px;font-weight:900;color:#4C1D95;}
+  .clip img{width:26px;height:26px;object-fit:contain;flex:0 0 auto;}
+  .clip .cic{width:26px;height:26px;flex:0 0 auto;color:#7C3AED;}
+
+  .chk{flex:0 0 auto;display:flex;flex-direction:column;gap:5px;background:#fff;border:2px solid #A7E3C7;border-radius:10px;padding:7px 10px;}
+  .chk .c{display:flex;align-items:center;gap:9px;font-size:15px;font-weight:900;color:#0B5136;line-height:1.28;}
+  .chk .c .cic{flex:0 0 auto;width:22px;height:22px;color:var(--green);}
+
+  .cap{flex:0 0 auto;font-size:15.5px;font-weight:900;line-height:1.34;border-radius:9px;padding:7px 10px;color:#334155;background:#E7EEF7;}
+  .col.hot .cap{color:#5B21B6;background:#EEE4FC;}
+  .col.fin .cap{color:var(--green-dark);background:#CFEFE0;}
+  .cap b{color:var(--orange);}
+
+  .next{flex:0 0 auto;margin:9px 16px 18px;background:linear-gradient(180deg,#EAF2FF,#DCEAFE);border:2.5px solid var(--blue);border-radius:13px;padding:9px 18px;display:flex;align-items:center;gap:11px;font-weight:900;font-size:19px;color:var(--blue-dark);box-shadow:0 3px 9px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .next .na{flex:0 0 auto;width:26px;height:26px;color:var(--blue);}
+  .next b{color:var(--orange);}
+  .src{position:absolute;left:16px;bottom:3px;font-size:10px;color:#AEB6C2;font-weight:700;z-index:3;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const ICON={
+  arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',
+  copy:'<rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',
+  pencil:'<path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/>',
+  beaker:'<path d="M9 3h6"/><path d="M10 3v6L4.6 18.9A2 2 0 0 0 6.3 22h11.4a2 2 0 0 0 1.7-3.1L14 9V3"/>',
+  comment:'<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
+  trash:'<path d="M3 6h18"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>',
+  check:'<path d="M20 6L9 17l-5-5"/>'
+};
+const svg=(n,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${ICON[n]}</svg>`;
+
+/* ---- 情景SVG（リアル寄り：グラデ＋影＋ディテール） ---- */
+const defs=(id,c1,c2)=>`
+  <linearGradient id="pg${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#E4ECF8"/></linearGradient>
+  <linearGradient id="ac${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${c1}"/><stop offset="1" stop-color="${c2}"/></linearGradient>
+  <filter id="sd${id}" x="-40%" y="-40%" width="180%" height="190%"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#16233F" flood-opacity=".26"/></filter>`;
+/* 書類（フロー上のアクションカードに見立てた紙） */
+const paper=(id,x,y,s,tint)=>`<g transform="translate(${x},${y}) scale(${s})" filter="url(#sd${id})">
+  <rect x="0" y="0" width="86" height="66" rx="7" fill="url(#pg${id})" stroke="${tint}" stroke-width="2.6"/>
+  <rect x="0" y="0" width="86" height="17" rx="7" fill="${tint}" opacity=".18"/>
+  <circle cx="12" cy="8.5" r="4.6" fill="${tint}"/>
+  <line x1="22" y1="8.5" x2="66" y2="8.5" stroke="${tint}" stroke-width="3.4" stroke-linecap="round" opacity=".65"/>
+  <line x1="10" y1="29" x2="72" y2="29" stroke="#AFC0D8" stroke-width="3.6" stroke-linecap="round"/>
+  <line x1="10" y1="41" x2="58" y2="41" stroke="#AFC0D8" stroke-width="3.6" stroke-linecap="round"/>
+  <line x1="10" y1="53" x2="66" y2="53" stroke="#AFC0D8" stroke-width="3.6" stroke-linecap="round"/>
+</g>`;
+
+/* ① 1枚の紙が2枚になる（複製） */
+const scene1=`<svg class="sc-bg" viewBox="0 0 340 126" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+  <defs>${defs(1,'#3B82F6','#1D4ED8')}</defs>
+  ${paper(1,14,34,0.86,'#2563EB')}
+  ${paper(1,96,22,0.86,'#7C3AED')}
+  <g stroke="#2563EB" stroke-width="4.6" stroke-linecap="round" fill="none" opacity=".85">
+    <path d="M92 62 h-0.5"/>
+  </g>
+  <g transform="translate(176,44)">
+    <circle cx="20" cy="20" r="20" fill="url(#ac1)" filter="url(#sd1)"/>
+    <path d="M12 20h16M20 12v16" stroke="#fff" stroke-width="4.2" stroke-linecap="round"/>
+  </g>
+</svg>`;
+
+/* ② フローAからフローBへ、紙が飛んでいく */
+const scene2=`<svg class="sc-bg" viewBox="0 0 340 126" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+  <defs>${defs(2,'#8B5CF6','#6D28D9')}
+    <marker id="mk2" markerWidth="9" markerHeight="9" refX="6" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="#7C3AED"/></marker>
+  </defs>
+  <g opacity=".55">
+    <rect x="10" y="18" width="66" height="90" rx="9" fill="#fff" stroke="#B9CBE6" stroke-width="2.4"/>
+    <text x="43" y="14" font-family="Noto Sans JP" font-size="13" font-weight="900" fill="#64748B" text-anchor="middle">フローA</text>
+    <rect x="20" y="28" width="46" height="16" rx="4" fill="#DCE7F7"/>
+    <rect x="20" y="50" width="46" height="16" rx="4" fill="#DCE7F7"/>
+    <rect x="20" y="72" width="46" height="16" rx="4" fill="#DCE7F7"/>
+  </g>
+  <g opacity=".55">
+    <rect x="264" y="18" width="66" height="90" rx="9" fill="#fff" stroke="#B9CBE6" stroke-width="2.4"/>
+    <text x="297" y="14" font-family="Noto Sans JP" font-size="13" font-weight="900" fill="#64748B" text-anchor="middle">フローB</text>
+    <rect x="274" y="28" width="46" height="16" rx="4" fill="#DCE7F7"/>
+    <rect x="274" y="72" width="46" height="16" rx="4" fill="#EDE4FB" stroke="#B79BEE" stroke-width="2" stroke-dasharray="4 3"/>
+  </g>
+  <path d="M86 60 C 140 20, 210 20, 258 74" stroke="#7C3AED" stroke-width="4" fill="none" stroke-linecap="round" stroke-dasharray="9 7" marker-end="url(#mk2)"/>
+  ${paper(2,132,40,0.72,'#7C3AED')}
+</svg>`;
+
+/* ③ 貼り付いた紙＋チェック＋時計（時間が浮く） */
+const scene3=`<svg class="sc-bg" viewBox="0 0 340 126" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+  <defs>${defs(3,'#34D399','#16A34A')}</defs>
+  ${paper(3,18,30,0.92,'#16A34A')}
+  <g transform="translate(88,74)">
+    <circle cx="17" cy="17" r="17" fill="url(#ac3)" filter="url(#sd3)"/>
+    <path d="M9 17.5 l5.5 5.5 L26 11" stroke="#fff" stroke-width="4.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <g transform="translate(140,26)" filter="url(#sd3)">
+    <circle cx="34" cy="34" r="32" fill="#fff" stroke="#7FCEA9" stroke-width="3"/>
+    <line x1="34" y1="34" x2="34" y2="14" stroke="#16A34A" stroke-width="4.4" stroke-linecap="round"/>
+    <line x1="34" y1="34" x2="49" y2="41" stroke="#16A34A" stroke-width="3.4" stroke-linecap="round"/>
+    <circle cx="34" cy="34" r="4" fill="#16A34A"/>
+    <text x="34" y="80" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#0B5136" text-anchor="middle">30分が浮く</text>
+  </g>
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.98-1</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">先月つくった処理は、<span class="hl">コピペで別のフローに使い回せる</span></div>
+    <img class="title-chara" src="${A}chara/chara_confident.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svg('copy')}</div>
+    <div class="txt">同じような通知やメールを、毎回いちから組み直しがちですよね。<b>設定を入れたまままるごとコピー</b>して、<b>別のフローに貼れます</b>。</div>
+  </div>
+
+  <div class="stage">
+    <div class="col hot">
+      <div class="ch2"><span class="n">1</span>「…」からコピー</div>
+      <div class="scene">${scene1}<img class="chara" src="${A}chara/chara_point.png" alt=""></div>
+      <div class="body">
+        <div class="card sel">
+          <div class="cardh"><img src="${A}icons/pa_outlook.png" alt="">メールの送信 (V2)<span class="dots">…</span></div>
+        </div>
+        <div class="menu">
+          <div class="mi"><span class="mic">${svg('pencil',2.2)}</span>名前の変更</div>
+          <div class="mi"><span class="mic">${svg('beaker',2.2)}</span>静的な結果</div>
+          <div class="mi on"><span class="mic">${svg('copy',2.2)}</span>クリップボードにコピー</div>
+          <div class="mi"><span class="mic">${svg('trash',2.2)}</span>削除</div>
+        </div>
+      </div>
+      <div class="cap">カード右上の<b>「…」</b>を押すだけ。</div>
+    </div>
+
+    <div class="col hot">
+      <div class="ch2"><span class="n">2</span>別のフローで貼る</div>
+      <div class="scene">${scene2}</div>
+      <div class="body">
+        <div class="panel">
+          <div class="ptab"><span>標準</span><span>カスタム</span><span class="on">自分のクリップボード</span></div>
+          <div class="pbody">
+            <div class="clip"><img src="${A}icons/pa_outlook.png" alt="">メールの送信 (V2)</div>
+            <div class="clip"><span class="cic">${svg('copy',2.2)}</span>条件（中身ごと）</div>
+            <div class="clip"><span class="cic">${svg('copy',2.2)}</span>Apply to each（中身ごと）</div>
+          </div>
+        </div>
+      </div>
+      <div class="cap"><b>「新しいステップ」</b>を足すところに出てきます。</div>
+    </div>
+
+    <div class="col fin">
+      <div class="ch2"><span class="n">3</span>中身ごと、そのまま</div>
+      <div class="scene">${scene3}<img class="chara" src="${A}chara/chara_guts.png" alt=""></div>
+      <div class="body">
+        <div class="card new grow">
+          <div class="cardh"><img src="${A}icons/pa_outlook.png" alt="">メールの送信 (V2)<span class="dots">…</span></div>
+          <div class="cardb">
+            <div class="cf"><span class="k">宛先</span><span class="v"><span class="dynp">担当者</span></span></div>
+            <div class="cf"><span class="k">件名</span><span class="v">【ご案内】<span class="dynp">案件名</span></span></div>
+            <div class="cf"><span class="k">添付</span><span class="v"><span class="dynp">見積PDF</span></span></div>
+          </div>
+        </div>
+        <div class="chk">
+          <div class="c"><span class="cic">${svg('check',3)}</span>書式も式も、入ったまま</div>
+          <div class="c"><span class="cic">${svg('check',3)}</span>添付の設定も、そのまま</div>
+        </div>
+      </div>
+      <div class="cap">直すのは<b>宛先くらい</b>で済みます。</div>
+    </div>
+  </div>
+
+  <div class="next"><span class="na">${svg('arrow')}</span>条件の中ごと・くり返しごとも運べます。<b>使いどころと落とし穴</b>は <b>2枚目</b>へ！</div>
+  <div class="src">出典：Microsoft Learn「クラウドフロー内のアクションに対して、移動、削除、追加のオプションを実行する」／画面は再現・データは架空</div>
+`;
+</script>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>

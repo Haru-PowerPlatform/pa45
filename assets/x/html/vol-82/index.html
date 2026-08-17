@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.82-1 ZIPは自動で開ける</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB; --blue-bg:#EFF6FF; --blue-dark:#1E40AF;
+    --green:#16A34A; --green-dark:#065F46;
+    --red:#DC2626; --orange:#EA580C; --od:#0364B8;
+    --ink:#1F2937; --gray:#374151; --weak:#6B7280; --line:#E5E7EB;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+  .ic{display:block;width:100%;height:100%;}
+
+  .titlebar{height:90px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:16px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:26px;border-radius:999px;padding:7px 20px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .vol-logo{height:50px;width:50px;object-fit:contain;flex:0 0 auto;background:#fff;border-radius:12px;padding:5px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
+  .title-text{color:#fff;font-weight:900;font-size:27px;line-height:1.14;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:150px;}
+  .title-text .hl{color:#FFE08A;}
+  .title-chara{position:absolute;right:14px;bottom:-40px;height:142px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .concl{margin:10px 16px 0;background:var(--blue-bg);border:2.5px solid var(--blue);border-radius:13px;display:flex;align-items:center;gap:13px;padding:10px 18px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;width:40px;height:40px;border-radius:11px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;padding:8px;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
+  .concl .txt{font-weight:800;font-size:19.5px;color:var(--blue-dark);line-height:1.34;padding-right:150px;}
+  .concl .txt b{color:var(--orange);}
+
+  .stage{flex:1 1 auto;margin:12px 16px 0;display:flex;align-items:center;gap:8px;min-height:0;}
+  .zone{flex:1;display:flex;flex-direction:column;min-height:0;height:100%;}
+  .zh{flex:0 0 auto;font-weight:900;font-size:15px;color:var(--weak);text-align:center;margin-bottom:6px;}
+  .zbox{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:#F8FAFC;border:2px solid #E2E8F1;border-radius:14px;padding:12px;min-height:0;box-shadow:inset 0 1px 0 rgba(255,255,255,.7);}
+  .zbox.res{background:#F1FAF4;border-color:#A7E3C4;}
+  .zbox .lab{font-size:15px;font-weight:900;color:#334155;}
+  .zbox.res .lab{color:var(--green-dark);}
+
+  /* 中央：解凍アクション */
+  .mid{flex:0 0 176px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;}
+  .actbadge{background:#fff;border:2px solid var(--od);border-radius:12px;padding:9px 11px;text-align:center;box-shadow:0 4px 10px rgba(3,100,184,.18);}
+  .actbadge .an{font-size:13.5px;font-weight:900;color:var(--od);line-height:1.3;}
+  .actbadge .std{margin-top:4px;font-size:11px;font-weight:900;color:#fff;background:var(--od);border-radius:6px;padding:2px 8px;display:inline-block;}
+  .bigarrow{width:64px;height:34px;color:var(--od);}
+
+  /* 展開後ファイル一覧 */
+  .files{width:100%;display:flex;flex-direction:column;gap:6px;}
+  .frow{display:flex;align-items:center;gap:9px;background:#fff;border:1px solid #D7E4DA;border-radius:9px;padding:6px 10px;box-shadow:0 1px 3px rgba(0,0,0,.06);}
+  .frow .nm{font-size:14px;font-weight:800;color:#243B58;}
+  .frow .ok{margin-left:auto;font-size:11px;font-weight:900;color:#15803D;background:#DCFCE7;border-radius:5px;padding:1px 7px;}
+
+  .bonus{flex:0 0 auto;margin:9px 16px 0;background:linear-gradient(180deg,#FFFBEB,#FEF3C7);border:2px solid #FCD34D;border-radius:12px;padding:9px 16px;display:flex;align-items:center;gap:12px;}
+  .bonus .bt{flex:0 0 auto;font-size:14px;font-weight:900;color:#fff;background:#D97706;border-radius:7px;padding:4px 11px;}
+  .bonus .bx{font-size:16px;font-weight:800;color:#92400E;line-height:1.35;}
+  .bonus .bx b{color:#B45309;}
+
+  .next{flex:0 0 auto;margin:9px 16px 14px;background:linear-gradient(180deg,#EAF2FF,#DCEAFE);border:2.5px solid var(--blue);border-radius:13px;padding:11px 18px;display:flex;align-items:center;gap:11px;font-weight:900;font-size:20px;color:var(--blue-dark);box-shadow:0 3px 9px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .next .na{flex:0 0 auto;width:26px;height:26px;color:var(--blue);}
+  .next b{color:var(--orange);}
+  .src{position:absolute;left:16px;bottom:4px;font-size:10px;color:#AEB6C2;font-weight:700;z-index:3;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const ICON={arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',bulb:'<path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/>'};
+const svg=(n)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">${ICON[n]}</svg>`;
+// 大きいZIP箱SVG
+const zip=`<svg viewBox="0 0 150 150" width="150" height="150">
+  <defs><linearGradient id="zf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FBBF24"/><stop offset="1" stop-color="#D97706"/></linearGradient></defs>
+  <g filter="drop-shadow(0 6px 10px rgba(0,0,0,.22))">
+    <path d="M30 34 h40 l8 -10 h34 a8 8 0 0 1 8 8 v78 a8 8 0 0 1 -8 8 H30 a8 8 0 0 1 -8 -8 V42 a8 8 0 0 1 8 -8 z" fill="url(#zf)"/>
+    <rect x="60" y="24" width="16" height="104" fill="#B45309"/>
+    <g fill="#FDE68A"><rect x="62" y="30" width="12" height="8"/><rect x="62" y="46" width="12" height="8"/><rect x="62" y="62" width="12" height="8"/><rect x="62" y="78" width="12" height="8"/></g>
+    <rect x="58" y="96" width="20" height="26" rx="4" fill="#FDE68A" stroke="#B45309" stroke-width="1.5"/>
+    <circle cx="68" cy="106" r="3.5" fill="#B45309"/><rect x="66.5" y="106" width="3" height="10" fill="#B45309"/>
+  </g>
+</svg>`;
+const fEx=`<svg viewBox="0 0 24 26" width="24" height="26"><rect x="1" y="1" width="22" height="24" rx="3" fill="#fff" stroke="#B7C3D2"/><path d="M16 1l7 7h-7z" fill="#DDE6EF"/><rect x="1" y="14" width="16" height="11" rx="2" fill="#217346"/><text x="9" y="22.5" text-anchor="middle" fill="#fff" font-weight="900" font-size="8" font-family="Segoe UI">X</text></svg>`;
+const fPdf=`<svg viewBox="0 0 24 26" width="24" height="26"><rect x="1" y="1" width="22" height="24" rx="3" fill="#fff" stroke="#E4A8A3"/><path d="M16 1l7 7h-7z" fill="#F3D3D0"/><rect x="1" y="15" width="22" height="9" rx="2" fill="#C4241C"/><text x="12" y="22" text-anchor="middle" fill="#fff" font-weight="900" font-size="6.5" font-family="Segoe UI">PDF</text></svg>`;
+const fWd=`<svg viewBox="0 0 24 26" width="24" height="26"><rect x="1" y="1" width="22" height="24" rx="3" fill="#fff" stroke="#A9C0E8"/><path d="M16 1l7 7h-7z" fill="#D5E2F5"/><rect x="1" y="14" width="16" height="11" rx="2" fill="#2B579A"/><text x="9" y="22.5" text-anchor="middle" fill="#fff" font-weight="900" font-size="8" font-family="Segoe UI">W</text></svg>`;
+const fImg=`<svg viewBox="0 0 24 26" width="24" height="26"><rect x="1" y="1" width="22" height="24" rx="3" fill="#fff" stroke="#9AD6C4"/><rect x="4" y="5" width="16" height="13" rx="2" fill="#E8F7F0"/><circle cx="9" cy="10" r="2" fill="#F59E0B"/><path d="M4 16l5-5 4 4 3-3 4 4v2H4z" fill="#0E9F6E"/><rect x="4" y="20" width="16" height="3" rx="1.5" fill="#CBD5E1"/></svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.82-1</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">「zipは扱えない」はもう昔｜<span class="hl">ZIPは“標準アクション”で自動で開ける</span></div>
+    <img class="title-chara" src="${A}chara/chara_surprise.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svg('bulb')}</div>
+    <div class="txt">届いた<b>ZIP</b>を手で解凍していませんか。OneDriveの<b>標準アクション1個</b>で、中身がそのままフォルダに展開されます。</div>
+  </div>
+
+  <div class="stage">
+    <div class="zone">
+      <div class="zh">届くのは 1個の圧縮ファイル</div>
+      <div class="zbox">
+        <div style="font-size:13.5px;font-weight:900;color:#64748B;background:#EEF2F7;border:1px solid #DCE3EC;border-radius:8px;padding:5px 12px">📩 メールに添付 / フォルダに保存されて届く</div>
+        ${zip}
+        <div class="lab">資料一式.zip</div>
+        <div style="font-size:12.5px;font-weight:800;color:#94A3B8">4ファイル ・ 3.2 MB</div>
+        <div style="font-size:13px;font-weight:800;color:#B91C1C;background:#FEF2F2;border:1px solid #F3C0C0;border-radius:8px;padding:6px 12px;text-align:center;line-height:1.35">これまで：ダウンロード→手で解凍→<br>また保存…が地味に手間</div>
+      </div>
+    </div>
+
+    <div class="mid">
+      <div class="actbadge"><div class="an">⚡ フォルダーへの<br>アーカイブの抽出</div><span class="std">OneDrive 標準</span></div>
+      <span class="bigarrow">${svg('arrow')}</span>
+      <div style="font-size:12.5px;font-weight:900;color:var(--od);text-align:center;line-height:1.3">自動で<br>解凍</div>
+    </div>
+
+    <div class="zone">
+      <div class="zh">中身がフォルダに“展開”される</div>
+      <div class="zbox res">
+        <div class="lab" style="align-self:flex-start">📂 /展開先フォルダ</div>
+        <div class="files">
+          <div class="frow"><span style="width:24px;height:26px">${fEx}</span><span class="nm">見積書.xlsx</span><span class="ok">✓ 展開</span></div>
+          <div class="frow"><span style="width:24px;height:26px">${fPdf}</span><span class="nm">契約書.pdf</span><span class="ok">✓ 展開</span></div>
+          <div class="frow"><span style="width:24px;height:26px">${fWd}</span><span class="nm">提案書.docx</span><span class="ok">✓ 展開</span></div>
+          <div class="frow"><span style="width:24px;height:26px">${fImg}</span><span class="nm">現場写真.jpg</span><span class="ok">✓ 展開</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bonus">
+    <span class="bt">おまけ</span>
+    <span class="bx">Web上のファイルも<b>「URL からファイルをアップロード」</b>で直接保存OK。<b>有料のHTTPアクション不要</b>です。</span>
+  </div>
+
+  <div class="next"><span class="na">${svg('arrow')}</span>解凍先の指定と<b>“日本語ファイル名”の落とし穴</b>…<b>作り方</b>は <b>2枚目</b>へ！</div>
+  <div class="src">出典：Microsoft Learn（OneDrive for Business「フォルダーへのアーカイブの抽出」「URL からファイルをアップロード」）／画面は再現・データは架空</div>
+`;
+</script>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>

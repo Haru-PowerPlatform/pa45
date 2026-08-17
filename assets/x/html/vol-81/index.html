@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.81-1 info@の一次受けが止まらなくなる</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB; --blue-bg:#EFF6FF; --blue-dark:#1E40AF;
+    --green:#16A34A; --green-dark:#065F46;
+    --red:#DC2626; --orange:#EA580C; --ol:#0F6CBD; --teams:#5B5FC7;
+    --ink:#1F2937; --gray:#374151; --weak:#6B7280; --line:#E5E7EB;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+  .ic{display:block;width:100%;height:100%;}
+
+  .titlebar{height:90px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:16px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:26px;border-radius:999px;padding:7px 20px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .vol-logo{height:50px;width:50px;object-fit:contain;flex:0 0 auto;background:#fff;border-radius:12px;padding:5px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
+  .title-text{color:#fff;font-weight:900;font-size:27px;line-height:1.14;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:150px;}
+  .title-text .hl{color:#FFE08A;}
+  .title-chara{position:absolute;right:14px;bottom:-40px;height:142px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .concl{margin:10px 16px 0;background:var(--blue-bg);border:2.5px solid var(--blue);border-radius:13px;display:flex;align-items:center;gap:13px;padding:10px 18px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;width:40px;height:40px;border-radius:11px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;padding:8px;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
+  .concl .txt{font-weight:800;font-size:19.5px;color:var(--blue-dark);line-height:1.34;padding-right:150px;}
+  .concl .txt b{color:var(--orange);}
+
+  .stage{flex:1 1 auto;margin:12px 16px 0;display:flex;gap:10px;min-height:0;align-items:stretch;}
+  .sorter{flex:0 0 104px;display:flex;align-items:center;justify-content:center;}
+  .sorter svg{width:100%;height:92%;}
+
+  /* 左：info@ 共有メールボックス mock */
+  .inbox{flex:1;display:flex;flex-direction:column;min-height:0;background:#fff;border:1px solid #D7DEE8;border-radius:13px;box-shadow:0 6px 15px rgba(0,0,0,.13);overflow:hidden;font-family:'Segoe UI','Noto Sans JP',sans-serif;}
+  .ibh{flex:0 0 auto;display:flex;align-items:center;gap:9px;padding:9px 13px;background:linear-gradient(180deg,#F7FAFF,#EDF3FB);border-bottom:1px solid #E1E8F2;}
+  .ibh img{width:24px;height:24px;object-fit:contain;}
+  .ibh .nm{font-weight:900;font-size:16px;color:#1B3A5B;}
+  .ibh .un{margin-left:auto;font-size:12.5px;font-weight:900;color:#fff;background:var(--red);border-radius:999px;padding:2px 9px;}
+  .ibb{flex:1;padding:9px;display:flex;flex-direction:column;gap:7px;min-height:0;}
+  .mail{display:flex;flex-direction:column;gap:3px;border:1px solid #E7ECF3;border-left:5px solid var(--weak);border-radius:8px;padding:7px 10px;background:#FBFCFE;}
+  .mail.k1{border-left-color:#2563EB;} .mail.k2{border-left-color:#16A34A;} .mail.k3{border-left-color:#EA580C;}
+  .mail .top{display:flex;align-items:center;gap:7px;}
+  .mail .fr{font-size:12px;font-weight:800;color:var(--weak);}
+  .mail .dot{width:8px;height:8px;border-radius:50%;background:var(--red);}
+  .mail .sub{font-size:14.5px;font-weight:900;color:#243B58;line-height:1.25;}
+  .mail .sub .hlk{border-radius:4px;padding:0 3px;}
+  .mail.k1 .hlk{background:#DBEAFE;color:#1E40AF;} .mail.k2 .hlk{background:#DCFCE7;color:#15803D;} .mail.k3 .hlk{background:#FFEDD5;color:#9A3412;}
+  .ibnote{flex:0 0 auto;margin-top:auto;font-size:13.5px;font-weight:800;color:#9A3412;background:#FFF7ED;border:1px solid #FDBA74;border-radius:8px;padding:7px 9px;line-height:1.35;}
+
+  /* 右：振り分け表 */
+  .rules{flex:1.05;display:flex;flex-direction:column;min-height:0;}
+  .rh{flex:0 0 auto;font-weight:900;font-size:17px;color:var(--ink);margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+  .rh .sw{flex:0 0 auto;font-size:12px;font-weight:900;color:#fff;background:var(--teams);border-radius:6px;padding:3px 9px;}
+  .rtable{flex:1;display:flex;flex-direction:column;gap:8px;min-height:0;}
+  .rrow{flex:1;display:flex;align-items:center;gap:10px;background:#fff;border:2px solid var(--line);border-radius:11px;padding:9px 12px;box-shadow:0 2px 6px rgba(0,0,0,.07);min-height:0;}
+  .rrow.k1{border-color:#9DC1F5;background:#F5F9FF;} .rrow.k2{border-color:#A7E3C4;background:#F3FdF8;} .rrow.k3{border-color:#F6C58A;background:#FFFaf3;} .rrow.k4{border-color:#D6DCE6;background:#FAFBFC;}
+  .rrow .kw{flex:0 0 auto;width:118px;font-size:15px;font-weight:900;line-height:1.25;}
+  .rrow.k1 .kw{color:#1E40AF;} .rrow.k2 .kw{color:#15803D;} .rrow.k3 .kw{color:#9A3412;} .rrow.k4 .kw{color:#64748B;}
+  .rrow .ar{flex:0 0 auto;width:20px;height:20px;color:var(--weak);}
+  .rrow .to{flex:1;display:flex;align-items:center;gap:9px;min-width:0;}
+  .rrow .av{flex:0 0 auto;width:34px;height:34px;border-radius:50%;color:#fff;font-weight:900;font-size:14px;display:flex;align-items:center;justify-content:center;}
+  .rrow.k1 .av{background:linear-gradient(135deg,#3B82F6,#1D4ED8);} .rrow.k2 .av{background:linear-gradient(135deg,#34D399,#059669);} .rrow.k3 .av{background:linear-gradient(135deg,#FB923C,#EA580C);} .rrow.k4 .av{background:linear-gradient(135deg,#94A3B8,#64748B);}
+  .rrow .who{min-width:0;}
+  .rrow .dept{font-size:14.5px;font-weight:900;color:#243B58;line-height:1.15;}
+  .rrow .men{font-size:12px;font-weight:800;color:var(--teams);}
+
+  .next{flex:0 0 auto;margin:9px 16px 15px;background:linear-gradient(180deg,#EAF2FF,#DCEAFE);border:2.5px solid var(--blue);border-radius:13px;padding:11px 18px;display:flex;align-items:center;gap:11px;font-weight:900;font-size:20px;color:var(--blue-dark);box-shadow:0 3px 9px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .next .na{flex:0 0 auto;width:26px;height:26px;color:var(--blue);}
+  .next b{color:var(--orange);}
+  .src{position:absolute;left:16px;bottom:4px;font-size:10px;color:#AEB6C2;font-weight:700;z-index:3;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const ICON={arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',bulb:'<path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/>'};
+const svg=(n)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">${ICON[n]}</svg>`;
+
+// 仕分け機SVG（メール→仕分け→3色に振り分け）
+const sorter=`<svg viewBox="0 0 104 430" preserveAspectRatio="xMidYMid meet">
+  <defs><linearGradient id="mg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F8FAFF"/><stop offset="1" stop-color="#E7EFFA"/></linearGradient>
+  <linearGradient id="fn" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5B5FC7"/><stop offset="1" stop-color="#4145A8"/></linearGradient></defs>
+  <!-- 封筒（未読の束） -->
+  <g filter="drop-shadow(0 3px 4px rgba(0,0,0,.16))">
+    <rect x="26" y="14" width="52" height="36" rx="5" fill="#fff" stroke="#C7D3E4"/>
+    <rect x="20" y="22" width="52" height="36" rx="5" fill="#fff" stroke="#C7D3E4"/>
+    <rect x="14" y="30" width="52" height="36" rx="5" fill="url(#mg)" stroke="#9DB4D2" stroke-width="1.5"/>
+    <path d="M14 34 L40 52 L66 34" fill="none" stroke="#5B5FC7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="64" cy="30" r="7" fill="#DC2626"/><text x="64" y="34" text-anchor="middle" fill="#fff" font-size="9" font-weight="900" font-family="Segoe UI">!</text>
+  </g>
+  <path d="M40 70 V96" stroke="#B7C6DA" stroke-width="3" marker-end=""/>
+  <path d="M34 90 l6 8 6-8z" fill="#8697AE"/>
+  <!-- 仕分け機（漏斗） -->
+  <g filter="drop-shadow(0 4px 6px rgba(72,111,224,.25))">
+    <path d="M18 104 H86 L64 168 V196 H40 V168 Z" fill="url(#fn)"/>
+    <circle cx="52" cy="140" r="17" fill="#fff" opacity=".92"/>
+    <path d="M52 131 v9 l6 4" stroke="#4145A8" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <circle cx="52" cy="140" r="17" fill="none" stroke="#312E81" stroke-width="0"/>
+  </g>
+  <text x="52" y="214" text-anchor="middle" fill="#3A3E8C" font-size="12.5" font-weight="900" font-family="Noto Sans JP">キーワード</text>
+  <text x="52" y="230" text-anchor="middle" fill="#3A3E8C" font-size="12.5" font-weight="900" font-family="Noto Sans JP">で仕分け</text>
+  <!-- 3色に振り分け -->
+  <g stroke-width="6" stroke-linecap="round" fill="none">
+    <path d="M40 250 C40 274 78 276 96 288" stroke="#2563EB"/>
+    <path d="M52 250 V300" stroke="#16A34A"/>
+    <path d="M64 250 C64 274 26 300 8 312" stroke="#EA580C"/>
+  </g>
+  <g>
+    <circle cx="96" cy="290" r="9" fill="#2563EB"/><path d="M92 290h8M97 286l4 4-4 4" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="52" cy="306" r="9" fill="#16A34A"/><path d="M48 306h8M53 302l4 4-4 4" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="9" cy="314" r="9" fill="#EA580C"/><path d="M5 314h8M10 310l4 4-4 4" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <text x="52" y="356" text-anchor="middle" fill="#64748B" font-size="12" font-weight="900" font-family="Noto Sans JP">担当へ自動で</text>
+  <text x="52" y="372" text-anchor="middle" fill="#64748B" font-size="12" font-weight="900" font-family="Noto Sans JP">お届け</text>
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.81-1</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">info@の“気づいた人が見る”をやめる｜<span class="hl">担当者へ自動で交通整理</span></div>
+    <img class="title-chara" src="${A}chara/chara_confident.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svg('bulb')}</div>
+    <div class="txt">共有メールボックスに届いたメールを、<b>件名のキーワードで見分けて</b>、担当者のTeamsへ<b>自動でメンション</b>。放置がなくなります。</div>
+  </div>
+
+  <div class="stage">
+    <div class="inbox">
+      <div class="ibh"><img src="${A}icons/pa_outlook.png" alt=""><span class="nm">info@ 共有メールボックス</span><span class="un">未読 12</span></div>
+      <div class="ibb">
+        <div class="mail k1"><div class="top"><span class="dot"></span><span class="fr">みらい商事 様</span></div><div class="sub"><span class="hlk">見積</span>のご依頼について</div></div>
+        <div class="mail k2"><div class="top"><span class="dot"></span><span class="fr">さくら工業 様</span></div><div class="sub"><span class="hlk">請求書</span>の再発行の件</div></div>
+        <div class="mail k3"><div class="top"><span class="dot"></span><span class="fr">社内・田中</span></div><div class="sub"><span class="hlk">備品</span>の購入申請です</div></div>
+        <div class="mail"><div class="top"><span class="dot"></span><span class="fr">ひかり物産 様</span></div><div class="sub">御社サービスへのお問い合わせ</div></div>
+        <div class="mail k1"><div class="top"><span class="dot"></span><span class="fr">大空フーズ 様</span></div><div class="sub"><span class="hlk">注文</span>内容の変更について</div></div>
+        <div class="ibnote">⚠ 「気づいた人が見る」運用だと、<b>数日だれも触らない</b>ことに…。</div>
+      </div>
+    </div>
+
+    <div class="sorter">${sorter}</div>
+
+    <div class="rules">
+      <div class="rh">こう振り分ける<span class="sw">キーワードで自動</span></div>
+      <div class="rtable">
+        <div class="rrow k1"><span class="kw">「見積」「注文」</span><span class="ar">${svg('arrow')}</span><span class="to"><span class="av">田</span><span class="who"><div class="dept">営業部</div><div class="men">@田中さん にメンション</div></span></span></div>
+        <div class="rrow k2"><span class="kw">「請求」「支払」</span><span class="ar">${svg('arrow')}</span><span class="to"><span class="av">佐</span><span class="who"><div class="dept">経理部</div><div class="men">@佐藤さん にメンション</div></span></span></div>
+        <div class="rrow k3"><span class="kw">「備品」「設備」</span><span class="ar">${svg('arrow')}</span><span class="to"><span class="av">鈴</span><span class="who"><div class="dept">総務部</div><div class="men">@鈴木さん にメンション</div></span></span></div>
+        <div class="rrow k4"><span class="kw">上記以外</span><span class="ar">${svg('arrow')}</span><span class="to"><span class="av">全</span><span class="who"><div class="dept">チーム全体</div><div class="men">@チャネル で共有</div></span></span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="next"><span class="na">${svg('arrow')}</span>使うのは<b>共有メールボックス専用トリガー</b>＋スイッチ。<b>作り方</b>は <b>2枚目</b>へ！</div>
+  <div class="src">出典：Microsoft Learn（Office 365 Outlook「新しいメールが共有メールボックスに届いたとき (V2)」／Teams コネクタ）／画面は再現・社名は架空</div>
+`;
+</script>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.84-1 Formsの写真が台帳に自動で添付される</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB; --blue-bg:#EFF6FF; --blue-dark:#1E40AF;
+    --green:#16A34A; --green-dark:#065F46; --forms:#5B2E91; --spo:#0F6CBD; --spo-dark:#0A4F8A;
+    --orange:#EA580C;
+    --ink:#1F2937; --gray:#374151; --weak:#6B7280; --line:#E5E7EB;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+  .ic{display:block;width:100%;height:100%;}
+
+  .titlebar{height:90px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:16px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:26px;border-radius:999px;padding:7px 20px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .vol-logo{height:50px;width:50px;object-fit:contain;flex:0 0 auto;background:#fff;border-radius:12px;padding:5px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
+  .title-text{color:#fff;font-weight:900;font-size:27px;line-height:1.14;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:150px;}
+  .title-text .hl{color:#FFE08A;}
+  .title-chara{position:absolute;right:14px;bottom:-40px;height:142px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .concl{margin:10px 16px 0;background:var(--blue-bg);border:2.5px solid var(--blue);border-radius:13px;display:flex;align-items:center;gap:13px;padding:10px 18px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;width:40px;height:40px;border-radius:11px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;padding:8px;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
+  .concl .txt{font-weight:800;font-size:19.5px;color:var(--blue-dark);line-height:1.34;padding-right:150px;}
+  .concl .txt b{color:var(--orange);}
+
+  .stage{flex:1 1 auto;margin:12px 16px 0;display:flex;align-items:stretch;gap:11px;min-height:0;}
+
+  /* 左：Forms回答 */
+  .forms{flex:.92;display:flex;flex-direction:column;min-height:0;background:#fff;border:1px solid #D7DEE8;border-radius:13px;box-shadow:0 6px 15px rgba(0,0,0,.13);overflow:hidden;}
+  .fmh{flex:0 0 auto;display:flex;align-items:center;gap:9px;padding:10px 13px;background:linear-gradient(90deg,#5B2E91,#7C3AED);color:#fff;}
+  .fmh .fi{width:26px;height:26px;background:#fff;color:var(--forms);border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:16px;}
+  .fmh .nm{font-weight:900;font-size:16.5px;}
+  .fmb{flex:1;padding:11px 13px;display:flex;flex-direction:column;gap:9px;min-height:0;}
+  .qa{display:flex;flex-direction:column;gap:3px;}
+  .qa .q{font-size:13px;font-weight:800;color:var(--weak);}
+  .qa .a{font-size:16.5px;font-weight:900;color:#243B58;background:#F4F6FA;border-left:4px solid var(--forms);border-radius:0 7px 7px 0;padding:6px 10px;}
+  .qa .a.warn{color:#B91C1C;background:#FEF2F2;border-left-color:#DC2626;}
+  .photo{flex:1;display:flex;flex-direction:column;min-height:0;}
+  .photo .q{font-size:13px;font-weight:800;color:var(--weak);margin-bottom:3px;}
+  .photo .pf{flex:1;border-radius:9px;overflow:hidden;border:2px solid #E2E8F1;min-height:0;position:relative;}
+  .photo .pf svg{width:100%;height:100%;display:block;}
+  .photo .tagup{position:absolute;left:8px;bottom:8px;background:rgba(15,23,42,.82);color:#fff;font-size:12.5px;font-weight:900;border-radius:7px;padding:4px 9px;}
+
+  /* 中央 */
+  .mid{flex:0 0 176px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:11px;}
+  .actbadge{background:#fff;border:2.5px solid var(--spo);border-radius:12px;padding:11px 12px;text-align:center;box-shadow:0 4px 10px rgba(15,108,189,.16);font-size:14.5px;font-weight:900;color:var(--spo-dark);line-height:1.4;}
+  .actbadge b{color:var(--orange);}
+  .bigarrow{width:64px;height:36px;color:var(--spo);}
+  .note{font-size:13px;font-weight:900;color:#7C2D12;background:#FFF7ED;border:1.5px solid #FDBA74;border-radius:9px;padding:8px 10px;text-align:center;line-height:1.4;}
+
+  /* 右：SharePoint台帳 */
+  .ledger{flex:1.12;display:flex;flex-direction:column;min-height:0;background:#fff;border:1px solid #D7DEE8;border-radius:13px;box-shadow:0 6px 15px rgba(0,0,0,.13);overflow:hidden;}
+  .lgh{flex:0 0 auto;display:flex;align-items:center;gap:9px;padding:10px 13px;background:linear-gradient(180deg,#EAF2FB,#DCEAF7);border-bottom:1px solid #C9DAEC;}
+  .lgh img{width:24px;height:24px;object-fit:contain;}
+  .lgh .nm{font-weight:900;font-size:16.5px;color:#0A4F8A;}
+  .lgrid{flex:1;display:flex;flex-direction:column;min-height:0;}
+  .lr{display:grid;grid-template-columns:1fr 1.3fr 88px;border-bottom:1px solid #EBF0F5;min-height:0;}
+  .lr>div{padding:0 11px;display:flex;align-items:center;font-size:16px;font-weight:800;color:#243B58;border-right:1px solid #F1F4F8;}
+  .lr.head>div{background:#EEF4FB;color:#0A4F8A;font-weight:900;font-size:14px;padding-top:7px;padding-bottom:7px;}
+  .lr.body{flex:1;}
+  .lr .ph{justify-content:center;}
+  .lr .ph .thumb{width:52px;height:38px;border-radius:5px;overflow:hidden;border:1px solid #CBD5E1;background:#E2E8F0;}
+  .lr .ph .thumb svg{width:100%;height:100%;display:block;}
+  .lr .clip{font-size:12px;font-weight:900;color:var(--spo);}
+  .lr.newrow>div{background:#ECFDF5;}
+  .lr.newrow .nmc{color:#15803D;}
+  .lr .badge-new{margin-left:6px;font-size:10.5px;font-weight:900;color:#fff;background:var(--green);border-radius:5px;padding:1px 6px;}
+
+  .next{flex:0 0 auto;margin:9px 16px 14px;background:linear-gradient(180deg,#EAF2FF,#DCEAFE);border:2.5px solid var(--blue);border-radius:13px;padding:11px 18px;display:flex;align-items:center;gap:11px;font-weight:900;font-size:20px;color:var(--blue-dark);box-shadow:0 3px 9px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .next .na{flex:0 0 auto;width:26px;height:26px;color:var(--blue);}
+  .next b{color:var(--orange);}
+  .src{position:absolute;left:16px;bottom:4px;font-size:10px;color:#AEB6C2;font-weight:700;z-index:3;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const ICON={arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',bulb:'<path d="M9 18h6"/><path d="M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1h6c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z"/>'};
+const svg=(n)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">${ICON[n]}</svg>`;
+// 現場写真SVG（ビルと重機の情景）
+const site=(w,h)=>`<svg viewBox="0 0 200 150" preserveAspectRatio="xMidYMid slice">
+  <rect width="200" height="150" fill="#BFE3F5"/>
+  <circle cx="164" cy="30" r="16" fill="#FDE68A"/>
+  <rect y="104" width="200" height="46" fill="#B7A98F"/>
+  <rect x="18" y="42" width="46" height="62" fill="#8FA3B8"/><rect x="24" y="50" width="10" height="12" fill="#DCE6F0"/><rect x="40" y="50" width="10" height="12" fill="#DCE6F0"/><rect x="24" y="70" width="10" height="12" fill="#DCE6F0"/><rect x="40" y="70" width="10" height="12" fill="#DCE6F0"/>
+  <rect x="78" y="26" width="52" height="78" fill="#6E8398"/><rect x="86" y="36" width="12" height="14" fill="#C7D6E4"/><rect x="110" y="36" width="12" height="14" fill="#C7D6E4"/><rect x="86" y="58" width="12" height="14" fill="#C7D6E4"/><rect x="110" y="58" width="12" height="14" fill="#C7D6E4"/><rect x="86" y="80" width="12" height="14" fill="#C7D6E4"/><rect x="110" y="80" width="12" height="14" fill="#C7D6E4"/>
+  <g stroke="#F59E0B" stroke-width="4" fill="none"><path d="M150 104 V40 H186"/><path d="M150 48 L172 40"/></g><rect x="182" y="40" width="6" height="20" fill="#B45309"/>
+  <rect x="140" y="90" width="30" height="14" rx="2" fill="#F59E0B"/><circle cx="147" cy="106" r="5" fill="#334155"/><circle cx="163" cy="106" r="5" fill="#334155"/>
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.84-1</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">現場写真、集めたはいいけど<span class="hl">“誰の分”か分からない…を解決</span></div>
+    <img class="title-chara" src="${A}chara/chara_smile.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svg('bulb')}</div>
+    <div class="txt">Forms は<b>写真も集められます</b>。回答と写真をまとめて、<b>台帳の1行に自動で添付</b>。誰の・どの現場かが一目で分かります。</div>
+  </div>
+
+  <div class="stage">
+    <div class="forms">
+      <div class="fmh"><span class="fi">F</span><span class="nm">現場点検レポート</span></div>
+      <div class="fmb">
+        <div class="qa"><span class="q">報告者</span><span class="a">田中 一郎</span></div>
+        <div class="qa"><span class="q">現場</span><span class="a">グリーンビル 3F</span></div>
+        <div class="qa"><span class="q">点検結果</span><span class="a warn">⚠ 異常あり（要確認）</span></div>
+        <div class="photo"><span class="q">現場写真をアップロード</span><div class="pf">${site()}<span class="tagup">📷 IMG_0421.jpg</span></div></div>
+      </div>
+    </div>
+
+    <div class="mid">
+      <div class="actbadge">応答の詳細＋<b>写真</b>を<br>まとめて取得</div>
+      <span class="bigarrow">${svg('arrow')}</span>
+      <div class="note">💡 写真の置き場は<br><b>フォーム作成者</b>の<br>OneDrive</div>
+    </div>
+
+    <div class="ledger">
+      <div class="lgh"><img src="${A}icons/pa_sharepoint.png" alt=""><span class="nm">点検記録 台帳</span></div>
+      <div class="lgrid">
+        <div class="lr head"><div>報告者</div><div>現場</div><div class="ph">写真</div></div>
+        <div class="lr body"><div>佐藤 花子</div><div>さくら棟 1F</div><div class="ph"><span class="clip">📎</span></div></div>
+        <div class="lr body"><div>鈴木 次郎</div><div>本社ビル B1</div><div class="ph"><span class="clip">📎</span></div></div>
+        <div class="lr body newrow"><div class="nmc">田中 一郎<span class="badge-new">新規</span></div><div>グリーンビル 3F</div><div class="ph"><span class="thumb">${site()}</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="next"><span class="na">${svg('arrow')}</span>写真は<b>JSONで届く</b>のがコツ。取得して添付する<b>作り方</b>は <b>2枚目</b>へ！</div>
+  <div class="src">出典：Microsoft Learn（Microsoft Forms「応答の詳細を取得する」／SharePoint「添付ファイルの追加」）／画面は再現・氏名は架空</div>
+`;
+</script>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>

@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.99-1 フローが止まったこと、今すぐ知れる</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --blue:#2563EB; --blue-bg:#EFF6FF; --blue-dark:#1E40AF;
+    --green:#16A34A; --green-bg:#ECFDF5; --green-dark:#065F46;
+    --red:#DC2626; --red-bg:#FEF2F2; --red-dark:#991B1B;
+    --orange:#EA580C; --violet:#7C3AED;
+    --ink:#1F2937; --gray:#374151; --weak:#6B7280; --line:#E5E7EB;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:"Noto Sans JP",sans-serif;}
+  #slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;display:flex;flex-direction:column;color:var(--gray);}
+  .ic{display:block;width:100%;height:100%;}
+
+  .titlebar{height:90px;background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);display:flex;align-items:center;gap:16px;padding:0 24px;position:relative;flex:0 0 auto;z-index:5;}
+  .vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:26px;border-radius:999px;padding:7px 20px;white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+  .vol-logo{height:50px;width:50px;object-fit:contain;flex:0 0 auto;background:#fff;border-radius:12px;padding:5px;box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
+  .title-text{color:#fff;font-weight:900;font-size:27px;line-height:1.14;text-shadow:0 1px 2px rgba(0,0,0,.18);padding-right:158px;}
+  .title-text .hl{color:#FFE08A;}
+  .title-chara{position:absolute;right:14px;bottom:-44px;height:146px;z-index:50;filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+  .concl{margin:9px 16px 0;background:var(--blue-bg);border:2.5px solid var(--blue);border-radius:13px;display:flex;align-items:center;gap:13px;padding:8px 18px;flex:0 0 auto;box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .concl .chip{flex:0 0 auto;width:40px;height:40px;border-radius:11px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;display:flex;align-items:center;justify-content:center;padding:8px;box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
+  .concl .txt{font-weight:800;font-size:19px;color:var(--blue-dark);line-height:1.3;padding-right:158px;}
+  .concl .txt b{color:var(--orange);}
+
+  .stage{flex:1 1 auto;margin:10px 16px 0;display:flex;align-items:stretch;gap:12px;min-height:0;}
+
+  /* 左：気づかないまま（赤） */
+  .left{flex:1;display:flex;flex-direction:column;gap:8px;min-height:0;background:var(--red-bg);border:2.5px solid #F2B8B8;border-radius:14px;padding:9px 11px 10px;}
+  .lh{flex:0 0 auto;display:flex;align-items:center;gap:9px;font-weight:900;font-size:25px;color:var(--red-dark);line-height:1.14;}
+  .lh .bdg{flex:0 0 auto;font-size:14px;font-weight:900;color:#fff;background:var(--red);border-radius:999px;padding:3px 12px;}
+  .lscene{flex:1;min-height:0;border-radius:11px;position:relative;overflow:hidden;background:#FCE4E4;}
+  .lscene svg{position:absolute;inset:0;width:100%;height:100%;}
+  .lscene .chara{position:absolute;right:5px;bottom:0;height:118px;z-index:2;filter:drop-shadow(0 3px 5px rgba(0,0,0,.22));}
+  .lcap{flex:0 0 auto;font-size:16px;font-weight:900;line-height:1.34;color:var(--red-dark);background:#FBD9D9;border-radius:9px;padding:8px 10px;}
+
+  /* 中央：主役の通知カード（どーん） */
+  .hero{flex:1.34;display:flex;flex-direction:column;gap:8px;min-height:0;}
+  .hh{flex:0 0 auto;display:flex;align-items:center;gap:9px;font-weight:900;font-size:21px;color:var(--green-dark);line-height:1.16;}
+  .hh .bdg{flex:0 0 auto;font-size:14px;font-weight:900;color:#fff;background:var(--green);border-radius:999px;padding:3px 12px;}
+  .tcard{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:2.5px solid #C9D6EA;border-radius:13px;overflow:hidden;box-shadow:0 6px 16px rgba(20,40,90,.16);}
+  .tch{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:9px 12px;background:#F3F6FC;border-bottom:1.5px solid #E2EAF5;}
+  .tch img{width:32px;height:32px;object-fit:contain;flex:0 0 auto;}
+  .tch .nm{font-weight:900;font-size:16px;color:#1B2A44;}
+  .tch .bot{font-size:13.5px;font-weight:900;color:#5B21B6;background:#EFE7FC;border-radius:5px;padding:1px 7px;}
+  .tch .tm{margin-left:auto;font-size:14px;font-weight:800;color:var(--weak);}
+  .tcb{flex:1;padding:10px 13px;display:flex;flex-direction:column;gap:8px;min-height:0;}
+  .alert{display:flex;align-items:center;gap:9px;background:#FEF2F2;border:2px solid #F3B3B3;border-radius:10px;padding:8px 11px;}
+  .alert .ai{flex:0 0 auto;width:28px;height:28px;color:var(--red);}
+  .alert .at{flex:1;min-width:0;font-size:19px;font-weight:900;color:var(--red-dark);line-height:1.24;}
+  .kv{display:flex;flex-direction:column;gap:6px;}
+  .kvr{display:flex;gap:9px;align-items:baseline;font-size:16px;line-height:1.3;}
+  .kvr .k{flex:0 0 84px;font-weight:900;color:var(--weak);}
+  .kvr .v{flex:1;min-width:0;font-weight:900;color:#243B58;}
+  .kvr .v.mono{font-family:'Roboto Mono',monospace;font-size:14.5px;color:#B91C1C;}
+  .btns{margin-top:auto;display:flex;gap:9px;}
+  .btns span{flex:1;text-align:center;font-size:15.5px;font-weight:900;border-radius:8px;padding:8px 4px;}
+  .btns .p{background:linear-gradient(180deg,#4B7BF5,#2563EB);color:#fff;box-shadow:0 3px 7px rgba(37,99,235,.35);}
+  .btns .s{background:#fff;border:2px solid #C9D6EA;color:#33507F;}
+  .hcap{flex:0 0 auto;font-size:16px;font-weight:900;line-height:1.32;color:var(--green-dark);background:#D6F2E4;border:2px solid #A7E3C7;border-radius:10px;padding:8px 11px;}
+  .hcap b{color:var(--orange);}
+
+  /* 右：どこに送れるか */
+  .right{flex:.86;display:flex;flex-direction:column;gap:8px;min-height:0;}
+  .rh{flex:0 0 auto;font-weight:900;font-size:18px;color:var(--blue-dark);line-height:1.2;}
+  .dest{flex:1;display:flex;flex-direction:column;gap:8px;min-height:0;}
+  .d{flex:1;display:flex;align-items:center;gap:10px;background:#F8FAFC;border:2px solid #DCE3EE;border-left:7px solid var(--blue);border-radius:11px;padding:7px 10px;min-height:0;}
+  .d .dg{flex:0 0 122px;align-self:stretch;border-radius:9px;background:#fff;border:1.5px solid #E2E8F1;position:relative;overflow:hidden;}
+  .d .dg svg{position:absolute;inset:0;width:100%;height:100%;}
+  .d img{width:30px;height:30px;object-fit:contain;flex:0 0 auto;}
+  .d .di{width:28px;height:28px;flex:0 0 auto;color:var(--blue);}
+  .d .db{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px;}
+  .d .dt{font-size:16.5px;font-weight:900;color:var(--blue-dark);line-height:1.2;}
+  .d .dd{font-size:14.5px;font-weight:800;color:#5B6472;line-height:1.28;}
+  .d.v2{border-left-color:var(--violet);} .d.v2 .dt{color:#5B21B6;} .d.v2 .di{color:var(--violet);}
+  .d.v3{border-left-color:var(--green);} .d.v3 .dt{color:var(--green-dark);} .d.v3 .di{color:var(--green);}
+
+  .next{flex:0 0 auto;margin:9px 16px 18px;background:linear-gradient(180deg,#EAF2FF,#DCEAFE);border:2.5px solid var(--blue);border-radius:13px;padding:9px 18px;display:flex;align-items:center;gap:11px;font-weight:900;font-size:19px;color:var(--blue-dark);box-shadow:0 3px 9px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+  .next .na{flex:0 0 auto;width:26px;height:26px;color:var(--blue);}
+  .next b{color:var(--orange);}
+  .src{position:absolute;left:16px;bottom:3px;font-size:10px;color:#AEB6C2;font-weight:700;z-index:3;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const ICON={
+  arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',
+  bell:'<path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/>',
+  warn:'<path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>',
+  list:'<path d="M8 6h13M8 12h13M8 18h13"/><path d="M3 6h.01M3 12h.01M3 18h.01"/>',
+  phone:'<rect x="6" y="2" width="12" height="20" rx="3"/><path d="M11 18h2"/>'
+};
+const svg=(n,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${ICON[n]}</svg>`;
+
+/* ---- 送り先のミニ図解（内容そのものを描く） ---- */
+const dgTeams=`<svg viewBox="0 0 122 74" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+  <rect x="8" y="10" width="78" height="42" rx="9" fill="#F0F2FB" stroke="#5B5FC7" stroke-width="2.6"/>
+  <circle cx="22" cy="24" r="6.5" fill="#5B5FC7"/>
+  <line x1="34" y1="22" x2="76" y2="22" stroke="#B9BDE8" stroke-width="4.5" stroke-linecap="round"/>
+  <line x1="34" y1="34" x2="64" y2="34" stroke="#B9BDE8" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M20 52 L20 64 L34 52 Z" fill="#F0F2FB" stroke="#5B5FC7" stroke-width="2.6" stroke-linejoin="round"/>
+  <g transform="translate(84,4)"><circle cx="12" cy="12" r="12" fill="#DC2626"/><path d="M12 6v7M12 17h.01" stroke="#fff" stroke-width="3" stroke-linecap="round"/></g>
+</svg>`;
+const dgMail=`<svg viewBox="0 0 122 74" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+  <rect x="10" y="16" width="80" height="50" rx="7" fill="#fff" stroke="#7C3AED" stroke-width="2.8"/>
+  <path d="M10 22 L50 48 L90 22" fill="none" stroke="#7C3AED" stroke-width="2.8" stroke-linejoin="round"/>
+  <line x1="20" y1="58" x2="56" y2="58" stroke="#D6C7EF" stroke-width="4.5" stroke-linecap="round"/>
+  <g transform="translate(80,4)"><circle cx="14" cy="14" r="13" fill="#7C3AED"/><path d="M8 14.5 l4 4 8-9" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>
+</svg>`;
+const dgLedger=`<svg viewBox="0 0 122 74" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+  <rect x="10" y="8" width="102" height="58" rx="8" fill="#fff" stroke="#16A34A" stroke-width="2.8"/>
+  <rect x="10" y="8" width="102" height="14" rx="8" fill="#16A34A"/><rect x="10" y="16" width="102" height="6" fill="#16A34A"/>
+  ${Array.from({length:3},(_,i)=>`<g><line x1="18" y1="${32+i*12}" x2="56" y2="${32+i*12}" stroke="#BFE7D3" stroke-width="5" stroke-linecap="round"/><line x1="64" y1="${32+i*12}" x2="104" y2="${32+i*12}" stroke="#BFE7D3" stroke-width="5" stroke-linecap="round"/></g>`).join('')}
+  <line x1="18" y1="56" x2="56" y2="56" stroke="#16A34A" stroke-width="5" stroke-linecap="round"/>
+  <line x1="64" y1="56" x2="104" y2="56" stroke="#16A34A" stroke-width="5" stroke-linecap="round"/>
+</svg>`;
+const dgOnlyMe=`<svg viewBox="0 0 122 74" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+  <g transform="translate(6,12)">
+    <circle cx="17" cy="13" r="11" fill="#2563EB"/><path d="M2 44a15 15 0 0 1 30 0z" fill="#2563EB"/>
+    <g transform="translate(28,-2)"><circle cx="9" cy="9" r="9.5" fill="#16A34A"/><path d="M4.5 9.5 l3 3 6-6.5" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>
+  </g>
+  <line x1="62" y1="10" x2="62" y2="64" stroke="#DCE3EE" stroke-width="2" stroke-dasharray="5 4"/>
+  <g transform="translate(72,12)" opacity=".6">
+    <circle cx="15" cy="13" r="10" fill="#C9CFD9"/><path d="M2 42a13 13 0 0 1 26 0z" fill="#C9CFD9"/>
+    <g transform="translate(24,-2)"><circle cx="8" cy="8" r="8.5" fill="#9AA5B5"/><path d="M4.5 4.5 l7 7 M11.5 4.5 l-7 7" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/></g>
+  </g>
+</svg>`;
+
+/* 情景：止まったフロー＋カレンダーが1週間進む＋誰も気づかない */
+const leftScene=`<svg viewBox="0 0 330 292" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="cg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#F0DADA"/></linearGradient>
+    <filter id="lsd" x="-40%" y="-40%" width="180%" height="190%"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#3B1414" flood-opacity=".22"/></filter>
+  </defs>
+
+  <!-- 止まったフロー（上段・3カード） -->
+  <g filter="url(#lsd)">
+    <rect x="26" y="10" width="170" height="38" rx="9" fill="#fff" stroke="#B9CBE6" stroke-width="2.6"/>
+    <circle cx="48" cy="29" r="10" fill="#16A34A"/><path d="M43 29.5 l4 4 7.5-8.5" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <line x1="68" y1="29" x2="180" y2="29" stroke="#C3D2E6" stroke-width="6" stroke-linecap="round"/>
+  </g>
+  <line x1="111" y1="48" x2="111" y2="62" stroke="#C3D2E6" stroke-width="4.5" stroke-linecap="round"/>
+  <g filter="url(#lsd)">
+    <rect x="26" y="62" width="170" height="38" rx="9" fill="#FFF1F1" stroke="#DC2626" stroke-width="3.2"/>
+    <circle cx="48" cy="81" r="10" fill="#DC2626"/><path d="M43.5 76.5 l9 9 M52.5 76.5 l-9 9" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+    <line x1="68" y1="81" x2="180" y2="81" stroke="#F0B6B6" stroke-width="6" stroke-linecap="round"/>
+  </g>
+  <text x="228" y="88" font-family="Noto Sans JP" font-size="18" font-weight="900" fill="#991B1B">停止</text>
+  <line x1="111" y1="100" x2="111" y2="114" stroke="#E4C6C6" stroke-width="4.5" stroke-linecap="round" stroke-dasharray="5 5"/>
+  <g opacity=".45">
+    <rect x="26" y="114" width="170" height="38" rx="9" fill="#fff" stroke="#C9D3E2" stroke-width="2.6" stroke-dasharray="7 5"/>
+    <circle cx="48" cy="133" r="10" fill="#CBD5E1"/>
+    <line x1="68" y1="133" x2="180" y2="133" stroke="#DDE4EE" stroke-width="6" stroke-linecap="round"/>
+  </g>
+  <text x="228" y="140" font-family="Noto Sans JP" font-size="15.5" font-weight="900" fill="#A78787">動かない</text>
+
+  <!-- カレンダー：7日ぶん（下段） -->
+  <g transform="translate(20,168)" filter="url(#lsd)">
+    <rect x="0" y="0" width="186" height="112" rx="10" fill="url(#cg)" stroke="#E0A6A6" stroke-width="2.6"/>
+    <rect x="0" y="0" width="186" height="26" rx="10" fill="#DC2626"/>
+    <rect x="0" y="18" width="186" height="8" fill="#DC2626"/>
+    <text x="93" y="20" font-family="Noto Sans JP" font-size="15.5" font-weight="900" fill="#fff" text-anchor="middle">気づかないまま…</text>
+    <g fill="#F3C9C9">
+      <rect x="14" y="36" width="30" height="22" rx="5"/><rect x="54" y="36" width="30" height="22" rx="5"/>
+      <rect x="94" y="36" width="30" height="22" rx="5"/><rect x="134" y="36" width="30" height="22" rx="5"/>
+      <rect x="14" y="64" width="30" height="22" rx="5"/><rect x="54" y="64" width="30" height="22" rx="5"/>
+      <rect x="94" y="64" width="30" height="22" rx="5"/>
+    </g>
+    <text x="150" y="82" font-family="Noto Sans JP" font-size="24" font-weight="900" fill="#991B1B" text-anchor="middle">7日</text>
+    <text x="93" y="104" font-family="Noto Sans JP" font-size="14.5" font-weight="900" fill="#7F1D1D" text-anchor="middle">通知も台帳も、止まったまま</text>
+  </g>
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.99-1</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">フローが止まったこと、<span class="hl">翌週じゃなく今すぐ</span>知れる</div>
+    <img class="title-chara" src="${A}chara/chara_confident.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svg('bell')}</div>
+    <div class="txt">フローは止まっても、自分から教えてはくれません。<b>失敗したときだけ動く通知</b>を1つ足せば、その場で気づけます。</div>
+  </div>
+
+  <div class="stage">
+    <div class="left">
+      <div class="lh"><span class="bdg">いま</span>誰も気づかない</div>
+      <div class="lscene">${leftScene}<img class="chara" src="${A}chara/chara_trouble.png" alt=""></div>
+      <div class="lcap">気づくのは、たいてい誰かに「来てませんよ」と言われた時。</div>
+    </div>
+
+    <div class="hero">
+      <div class="hh"><span class="bdg">これから</span>止まった瞬間に、自分だけに届く</div>
+      <div class="tcard">
+        <div class="tch">
+          <img src="${A}icons/pa_teams.png" alt="">
+          <span class="nm">Power Automate</span><span class="bot">フローボット</span>
+          <span class="tm">9:03</span>
+        </div>
+        <div class="tcb">
+          <div class="alert"><span class="ai">${svg('warn',2.4)}</span><span class="at">フローが失敗しました</span></div>
+          <div class="kv">
+            <div class="kvr"><span class="k">フロー名</span><span class="v">請求書メールの自動保存</span></div>
+            <div class="kvr"><span class="k">止まった所</span><span class="v">項目の作成（SharePoint）</span></div>
+            <div class="kvr"><span class="k">理由</span><span class="v mono">The column 'Amount' is required.</span></div>
+            <div class="kvr"><span class="k">発生時刻</span><span class="v">2026/08/16 09:03</span></div>
+            <div class="kvr"><span class="k">前回の成功</span><span class="v">2026/08/15 09:02</span></div>
+          </div>
+          <div class="btns"><span class="p">実行履歴をひらく</span><span class="s">あとで見る</span></div>
+        </div>
+      </div>
+      <div class="hcap">どのアクションで・なぜ落ちたかまで入るので、<b>開く前に見当がつきます</b>。</div>
+    </div>
+
+    <div class="right">
+      <div class="rh">送り先は選べます</div>
+      <div class="dest">
+        <div class="d"><span class="dg">${dgTeams}</span><span class="db"><span class="dt">Teams で自分に</span><span class="dd">いちばん気づきやすい</span></span></div>
+        <div class="d v2"><span class="dg">${dgMail}</span><span class="db"><span class="dt">メールで担当者に</span><span class="dd">記録として残したいとき</span></span></div>
+        <div class="d v3"><span class="dg">${dgLedger}</span><span class="db"><span class="dt">台帳に書きためる</span><span class="dd">あとで傾向を見たいとき</span></span></div>
+        <div class="d"><span class="dg">${dgOnlyMe}</span><span class="db"><span class="dt">通知は自分にだけ</span><span class="dd">他の人を巻き込まない</span></span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="next"><span class="na">${svg('arrow')}</span>やることは<b>「実行条件の構成」にチェックを1つ</b>。作り方は <b>2枚目</b>へ！</div>
+  <div class="src">出典：Microsoft Learn「堅牢なエラー処理を採用する」／画面は再現・データは架空</div>
+`;
+</script>
+<script>
+(function(){function fit(){var s=document.getElementById('slide');if(!s)return;if(window.innerWidth<1240){s.style.zoom=Math.min(window.innerWidth/1280,window.innerHeight/720);}else{s.style.zoom=1;}}window.addEventListener('resize',fit);fit();})();
+</script>
+</body>
+</html>
