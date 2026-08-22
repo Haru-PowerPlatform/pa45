@@ -73,6 +73,10 @@ def build_page(vol, title, date, links, upcoming=False):
         cards.append(card("🎫","connpass イベントページ",
             "参加登録・当日入室（Teams会議リンク）。" if upcoming else "この回のイベント概要（アーカイブ）。",
             f"{GROUP}event/{ev}/"))
+    if links.get("handson"):
+        cards.append(card("🛠️","ハンズオン手順（当日これを見ながら作る）",
+            "手順どおりに進めれば、👍で出欠が集まるフローが完成します。", links["handson"],
+            go="手順を開く →", primary=True, tag="まずコレ"))
     if upcoming and vol==17:
         cards.append(card("📥","ハンズオンExcel素材",
             "タスク一覧.xlsx（テーブルTaskTable・サンプル5件）。クリックでDL。",
@@ -124,8 +128,14 @@ def main():
                     "links":classify(hrefs)}
     up=json.load(open(os.path.join(ROOT,"data","config","upcoming-event.json"),encoding="utf-8"))
     uv=int(up["vol"])
+    up_links={}
+    _vd=os.path.join(ROOT,"slides",f"vol-{uv:02d}")
+    if os.path.exists(os.path.join(_vd,"handson.html")):
+        up_links["handson"]=f"{SITE}slides/vol-{uv:02d}/handson.html"
+    if os.path.exists(os.path.join(_vd,"index.html")):
+        up_links["slide"]=f"{SITE}slides/vol-{uv:02d}/"
     voldata[uv]={"title":f"第{uv}回：{up['theme']}","date":up["date"],
-                 "links":classify([f"{SITE}slides/vol-{uv:02d}/"]),"upcoming":True}
+                 "links":up_links,"upcoming":True}
 
     made=[]
     for v,dd in sorted(voldata.items()):
