@@ -154,7 +154,7 @@
     <ol class="steps sp">
       <li>Teams で、出欠を集めるチーム（例：<b>PA45</b>）に <b>「懇親会出欠」チャネル</b>を作ります。<ul class="sub"><li>チーム名の右「<b>⋯</b>」→「<b>チャネルを追加</b>」→名前は <span class="k">懇親会出欠</span>／種類は <b>標準</b>。</li></ul></li>
       <li>SharePoint で、記録用の <b>「出欠台帳」リスト</b>を作ります。<ul class="sub"><li>サイト →「<b>新規</b>」→「<b>リスト</b>」→「<b>空白のリスト</b>」→名前は <span class="k">出欠台帳</span>。</li></ul></li>
-      <li>「出欠台帳」に<b>列を2つ追加</b>します。<b>氏名</b>は既定の「<b>タイトル</b>」列をそのまま使います。<div class="setrow"><span class="kv"><span class="kk">回答</span><span class="vv">1行テキスト</span></span><span class="kv"><span class="kk">日時</span><span class="vv">日付と時刻</span></span></div></li>
+      <li>「出欠台帳」に<b>列を1つ追加</b>します。「<b>回答</b>」（種類＝<b>1行テキスト</b>）。<b>氏名</b>は既定の「<b>タイトル</b>」列をそのまま使います。<ul class="sub"><li>「日時」は<b>作らなくてOK</b>。SharePointが「<b>作成日時</b>」を自動で記録します（式を1つ減らせます）。</li></ul></li>
     </ol>
     <div class="callout tip"><b>💡 なぜ「標準」チャネル？</b> 出欠は<b>参加者みんなが👍を押す</b>もの。プライベートにすると押せる人が限られるので、<b>全員が見える「標準」</b>にします。</div>
   </section>
@@ -195,31 +195,26 @@
     <p class="part-note">押した人を、STEP 0で作った「出欠台帳」に1行 書き込みます。</p>
     <ol class="steps sp">
       <li><b>＋新しいステップ</b>→ <b>SharePoint</b>の <b>「項目の作成」</b>を追加します。サイトアドレスとリスト <span class="k">出欠台帳</span> を選びます。</li>
-      <li>3つの欄を、動的コンテンツで埋めます。<div class="setrow"><span class="kv"><span class="kk">タイトル（氏名）</span><span class="vv">表示名</span></span><span class="kv"><span class="kk">回答</span><span class="vv">参加</span></span><span class="kv"><span class="kk">日時</span><span class="vv">応答日時</span></span></div><ul class="sub"><li>「回答」は文字で <span class="k">参加</span> と入力／「日時」はトリガーの <span class="k">応答日時（reactionDateTime）</span>。</li></ul></li>
+      <li>2つの欄だけ埋めます。<b>どちらも式は使いません</b>。<div class="setrow"><span class="kv"><span class="kk">タイトル（氏名）</span><span class="vv">表示名</span></span><span class="kv"><span class="kk">回答</span><span class="vv">参加</span></span></div><ul class="sub"><li>「タイトル」は<b>動的コンテンツ</b>から <span class="k">表示名</span>（STEP 2で取った名前）を選ぶ。</li><li>「回答」は文字で <span class="k">参加</span> と入力するだけ。</li></ul></li>
     </ol>
-    <div class="callout info"><b>🔎 列が出てこない時は：</b> 「項目の作成」の<b>「すべて表示」</b>を押すと、台帳の全部の列（回答・日時）が出ます。<b>表示名で選べばOK</b>（内部の名前は気にしなくて大丈夫）。</div>
+    <div class="callout tip"><b>💡 「日時」は入れません：</b> SharePointが<b>「作成日時」を自動で記録</b>してくれるので、フローで日時を入れる必要はありません（式が1つ減ります）。<b>回答の列が出てこない</b>時は「<b>すべて表示</b>」を押すと出ます（表示名で選べばOK）。</div>
   </section>
 
   <!-- ===== 4. 参加者を集める ===== -->
   <section class="part" id="p4">
     <div class="part-h"><span class="part-badge sp">STEP 4</span><h2>「参加」の人をぜんぶ集める</h2></div>
-    <p class="part-note">人数を数えるために、台帳から<b>「参加」の行だけ</b>を取り出します。</p>
+    <p class="part-note">人数を数えるために、台帳の<b>行を全部</b>取り出します（ぜんぶ参加者です）。</p>
     <ol class="steps sp">
       <li><b>＋新しいステップ</b>→ <b>SharePoint</b>の <b>「複数の項目の取得」</b>を追加します。リストは <span class="k">出欠台帳</span>。</li>
-      <li>詳細の <b>「フィルター クエリ」</b>に、下を入れて「参加」だけにしぼります。</li>
+      <li>設定は<b>これだけ</b>。<b>フィルターは入れません</b>（台帳の行はぜんぶ「参加」なので、全部が参加者です）。</li>
     </ol>
-    <div class="codewrap">
-      <span class="lbl">フィルター クエリ（コピーして貼る）</span>
-      <button class="copybtn" data-code="filter">コピー</button>
-<pre id="filter">answer eq '参加'</pre>
-    </div>
-    <div class="callout tip"><b>💡 <span class="k">answer</span> って？</b> これは「回答」列の<b>内部の名前</b>です。フィルターだけは内部名を使います（表示名の「回答」ではなく <span class="k">answer</span>）。列を作った時の名前で決まります。</div>
+    <div class="callout tip"><b>💡 なぜフィルター無し？</b> このフローは「参加」の行しか作りません。だから<b>台帳の全部＝参加者</b>。しぼり込み（＝内部名を使うコード）が要らず、次でそのまま数えられます。</div>
   </section>
 
   <!-- ===== 5. 人数を数える ===== -->
   <section class="part" id="p5">
     <div class="part-h"><span class="part-badge">STEP 5</span><h2>参加人数を数える</h2></div>
-    <p class="part-note">取り出した「参加」の行が<b>何件あるか</b>を数えます。ここだけ、短い「式（おまじない）」を使います。</p>
+    <p class="part-note">取り出した行が<b>何件あるか</b>を数えます。<b>このフローで式を使うのは、ここだけ</b>です。</p>
     <ol class="steps">
       <li><b>＋新しいステップ</b>→ <b>「作成」</b>（データ操作）を追加します。</li>
       <li>「入力」に、<b>式（fx）</b>で下を貼り付けます。<b>件数＝人数</b>になります。</li>
