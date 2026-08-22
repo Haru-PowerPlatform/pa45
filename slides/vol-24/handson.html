@@ -203,18 +203,23 @@
   <!-- ===== 4. 参加者を集める ===== -->
   <section class="part" id="p4">
     <div class="part-h"><span class="part-badge sp">STEP 4</span><h2>「参加」の人をぜんぶ集める</h2></div>
-    <p class="part-note">人数を数えるために、台帳の<b>行を全部</b>取り出します（ぜんぶ参加者です）。</p>
+    <p class="part-note">人数を数えるために、台帳から<b>「参加」の行だけ</b>を取り出します。</p>
     <ol class="steps sp">
       <li><b>＋新しいステップ</b>→ <b>SharePoint</b>の <b>「複数の項目の取得」</b>を追加します。リストは <span class="k">出欠台帳</span>。</li>
-      <li>設定は<b>これだけ</b>。<b>フィルターは入れません</b>（台帳の行はぜんぶ「参加」なので、全部が参加者です）。</li>
+      <li>詳細の <b>「フィルター クエリ」</b>に、下を入れて「参加」だけにしぼります。</li>
     </ol>
-    <div class="callout tip"><b>💡 なぜフィルター無し？</b> このフローは「参加」の行しか作りません。だから<b>台帳の全部＝参加者</b>。しぼり込み（＝内部名を使うコード）が要らず、次でそのまま数えられます。</div>
+    <div class="codewrap">
+      <span class="lbl">フィルター クエリ（コピーして貼る）</span>
+      <button class="copybtn" data-code="filter">コピー</button>
+<pre id="filter">answer eq '参加'</pre>
+    </div>
+    <div class="callout tip"><b>💡 <span class="k">answer</span> って？（覚えておくと役立つ）</b> これは「回答」列の<b>内部の名前</b>です。フィルターだけは表示名（回答）ではなく<b>内部名</b>（<span class="k">answer</span>）を使います。内部名は列を作った時に決まり、列の設定画面（<span class="k">FldEdit</span>）の URL の <span class="k">Field=</span> で確認できます。※これは「式(fx)」ではなく<b>フィルターの書き方</b>なので、フローで使う式が <span class="k">length()</span> 1つだけ、という点は変わりません。</div>
   </section>
 
   <!-- ===== 5. 人数を数える ===== -->
   <section class="part" id="p5">
     <div class="part-h"><span class="part-badge">STEP 5</span><h2>参加人数を数える</h2></div>
-    <p class="part-note">取り出した行が<b>何件あるか</b>を数えます。<b>このフローで式を使うのは、ここだけ</b>です。</p>
+    <p class="part-note">取り出した「参加」の行が<b>何件あるか</b>を数えます。<b>このフローで式（fx）を使うのは、ここだけ</b>です。</p>
     <ol class="steps">
       <li><b>＋新しいステップ</b>→ <b>「作成」</b>（データ操作）を追加します。</li>
       <li>「入力」に、<b>式（fx）</b>で下を貼り付けます。<b>件数＝人数</b>になります。</li>
