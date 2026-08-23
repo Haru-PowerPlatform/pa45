@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PA45 第25回 ハンズオン手順｜メールの添付をSharePointへ自動保存</title>
+<meta name="description" content="PA45 第25回のハンズオン手順書。件名に【請求書】が入った添付つきメールが届くと、添付をSharePointの今月フォルダへ自動で保存し、元のメールに「保存済み」の印をつけて、Teamsに知らせるフローを作ります。">
+<style>
+  :root{
+    --pa:#3a4fb8;--pa-dark:#2c3a94;--pa-bg:#eef1fc;
+    --sp:#0f6cbd;--sp-bg:#e6f0fb;
+    --blue-text:#14528f;--blue-mid:#2a7dd4;--blue-bg:#eaf2fc;
+    --ink:#1f2937;--muted:#475569;--border:#e2e8f0;--amber:#b45309;--code-bg:#0f172a;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:linear-gradient(160deg,#eef1fc 0%,#f5f8fc 42%,#fff 100%);
+    font-family:"Meiryo UI","Yu Gothic UI","Segoe UI",sans-serif;color:var(--ink);
+    min-height:100vh;padding:0 16px 70px;line-height:1.7;}
+  .wrap{max-width:860px;margin:0 auto;}
+
+  .topbar{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.93);
+    -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+    border:1px solid var(--border);border-top:none;border-radius:0 0 14px 14px;
+    box-shadow:0 2px 10px rgba(20,82,143,.08);margin-bottom:18px;}
+  .topbar-in{display:flex;align-items:center;gap:10px;padding:9px 14px;flex-wrap:wrap;}
+  .brand{display:flex;flex-direction:column;text-decoration:none;color:var(--blue-text);font-weight:800;font-size:18px;line-height:1;}
+  .brand span{font-size:9px;font-weight:600;color:var(--muted);letter-spacing:.04em;margin-top:3px;}
+  .tnav{display:flex;gap:3px;flex-wrap:wrap;margin-left:auto;}
+  .tnav a{text-decoration:none;color:var(--blue-text);font-size:12.5px;font-weight:700;padding:6px 10px;border-radius:8px;white-space:nowrap;}
+  .tnav a:hover{background:var(--blue-bg);}
+  .tnav a.cur{background:var(--pa);color:#fff;}
+
+  header{text-align:center;margin-bottom:6px;}
+  .eyebrow{display:inline-block;background:var(--pa);color:#fff;font-weight:700;font-size:13px;letter-spacing:.06em;padding:5px 16px;border-radius:20px;}
+  h1{font-size:29px;font-weight:800;color:var(--pa-dark);margin:14px 0 6px;line-height:1.28;}
+  h1 small{display:block;font-size:15.5px;color:var(--muted);font-weight:600;margin-top:6px;}
+  .crumbs{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:12.5px;color:var(--muted);margin-bottom:14px;justify-content:center;}
+  .crumbs a{color:var(--blue-mid);text-decoration:none;font-weight:700;}
+  .crumbs .sep{color:#cbd5e1;}
+
+  .goal{background:#fff;border:1px solid var(--border);border-left:5px solid var(--pa);border-radius:12px;padding:14px 20px;margin-bottom:16px;box-shadow:0 2px 8px rgba(20,82,143,.05);}
+  .goal b{color:var(--pa-dark);}
+  .flowpath{display:flex;flex-wrap:wrap;align-items:center;gap:8px;justify-content:center;margin:14px 0 0;font-weight:800;color:var(--pa-dark);font-size:14.5px;}
+  .flowpath .st{background:var(--sp-bg);border:1px solid #a9cdec;border-radius:22px;padding:7px 15px;}
+  .flowpath .st.hot{background:var(--pa-bg);border-color:#aab6f0;color:var(--pa-dark);}
+  .flowpath .st.end{background:#ecfdf5;border-color:#86efac;color:#065f46;}
+  .flowpath .ar{color:var(--pa);font-size:18px;}
+
+  .toc{display:flex;flex-wrap:wrap;gap:8px;background:#fff;border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:22px;box-shadow:0 2px 8px rgba(20,82,143,.05);}
+  .toc-lbl{font-size:12px;font-weight:800;color:var(--pa-dark);background:var(--pa-bg);padding:4px 11px;border-radius:8px;}
+  .toc a{text-decoration:none;color:var(--blue-text);font-size:13px;font-weight:700;padding:6px 12px;border-radius:8px;border:1px solid var(--border);}
+  .toc a:hover{background:var(--blue-bg);border-color:var(--blue-mid);}
+
+  .part{scroll-margin-top:70px;margin:26px 0 0;}
+  .part-h{display:flex;align-items:center;gap:12px;margin-bottom:6px;}
+  .part-badge{flex:0 0 auto;background:var(--pa);color:#fff;font-weight:800;font-size:14px;padding:6px 14px;border-radius:20px;}
+  .part-badge.sp{background:var(--sp);}
+  .part-h h2{font-size:20px;font-weight:800;color:var(--pa-dark);margin:0;}
+  .part-note{font-size:14px;color:var(--muted);margin:0 0 12px;}
+
+  ol.steps{list-style:none;counter-reset:st;padding:0;margin:0;}
+  ol.steps>li{position:relative;padding:14px 16px 14px 54px;background:#fff;border:1px solid var(--border);border-radius:12px;margin-bottom:10px;box-shadow:0 2px 6px rgba(20,82,143,.05);font-size:15px;}
+  ol.steps>li::before{counter-increment:st;content:counter(st);position:absolute;left:14px;top:13px;width:28px;height:28px;border-radius:50%;background:var(--pa);color:#fff;font-weight:800;font-size:15px;display:flex;align-items:center;justify-content:center;}
+  ol.steps.sp>li::before{background:var(--sp);}
+  ol.steps>li b{color:var(--pa-dark);}
+  .k{display:inline-block;background:#f1f5f9;border:1px solid #d7dee7;border-radius:6px;padding:1px 8px;font-weight:700;font-size:13.5px;color:#334155;white-space:nowrap;}
+  .pick{display:inline-block;background:#fff7ed;border:1px solid #fdba74;border-radius:6px;padding:1px 8px;font-weight:800;font-size:13.5px;color:#c2410c;}
+  ul.sub{margin:8px 0 0;padding-left:20px;font-size:14px;color:var(--muted);}
+  ul.sub li{margin:3px 0;}
+
+  .setrow{display:flex;flex-wrap:wrap;gap:6px 10px;margin:8px 0 0;padding:10px 12px;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:10px;font-size:13.5px;}
+  .setrow .kv{display:flex;gap:6px;align-items:center;}
+  .setrow .kv .kk{font-weight:800;color:var(--pa-dark);}
+  .setrow .kv .vv{background:#fff;border:1px solid #d7dee7;border-radius:6px;padding:1px 9px;font-weight:700;color:#334155;}
+
+  figure.shotwrap{margin:14px 0 8px;}
+  figure.shotwrap .ph{display:flex;align-items:center;justify-content:center;text-align:center;min-height:120px;background:#f1f5f9;border:1.5px dashed #cbd5e1;border-radius:12px;color:#64748b;font-size:13px;font-weight:700;padding:16px;}
+  figure.shotwrap figcaption{font-size:13px;color:var(--muted);margin-top:7px;}
+
+  .callout{border-radius:10px;padding:12px 18px;font-size:14px;margin:12px 0;line-height:1.7;}
+  .callout.tip{background:var(--sp-bg);border-left:5px solid var(--sp);color:#0b4a7a;}
+  .callout.warn{background:#fffbeb;border-left:5px solid #f59e0b;color:#78350f;}
+  .callout.info{background:var(--blue-bg);border-left:5px solid var(--blue-mid);color:#14528f;}
+  .callout.pa{background:var(--pa-bg);border-left:5px solid var(--pa);color:var(--pa-dark);}
+
+  .codewrap{position:relative;margin:10px 0;}
+  .codewrap .lbl{font-size:12px;font-weight:800;color:#cbd5e1;background:#1e293b;display:inline-block;padding:4px 12px;border-radius:8px 8px 0 0;}
+  pre{margin:0;background:var(--code-bg);color:#e2e8f0;border-radius:0 10px 10px 10px;padding:16px 18px;overflow-x:auto;font-size:12.5px;line-height:1.65;
+    font-family:"Cascadia Code","Consolas","SFMono-Regular",monospace;}
+  pre .c{color:#7dd3a8;} pre .kw{color:#93c5fd;} pre .s{color:#fca5a5;}
+  .copybtn{position:absolute;top:6px;right:8px;background:#334155;color:#e2e8f0;border:none;border-radius:7px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer;}
+  .copybtn:hover{background:#475569;}
+
+  .backrow{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:30px;}
+  .btn.sec{display:inline-flex;align-items:center;gap:6px;background:#fff;color:var(--blue-text);border:1px solid var(--blue-mid);text-decoration:none;font-size:14px;font-weight:700;padding:10px 20px;border-radius:9px;}
+  .btn.sec:hover{background:var(--blue-bg);}
+  figure.shot{margin:14px 0 6px;}
+  figure.shot img{display:block;width:100%;border:1px solid #cbd5e1;border-radius:10px;box-shadow:0 6px 18px rgba(20,82,143,.14);}
+  figure.shot figcaption{font-size:12.5px;color:var(--muted);margin-top:7px;text-align:center;}
+  footer{margin-top:26px;text-align:center;color:#94a3b8;font-size:12px;line-height:1.8;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <nav class="topbar" aria-label="サイト内メニュー">
+    <div class="topbar-in">
+      <a class="brand" href="../../">PA45<span>Power Automate 45</span></a>
+      <div class="tnav">
+        <a href="../../">🏠 ホーム</a>
+        <a href="links.html">🗂️ 第25回の資料</a>
+        <a href="./" class="cur">🛠️ ハンズオン手順</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="crumbs">
+    <a href="../../">🏠 PA45トップ</a><span class="sep">›</span>
+    <a href="links.html">第25回 資料</a><span class="sep">›</span>
+    <span>ハンズオン手順</span>
+  </div>
+
+  <header>
+    <span class="eyebrow">PA45 第25回｜ハンズオン手順</span>
+    <h1>メールの添付を、SharePointへ自動保存<small>件名に【請求書】が入った添付つきメールが届くと、添付が今月のフォルダに並びます。元のメールには「保存済み」の印がつきます。順番どおりに進めればできます。</small></h1>
+  </header>
+
+  <div class="goal">
+    <b>今日つくるもの：</b> 件名に <b>【請求書】</b> が入った添付つきメールが届いたら、添付を <b>SharePointの「請求書 › 今月」フォルダ</b>に保存し、元のメールに <b>「保存済み」の印</b>をつけて、<b>Teamsに知らせる</b>フロー。
+    <div class="flowpath">
+      <span class="st">📩 メールが届く</span><span class="ar">→</span>
+      <span class="st">📎 添付を1件ずつ</span><span class="ar">→</span>
+      <span class="st hot">📂 月フォルダに保存</span><span class="ar">→</span>
+      <span class="st">🏷️ 保存済みの印</span><span class="ar">→</span>
+      <span class="st end">📣 Teamsに通知</span>
+    </div>
+  </div>
+
+  <div class="callout info" style="margin-bottom:4px;"><b>🔰 初参加の方へ：</b> ここから始めても大丈夫です。<b>1人でも完成します</b>——自分あてに添付つきメールを1通送るだけでテストできます。前回までの内容は必要ありません。</div>
+
+  <nav class="toc" aria-label="手順の目次">
+    <span class="toc-lbl">目次</span>
+    <a href="#p0">0. 準備</a>
+    <a href="#p1">1. 添付つきメールで動く</a>
+    <a href="#p2">2. 添付を1件ずつ</a>
+    <a href="#p3">3. 月フォルダに保存</a>
+    <a href="#p4">4. 保存済みの印</a>
+    <a href="#p5">5. Teamsに通知</a>
+    <a href="#pt">6. テスト</a>
+  </nav>
+
+  <!-- ===== 0. 準備 ===== -->
+  <section class="part" id="p0">
+    <div class="part-h"><span class="part-badge sp">STEP 0</span><h2>準備（保存先のサイトを決めるだけ）</h2></div>
+    <p class="part-note">作るものはありません。<b>添付を置く SharePoint サイトを1つ決める</b>だけです。</p>
+    <ol class="steps sp">
+      <li>添付を保存したい <b>SharePoint サイト</b>を開き、ブラウザの<b>URLをコピー</b>しておきます。<ul class="sub"><li>ふだん使っているチームサイトでOK。無ければ「サイトの作成」→「チームサイト」で1つ作ります。</li></ul></li>
+      <li><b>フォルダは作りません。</b> 「請求書」も「今月」のフォルダも、<b>フローが自動で作ります</b>。</li>
+      <li>テスト用に、<b>添付つきのメールを1通</b>用意します（写真でもPDFでもOK）。件名には <span class="k">【請求書】</span> を入れます。</li>
+    </ol>
+    <div class="callout tip"><b>💡 なぜ件名に【請求書】？</b> 目印がないと<b>届いたメール全部でフローが動きます</b>。テスト中に大量に動いてしまうので、件名で絞ります。実務でも「請求書」「報告書」など、いつも付いている言葉を入れておくと安全です。</div>
+  </section>
+
+  <!-- ===== 1. トリガー ===== -->
+  <section class="part" id="p1">
+    <div class="part-h"><span class="part-badge">STEP 1</span><h2>添付つきメールが届いたら動くトリガー</h2></div>
+    <p class="part-note">Power Automate で<b>「最初から作成」→ 自動フロー</b>を選び、トリガーを検索します。</p>
+    <ol class="steps">
+      <li>トリガーの検索で <b>Office 365 Outlook</b> を開き、<b>「新しいメールが届いたとき (V3)」</b>を選びます。</li>
+      <li>詳細パラメーターの <b>「すべて表示」</b>を押します。<b>最初は5個しか出ていません</b>。</li>
+      <li>4つの設定を、下のとおりに入れます。<b>ここが今日いちばんの山場</b>です。<div class="setrow"><span class="kv"><span class="kk">添付ファイルを含める</span><span class="vv">はい</span></span><span class="kv"><span class="kk">添付ファイル付きのみ</span><span class="vv">はい</span></span><span class="kv"><span class="kk">件名フィルター</span><span class="vv">【請求書】</span></span><span class="kv"><span class="kk">フォルダー</span><span class="vv">Inbox</span></span></div></li>
+    </ol>
+  <figure class="shot"><img src="assets/set-trigger.png" alt="トリガーの設定画面"><figcaption>実際の画面。「添付ファイルを含める＝はい」「添付ファイル付きのみ＝はい」「件名フィルター＝【請求書】」まで入った状態。</figcaption></figure>
+    <div class="callout warn"><b>⚠️ 「添付ファイルを含める」は既定でオフ（詰まりポイント）：</b>
+      <ul style="margin:6px 0 0;padding-left:20px;">
+        <li>オフのままだと、<b>添付の中身が届きません</b>。フローは成功するのに、<b>0KBの空ファイル</b>が保存されます。</li>
+        <li>「添付ファイル付きのみ」は<b>別の設定</b>です。こちらは「添付がないメールでは動かない」という意味。<b>両方 はい</b> にします。</li>
+        <li>設定が見当たらない時は <b>「すべて表示」</b>を押し忘れています。</li>
+      </ul>
+    </div>
+    <div class="callout pa"><b>この2つの違い、ひとことで：</b> <span class="pick">添付ファイル付きのみ</span>＝<b>いつ動くか</b>の話。<span class="pick">添付ファイルを含める</span>＝<b>中身を持ってくるか</b>の話。保存したいので、<b>中身を持ってくる</b >方も必ずオンにします。</div>
+  </section>
+
+  <!-- ===== 2. くり返し ===== -->
+  <section class="part" id="p2">
+    <div class="part-h"><span class="part-badge">STEP 2</span><h2>添付を1件ずつ取り出す</h2></div>
+    <p class="part-note">1通のメールに添付が<b>3つ入っていること</b>もあります。1件ずつ処理する箱を用意します。</p>
+    <ol class="steps">
+      <li><b>＋新しいステップ</b>→ <b>「コントロール」</b>の <b>「Apply to each」</b>を追加します。</li>
+      <li><b>「前のステップから出力を選択します」</b>の欄に、動的コンテンツから <b>添付ファイル</b> を入れます。</li>
+    </ol>
+  <figure class="shot"><img src="assets/set-foreach.png" alt="Apply to each の設定画面"><figcaption>実際の画面。渡すのは「添付ファイル」ひとつだけ。</figcaption></figure>
+    <div class="callout tip"><b>💡 ここがこの回の学び：</b> 「まとめて来たものを、1件ずつ取り出す」は自動化の定番の形です。この箱の<b>中</b>に、次のSTEP 3を入れます。<b>箱の外に置くと、1件目しか保存されません</b>。</div>
+  </section>
+
+  <!-- ===== 3. 保存 ===== -->
+  <section class="part" id="p3">
+    <div class="part-h"><span class="part-badge sp">STEP 3</span><h2>今月のフォルダに、名前を変えて保存する</h2></div>
+    <p class="part-note">Apply to each の<b>中</b>に、SharePointへ保存するアクションを入れます。</p>
+    <ol class="steps sp">
+      <li>Apply to each の中の <b>＋</b> →  <b>SharePoint</b> の <b>「ファイルの作成」</b>を追加します。</li>
+      <li><b>サイトのアドレス</b>に、STEP 0でコピーしたサイトを選びます。</li>
+      <li><b>フォルダーのパス</b>に、下の文字を打ち、続けて<b>式（fx）</b>で「今月」を足します。</li>
+    </ol>
+    <div class="codewrap">
+      <span class="lbl">フォルダーのパス（先に打つ文字）</span>
+      <button class="copybtn" data-code="folder">コピー</button>
+<pre id="folder">/Shared Documents/請求書/</pre>
+    </div>
+    <div class="codewrap">
+      <span class="lbl">式（fx に貼る・今月のフォルダ名）</span>
+      <button class="copybtn" data-code="month">コピー</button>
+<pre id="month">formatDateTime(utcNow(),'yyyy-MM')</pre>
+    </div>
+    <ol class="steps sp" start="4">
+      <li><b>ファイル名</b>は、<b>式（fx）</b>で日付を入れ、続けて <span class="k">_</span> と、動的コンテンツの <b>名前</b> をならべます。</li>
+      <li><b>ファイル コンテンツ</b>に、動的コンテンツの <b>contentBytes</b> を入れます。</li>
+    </ol>
+    <div class="codewrap">
+      <span class="lbl">式（fx に貼る・ファイル名の先頭の日付）</span>
+      <button class="copybtn" data-code="day">コピー</button>
+<pre id="day">formatDateTime(utcNow(),'yyyyMMdd')</pre>
+    </div>
+  <figure class="shot"><img src="assets/set-createfile.png" alt="ファイルの作成の設定画面"><figcaption>実際の画面。ファイル名は「式（日付）＋_＋名前」の3つ並び。中身は contentBytes。</figcaption></figure>
+    <div class="callout tip"><b>💡 2つの発見：</b>
+      <ul style="margin:6px 0 0;padding-left:20px;">
+        <li><b>フォルダは作らなくていい。</b> 「請求書」も「2026-08」も無ければ<b>自動でできます</b>。月が変われば勝手に新しいフォルダが増えます。</li>
+        <li><b>画面は日本語、URLは英語。</b> SharePointの「ドキュメント」ライブラリは、中身の名前が <span class="k">/Shared Documents</span> です。ここは日本語で打っても見つかりません。</li>
+      </ul>
+    </div>
+    <div class="callout pa"><b>なぜファイル名の頭に日付？</b> 同じ名前のファイルが届くと<b>上書きされてしまう</b>からです。頭に日付を付けると上書きが起きず、フォルダの中も日付順に並びます。</div>
+  </section>
+
+  <!-- ===== 4. 印 ===== -->
+  <section class="part" id="p4">
+    <div class="part-h"><span class="part-badge">STEP 4</span><h2>元のメールに「保存済み」の印をつける</h2></div>
+    <p class="part-note">Apply to each の<b>外</b>（下）に追加します。処理したメールが一目で分かるようになります。</p>
+    <ol class="steps">
+      <li>Apply to each の下の <b>＋</b> → <b>Office 365 Outlook</b> の <b>「Outlook カテゴリを割り当てます」</b>を追加します。</li>
+      <li>2つの欄を埋めます。<div class="setrow"><span class="kv"><span class="kk">メッセージ ID</span><span class="vv">メッセージ ID（動的コンテンツ）</span></span><span class="kv"><span class="kk">カテゴリ</span><span class="vv">保存済み</span></span></div></li>
+    </ol>
+  <figure class="shot"><img src="assets/set-category.png" alt="カテゴリを割り当てる設定画面"><figcaption>実際の画面。入れるのは「メッセージ ID」と、カテゴリ名の文字だけ。</figcaption></figure>
+    <div class="callout tip"><b>💡 これは意外と知られていません。</b> Outlookの<b>色ラベル（分類）</b>をフローから付けられます。受信トレイの一覧で色が見えるので、<b>「これはもう保存した」</b>が一目で分かります。同じメールを二度処理する事故も防げます。</div>
+  </section>
+
+  <!-- ===== 5. 通知 ===== -->
+  <section class="part" id="p5">
+    <div class="part-h"><span class="part-badge">STEP 5</span><h2>「◯件 保存しました」を知らせる</h2></div>
+    <p class="part-note">最後に、何件保存したかと、保存先を知らせます。</p>
+    <ol class="steps">
+      <li><b>＋新しいステップ</b>→ <b>Microsoft Teams</b> の <b>「チャットまたはチャネルでメッセージを投稿する」</b>を追加します。</li>
+      <li>投稿者＝<b>フロー ボット</b>。投稿先は、まずは確実な <b>「フロー ボットとチャットをする」</b>（自分あて）にしておくと、当日つまずきません。</li>
+      <li>メッセージに、件名・件数・保存先を差し込みます。件数は<b>式（fx）</b>で数えます。</li>
+    </ol>
+    <div class="codewrap">
+      <span class="lbl">式（fx に貼る・添付が何件あったか）</span>
+      <button class="copybtn" data-code="cnt">コピー</button>
+<pre id="cnt">length(triggerOutputs()?['body/attachments'])</pre>
+    </div>
+    <div class="codewrap">
+      <span class="lbl">メッセージの例</span>
+      <button class="copybtn" data-code="msg">コピー</button>
+<pre id="msg">📎「［件名］」の添付 ［件数］ 件を保存しました
+保存先：/Shared Documents/請求書/［今月］
+元のメールには「保存済み」の印をつけました</pre>
+    </div>
+  <figure class="shot"><img src="assets/set-teams.png" alt="Teams通知の設定画面"><figcaption>実際の画面。宛先はぼかしています。件数は length(...) の式、保存先の月は formatDateTime の式。</figcaption></figure>
+    <div class="callout info"><b>📣 チームのチャネルに出したい時は：</b> 投稿先を「<b>チャネル</b>」に変えて、チームとチャネルを選びます。経理チームの部屋に「請求書が届いて保存しました」と出せます。</div>
+  </section>
+
+  <!-- ===== 6. テスト ===== -->
+  <section class="part" id="pt">
+    <div class="part-h"><span class="part-badge">STEP 6</span><h2>保存して、テストする</h2></div>
+    <ol class="steps">
+      <li>右上の <b>「保存」</b>→ フローを<b>オン</b>にします。</li>
+      <li>件名に <span class="k">【請求書】</span> を入れて、<b>添付つきのメールを自分あてに送信</b>します。</li>
+      <li>1〜2分待つと、各ステップに<b>緑のチェック ✓</b>。SharePointに<b>「請求書 › 今月」フォルダ</b>ができ、<b>日付つきのファイル</b>が入ります。</li>
+    </ol>
+  <figure class="shot"><img src="assets/sp-result.png" alt="SharePointに保存された添付ファイル"><figcaption>実際の画面。フォルダも自動でできて、ファイル名の頭に日付が付いています。</figcaption></figure>
+    <div class="callout tip"><b>💡 ここまで来たら完成です。</b> 受信トレイに戻ると、送ったメールに<b>「保存済み」の色ラベル</b>が付いています。Teamsにも通知が届いているはずです。</div>
+    <div class="callout warn"><b>うまくいかないとき：</b>
+      <ul style="margin:6px 0 0;padding-left:20px;">
+        <li>フローが動かない → 件名に <b>【請求書】</b> が入っているか／フローが<b>オン</b>か。メールの到着から動くまで<b>1〜2分かかる</b>ことがあります。</li>
+        <li>ファイルが0KB → STEP 1の <b>「添付ファイルを含める＝はい」</b>を忘れています。ここが一番多い原因です。</li>
+        <li>保存でエラー → フォルダーのパスの先頭が <span class="k">/Shared Documents</span> になっているか。日本語の「ドキュメント」では見つかりません。</li>
+        <li>1件しか保存されない → 「ファイルの作成」が <b>Apply to each の中</b>に入っているか。</li>
+        <li>思ったより多く保存される → メールの<b>署名の画像</b>が添付として拾われています。テストは署名なしのメールで送ると分かりやすいです。</li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="backrow">
+    <a class="btn sec" href="links.html">← 第25回の資料にもどる</a>
+    <a class="btn sec" href="../../">🏠 サイトのトップへ</a>
+  </div>
+
+  <footer>
+    PA45 第25回 ハンズオン手順 ／ メールの添付ファイル × SharePoint 自動保存<br>
+    人名・数値はすべて架空のサンプルです。画面や手順は公開日時点のもので、今後変わる可能性があります。
+  </footer>
+</div>
+
+<script>
+  document.querySelectorAll('.copybtn').forEach(function(b){
+    b.addEventListener('click', function(){
+      var el = document.getElementById(b.dataset.code);
+      var text = el.innerText;
+      navigator.clipboard.writeText(text).then(function(){
+        var o = b.textContent; b.textContent = 'コピーしました'; setTimeout(function(){ b.textContent = o; }, 1400);
+      });
+    });
+  });
+</script>
+</body>
+</html>
