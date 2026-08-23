@@ -8989,6 +8989,7 @@
   .mm-cell.s1 { background:#dcfce7; border-color:#22c55e; color:#166534; }
   .mm-cell.s2 { background:#fef3c7; border-color:#f59e0b; color:#92400e; }
   .mm-cell.s3 { background:#fee2e2; border-color:#ef4444; color:#991b1b; }
+  .mm-cell.is-built { box-shadow:0 0 0 2px #bfdbfe inset; }
   .mm-cell .book { position:absolute; top:-7px; right:-7px; font-size:15px; background:#fff; border-radius:50%; line-height:1; padding:1px; box-shadow:0 1px 3px rgba(0,0,0,.2); }
   .mm-emptynote { font-size:12.5px; color:#94a3b8; margin-top:6px; }
   .mm-goal { background:linear-gradient(135deg,#fff7ed,#fef3c7); border:2px solid #fcd34d; border-radius:14px; padding:14px 16px; margin-bottom:16px; }
@@ -10098,14 +10099,13 @@
 })();
 </script>
 <script>
-/* 🗺️ 完全チェック 制覇マップ */
+/* 🗺️ 完全チェック 制覇マップ（② 各回タブの大問チェックを集計して回の色を自動決定）*/
 (function(){
-  var MM_KEY = 'manabie_mastery_v1';        // { rika:{ "1":1, ... } }  1=すぐ 2=悩んで 3=×
-  var MM_AWARD = 'manabie_mastery_award_v1'; // { "rika-1":1, ... } シール付与済み(1回につき1枚)
-  var DEADLINE = new Date(2026, 11, 31);     // 12月31日（月は0はじまり）
+  var MM_KEY = 'manabie_mastery_v1';        // 手動チェック（解説タブが無い回用）
+  var MM_AWARD = 'manabie_mastery_award_v1'; // 手動チェックのシール付与済み
+  var DEADLINE = new Date(2026, 11, 31);     // 12/31
 
-  // 教科ごとの設定。回数・解説タブ・タイトルはここに足していく。
-  // total が 0（=まだスキャンしていない）教科は「準備中」表示になる。
+  // 教科ごとの設定。回数・解説タブ(回→panelId)・タイトルはここに足していく。
   var SUBJECTS = [
     { key:'rika', label:'🧪 理科', total:55,
       tabs:  { 1:'t-check-01' },
@@ -10116,8 +10116,32 @@
 
   function load(k){ try { return JSON.parse(localStorage.getItem(k) || '{}'); } catch(e){ return {}; } }
   function save(k,v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
-
   var mm = load(MM_KEY), award = load(MM_AWARD);
+
+  // 解説タブがある回：その回の大問の手ごたえ(q-quick/q-slow/q-redo)を集計して 0/1/2/3 を返す
+  function aggFromTab(tabId){
+    var panel = document.getElementById(tabId);
+    if (!panel) return 0;
+    var qs = panel.querySelectorAll('.question');
+    if (!qs.length) return 0;
+    var total = qs.length, quick=0, slow=0, redo=0, touched=0;
+    qs.forEach(function(q){
+      if (q.classList.contains('q-quick')) { quick++; touched++; }
+      else if (q.classList.contains('q-slow')) { slow++; touched++; }
+      else if (q.classList.contains('q-redo')) { redo++; touched++; }
+    });
+    if (redo > 0) return 3;                       // ひとつでも直し → ✕
+    if (touched === total && quick === total) return 1; // 全部すぐ → ⚡
+    if (touched > 0) return 2;                    // とちゅう or 悩んで混じり → 🤔
+    return 0;                                     // まだ
+  }
+
+  // その回の状態 0/1/2/3（解説タブがあれば集計・なければ手動）
+  function stateOf(sub, kai){
+    if (sub.tabs && sub.tabs[kai]) return aggFromTab(sub.tabs[kai]);
+    var st = mm[sub.key] || {};
+    return st[kai] || 0;
+  }
 
   function renderGoal(){
     var box = document.getElementById('mm-goal');
@@ -10125,16 +10149,14 @@
     var now = new Date(); now.setHours(0,0,0,0);
     var days = Math.max(0, Math.ceil((DEADLINE - now) / 86400000));
     var weeks = Math.max(1, Math.ceil(days/7));
-    var totalKai=0, mastered=0, touched=0, next=null;
+    var totalKai=0, mastered=0, next=null;
     SUBJECTS.forEach(function(sub){
       if (!sub.total) return;
-      var st = mm[sub.key] || {};
       totalKai += sub.total;
       for (var k=1;k<=sub.total;k++){
-        var v = st[k]||0;
+        var v = stateOf(sub,k);
         if (v===1) mastered++;
-        if (v) touched++;
-        if (v!==1 && !next) next = { label:sub.label.replace(/^[^ ]+ /,''), kai:k };
+        if (v!==1 && !next) next = { label:sub.label.replace(/^[^ ]+ /,''), kai:k, built:!!(sub.tabs&&sub.tabs[k]) };
       }
     });
     var remain = totalKai - mastered;
@@ -10146,7 +10168,7 @@
       '<div class="g-days">のこり <b>'+days+'</b> 日（約 '+weeks+' 週間）</div>'+
       '<div class="g-rate">いまの制覇率 <b style="color:#16a34a;">'+pct+'%</b>　⚡ '+mastered+' / 全 '+totalKai+' 回</div>';
     if (remain>0 && next)
-      html += '<div class="g-rate" style="color:#b45309;">👉 つぎにやること：<b>'+next.label+' 第'+next.kai+'回</b>　／　この調子だと 1週間に <b>'+pace+'回</b> ずつ ⚡にできれば間に合うよ</div>';
+      html += '<div class="g-rate" style="color:#b45309;">👉 つぎにやること：<b>'+next.label+' 第'+next.kai+'回</b>'+(next.built?'（📖解説あり）':'')+'　／　1週間に <b>'+pace+'回</b> ずつ ⚡にできれば間に合うよ</div>';
     else if (totalKai)
       html += '<div class="g-rate" style="color:#16a34a;">🎉 いまのところ ぜんぶ ⚡！ この調子！</div>';
     if (pending.length)
@@ -10159,18 +10181,16 @@
     if (!root) return;
     root.innerHTML = '';
     SUBJECTS.forEach(function(sub){
-      var st = mm[sub.key] || (mm[sub.key] = {});
       var sec = document.createElement('div');
       sec.className = 'mm-subject';
       if (!sub.total){
         sec.innerHTML = '<h3>'+sub.label+' <span style="font-size:13px;color:#94a3b8;font-weight:normal;">（準備中）</span></h3>'+
           '<div class="mm-emptynote">完全チェックをスキャンしたら、ここに回のマスがならぶよ。</div>';
-        root.appendChild(sec);
-        return;
+        root.appendChild(sec); return;
       }
-      var c1=0,c2=0,c3=0;
-      for (var i=1;i<=sub.total;i++){ var v=st[i]; if(v===1)c1++; else if(v===2)c2++; else if(v===3)c3++; }
-      var done = c1+c2+c3;
+      var st = mm[sub.key] || (mm[sub.key] = {});
+      var c1=0,c2=0,c3=0,done=0;
+      for (var i=1;i<=sub.total;i++){ var v=stateOf(sub,i); if(v===1)c1++; else if(v===2)c2++; else if(v===3)c3++; if(v)done++; }
       var pct = Math.round(c1/sub.total*100);
       sec.innerHTML =
         '<h3>'+sub.label+' <span style="font-size:13px;color:#64748b;font-weight:normal;">（全'+sub.total+'回）</span></h3>'+
@@ -10190,47 +10210,51 @@
       grid.className = 'mm-grid';
       for (var n=1;n<=sub.total;n++){
         (function(kai){
-          var v = st[kai] || 0;
+          var built = !!(sub.tabs && sub.tabs[kai]);
+          var v = stateOf(sub, kai);
           var cell = document.createElement('div');
-          cell.className = 'mm-cell' + (v?(' s'+v):'');
+          cell.className = 'mm-cell' + (v?(' s'+v):'') + (built?' is-built':'');
           var face = v===1?'⚡':v===2?'🤔':v===3?'✕':'';
           var title = sub.titles && sub.titles[kai];
           cell.innerHTML = '<span class="kai">'+kai+'</span>' +
             (face?'<span class="icon">'+face+'</span>':'') +
             (title?'<span class="fc">'+title.slice(0,4)+'</span>':'');
-          if (sub.tabs && sub.tabs[kai]){
+          if (built){
             var book = document.createElement('span');
             book.className='book'; book.textContent='📖';
-            book.title='解説をひらく';
-            book.addEventListener('click', function(ev){
-              ev.stopPropagation();
+            cell.appendChild(book);
+            cell.title = '解説をひらいて、大問ごとに手ごたえをチェックしよう';
+            cell.addEventListener('click', function(){
               var b=document.querySelector('.tab[data-target="'+sub.tabs[kai]+'"]');
               if(b) b.click();
             });
-            cell.appendChild(book);
+          } else {
+            cell.title = '紙で解いたら、手ごたえをタップ（⚡→🤔→✕→もどる）';
+            cell.addEventListener('click', function(){
+              var cur = st[kai] || 0;
+              var nx = (cur+1)%4;
+              if (nx===0) delete st[kai]; else st[kai]=nx;
+              save(MM_KEY, mm);
+              var akey = sub.key+'-'+kai;
+              if (nx!==0 && !award[akey]){ award[akey]=1; save(MM_AWARD, award); if (typeof gachaSticker==='function') gachaSticker(); }
+              render();
+            });
           }
-          cell.addEventListener('click', function(){
-            var cur = st[kai] || 0;
-            var nx = (cur+1)%4;                 // 0→1→2→3→0
-            if (nx===0) delete st[kai]; else st[kai]=nx;
-            save(MM_KEY, mm);
-            var akey = sub.key+'-'+kai;
-            if (nx!==0 && !award[akey]){
-              award[akey]=1; save(MM_AWARD, award);
-              if (typeof gachaSticker === 'function') gachaSticker();
-            }
-            render();
-          });
           grid.appendChild(cell);
         })(n);
       }
       sec.appendChild(grid);
-      if (sub.total > Object.keys(sub.tabs||{}).length)
-        sec.insertAdjacentHTML('beforeend','<div class="mm-emptynote">📖 のない回は、解説ページはこれから追加していくよ。手ごたえのチェックは今からできるよ。</div>');
+      var builtN = Object.keys(sub.tabs||{}).length;
+      sec.insertAdjacentHTML('beforeend','<div class="mm-emptynote">📖つき＝解説あり（タップで開いて大問ごとにチェック→色が自動でつく）。📖なし＝紙で解いたらマスをタップして手ごたえを記録。</div>');
       root.appendChild(sec);
     });
     renderGoal();
   }
+
+  // 各回タブで手ごたえを変えたら、マップも更新
+  document.addEventListener('click', function(e){ if(e.target.closest('.check-btn')) setTimeout(render, 80); });
+  var mtab = document.querySelector('.tab[data-target="t-mastery-map"]');
+  if (mtab) mtab.addEventListener('click', function(){ setTimeout(render, 50); });
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', render);
   else render();
