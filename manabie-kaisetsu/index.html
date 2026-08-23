@@ -1178,6 +1178,7 @@
 <nav class="tabs sidebar" id="tabs">
   <div class="side-brand">📚 マナビー解説</div>
   <button class="tab side-home active" data-target="t-home">🏠 ホーム（目次）</button>
+  <button class="tab" data-target="t-mastery-map" style="background:linear-gradient(135deg,#dbeafe,#93c5fd);color:#1e3a8a;font-weight:bold;">🗺️ 制覇マップ<span class="date">手ごたえチェック</span></button>
   <div class="subj-group sg-math">
     <div class="subj-head">📐 算数</div>
     <div class="cat-row r-manabi">
@@ -8843,6 +8844,58 @@
   .nb-item.is-redo   { background: #fff1f2; border-color: #fca5a5; }
   .nb-item .nb-status { flex-shrink: 0; font-size: 16px; }
 </style>
+<style>
+  /* 🗺️ 完全チェック制覇マップ */
+  #t-mastery-map h2 { margin-top:0; }
+  .mm-intro { background:#eef6ff; border:1px solid #bfdbfe; border-radius:10px; padding:12px 14px; font-size:13.5px; color:#1e3a5f; line-height:1.7; margin-bottom:16px; }
+  .mm-legend { display:flex; flex-wrap:wrap; gap:8px; margin:10px 0 4px; }
+  .mm-legend .chip { display:inline-flex; align-items:center; gap:5px; font-size:12.5px; font-weight:bold; padding:5px 11px; border-radius:999px; border:1.5px solid; }
+  .chip.st1 { background:#dcfce7; color:#166534; border-color:#86efac; }
+  .chip.st2 { background:#fef3c7; color:#92400e; border-color:#fcd34d; }
+  .chip.st3 { background:#fee2e2; color:#991b1b; border-color:#fca5a5; }
+  .chip.st0 { background:#f1f5f9; color:#64748b; border-color:#cbd5e1; }
+  .mm-subject { border:1px solid #e2e8f0; border-radius:14px; padding:16px; margin-bottom:22px; background:#fff; }
+  .mm-subject > h3 { margin:0 0 4px; font-size:18px; }
+  .mm-summary { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin:10px 0 6px; font-size:13px; }
+  .mm-summary .s-num { font-weight:bold; }
+  .mm-bar { height:12px; border-radius:999px; background:#f1f5f9; overflow:hidden; display:flex; margin:8px 0 14px; }
+  .mm-bar > i { display:block; height:100%; }
+  .mm-bar .b1 { background:#22c55e; } .mm-bar .b2 { background:#f59e0b; } .mm-bar .b3 { background:#ef4444; }
+  .mm-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(58px,1fr)); gap:8px; }
+  .mm-cell { position:relative; aspect-ratio:1/1; border-radius:10px; border:2px solid #cbd5e1; background:#f1f5f9; color:#64748b; font-weight:bold; cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; line-height:1.1; transition:transform .08s, box-shadow .12s; -webkit-tap-highlight-color:transparent; user-select:none; }
+  .mm-cell:active { transform:scale(.94); }
+  .mm-cell .kai { font-size:15px; }
+  .mm-cell .fc  { font-size:10px; font-weight:normal; margin-top:2px; }
+  .mm-cell .icon { font-size:14px; margin-top:1px; }
+  .mm-cell.s1 { background:#dcfce7; border-color:#22c55e; color:#166534; }
+  .mm-cell.s2 { background:#fef3c7; border-color:#f59e0b; color:#92400e; }
+  .mm-cell.s3 { background:#fee2e2; border-color:#ef4444; color:#991b1b; }
+  .mm-cell .book { position:absolute; top:-7px; right:-7px; font-size:15px; background:#fff; border-radius:50%; line-height:1; padding:1px; box-shadow:0 1px 3px rgba(0,0,0,.2); }
+  .mm-emptynote { font-size:12.5px; color:#94a3b8; margin-top:6px; }
+  .mm-goal { background:linear-gradient(135deg,#fff7ed,#fef3c7); border:2px solid #fcd34d; border-radius:14px; padding:14px 16px; margin-bottom:16px; }
+  .mm-goal .g-title { font-size:14px; color:#92400e; font-weight:bold; }
+  .mm-goal .g-days { font-size:15px; color:#b45309; margin-top:4px; }
+  .mm-goal .g-days b { font-size:26px; color:#dc2626; }
+  .mm-goal .g-rate { font-size:13.5px; color:#166534; margin-top:6px; }
+  .mm-goal .g-rate b { font-size:20px; }
+</style>
+<div class="panel" id="t-mastery-map">
+  <h2>🗺️ 完全チェック 制覇マップ</h2>
+  <div class="mm-goal" id="mm-goal"></div>
+  <div class="mm-intro">
+    「完全チェック」を1回ずつ解いたら、その回のマスを<b>タップ</b>して、じぶんの手ごたえで色をぬっていこう。<br>
+    タップするたびに <b>⚡すぐ解けた → 🤔悩んで解けた → ✕解けなかった → （もどる）</b> の順で色がかわるよ。まちがえても もう1回タップすればもとにもどるよ。<br>
+    <b>📖</b> がついているマスは、そのマスをタップすると <b>解説ページにとべる</b>（📖の右上マークをタップ）。ぜんぶ⚡になったら制覇！
+  </div>
+  <div class="mm-legend">
+    <span class="chip st1">⚡ すぐ解けた</span>
+    <span class="chip st2">🤔 悩んで解けた</span>
+    <span class="chip st3">✕ 解けなかった</span>
+    <span class="chip st0">・ まだ</span>
+  </div>
+  <div id="mm-root"></div>
+</div>
+
 <div class="panel" id="t-notebook">
   <h2 style="margin-top:0; margin-bottom:16px;">📋 ノート — 目次</h2>
   <div id="nb-categories"></div>
@@ -9206,7 +9259,7 @@
   document.querySelectorAll('.panel').forEach((panel, panelIdx) => {
     const panelId = panel.id;
     // ホーム目次パネルは進捗バー・問題ジャンプを付けない
-    if (panelId === 't-home') return;
+    if (panelId === 't-home' || panelId === 't-mastery-map') return;
     // 進捗バー
     const progBar = document.createElement('div');
     progBar.className = 'progress';
@@ -9914,5 +9967,145 @@
   onScroll();
 })();
 </script>
+<script>
+/* 🗺️ 完全チェック 制覇マップ */
+(function(){
+  var MM_KEY = 'manabie_mastery_v1';        // { rika:{ "1":1, ... } }  1=すぐ 2=悩んで 3=×
+  var MM_AWARD = 'manabie_mastery_award_v1'; // { "rika-1":1, ... } シール付与済み(1回につき1枚)
+  var DEADLINE = new Date(2026, 11, 31);     // 12月31日（月は0はじまり）
+
+  // 教科ごとの設定。回数・解説タブ・タイトルはここに足していく。
+  // total が 0（=まだスキャンしていない）教科は「準備中」表示になる。
+  var SUBJECTS = [
+    { key:'rika', label:'🧪 理科', total:55,
+      tabs:  { 1:'t-check-01' },
+      titles:{ 1:'ジャガイモの育ち', 2:'いろいろな種のつくり' } },
+    { key:'sansu', label:'🔢 算数', total:0, tabs:{}, titles:{} },
+    { key:'shakai', label:'🌏 社会', total:0, tabs:{}, titles:{} }
+  ];
+
+  function load(k){ try { return JSON.parse(localStorage.getItem(k) || '{}'); } catch(e){ return {}; } }
+  function save(k,v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
+
+  var mm = load(MM_KEY), award = load(MM_AWARD);
+
+  function renderGoal(){
+    var box = document.getElementById('mm-goal');
+    if (!box) return;
+    var now = new Date(); now.setHours(0,0,0,0);
+    var days = Math.max(0, Math.ceil((DEADLINE - now) / 86400000));
+    var weeks = Math.max(1, Math.ceil(days/7));
+    var totalKai=0, mastered=0, touched=0, next=null;
+    SUBJECTS.forEach(function(sub){
+      if (!sub.total) return;
+      var st = mm[sub.key] || {};
+      totalKai += sub.total;
+      for (var k=1;k<=sub.total;k++){
+        var v = st[k]||0;
+        if (v===1) mastered++;
+        if (v) touched++;
+        if (v!==1 && !next) next = { label:sub.label.replace(/^[^ ]+ /,''), kai:k };
+      }
+    });
+    var remain = totalKai - mastered;
+    var pct = totalKai ? Math.round(mastered/totalKai*100) : 0;
+    var pace = remain>0 ? Math.ceil(remain/weeks) : 0;
+    var pending = SUBJECTS.filter(function(s){return !s.total;}).map(function(s){return s.label;});
+    var html =
+      '<div class="g-title">🎯 目標：12月31日までに 算数・理科・社会の「完全チェック」を ぜんぶ ⚡すぐ解ける に！</div>'+
+      '<div class="g-days">のこり <b>'+days+'</b> 日（約 '+weeks+' 週間）</div>'+
+      '<div class="g-rate">いまの制覇率 <b style="color:#16a34a;">'+pct+'%</b>　⚡ '+mastered+' / 全 '+totalKai+' 回</div>';
+    if (remain>0 && next)
+      html += '<div class="g-rate" style="color:#b45309;">👉 つぎにやること：<b>'+next.label+' 第'+next.kai+'回</b>　／　この調子だと 1週間に <b>'+pace+'回</b> ずつ ⚡にできれば間に合うよ</div>';
+    else if (totalKai)
+      html += '<div class="g-rate" style="color:#16a34a;">🎉 いまのところ ぜんぶ ⚡！ この調子！</div>';
+    if (pending.length)
+      html += '<div class="g-rate" style="color:#94a3b8;">（'+pending.join('・')+' の完全チェックは、スキャンできたら ここに追加するよ）</div>';
+    box.innerHTML = html;
+  }
+
+  function render(){
+    var root = document.getElementById('mm-root');
+    if (!root) return;
+    root.innerHTML = '';
+    SUBJECTS.forEach(function(sub){
+      var st = mm[sub.key] || (mm[sub.key] = {});
+      var sec = document.createElement('div');
+      sec.className = 'mm-subject';
+      if (!sub.total){
+        sec.innerHTML = '<h3>'+sub.label+' <span style="font-size:13px;color:#94a3b8;font-weight:normal;">（準備中）</span></h3>'+
+          '<div class="mm-emptynote">完全チェックをスキャンしたら、ここに回のマスがならぶよ。</div>';
+        root.appendChild(sec);
+        return;
+      }
+      var c1=0,c2=0,c3=0;
+      for (var i=1;i<=sub.total;i++){ var v=st[i]; if(v===1)c1++; else if(v===2)c2++; else if(v===3)c3++; }
+      var done = c1+c2+c3;
+      var pct = Math.round(c1/sub.total*100);
+      sec.innerHTML =
+        '<h3>'+sub.label+' <span style="font-size:13px;color:#64748b;font-weight:normal;">（全'+sub.total+'回）</span></h3>'+
+        '<div class="mm-summary">'+
+          '<span>制覇率 <span class="s-num" style="color:#16a34a;font-size:16px;">'+pct+'%</span></span>'+
+          '<span class="chip st1" style="padding:3px 9px;">⚡ '+c1+'</span>'+
+          '<span class="chip st2" style="padding:3px 9px;">🤔 '+c2+'</span>'+
+          '<span class="chip st3" style="padding:3px 9px;">✕ '+c3+'</span>'+
+          '<span class="chip st0" style="padding:3px 9px;">・ '+(sub.total-done)+'</span>'+
+        '</div>'+
+        '<div class="mm-bar">'+
+          '<i class="b1" style="width:'+(c1/sub.total*100)+'%"></i>'+
+          '<i class="b2" style="width:'+(c2/sub.total*100)+'%"></i>'+
+          '<i class="b3" style="width:'+(c3/sub.total*100)+'%"></i>'+
+        '</div>';
+      var grid = document.createElement('div');
+      grid.className = 'mm-grid';
+      for (var n=1;n<=sub.total;n++){
+        (function(kai){
+          var v = st[kai] || 0;
+          var cell = document.createElement('div');
+          cell.className = 'mm-cell' + (v?(' s'+v):'');
+          var face = v===1?'⚡':v===2?'🤔':v===3?'✕':'';
+          var title = sub.titles && sub.titles[kai];
+          cell.innerHTML = '<span class="kai">'+kai+'</span>' +
+            (face?'<span class="icon">'+face+'</span>':'') +
+            (title?'<span class="fc">'+title.slice(0,4)+'</span>':'');
+          if (sub.tabs && sub.tabs[kai]){
+            var book = document.createElement('span');
+            book.className='book'; book.textContent='📖';
+            book.title='解説をひらく';
+            book.addEventListener('click', function(ev){
+              ev.stopPropagation();
+              var b=document.querySelector('.tab[data-target="'+sub.tabs[kai]+'"]');
+              if(b) b.click();
+            });
+            cell.appendChild(book);
+          }
+          cell.addEventListener('click', function(){
+            var cur = st[kai] || 0;
+            var nx = (cur+1)%4;                 // 0→1→2→3→0
+            if (nx===0) delete st[kai]; else st[kai]=nx;
+            save(MM_KEY, mm);
+            var akey = sub.key+'-'+kai;
+            if (nx!==0 && !award[akey]){
+              award[akey]=1; save(MM_AWARD, award);
+              if (typeof gachaSticker === 'function') gachaSticker();
+            }
+            render();
+          });
+          grid.appendChild(cell);
+        })(n);
+      }
+      sec.appendChild(grid);
+      if (sub.total > Object.keys(sub.tabs||{}).length)
+        sec.insertAdjacentHTML('beforeend','<div class="mm-emptynote">📖 のない回は、解説ページはこれから追加していくよ。手ごたえのチェックは今からできるよ。</div>');
+      root.appendChild(sec);
+    });
+    renderGoal();
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', render);
+  else render();
+})();
+</script>
+
 </body>
 </html>
