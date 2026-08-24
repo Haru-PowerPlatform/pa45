@@ -342,6 +342,62 @@ def ann_bodies(ev):
     return [(s, s["tpl"].format(**ctx)) for s in ANN_SLOTS]
 
 
+_WD = ["月", "火", "水", "木", "金", "土", "日"]
+
+
+def _short_topic(theme):
+    t = (theme or "").strip()
+    for suf in ("する回", "します", "しよう", "する", "編"):
+        if t.endswith(suf):
+            t = t[:-len(suf)]
+            break
+    return t[:20].strip()
+
+
+def _short_line(desc):
+    if not desc:
+        return ""
+    first = re.split(r"[。．\n]", desc.strip())[0]
+    return first[:24].strip()
+
+
+def _fit_announce(ev):
+    """4スロットすべて c140<=140 に収まるよう line→topic の順に自動で詰める。"""
+    for _ in range(60):
+        if all(c140(b) <= 140 for _s, b in ann_bodies(ev)):
+            return ev
+        if ev.get("line"):
+            ev["line"] = ev["line"][:-2].rstrip("、。 ")
+        elif len(ev.get("topic", "")) > 6:
+            ev["topic"] = ev["topic"][:-1]
+        else:
+            return ev
+    return ev
+
+
+def derive_announce_from_upcoming(up):
+    """upcoming-event.json から告知1件を自動生成（announce-events.json に手動エントリが無いとき用）。"""
+    di = up.get("date_iso", "")
+    try:
+        import datetime as _dt
+        y, m, d = map(int, di.split("-"))
+        wd = _WD[_dt.date(y, m, d).weekday()]
+    except Exception:
+        wd = "木"
+    tm = re.search(r"(\d{1,2}:\d{2})", up.get("date", "") or "")
+    ev = {
+        "vol": int(up["vol"]),
+        "date": di,
+        "wd": wd,
+        "time": tm.group(1) if tm else "20:15",
+        "topic": _short_topic(up.get("theme", "")),
+        "line": _short_line(up.get("description", "")),
+        "connpass_url": up.get("connpass_url", ""),
+        "_auto": True,
+    }
+    return _fit_announce(ev)
+
+
 def cards_announce(ev):
     if ev.get("og_image"):
         thumb = f'<img class="og" src="{html.escape(ev["og_image"])}" alt="" loading="lazy">'
@@ -662,9 +718,21 @@ def main():
     pa_html, pa_ready, pa_fix = blog_pane(blog_pa)
     cs_html, cs_ready, cs_fix = blog_pane(blog_cs)
 
+    # 開催告知は「次回イベント」を常に自動表示。
+    #  - upcoming-event.json（Haruが次回connpass作成時に更新）の vol を対象にする。
+    #  - announce-events.json にその vol の手動エントリがあれば優先（良い文言を入れたいとき）。
+    #  - 無ければ upcoming-event.json から自動生成（140字に自動フィット）。
     af = ROOT / "data" / "announce-events.json"
-    ann = json.loads(af.read_text(encoding="utf-8"))["events"] if af.exists() else []
-    ann.sort(key=lambda e: e["vol"])
+    ann_manual = json.loads(af.read_text(encoding="utf-8"))["events"] if af.exists() else []
+    upf = ROOT / "data" / "config" / "upcoming-event.json"
+    ann = []
+    if upf.exists():
+        up = json.loads(upf.read_text(encoding="utf-8"))
+        uv = int(up["vol"])
+        manual = next((e for e in ann_manual if int(e.get("vol", -1)) == uv), None)
+        ann = [manual] if manual else [derive_announce_from_upcoming(up)]
+    else:
+        ann = sorted(ann_manual, key=lambda e: e["vol"])[-1:]
     n_ann = len(ann) * 4
 
     lif = ROOT / "data" / "linkedin-board.json"
