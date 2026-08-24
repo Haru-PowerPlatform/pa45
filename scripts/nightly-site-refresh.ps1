@@ -78,6 +78,8 @@ try {
   & $py "scripts\build-insights.py"       2>&1 | ForEach-Object { Log "insights: $_" }
   & $py "scripts\build-slides-gallery.py" 2>&1 | ForEach-Object { Log "slides: $_" }
   & $py "scripts\sync-youtube-links.py"   2>&1 | ForEach-Object { Log "youtube: $_" }
+  # 全回の資料リンク集（目次ハブ）を台帳 data\config\links-index.json から冪等再生成
+  & $py "scripts\build-links-index.py"    2>&1 | ForEach-Object { Log "links: $_" }
 
   # 3) 集計値に変化があったときだけOGPを作り直す（ヘッドレスChromeで重いため）
   $sig = (& $py -c "import json;s=json.load(open(r'$repo\data\insights.json',encoding='utf-8'))['summary'];print('|'.join(str(s.get(k)) for k in ['sessions','participants_total','responses_total','understanding_avg','usefulness_avg','participants_max','participants_avg','archive_videos']))").Trim()
@@ -99,6 +101,8 @@ try {
     $paths = @(
       "data\insights.json",
       "slides\index.html",
+      "slides\links.html",
+      "data\config\links-index.json",
       "sessions\index.html",
       "assets\ogp\insights-*.png",
       "assets\ogp\og-*.png"
