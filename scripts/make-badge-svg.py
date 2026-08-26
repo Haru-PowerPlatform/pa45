@@ -47,6 +47,7 @@ SESSIONS = {
     21: ("First Steps", "2026-07-30", "firststep"),
     22: ("Office Scripts × Copilot", "2026-08-06", "excelscript"),
     23: ("Return Value & Condition", "2026-08-15", "branch"),
+    24: ("Reaction Attendance", "2026-08-22", "reaction"),
 }
 
 
@@ -80,6 +81,10 @@ PALETTE_OVERRIDE = {
     #          判断のバイオレット×ゴールド。菱形の条件から2本に分かれる分岐iconが主役。
     23: dict(ring=("#d7c7ff", "#2a1a5e"), disc=("#7c3aed", "#1e0f45"),
              gold=GOLD, title="#ffffff", sub="#e6dcff"),
+    # Vol.24：Teamsの👍リアクションで出欠集計。バイオレット(23)からの変化で、
+    #          Teamsのインディゴ×ゴールド。吹き出しから立ち上がる親指アップiconが主役。
+    24: dict(ring=("#c8caff", "#171a58"), disc=("#4f52c9", "#0b0d33"),
+             gold=GOLD, title="#ffffff", sub="#d8daff"),
 }
 
 
@@ -329,11 +334,43 @@ def icon_branch(g):
   </g>'''
 
 
+def icon_reaction(g):
+    """Teamsの投稿に押した👍で出欠が集まる = 吹き出しから親指アップが立ち上がる。"""
+    gl, gm, gd = g
+    bx, by, bw, bh = 336, 250, 218, 100      # 吹き出し
+    lines = "".join(
+        f'<rect x="{bx+24}" y="{by+24+i*22}" width="{w}" height="10" rx="5" '
+        f'fill="{gd}" opacity="0.45"/>'
+        for i, w in enumerate((150, 118, 86)))
+    tail = (f'<path d="M{bx+58} {by+bh} l0 30 l34 -30 z" fill="#fffaf0" '
+            f'stroke="{gd}" stroke-width="4.5" stroke-linejoin="round"/>')
+    # 親指アップ（手のひら＝金グラデ／袖口＝クリーム）
+    hand = (f'<path d="M436 400 q4 -34 22 -50 q13 -11 21 0 q7 9 0 24 l-11 25 h47 '
+            f'q19 0 15 19 l-13 47 q-5 15 -22 15 h-59 z" '
+            f'fill="url(#sparkgrad)" stroke="{gd}" stroke-width="4.5" stroke-linejoin="round"/>')
+    cuff = (f'<rect x="392" y="396" width="40" height="84" rx="12" fill="#fffaf0" '
+            f'stroke="{gd}" stroke-width="4.5"/>')
+    spark = "".join(
+        f'<circle cx="{x}" cy="{y}" r="{r}" fill="{gl}" opacity="0.85"/>'
+        for x, y, r in ((392, 356, 7), (516, 350, 6), (546, 392, 5)))
+    return f'''
+  <g filter="url(#ishadow)" transform="translate(0,14)">
+    {tail}
+    <rect x="{bx}" y="{by}" width="{bw}" height="{bh}" rx="22" fill="#fffaf0"
+          stroke="{gd}" stroke-width="4.5"/>
+    {lines}
+    {spark}
+    {cuff}
+    {hand}
+  </g>'''
+
+
 ICONS = {"foldermail": icon_foldermail, "copilot": icon_copilot,
          "deadline": icon_deadline, "approval": icon_approval,
          "dashboard": icon_dashboard, "card": icon_card,
          "firststep": icon_firststep, "excelscript": icon_excelscript,
-         "branch": icon_branch}
+         "branch": icon_branch,
+         "reaction": icon_reaction}
 
 
 def knurl_dots(cx, cy, r, n, color):

@@ -281,6 +281,7 @@ def send_email(to_email: str, session_num: int, badge_path: Path, next_url_overr
         21: "はじめる前の基礎と環境準備",
         22: "OfficeスクリプトとCopilotでExcel自動化",
         23: "Officeスクリプトの戻り値で条件分岐（自動振り分け）",
+        24: "Teamsの絵文字リアクションで出欠を自動集計",
     }
     theme = THEMES_JP.get(session_num)
     theme_part = f"『{theme}』" if theme else ""
