@@ -1019,6 +1019,12 @@
 
   /* ===== サイドバー＆ホーム目次（2026-06-21 リデザイン） ===== */
   .menu-toggle{display:none;position:fixed;top:10px;left:10px;z-index:120;background:#1e40af;color:#fff;border:none;border-radius:10px;padding:9px 13px;font-size:14px;font-weight:bold;box-shadow:0 2px 8px rgba(0,0,0,.25);cursor:pointer;}
+  /* ホームへ戻る 追従ボタン（ホーム以外で表示） */
+  .home-fab{position:fixed;right:18px;bottom:18px;z-index:90;background:linear-gradient(135deg,#3b82f6,#1e40af);color:#fff;border:none;border-radius:999px;padding:12px 20px;font-size:14.5px;font-weight:bold;box-shadow:0 6px 18px rgba(30,64,175,.4);cursor:pointer;display:none;align-items:center;gap:6px;transition:transform .1s;}
+  .home-fab:hover{filter:brightness(1.06);}
+  .home-fab:active{transform:translateY(2px);}
+  .home-fab.show{display:inline-flex;}
+  @media (max-width:600px){.home-fab{right:12px;bottom:12px;padding:11px 16px;font-size:13px;}}
   .nav-backdrop{display:none;position:fixed;inset:0;background:rgba(15,23,42,.4);z-index:100;}
   body.nav-open .nav-backdrop{display:block;}
   .app-shell{display:flex;gap:18px;max-width:1240px;margin:0 auto;padding:14px 14px 0;align-items:flex-start;}
@@ -1185,6 +1191,7 @@
 </div>
 
 <button class="menu-toggle" id="menuToggle" aria-label="メニュー">☰ メニュー</button>
+<button class="home-fab" id="homeFab" aria-label="ホームへ戻る">🏠 ホームへ戻る</button>
 <div class="nav-backdrop" id="navBackdrop"></div>
 <div class="app-shell">
 <nav class="tabs sidebar" id="tabs">
@@ -17999,6 +18006,36 @@
   }
   window.addEventListener('load', openFromHash);
   window.addEventListener('hashchange', openFromHash);
+})();
+</script>
+<script>
+/* 🏠 ホームへ戻る 追従ボタン（ホーム以外の全ページで表示） */
+(function(){
+  var fab = document.getElementById('homeFab');
+  if(!fab) return;
+  function goHome(){
+    document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
+    document.querySelectorAll('.panel').forEach(function(p){ p.classList.remove('active'); });
+    var ht = document.querySelector('.tab[data-target="t-home"]');
+    var hp = document.getElementById('t-home');
+    if(ht) ht.classList.add('active');
+    if(hp) hp.classList.add('active');
+    try { localStorage.setItem('manabie_last_tab_v1','t-home'); } catch(e) {}
+    document.body.classList.remove('nav-open');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  function updateFab(){
+    var home = document.getElementById('t-home');
+    var atHome = home && home.classList.contains('active');
+    fab.classList.toggle('show', !atHome);
+  }
+  fab.addEventListener('click', goHome);
+  // どの経路でパネルが切り替わっても表示を更新
+  document.querySelectorAll('.panel').forEach(function(p){
+    new MutationObserver(updateFab).observe(p, { attributes:true, attributeFilter:['class'] });
+  });
+  window.addEventListener('hashchange', updateFab);
+  updateFab();
 })();
 </script>
 </body>
