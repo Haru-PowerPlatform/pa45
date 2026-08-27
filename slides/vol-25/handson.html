@@ -190,6 +190,20 @@
       <li><b>「前のステップから出力を選択します」</b>の欄に、動的コンテンツから <b>添付ファイル</b> を入れます。</li>
     </ol>
   <figure class="shot"><img src="assets/set-foreach.png" alt="Apply to each の設定画面"><figcaption>実際の画面。渡すのは「添付ファイル」ひとつだけ。</figcaption></figure>
+    <div class="callout pa"><b>❓ なぜ「Apply to each」が要るの？</b>
+      <ul style="margin:6px 0 0;padding-left:20px;">
+        <li>添付ファイルは1件ずつ届くのではなく、<b>まとめて1つの箱に入って</b>やってきます（0件のことも、3件のこともある）。</li>
+        <li>箱のままでは保存できません。<b>中身を1個ずつ取り出す</b>必要があります。</li>
+        <li>Apply to each ＝「<b>箱から1個ずつ出して、中の処理をくり返す</b>」アクション。だから添付の数だけ「ファイルの作成」が動きます。</li>
+      </ul>
+    </div>
+    <div class="callout warn"><b>⚠️ 置いていないのに勝手に出てくることがあります：</b>
+      <ul style="margin:6px 0 0;padding-left:20px;">
+        <li>次のSTEP 3で、ファイル名などに動的コンテンツの <span class="k">名前</span> や <span class="k">コンテンツ</span> を選ぶと、<b>Power Automateが自動でApply to eachを付けます</b>。</li>
+        <li>これは故障ではありません。「<b>箱の中身を使った＝くり返しが要る</b>」と判断して、先回りしてくれています。</li>
+        <li>今回は<b>先に自分で置いてから</b>中にアクションを入れるので、二重に増えません。もし2つできてしまったら、外側の空のほうを削除します。</li>
+      </ul>
+    </div>
     <div class="callout tip"><b>💡 ここがこの回の学び：</b> 「まとめて来たものを、1件ずつ取り出す」は自動化の定番の形です。この箱の<b>中</b>に、次のSTEP 3を入れます。<b>箱の外に置くと、1件目しか保存されません</b>。</div>
   </section>
 
@@ -261,7 +275,7 @@
     <ol class="steps">
       <li><b>＋新しいステップ</b>→ <b>Microsoft Teams</b> の <b>「チャットまたはチャネルでメッセージを投稿する」</b>を追加します。</li>
       <li>投稿者＝<b>フロー ボット</b>。投稿先は、まずは確実な <b>「フロー ボットとチャットをする」</b>（自分あて）にしておくと、当日つまずきません。</li>
-      <li>メッセージに、件名・件数・保存先を差し込みます。件数は<b>式（fx）</b>で数えます。</li>
+      <li>メッセージに、件名・件数・保存先を差し込みます。件数は<b>式（fx）</b>で数えます。<ul class="sub"><li>保存先のパスは<b>ただの文字として</b>書きます。クリックできるリンクにはしません。</li></ul></li>
     </ol>
     <div class="codewrap">
       <span class="lbl">式（fx に貼る・添付が何件あったか）</span>
@@ -275,7 +289,8 @@
 保存先：/Shared Documents/請求書/［今月］
 元のメールには「保存済み」の印をつけました</pre>
     </div>
-  <figure class="shot"><img src="assets/set-teams.png" alt="Teams通知の設定画面"><figcaption>実際の画面。宛先はぼかしています。件数は length(...) の式、保存先の月は formatDateTime の式。</figcaption></figure>
+  <figure class="shot"><img src="assets/set-teams.png" alt="Teams通知の設定画面"><figcaption>実際の画面。宛先はぼかしています。件数は length(...) の式、保存先の月は formatDateTime の式。<b>保存先は文字を並べているだけ</b>で、リンクは作っていません。</figcaption></figure>
+    <div class="callout pa"><b>📌 保存先は「文字」で十分です。</b> クリックで開けるリンクにすることもできますが、<b>保存したファイルのURLを取り出して組み立てる</b>手順が要るので、45分では回り道になります。今回は<b>どこに入ったかが読めれば目的は果たせる</b>ので、文字のまま出します。<br><span style="font-size:13px;color:var(--muted);">フォルダをすぐ開きたい人は、SharePointのそのフォルダをブラウザのお気に入りに入れておけば十分です。</span></div>
     <div class="callout info"><b>📣 チームのチャネルに出したい時は：</b> 投稿先を「<b>チャネル</b>」に変えて、チームとチャネルを選びます。経理チームの部屋に「請求書が届いて保存しました」と出せます。</div>
   </section>
 
