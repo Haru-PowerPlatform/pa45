@@ -67,17 +67,44 @@ def icon_mailsave(c):
 ICONS = {"mailsave": icon_mailsave}
 
 
+
+def _rounded_poly(pts, r):
+    """頂点リストから、角を半径rで丸めたパス文字列を作る。"""
+    import math
+    n = len(pts)
+    d = []
+    for i in range(n):
+        x, y = pts[i]
+        px, py = pts[(i - 1) % n]
+        nx, ny = pts[(i + 1) % n]
+        v1 = (px - x, py - y); v2 = (nx - x, ny - y)
+        l1 = math.hypot(*v1) or 1.0; l2 = math.hypot(*v2) or 1.0
+        rr = min(r, l1 / 2, l2 / 2)
+        a = (x + v1[0] / l1 * rr, y + v1[1] / l1 * rr)
+        b = (x + v2[0] / l2 * rr, y + v2[1] / l2 * rr)
+        if i == 0:
+            d.append(f"M{a[0]:.1f},{a[1]:.1f}")
+        else:
+            d.append(f"L{a[0]:.1f},{a[1]:.1f}")
+        d.append(f"Q{x:.1f},{y:.1f} {b[0]:.1f},{b[1]:.1f}")
+    d.append("Z")
+    return " ".join(d)
+
+
 def build_svg(vol, l1, l2, date, key, c):
     cx, cy = 440, 440
     W, H = 668, 792                      # 六角形の幅・高さ（縦長・上下がとがる）
     hx = [(cx, cy - H / 2), (cx + W / 2, cy - H / 4), (cx + W / 2, cy + H / 4),
           (cx, cy + H / 2), (cx - W / 2, cy + H / 4), (cx - W / 2, cy - H / 4)]
     pts = " ".join(f"{x:.1f},{y:.1f}" for x, y in hx)
+    hexd = _rounded_poly(hx, 52)
+    rimd = _rounded_poly([(cx + (x - cx) * 1.035, cy + (y - cy) * 1.035) for x, y in hx], 54)
 
     iW, iH = W - 46, H - 54              # 内側の細いライン
     ihx = [(cx, cy - iH / 2), (cx + iW / 2, cy - iH / 4), (cx + iW / 2, cy + iH / 4),
            (cx, cy + iH / 2), (cx - iW / 2, cy + iH / 4), (cx - iW / 2, cy - iH / 4)]
     ipts = " ".join(f"{x:.1f},{y:.1f}" for x, y in ihx)
+    inid = _rounded_poly(ihx, 44)
 
     # テーマ文字は長さで自動縮小
     def fit(s, base, maxw=470):
@@ -98,21 +125,50 @@ def build_svg(vol, l1, l2, date, key, c):
       <stop offset="0" stop-color="#ffffff" stop-opacity="0.14"/>
       <stop offset="0.55" stop-color="#ffffff" stop-opacity="0"/>
     </linearGradient>
-    <clipPath id="hexclip"><polygon points="{pts}"/></clipPath>
-    <filter id="soft" x="-25%" y="-25%" width="150%" height="150%">
-      <feDropShadow dx="0" dy="10" stdDeviation="16" flood-color="#000" flood-opacity="0.38"/>
+    <linearGradient id="rim" x1="0" y1="0" x2="0.2" y2="1">
+      <stop offset="0" stop-color="{c['line']}"/>
+      <stop offset="0.5" stop-color="{c['accent']}"/>
+      <stop offset="1" stop-color="{c['bg1']}"/>
+    </linearGradient>
+    <linearGradient id="edge" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.85"/>
+      <stop offset="0.45" stop-color="#ffffff" stop-opacity="0.15"/>
+      <stop offset="1" stop-color="#000000" stop-opacity="0.35"/>
+    </linearGradient>
+    <radialGradient id="gloss" cx="0.32" cy="0.16" r="0.72">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.30"/>
+      <stop offset="0.55" stop-color="#ffffff" stop-opacity="0.05"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="floor" x1="0" y1="0.55" x2="0" y2="1">
+      <stop offset="0" stop-color="#000000" stop-opacity="0"/>
+      <stop offset="1" stop-color="#000000" stop-opacity="0.42"/>
+    </linearGradient>
+    <clipPath id="hexclip"><path d="{hexd}"/></clipPath>
+    <filter id="soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="16" stdDeviation="20" flood-color="#000" flood-opacity="0.42"/>
+    </filter>
+    <filter id="innersh" x="-20%" y="-20%" width="140%" height="140%">
+      <feOffset dx="0" dy="7"/><feGaussianBlur stdDeviation="9" result="b"/>
+      <feComposite in="SourceGraphic" in2="b" operator="out" result="o"/>
+      <feColorMatrix in="o" type="matrix"
+        values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.55 0"/>
     </filter>
   </defs>
 
-  <polygon points="{pts}" fill="url(#face)" filter="url(#soft)"/>
+  <!-- 縁（厚み）→ 面 の順に重ねて立体に -->
+  <path d="{rimd}" fill="url(#rim)" filter="url(#soft)"/>
+  <path d="{hexd}" fill="url(#face)"/>
   <g clip-path="url(#hexclip)">
-    <polygon points="{pts}" fill="url(#sheen)"/>
-    <!-- 下部の帯 -->
+    <path d="{hexd}" fill="url(#sheen)"/>
     <rect x="0" y="{cy + 224}" width="880" height="220" fill="{c['band']}" opacity="0.94"/>
     <rect x="0" y="{cy + 224}" width="880" height="3" fill="{c['accent']}" opacity="0.9"/>
+    <rect x="0" y="0" width="880" height="880" fill="url(#floor)"/>
+    <rect x="0" y="0" width="880" height="880" fill="url(#gloss)"/>
+    <path d="{hexd}" fill="#fff" filter="url(#innersh)" opacity="0.9"/>
   </g>
-  <polygon points="{pts}" fill="none" stroke="{c['accent']}" stroke-width="6"/>
-  <polygon points="{ipts}" fill="none" stroke="{c['line']}" stroke-width="1.6" opacity="0.45"/>
+  <path d="{hexd}" fill="none" stroke="url(#edge)" stroke-width="5"/>
+  <path d="{inid}" fill="none" stroke="{c['line']}" stroke-width="1.6" opacity="0.42"/>
 
   {icon}
 
