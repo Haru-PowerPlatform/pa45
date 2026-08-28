@@ -43,21 +43,21 @@ def icon_mailsave(c):
     """封筒からファイルが下のフォルダへ落ちる＝メール添付の自動保存。"""
     a, w = c["accent"], "#FFFFFF"
     return f'''
-  <g transform="translate(440,210) scale(0.88)" fill="none" stroke="{w}" stroke-width="8"
+  <g transform="translate(440,236) scale(0.88)" fill="none" stroke="{w}" stroke-width="8"
      stroke-linecap="round" stroke-linejoin="round">
     <!-- 封筒 -->
     <rect x="-96" y="-74" width="192" height="126" rx="12"/>
     <path d="M-96 -62 L0 12 L96 -62"/>
-    <!-- クリップ（添付） -->
-    <path d="M52 -96 v-14 a20 20 0 0 1 40 0 v52 a34 34 0 0 1 -68 0 v-46"
+    <!-- クリップ（添付）＝封筒の上ぶちに留める。face を横切らない -->
+    <path d="M76 -138 v-8 a16 16 0 0 1 32 0 v44 a24 24 0 0 1 -48 0 v-38"
           stroke="{a}" stroke-width="8"/>
   </g>
-  <g transform="translate(440,318)" fill="none" stroke="{a}" stroke-width="7"
+  <g transform="translate(440,330)" fill="none" stroke="{a}" stroke-width="7"
      stroke-linecap="round" stroke-linejoin="round">
     <path d="M0 -34 v46"/>
     <path d="M-16 -4 L0 12 L16 -4"/>
   </g>
-  <g transform="translate(440,392) scale(0.88)" fill="none" stroke="{w}" stroke-width="8"
+  <g transform="translate(440,400) scale(0.88)" fill="none" stroke="{w}" stroke-width="8"
      stroke-linecap="round" stroke-linejoin="round">
     <path d="M-104 34 v-72 a10 10 0 0 1 10 -10 h44 l18 20 h122 a10 10 0 0 1 10 10 v52
              a10 10 0 0 1 -10 10 h-184 a10 10 0 0 1 -10 -10 z"/>
