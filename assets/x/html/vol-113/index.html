@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.113-1 議事録は「書くもの」から、翌朝に届くものへ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/tips-base.css">
+<style>
+  .stage{gap:11px;}
+  .koma{flex:1;min-height:0;display:flex;flex-direction:column;gap:7px;border-radius:14px;padding:8px 10px 9px;
+    background:#F8FAFC;border:2.5px solid #DCE3EE;position:relative;}
+  .koma.k2{background:#F5F0FF;border-color:#C9B4F4;}
+  .koma.k3{background:#EFF6FF;border-color:#A9C6F5;}
+  .koma.k4{background:#ECFDF5;border-color:#7FCEA9;}
+  .kt{flex:0 0 auto;display:flex;align-items:center;gap:8px;}
+  .kt .tm{flex:0 0 auto;background:#1B2A44;color:#fff;border-radius:7px;padding:3px 9px;font-size:15px;font-weight:900;
+    font-family:'Roboto Mono',monospace;}
+  .koma.k2 .kt .tm{background:#6D28D9;} .koma.k3 .kt .tm{background:#1E40AF;} .koma.k4 .kt .tm{background:#0B5136;}
+  .kt .th{font-size:20px;font-weight:900;color:var(--navy);line-height:1.14;}
+  .koma.k4 .kt .th{color:var(--green-dark);}
+  .ks{flex:1;min-height:0;border-radius:11px;overflow:hidden;position:relative;background:#EDF3FA;}
+  .koma.k2 .ks{background:#EDE4FF;} .koma.k4 .ks{background:#DCF3E7;}
+  .ks svg{position:absolute;inset:0;width:100%;height:100%;}
+  .ks .chara{position:absolute;right:2px;bottom:0;height:104px;z-index:2;filter:drop-shadow(0 3px 5px rgba(0,0,0,.22));}
+  .kc{flex:0 0 auto;font-size:15.5px;font-weight:900;line-height:1.3;border-radius:9px;padding:7px 10px;
+    color:#334155;background:#E7EEF7;}
+  .koma.k2 .kc{background:#E4D8FA;color:#5B21B6;}
+  .koma.k3 .kc{background:#DCEAFE;color:var(--blue-dark);}
+  .koma.k4 .kc{background:#CFEFE0;color:var(--green-dark);}
+  .kc b{color:var(--orange);}
+  .youdo{position:absolute;top:-13px;right:8px;background:#EA580C;color:#fff;border-radius:999px;padding:2px 11px;
+    font-size:13px;font-weight:900;box-shadow:0 2px 5px rgba(0,0,0,.25);z-index:6;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={bulb:'<path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/>',
+  arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>'};
+const VB='0 0 280 360';
+
+/* ① 会議中：録画をONにするだけ */
+const k1=`<svg viewBox="${VB}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs><filter id="a1" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#1B2A44" flood-opacity=".22"/></filter></defs>
+  <rect x="0" y="0" width="280" height="360" fill="#EDF3FA"/>
+  <g filter="url(#a1)"><rect x="12" y="26" width="256" height="196" rx="10" fill="#2B2B3C" stroke="#5B5FC7" stroke-width="2.4"/>
+    ${[[24,44],[126,44],[24,132],[126,132]].map(([x,y])=>`<rect x="${x}" y="${y}" width="94" height="74" rx="7" fill="#3E3E55"/>
+      <circle cx="${x+47}" cy="${y+30}" r="18" fill="#5B5FC7"/><rect x="${x+26}" y="${y+56}" width="42" height="6" rx="3" fill="#6B6B85"/>`).join('')}
+  </g>
+  <g filter="url(#a1)"><rect x="66" y="242" width="148" height="40" rx="20" fill="#DC2626"/>
+    <circle cx="92" cy="262" r="9" fill="#fff"/>
+    <text x="152" y="269" font-family="Noto Sans JP" font-size="16" font-weight="900" fill="#fff" text-anchor="middle">録画中</text></g>
+  <text x="140" y="318" font-family="Noto Sans JP" font-size="17" font-weight="900" fill="#1E40AF" text-anchor="middle">やることは</text>
+  <text x="140" y="342" font-family="Noto Sans JP" font-size="17" font-weight="900" fill="#1E40AF" text-anchor="middle">これだけ</text>
+</svg>`;
+
+/* ② 会議のあと：文字起こしが作られる */
+const k2=`<svg viewBox="${VB}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs><filter id="a2" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#3B2A66" flood-opacity=".22"/></filter></defs>
+  <rect x="0" y="0" width="280" height="360" fill="#EDE4FF"/>
+  <g filter="url(#a2)"><rect x="16" y="16" width="248" height="292" rx="10" fill="#fff" stroke="#B79CF0" stroke-width="2.4"/>
+    <rect x="16" y="16" width="248" height="26" rx="10" fill="#F3EEFF"/><rect x="16" y="32" width="248" height="10" fill="#F3EEFF"/>
+    <text x="30" y="35" font-family="Noto Sans JP" font-size="13.5" font-weight="900" fill="#5B21B6">文字起こし</text>
+    ${[0,1,2,3,4,5,6,7].map(i=>`<g transform="translate(30,${56+i*31})">
+      <circle cx="10" cy="10" r="10" fill="${['#8B5CF6','#60A5FA','#34D399','#8B5CF6','#60A5FA','#34D399','#8B5CF6','#60A5FA'][i]}"/>
+      <rect x="28" y="3" width="${[154,128,170,112,146,132,160,120][i]}" height="7" rx="3.5" fill="#DDD3F7"/>
+      <rect x="28" y="14" width="${[98,152,82,140,106,118,90,146][i]}" height="7" rx="3.5" fill="#EBE4FA"/></g>`).join('')}
+  </g>
+  <text x="140" y="336" font-family="Noto Sans JP" font-size="17" font-weight="900" fill="#5B21B6" text-anchor="middle">自動でたまっていく</text>
+</svg>`;
+
+/* ③ 夜：ワークフローが前日ぶんをまとめる */
+const k3=`<svg viewBox="${VB}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="nsky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22304F"/><stop offset="1" stop-color="#43507A"/></linearGradient>
+    <filter id="a3" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#0B1224" flood-opacity=".4"/></filter>
+  </defs>
+  <rect x="0" y="0" width="280" height="360" fill="url(#nsky)"/>
+  <circle cx="52" cy="46" r="19" fill="#FDE68A"/><circle cx="43" cy="39" r="18" fill="#22304F"/>
+  <g fill="#FFF7D6" opacity=".85"><circle cx="112" cy="30" r="2.4"/><circle cx="156" cy="58" r="1.8"/><circle cx="216" cy="26" r="2"/><circle cx="248" cy="66" r="1.8"/><circle cx="184" cy="96" r="1.6"/></g>
+  ${[0,1,2,3].map(i=>`<g filter="url(#a3)"><rect x="${18+i*14}" y="${112+i*26}" width="122" height="24" rx="6" fill="#fff" opacity=".92"/>
+    <rect x="${28+i*14}" y="${120+i*26}" width="78" height="6" rx="3" fill="#C3D6F2"/></g>`).join('')}
+  <path d="M162 180 C 192 180, 196 194, 206 198" stroke="#93C5FD" stroke-width="4.4" fill="none" stroke-linecap="round"/>
+  <g filter="url(#a3)"><rect x="148" y="126" width="120" height="76" rx="10" fill="#1E40AF" stroke="#93C5FD" stroke-width="2.6"/>
+    <text x="208" y="158" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#fff" text-anchor="middle">ワークフロー</text>
+    <text x="208" y="180" font-family="Noto Sans JP" font-size="13.5" font-weight="900" fill="#BFDBFE" text-anchor="middle">要点を抜き出す</text></g>
+  <text x="140" y="286" font-family="Noto Sans JP" font-size="17" font-weight="900" fill="#DBEAFE" text-anchor="middle">寝ている間に</text>
+  <text x="140" y="312" font-family="Noto Sans JP" font-size="17" font-weight="900" fill="#DBEAFE" text-anchor="middle">前日ぶんをまとめる</text>
+</svg>`;
+
+/* ④ 翌朝：要点がメールで届く */
+const k4=`<svg viewBox="${VB}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs><filter id="a4" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#0B5136" flood-opacity=".24"/></filter></defs>
+  <rect x="0" y="0" width="280" height="360" fill="#DCF3E7"/>
+  <circle cx="46" cy="40" r="19" fill="#FCD34D"/>
+  <g stroke="#FBBF24" stroke-width="3.4" stroke-linecap="round"><path d="M46 10 v8"/><path d="M16 40 h-8"/><path d="M26 20 l6 6"/><path d="M66 20 l-6 6"/></g>
+  <g filter="url(#a4)"><rect x="14" y="74" width="252" height="196" rx="10" fill="#fff" stroke="#16A34A" stroke-width="2.6"/>
+    <rect x="14" y="74" width="252" height="28" rx="10" fill="#EAF9F1"/><rect x="14" y="90" width="252" height="12" fill="#EAF9F1"/>
+    <text x="28" y="94" font-family="Noto Sans JP" font-size="13.5" font-weight="900" fill="#0B5136">前日の会議の重要なポイント</text>
+    ${[0,1,2,3,4].map(i=>`<g transform="translate(28,${118+i*30})">
+      <circle cx="7" cy="9" r="6" fill="#16A34A"/>
+      <rect x="22" y="2" width="${[190,166,208,150,182][i]}" height="7" rx="3.5" fill="#BFE7D3"/>
+      <rect x="22" y="13" width="${[142,198,122,206,138][i]}" height="7" rx="3.5" fill="#D6EFE1"/></g>`).join('')}
+  </g>
+  <text x="126" y="304" font-family="Noto Sans JP" font-size="16.5" font-weight="900" fill="#0B5136" text-anchor="middle">開いたら</text>
+  <text x="126" y="328" font-family="Noto Sans JP" font-size="16.5" font-weight="900" fill="#0B5136" text-anchor="middle">もう出来ている</text>
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.113-1</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">議事録は「書くもの」から、<span class="hl">翌朝に届くもの</span>へ</div>
+    <img class="title-chara" src="${A}chara/chara_confident.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svgw(P.bulb,2.2)}</div>
+    <div class="txt">Teamsのワークフローに<b>テンプレートがあります</b>。1回設定すれば、あとは録画をONにするだけ</div>
+  </div>
+
+  <div class="stage">
+    <div class="koma">
+      <div class="youdo">やるのはここだけ</div>
+      <div class="kt"><span class="tm">14:00</span><span class="th">会議中</span></div>
+      <div class="ks">${k1}</div>
+      <div class="kc">録画を<b>ONにする</b>。メモを取る手は止めていい</div>
+    </div>
+    <div class="koma k2">
+      <div class="kt"><span class="tm">15:00</span><span class="th">会議のあと</span></div>
+      <div class="ks">${k2}</div>
+      <div class="kc">録画から<b>文字起こし</b>が作られる。ここは自動</div>
+    </div>
+    <div class="koma k3">
+      <div class="kt"><span class="tm">深夜</span><span class="th">寝ている間</span></div>
+      <div class="ks">${k3}</div>
+      <div class="kc">ワークフローが<b>前日ぶん</b>の要点を抜き出す</div>
+    </div>
+    <div class="koma k4">
+      <div class="kt"><span class="tm">翌 08:00</span><span class="th">朝いち</span></div>
+      <div class="ks">${k4}<img class="chara" src="${A}chara/chara_guts.png" alt=""></div>
+      <div class="kc">要点が<b>メールで届く</b>。書く時間がまるごと消える</div>
+    </div>
+  </div>
+
+  <div class="next">
+    <span class="na">${svgw(P.arrow,3)}</span>
+    <span>※ AI要約には <b>Microsoft 365 Copilot</b> が必要です。<b>作り方は2枚目へ</b></span>
+  </div>
+  <div class="src">出典：Microsoft Learn「Teams のワークフロー」／画面は再現イメージ</div>
+`;
+</script>
+</body>
+</html>

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.116-2 共有リンクで送るフローの作り方</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/tips-base.css">
+<style>
+  .scene{height:100px;}
+  .cardb{gap:5px;padding:7px 9px;}
+  .fld{display:flex;flex-direction:column;gap:2px;}
+  .fld .fl{font-size:14px;font-weight:900;color:#475569;}
+  .fld .fi{display:flex;align-items:center;gap:6px;background:#fff;border:2px solid #B9C7DC;border-radius:7px;
+    padding:5px 9px;font-size:15.5px;font-weight:900;color:var(--navy);line-height:1.2;}
+  .fld .fi.sel{border-color:var(--blue);background:#F4F8FF;}
+  .fld .fi.hot{border-color:var(--orange);background:#FFF7ED;}
+  .fld .fi .cv{margin-left:auto;color:#64748B;font-size:14px;}
+  .fld .fi img{width:22px;height:22px;object-fit:contain;flex:0 0 auto;}
+  .note{display:flex;align-items:center;gap:7px;background:#FFF7ED;border:1.6px solid #FDBA74;border-radius:8px;
+    padding:4px 8px;font-size:14.5px;font-weight:900;color:#9A3412;line-height:1.24;}
+  .tree{display:flex;flex-direction:column;gap:3px;background:#F7F9FC;border:1.5px solid #E2EAF5;border-radius:8px;padding:6px 8px;}
+  .tr3{display:flex;align-items:center;gap:7px;font-size:15px;font-weight:900;color:#475569;line-height:1.2;}
+  .tr3 .fo{flex:0 0 auto;width:20px;height:16px;border-radius:3px 5px 5px 5px;background:#F0C24B;}
+  .tr3.on{color:#9A3412;}
+  .tr3.on .fo{background:#EA580C;}
+  .tr3.sub{padding-left:18px;}
+  .mailmini{display:flex;flex-direction:column;gap:4px;background:#fff;border:2px solid var(--green-line);
+    border-radius:8px;padding:6px 9px;}
+  .mailmini .mline{font-size:15px;font-weight:700;color:#334155;line-height:1.4;}
+  .mailmini .murl{display:flex;align-items:center;gap:7px;background:#EAF9F1;border:1.8px solid #16A34A;border-radius:7px;
+    padding:4px 8px;font-size:14.5px;font-weight:900;color:var(--green-dark);}
+  .mailmini .murl .lk{flex:0 0 auto;width:20px;height:20px;color:var(--green);}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={warn:'<path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>',
+  bulb:'<path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/>',
+  link:'<path d="M9.5 14.5a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1.5 1.5"/><path d="M14.5 9.5a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1.5-1.5"/>'};
+const VB='0 0 388 100';
+
+/* ① 見張るのは送信箱1つだけ */
+const s1=`<svg viewBox="${VB}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs><filter id="y1" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#1B2A44" flood-opacity=".2"/></filter></defs>
+  <rect x="0" y="0" width="388" height="100" fill="#EDF3FA"/>
+  <text x="14" y="20" font-family="Noto Sans JP" font-size="14.5" font-weight="900" fill="#1E40AF">見張るのは1つのフォルダだけ</text>
+  <g filter="url(#y1)">
+    <path d="M14 30 h22 l7 7 h44 a4 4 0 0 1 4 4 v20 a4 4 0 0 1 -4 4 h-73 a4 4 0 0 1 -4 -4 v-27 a4 4 0 0 1 4 -4 z" fill="#EEF2F7" stroke="#94A3B8" stroke-width="2"/>
+    <text x="52" y="55" font-family="Noto Sans JP" font-size="12.5" font-weight="900" fill="#64748B" text-anchor="middle">作業中</text>
+    <path d="M14 72 h22 l7 7 h44 a4 4 0 0 1 4 4 v8 a4 4 0 0 1 -4 4 h-73 a4 4 0 0 1 -4 -4 v-15 a4 4 0 0 1 4 -4 z" fill="#EEF2F7" stroke="#94A3B8" stroke-width="2"/>
+    <text x="52" y="92" font-family="Noto Sans JP" font-size="12.5" font-weight="900" fill="#64748B" text-anchor="middle">資料</text>
+  </g>
+  <g filter="url(#y1)">
+    <path d="M116 28 h26 l8 8 h52 a4 4 0 0 1 4 4 v30 a4 4 0 0 1 -4 4 h-86 a4 4 0 0 1 -4 -4 v-38 a4 4 0 0 1 4 -4 z" fill="#FFF3D6" stroke="#EA580C" stroke-width="2.6"/>
+    <text x="163" y="60" font-family="Noto Sans JP" font-size="14.5" font-weight="900" fill="#9A3412" text-anchor="middle">送信箱</text>
+  </g>
+  <path d="M216 55 H 250" stroke="#2563EB" stroke-width="4.4" stroke-linecap="round"/>
+  <path d="M244 49 l8 6 l-8 6" fill="none" stroke="#2563EB" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <g filter="url(#y1)"><rect x="258" y="30" width="118" height="50" rx="9" fill="#EAF1FE" stroke="#2563EB" stroke-width="2.4"/>
+    <text x="317" y="52" font-family="Noto Sans JP" font-size="13.5" font-weight="900" fill="#1E40AF" text-anchor="middle">ファイルが</text>
+    <text x="317" y="70" font-family="Noto Sans JP" font-size="13.5" font-weight="900" fill="#1E40AF" text-anchor="middle">作成されたとき</text></g>
+</svg>`;
+
+/* ② 既定のままだと社外にも開ける */
+const s2=`<svg viewBox="${VB}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs><filter id="y2" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#1B2A44" flood-opacity=".2"/></filter></defs>
+  <rect x="0" y="0" width="388" height="100" fill="#EDF3FA"/>
+  <g filter="url(#y2)"><rect x="12" y="12" width="164" height="34" rx="8" fill="#FFECEC" stroke="#DC2626" stroke-width="2.2"/>
+    <text x="94" y="34" font-family="Noto Sans JP" font-size="14.5" font-weight="900" fill="#991B1B" text-anchor="middle">既定のまま</text></g>
+  <path d="M184 29 H 208" stroke="#DC2626" stroke-width="3.6" stroke-linecap="round"/>
+  <g><circle cx="230" cy="29" r="13" fill="#fff" stroke="#DC2626" stroke-width="2.4"/>
+    <path d="M224 29 h12 M230 23 v12" stroke="#DC2626" stroke-width="2.6" stroke-linecap="round"/></g>
+  <text x="316" y="35" font-family="Noto Sans JP" font-size="14.5" font-weight="900" fill="#991B1B" text-anchor="middle">社外にも開ける</text>
+  <g filter="url(#y2)"><rect x="12" y="56" width="164" height="34" rx="8" fill="#EAF9F1" stroke="#16A34A" stroke-width="2.4"/>
+    <text x="94" y="78" font-family="Noto Sans JP" font-size="14.5" font-weight="900" fill="#0B5136" text-anchor="middle">表示のみ ＋ 組織</text></g>
+  <path d="M184 73 H 208" stroke="#16A34A" stroke-width="4" stroke-linecap="round"/>
+  <g><circle cx="230" cy="73" r="13" fill="#fff" stroke="#16A34A" stroke-width="2.6"/>
+    <path d="M224 73.5 l4 4 L237 68" stroke="#16A34A" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>
+  <text x="316" y="79" font-family="Noto Sans JP" font-size="14.5" font-weight="900" fill="#0B5136" text-anchor="middle">社内だけ・編集不可</text>
+</svg>`;
+
+/* ③ 本文にWeb URLを1行 */
+const s3=`<svg viewBox="${VB}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs><filter id="y3" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#0B5136" flood-opacity=".22"/></filter></defs>
+  <rect x="0" y="0" width="388" height="100" fill="#DCF3E7"/>
+  <g filter="url(#y3)"><rect x="12" y="24" width="128" height="52" rx="9" fill="#fff" stroke="#16A34A" stroke-width="2.4"/>
+    <text x="76" y="46" font-family="Noto Sans JP" font-size="13" font-weight="900" fill="#0B5136" text-anchor="middle">共有リンクの作成</text>
+    <rect x="26" y="54" width="100" height="14" rx="7" fill="#EAF9F1" stroke="#16A34A" stroke-width="1.6"/>
+    <text x="76" y="65" font-family="Roboto Mono" font-size="11" font-weight="700" fill="#0B5136" text-anchor="middle">Web URL</text></g>
+  <path d="M148 50 H 180" stroke="#16A34A" stroke-width="4.4" stroke-linecap="round"/>
+  <path d="M174 44 l8 6 l-8 6" fill="none" stroke="#16A34A" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <g filter="url(#y3)"><rect x="190" y="12" width="186" height="76" rx="9" fill="#fff" stroke="#16A34A" stroke-width="2.6"/>
+    <rect x="190" y="12" width="186" height="20" rx="9" fill="#EAF9F1"/><rect x="190" y="24" width="186" height="8" fill="#EAF9F1"/>
+    <text x="202" y="26" font-family="Noto Sans JP" font-size="12" font-weight="900" fill="#0B5136">メールの送信 (V2)</text>
+    <rect x="202" y="42" width="120" height="6" rx="3" fill="#D6EFE1"/>
+    <rect x="202" y="54" width="92" height="6" rx="3" fill="#D6EFE1"/>
+    <rect x="202" y="66" width="162" height="14" rx="7" fill="#EAF9F1" stroke="#16A34A" stroke-width="1.8"/>
+    <text x="283" y="77" font-family="Roboto Mono" font-size="10.5" font-weight="700" fill="#0B5136" text-anchor="middle">https://contoso-my.sharep…</text></g>
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.116-2</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">作り方は<span class="hl">3ステップ</span>（送信箱 → リンクの種類 → 本文に差し込む）</div>
+    <img class="title-chara" src="${A}chara/chara_point.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svgw(P.bulb,2.2)}</div>
+    <div class="txt">要るのは<b>共有用のフォルダを1つ決めること</b>だけ。<br>あとは置いたファイルにフローが反応します</div>
+  </div>
+
+  <div class="stage">
+    <div class="col neutral">
+      <div class="ch2"><span class="n">1</span>送信箱を見張る</div>
+      <div class="scene">${s1}</div>
+      <div class="body"><div class="card">
+        <div class="cardh"><img src="${A}icons/pa_onedrive.png" alt="">ファイルが作成されたとき</div>
+        <div class="cardb">
+          <div class="tree">
+            <div class="tr3"><span class="fo"></span>OneDrive</div>
+            <div class="tr3 sub"><span class="fo"></span>作業中（見張らない）</div>
+            <div class="tr3 sub on"><span class="fo"></span>送信箱（ここだけ）</div>
+          </div>
+          <div class="fld"><span class="fl">フォルダー</span>
+            <span class="fi hot"><img src="${A}icons/pa_onedrive.png" alt="">/送信箱</span></div>
+          <div class="note">ふだんの作業フォルダを見張らせない</div>
+        </div>
+      </div></div>
+      <div class="cap">置いた瞬間に動きます。<br>置き場所を分けるのがコツ</div>
+    </div>
+
+    <div class="col info">
+      <div class="ch2"><span class="n">2</span>リンクを作る</div>
+      <div class="scene">${s2}</div>
+      <div class="body"><div class="card">
+        <div class="cardh"><img src="${A}icons/pa_onedrive.png" alt="">共有リンクの作成</div>
+        <div class="cardb">
+          <div class="fld"><span class="fl">ファイル</span>
+            <span class="fi hot"><span class="dyn">トリガーの識別子</span></span></div>
+          <div class="fld"><span class="fl">リンクの種類</span>
+            <span class="fi sel">表示のみ<span class="cv">▾</span></span></div>
+          <div class="fld"><span class="fl">リンクのスコープ</span>
+            <span class="fi sel">組織<span class="cv">▾</span></span></div>
+        </div>
+      </div></div>
+      <div class="cap">ここを既定のままにすると、<br>社外にも開けるリンクになることがあります</div>
+    </div>
+
+    <div class="col good">
+      <div class="ch2"><span class="n">3</span>本文に差し込む</div>
+      <div class="scene">${s3}</div>
+      <div class="body"><div class="card">
+        <div class="cardh"><img src="${A}icons/pa_outlook.png" alt="">メールの送信 (V2)</div>
+        <div class="cardb">
+          <div class="fld"><span class="fl">宛先</span><span class="fi">sato@example.com</span></div>
+          <div class="mailmini">
+            <span class="mline">設計図面_10月版.pdf を共有しました。</span>
+            <span class="murl"><span class="lk">${svgw(P.link,2.2)}</span>Web URL</span>
+          </div>
+        </div>
+      </div></div>
+      <div class="cap">置くのは<b>②が返すWeb URL</b>だけ。<br>添付は付けません</div>
+    </div>
+  </div>
+
+  <div class="warnbar">
+    <span class="na">${svgw(P.warn,2.4)}</span>
+    <span class="ws"><span>既定のままだと社外にも開けるリンクになることがある</span>
+      <span>ふだんの作業フォルダを見張らせない</span><span>社外相手は期限つきリンクや従来の添付が妥当な場合も</span></span>
+  </div>
+  <div class="src">出典：Microsoft Learn「OneDrive for Business コネクタ」「Office 365 Outlook コネクタ」／宛先・ファイル名は架空</div>
+`;
+</script>
+</body>
+</html>

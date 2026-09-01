@@ -166,7 +166,30 @@ def card_tips(it):
         extra_shots += f'\n    <a href="{relx}" target="_blank"><img src="{relx}" alt="{lbl}" loading="lazy"></a>'
         extra_btns += f'\n    <button class="btn copyp" data-p="{html.escape(str(imgx))}">{lbl}パス</button>'
     label, cls = STATUS.get(it["status"], ("―", "st-todo"))
-    miss = "" if img1.exists() and img2.exists() else '<div class="warn">PNGが見つかりません</div>'
+    # スライドPNGがまだ無い回は、壊れた画像アイコンではなく「未作成」の枠を出す。
+    # （ネタだけ先に board へ登録した回が上に並ぶので、画像が全滅したように見えるのを防ぐ）
+    def shot(img, rel, lbl):
+        if img.exists():
+            return (f'\n    <a href="{rel}" target="_blank">'
+                    f'<img src="{rel}" alt="{lbl}" loading="lazy"></a>')
+        return (f'\n    <div class="noimg">{lbl}'
+                '<span>スライド未作成</span></div>')
+
+    def btn(img, lbl):
+        if not img.exists():
+            return ""
+        return (f'\n    <button class="btn copyp" data-p="{html.escape(str(img))}">{lbl}パス</button>')
+
+    shot1 = shot(img1, rel1, "1枚目")
+    shot2 = shot(img2, rel2, "2枚目")
+    btn1 = btn(img1, "1枚目")
+    btn2 = btn(img2, "2枚目")
+    if img1.exists() and img2.exists():
+        miss = ""
+    else:
+        miss = ('<div class="warn">スライドPNGがまだありません'
+                f'（assets/x/html/{f}/ に作成してください）</div>')
+        label, cls = ("スライド未作成", "st-miss")
 
     # LinkedIn用の詳しい本文（作り方をXより丁寧に）。あればコピー用の隠しpreと専用ボタンを出す。
     li_body = it.get("li_body")
@@ -184,16 +207,14 @@ def card_tips(it):
     <span class="badge {cls}">{label}</span>{li_flag}<span class="len">{x_len(it['body'])}</span></div>
   <div class="sub">{html.escape(it['sub'])}</div>
   <div class="shots">
-    <a href="{rel1}" target="_blank"><img src="{rel1}" alt="1枚目" loading="lazy"></a>
-    <a href="{rel2}" target="_blank"><img src="{rel2}" alt="2枚目" loading="lazy"></a>{extra_shots}
+{shot1}{shot2}{extra_shots}
   </div>
   {miss}
   <pre class="body" id="{key}{it['vol']}">{html.escape(it['body'])}</pre>
   {li_pre}
   <div class="acts">
     <button class="btn copy" data-t="{key}{it['vol']}">X用をコピー</button>
-    <button class="btn copyp" data-p="{html.escape(str(img1))}">1枚目パス</button>
-    <button class="btn copyp" data-p="{html.escape(str(img2))}">2枚目パス</button>{extra_btns}
+{btn1}{btn2}{extra_btns}
     <a class="btn go" href="{html.escape(intent(it['body']))}" target="_blank" rel="noopener">Xの下書きを開く →</a>
     {li_copy}<a class="btn li" href="{LI_COMPOSE}" target="_blank" rel="noopener">LinkedInを開く →</a>
   </div>
@@ -522,6 +543,11 @@ h1{font-size:24px;font-weight:900;margin-bottom:4px}
 .og.yt{background:#111;color:#bbb;font-size:12px;text-align:center;padding:34px 8px}
 .shots{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .shots img{width:100%;border-radius:8px;border:1px solid var(--ln);display:block}
+.noimg{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+  aspect-ratio:16/9;border-radius:8px;border:1px dashed #d9c49a;background:#fffaf0;
+  color:#8a5a00;font-size:11px;font-weight:700}
+.noimg span{font-weight:400;font-size:10.5px;color:#a58455}
+.st-miss{background:#fdeceb;color:#b3261e}
 .warn{font-size:11px;color:#b3261e}
 .todo{font-size:12px;background:#fffaf0;border:1px solid #f0e0c0;border-radius:10px;padding:9px 11px}
 .todo b{display:block;font-size:11.5px;color:#8a5a00;margin-bottom:5px}
@@ -638,7 +664,7 @@ document.querySelectorAll('.copy3,.copyp').forEach(b=>b.addEventListener('click'
 
 // 投稿済みチェック（このPCのブラウザに保存。35本を数ヶ月かけて回すための進捗管理）
 const KEY='pa45-x-posted';
-const posted=new Set(JSON.parse(localStorage.getItem(KEY)||'[]'));
+const posted=new Set(JSON.parse(lsGet(KEY)||'[]'));
 function count(){
   const n=[...document.querySelectorAll('.donebox')].filter(c=>!c.checked).length;
   document.getElementById('remain').textContent=n;
@@ -649,7 +675,7 @@ document.querySelectorAll('.donebox').forEach(cb=>{
   cb.addEventListener('change',()=>{
     card.classList.toggle('posted',cb.checked);
     cb.checked?posted.add(cb.dataset.k):posted.delete(cb.dataset.k);
-    localStorage.setItem(KEY,JSON.stringify([...posted]));
+    lsSet(KEY,JSON.stringify([...posted]));
     count();
   });
 });

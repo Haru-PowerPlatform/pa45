@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.107-2 再試行ポリシーの入れ方</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/tips-base.css">
+<style>
+  .scene{height:100px;}
+  .scene .chara{height:112px;right:2px;}
+  .cardb{gap:5px;padding:7px 9px;}
+
+  /* Power Automate デザイナーのフォーム再現 */
+  .fld{display:flex;flex-direction:column;gap:3px;}
+  .fld .fl{font-size:14.5px;font-weight:900;color:#475569;}
+  .fld .fi{display:flex;align-items:center;gap:7px;background:#fff;border:2px solid #B9C7DC;border-radius:7px;
+    padding:5px 9px;font-size:16px;font-weight:900;color:var(--navy);}
+  .fld .fi.sel{border-color:var(--blue);background:#F4F8FF;}
+  .fld .fi .cv{margin-left:auto;color:#64748B;font-size:15px;}
+  .fld .fi .num{font-family:'Roboto Mono',monospace;font-size:17px;color:var(--blue-dark);}
+
+  /* 「…」メニュー再現 */
+  .menu{background:#fff;border:2px solid #B9C7DC;border-radius:9px;overflow:hidden;box-shadow:0 4px 10px rgba(20,40,90,.16);}
+  .menu .mi{display:flex;align-items:center;gap:8px;padding:6px 10px;font-size:15.5px;font-weight:900;color:var(--navy);
+    border-bottom:1px solid #EEF2F8;}
+  .menu .mi:last-child{border-bottom:none;}
+  .menu .mi.on{background:#E8F0FE;color:var(--blue-dark);}
+  .menu .mi .dot{width:18px;height:18px;flex:0 0 auto;color:#64748B;}
+  .actbar{display:flex;align-items:center;gap:8px;background:#fff;border:2px solid var(--blue-line);border-radius:9px;
+    padding:6px 9px;box-shadow:0 3px 7px rgba(20,40,90,.12);}
+  .actbar img{width:28px;height:28px;object-fit:contain;flex:0 0 auto;}
+  .actbar .an{flex:1;font-size:15.5px;font-weight:900;color:var(--navy);line-height:1.2;}
+  .actbar .dots{font-size:20px;font-weight:900;color:var(--blue);letter-spacing:1px;background:#EAF1FE;border-radius:6px;
+    padding:0 8px;}
+
+  /* 実行条件の構成 */
+  .chk{display:flex;align-items:center;gap:8px;background:#F7F9FC;border:1.5px solid #E2EAF5;border-radius:7px;
+    padding:5px 9px;font-size:15.5px;font-weight:900;color:var(--navy);}
+  .chk .bx{width:20px;height:20px;border-radius:4px;border:2.5px solid #94A3B8;flex:0 0 auto;background:#fff;}
+  .chk.on{background:#FFF1F1;border-color:#F0AEAE;color:var(--red-dark);}
+  .chk.on .bx{background:var(--red);border-color:var(--red);position:relative;}
+  .chk.on .bx::after{content:"";position:absolute;left:5px;top:1px;width:5px;height:10px;border:solid #fff;
+    border-width:0 2.6px 2.6px 0;transform:rotate(45deg);}
+  .teamsmsg{display:flex;gap:8px;align-items:flex-start;background:#F3EEFF;border:2px solid #D8C9FA;border-radius:9px;padding:6px 9px;}
+  .teamsmsg .av{flex:0 0 auto;width:30px;height:30px;border-radius:50%;background:linear-gradient(180deg,#8B5CF6,#6D28D9);
+    color:#fff;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:900;}
+  .teamsmsg .tb{flex:1;}
+  .teamsmsg .tn{font-size:13.5px;font-weight:900;color:var(--weak);}
+  .teamsmsg .tt{font-size:15.5px;font-weight:900;color:var(--navy);line-height:1.32;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={warn:'<path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>',
+  gear:'<circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1A1.6 1.6 0 0 0 9 19.4a1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1A1.6 1.6 0 0 0 4.6 9a1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3H9a1.6 1.6 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 1 1.5 1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8V9a1.6 1.6 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1z"/>'};
+
+/* ① アクションの「…」から設定を開く（388x100） */
+const s1=`<svg viewBox="0 0 388 100" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs><filter id="d1" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#1B2A44" flood-opacity=".26"/></filter></defs>
+  <rect x="0" y="0" width="388" height="100" fill="#EDF3FA"/>
+  <text x="14" y="19" font-family="Noto Sans JP" font-size="14.5" font-weight="900" fill="#1E40AF">アクションごとに付ける</text>
+  <g filter="url(#d1)"><rect x="14" y="28" width="150" height="28" rx="7" fill="#fff" stroke="#C7D6EE" stroke-width="2"/>
+    <rect x="23" y="36" width="13" height="12" rx="3" fill="#0B6BCB"/><rect x="44" y="37" width="78" height="6" rx="3" fill="#C3D6F2"/><rect x="44" y="46" width="52" height="5" rx="2.5" fill="#DCE6F5"/></g>
+  <path d="M89 58 v6" stroke="#94A3B8" stroke-width="2.6" stroke-linecap="round"/>
+  <g filter="url(#d1)"><rect x="14" y="66" width="150" height="30" rx="7" fill="#fff" stroke="#2563EB" stroke-width="2.6"/>
+    <rect x="23" y="74" width="14" height="14" rx="3.5" fill="#0B6BCB"/><rect x="45" y="75" width="74" height="6" rx="3" fill="#C3D6F2"/><rect x="45" y="85" width="48" height="5" rx="2.5" fill="#DCE6F5"/>
+    <circle cx="150" cy="75" r="1.9" fill="#2563EB"/><circle cx="150" cy="81" r="1.9" fill="#2563EB"/><circle cx="150" cy="87" r="1.9" fill="#2563EB"/></g>
+  <path d="M170 81 H 196" stroke="#2563EB" stroke-width="3.6" stroke-linecap="round"/>
+  <g filter="url(#d1)"><rect x="202" y="20" width="172" height="72" rx="9" fill="#fff" stroke="#B9C7DC" stroke-width="2"/>
+    <path d="M202 29 a9 9 0 0 1 9-9 h154 a9 9 0 0 1 9 9 v9 H202 z" fill="#E8F0FE"/>
+    <text x="214" y="35" font-family="Noto Sans JP" font-size="14" font-weight="900" fill="#1E40AF">設定</text>
+    <rect x="214" y="47" width="146" height="7" rx="3.5" fill="#DCE6F5"/>
+    <rect x="214" y="62" width="146" height="20" rx="6" fill="#EAF1FE" stroke="#2563EB" stroke-width="2"/>
+    <text x="287" y="76" font-family="Noto Sans JP" font-size="14" font-weight="900" fill="#1E40AF" text-anchor="middle">再試行ポリシー</text></g>
+</svg>`;
+
+/* ② 指数間隔で待つ時間が倍にのびる（388x100） */
+const s2=`<svg viewBox="0 0 388 100" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs><linearGradient id="bar2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#60A5FA"/><stop offset="1" stop-color="#2563EB"/></linearGradient></defs>
+  <rect x="0" y="0" width="388" height="100" fill="#EDF3FA"/>
+  <text x="14" y="19" font-family="Noto Sans JP" font-size="14.5" font-weight="900" fill="#1E40AF">待つ時間が倍にのびる</text>
+  <path d="M16 88 H 372" stroke="#A9BBD3" stroke-width="2.4" stroke-linecap="round"/>
+  <g>
+    <rect x="26" y="66" width="86" height="22" rx="5" fill="url(#bar2)"/>
+    <text x="69" y="82" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#fff" text-anchor="middle">1分</text>
+    <rect x="124" y="52" width="112" height="36" rx="5" fill="url(#bar2)"/>
+    <text x="180" y="76" font-family="Noto Sans JP" font-size="17" font-weight="900" fill="#fff" text-anchor="middle">2分</text>
+    <rect x="248" y="30" width="124" height="58" rx="5" fill="url(#bar2)"/>
+    <text x="310" y="66" font-family="Noto Sans JP" font-size="21" font-weight="900" fill="#fff" text-anchor="middle">4分</text>
+  </g>
+  <text x="69" y="46" font-family="Noto Sans JP" font-size="13" font-weight="900" fill="#475569" text-anchor="middle">1回目</text>
+  <text x="180" y="44" font-family="Noto Sans JP" font-size="13" font-weight="900" fill="#475569" text-anchor="middle">2回目</text>
+  <text x="310" y="24" font-family="Noto Sans JP" font-size="13" font-weight="900" fill="#475569" text-anchor="middle">3回目</text>
+</svg>`;
+
+/* ③ 再試行で通れば静か、駄目な時だけDM（388x100） */
+const s3=`<svg viewBox="0 0 388 100" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs><filter id="d3" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#0B5136" flood-opacity=".24"/></filter></defs>
+  <rect x="0" y="0" width="388" height="100" fill="#DCF3E7"/>
+  <g filter="url(#d3)"><rect x="12" y="10" width="164" height="34" rx="9" fill="#fff" stroke="#16A34A" stroke-width="2.4"/>
+    <circle cx="32" cy="27" r="11" fill="#16A34A"/><path d="M26.5 27.5 l4 4 L38 23" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="112" y="33" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#0B5136" text-anchor="middle">再試行で成功</text></g>
+  <path d="M182 27 H 208" stroke="#94A3B8" stroke-width="3.4" stroke-linecap="round" stroke-dasharray="6 5"/>
+  <text x="298" y="33" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#4B5563" text-anchor="middle">通知は来ない</text>
+
+  <g filter="url(#d3)"><rect x="12" y="56" width="164" height="34" rx="9" fill="#FFECEC" stroke="#DC2626" stroke-width="2.4"/>
+    <circle cx="32" cy="73" r="11" fill="#DC2626"/><path d="M32 66.5 v7 M32 79 v.01" stroke="#fff" stroke-width="3.2" stroke-linecap="round"/>
+    <text x="112" y="79" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#991B1B" text-anchor="middle">4回とも失敗</text></g>
+  <path d="M182 73 H 208" stroke="#DC2626" stroke-width="4" stroke-linecap="round"/>
+  <g filter="url(#d3)"><rect x="214" y="54" width="162" height="38" rx="10" fill="#fff" stroke="#7C3AED" stroke-width="2.4"/>
+    <circle cx="234" cy="73" r="11" fill="#6D28D9"/><text x="234" y="78" font-family="Noto Sans JP" font-size="11" font-weight="900" fill="#fff" text-anchor="middle">Bot</text>
+    <rect x="252" y="64" width="112" height="7" rx="3.5" fill="#DDD3F7"/>
+    <rect x="252" y="76" width="84" height="7" rx="3.5" fill="#DDD3F7"/></g>
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.107-2</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">作り方は<span class="hl">3ステップ</span>（設定を開く → 粘らせる → 最後だけ通知）</div>
+    <img class="title-chara" src="${A}chara/chara_point.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svgw(P.gear,2)}</div>
+    <div class="txt">決めるのは<b>初期間隔</b>と<b>最大再試行回数</b>の2つだけ。フロー全体ではなく、<b>アクションごと</b>に付けます</div>
+  </div>
+
+  <div class="stage">
+    <div class="col neutral">
+      <div class="ch2"><span class="n">1</span>設定を開く</div>
+      <div class="scene">${s1}</div>
+      <div class="body"><div class="card">
+        <div class="cardh"><img src="${A}icons/pa_sharepoint.png" alt="">止まりやすいアクション</div>
+        <div class="cardb">
+          <div class="actbar"><img src="${A}icons/pa_sharepoint.png" alt=""><span class="an">項目の作成</span><span class="dots">…</span></div>
+          <div class="menu">
+            <div class="mi"><span class="dot">${svgw(P.gear,2)}</span>名前の変更</div>
+            <div class="mi on"><span class="dot">${svgw(P.gear,2)}</span>設定</div>
+            <div class="mi"><span class="dot">${svgw(P.gear,2)}</span>実行条件の構成</div>
+          </div>
+        </div>
+      </div></div>
+      <div class="cap">外とやり取りするアクション（送信・作成・取得）に<b>1つずつ</b>付ける</div>
+    </div>
+
+    <div class="col info">
+      <div class="ch2"><span class="n">2</span>粘らせる</div>
+      <div class="scene">${s2}</div>
+      <div class="body"><div class="card">
+        <div class="cardh"><img src="${A}icons/pa_logo.png" alt="">再試行ポリシー</div>
+        <div class="cardb">
+          <div class="fld"><span class="fl">種類</span><span class="fi sel">指数間隔<span class="cv">▾</span></span></div>
+          <div class="fld"><span class="fl">初期間隔（最初に待つ時間）</span><span class="fi"><span class="num">PT1M</span><span class="cv">1分</span></span></div>
+          <div class="fld"><span class="fl">最大再試行回数</span><span class="fi"><span class="num">4</span><span class="cv">回</span></span></div>
+        </div>
+      </div></div>
+      <div class="cap">種類は 既定／なし／固定間隔／指数間隔。公式のおすすめは<b>指数間隔</b></div>
+    </div>
+
+    <div class="col good">
+      <div class="ch2"><span class="n">3</span>最後だけ通知</div>
+      <div class="scene">${s3}</div>
+      <div class="body"><div class="card">
+        <div class="cardh">実行条件の構成</div>
+        <div class="cardb">
+          <div class="chk"><span class="bx"></span>成功しました</div>
+          <div class="chk on"><span class="bx"></span>失敗しました</div>
+          <div class="teamsmsg"><span class="av">Bot</span><span class="tb">
+            <span class="tn">Power Automate</span>
+            <span class="tt">「日次の請求データ連携」が4回とも失敗しました。確認をお願いします</span></span></div>
+        </div>
+      </div></div>
+      <div class="cap">再試行で通れば通知は来ない。<b>本当に人の手が要る時だけ</b>届く</div>
+    </div>
+  </div>
+
+  <div class="warnbar">
+    <span class="na">${svgw(P.warn,2.4)}</span>
+    <span class="ws"><span>待っている間もフローは動いたまま</span><span>長く粘らせすぎない</span><span>回数が多いほど気づくのが遅くなる</span></span>
+  </div>
+  <div class="src">出典：Microsoft Learn「堅牢なエラー処理を採用する」（人名・フロー名は架空）</div>
+`;
+</script>
+</body>
+</html>

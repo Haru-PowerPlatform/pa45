@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.117-2 商談フォローの下書きを自動で出す作り方</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/tips-base.css">
+<style>
+  .scene{height:100px;}
+  .cardb{gap:5px;padding:7px 9px;}
+  .col.ai{background:#F7F3FF;border:2.5px solid #C9B4F4;}
+  .col.ai .ch2{color:#5B21B6;}
+  .col.ai .ch2 .n{background:linear-gradient(180deg,#A78BFA,#6D28D9);}
+  .col.ai .card{border-color:#C9B4F4;}
+  .col.ai .cardh{background:#EDE4FF;border-bottom-color:#D8C9FA;color:#5B21B6;}
+  .col.ai .cap{background:#E4D8FA;color:#5B21B6;}
+  .fld{display:flex;flex-direction:column;gap:2px;}
+  .fld .fl{font-size:14px;font-weight:900;color:#475569;}
+  .fld .fi{display:flex;align-items:center;gap:6px;background:#fff;border:2px solid #B9C7DC;border-radius:7px;
+    padding:5px 9px;font-size:15.5px;font-weight:900;color:var(--navy);line-height:1.24;}
+  .fld .fi.hot{border-color:var(--orange);background:#FFF7ED;}
+  .fld .fi.pv{border-color:#7C3AED;background:#F7F3FF;color:#3B2A66;}
+  .prm{display:flex;flex-direction:column;gap:3px;background:#fff;border:2px solid #C9B4F4;border-radius:8px;padding:6px 9px;}
+  .prm .pl{font-size:13.5px;font-weight:900;color:#7C3AED;}
+  .prm .pt{font-size:15px;font-weight:700;color:#3B2A66;line-height:1.4;}
+  .outp{display:flex;gap:6px;flex-wrap:wrap;}
+  .outp span{background:#EDE4FF;border:1.5px solid #C9B4F4;border-radius:7px;padding:3px 10px;font-size:15px;
+    font-weight:900;color:#5B21B6;}
+  .note{display:flex;align-items:center;gap:7px;background:#FFF7ED;border:1.6px solid #FDBA74;border-radius:8px;
+    padding:4px 8px;font-size:14.5px;font-weight:900;color:#9A3412;line-height:1.24;}
+  .apv{display:flex;flex-direction:column;gap:5px;background:#fff;border:2px solid var(--green-line);border-radius:8px;padding:6px 9px;}
+  .apv .at{font-size:14.5px;font-weight:900;color:var(--green-dark);}
+  .apv .ax{font-size:15px;font-weight:700;color:#334155;line-height:1.4;background:#F7F9FC;border:1.4px solid #E2EAF5;
+    border-radius:6px;padding:5px 8px;}
+  .apv .ar2{display:flex;gap:7px;}
+  .apv .ar2 span{flex:1;text-align:center;border-radius:7px;padding:4px 0;font-size:15px;font-weight:900;color:#fff;}
+  .apv .ar2 .ok{background:#16A34A;} .apv .ar2 .ed{background:#64748B;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={warn:'<path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>',
+  bulb:'<path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/>'};
+const VB='0 0 388 100';
+const SPARK='<path d="M0 -13l2.4 6.4 6.4 2.4 -6.4 2.4 -2.4 6.4 -2.4 -6.4 -6.4 -2.4 6.4 -2.4z"/><path d="M8.5 4.5l1.1 3 3 1.1 -3 1.1 -1.1 3 -1.1 -3 -3 -1.1 3 -1.1z"/>';
+
+/* ① プロンプトは1回だけ作る */
+const s1=`<svg viewBox="${VB}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="q1g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#A78BFA"/><stop offset="1" stop-color="#6D28D9"/></linearGradient>
+    <filter id="q1f" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#3B2A66" flood-opacity=".24"/></filter>
+  </defs>
+  <rect x="0" y="0" width="388" height="100" fill="#F3EEFF"/>
+  <g filter="url(#q1f)"><rect x="12" y="14" width="150" height="72" rx="9" fill="#fff" stroke="#B79CF0" stroke-width="2.4"/>
+    <text x="24" y="34" font-family="Noto Sans JP" font-size="12.5" font-weight="900" fill="#7C3AED">指示（何をさせるか）</text>
+    <rect x="24" y="42" width="126" height="6" rx="3" fill="#DDD3F7"/>
+    <rect x="24" y="53" width="104" height="6" rx="3" fill="#DDD3F7"/>
+    <text x="24" y="76" font-family="Noto Sans JP" font-size="12.5" font-weight="900" fill="#7C3AED">入力＝商談メモ</text></g>
+  <path d="M170 50 H 196" stroke="#7C3AED" stroke-width="4.4" stroke-linecap="round"/>
+  <path d="M190 44 l8 6 l-8 6" fill="none" stroke="#7C3AED" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <g filter="url(#q1f)"><circle cx="228" cy="50" r="24" fill="url(#q1g)"/>
+    <g transform="translate(228,50) scale(0.95)" fill="#fff">${SPARK}</g></g>
+  <text x="316" y="45" font-family="Noto Sans JP" font-size="14.5" font-weight="900" fill="#5B21B6" text-anchor="middle">1回作れば</text>
+  <text x="316" y="65" font-family="Noto Sans JP" font-size="14.5" font-weight="900" fill="#5B21B6" text-anchor="middle">毎回使い回せる</text>
+</svg>`;
+
+/* ② フローから呼ぶ */
+const s2=`<svg viewBox="${VB}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs><filter id="q2f" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#3B2A66" flood-opacity=".24"/></filter></defs>
+  <rect x="0" y="0" width="388" height="100" fill="#F3EEFF"/>
+  <g filter="url(#q2f)"><rect x="12" y="30" width="96" height="40" rx="8" fill="#fff" stroke="#94A3B8" stroke-width="2"/>
+    <text x="60" y="55" font-family="Noto Sans JP" font-size="14" font-weight="900" fill="#475569" text-anchor="middle">商談メモ</text></g>
+  <path d="M116 50 H 142" stroke="#7C3AED" stroke-width="4.4" stroke-linecap="round"/>
+  <g filter="url(#q2f)"><rect x="150" y="20" width="118" height="60" rx="9" fill="#EDE4FF" stroke="#7C3AED" stroke-width="2.6"/>
+    <text x="209" y="45" font-family="Noto Sans JP" font-size="13.5" font-weight="900" fill="#5B21B6" text-anchor="middle">プロンプトの実行</text>
+    <rect x="164" y="54" width="90" height="14" rx="7" fill="#fff" stroke="#B79CF0" stroke-width="1.6"/>
+    <text x="209" y="65" font-family="Noto Sans JP" font-size="11.5" font-weight="900" fill="#5B21B6" text-anchor="middle">商談フォロー</text></g>
+  <path d="M276 40 H 300" stroke="#7C3AED" stroke-width="4" stroke-linecap="round"/>
+  <path d="M276 62 H 300" stroke="#7C3AED" stroke-width="4" stroke-linecap="round"/>
+  <g filter="url(#q2f)"><rect x="304" y="26" width="72" height="26" rx="7" fill="#fff" stroke="#7C3AED" stroke-width="2.2"/>
+    <text x="340" y="44" font-family="Noto Sans JP" font-size="12.5" font-weight="900" fill="#5B21B6" text-anchor="middle">お礼文</text></g>
+  <g filter="url(#q2f)"><rect x="304" y="60" width="72" height="26" rx="7" fill="#fff" stroke="#7C3AED" stroke-width="2.2"/>
+    <text x="340" y="78" font-family="Noto Sans JP" font-size="12.5" font-weight="900" fill="#5B21B6" text-anchor="middle">提案文</text></g>
+</svg>`;
+
+/* ③ 人が直してから送る */
+const s3=`<svg viewBox="${VB}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs><filter id="q3f" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#0B5136" flood-opacity=".22"/></filter></defs>
+  <rect x="0" y="0" width="388" height="100" fill="#DCF3E7"/>
+  <g filter="url(#q3f)"><rect x="12" y="20" width="128" height="60" rx="9" fill="#fff" stroke="#7C3AED" stroke-width="2.4"/>
+    <rect x="26" y="34" width="100" height="6" rx="3" fill="#DDD3F7"/>
+    <rect x="26" y="46" width="76" height="6" rx="3" fill="#DDD3F7"/>
+    <rect x="26" y="58" width="92" height="6" rx="3" fill="#DDD3F7"/>
+    <text x="76" y="16" font-family="Noto Sans JP" font-size="12.5" font-weight="900" fill="#5B21B6" text-anchor="middle">AIの下書き</text></g>
+  <g><circle cx="168" cy="50" r="17" fill="#fff" stroke="#EA580C" stroke-width="2.6"/>
+    <path d="M160 56 l10 -10 l5 5 l-10 10 h-5 z" fill="#EA580C"/></g>
+  <text x="168" y="90" font-family="Noto Sans JP" font-size="13" font-weight="900" fill="#9A3412" text-anchor="middle">人が直す</text>
+  <path d="M190 50 H 214" stroke="#16A34A" stroke-width="4.4" stroke-linecap="round"/>
+  <path d="M208 44 l8 6 l-8 6" fill="none" stroke="#16A34A" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <g filter="url(#q3f)"><rect x="222" y="20" width="154" height="60" rx="9" fill="#fff" stroke="#16A34A" stroke-width="2.6"/>
+    <rect x="236" y="34" width="112" height="6" rx="3" fill="#BFE7D3"/>
+    <rect x="236" y="46" width="84" height="6" rx="3" fill="#BFE7D3"/>
+    <g transform="translate(322,54)"><circle cx="12" cy="12" r="12" fill="#16A34A"/>
+      <path d="M6 12.5 l4 4 L18.5 8" stroke="#fff" stroke-width="2.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>
+    <text x="270" y="72" font-family="Noto Sans JP" font-size="12.5" font-weight="900" fill="#0B5136">送信済み</text></g>
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.117-2</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">作り方は<span class="hl">3ステップ</span>（プロンプト → 実行 → 人が確認）</div>
+    <img class="title-chara" src="${A}chara/chara_point.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svgw(P.bulb,2.2)}</div>
+    <div class="txt">プロンプトは<b>1回作れば毎回使い回せます</b>。<br>フロー側でやるのは、渡して受け取るだけです</div>
+  </div>
+
+  <div class="stage">
+    <div class="col ai">
+      <div class="ch2"><span class="n">1</span>プロンプトを用意</div>
+      <div class="scene">${s1}</div>
+      <div class="body"><div class="card">
+        <div class="cardh">AI Builder のプロンプト「商談フォロー」</div>
+        <div class="cardb">
+          <div class="prm"><span class="pl">指示</span>
+            <span class="pt">商談メモから、お礼メールと次回提案の下書きを作る。事実はメモの範囲だけ。</span></div>
+          <div class="fld"><span class="fl">入力</span><span class="fi pv">商談メモ（テキスト）</span></div>
+        </div>
+      </div></div>
+      <div class="cap">作るのは<b>ここだけ</b>。<br>次からは選んで使うだけです</div>
+    </div>
+
+    <div class="col ai">
+      <div class="ch2"><span class="n">2</span>フローから呼ぶ</div>
+      <div class="scene">${s2}</div>
+      <div class="body"><div class="card">
+        <div class="cardh"><img src="${A}icons/pa_logo.png" alt="">プロンプトの実行</div>
+        <div class="cardb">
+          <div class="fld"><span class="fl">プロンプト</span><span class="fi pv">商談フォロー</span></div>
+          <div class="fld"><span class="fl">商談メモ</span>
+            <span class="fi hot"><span class="dyn">フォームの回答</span></span></div>
+          <div class="fld"><span class="fl">出力</span>
+            <span class="outp"><span>お礼文</span><span>提案文</span></span></div>
+        </div>
+      </div></div>
+      <div class="cap">きっかけはフォームでもメールでも可。<br>渡すのはメモ1つです</div>
+    </div>
+
+    <div class="col good">
+      <div class="ch2"><span class="n">3</span>人が確認する</div>
+      <div class="scene">${s3}</div>
+      <div class="body"><div class="card">
+        <div class="cardh">開始してテキストの承認を待機</div>
+        <div class="cardb">
+          <div class="apv">
+            <span class="at">承認者が画面上で直せます</span>
+            <span class="ax">本日はお忙しいところ、お時間をいただき…</span>
+            <span class="ar2"><span class="ed">修正する</span><span class="ok">承認</span></span>
+          </div>
+          <div class="note">固有名詞と数字は送る前にひと目で確認</div>
+        </div>
+      </div></div>
+      <div class="cap">送るかどうかを決めるのは人。<br>AIは下書きまでです</div>
+    </div>
+  </div>
+
+  <div class="warnbar">
+    <span class="na">${svgw(P.warn,2.4)}</span>
+    <span class="ws"><span>AI Builderはクレジット消費（プレミアム）</span><span>提供は一部地域のみ</span>
+      <span>AIは細部を盛ることがある</span></span>
+  </div>
+  <div class="src">出典：Microsoft Learn「Power Automate でプロンプトを使用する」「プロンプトのFAQ」／社名・人名は架空</div>
+`;
+</script>
+</body>
+</html>

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.116-1 重い添付が、リンク1行になって届く</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/tips-base.css">
+<style>
+  .stage{gap:9px;}
+  .col.bad{flex:1.08;} .col.good{flex:1.08;}
+  .scene{height:112px;}
+  .scene .chara{height:108px;right:2px;}
+
+  .engine{flex:0 0 250px;display:flex;flex-direction:column;gap:6px;border-radius:14px;padding:8px 10px 9px;
+    background:linear-gradient(180deg,#F5F0FF,#EDE4FF);border:2.5px solid #B79CF0;min-height:0;}
+  .engine .eh{flex:0 0 auto;display:flex;align-items:center;gap:8px;font-weight:900;font-size:17.5px;color:#5B21B6;line-height:1.16;}
+  .engine .eh img{width:30px;height:30px;object-fit:contain;flex:0 0 auto;background:#fff;border-radius:8px;padding:2px;}
+  .estep{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;gap:3px;background:#fff;
+    border:2px solid #C9B4F4;border-radius:9px;padding:6px 9px;}
+  .estep .en{font-size:13px;font-weight:900;color:#8B5CF6;}
+  .estep .et{font-size:15.5px;font-weight:900;color:#3B2A66;line-height:1.24;}
+  .estep .ei2{display:flex;align-items:center;gap:7px;}
+  .estep .ei2 img{width:22px;height:22px;object-fit:contain;flex:0 0 auto;}
+
+  /* メール作成画面のモック */
+  .mail{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:2.5px solid var(--red-line);
+    border-radius:11px;overflow:hidden;box-shadow:0 4px 10px rgba(20,40,90,.13);}
+  .col.good .mail{border-color:var(--green-line);}
+  .mh{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:6px 9px;background:#FFF1F1;border-bottom:1.5px solid #F3C6C6;}
+  .col.good .mh{background:#EAF9F1;border-bottom-color:#BFE7D3;}
+  .mh img{width:26px;height:26px;object-fit:contain;flex:0 0 auto;}
+  .mh .ms{flex:1;font-size:15px;font-weight:900;color:var(--navy);}
+  .mb{flex:1;min-height:0;padding:7px 9px;display:flex;flex-direction:column;gap:5px;}
+  .mf{display:flex;align-items:center;gap:7px;font-size:14.5px;font-weight:900;color:#334155;}
+  .mf .k{flex:0 0 42px;font-size:13.5px;color:#64748B;}
+  .mf .v{flex:1;background:#F7F9FC;border:1.4px solid #E2EAF5;border-radius:5px;padding:3px 8px;}
+  .mtext{flex:1;min-height:0;background:#F7F9FC;border:1.4px solid #E2EAF5;border-radius:6px;padding:6px 9px;
+    font-size:14.5px;font-weight:700;color:#334155;line-height:1.5;}
+  .att{display:flex;align-items:center;gap:8px;border-radius:8px;padding:6px 9px;}
+  .att.ng{background:#FFECEC;border:2px solid var(--red);}
+  .att.ok{background:#EAF9F1;border:2px solid #16A34A;}
+  .att .ic2{flex:0 0 auto;width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;
+    color:#fff;font-size:12px;font-weight:900;}
+  .att.ng .ic2{background:#DC2626;} .att.ok .ic2{background:#16A34A;}
+  .att .an2{flex:1;font-size:15px;font-weight:900;color:var(--navy);line-height:1.22;overflow:hidden;}
+  .att .sz{flex:0 0 auto;font-family:'Roboto Mono',monospace;font-size:14.5px;font-weight:700;}
+  .att.ng .sz{color:var(--red-dark);} .att.ok .sz{color:var(--green-dark);}
+  .err{display:flex;align-items:center;gap:8px;background:#DC2626;color:#fff;border-radius:8px;padding:6px 9px;
+    font-size:15px;font-weight:900;line-height:1.24;}
+  .okbar{display:flex;align-items:center;gap:8px;background:#16A34A;color:#fff;border-radius:8px;padding:6px 9px;
+    font-size:15px;font-weight:900;line-height:1.24;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={bulb:'<path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/>',
+  arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>', x:'<path d="M6 6l12 12M18 6L6 18"/>', ck:'<path d="M4 12.5l5 5L20 6.5"/>'};
+
+/* 情景① 重い添付が通らない（470x112） */
+const sc1=`<svg viewBox="0 0 470 112" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs><filter id="r1" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#4A1414" flood-opacity=".22"/></filter></defs>
+  <rect x="0" y="0" width="470" height="112" fill="#FCE4E4"/>
+  <g filter="url(#r1)"><rect x="14" y="26" width="72" height="60" rx="9" fill="#fff" stroke="#DC2626" stroke-width="2.4"/>
+    <path d="M32 40 h30 l10 10 v28 a4 4 0 0 1 -4 4 h-36 a4 4 0 0 1 -4 -4 v-34 a4 4 0 0 1 4 -4 z" fill="#FFECEC" stroke="#DC2626" stroke-width="2"/>
+    <text x="50" y="72" font-family="Roboto Mono" font-size="13" font-weight="700" fill="#991B1B" text-anchor="middle">28MB</text></g>
+  <path d="M96 56 H 148" stroke="#DC2626" stroke-width="5" stroke-linecap="round"/>
+  <g transform="translate(150,32)"><rect x="0" y="0" width="48" height="48" rx="10" fill="#DC2626"/>
+    <path d="M16 16 l16 16 M32 16 l-16 16" stroke="#fff" stroke-width="5" stroke-linecap="round"/></g>
+  <path d="M208 56 H 250" stroke="#F3C6C6" stroke-width="5" stroke-linecap="round" stroke-dasharray="8 7"/>
+  <g filter="url(#r1)" opacity=".55"><rect x="256" y="26" width="72" height="60" rx="9" fill="#fff" stroke="#D8B4B4" stroke-width="2"/>
+    <circle cx="292" cy="48" r="12" fill="#E7CFCF"/><rect x="272" y="66" width="40" height="7" rx="3.5" fill="#E7CFCF"/></g>
+  <text x="292" y="104" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#991B1B" text-anchor="middle">相手に届かない</text>
+  <text x="118" y="26" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#991B1B" text-anchor="middle">容量オーバー</text>
+</svg>`;
+
+/* 情景③ 送信箱に置くだけでリンクが飛ぶ（470x112） */
+const sc3=`<svg viewBox="0 0 470 112" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs><filter id="r3" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#0B5136" flood-opacity=".22"/></filter></defs>
+  <rect x="0" y="0" width="470" height="112" fill="#DCF3E7"/>
+  <g filter="url(#r3)"><path d="M14 34 h26 l8 8 h34 a4 4 0 0 1 4 4 v34 a4 4 0 0 1 -4 4 h-68 a4 4 0 0 1 -4 -4 v-42 a4 4 0 0 1 4 -4 z"
+      fill="#FFF3D6" stroke="#EAB308" stroke-width="2.4"/>
+    <text x="50" y="72" font-family="Noto Sans JP" font-size="13" font-weight="900" fill="#92400E" text-anchor="middle">送信箱</text></g>
+  <text x="50" y="26" font-family="Noto Sans JP" font-size="14.5" font-weight="900" fill="#0B5136" text-anchor="middle">置くだけ</text>
+  <path d="M96 58 H 132" stroke="#16A34A" stroke-width="5" stroke-linecap="round"/>
+  <path d="M126 52 l8 6 l-8 6" fill="none" stroke="#16A34A" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <g filter="url(#r3)"><rect x="142" y="34" width="86" height="46" rx="10" fill="#fff" stroke="#16A34A" stroke-width="2.4"/>
+    <path d="M164 57 a10 10 0 0 1 10 -10 h6 M206 57 a10 10 0 0 1 -10 10 h-6" fill="none" stroke="#16A34A" stroke-width="3.4" stroke-linecap="round"/>
+    <path d="M170 57 h30" stroke="#16A34A" stroke-width="3.4" stroke-linecap="round"/></g>
+  <text x="185" y="98" font-family="Noto Sans JP" font-size="14.5" font-weight="900" fill="#0B5136" text-anchor="middle">共有リンクの作成</text>
+  <path d="M238 58 H 274" stroke="#16A34A" stroke-width="5" stroke-linecap="round"/>
+  <path d="M268 52 l8 6 l-8 6" fill="none" stroke="#16A34A" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <g filter="url(#r3)"><rect x="284" y="28" width="90" height="58" rx="9" fill="#fff" stroke="#16A34A" stroke-width="2.6"/>
+    <rect x="294" y="40" width="60" height="6" rx="3" fill="#BFE7D3"/>
+    <rect x="294" y="54" width="70" height="12" rx="6" fill="#EAF9F1" stroke="#16A34A" stroke-width="1.6"/>
+    <rect x="294" y="72" width="46" height="6" rx="3" fill="#D6EFE1"/></g>
+  <text x="329" y="104" font-family="Noto Sans JP" font-size="14.5" font-weight="900" fill="#0B5136" text-anchor="middle">リンク1行のメール</text>
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.116-1</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">重い添付が、<span class="hl">リンク1行になって届く</span></div>
+    <img class="title-chara" src="${A}chara/chara_confident.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svgw(P.bulb,2.2)}</div>
+    <div class="txt">共有用のフォルダを1つ決めておくだけ。<b>そこに置くと、共有リンク付きのメールが飛びます</b></div>
+  </div>
+
+  <div class="stage">
+    <div class="col bad">
+      <div class="ph"><span class="mk">${svgw(P.x,3.2)}</span>添付で送ると</div>
+      <div class="scene">${sc1}<img class="chara" src="${A}chara/chara_trouble.png" alt=""></div>
+      <div class="mail">
+        <div class="mh"><img src="${A}icons/pa_outlook.png" alt=""><span class="ms">新しいメッセージ</span></div>
+        <div class="mb">
+          <div class="mf"><span class="k">宛先</span><span class="v">sato@example.com</span></div>
+          <div class="mf"><span class="k">件名</span><span class="v">10月分の設計図面を送ります</span></div>
+          <div class="att ng"><span class="ic2">PDF</span><span class="an2">設計図面_10月版.pdf</span><span class="sz">28.4 MB</span></div>
+          <div class="err">${svgw(P.x,3.2)}<span>添付が大きすぎて送信できません</span></div>
+        </div>
+      </div>
+      <div class="cap">OneDriveに上げてリンクを貼り直す、が<b>毎回ついてくる</b></div>
+    </div>
+
+    <div class="engine">
+      <div class="eh"><img src="${A}icons/pa_onedrive.png" alt="">置くだけで飛ぶ</div>
+      <div class="estep"><span class="en">STEP 1</span>
+        <span class="ei2"><img src="${A}icons/pa_onedrive.png" alt=""><span class="et">送信箱にファイルが作成されたら</span></span></div>
+      <div class="estep"><span class="en">STEP 2</span>
+        <span class="ei2"><img src="${A}icons/pa_onedrive.png" alt=""><span class="et">共有リンクの作成（表示のみ・組織）</span></span></div>
+      <div class="estep"><span class="en">STEP 3</span>
+        <span class="ei2"><img src="${A}icons/pa_outlook.png" alt=""><span class="et">本文にWeb URLを差し込んで送信</span></span></div>
+      <div class="cap" style="background:#E4D8FA;color:#5B21B6;font-size:15px;">全部<b>標準コネクタ</b></div>
+    </div>
+
+    <div class="col good">
+      <div class="ph"><span class="mk">${svgw(P.ck,3.4)}</span>リンクで送ると</div>
+      <div class="scene">${sc3}<img class="chara" src="${A}chara/chara_guts.png" alt=""></div>
+      <div class="mail">
+        <div class="mh"><img src="${A}icons/pa_outlook.png" alt=""><span class="ms">送信済み（フローが送信）</span></div>
+        <div class="mb">
+          <div class="mf"><span class="k">宛先</span><span class="v">sato@example.com</span></div>
+          <div class="mf"><span class="k">件名</span><span class="v">10月分の設計図面を送ります</span></div>
+          <div class="mtext">設計図面_10月版.pdf を共有しました。<br>下のリンクから開いてください。</div>
+          <div class="att ok"><span class="ic2">URL</span><span class="an2">設計図面_10月版.pdf を開く</span><span class="sz">0 KB</span></div>
+        </div>
+      </div>
+      <div class="cap">ファイルを差し替えても、相手は<b>いつも最新版</b>を開けます</div>
+    </div>
+  </div>
+
+  <div class="next">
+    <span class="na">${svgw(P.arrow,3)}</span>
+    <span>容量オーバーで送れない、がなくなります。<b>作り方は2枚目へ</b></span>
+  </div>
+  <div class="src">出典：Microsoft Learn「OneDrive for Business コネクタ」「Office 365 Outlook コネクタ」／宛先・ファイル名は架空</div>
+`;
+</script>
+</body>
+</html>

@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.108-1 名前と日付を入れるだけで、期限つきタスク一式が並ぶ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/tips-base.css">
+<style>
+  .stage{gap:11px;}
+  .left{flex:0 0 316px;display:flex;flex-direction:column;gap:8px;min-height:0;}
+  .right{flex:1;min-height:0;display:flex;flex-direction:column;gap:8px;}
+
+  .inpbox{flex:0 0 auto;background:#F8FAFC;border:2.5px solid #DCE3EE;border-radius:13px;padding:9px 11px;
+    display:flex;flex-direction:column;gap:6px;}
+  .inpbox .ih{display:flex;align-items:center;gap:8px;font-size:19px;font-weight:900;color:var(--navy);}
+  .inpbox .ih .b{background:var(--blue);color:#fff;border-radius:7px;padding:2px 9px;font-size:17px;}
+  .fld{display:flex;flex-direction:column;gap:2px;}
+  .fld .fl{font-size:14.5px;font-weight:900;color:#475569;}
+  .fld .fi{background:#fff;border:2px solid var(--blue);border-radius:8px;padding:5px 10px;font-size:18px;
+    font-weight:900;color:var(--navy);display:flex;align-items:center;gap:8px;}
+  .fld .fi .cal{width:22px;height:22px;flex:0 0 auto;color:var(--blue);}
+  .runbtn{background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;border-radius:9px;padding:7px 0;text-align:center;
+    font-size:18px;font-weight:900;box-shadow:0 3px 7px rgba(37,99,235,.35);}
+
+  .sc{flex:0 0 152px;border-radius:12px;overflow:hidden;position:relative;background:#EDF3FA;}
+  .sc svg{position:absolute;inset:0;width:100%;height:100%;}
+  .sc .chara{position:absolute;right:2px;bottom:0;height:100px;z-index:2;filter:drop-shadow(0 3px 5px rgba(0,0,0,.22));}
+  .metric{margin-top:auto;}
+
+  /* Planner ボード */
+  .board{flex:1;min-height:0;background:#fff;border:2.5px solid var(--blue-line);border-radius:13px;overflow:hidden;
+    display:flex;flex-direction:column;box-shadow:0 5px 13px rgba(20,40,90,.15);}
+  .bh{flex:0 0 auto;display:flex;align-items:center;gap:9px;padding:7px 12px;background:linear-gradient(90deg,#0F5B8E,#1477BE);color:#fff;}
+  .bh .bt{font-size:17.5px;font-weight:900;}
+  .bh .bp{margin-left:auto;background:rgba(255,255,255,.22);border-radius:999px;padding:3px 11px;font-size:14px;font-weight:900;}
+  .bcols{flex:1;min-height:0;display:flex;gap:8px;padding:8px 10px;background:#F4F7FB;}
+  .bcol{flex:1;min-height:0;display:flex;flex-direction:column;gap:5px;}
+  .bcol .bn{flex:0 0 auto;display:flex;align-items:center;gap:6px;font-size:16px;font-weight:900;color:var(--navy);}
+  .bcol .bn .cnt{background:#DBE7F6;color:#1E40AF;border-radius:999px;padding:1px 8px;font-size:13.5px;}
+  .tk{flex:1;min-height:0;background:#fff;border:1.5px solid #DDE5F0;border-left:5px solid #2563EB;border-radius:7px;
+    padding:5px 8px;display:flex;flex-direction:column;justify-content:center;gap:3px;box-shadow:0 2px 4px rgba(20,40,90,.09);}
+  .tk .tt{font-size:15.5px;font-weight:900;color:var(--navy);line-height:1.22;}
+  .tk .ts{font-size:13.5px;font-weight:700;color:#64748B;line-height:1.24;}
+  .tk .tm{display:flex;align-items:center;gap:5px;}
+  .tk .due{font-family:'Roboto Mono',monospace;font-size:13.5px;font-weight:700;color:#1E40AF;background:#EAF1FE;
+    border-radius:5px;padding:1px 6px;}
+  .tk .due.soon{color:#9A3412;background:#FFEDD5;}
+  .tk .cl{font-size:12.5px;font-weight:900;color:#475569;background:#EEF2F7;border-radius:5px;padding:1px 6px;}
+  .tk .av{width:19px;height:19px;border-radius:50%;background:#94A3B8;color:#fff;font-size:11px;font-weight:900;
+    display:flex;align-items:center;justify-content:center;margin-left:auto;}
+  .bcol.b2 .tk{border-left-color:#EA580C;}
+  .bcol.b3 .tk{border-left-color:#16A34A;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={bulb:'<path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/>',
+  arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',
+  cal:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 11h18"/>'};
+
+/* 情景：台帳の「ずらす日数」→ addDaysで逆算（316x152） */
+const sc=`<svg viewBox="0 0 316 152" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="ds" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#1B2A44" flood-opacity=".22"/></filter>
+    <marker id="mk8" markerUnits="userSpaceOnUse" markerWidth="13" markerHeight="13" refX="9" refY="6.5" orient="auto"><path d="M0 0 L13 6.5 L0 13 z" fill="#2563EB"/></marker>
+  </defs>
+  <rect x="0" y="0" width="316" height="152" fill="#EDF3FA"/>
+  <text x="14" y="19" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#1E40AF">台帳（やることの型）</text>
+  <g filter="url(#ds)">
+    <rect x="14" y="26" width="216" height="86" rx="8" fill="#fff" stroke="#C7D6EE" stroke-width="2"/>
+    <rect x="14" y="26" width="216" height="21" fill="#E8F0FE"/>
+    <text x="24" y="41" font-family="Noto Sans JP" font-size="13" font-weight="900" fill="#1E40AF">タスク名</text>
+    <text x="152" y="41" font-family="Noto Sans JP" font-size="12.5" font-weight="900" fill="#1E40AF">ずらす日数</text>
+    <g font-family="Noto Sans JP" font-size="14" font-weight="700" fill="#334155">
+      <text x="24" y="63">会場を押さえる</text>
+      <text x="24" y="84">資料を配る</text>
+      <text x="24" y="105">お礼を送る</text>
+    </g>
+    <g font-family="Roboto Mono" font-size="15" font-weight="700">
+      <text x="172" y="63" fill="#1E40AF">-30</text>
+      <text x="178" y="84" fill="#1E40AF">-7</text>
+      <text x="176" y="105" fill="#16A34A">+3</text>
+    </g>
+    <path d="M14 69 H 230 M14 90 H 230" stroke="#EDF2F9" stroke-width="1.6"/>
+  </g>
+  <path d="M30 116 v18" stroke="#2563EB" stroke-width="4.4" stroke-linecap="round" marker-end="url(#mk8)"/>
+  <text x="44" y="133" font-family="Noto Sans JP" font-size="13.5" font-weight="900" fill="#1E40AF">addDays(基準日, ずらす日数)</text>
+  <text x="44" y="148" font-family="Noto Sans JP" font-size="13.5" font-weight="700" fill="#475569">で1件ずつ期限を出す</text>
+</svg>`;
+
+const tk=(t,s2,due,cl,av,soon)=>`<div class="tk"><span class="tt">${t}</span><span class="ts">${s2}</span>
+  <span class="tm"><span class="due${soon?' soon':''}">${due}</span><span class="cl">${cl}</span><span class="av">${av}</span></span></div>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.108-1</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">名前と日付を入れるだけで、<span class="hl">期限つきタスク一式が並ぶ</span></div>
+    <img class="title-chara" src="${A}chara/chara_confident.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svgw(P.bulb,2.2)}</div>
+    <div class="txt">Plannerには<b>バケットの複製がありません</b>。台帳の「ずらす日数」から期限を逆算して、フローで作ってしまいます</div>
+  </div>
+
+  <div class="stage">
+    <div class="left">
+      <div class="inpbox">
+        <div class="ih"><span class="b">入力</span>入れるのは2つだけ</div>
+        <div class="fld"><span class="fl">案件名</span><span class="fi">秋の全社イベント</span></div>
+        <div class="fld"><span class="fl">基準日（開催日）</span><span class="fi"><span class="cal">${svgw(P.cal,2)}</span>2026/10/12</span></div>
+        <div class="runbtn">実行する</div>
+      </div>
+      <div class="sc">${sc}<img class="chara" src="${A}chara/chara_guts.png" alt=""></div>
+      <div class="metric">
+        <span><span class="mv">45分</span><br><span class="ml">12枚を手で作る</span></span>
+        <span class="ar">${svgw(P.arrow,3)}</span>
+        <span><span class="mv to">20秒</span><br><span class="ml">2つ入れて実行</span></span>
+      </div>
+    </div>
+
+    <div class="right">
+      <div class="board">
+        <div class="bh"><span class="bt">秋の全社イベント（フローが自動生成）</span><span class="bp">タスク 12件</span></div>
+        <div class="bcols">
+          <div class="bcol"><div class="bn">準備<span class="cnt">4</span></div>
+            ${tk('会場を押さえる','候補3件から決めて仮押さえ','9/12','0/3','山')}
+            ${tk('登壇者に依頼する','依頼文は台帳のテンプレから','9/20','0/2','佐')}
+            ${tk('案内を社内に出す','全社チャネルとメールの2本','9/28','0/2','山')}
+            ${tk('参加申込を締める','人数が確定したら備品を発注','10/02','0/3','鈴')}
+          </div>
+          <div class="bcol b2"><div class="bn">直前<span class="cnt">4</span></div>
+            ${tk('資料を配る','当日資料をSharePointへ','10/05','0/2','鈴',1)}
+            ${tk('備品と受付を確認','名札・電源・掲示物','10/09','0/4','佐',1)}
+            ${tk('リハーサルをする','配信と音声を通しで確認','10/11','0/3','山',1)}
+            ${tk('当日の連絡網を配る','緊急時の連絡先を共有','10/11','0/1','佐',1)}
+          </div>
+          <div class="bcol b3"><div class="bn">片づけ<span class="cnt">4</span></div>
+            ${tk('アンケートを送る','Formsのリンクを参加者へ','10/13','0/2','鈴')}
+            ${tk('お礼を送る','登壇者と協力部署あて','10/15','0/2','佐')}
+            ${tk('記録を残す','写真と議事をライブラリへ','10/19','0/3','山')}
+            ${tk('請求を処理する','会場・備品の精算','10/22','0/2','山')}
+          </div>
+        </div>
+      </div>
+      <div class="uses"><span class="ul">使いどころ</span>
+        <span class="u">新人受け入れ</span><span class="u">イベント準備</span><span class="u">棚卸し</span>
+        <span class="u">監査対応</span><span class="u">月次の締め</span></div>
+    </div>
+  </div>
+
+  <div class="next">
+    <span class="na">${svgw(P.arrow,3)}</span>
+    <span>タスクを増やしたいときは<b>台帳に1行足すだけ</b>。フローは触りません。<b>作り方は2枚目へ</b></span>
+  </div>
+  <div class="src">出典：Microsoft Learn「プランナー」コネクタ リファレンス（案件名・担当者は架空）</div>
+`;
+</script>
+</body>
+</html>

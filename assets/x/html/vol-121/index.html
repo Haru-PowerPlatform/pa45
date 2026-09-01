@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.121-1 顧客からの返信メールが、次にやることつきでタスクになる</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/tips-base.css">
+<style>
+  .stage{gap:9px;}
+  .col.bad{flex:1.1;} .col.good{flex:1.06;}
+  .scene{height:96px;}
+  .scene .chara{height:104px;right:2px;}
+
+  .engine{flex:0 0 250px;display:flex;flex-direction:column;gap:6px;border-radius:14px;padding:8px 10px 9px;
+    background:linear-gradient(180deg,#F5F0FF,#EDE4FF);border:2.5px solid #B79CF0;min-height:0;}
+  .engine .eh{flex:0 0 auto;display:flex;align-items:center;gap:8px;font-weight:900;font-size:17.5px;color:#5B21B6;line-height:1.16;}
+  .engine .eh .aib{flex:0 0 auto;width:30px;height:30px;border-radius:8px;padding:4px;
+    background:linear-gradient(180deg,#A78BFA,#6D28D9);display:flex;align-items:center;justify-content:center;}
+  .ex3{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;gap:3px;background:#fff;
+    border:2px solid #C9B4F4;border-radius:9px;padding:6px 9px;}
+  .ex3 .k3{font-size:13.5px;font-weight:900;color:#8B5CF6;}
+  .ex3 .v3{font-size:16px;font-weight:900;color:#3B2A66;line-height:1.24;}
+  .ex3 .n6{font-size:13.5px;font-weight:700;color:#7C3AED;line-height:1.3;}
+
+  /* メール本文 */
+  .mail{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:2.5px solid var(--red-line);
+    border-radius:11px;overflow:hidden;box-shadow:0 4px 10px rgba(20,40,90,.13);}
+  .mail .mh{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:6px 9px;background:#FFF1F1;
+    border-bottom:1.5px solid #F3C6C6;}
+  .mail .mh img{width:26px;height:26px;object-fit:contain;flex:0 0 auto;}
+  .mail .mh .ms{flex:1;font-size:15px;font-weight:900;color:var(--navy);}
+  .mail .mh .mt{font-family:'Roboto Mono',monospace;font-size:13px;font-weight:700;color:var(--weak);}
+  .mail .mb{flex:1;min-height:0;padding:8px 10px;font-size:15.5px;font-weight:700;color:#334155;line-height:1.62;}
+  .mail .mk2{background:linear-gradient(transparent 58%,#FDE68A 58%);font-weight:900;color:#7A4E06;}
+  .miss{flex:0 0 auto;display:flex;align-items:center;gap:8px;background:#DC2626;color:#fff;border-radius:8px;
+    padding:6px 10px;font-size:15.5px;font-weight:900;line-height:1.26;}
+  .miss svg{width:20px;height:20px;flex:0 0 auto;}
+
+  /* Plannerタスク */
+  .plan{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:2.5px solid var(--green-line);
+    border-radius:11px;overflow:hidden;box-shadow:0 4px 10px rgba(20,40,90,.13);}
+  .plan .ph4{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:6px 10px;
+    background:linear-gradient(90deg,#0B6A4F,#16A34A);color:#fff;}
+  .plan .ph4 .pt4{flex:1;font-size:15.5px;font-weight:900;}
+  .plan .ph4 .pc{background:rgba(255,255,255,.24);border-radius:999px;padding:2px 9px;font-size:12.5px;font-weight:900;}
+  .plan .pb4{flex:1;min-height:0;display:flex;flex-direction:column;gap:5px;padding:8px 10px;background:#F5FBF8;}
+  .tk2{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;gap:3px;background:#fff;
+    border:1.8px solid #DDE5F0;border-left:5px solid #16A34A;border-radius:8px;padding:5px 10px;
+    box-shadow:0 2px 4px rgba(20,40,90,.08);}
+  .tk2 .tt4{font-size:16.5px;font-weight:900;color:var(--navy);line-height:1.22;}
+  .tk2 .tm4{display:flex;align-items:center;gap:6px;}
+  .tk2 .due2{font-family:'Roboto Mono',monospace;font-size:14px;font-weight:700;color:var(--green-dark);
+    background:#EAF9F1;border-radius:5px;padding:1px 7px;}
+  .tk2 .due2.soon{color:#9A3412;background:#FFEDD5;}
+  .tk2 .who{font-size:13.5px;font-weight:900;color:#64748B;}
+  .tk2 .av5{margin-left:auto;width:19px;height:19px;border-radius:50%;background:#94A3B8;color:#fff;font-size:11px;
+    font-weight:900;display:flex;align-items:center;justify-content:center;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={bulb:'<path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/>',
+  arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>', x:'<path d="M6 6l12 12M18 6L6 18"/>', ck:'<path d="M4 12.5l5 5L20 6.5"/>'};
+const AIW=`<svg viewBox="0 0 24 24" fill="#fff" style="width:100%;height:100%" xmlns="http://www.w3.org/2000/svg">
+  <path d="M12 2.2l1.9 5.1 5.1 1.9-5.1 1.9L12 16.2l-1.9-5.1L5 9.2l5.1-1.9z"/>
+  <path d="M18.6 14.6l.9 2.4 2.4.9-2.4.9-.9 2.4-.9-2.4-2.4-.9 2.4-.9z"/></svg>`;
+
+/* 情景① 読んだのに、依頼が本文に埋もれる（474x96） */
+const sc1=`<svg viewBox="0 0 474 96" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs><filter id="k1f" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#4A1414" flood-opacity=".22"/></filter></defs>
+  <rect x="0" y="0" width="474" height="96" fill="#FCE4E4"/>
+  <g filter="url(#k1f)"><rect x="14" y="14" width="128" height="68" rx="8" fill="#fff" stroke="#D8B4B4" stroke-width="2"/>
+    ${[0,1,2,3,4].map(i=>`<rect x="26" y="${26+i*11}" width="${[104,86,98,74,92][i]}" height="5" rx="2.5" fill="#E7CFCF"/>`).join('')}
+    <rect x="26" y="48" width="62" height="8" rx="3" fill="#FDE68A"/></g>
+  <text x="78" y="94" font-family="Noto Sans JP" font-size="13" font-weight="900" fill="#991B1B" text-anchor="middle">読んだ</text>
+  <path d="M152 48 H 178" stroke="#DC2626" stroke-width="4" stroke-linecap="round" stroke-dasharray="7 6"/>
+  <g transform="translate(186,24)"><circle cx="24" cy="24" r="24" fill="#DC2626"/>
+    <path d="M24 12 v16 M24 33 v.01" stroke="#fff" stroke-width="5" stroke-linecap="round"/></g>
+  <text x="330" y="42" font-family="Noto Sans JP" font-size="16.5" font-weight="900" fill="#991B1B" text-anchor="middle">依頼された作業を</text>
+  <text x="330" y="66" font-family="Noto Sans JP" font-size="16.5" font-weight="900" fill="#991B1B" text-anchor="middle">あとで拾い忘れる</text>
+</svg>`;
+
+/* 情景③ 期日つきで並ぶ（460x96） */
+const sc3=`<svg viewBox="0 0 460 96" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs><filter id="k3f" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#0B5136" flood-opacity=".22"/></filter></defs>
+  <rect x="0" y="0" width="460" height="96" fill="#DCF3E7"/>
+  <g filter="url(#k3f)"><rect x="14" y="20" width="104" height="56" rx="8" fill="#fff" stroke="#16A34A" stroke-width="2.2"/>
+    ${[0,1,2].map(i=>`<rect x="26" y="${32+i*12}" width="${[80,64,72][i]}" height="5" rx="2.5" fill="#BFE7D3"/>`).join('')}
+    <rect x="26" y="44" width="50" height="8" rx="3" fill="#FDE68A"/></g>
+  <path d="M128 48 H 150" stroke="#16A34A" stroke-width="4.4" stroke-linecap="round"/>
+  <g filter="url(#k3f)"><circle cx="180" cy="48" r="24" fill="#6D28D9"/>
+    <g transform="translate(180,48) scale(0.95)" fill="#fff">
+      <path d="M0 -13l2.4 6.4 6.4 2.4 -6.4 2.4 -2.4 6.4 -2.4 -6.4 -6.4 -2.4 6.4 -2.4z"/>
+      <path d="M8.5 4.5l1.1 3 3 1.1 -3 1.1 -1.1 3 -1.1 -3 -3 -1.1 3 -1.1z"/></g></g>
+  <path d="M210 48 H 234" stroke="#16A34A" stroke-width="4.4" stroke-linecap="round"/>
+  <path d="M228 42 l8 6 l-8 6" fill="none" stroke="#16A34A" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"/>
+  ${[0,1,2].map(i=>`<g filter="url(#k3f)"><rect x="242" y="${10+i*26}" width="150" height="22" rx="6" fill="#fff" stroke="#16A34A" stroke-width="1.8"/>
+    <rect x="252" y="${17+i*26}" width="${[74,62,68][i]}" height="6" rx="3" fill="#BFE7D3"/>
+    <rect x="${338}" y="${17+i*26}" width="44" height="8" rx="4" fill="#D6EFE1"/></g>`).join('')}
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.121-1</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">顧客からの返信メールが、<span class="hl">次にやることつきでタスクになる</span></div>
+    <img class="title-chara" src="${A}chara/chara_confident.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svgw(P.bulb,2.2)}</div>
+    <div class="txt">AIが<b>「誰が・何を・いつまで」</b>を抜き出して、期日つきのタスクにします。<br>拾い忘れがなくなります</div>
+  </div>
+
+  <div class="stage">
+    <div class="col bad">
+      <div class="ph"><span class="mk">${svgw(P.x,3.2)}</span>読むだけだと</div>
+      <div class="scene">${sc1}<img class="chara" src="${A}chara/chara_trouble.png" alt=""></div>
+      <div class="mail">
+        <div class="mh"><img src="${A}icons/pa_outlook.png" alt=""><span class="ms">Re: 見積のご相談</span>
+          <span class="mt">14:32</span></div>
+        <div class="mb">
+          お世話になっております。山田商事の佐藤です。<br>
+          先日の件、社内で共有いたしました。<br>
+          つきましては<span class="mk2">9月5日までに見積書をお送りいただけますでしょうか</span>。<br>
+          あわせて<span class="mk2">構成図の最新版</span>もいただけると助かります。<br>
+          また、<span class="mk2">次回の打ち合わせ日程</span>を今週中にご提案ください。
+        </div>
+      </div>
+      <div class="miss">${svgw(P.x,3.2)}<span>3つ頼まれているのに、記憶だけが頼り</span></div>
+    </div>
+
+    <div class="engine">
+      <div class="eh"><span class="aib">${AIW}</span>抜き出すのは3つ</div>
+      <div class="ex3"><span class="k3">誰が</span><span class="v3">自分（営業担当）</span><span class="n6">メールの宛先から</span></div>
+      <div class="ex3"><span class="k3">何を</span><span class="v3">見積書の送付<br>構成図の最新版<br>次回日程の提案</span></div>
+      <div class="ex3"><span class="k3">いつまで</span><span class="v3">9/5・9/5・今週中</span><span class="n6">「今週中」は9/7に変換</span></div>
+      <div class="cap" style="background:#E4D8FA;color:#5B21B6;font-size:15px;">日付の言い回しも<b>日付に直す</b></div>
+    </div>
+
+    <div class="col good">
+      <div class="ph"><span class="mk">${svgw(P.ck,3.4)}</span>タスクになると</div>
+      <div class="scene">${sc3}<img class="chara" src="${A}chara/chara_guts.png" alt=""></div>
+      <div class="plan">
+        <div class="ph4"><span class="pt4">Planner ／ 営業フォロー</span><span class="pc">自動作成 3件</span></div>
+        <div class="pb4">
+          <div class="tk2"><span class="tt4">見積書を送る（山田商事）</span>
+            <span class="tm4"><span class="due2 soon">9/05</span><span class="who">Re: 見積のご相談 から</span><span class="av5">自</span></span></div>
+          <div class="tk2"><span class="tt4">構成図の最新版を送る</span>
+            <span class="tm4"><span class="due2 soon">9/05</span><span class="who">同じメールから</span><span class="av5">自</span></span></div>
+          <div class="tk2"><span class="tt4">次回の打ち合わせ日程を提案する</span>
+            <span class="tm4"><span class="due2">9/07</span><span class="who">「今週中」を日付に変換</span><span class="av5">自</span></span></div>
+        </div>
+      </div>
+      <div class="cap">読んだ瞬間に<b>やることが並ぶ</b>ので、忘れようがない</div>
+    </div>
+  </div>
+
+  <div class="next">
+    <span class="na">${svgw(P.arrow,3)}</span>
+    <span>返信は読んだのに作業を拾い忘れる、がなくなります。<b>作り方は2枚目へ</b></span>
+  </div>
+  <div class="src">出典：Microsoft Learn「Power Automate でプロンプトを使用する」「Office 365 Outlook／Plannerコネクタ」／社名・人名は架空</div>
+`;
+</script>
+</body>
+</html>

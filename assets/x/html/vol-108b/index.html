@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.108-2 期限つきタスク一式の作り方</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/tips-base.css">
+<style>
+  .scene{height:100px;}
+  .cardb{gap:5px;padding:7px 9px;}
+  .fld{display:flex;flex-direction:column;gap:2px;}
+  .fld .fl{font-size:14px;font-weight:900;color:#475569;}
+  .fld .fi{display:flex;align-items:center;gap:6px;background:#fff;border:2px solid #B9C7DC;border-radius:7px;
+    padding:5px 9px;font-size:15.5px;font-weight:900;color:var(--navy);line-height:1.2;}
+  .fld .fi.exp{border-color:var(--blue);background:#F4F8FF;font-family:'Roboto Mono',monospace;font-size:14.5px;
+    color:var(--blue-dark);word-break:break-all;}
+  .actbar{display:flex;align-items:center;gap:8px;background:#fff;border:2px solid var(--blue-line);border-radius:9px;
+    padding:6px 9px;box-shadow:0 3px 7px rgba(20,40,90,.12);}
+  .actbar img{width:28px;height:28px;object-fit:contain;flex:0 0 auto;}
+  .actbar .an{flex:1;font-size:16px;font-weight:900;color:var(--navy);line-height:1.2;}
+  .chklist{display:flex;flex-direction:column;gap:3px;background:#F7F9FC;border:1.5px solid #E2EAF5;border-radius:8px;padding:6px 8px;}
+  .chklist .ct{font-size:13.5px;font-weight:900;color:var(--weak);}
+  .chklist .cr{display:flex;align-items:center;gap:7px;font-size:15px;font-weight:900;color:var(--navy);}
+  .chklist .cr .bx{width:16px;height:16px;border:2.2px solid #94A3B8;border-radius:3.5px;flex:0 0 auto;background:#fff;}
+  .seq{display:flex;align-items:center;gap:5px;background:#F7F9FC;border:1.5px solid #E2EAF5;border-radius:8px;padding:5px 7px;}
+  .seq .sl{font-size:13.5px;font-weight:900;color:var(--weak);}
+  .seq .sa{font-size:14px;font-weight:900;color:#94A3B8;}
+  .seq span[class^="sc"]{color:#fff;border-radius:6px;padding:2px 9px;font-size:14.5px;font-weight:900;}
+  .seq .sc1{background:#2563EB;} .seq .sc2{background:#EA580C;} .seq .sc3{background:#16A34A;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={warn:'<path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>',
+  bulb:'<path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/>'};
+
+/* ① 3つのバケットを作る（388x100） */
+const s1=`<svg viewBox="0 0 388 100" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs><filter id="e1" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#1B2A44" flood-opacity=".22"/></filter></defs>
+  <rect x="0" y="0" width="388" height="100" fill="#EDF3FA"/>
+  <text x="14" y="20" font-family="Noto Sans JP" font-size="14.5" font-weight="900" fill="#1E40AF">くり返すのは3回だけ</text>
+  <g filter="url(#e1)">
+    <rect x="14" y="30" width="112" height="58" rx="8" fill="#fff" stroke="#2563EB" stroke-width="2.4"/>
+    <rect x="14" y="30" width="112" height="20" rx="8" fill="#2563EB"/><rect x="14" y="42" width="112" height="8" fill="#2563EB"/>
+    <text x="70" y="45" font-family="Noto Sans JP" font-size="14" font-weight="900" fill="#fff" text-anchor="middle">準備</text>
+    <rect x="24" y="58" width="92" height="8" rx="4" fill="#DCE6F5"/><rect x="24" y="72" width="70" height="8" rx="4" fill="#DCE6F5"/>
+  </g>
+  <g filter="url(#e1)">
+    <rect x="138" y="30" width="112" height="58" rx="8" fill="#fff" stroke="#EA580C" stroke-width="2.4"/>
+    <rect x="138" y="30" width="112" height="20" rx="8" fill="#EA580C"/><rect x="138" y="42" width="112" height="8" fill="#EA580C"/>
+    <text x="194" y="45" font-family="Noto Sans JP" font-size="14" font-weight="900" fill="#fff" text-anchor="middle">直前</text>
+    <rect x="148" y="58" width="92" height="8" rx="4" fill="#FBE3D2"/><rect x="148" y="72" width="70" height="8" rx="4" fill="#FBE3D2"/>
+  </g>
+  <g filter="url(#e1)">
+    <rect x="262" y="30" width="112" height="58" rx="8" fill="#fff" stroke="#16A34A" stroke-width="2.4"/>
+    <rect x="262" y="30" width="112" height="20" rx="8" fill="#16A34A"/><rect x="262" y="42" width="112" height="8" fill="#16A34A"/>
+    <text x="318" y="45" font-family="Noto Sans JP" font-size="14" font-weight="900" fill="#fff" text-anchor="middle">片づけ</text>
+    <rect x="272" y="58" width="92" height="8" rx="4" fill="#D6EFE1"/><rect x="272" y="72" width="70" height="8" rx="4" fill="#D6EFE1"/>
+  </g>
+</svg>`;
+
+/* ② 基準日から前後にずらす（388x100） */
+const s2=`<svg viewBox="0 0 388 100" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="388" height="100" fill="#EDF3FA"/>
+  <text x="14" y="34" font-family="Noto Sans JP" font-size="14.5" font-weight="900" fill="#1E40AF">前後にずらす</text>
+  <path d="M18 62 H 370" stroke="#94A3B8" stroke-width="3" stroke-linecap="round"/>
+  <g stroke="#94A3B8" stroke-width="2.4" stroke-linecap="round">
+    <path d="M60 56 v12"/><path d="M140 56 v12"/><path d="M300 56 v12"/></g>
+  <path d="M194 56 v12" stroke="#2563EB" stroke-width="3" stroke-linecap="round"/>
+  <g transform="translate(194,16)"><rect x="-34" y="0" width="68" height="26" rx="13" fill="#2563EB"/>
+    <text x="0" y="18" font-family="Noto Sans JP" font-size="14" font-weight="900" fill="#fff" text-anchor="middle">基準日</text></g>
+  <text x="60" y="48" font-family="Roboto Mono" font-size="16" font-weight="700" fill="#1E40AF" text-anchor="middle">-30</text>
+  <text x="140" y="48" font-family="Roboto Mono" font-size="16" font-weight="700" fill="#1E40AF" text-anchor="middle">-7</text>
+  <text x="300" y="48" font-family="Roboto Mono" font-size="16" font-weight="700" fill="#16A34A" text-anchor="middle">+3</text>
+  <text x="60" y="86" font-family="Noto Sans JP" font-size="13.5" font-weight="900" fill="#475569" text-anchor="middle">9/12</text>
+  <text x="140" y="86" font-family="Noto Sans JP" font-size="13.5" font-weight="900" fill="#475569" text-anchor="middle">10/05</text>
+  <text x="194" y="86" font-family="Noto Sans JP" font-size="13.5" font-weight="900" fill="#1E40AF" text-anchor="middle">10/12</text>
+  <text x="300" y="86" font-family="Noto Sans JP" font-size="13.5" font-weight="900" fill="#0B5136" text-anchor="middle">10/15</text>
+</svg>`;
+
+/* ③ 中身まで入って届く（388x100） */
+const s3=`<svg viewBox="0 0 388 100" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs><filter id="e3" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#0B5136" flood-opacity=".24"/></filter></defs>
+  <rect x="0" y="0" width="388" height="100" fill="#DCF3E7"/>
+  <g filter="url(#e3)">
+    <rect x="12" y="12" width="150" height="76" rx="9" fill="#fff" stroke="#94A3B8" stroke-width="2"/>
+    <rect x="24" y="26" width="84" height="9" rx="4.5" fill="#CBD5E1"/>
+    <rect x="24" y="44" width="120" height="7" rx="3.5" fill="#E2E8F0"/>
+    <text x="87" y="76" font-family="Noto Sans JP" font-size="13.5" font-weight="900" fill="#64748B" text-anchor="middle">タイトルだけ</text>
+  </g>
+  <path d="M170 50 H 202" stroke="#16A34A" stroke-width="4.4" stroke-linecap="round"/>
+  <path d="M196 44 l8 6 l-8 6" fill="none" stroke="#16A34A" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <g filter="url(#e3)">
+    <rect x="212" y="8" width="164" height="84" rx="9" fill="#fff" stroke="#16A34A" stroke-width="2.6"/>
+    <rect x="224" y="20" width="96" height="9" rx="4.5" fill="#16A34A"/>
+    <rect x="224" y="36" width="140" height="6" rx="3" fill="#D6EFE1"/>
+    <rect x="224" y="46" width="118" height="6" rx="3" fill="#D6EFE1"/>
+    <g stroke="#16A34A" stroke-width="2.2" fill="none" stroke-linecap="round">
+      <rect x="224" y="58" width="11" height="11" rx="2.5"/><rect x="224" y="74" width="11" height="11" rx="2.5"/></g>
+    <rect x="242" y="61" width="70" height="6" rx="3" fill="#BFE7D3"/>
+    <rect x="242" y="77" width="52" height="6" rx="3" fill="#BFE7D3"/>
+    <text x="352" y="26" font-family="Noto Sans JP" font-size="12.5" font-weight="900" fill="#0B5136" text-anchor="middle">説明</text>
+  </g>
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.108-2</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">作り方は<span class="hl">3ステップ</span>（入れ物 → 期限を逆算 → 中身まで）</div>
+    <img class="title-chara" src="${A}chara/chara_point.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svgw(P.bulb,2.2)}</div>
+    <div class="txt">タスクの一覧は<b>ExcelやSharePointの台帳</b>に置く。増やしたい時は台帳に1行、フローは触りません</div>
+  </div>
+
+  <div class="stage">
+    <div class="col neutral">
+      <div class="ch2"><span class="n">1</span>入れ物を作る</div>
+      <div class="scene">${s1}</div>
+      <div class="body"><div class="card">
+        <div class="cardh">バケットを作成する</div>
+        <div class="cardb">
+          <div class="fld"><span class="fl">名前</span><span class="fi">準備</span></div>
+          <div class="fld"><span class="fl">グループ ID</span><span class="fi">全社イベント運営チーム</span></div>
+          <div class="fld"><span class="fl">プラン ID</span><span class="fi">秋の全社イベント</span></div>
+          <div class="seq"><span class="sl">作る順</span>
+            <span class="sc1">準備</span><span class="sa">→</span>
+            <span class="sc2">直前</span><span class="sa">→</span>
+            <span class="sc3">片づけ</span></div>
+        </div>
+      </div></div>
+      <div class="cap">準備／直前／片づけ の3つなら、<b>3回くり返すだけ</b></div>
+    </div>
+
+    <div class="col info">
+      <div class="ch2"><span class="n">2</span>期限を逆算する</div>
+      <div class="scene">${s2}</div>
+      <div class="body"><div class="card">
+        <div class="cardh"><img src="${A}icons/pa_logo.png" alt="">タスクを作成する</div>
+        <div class="cardb">
+          <div class="fld"><span class="fl">タイトル</span><span class="fi">会場を押さえる</span></div>
+          <div class="fld"><span class="fl">期限の時刻</span>
+            <span class="fi exp">addDays(基準日, ずらす日数)</span></div>
+          <div class="fld"><span class="fl">担当者</span><span class="fi">yamada@example.com</span></div>
+        </div>
+      </div></div>
+      <div class="cap">開催日より前は <b>-30</b>、後は <b>+10</b>。台帳の列をそのまま渡す</div>
+    </div>
+
+    <div class="col good">
+      <div class="ch2"><span class="n">3</span>中身まで入れる</div>
+      <div class="scene">${s3}</div>
+      <div class="body"><div class="card">
+        <div class="cardh">タスクの詳細を更新する</div>
+        <div class="cardb">
+          <div class="fld"><span class="fl">説明</span><span class="fi">候補3件から決めて仮押さえ</span></div>
+          <div class="chklist"><span class="ct">チェックリスト</span>
+            <span class="cr"><span class="bx"></span>候補を3件出す</span>
+            <span class="cr"><span class="bx"></span>見積りをもらう</span>
+            <span class="cr"><span class="bx"></span>仮押さえの連絡</span></div>
+        </div>
+      </div></div>
+      <div class="cap">説明・参照リンク・チェックリストまで<b>入った状態</b>で立つ</div>
+    </div>
+  </div>
+
+  <div class="warnbar">
+    <span class="na">${svgw(P.warn,2.4)}</span>
+    <span class="ws"><span>Plannerコネクタは基本プランのみ</span><span>タイトルは255文字まで</span>
+      <span>担当者はセミコロン区切りのメールアドレス</span><span>接続ごと60秒に100回まで</span></span>
+  </div>
+  <div class="src">出典：Microsoft Learn「プランナー」コネクタ リファレンス（案件名・担当者は架空）</div>
+`;
+</script>
+</body>
+</html>

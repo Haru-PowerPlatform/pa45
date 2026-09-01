@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.118-1 毎朝、ニュースがAI要約で1通にまとまって届く</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/tips-base.css">
+<style>
+  .stage{gap:11px;}
+  .left{flex:0 0 336px;display:flex;flex-direction:column;gap:8px;min-height:0;}
+  .right{flex:1;min-height:0;display:flex;flex-direction:column;gap:8px;}
+
+  .before{flex:0 0 auto;background:var(--red-bg);border:2.5px solid var(--red-line);border-radius:13px;padding:8px 10px 9px;
+    display:flex;flex-direction:column;gap:6px;}
+  .before .bh2{display:flex;align-items:center;gap:9px;font-size:21px;font-weight:900;color:var(--red-dark);line-height:1.16;}
+  .before .bh2 .mk{flex:0 0 auto;width:32px;height:32px;border-radius:50%;background:linear-gradient(180deg,#EF6A6A,#DC2626);
+    color:#fff;display:flex;align-items:center;justify-content:center;}
+  .before .bh2 .mk svg{width:19px;height:19px;}
+  .tabs2{display:flex;flex-direction:column;gap:4px;}
+  .tab2{display:flex;align-items:center;gap:8px;background:#fff;border:1.8px solid var(--red-line);border-radius:7px;
+    padding:4px 9px;font-size:15px;font-weight:900;color:#7F1D1D;}
+  .tab2 .fav{flex:0 0 auto;width:18px;height:18px;border-radius:4px;background:#E88A8A;}
+  .tab2 .un{margin-left:auto;background:#DC2626;color:#fff;border-radius:999px;padding:1px 8px;font-size:12.5px;}
+
+  .sc{flex:1;min-height:0;border-radius:12px;overflow:hidden;position:relative;background:#F3EEFF;}
+  .sc svg{position:absolute;inset:0;width:100%;height:100%;}
+  .sc .chara{position:absolute;right:2px;bottom:0;height:100px;z-index:2;filter:drop-shadow(0 3px 5px rgba(0,0,0,.22));}
+
+  /* Teams のチャネル投稿 */
+  .teams{flex:1;min-height:0;background:#fff;border:2.5px solid #C9CBEF;border-radius:13px;overflow:hidden;
+    display:flex;flex-direction:column;box-shadow:0 5px 13px rgba(20,40,90,.15);}
+  .th3{flex:0 0 auto;display:flex;align-items:center;gap:9px;padding:7px 12px;background:linear-gradient(90deg,#4B4FA8,#5B5FC7);color:#fff;}
+  .th3 img{width:26px;height:26px;object-fit:contain;background:#fff;border-radius:7px;padding:2px;flex:0 0 auto;}
+  .th3 .tt3{font-size:17px;font-weight:900;}
+  .th3 .tm3{margin-left:auto;font-family:'Roboto Mono',monospace;font-size:14px;font-weight:700;opacity:.92;}
+  .tb3{flex:1;min-height:0;display:flex;flex-direction:column;gap:6px;padding:9px 11px;background:#F6F7FD;}
+  .post{flex:0 0 auto;display:flex;gap:9px;align-items:flex-start;}
+  .post .av2{flex:0 0 auto;width:34px;height:34px;border-radius:8px;background:linear-gradient(180deg,#8B5CF6,#6D28D9);
+    color:#fff;display:flex;align-items:center;justify-content:center;}
+  .post .av2 svg{width:20px;height:20px;}
+  .post .pb{flex:1;}
+  .post .pn{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:900;color:var(--navy);}
+  .post .pn .bot{background:#EDE4FF;color:#5B21B6;border-radius:5px;padding:1px 7px;font-size:12.5px;}
+  .post .pt3{font-size:18px;font-weight:900;color:var(--navy);line-height:1.24;}
+  .news{flex:1;min-height:0;display:flex;flex-direction:column;gap:6px;}
+  .nw{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;gap:3px;background:#fff;
+    border:1.8px solid #DDE0F2;border-left:5px solid #5B5FC7;border-radius:9px;padding:6px 11px;
+    box-shadow:0 2px 5px rgba(20,40,90,.08);}
+  .nw .nh{display:flex;align-items:center;gap:8px;}
+  .nw .cat{flex:0 0 auto;border-radius:999px;padding:1px 10px;font-size:13px;font-weight:900;color:#fff;}
+  .nw .cat.a{background:#2563EB;} .nw .cat.b{background:#16A34A;} .nw .cat.c{background:#EA580C;}
+  .nw .ttl3{flex:1;font-size:16.5px;font-weight:900;color:var(--navy);line-height:1.2;}
+  .nw .sm{font-size:15px;font-weight:700;color:#475569;line-height:1.38;}
+  .nw .src2{font-size:13px;font-weight:900;color:#8B90B8;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={bulb:'<path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/>',
+  arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>', x:'<path d="M6 6l12 12M18 6L6 18"/>'};
+const AI=`<svg viewBox="0 0 24 24" fill="#fff" xmlns="http://www.w3.org/2000/svg">
+  <path d="M12 2.2l1.9 5.1 5.1 1.9-5.1 1.9L12 16.2l-1.9-5.1L5 9.2l5.1-1.9z"/>
+  <path d="M18.6 14.6l.9 2.4 2.4.9-2.4.9-.9 2.4-.9-2.4-2.4-.9 2.4-.9z"/></svg>`;
+
+/* 情景：たくさんの新着 → AI → 1通 */
+const sc=`<svg viewBox="0 0 336 263" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg3" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#A78BFA"/><stop offset="1" stop-color="#6D28D9"/></linearGradient>
+    <filter id="w1" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#3B2A66" flood-opacity=".24"/></filter>
+  </defs>
+  <rect x="0" y="0" width="336" height="263" fill="#F3EEFF"/>
+  <text x="14" y="20" font-family="Noto Sans JP" font-size="14.5" font-weight="900" fill="#5B21B6">新着がたまり続ける</text>
+  ${[0,1,2,3,4,5,6].map(i=>`<g filter="url(#w1)"><rect x="${14+(i%2)*8}" y="${30+i*26}" width="104" height="20" rx="4" fill="#fff" stroke="#C4B5FD" stroke-width="1.5"/>
+    <rect x="${22+(i%2)*8}" y="${38+i*26}" width="${[62,52,70,46,58,66,50][i]}" height="5" rx="2.5" fill="#DDD3F7"/></g>`).join('')}
+  <path d="M130 132 H 152" stroke="#7C3AED" stroke-width="4.4" stroke-linecap="round"/>
+  <g filter="url(#w1)"><circle cx="184" cy="132" r="28" fill="url(#bg3)"/>
+    <g transform="translate(184,132) scale(1.05)" fill="#fff">
+      <path d="M0 -14l2.6 7 7 2.6 -7 2.6 -2.6 7 -2.6 -7 -7 -2.6 7 -2.6z"/>
+      <path d="M9 5l1.2 3.2 3.2 1.2 -3.2 1.2 -1.2 3.2 -1.2 -3.2 -3.2 -1.2 3.2 -1.2z"/></g></g>
+  <text x="184" y="180" font-family="Noto Sans JP" font-size="13.5" font-weight="900" fill="#5B21B6" text-anchor="middle">3行に要約</text>
+  <path d="M216 132 H 240" stroke="#7C3AED" stroke-width="4.4" stroke-linecap="round"/>
+  <path d="M234 126 l8 6 l-8 6" fill="none" stroke="#7C3AED" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <g filter="url(#w1)"><rect x="248" y="96" width="76" height="72" rx="9" fill="#fff" stroke="#5B5FC7" stroke-width="2.6"/>
+    <rect x="248" y="96" width="76" height="18" rx="9" fill="#5B5FC7"/><rect x="248" y="106" width="76" height="8" fill="#5B5FC7"/>
+    <text x="286" y="109" font-family="Noto Sans JP" font-size="11" font-weight="900" fill="#fff" text-anchor="middle">今朝の3本</text>
+    ${[0,1,2].map(i=>`<rect x="258" y="${122+i*14}" width="${[56,46,52][i]}" height="6" rx="3" fill="#D6D8F2"/>`).join('')}
+  </g>
+  <text x="14" y="226" font-family="Noto Sans JP" font-size="15.5" font-weight="900" fill="#5B21B6">7サイト巡回して20分。</text>
+  <text x="14" y="250" font-family="Noto Sans JP" font-size="15.5" font-weight="900" fill="#5B21B6">1通を2分読むだけに。</text>
+</svg>`;
+
+const nw=(cat,cls,ttl,sm,src)=>`<div class="nw">
+  <span class="nh"><span class="cat ${cls}">${cat}</span><span class="ttl3">${ttl}</span></span>
+  <span class="sm">${sm}</span><span class="src2">出典：${src}</span></div>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.118-1</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">毎朝、ニュースが<span class="hl">AI要約で1通にまとまって届く</span></div>
+    <img class="title-chara" src="${A}chara/chara_confident.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svgw(P.bulb,2.2)}</div>
+    <div class="txt">RSSで新着を集めて、AIが3行に要約。<br>毎朝8時に<b>「今朝の3本」がTeamsに1通</b>で届きます</div>
+  </div>
+
+  <div class="stage">
+    <div class="left">
+      <div class="before">
+        <div class="bh2"><span class="mk">${svgw(P.x,3.2)}</span>これまで</div>
+        <div class="tabs2">
+          <div class="tab2"><span class="fav"></span>業界ニュースA<span class="un">12</span></div>
+          <div class="tab2"><span class="fav"></span>製品ブログB<span class="un">7</span></div>
+          <div class="tab2"><span class="fav"></span>官公庁の発表C<span class="un">4</span></div>
+          <div class="tab2"><span class="fav"></span>競合のリリースD<span class="un">9</span></div>
+        </div>
+      </div>
+      <div class="sc">${sc}<img class="chara" src="${A}chara/chara_guts.png" alt=""></div>
+    </div>
+
+    <div class="right">
+      <div class="teams">
+        <div class="th3"><img src="${A}icons/pa_teams.png" alt=""><span class="tt3">情報収集チャネル</span>
+          <span class="tm3">08:00</span></div>
+        <div class="tb3">
+          <div class="post"><span class="av2">${AI}</span><span class="pb">
+            <span class="pn">ニュース要約ボット<span class="bot">フロー ボット</span></span>
+            <span class="pt3">今朝の3本（9月1日）</span></span></div>
+          <div class="news">
+            ${nw('制度','a','電子取引データの保存要件が来年4月に更新',
+              '対象は電子で受け取った請求書と領収書。検索条件の付け方が変わり、社内の保存フォルダの決め方を見直す必要があります。既存データの遡及は不要です。','経済産業省 報道発表')}
+            ${nw('製品','b','業務アプリの自動化機能に、承認の再送が追加',
+              '期限を過ぎた承認を自動で再送できるようになりました。これまで別のフローを組んでいた部分が、設定1つに置き換わります。','製品ブログ')}
+            ${nw('競合','c','同業A社が全社の請求処理を自動化したと発表',
+              '月末の処理時間を6割減らしたとのこと。仕組みは自社でも作れる範囲で、まず1部署から試す形が近そうです。','A社 プレスリリース')}
+          </div>
+        </div>
+      </div>
+      <div class="uses"><span class="ul">使いどころ</span>
+        <span class="u">業界動向の追跡</span><span class="u">競合ウォッチ</span><span class="u">制度改正の見落とし防止</span></div>
+    </div>
+  </div>
+
+  <div class="next">
+    <span class="na">${svgw(P.arrow,3)}</span>
+    <span>開かないまま1週間、がなくなります。<b>作り方は2枚目へ</b></span>
+  </div>
+  <div class="src">出典：Microsoft Learn「RSSコネクタ」「Power Automate でプロンプトを使用する」／記事の内容は架空の例</div>
+`;
+</script>
+</body>
+</html>

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.110-1 削減した時間が、勝手に積み上がっていく</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/tips-base.css">
+<style>
+  .stage{gap:11px;}
+  .left{flex:0 0 320px;display:flex;flex-direction:column;gap:8px;min-height:0;}
+  .right{flex:1;min-height:0;display:flex;flex-direction:column;gap:8px;}
+
+  .setbox{flex:0 0 auto;background:#F8FAFC;border:2.5px solid #DCE3EE;border-radius:13px;padding:9px 11px;
+    display:flex;flex-direction:column;gap:6px;}
+  .setbox .ih{display:flex;align-items:center;gap:8px;font-size:19px;font-weight:900;color:var(--navy);}
+  .setbox .ih .b{background:var(--blue);color:#fff;border-radius:7px;padding:2px 9px;font-size:16px;}
+  .fld{display:flex;flex-direction:column;gap:2px;}
+  .fld .fl{font-size:14px;font-weight:900;color:#475569;}
+  .fld .fi{background:#fff;border:2px solid var(--blue);border-radius:8px;padding:5px 10px;font-size:19px;
+    font-weight:900;color:var(--navy);display:flex;align-items:center;gap:8px;}
+  .fld .fi .u{margin-left:auto;font-size:14px;color:#64748B;}
+  .once{display:flex;align-items:center;gap:7px;background:#EAF9F1;border:2px solid #16A34A;border-radius:8px;
+    padding:5px 9px;font-size:15px;font-weight:900;color:var(--green-dark);line-height:1.24;}
+
+  .sc{flex:0 0 144px;border-radius:12px;overflow:hidden;position:relative;background:#EDF3FA;}
+  .sc svg{position:absolute;inset:0;width:100%;height:100%;}
+  .sc .chara{position:absolute;right:2px;bottom:0;height:104px;z-index:2;filter:drop-shadow(0 3px 5px rgba(0,0,0,.22));}
+
+  /* オートメーション センターの節約カード */
+  .dash{flex:1;min-height:0;background:#fff;border:2.5px solid var(--blue-line);border-radius:13px;overflow:hidden;
+    display:flex;flex-direction:column;box-shadow:0 5px 13px rgba(20,40,90,.15);}
+  .dh{flex:0 0 auto;display:flex;align-items:center;gap:9px;padding:7px 12px;background:linear-gradient(90deg,#1E3A8A,#2563EB);color:#fff;}
+  .dh img{width:26px;height:26px;object-fit:contain;background:#fff;border-radius:7px;padding:2px;flex:0 0 auto;}
+  .dh .dt{font-size:17px;font-weight:900;}
+  .dh .dp{margin-left:auto;background:rgba(255,255,255,.22);border-radius:999px;padding:3px 11px;font-size:14px;font-weight:900;}
+  .db{flex:1;min-height:0;display:flex;gap:9px;padding:9px 11px;background:#F6F9FD;}
+  .kpis{flex:0 0 236px;display:flex;flex-direction:column;gap:7px;}
+  .kpi{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;gap:1px;background:#fff;
+    border:2px solid #DDE5F0;border-left:6px solid #2563EB;border-radius:9px;padding:6px 10px;
+    box-shadow:0 2px 5px rgba(20,40,90,.09);}
+  .kpi .kl{font-size:14px;font-weight:900;color:#64748B;}
+  .kpi .kv{font-size:31px;font-weight:900;color:var(--blue-dark);line-height:1.06;}
+  .kpi .kv small{font-size:16px;margin-left:2px;}
+  .kpi.g{border-left-color:#16A34A;} .kpi.g .kv{color:var(--green-dark);}
+  .kpi.o{border-left-color:#EA580C;} .kpi.o .kv{color:#9A3412;}
+  .chart{flex:1;min-height:0;background:#fff;border:2px solid #DDE5F0;border-radius:9px;padding:7px 9px;
+    display:flex;flex-direction:column;gap:5px;box-shadow:0 2px 5px rgba(20,40,90,.09);}
+  .chart .ct{font-size:14.5px;font-weight:900;color:var(--navy);}
+  .chart .cw{flex:1;min-height:0;}
+  .bars{width:100%;height:100%;display:flex;align-items:flex-end;gap:7px;}
+  .bcell{flex:1;height:100%;display:flex;flex-direction:column;}
+  .bwrap{flex:1;min-height:0;display:flex;align-items:flex-end;}
+  .bfill{width:100%;border-radius:4px 4px 0 0;background:#BBD3F5;}
+  .bfill.now{background:linear-gradient(180deg,#60A5FA,#2563EB);}
+  .blab{flex:0 0 auto;text-align:center;font-size:13.5px;font-weight:900;color:#64748B;padding-top:4px;
+    border-top:1.6px solid #CBD5E1;margin-top:3px;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={bulb:'<path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/>',
+  arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>', ck:'<path d="M4 12.5l5 5L20 6.5"/>'};
+
+/* 情景：実行が成功するたびに時間が積み上がる（320x160） */
+const sc=`<svg viewBox="0 0 320 144" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="cg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FDE68A"/><stop offset="1" stop-color="#F59E0B"/></linearGradient>
+    <filter id="cs" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="1.8" flood-color="#7A4E06" flood-opacity=".3"/></filter>
+  </defs>
+  <rect x="0" y="0" width="320" height="144" fill="#EDF3FA"/>
+  <text x="14" y="20" font-family="Noto Sans JP" font-size="14.5" font-weight="900" fill="#1E40AF">実行が成功するたびに</text>
+  <g stroke="#16A34A" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="26" cy="42" r="11" fill="#EAF9F1"/><path d="M20 42.5 l4 4 L33 37"/>
+    <circle cx="56" cy="42" r="11" fill="#EAF9F1"/><path d="M50 42.5 l4 4 L63 37"/>
+    <circle cx="86" cy="42" r="11" fill="#EAF9F1"/><path d="M80 42.5 l4 4 L93 37"/>
+    <circle cx="116" cy="42" r="11" fill="#EAF9F1"/><path d="M110 42.5 l4 4 L123 37"/>
+  </g>
+  <text x="140" y="47" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#0B5136">…82件</text>
+  <g filter="url(#cs)">
+    ${Array.from({length:5},(_,i)=>`<g transform="translate(${14+i*29},${106-i*4})">
+      <ellipse cx="13" cy="8" rx="13" ry="5" fill="url(#cg)" stroke="#B45309" stroke-width="1.4"/>
+      <path d="M0 8 v-6 a13 5 0 0 0 26 0 v6" fill="url(#cg)" stroke="#B45309" stroke-width="1.4"/>
+      <ellipse cx="13" cy="2" rx="13" ry="5" fill="#FDE68A" stroke="#B45309" stroke-width="1.4"/>
+      <text x="13" y="5" font-family="Noto Sans JP" font-size="8" font-weight="900" fill="#92400E" text-anchor="middle">15分</text></g>`).join('')}
+  </g>
+  <path d="M12 124 H 168" stroke="#94A3B8" stroke-width="2.4" stroke-linecap="round"/>
+  <text x="12" y="140" font-family="Noto Sans JP" font-size="16" font-weight="900" fill="#92400E">1回15分ぶんが、そのまま貯まる</text>
+</svg>`;
+
+const bar=(vals,labels)=>{
+  const max=Math.max(...vals);
+  return `<div class="bars">${vals.map((v,i)=>`
+    <div class="bcell"><div class="bwrap"><div class="bfill${i===vals.length-1?' now':''}" style="height:${Math.round(v/max*100)}%"></div></div>
+    <div class="blab">${labels[i]}</div></div>`).join('')}</div>`;
+};
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.110-1</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">削減した時間が、<span class="hl">勝手に積み上がっていく</span></div>
+    <img class="title-chara" src="${A}chara/chara_confident.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svgw(P.bulb,2.2)}</div>
+    <div class="txt">決めるのは<b>手でやると何分かかるか</b>だけ。あとは実行が成功するたびに、削減時間と金額が自動で貯まります</div>
+  </div>
+
+  <div class="stage">
+    <div class="left">
+      <div class="setbox">
+        <div class="ih"><span class="b">1回だけ</span>節約ルールの編集</div>
+        <div class="fld"><span class="fl">この作業を手でやると</span><span class="fi">15<span class="u">分／件</span></span></div>
+        <div class="fld"><span class="fl">時間レート（任意）</span><span class="fi">3,000<span class="u">円／時</span></span></div>
+        <div class="once">${svgw(P.ck,3)}<span>設定はここまで。あとは自動で貯まる</span></div>
+      </div>
+      <div class="sc">${sc}<img class="chara" src="${A}chara/chara_guts.png" alt=""></div>
+      <div class="uses"><span class="ul">効くとき</span>
+        <span class="u">効果を聞かれた</span><span class="u">上司への報告</span></div>
+    </div>
+
+    <div class="right">
+      <div class="dash">
+        <div class="dh"><img src="${A}icons/pa_logo.png" alt=""><span class="dt">オートメーション センター ＞ 節約</span>
+          <span class="dp">経費申請の自動振り分け</span></div>
+        <div class="db">
+          <div class="kpis">
+            <div class="kpi"><span class="kl">今月の削減時間</span><span class="kv">1,240<small>分</small></span></div>
+            <div class="kpi g"><span class="kl">金額に換算すると</span><span class="kv">62,000<small>円</small></span></div>
+            <div class="kpi o"><span class="kl">成功した実行</span><span class="kv">82<small>件</small></span></div>
+          </div>
+          <div class="chart">
+            <div class="ct">月ごとの削減時間（分）</div>
+            <div class="cw">${bar([320,455,610,780,960,1240],['4月','5月','6月','7月','8月','9月'])}</div>
+          </div>
+        </div>
+      </div>
+      <div class="metric">
+        <span><span class="mv">毎回 手集計</span><br><span class="ml">実行回数を数え直す</span></span>
+        <span class="ar">${svgw(P.arrow,3)}</span>
+        <span><span class="mv to">開くだけ</span><br><span class="ml">聞かれたその場で答える</span></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="next">
+    <span class="na">${svgw(P.arrow,3)}</span>
+    <span>2025年10月に一般提供された機能です。<b>作り方は2枚目へ</b></span>
+  </div>
+  <div class="src">出典：Microsoft Learn「Power Automate の 節約効果」（フロー名・数値は架空の例）</div>
+`;
+</script>
+</body>
+</html>

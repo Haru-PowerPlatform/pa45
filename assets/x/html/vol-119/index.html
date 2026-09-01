@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.119-1 分厚い資料に、聞きたいことをAIが答えてくれる</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/tips-base.css">
+<style>
+  .stage{gap:9px;}
+  .col.bad{flex:1.06;} .col.good{flex:1.12;}
+  .scene{height:96px;}
+  .scene .chara{height:108px;right:2px;}
+
+  .engine{flex:0 0 244px;display:flex;flex-direction:column;gap:6px;border-radius:14px;padding:8px 10px 9px;
+    background:linear-gradient(180deg,#F5F0FF,#EDE4FF);border:2.5px solid #B79CF0;min-height:0;}
+  .engine .eh{flex:0 0 auto;display:flex;align-items:center;gap:8px;font-weight:900;font-size:17.5px;color:#5B21B6;line-height:1.16;}
+  .engine .eh img{width:30px;height:30px;object-fit:contain;flex:0 0 auto;background:#fff;border-radius:8px;padding:2px;}
+  .estep{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;gap:3px;background:#fff;
+    border:2px solid #C9B4F4;border-radius:9px;padding:6px 9px;}
+  .estep .en{font-size:13px;font-weight:900;color:#8B5CF6;}
+  .estep .et{font-size:15.5px;font-weight:900;color:#3B2A66;line-height:1.26;}
+  .estep .ei2{display:flex;align-items:center;gap:7px;}
+  .estep .ei2 img{width:22px;height:22px;object-fit:contain;flex:0 0 auto;}
+  .estep .aim{flex:0 0 auto;width:22px;height:22px;border-radius:6px;background:linear-gradient(180deg,#A78BFA,#6D28D9);
+    display:flex;align-items:center;justify-content:center;padding:3px;}
+
+  /* 分厚い資料 */
+  .doc{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:2.5px solid var(--red-line);
+    border-radius:11px;overflow:hidden;box-shadow:0 4px 10px rgba(20,40,90,.13);}
+  .doc .dh2{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:6px 9px;background:#FFF1F1;
+    border-bottom:1.5px solid #F3C6C6;font-size:15px;font-weight:900;color:var(--red-dark);}
+  .doc .dh2 .pg{margin-left:auto;font-family:'Roboto Mono',monospace;font-size:13.5px;}
+  .doc .db2{flex:1;min-height:0;padding:7px 9px;display:flex;flex-direction:column;gap:4px;}
+  .doc .ln{height:6px;border-radius:3px;background:#E7D2D2;}
+  .doc .find{display:flex;align-items:center;gap:7px;background:#FFECEC;border:2px solid var(--red);border-radius:7px;
+    padding:5px 8px;font-size:15px;font-weight:900;color:var(--red-dark);}
+  .doc .find .box{flex:1;background:#fff;border:1.4px solid #F0AEAE;border-radius:5px;padding:2px 8px;
+    font-size:14.5px;color:#7F1D1D;}
+  .doc .hit{font-size:14.5px;font-weight:900;color:var(--red-dark);text-align:center;}
+  .doc .cand{display:flex;align-items:center;gap:8px;background:#FFF6F6;border:1.5px solid #F0AEAE;border-radius:6px;
+    padding:3px 8px;font-size:14.5px;font-weight:900;color:#7F1D1D;line-height:1.2;}
+  .doc .cand .cn{flex:0 0 auto;font-family:'Roboto Mono',monospace;font-size:13px;background:#F3C6C6;color:#7F1D1D;
+    border-radius:4px;padding:1px 6px;}
+
+  /* 回答カード */
+  .qa{flex:1;min-height:0;display:flex;flex-direction:column;gap:6px;}
+  .q{flex:0 0 auto;display:flex;gap:8px;align-items:flex-start;background:#fff;border:2px solid var(--green-line);
+    border-radius:10px;padding:7px 10px;box-shadow:0 3px 7px rgba(20,40,90,.1);}
+  .q .av3{flex:0 0 auto;width:30px;height:30px;border-radius:50%;background:#64748B;color:#fff;font-size:13px;
+    font-weight:900;display:flex;align-items:center;justify-content:center;}
+  .q .qt{flex:1;font-size:18px;font-weight:900;color:var(--navy);line-height:1.26;}
+  .a{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:2.5px solid #7FCEA9;
+    border-radius:11px;overflow:hidden;box-shadow:0 4px 10px rgba(20,40,90,.13);}
+  .a .ahd{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:6px 10px;
+    background:linear-gradient(90deg,#0B6A4F,#16A34A);color:#fff;}
+  .a .ahd .ai2{flex:0 0 auto;width:22px;height:22px;}
+  .a .ahd .an3{flex:1;font-size:15px;font-weight:900;}
+  .a .abd{flex:1;min-height:0;padding:8px 10px;display:flex;flex-direction:column;gap:6px;}
+  .a .atx{font-size:16.5px;font-weight:700;color:#334155;line-height:1.5;}
+  .a .atx b{color:var(--green-dark);}
+  .a .cite{display:flex;flex-direction:column;gap:3px;background:#EAF9F1;border:1.8px solid #7FCEA9;border-radius:8px;
+    padding:6px 9px;}
+  .a .cite .cl{font-size:13.5px;font-weight:900;color:var(--green-dark);}
+  .a .cite .cq{font-size:15px;font-weight:700;color:#334155;line-height:1.4;border-left:4px solid #16A34A;padding-left:8px;}
+  .a .cite .cp{font-family:'Roboto Mono',monospace;font-size:13.5px;font-weight:700;color:var(--green-dark);}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={bulb:'<path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/>',
+  arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>', x:'<path d="M6 6l12 12M18 6L6 18"/>', ck:'<path d="M4 12.5l5 5L20 6.5"/>'};
+const AI=`<svg viewBox="0 0 24 24" fill="#fff" xmlns="http://www.w3.org/2000/svg">
+  <path d="M12 2.2l1.9 5.1 5.1 1.9-5.1 1.9L12 16.2l-1.9-5.1L5 9.2l5.1-1.9z"/>
+  <path d="M18.6 14.6l.9 2.4 2.4.9-2.4.9-.9 2.4-.9-2.4-2.4-.9 2.4-.9z"/></svg>`;
+const AI2=`<svg viewBox="0 0 24 24" fill="#fff" style="width:100%;height:100%" xmlns="http://www.w3.org/2000/svg">
+  <path d="M12 2.2l1.9 5.1 5.1 1.9-5.1 1.9L12 16.2l-1.9-5.1L5 9.2l5.1-1.9z"/>
+  <path d="M18.6 14.6l.9 2.4 2.4.9-2.4.9-.9 2.4-.9-2.4-2.4-.9 2.4-.9z"/></svg>`;
+
+/* 情景① 分厚い資料をめくる（466x112） */
+const sc1=`<svg viewBox="0 0 466 96" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs><filter id="v1" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#4A1414" flood-opacity=".22"/></filter></defs>
+  <rect x="0" y="0" width="466" height="96" fill="#FCE4E4"/>
+  ${[0,1,2,3].map(i=>`<g filter="url(#v1)"><rect x="${14+i*7}" y="${14+i*5}" width="86" height="66" rx="6" fill="#fff" stroke="#D8B4B4" stroke-width="1.8"/></g>`).join('')}
+  <g><rect x="35" y="28" width="66" height="5" rx="2.5" fill="#E7CFCF"/>
+    <rect x="35" y="40" width="54" height="5" rx="2.5" fill="#E7CFCF"/>
+    <rect x="35" y="52" width="62" height="5" rx="2.5" fill="#E7CFCF"/>
+    <rect x="35" y="64" width="48" height="5" rx="2.5" fill="#E7CFCF"/></g>
+  <text x="66" y="92" font-family="Noto Sans JP" font-size="14" font-weight="900" fill="#991B1B" text-anchor="middle">全128ページ</text>
+  <g transform="translate(142,22)">
+    <circle cx="26" cy="26" r="24" fill="none" stroke="#DC2626" stroke-width="4.6"/>
+    <path d="M44 44 L 62 62" stroke="#DC2626" stroke-width="6.4" stroke-linecap="round"/></g>
+  <text x="286" y="40" font-family="Noto Sans JP" font-size="16.5" font-weight="900" fill="#991B1B" text-anchor="middle">どこに書いてある？</text>
+  <text x="286" y="66" font-family="Noto Sans JP" font-size="16.5" font-weight="900" fill="#991B1B" text-anchor="middle">探すだけで時間が溶ける</text>
+</svg>`;
+
+/* 情景③ 聞くと答えと出どころが返る（492x112） */
+const sc3=`<svg viewBox="0 0 492 96" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="v3g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#34D399"/><stop offset="1" stop-color="#0B6A4F"/></linearGradient>
+    <filter id="v3" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#0B5136" flood-opacity=".22"/></filter>
+  </defs>
+  <rect x="0" y="0" width="492" height="96" fill="#DCF3E7"/>
+  <g filter="url(#v3)"><rect x="14" y="20" width="112" height="32" rx="17" fill="#fff" stroke="#16A34A" stroke-width="2.4"/>
+    <text x="70" y="41" font-family="Noto Sans JP" font-size="14.5" font-weight="900" fill="#0B5136" text-anchor="middle">ふだんの言葉で</text></g>
+  <text x="70" y="72" font-family="Noto Sans JP" font-size="14" font-weight="900" fill="#0B5136" text-anchor="middle">聞くだけ</text>
+  <path d="M134 37 H 158" stroke="#16A34A" stroke-width="4.4" stroke-linecap="round"/>
+  <g filter="url(#v3)"><circle cx="190" cy="46" r="24" fill="url(#v3g)"/>
+    <g transform="translate(190,46) scale(0.94)" fill="#fff">
+      <path d="M0 -13l2.4 6.4 6.4 2.4 -6.4 2.4 -2.4 6.4 -2.4 -6.4 -6.4 -2.4 6.4 -2.4z"/>
+      <path d="M8.5 4.5l1.1 3 3 1.1 -3 1.1 -1.1 3 -1.1 -3 -3 -1.1 3 -1.1z"/></g></g>
+  <path d="M220 38 C 238 30, 244 26, 256 24" stroke="#16A34A" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <path d="M220 56 C 238 64, 244 70, 256 72" stroke="#16A34A" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <g filter="url(#v3)"><rect x="260" y="8" width="126" height="34" rx="8" fill="#fff" stroke="#16A34A" stroke-width="2.4"/>
+    <text x="323" y="30" font-family="Noto Sans JP" font-size="14.5" font-weight="900" fill="#0B5136" text-anchor="middle">答え</text></g>
+  <g filter="url(#v3)"><rect x="260" y="56" width="126" height="34" rx="8" fill="#fff" stroke="#16A34A" stroke-width="2.4"/>
+    <text x="323" y="78" font-family="Noto Sans JP" font-size="14.5" font-weight="900" fill="#0B5136" text-anchor="middle">出どころ</text></g>
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.119-1</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">分厚い資料に、<span class="hl">聞きたいことをAIが答えてくれる</span></div>
+    <img class="title-chara" src="${A}chara/chara_confident.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svgw(P.bulb,2.2)}</div>
+    <div class="txt">答えだけでなく<b>根拠にした箇所</b>も一緒に返します。<br>社内FAQボットの土台にもなります</div>
+  </div>
+
+  <div class="stage">
+    <div class="col bad">
+      <div class="ph"><span class="mk">${svgw(P.x,3.2)}</span>探すと</div>
+      <div class="scene">${sc1}<img class="chara" src="${A}chara/chara_tired.png" alt=""></div>
+      <div class="doc">
+        <div class="dh2">経費精算規程_2026年度.pdf<span class="pg">128p</span></div>
+        <div class="db2">
+          <div class="find"><span>検索</span><span class="box">交通費 上限</span></div>
+          <div class="hit">ヒット 47件</div>
+          <div class="cand"><span class="cn">p.12</span>第4条 交通費は実費を支給する…</div>
+          <div class="ln" style="width:92%"></div><div class="ln" style="width:78%"></div>
+          <div class="cand"><span class="cn">p.34</span>第9条 出張旅費の精算期限は…</div>
+          <div class="ln" style="width:86%"></div><div class="ln" style="width:64%"></div>
+          <div class="cand"><span class="cn">p.71</span>別表2 交通費の区分と上限…</div>
+          <div class="ln" style="width:88%"></div><div class="ln" style="width:72%"></div>
+          <div class="cand"><span class="cn">p.96</span>附則 2026年度からの改定…</div>
+          <div class="ln" style="width:80%"></div><div class="ln" style="width:68%"></div>
+        </div>
+      </div>
+      <div class="cap">どれが今回の答えか、<b>結局は全部読む</b></div>
+    </div>
+
+    <div class="engine">
+      <div class="eh"><img src="${A}icons/pa_logo.png" alt="">資料に聞く</div>
+      <div class="estep"><span class="en">STEP 1</span>
+        <span class="ei2"><img src="${A}icons/pa_sharepoint.png" alt=""><span class="et">資料の本文を読み込む</span></span></div>
+      <div class="estep"><span class="en">STEP 2</span>
+        <span class="ei2"><span class="aim">${AI2}</span><span class="et">本文＋質問をAIに渡す</span></span></div>
+      <div class="estep"><span class="en">STEP 3</span>
+        <span class="ei2"><img src="${A}icons/pa_teams.png" alt=""><span class="et">答えと根拠を返す</span></span></div>
+      <div class="cap" style="background:#E4D8FA;color:#5B21B6;font-size:15px;">同じ形で<b>就業規程・マニュアル</b>にも</div>
+    </div>
+
+    <div class="col good">
+      <div class="ph"><span class="mk">${svgw(P.ck,3.4)}</span>聞くと</div>
+      <div class="scene">${sc3}<img class="chara" src="${A}chara/chara_guts.png" alt=""></div>
+      <div class="qa">
+        <div class="q"><span class="av3">山</span>
+          <span class="qt">出張の交通費、上限っていくらでしたっけ？</span></div>
+        <div class="a">
+          <div class="ahd"><span class="ai2">${AI}</span><span class="an3">規程アシスタント</span></div>
+          <div class="abd">
+            <div class="atx">日帰りの交通費は<b>実費、上限15,000円</b>です。<br>
+              超える場合は事前申請が要ります。</div>
+            <div class="cite"><span class="cl">根拠にした箇所</span>
+              <span class="cq">第4条 交通費は実費を支給する。1日あたり15,000円を上限とし、超える場合は事前に申請すること。</span>
+              <span class="cp">経費精算規程_2026年度.pdf ／ p.12</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="cap">答えと<b>出どころ</b>が一緒に返るので、そのまま人に説明できる</div>
+    </div>
+  </div>
+
+  <div class="next">
+    <span class="na">${svgw(P.arrow,3)}</span>
+    <span>該当箇所を探すだけで時間が溶ける、がなくなります。<b>作り方は2枚目へ</b></span>
+  </div>
+  <div class="src">出典：Microsoft Learn「Power Automate でプロンプトを使用する」「SharePointコネクタ」／規程の条文は架空の例</div>
+`;
+</script>
+</body>
+</html>

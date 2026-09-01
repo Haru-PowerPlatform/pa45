@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.109-1 遅れている行だけ赤い一覧が、毎朝届く</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/tips-base.css">
+<style>
+  .stage{gap:9px;}
+  .col.bad{flex:1.08;} .col.good{flex:1.08;}
+  .scene{height:100px;}
+  .scene .chara{height:112px;right:2px;}
+
+  .engine{flex:0 0 250px;display:flex;flex-direction:column;gap:6px;border-radius:14px;padding:8px 10px 9px;
+    background:linear-gradient(180deg,#F5F0FF,#EDE4FF);border:2.5px solid #B79CF0;min-height:0;}
+  .engine .eh{flex:0 0 auto;display:flex;align-items:center;gap:8px;font-weight:900;font-size:18px;color:#5B21B6;line-height:1.16;}
+  .engine .eh img{width:30px;height:30px;object-fit:contain;flex:0 0 auto;background:#fff;border-radius:8px;padding:2px;}
+  .estep{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;gap:3px;background:#fff;
+    border:2px solid #C9B4F4;border-radius:9px;padding:6px 9px;}
+  .estep .en{font-size:13.5px;font-weight:900;color:#8B5CF6;}
+  .estep .et{font-size:15.5px;font-weight:900;color:#3B2A66;line-height:1.24;}
+  .estep .emini{width:100%;height:auto;display:block;}
+  .estep .ec{font-family:'Roboto Mono',monospace;font-size:13.5px;font-weight:700;color:#5B21B6;background:#F3EEFF;
+    border-radius:5px;padding:3px 6px;word-break:break-all;line-height:1.3;}
+
+  /* メール本文のモック */
+  .mail{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:2.5px solid var(--blue-line);
+    border-radius:11px;overflow:hidden;box-shadow:0 4px 10px rgba(20,40,90,.13);}
+  .col.bad .mail{border-color:var(--red-line);} .col.good .mail{border-color:var(--green-line);}
+  .mh{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:6px 9px;background:#F2F7FD;border-bottom:1.5px solid #E2EAF5;}
+  .mh img{width:26px;height:26px;object-fit:contain;flex:0 0 auto;}
+  .mh .ms{flex:1;font-size:15px;font-weight:900;color:var(--navy);line-height:1.2;}
+  .mh .mt{font-family:'Roboto Mono',monospace;font-size:13px;font-weight:700;color:var(--weak);}
+  .mb{flex:1;min-height:0;padding:7px 8px;display:flex;flex-direction:column;gap:3px;}
+  .mrow{flex:1;min-height:0;display:flex;align-items:center;gap:6px;border:1px solid #DDE5F0;border-radius:5px;
+    padding:2px 7px;font-size:14.5px;font-weight:700;color:#334155;background:#fff;}
+  .mrow.hd{background:#EEF2F7;font-weight:900;color:#475569;font-size:13.5px;flex:0 0 auto;}
+  .mrow .c1{flex:1.5;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
+  .mrow .c2{flex:.9;font-family:'Roboto Mono',monospace;font-size:13.5px;}
+  .mrow .c3{flex:.7;text-align:right;}
+  .mrow.late{background:#FFECEC;border-color:#F0AEAE;color:#B91C1C;font-weight:900;}
+  .mrow.late .c3{color:#B91C1C;}
+  .findbar{flex:0 0 auto;display:flex;align-items:center;gap:7px;font-size:15px;font-weight:900;border-radius:8px;padding:5px 9px;}
+  .findbar > svg{width:22px;height:22px;flex:0 0 auto;}
+  .findbar.n{background:#FBD9D9;color:var(--red-dark);}
+  .findbar.y{background:#CFEFE0;color:var(--green-dark);}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={bulb:'<path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/>',
+  arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',
+  x:'<path d="M6 6l12 12M18 6L6 18"/>', ck:'<path d="M4 12.5l5 5L20 6.5"/>',
+  eye:'<path d="M1.5 12S5 5 12 5s10.5 7 10.5 7-3.5 7-10.5 7S1.5 12 1.5 12z"/><circle cx="12" cy="12" r="3.2"/>'};
+
+/* 情景① 全部同じ色 → 探すところから始まる（466x118） */
+const sc1=`<svg viewBox="0 0 466 100" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs><filter id="q1" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#4A1414" flood-opacity=".22"/></filter></defs>
+  <rect x="0" y="0" width="466" height="100" fill="#FCE4E4"/>
+  <g filter="url(#q1)">
+    ${Array.from({length:6},(_,i)=>`<g transform="translate(16,${8+i*14})"><rect x="0" y="0" width="230" height="11" rx="3" fill="#fff" stroke="#D8B4B4" stroke-width="1.4"/>
+      <rect x="7" y="3.5" width="62" height="4" rx="2" fill="#D9C2C2"/><rect x="80" y="3.5" width="52" height="4" rx="2" fill="#D9C2C2"/><rect x="146" y="3.5" width="72" height="4" rx="2" fill="#D9C2C2"/></g>`).join('')}
+  </g>
+  <g transform="translate(266,14)">
+    <circle cx="26" cy="26" r="25" fill="none" stroke="#DC2626" stroke-width="4.6"/>
+    <path d="M45 45 L 63 63" stroke="#DC2626" stroke-width="6.4" stroke-linecap="round"/>
+  </g>
+  <text x="300" y="94" font-family="Noto Sans JP" font-size="16.5" font-weight="900" fill="#991B1B" text-anchor="middle">どれが遅れ？</text>
+</svg>`;
+
+/* 情景③ 赤い行だけが目に飛び込む（466x118） */
+const sc3=`<svg viewBox="0 0 466 100" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs><filter id="q3" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#0B5136" flood-opacity=".2"/></filter></defs>
+  <rect x="0" y="0" width="466" height="100" fill="#DCF3E7"/>
+  <g filter="url(#q3)">
+    ${Array.from({length:6},(_,i)=>{const red=(i===1||i===4);return `<g transform="translate(16,${8+i*14})"><rect x="0" y="0" width="230" height="11" rx="3" fill="${red?'#FFE1E1':'#fff'}" stroke="${red?'#DC2626':'#BFE7D3'}" stroke-width="${red?'2':'1.4'}"/>
+      <rect x="7" y="3.5" width="62" height="4" rx="2" fill="${red?'#F19C9C':'#C6E7D6'}"/><rect x="80" y="3.5" width="52" height="4" rx="2" fill="${red?'#F19C9C':'#C6E7D6'}"/><rect x="146" y="3.5" width="72" height="4" rx="2" fill="${red?'#F19C9C':'#C6E7D6'}"/></g>`}).join('')}
+  </g>
+  <path d="M256 27 H 286" stroke="#DC2626" stroke-width="4.4" stroke-linecap="round"/>
+  <path d="M256 69 H 286" stroke="#DC2626" stroke-width="4.4" stroke-linecap="round"/>
+  <g transform="translate(292,26)"><rect x="0" y="0" width="44" height="44" rx="22" fill="#DC2626"/>
+    <text x="22" y="29" font-family="Noto Sans JP" font-size="19" font-weight="900" fill="#fff" text-anchor="middle">2</text></g>
+  <text x="132" y="96" font-family="Noto Sans JP" font-size="16.5" font-weight="900" fill="#0B5136" text-anchor="middle">赤い2件だけが目に入る</text>
+</svg>`;
+
+const row=(a,b,c,late)=>`<div class="mrow${late?' late':''}"><span class="c1">${a}</span><span class="c2">${b}</span><span class="c3">${c}</span></div>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.109-1</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">遅れている行だけ<span class="hl">赤い一覧が、毎朝届く</span></div>
+    <img class="title-chara" src="${A}chara/chara_confident.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svgw(P.bulb,2.2)}</div>
+    <div class="txt">コツは<b>色を先に付けること</b>。表ができてから色を付けようとすると、かえって面倒になります</div>
+  </div>
+
+  <div class="stage">
+    <div class="col bad">
+      <div class="ph"><span class="mk">${svgw(P.x,3.2)}</span>白黒のまま</div>
+      <div class="scene">${sc1}<img class="chara" src="${A}chara/chara_tired.png" alt=""></div>
+      <div class="mail">
+        <div class="mh"><img src="${A}icons/pa_outlook.png" alt=""><span class="ms">【日次】案件の進捗一覧</span><span class="mt">08:00</span></div>
+        <div class="mb">
+          <div class="mrow hd"><span class="c1">案件</span><span class="c2">期限</span><span class="c3">状態</span></div>
+          ${row('関西支社 更新見積','10/02','対応中')}
+          ${row('北陸 定期点検','09/28','未着手')}
+          ${row('九州 追加ライセンス','10/09','対応中')}
+          ${row('東北 保守更新','09/30','未着手')}
+          ${row('中部 新規導入','10/15','対応中')}
+        </div>
+      </div>
+      <div class="findbar n">${svgw(P.eye,2.4)}<span>探すところから始まる</span></div>
+    </div>
+
+    <div class="engine">
+      <div class="eh"><img src="${A}icons/pa_dataoperation.png" alt="">色は表の前に付ける</div>
+      <div class="estep"><span class="en">STEP 1</span><span class="et">期限が今日より前かを見る</span>
+        <svg class="emini" viewBox="0 0 210 40" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0" y="8" width="62" height="24" rx="6" fill="#FFECEC" stroke="#DC2626" stroke-width="2"/>
+          <text x="31" y="25" font-family="Roboto Mono" font-size="14" font-weight="700" fill="#B91C1C" text-anchor="middle">09/28</text>
+          <text x="82" y="26" font-family="Noto Sans JP" font-size="17" font-weight="900" fill="#5B21B6">&lt;</text>
+          <rect x="100" y="8" width="62" height="24" rx="6" fill="#EEF2FF" stroke="#6D28D9" stroke-width="2"/>
+          <text x="131" y="25" font-family="Roboto Mono" font-size="14" font-weight="700" fill="#5B21B6" text-anchor="middle">10/01</text>
+          <text x="186" y="26" font-family="Noto Sans JP" font-size="13" font-weight="900" fill="#6B7280" text-anchor="middle">今日</text>
+        </svg></div>
+      <div class="estep"><span class="en">STEP 2</span><span class="et">遅れている行だけ、値を色のタグで包む</span>
+        <span class="ec">&lt;span style='color:red'&gt;…&lt;/span&gt;</span></div>
+      <div class="estep"><span class="en">STEP 3</span><span class="et">その値を表に渡す</span>
+        <svg class="emini" viewBox="0 0 210 44" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0" y="2" width="210" height="40" rx="6" fill="#fff" stroke="#C9B4F4" stroke-width="1.8"/>
+          <rect x="0" y="2" width="210" height="12" fill="#EDE4FF"/>
+          <rect x="8" y="19" width="70" height="5" rx="2.5" fill="#D8CDEF"/><rect x="90" y="19" width="46" height="5" rx="2.5" fill="#D8CDEF"/><rect x="148" y="19" width="54" height="5" rx="2.5" fill="#D8CDEF"/>
+          <rect x="4" y="28" width="202" height="11" rx="3" fill="#FFECEC" stroke="#DC2626" stroke-width="1.6"/>
+          <rect x="10" y="31.5" width="66" height="4" rx="2" fill="#F19C9C"/><rect x="90" y="31.5" width="44" height="4" rx="2" fill="#F19C9C"/><rect x="148" y="31.5" width="50" height="4" rx="2" fill="#F19C9C"/>
+        </svg></div>
+      <div class="cap" style="background:#E4D8FA;color:#5B21B6;font-size:15px;">使うのは<b>「選択」</b>アクション</div>
+    </div>
+
+    <div class="col good">
+      <div class="ph"><span class="mk">${svgw(P.ck,3.4)}</span>色を付けると</div>
+      <div class="scene">${sc3}<img class="chara" src="${A}chara/chara_guts.png" alt=""></div>
+      <div class="mail">
+        <div class="mh"><img src="${A}icons/pa_outlook.png" alt=""><span class="ms">【日次】案件の進捗一覧</span><span class="mt">08:00</span></div>
+        <div class="mb">
+          <div class="mrow hd"><span class="c1">案件</span><span class="c2">期限</span><span class="c3">状態</span></div>
+          ${row('関西支社 更新見積','10/02','対応中')}
+          ${row('北陸 定期点検','09/28','期限ごえ',1)}
+          ${row('九州 追加ライセンス','10/09','対応中')}
+          ${row('東北 保守更新','09/30','期限ごえ',1)}
+          ${row('中部 新規導入','10/15','対応中')}
+        </div>
+      </div>
+      <div class="findbar y">${svgw(P.ck,3)}<span>開いた瞬間に、危ない件数が分かる</span></div>
+    </div>
+  </div>
+
+  <div class="next">
+    <span class="na">${svgw(P.arrow,3)}</span>
+    <span>全部同じ色のメールだと、結局あとで開き直すことになります。<b>作り方は2枚目へ</b></span>
+  </div>
+  <div class="src">出典：Microsoft Learn「Power Automate でデータ操作を使用する」（案件名は架空）</div>
+`;
+</script>
+</body>
+</html>

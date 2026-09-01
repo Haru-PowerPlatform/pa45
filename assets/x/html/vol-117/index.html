@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.117-1 商談メモを入れると、お礼と次の提案の下書きが出てくる</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/tips-base.css">
+<style>
+  .stage{gap:11px;}
+  .left{flex:0 0 330px;display:flex;flex-direction:column;gap:8px;min-height:0;}
+  .right{flex:1;min-height:0;display:flex;flex-direction:column;gap:8px;}
+
+  .memo{flex:0 0 auto;background:#fff;border:2.5px solid var(--blue-line);border-radius:12px;overflow:hidden;
+    box-shadow:0 4px 10px rgba(20,40,90,.14);}
+  .memo .mh{display:flex;align-items:center;gap:8px;padding:7px 10px;background:#F2F7FD;border-bottom:1.5px solid #E2EAF5;}
+  .memo .mh .ttl{flex:1;font-size:16px;font-weight:900;color:var(--navy);}
+  .memo .mh .tag{background:var(--blue);color:#fff;border-radius:6px;padding:2px 9px;font-size:13px;font-weight:900;}
+  .memo .mb{padding:7px 10px;display:flex;flex-direction:column;gap:0;}
+  .memo .li{display:flex;gap:8px;align-items:flex-start;font-size:15px;font-weight:700;color:#334155;line-height:1.34;
+    padding:4px 0;border-top:1px solid #EEF2F8;}
+  .memo .li:first-child{border-top:none;}
+  .memo .li .bl{flex:0 0 auto;width:6px;height:6px;border-radius:50%;background:#94A3B8;margin-top:7px;}
+
+  .sc{flex:1;min-height:0;border-radius:12px;overflow:hidden;position:relative;background:#F3EEFF;}
+  .sc svg{position:absolute;inset:0;width:100%;height:100%;}
+  .sc .chara{position:absolute;right:2px;bottom:0;height:102px;z-index:2;filter:drop-shadow(0 3px 5px rgba(0,0,0,.22));}
+
+  /* 生成された2通 */
+  .outs{flex:1;min-height:0;display:flex;gap:9px;}
+  .out{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:2.5px solid #C9B4F4;
+    border-radius:12px;overflow:hidden;box-shadow:0 5px 12px rgba(59,42,102,.16);}
+  .out .oh{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:7px 10px;
+    background:linear-gradient(90deg,#6D28D9,#8B5CF6);color:#fff;}
+  .out .oh .ai{flex:0 0 auto;width:24px;height:24px;}
+  .out .oh .on2{flex:1;font-size:16px;font-weight:900;}
+  .out .oh .badge3{background:rgba(255,255,255,.24);border-radius:999px;padding:2px 9px;font-size:12.5px;font-weight:900;}
+  .out .ob{flex:1;min-height:0;padding:8px 10px;display:flex;flex-direction:column;gap:5px;}
+  .out .row2{display:flex;align-items:center;gap:7px;font-size:14.5px;font-weight:900;color:#334155;}
+  .out .row2 .k{flex:0 0 34px;font-size:13.5px;color:#64748B;}
+  .out .row2 .v{flex:1;background:#F7F9FC;border:1.4px solid #E2EAF5;border-radius:5px;padding:3px 8px;}
+  .out .txt2{flex:1;min-height:0;font-size:15.5px;font-weight:700;color:#334155;line-height:1.52;
+    background:#FAF8FF;border:1.5px solid #E4DAFB;border-radius:8px;padding:7px 9px;}
+  .out .bul{display:flex;gap:8px;align-items:flex-start;font-size:15.5px;font-weight:700;color:#334155;line-height:1.34;
+    padding:5px 0;border-top:1px solid #EEE8FA;}
+  .out .bul:first-child{border-top:none;}
+  .out .bul .n3{flex:0 0 auto;width:20px;height:20px;border-radius:6px;background:#EDE4FF;color:#5B21B6;font-size:12.5px;
+    font-weight:900;display:flex;align-items:center;justify-content:center;}
+  .out .list2{flex:1;min-height:0;display:flex;flex-direction:column;background:#FAF8FF;border:1.5px solid #E4DAFB;
+    border-radius:8px;padding:4px 9px;}
+
+  .out .foot2{flex:0 0 auto;display:flex;align-items:center;gap:8px;background:#F7F9FC;border:1.4px solid #E2EAF5;
+    border-radius:7px;padding:4px 9px;font-size:14.5px;font-weight:900;color:#334155;}
+  .out .foot2 .fk2{font-size:13px;color:#64748B;}
+  .out .foot2 .fs2{margin-left:auto;background:#EDE4FF;color:#5B21B6;border-radius:5px;padding:2px 8px;font-size:13px;}
+  .out .chips3{flex:0 0 auto;display:flex;gap:6px;flex-wrap:wrap;}
+  .out .chips3 span{background:#EDE4FF;border:1.4px solid #C9B4F4;border-radius:999px;padding:2px 10px;
+    font-size:14px;font-weight:900;color:#5B21B6;}
+  .appr{flex:0 0 auto;display:flex;align-items:center;gap:10px;background:linear-gradient(180deg,#EAF2FF,#DCEAFE);
+    border:2.5px solid var(--blue);border-radius:11px;padding:7px 12px;}
+  .appr .al{flex:1;font-size:16.5px;font-weight:900;color:var(--blue-dark);line-height:1.26;}
+  .appr .al b{color:var(--orange);}
+  .appr .btn2{flex:0 0 auto;border-radius:8px;padding:5px 14px;font-size:15px;font-weight:900;color:#fff;}
+  .appr .btn2.ok{background:#16A34A;} .appr .btn2.ed{background:#64748B;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={bulb:'<path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/>',
+  arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>'};
+/* AI（きらめき）マーク：アイコン画像が無いのでシリーズ共通のSVGで統一する */
+const AI=(c)=>`<svg class="ic" viewBox="0 0 24 24" fill="${c||'#fff'}" xmlns="http://www.w3.org/2000/svg">
+  <path d="M12 2.2l1.9 5.1 5.1 1.9-5.1 1.9L12 16.2l-1.9-5.1L5 9.2l5.1-1.9z"/>
+  <path d="M18.6 14.6l.9 2.4 2.4.9-2.4.9-.9 2.4-.9-2.4-2.4-.9 2.4-.9z"/>
+  <path d="M5.4 15.2l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8L2.9 18l1.8-.7z"/></svg>`;
+
+/* 情景：商談メモ1枚 → AI → 下書き2通（330x256） */
+const sc=`<svg viewBox="0 0 330 256" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="ag" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8B5CF6"/><stop offset="1" stop-color="#6D28D9"/></linearGradient>
+    <filter id="z1" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#3B2A66" flood-opacity=".26"/></filter>
+  </defs>
+  <rect x="0" y="0" width="330" height="256" fill="#F3EEFF"/>
+  <text x="57" y="20" font-family="Noto Sans JP" font-size="13.5" font-weight="900" fill="#5B21B6" text-anchor="middle">商談メモ</text>
+  <g filter="url(#z1)"><rect x="14" y="30" width="86" height="118" rx="9" fill="#fff" stroke="#B79CF0" stroke-width="2.2"/>
+    ${[0,1,2,3,4,5].map(i=>`<g><circle cx="27" cy="${52+i*17}" r="3" fill="#C4B5FD"/>
+      <rect x="36" y="${49+i*17}" width="${[52,42,56,46,50,44][i]}" height="6" rx="3" fill="#DDD3F7"/></g>`).join('')}
+  </g>
+  <path d="M106 88 H 128" stroke="#7C3AED" stroke-width="4.4" stroke-linecap="round"/>
+  <g filter="url(#z1)"><circle cx="158" cy="88" r="28" fill="url(#ag)"/>
+    <g transform="translate(158,88) scale(1.08)" fill="#fff">
+      <path d="M0 -14l2.6 7 7 2.6 -7 2.6 -2.6 7 -2.6 -7 -7 -2.6 7 -2.6z"/>
+      <path d="M9 5l1.2 3.2 3.2 1.2 -3.2 1.2 -1.2 3.2 -1.2 -3.2 -3.2 -1.2 3.2 -1.2z"/></g></g>
+  <text x="158" y="136" font-family="Noto Sans JP" font-size="13.5" font-weight="900" fill="#5B21B6" text-anchor="middle">プロンプトの実行</text>
+  <path d="M190 76 C 210 64, 216 56, 228 52" stroke="#7C3AED" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <path d="M190 100 C 210 112, 216 120, 228 124" stroke="#7C3AED" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <g filter="url(#z1)"><rect x="232" y="28" width="84" height="48" rx="8" fill="#fff" stroke="#7C3AED" stroke-width="2.4"/>
+    <text x="274" y="48" font-family="Noto Sans JP" font-size="12.5" font-weight="900" fill="#5B21B6" text-anchor="middle">お礼メール</text>
+    <rect x="244" y="56" width="60" height="6" rx="3" fill="#DDD3F7"/>
+    <rect x="244" y="66" width="44" height="6" rx="3" fill="#EAE2FB"/></g>
+  <g filter="url(#z1)"><rect x="232" y="100" width="84" height="48" rx="8" fill="#fff" stroke="#7C3AED" stroke-width="2.4"/>
+    <text x="274" y="120" font-family="Noto Sans JP" font-size="12.5" font-weight="900" fill="#5B21B6" text-anchor="middle">次回の提案</text>
+    <rect x="244" y="128" width="60" height="6" rx="3" fill="#DDD3F7"/>
+    <rect x="244" y="138" width="44" height="6" rx="3" fill="#EAE2FB"/></g>
+  <text x="14" y="186" font-family="Noto Sans JP" font-size="16" font-weight="900" fill="#5B21B6">メモ1枚を渡すだけで、</text>
+  <text x="14" y="210" font-family="Noto Sans JP" font-size="16" font-weight="900" fill="#5B21B6">2通ぶんの下書きが出る。</text>
+  <text x="14" y="240" font-family="Noto Sans JP" font-size="14.5" font-weight="700" fill="#7C3AED">送るかどうかを決めるのは人。</text>
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.117-1</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">商談メモを入れると、<span class="hl">お礼と次の提案の下書き</span>が出てくる</div>
+    <img class="title-chara" src="${A}chara/chara_confident.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svgw(P.bulb,2.2)}</div>
+    <div class="txt">下書きだけAIに任せます。<br>人は<b>ひと目チェックして送るだけ</b>になります</div>
+  </div>
+
+  <div class="stage">
+    <div class="left">
+      <div class="memo">
+        <div class="mh"><span class="ttl">商談メモ（入力）</span><span class="tag">手書き</span></div>
+        <div class="mb">
+          <div class="li"><span class="bl"></span>山田商事・佐藤部長／9月1日 14:00</div>
+          <div class="li"><span class="bl"></span>請求書の処理が月末に集中して残業</div>
+          <div class="li"><span class="bl"></span>基幹システムは変えたくない</div>
+          <div class="li"><span class="bl"></span>予算は下期に確保できそう</div>
+          <div class="li"><span class="bl"></span>次回は現場の担当者も同席したい</div>
+        </div>
+      </div>
+      <div class="sc">${sc}<img class="chara" src="${A}chara/chara_guts.png" alt=""></div>
+    </div>
+
+    <div class="right">
+      <div class="outs">
+        <div class="out">
+          <div class="oh"><span class="ai">${AI()}</span><span class="on2">お礼メールの下書き</span>
+            <span class="badge3">AI生成</span></div>
+          <div class="ob">
+            <div class="row2"><span class="k">宛先</span><span class="v">佐藤部長（山田商事）</span></div>
+            <div class="row2"><span class="k">件名</span><span class="v">本日はお時間をいただきありがとうございました</span></div>
+            <div class="txt2">本日はお忙しいところ、お時間をいただきありがとうございました。<br>
+              月末に請求書の処理が集中してしまうお話、たいへん参考になりました。<br>
+              基幹システムはそのままに、まわりの手作業から減らす形でご提案いたします。<br>
+              次回は現場のご担当者さまにもご同席いただけますと幸いです。</div>
+            <div class="foot2"><span class="fk2">添付</span>前回の構成図.pdf<span class="fs2">署名あり</span></div>
+          </div>
+        </div>
+        <div class="out">
+          <div class="oh"><span class="ai">${AI()}</span><span class="on2">次回提案の下書き</span>
+            <span class="badge3">AI生成</span></div>
+          <div class="ob">
+            <div class="row2"><span class="k">狙い</span><span class="v">基幹システムは触らず、月末の山を崩す</span></div>
+            <div class="list2">
+              <div class="bul"><span class="n3">1</span>受領した請求書を自動で保存し、台帳に1行記録する</div>
+              <div class="bul"><span class="n3">2</span>処理待ちの件数を毎朝Teamsに通知する</div>
+              <div class="bul"><span class="n3">3</span>下期の予算に合わせ、まず1部署で試す</div>
+              <div class="bul"><span class="n3">4</span>効果は削減時間で記録し、月ごとに見せる</div>
+              <div class="bul"><span class="n3">5</span>うまくいったら他部署へ横展開する</div>
+              <div class="bul"><span class="n3">6</span>次回は現場の担当者にも同席いただく</div>
+            </div>
+            <div class="chips3"><span>次回 9/12(木) 14:00</span><span>オンライン</span><span>45分</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="appr">
+        <span class="al">「開始してテキストの承認を待機」で、<b>人が画面上で直してから送信</b></span>
+        <span class="btn2 ed">修正する</span><span class="btn2 ok">承認</span>
+      </div>
+      <div class="uses"><span class="ul">使いどころ</span>
+        <span class="u">営業</span><span class="u">カスタマーサクセス</span><span class="u">渉外</span><span class="u">採用面談</span></div>
+    </div>
+  </div>
+
+  <div class="next">
+    <span class="na">${svgw(P.arrow,3)}</span>
+    <span>後回しになりがちな「商談のあと」を、<b>その日のうちに終わらせる</b>。<b>作り方は2枚目へ</b></span>
+  </div>
+  <div class="src">出典：Microsoft Learn「Power Automate でプロンプトを使用する」「プロンプトのFAQ」／社名・人名は架空</div>
+`;
+</script>
+</body>
+</html>

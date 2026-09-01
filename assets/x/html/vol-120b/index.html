@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.120-2 自由記述を論点別にまとめる作り方</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/tips-base.css">
+<style>
+  .scene{height:100px;}
+  .cardb{gap:5px;padding:7px 9px;}
+  .col.ai{background:#F7F3FF;border:2.5px solid #C9B4F4;}
+  .col.ai .ch2{color:#5B21B6;}
+  .col.ai .ch2 .n{background:linear-gradient(180deg,#A78BFA,#6D28D9);}
+  .col.ai .card{border-color:#C9B4F4;}
+  .col.ai .cardh{background:#EDE4FF;border-bottom-color:#D8C9FA;color:#5B21B6;}
+  .col.ai .cap{background:#E4D8FA;color:#5B21B6;}
+  .fld{display:flex;flex-direction:column;gap:2px;}
+  .fld .fl{font-size:14px;font-weight:900;color:#475569;}
+  .fld .fi{display:flex;align-items:center;gap:6px;background:#fff;border:2px solid #B9C7DC;border-radius:7px;
+    padding:5px 9px;font-size:15.5px;font-weight:900;color:var(--navy);line-height:1.24;}
+  .fld .fi.hot{border-color:var(--orange);background:#FFF7ED;}
+  .fld .fi img{width:22px;height:22px;object-fit:contain;flex:0 0 auto;}
+  .prm{display:flex;flex-direction:column;gap:3px;background:#fff;border:2px solid #C9B4F4;border-radius:8px;padding:6px 9px;}
+  .prm .pl{font-size:13.5px;font-weight:900;color:#7C3AED;}
+  .prm .pt{font-size:15px;font-weight:700;color:#3B2A66;line-height:1.38;}
+  .note{display:flex;align-items:center;gap:7px;background:#FFF7ED;border:1.6px solid #FDBA74;border-radius:8px;
+    padding:4px 8px;font-size:14.5px;font-weight:900;color:#9A3412;line-height:1.24;}
+  .rank{display:flex;flex-direction:column;gap:4px;background:#fff;border:2px solid var(--green-line);border-radius:8px;padding:6px 9px;}
+  .rk{display:flex;align-items:center;gap:8px;font-size:15.5px;font-weight:900;color:var(--navy);}
+  .rk .no4{flex:0 0 auto;width:22px;height:22px;border-radius:6px;background:#16A34A;color:#fff;font-size:13px;
+    display:flex;align-items:center;justify-content:center;}
+  .rk .bar2{flex:1;height:11px;border-radius:6px;background:#EAF1FE;overflow:hidden;}
+  .rk .bar2 i{display:block;height:100%;border-radius:6px;background:linear-gradient(90deg,#6EE7B7,#16A34A);}
+  .rk .n5{flex:0 0 auto;font-family:'Roboto Mono',monospace;font-size:14.5px;font-weight:700;color:var(--green-dark);}
+  .dest{display:flex;gap:6px;}
+  .dest span{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;background:#F7F9FC;
+    border:1.6px solid #DDE5F0;border-radius:7px;padding:4px 0;font-size:15px;font-weight:900;color:var(--navy);}
+  .dest span img{width:20px;height:20px;object-fit:contain;}
+  .rows5{display:flex;flex-direction:column;gap:3px;background:#F7F9FC;border:1.5px solid #E2EAF5;border-radius:8px;padding:6px 8px;}
+  .rw5{display:flex;align-items:center;gap:7px;font-size:14.5px;font-weight:700;color:#475569;line-height:1.24;}
+  .rw5 .id5{flex:0 0 auto;font-family:'Roboto Mono',monospace;font-size:12.5px;background:#E2EAF5;color:#475569;
+    border-radius:4px;padding:1px 6px;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={warn:'<path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>',
+  bulb:'<path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/>'};
+const VB='0 0 388 100';
+const SPARK='<path d="M0 -13l2.4 6.4 6.4 2.4 -6.4 2.4 -2.4 6.4 -2.4 -6.4 -6.4 -2.4 6.4 -2.4z"/><path d="M8.5 4.5l1.1 3 3 1.1 -3 1.1 -1.1 3 -1.1 -3 -3 -1.1 3 -1.1z"/>';
+
+/* ① 締切に一度だけ動かす */
+const s1=`<svg viewBox="${VB}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs><filter id="t1f" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#1B2A44" flood-opacity=".2"/></filter></defs>
+  <rect x="0" y="0" width="388" height="100" fill="#EDF3FA"/>
+  <g filter="url(#t1f)"><circle cx="46" cy="50" r="26" fill="#fff" stroke="#2563EB" stroke-width="2.8"/>
+    <path d="M46 32 v18 l12 8" stroke="#2563EB" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>
+  <text x="46" y="94" font-family="Noto Sans JP" font-size="13" font-weight="900" fill="#1E40AF" text-anchor="middle">締切に1回</text>
+  <path d="M80 50 H 106" stroke="#2563EB" stroke-width="4.4" stroke-linecap="round"/>
+  <path d="M100 44 l8 6 l-8 6" fill="none" stroke="#2563EB" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <g filter="url(#t1f)"><rect x="116" y="12" width="150" height="76" rx="8" fill="#fff" stroke="#2563EB" stroke-width="2.4"/>
+    <rect x="116" y="12" width="150" height="18" rx="8" fill="#EAF1FE"/><rect x="116" y="22" width="150" height="8" fill="#EAF1FE"/>
+    <text x="128" y="25" font-family="Noto Sans JP" font-size="11.5" font-weight="900" fill="#1E40AF">自由記述の一覧</text>
+    ${[0,1,2,3].map(i=>`<rect x="128" y="${38+i*12}" width="${[118,96,110,88][i]}" height="6" rx="3" fill="#C3D6F2"/>`).join('')}
+  </g>
+  <text x="330" y="44" font-family="Noto Sans JP" font-size="14.5" font-weight="900" fill="#1E40AF" text-anchor="middle">100件を</text>
+  <text x="330" y="64" font-family="Noto Sans JP" font-size="14.5" font-weight="900" fill="#1E40AF" text-anchor="middle">まとめて渡す</text>
+</svg>`;
+
+/* ② 論点に仕分ける */
+const s2=`<svg viewBox="${VB}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="t2g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#A78BFA"/><stop offset="1" stop-color="#6D28D9"/></linearGradient>
+    <filter id="t2f" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#3B2A66" flood-opacity=".24"/></filter>
+  </defs>
+  <rect x="0" y="0" width="388" height="100" fill="#F3EEFF"/>
+  ${[0,1,2,3,4].map(i=>`<g filter="url(#t2f)"><rect x="${12+(i%2)*6}" y="${8+i*18}" width="88" height="14" rx="4" fill="#fff" stroke="#C4B5FD" stroke-width="1.4"/>
+    <rect x="${19+(i%2)*6}" y="${12+i*18}" width="${[62,50,68,46,58][i]}" height="5" rx="2.5" fill="#DDD3F7"/></g>`).join('')}
+  <path d="M112 50 H 136" stroke="#7C3AED" stroke-width="4.4" stroke-linecap="round"/>
+  <g filter="url(#t2f)"><circle cx="168" cy="50" r="24" fill="url(#t2g)"/>
+    <g transform="translate(168,50) scale(0.95)" fill="#fff">${SPARK}</g></g>
+  <path d="M200 40 C 216 30, 222 26, 234 24" stroke="#7C3AED" stroke-width="3.6" fill="none" stroke-linecap="round"/>
+  <path d="M200 50 H 234" stroke="#7C3AED" stroke-width="3.6" stroke-linecap="round"/>
+  <path d="M200 60 C 216 70, 222 74, 234 76" stroke="#7C3AED" stroke-width="3.6" fill="none" stroke-linecap="round"/>
+  ${[['価格','#DC2626',12],['機能要望','#EA580C',40],['接客','#16A34A',68]].map(([t,c,y])=>
+    `<g filter="url(#t2f)"><rect x="238" y="${y}" width="138" height="24" rx="7" fill="#fff" stroke="${c}" stroke-width="2.2"/>
+      <text x="307" y="${+y+17}" font-family="Noto Sans JP" font-size="14" font-weight="900" fill="${c}" text-anchor="middle">${t}</text></g>`).join('')}
+</svg>`;
+
+/* ③ 多い順に並べて配信 */
+const s3=`<svg viewBox="${VB}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs><filter id="t3f" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#0B5136" flood-opacity=".22"/></filter></defs>
+  <rect x="0" y="0" width="388" height="100" fill="#DCF3E7"/>
+  ${[[92,'#DC2626',10],[64,'#EA580C',38],[40,'#16A34A',66]].map(([w,c,y])=>
+    `<g filter="url(#t3f)"><rect x="12" y="${y}" width="150" height="24" rx="6" fill="#fff" stroke="#7FCEA9" stroke-width="1.8"/>
+      <rect x="20" y="${+y+8}" width="${w}" height="8" rx="4" fill="${c}"/></g>`).join('')}
+  <text x="87" y="98" font-family="Noto Sans JP" font-size="12.5" font-weight="900" fill="#0B5136" text-anchor="middle">多い順に並べる</text>
+  <path d="M172 50 H 198" stroke="#16A34A" stroke-width="4.4" stroke-linecap="round"/>
+  <path d="M192 44 l8 6 l-8 6" fill="none" stroke="#16A34A" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <g filter="url(#t3f)"><rect x="208" y="12" width="168" height="76" rx="9" fill="#fff" stroke="#5B5FC7" stroke-width="2.6"/>
+    <rect x="208" y="12" width="168" height="18" rx="9" fill="#5B5FC7"/><rect x="208" y="22" width="168" height="8" fill="#5B5FC7"/>
+    <text x="292" y="25" font-family="Noto Sans JP" font-size="11" font-weight="900" fill="#fff" text-anchor="middle">関係者へ配信</text>
+    ${[0,1,2].map(i=>`<g><rect x="220" y="${40+i*15}" width="${[128,106,116][i]}" height="6" rx="3" fill="#D6D8F2"/>
+      <rect x="220" y="${49+i*15}" width="${[76,90,68][i]}" height="4" rx="2" fill="#E6E7F6"/></g>`).join('')}
+  </g>
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.120-2</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">作り方は<span class="hl">3ステップ</span>（集める → 仕分ける → 多い順に配る）</div>
+    <img class="title-chara" src="${A}chara/chara_point.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svgw(P.bulb,2.2)}</div>
+    <div class="txt">1件ずつ渡すのではなく、<b>締切に一度だけまとめて渡す</b>のがコツ。<br>そのほうが分類がそろいます</div>
+  </div>
+
+  <div class="stage">
+    <div class="col neutral">
+      <div class="ch2"><span class="n">1</span>回答を集める</div>
+      <div class="scene">${s1}</div>
+      <div class="body"><div class="card">
+        <div class="cardh"><img src="${A}icons/pa_schedule.png" alt="">締切にスケジュール起動</div>
+        <div class="cardb">
+          <div class="fld"><span class="fl">取得元</span>
+            <span class="fi"><img src="${A}icons/pa_sharepoint.png" alt="">Forms の回答（Excel）</span></div>
+          <div class="rows5">
+            <div class="rw5"><span class="id5">001</span>金額のわりに機能が少ない…</div>
+            <div class="rw5"><span class="id5">002</span>問い合わせの返事が早くて…</div>
+            <div class="rw5"><span class="id5">003</span>スマホから使えるように…</div>
+            <div class="rw5"><span class="id5">…</span>100件ぶんを1つのテキストに</div>
+          </div>
+        </div>
+      </div></div>
+      <div class="cap">自由記述の列だけを、<b>一覧にして持つ</b></div>
+    </div>
+
+    <div class="col ai">
+      <div class="ch2"><span class="n">2</span>論点に仕分ける</div>
+      <div class="scene">${s2}</div>
+      <div class="body"><div class="card">
+        <div class="cardh"><img src="${A}icons/pa_logo.png" alt="">プロンプトの実行</div>
+        <div class="cardb">
+          <div class="prm"><span class="pl">指示</span>
+            <span class="pt">自由記述を論点で分類し、論点ごとに件数と要約、代表の声を1つ出す。論点名は短く。</span></div>
+          <div class="fld"><span class="fl">入力</span>
+            <span class="fi hot"><span class="dyn">自由記述のまとめ</span></span></div>
+        </div>
+      </div></div>
+      <div class="cap">論点名まで<b>AIに決めさせる</b>と、こちらの思い込みが入りません</div>
+    </div>
+
+    <div class="col good">
+      <div class="ch2"><span class="n">3</span>多い順に配る</div>
+      <div class="scene">${s3}</div>
+      <div class="body"><div class="card">
+        <div class="cardh">並べ替えてから送る</div>
+        <div class="cardb">
+          <div class="rank">
+            <div class="rk"><span class="no4">1</span>価格<span class="bar2"><i style="width:86%"></i></span><span class="n5">43</span></div>
+            <div class="rk"><span class="no4">2</span>機能要望<span class="bar2"><i style="width:58%"></i></span><span class="n5">29</span></div>
+            <div class="rk"><span class="no4">3</span>接客<span class="bar2"><i style="width:36%"></i></span><span class="n5">18</span></div>
+          </div>
+          <div class="dest">
+            <span><img src="${A}icons/pa_teams.png" alt="">Teams</span>
+            <span><img src="${A}icons/pa_outlook.png" alt="">メール</span></div>
+        </div>
+      </div></div>
+      <div class="cap">件数の多い順に並べると、<b>読む順番がそのまま優先順位</b>になります</div>
+    </div>
+  </div>
+
+  <div class="warnbar">
+    <span class="na">${svgw(P.warn,2.4)}</span>
+    <span class="ws"><span>要約はクレジット消費（プレミアム）</span><span>件数が多いとまとめて渡せないことがある（分割する）</span>
+      <span>個人が特定される記述は匿名運用と社内ルールに注意</span></span>
+  </div>
+  <div class="src">出典：Microsoft Learn「Power Automate でプロンプトを使用する」「プロンプトのFAQ」「Microsoft Formsコネクタ」</div>
+`;
+</script>
+</body>
+</html>

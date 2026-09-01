@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.110-2 節約効果の設定のしかた</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/tips-base.css">
+<style>
+  .scene{height:100px;}
+  .cardb{gap:5px;padding:7px 9px;}
+  .fld{display:flex;flex-direction:column;gap:2px;}
+  .fld .fl{font-size:14px;font-weight:900;color:#475569;}
+  .fld .fi{display:flex;align-items:center;gap:6px;background:#fff;border:2px solid #B9C7DC;border-radius:7px;
+    padding:5px 9px;font-size:16px;font-weight:900;color:var(--navy);line-height:1.2;}
+  .fld .fi .u{margin-left:auto;font-size:14px;color:#64748B;}
+  .rule{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;gap:2px;border-radius:8px;
+    border:2px solid #DDE5F0;background:#fff;padding:5px 9px;}
+  .rule .rn{font-size:15.5px;font-weight:900;color:var(--navy);line-height:1.2;}
+  .rule .rd{font-size:13.5px;font-weight:700;color:#64748B;line-height:1.24;}
+  .rule.a{border-color:#2563EB;background:#F4F8FF;}
+  .rule.a .rn{color:var(--blue-dark);}
+  .rule.b{border-color:#16A34A;background:#F3FBF6;} .rule.b .rn{color:var(--green-dark);}
+  .rule.c{border-color:#EA580C;background:#FFF9F4;} .rule.c .rn{color:#9A3412;}
+  .path{display:flex;align-items:center;gap:5px;flex-wrap:wrap;background:#F7F9FC;border:1.5px solid #E2EAF5;
+    border-radius:8px;padding:5px 8px;}
+  .path span.p{background:#fff;border:1.6px solid #C7D6EE;border-radius:6px;padding:2px 8px;font-size:14.5px;
+    font-weight:900;color:var(--navy);}
+  .path span.p.on{background:var(--blue);border-color:var(--blue);color:#fff;}
+  .path span.a2{font-size:14px;font-weight:900;color:#94A3B8;}
+  .note{display:flex;align-items:center;gap:7px;background:#FFF7ED;border:1.6px solid #FDBA74;border-radius:8px;
+    padding:4px 8px;font-size:14.5px;font-weight:900;color:#9A3412;line-height:1.24;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={warn:'<path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>',
+  bulb:'<path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/>'};
+
+/* ① フローの詳細ページから「節約」を開く（388x100） */
+const s1=`<svg viewBox="0 0 388 100" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs><filter id="v1" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#1B2A44" flood-opacity=".22"/></filter></defs>
+  <rect x="0" y="0" width="388" height="100" fill="#EDF3FA"/>
+  <g filter="url(#v1)"><rect x="12" y="12" width="180" height="76" rx="9" fill="#fff" stroke="#C7D6EE" stroke-width="2"/>
+    <rect x="12" y="12" width="180" height="22" rx="9" fill="#E8F0FE"/><rect x="12" y="24" width="180" height="10" fill="#E8F0FE"/>
+    <text x="24" y="28" font-family="Noto Sans JP" font-size="13" font-weight="900" fill="#1E40AF">経費申請の自動振り分け</text>
+    <rect x="24" y="44" width="72" height="8" rx="4" fill="#DCE6F5"/>
+    <rect x="24" y="60" width="90" height="20" rx="6" fill="#EAF1FE" stroke="#2563EB" stroke-width="2"/>
+    <text x="69" y="74" font-family="Noto Sans JP" font-size="13.5" font-weight="900" fill="#1E40AF" text-anchor="middle">節約</text>
+    <rect x="126" y="62" width="54" height="8" rx="4" fill="#E6ECF5"/></g>
+  <path d="M200 50 H 232" stroke="#2563EB" stroke-width="4.4" stroke-linecap="round"/>
+  <path d="M226 44 l8 6 l-8 6" fill="none" stroke="#2563EB" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <g filter="url(#v1)"><rect x="242" y="12" width="134" height="76" rx="9" fill="#fff" stroke="#2563EB" stroke-width="2.6"/>
+    <text x="309" y="34" font-family="Noto Sans JP" font-size="13.5" font-weight="900" fill="#1E40AF" text-anchor="middle">節約ルールの編集</text>
+    <rect x="256" y="44" width="106" height="20" rx="6" fill="#F4F8FF" stroke="#B9C7DC" stroke-width="1.8"/>
+    <text x="309" y="58" font-family="Roboto Mono" font-size="14" font-weight="700" fill="#1E40AF" text-anchor="middle">15 分</text>
+    <rect x="256" y="70" width="106" height="10" rx="5" fill="#DCE6F5"/></g>
+</svg>`;
+
+/* ② ルールは3種類（388x100） */
+const s2=`<svg viewBox="0 0 388 100" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="388" height="100" fill="#EDF3FA"/>
+  <g><rect x="12" y="16" width="112" height="68" rx="9" fill="#fff" stroke="#2563EB" stroke-width="2.4"/>
+    <circle cx="68" cy="42" r="17" fill="none" stroke="#2563EB" stroke-width="3"/>
+    <path d="M68 32 v10 l7 5" stroke="#2563EB" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="68" y="76" font-family="Noto Sans JP" font-size="13.5" font-weight="900" fill="#1E40AF" text-anchor="middle">時間</text></g>
+  <g><rect x="138" y="16" width="112" height="68" rx="9" fill="#fff" stroke="#16A34A" stroke-width="2.4"/>
+    <circle cx="194" cy="42" r="17" fill="none" stroke="#16A34A" stroke-width="3"/>
+    <text x="194" y="49" font-family="Noto Sans JP" font-size="20" font-weight="900" fill="#16A34A" text-anchor="middle">¥</text>
+    <text x="194" y="76" font-family="Noto Sans JP" font-size="13.5" font-weight="900" fill="#0B5136" text-anchor="middle">時間 × 単価</text></g>
+  <g><rect x="264" y="16" width="112" height="68" rx="9" fill="#fff" stroke="#EA580C" stroke-width="2.4"/>
+    <rect x="303" y="27" width="34" height="30" rx="5" fill="none" stroke="#EA580C" stroke-width="3"/>
+    <path d="M310 42 h20" stroke="#EA580C" stroke-width="3" stroke-linecap="round"/>
+    <text x="320" y="76" font-family="Noto Sans JP" font-size="13.5" font-weight="900" fill="#9A3412" text-anchor="middle">金額を直接</text></g>
+</svg>`;
+
+/* ③ トレンドを表示する（388x100） */
+const s3=`<svg viewBox="0 0 388 100" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs><filter id="v3" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#0B5136" flood-opacity=".22"/></filter></defs>
+  <rect x="0" y="0" width="388" height="100" fill="#DCF3E7"/>
+  <g filter="url(#v3)"><rect x="12" y="18" width="128" height="64" rx="9" fill="#fff" stroke="#16A34A" stroke-width="2.4"/>
+    <text x="76" y="40" font-family="Noto Sans JP" font-size="13" font-weight="900" fill="#0B5136" text-anchor="middle">節約カード</text>
+    <text x="76" y="64" font-family="Noto Sans JP" font-size="19" font-weight="900" fill="#0B5136" text-anchor="middle">1,240分</text></g>
+  <path d="M148 50 H 180" stroke="#16A34A" stroke-width="4.4" stroke-linecap="round"/>
+  <path d="M174 44 l8 6 l-8 6" fill="none" stroke="#16A34A" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <g filter="url(#v3)"><rect x="190" y="10" width="186" height="80" rx="9" fill="#fff" stroke="#16A34A" stroke-width="2.6"/>
+    <text x="202" y="27" font-family="Noto Sans JP" font-size="12.5" font-weight="900" fill="#0B5136">オートメーション センター</text>
+    <g fill="#BFE7D3">
+      <rect x="204" y="60" width="20" height="18" rx="3"/><rect x="232" y="52" width="20" height="26" rx="3"/>
+      <rect x="260" y="44" width="20" height="34" rx="3"/><rect x="288" y="36" width="20" height="42" rx="3"/></g>
+    <rect x="316" y="30" width="20" height="48" rx="3" fill="#16A34A"/>
+    <path d="M200 82 H 366" stroke="#CBD5E1" stroke-width="1.8"/></g>
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.110-2</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">作り方は<span class="hl">3ステップ</span>（開く → 何分か決める → 見る）</div>
+    <img class="title-chara" src="${A}chara/chara_point.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svgw(P.bulb,2.2)}</div>
+    <div class="txt">設定できるのは<b>ソリューション ベースのクラウドフロー</b>だけ。ここだけ先に確かめてください</div>
+  </div>
+
+  <div class="stage">
+    <div class="col neutral">
+      <div class="ch2"><span class="n">1</span>設定する場所</div>
+      <div class="scene">${s1}</div>
+      <div class="body"><div class="card">
+        <div class="cardh"><img src="${A}icons/pa_logo.png" alt="">たどり方</div>
+        <div class="cardb">
+          <div class="path"><span class="p">クラウドフローの詳細</span><span class="a2">▶</span>
+            <span class="p on">節約</span><span class="a2">▶</span><span class="p">節約ルールの編集</span></div>
+          <div class="fld"><span class="fl">この作業を手でやると</span><span class="fi">15<span class="u">分／件</span></span></div>
+          <div class="note">決めるのはこの1つだけです</div>
+        </div>
+      </div></div>
+      <div class="cap">フローの<b>詳細ページ</b>から入ります。デザイナーの中ではありません</div>
+    </div>
+
+    <div class="col info">
+      <div class="ch2"><span class="n">2</span>ルールは3種類</div>
+      <div class="scene">${s2}</div>
+      <div class="body"><div class="card">
+        <div class="cardh">節約ルールの種類</div>
+        <div class="cardb">
+          <div class="rule a"><span class="rn">時間節約ルール</span><span class="rd">手作業なら何分かかるか</span></div>
+          <div class="rule b"><span class="rn">時間レートに基づくルール</span><span class="rd">時間単価をかけて金額に換算</span></div>
+          <div class="rule c"><span class="rn">ユーザー定義の基準値</span><span class="rd">節約される金額を直接決める</span></div>
+        </div>
+      </div></div>
+      <div class="cap">レートのルールは、<b>時間のルールが有効なときだけ</b>使えます</div>
+    </div>
+
+    <div class="col good">
+      <div class="ch2"><span class="n">3</span>見る場所</div>
+      <div class="scene">${s3}</div>
+      <div class="body"><div class="card">
+        <div class="cardh">たどり方</div>
+        <div class="cardb">
+          <div class="path"><span class="p">フローの詳細</span><span class="a2">▶</span>
+            <span class="p">節約カード</span><span class="a2">▶</span><span class="p on">トレンドを表示する</span></div>
+          <div class="fld"><span class="fl">開くところ</span><span class="fi">オートメーション センター</span></div>
+          <div class="note">反映まで最大1時間。金額の端数は丸められます</div>
+        </div>
+      </div></div>
+      <div class="cap">部署ぶんをまとめて見たいときも、<b>ここに集まります</b></div>
+    </div>
+  </div>
+
+  <div class="warnbar">
+    <span class="na">${svgw(P.warn,2.4)}</span>
+    <span class="ws"><span>ソリューション ベースのフローだけ</span><span>正常に終わった実行だけが対象</span>
+      <span>テスト実行は加算されない</span><span>Dataverse for Teams では使えない</span></span>
+  </div>
+  <div class="src">出典：Microsoft Learn「Power Automate の 節約効果」（フロー名・数値は架空の例）</div>
+`;
+</script>
+</body>
+</html>

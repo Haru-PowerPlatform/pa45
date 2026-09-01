@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.111-1 送信アクション1つで、1日がこれだけ回る</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/tips-base.css">
+<style>
+  .stage{gap:11px;}
+  .left{flex:0 0 424px;display:flex;flex-direction:column;gap:8px;min-height:0;}
+  .right{flex:1;min-height:0;display:flex;flex-direction:column;gap:8px;}
+
+  .act{flex:0 0 auto;background:#fff;border:2.5px solid var(--blue-line);border-radius:12px;overflow:hidden;
+    box-shadow:0 4px 10px rgba(20,40,90,.14);}
+  .act .ah{display:flex;align-items:center;gap:9px;padding:7px 10px;background:#F2F7FD;border-bottom:1.5px solid #E2EAF5;}
+  .act .ah img{width:28px;height:28px;object-fit:contain;flex:0 0 auto;}
+  .act .ah .an{font-size:16.5px;font-weight:900;color:var(--navy);}
+  .act .ab{padding:8px 10px;display:flex;flex-direction:column;gap:5px;}
+  .fld{display:flex;flex-direction:column;gap:2px;}
+  .fld .fl{font-size:14px;font-weight:900;color:#475569;}
+  .fld .fi{background:#fff;border:2px solid #B9C7DC;border-radius:7px;padding:5px 9px;font-size:16px;font-weight:900;
+    color:var(--navy);display:flex;align-items:center;gap:7px;line-height:1.2;}
+  .fld .fi.hot{border-color:var(--orange);background:#FFF7ED;}
+  .fld .fi .dyn{flex:0 0 auto;}
+
+  .sc{flex:0 0 234px;border-radius:12px;overflow:hidden;position:relative;background:#EDF3FA;}
+  .sc svg{position:absolute;inset:0;width:100%;height:100%;}
+  .sc .chara{position:absolute;right:4px;bottom:0;height:112px;z-index:2;filter:drop-shadow(0 3px 5px rgba(0,0,0,.22));}
+
+  /* 4役の早見表 */
+  .roles{flex:1;min-height:0;display:flex;flex-direction:column;gap:7px;}
+  .role{flex:1;min-height:0;display:flex;align-items:center;gap:10px;background:#fff;border:2px solid #DDE5F0;
+    border-left:6px solid #2563EB;border-radius:10px;padding:6px 11px;box-shadow:0 3px 7px rgba(20,40,90,.10);}
+  .role .rn{flex:0 0 218px;display:flex;flex-direction:column;gap:3px;font-size:19px;font-weight:900;color:var(--navy);line-height:1.18;}
+  .role .rd2{font-size:13.5px;font-weight:700;color:#64748B;line-height:1.26;}
+  .role .rs{flex:0 0 auto;font-size:13.5px;font-weight:900;color:#64748B;}
+  .role .rt{flex:1;display:flex;flex-direction:column;gap:2px;}
+  .role .rl{font-size:13.5px;font-weight:900;color:#64748B;}
+  .role .rv{display:inline-flex;align-items:center;gap:5px;background:#EEF2FF;border:1.6px solid #A5B4FC;border-radius:7px;
+    padding:3px 9px;font-size:15.5px;font-weight:900;color:#4338CA;align-self:flex-start;line-height:1.2;}
+  .role.a{border-left-color:#2563EB;} .role.b{border-left-color:#16A34A;}
+  .role.c{border-left-color:#DC2626;} .role.d{border-left-color:#EA580C;}
+  .role.b .rv{background:#EAF9F1;border-color:#7FCEA9;color:var(--green-dark);}
+  .role.c .rv{background:#FFECEC;border-color:#F0AEAE;color:var(--red-dark);}
+  .role.d .rv{background:#FFF7ED;border-color:#FDBA74;color:#9A3412;}
+  .same{flex:0 0 auto;display:flex;align-items:center;gap:9px;background:linear-gradient(180deg,#F5F0FF,#EDE4FF);
+    border:2.5px solid #B79CF0;border-radius:11px;padding:7px 12px;font-size:17px;font-weight:900;color:#5B21B6;}
+  .same img{width:28px;height:28px;object-fit:contain;background:#fff;border-radius:7px;padding:2px;flex:0 0 auto;}
+  .same b{color:var(--orange);}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={bulb:'<path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/>',
+  arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>'};
+
+/* 情景：同じアクションから、宛先だけ替えて4方向へ（404x234） */
+const sc=`<svg viewBox="0 0 424 234" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="t1" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2.4" stdDeviation="2.2" flood-color="#1B2A44" flood-opacity=".24"/></filter>
+    <linearGradient id="bot" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8B5CF6"/><stop offset="1" stop-color="#6D28D9"/></linearGradient>
+  </defs>
+  <rect x="0" y="0" width="424" height="234" fill="#EDF3FA"/>
+  <text x="14" y="20" font-family="Noto Sans JP" font-size="14.5" font-weight="900" fill="#5B21B6">同じアクションのまま</text>
+  <g filter="url(#t1)"><circle cx="66" cy="108" r="40" fill="url(#bot)"/>
+    <text x="66" y="103" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#fff" text-anchor="middle">フロー</text>
+    <text x="66" y="122" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#fff" text-anchor="middle">ボット</text></g>
+  <g stroke-width="4.4" stroke-linecap="round" fill="none">
+    <path d="M108 88 C 148 56, 176 46, 216 42" stroke="#2563EB"/>
+    <path d="M110 100 C 152 90, 178 86, 216 84" stroke="#16A34A"/>
+    <path d="M110 118 C 152 128, 178 134, 216 138" stroke="#DC2626"/>
+    <path d="M108 128 C 148 162, 176 172, 216 178" stroke="#EA580C"/>
+  </g>
+  ${[['#2563EB','担当者に催促','#EAF1FE',28],['#16A34A','申請者に結果','#EAF9F1',70],['#DC2626','自分に失敗通報','#FFECEC',124],['#EA580C','上長へ引き上げ','#FFF7ED',164]]
+    .map(([c,t,bgc,y])=>`<g filter="url(#t1)"><rect x="222" y="${y}" width="188" height="30" rx="15" fill="${bgc}" stroke="${c}" stroke-width="2.4"/>
+      <text x="316" y="${y+20}" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="${c}" text-anchor="middle">${t}</text></g>`).join('')}
+  <text x="14" y="180" font-family="Noto Sans JP" font-size="15.5" font-weight="900" fill="#1E40AF">替えるのは</text>
+  <text x="14" y="202" font-family="Noto Sans JP" font-size="15.5" font-weight="900" fill="#EA580C">受信者の1行だけ</text>
+</svg>`;
+
+const role=(cls,n,d,v)=>`<div class="role ${cls}"><span class="rn">${n}<span class="rd2">${d}</span></span>
+  <span class="rt"><span class="rl">受信者に入れるもの</span><span class="rv">${v}</span></span></div>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.111-1</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">送信アクション1つで、<span class="hl">1日がこれだけ回る</span></div>
+    <img class="title-chara" src="${A}chara/chara_confident.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svgw(P.bulb,2.2)}</div>
+    <div class="txt">同じアクションでも、<b>受信者に何を入れるか</b>で役割が変わります。変えるのは宛先だけ</div>
+  </div>
+
+  <div class="stage">
+    <div class="left">
+      <div class="act">
+        <div class="ah"><img src="${A}icons/pa_teams.png" alt=""><span class="an">チャットまたはチャネルでメッセージを投稿する</span></div>
+        <div class="ab">
+          <div class="fld"><span class="fl">投稿者</span><span class="fi">フロー ボット</span></div>
+          <div class="fld"><span class="fl">受信者（ここだけ替える）</span>
+            <span class="fi hot"><span class="dyn">担当者のメールアドレス</span></span></div>
+        </div>
+      </div>
+      <div class="sc">${sc}<img class="chara" src="${A}chara/chara_point.png" alt=""></div>
+      <div class="same"><img src="${A}icons/pa_teams.png" alt=""><span>Teamsコネクタは<b>標準</b>。Premium不要</span></div>
+    </div>
+
+    <div class="right">
+      <div class="roles">
+        ${role('a','期限切れ','担当者本人にそっと催促が飛ぶ','台帳の担当者（メールアドレス）')}
+        ${role('b','承認が完了','申請した人に結果がその場で届く','申請した人')}
+        ${role('c','フローが失敗','翌週まで気づかない事故が減る','自分（実行条件の構成とセット）')}
+        ${role('d','24時間 放置','言いにくい催促をフローが肩代わり','上長')}
+      </div>
+      <div class="uses"><span class="ul">効きどころ</span>
+        <span class="u">言いにくい催促</span><span class="u">結果の連絡</span><span class="u">エラーの見逃し</span></div>
+    </div>
+  </div>
+
+  <div class="next">
+    <span class="na">${svgw(P.arrow,3)}</span>
+    <span>担当が変わってもフローは触りません。<b>台帳の列を替えるだけ</b>。<b>作り方は2枚目へ</b></span>
+  </div>
+  <div class="src">出典：Microsoft Learn「Microsoft Teams コネクタ」「実行条件の構成」</div>
+`;
+</script>
+</body>
+</html>

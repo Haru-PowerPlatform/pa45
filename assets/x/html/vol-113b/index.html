@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.113-2 会議の要点が翌朝届く設定のしかた</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/tips-base.css">
+<style>
+  .scene{height:100px;}
+  .cardb{gap:5px;padding:7px 9px;}
+  .fld{display:flex;flex-direction:column;gap:2px;}
+  .fld .fl{font-size:14px;font-weight:900;color:#475569;}
+  .fld .fi{display:flex;align-items:center;gap:6px;background:#fff;border:2px solid #B9C7DC;border-radius:7px;
+    padding:5px 9px;font-size:15.5px;font-weight:900;color:var(--navy);line-height:1.2;}
+  .fld .fi.sel{border-color:var(--blue);background:#F4F8FF;}
+  .fld .fi .cv{margin-left:auto;color:#64748B;font-size:14px;}
+  .menu{background:#fff;border:2px solid #B9C7DC;border-radius:9px;overflow:hidden;box-shadow:0 3px 8px rgba(20,40,90,.14);}
+  .menu .mi{display:flex;align-items:center;gap:8px;padding:6px 10px;font-size:15.5px;font-weight:900;color:var(--navy);
+    border-bottom:1px solid #EEF2F8;}
+  .menu .mi:last-child{border-bottom:none;}
+  .menu .mi.on{background:#EAEBFA;color:#3B3F9E;}
+  .menu .mi img{width:22px;height:22px;object-fit:contain;flex:0 0 auto;}
+  .search{display:flex;align-items:center;gap:7px;background:#fff;border:2px solid var(--blue);border-radius:8px;
+    padding:5px 9px;font-size:15.5px;font-weight:900;color:var(--navy);}
+  .search .mg{width:20px;height:20px;flex:0 0 auto;color:var(--blue);}
+  .tpl{display:flex;flex-direction:column;gap:2px;background:#EAEBFA;border:2px solid #5B5FC7;border-radius:8px;padding:6px 9px;}
+  .tpl .tn{font-size:15px;font-weight:900;color:#3B3F9E;line-height:1.24;}
+  .tpl .td{font-size:13.5px;font-weight:700;color:#5B5FC7;}
+  .note{display:flex;align-items:center;gap:7px;background:#FFF7ED;border:1.6px solid #FDBA74;border-radius:8px;
+    padding:4px 8px;font-size:14.5px;font-weight:900;color:#9A3412;line-height:1.24;}
+  .four{display:flex;flex-direction:column;gap:4px;}
+  .f4{display:flex;align-items:center;gap:8px;background:#fff;border:1.8px solid #BFE7D3;border-radius:7px;padding:4px 9px;}
+  .f4 .fk{flex:0 0 74px;font-size:13.5px;font-weight:900;color:#64748B;}
+  .f4 .fv{flex:1;font-size:15.5px;font-weight:900;color:var(--green-dark);line-height:1.2;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={warn:'<path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>',
+  bulb:'<path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/>',
+  mg:'<circle cx="11" cy="11" r="7"/><path d="M16.5 16.5L21 21"/>'};
+
+/* ① Teams左メニューからワークフロー（388x100） */
+const s1=`<svg viewBox="0 0 388 100" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs><filter id="n1" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#1B2A44" flood-opacity=".2"/></filter></defs>
+  <rect x="0" y="0" width="388" height="100" fill="#EDF3FA"/>
+  <g filter="url(#n1)"><rect x="12" y="10" width="72" height="80" rx="9" fill="#F3F4FB" stroke="#B9C7DC" stroke-width="2"/>
+    ${[0,1,2,3].map(i=>`<g transform="translate(30,${20+i*18})"><rect x="0" y="0" width="14" height="12" rx="3" fill="${i===3?'#5B5FC7':'#C7CBE8'}"/></g>`).join('')}
+    <text x="48" y="86" font-family="Noto Sans JP" font-size="11" font-weight="900" fill="#5B5FC7" text-anchor="middle">アプリ</text></g>
+  <path d="M92 50 H 118" stroke="#5B5FC7" stroke-width="4" stroke-linecap="round"/>
+  <path d="M112 44 l8 6 l-8 6" fill="none" stroke="#5B5FC7" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <g filter="url(#n1)"><rect x="128" y="16" width="120" height="68" rx="9" fill="#fff" stroke="#5B5FC7" stroke-width="2.4"/>
+    <text x="188" y="40" font-family="Noto Sans JP" font-size="14.5" font-weight="900" fill="#3B3F9E" text-anchor="middle">ワークフロー</text>
+    <rect x="138" y="52" width="100" height="20" rx="6" fill="#5B5FC7"/>
+    <text x="188" y="66" font-family="Noto Sans JP" font-size="11.5" font-weight="900" fill="#fff" text-anchor="middle">＋ 新しいワークフロー</text></g>
+  <path d="M256 50 H 282" stroke="#5B5FC7" stroke-width="4" stroke-linecap="round"/>
+  <path d="M276 44 l8 6 l-8 6" fill="none" stroke="#5B5FC7" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <g filter="url(#n1)"><rect x="292" y="22" width="84" height="56" rx="9" fill="#EAEBFA" stroke="#5B5FC7" stroke-width="2.4"/>
+    <text x="334" y="46" font-family="Noto Sans JP" font-size="13" font-weight="900" fill="#3B3F9E" text-anchor="middle">テンプレート</text>
+    <text x="334" y="64" font-family="Noto Sans JP" font-size="13" font-weight="900" fill="#3B3F9E" text-anchor="middle">を選ぶ</text></g>
+</svg>`;
+
+/* ② 名前が長いので「重要なポイント」で探す（388x100） */
+const s2=`<svg viewBox="0 0 388 100" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs><filter id="n2" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#1B2A44" flood-opacity=".2"/></filter></defs>
+  <rect x="0" y="0" width="388" height="100" fill="#EDF3FA"/>
+  <g filter="url(#n2)"><rect x="12" y="14" width="364" height="30" rx="8" fill="#fff" stroke="#2563EB" stroke-width="2.4"/>
+    <circle cx="32" cy="29" r="7" fill="none" stroke="#2563EB" stroke-width="2.6"/><path d="M37 34 l7 7" stroke="#2563EB" stroke-width="2.8" stroke-linecap="round"/>
+    <text x="52" y="35" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#1E40AF">重要なポイント</text></g>
+  <g filter="url(#n2)"><rect x="12" y="52" width="364" height="38" rx="8" fill="#EAEBFA" stroke="#5B5FC7" stroke-width="2.4"/>
+    <circle cx="34" cy="71" r="12" fill="#5B5FC7"/>
+    <path d="M28 71 h12 M34 65 v12" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/>
+    <text x="56" y="69" font-family="Noto Sans JP" font-size="13.5" font-weight="900" fill="#3B3F9E">最近の会議の重要なポイントの</text>
+    <text x="56" y="84" font-family="Noto Sans JP" font-size="13.5" font-weight="900" fill="#3B3F9E">概要を作成する</text></g>
+</svg>`;
+
+/* ③ 届き方の4つ（388x100） */
+const s3=`<svg viewBox="0 0 388 100" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs><filter id="n3" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#0B5136" flood-opacity=".22"/></filter></defs>
+  <rect x="0" y="0" width="388" height="100" fill="#DCF3E7"/>
+  ${[['過去24時間',12],['送信先',102],['送信時刻',192],['送信曜日',282]].map(([t,x])=>
+    `<g filter="url(#n3)"><rect x="${x}" y="14" width="82" height="34" rx="8" fill="#fff" stroke="#16A34A" stroke-width="2.2"/>
+      <text x="${+x+41}" y="36" font-family="Noto Sans JP" font-size="13" font-weight="900" fill="#0B5136" text-anchor="middle">${t}</text></g>`).join('')}
+  <path d="M52 54 v10 M143 54 v10 M233 54 v10 M323 54 v10" stroke="#4F9C78" stroke-width="2.6" stroke-linecap="round"/>
+  <path d="M52 66 H 323" stroke="#4F9C78" stroke-width="2.6" stroke-linecap="round"/>
+  <path d="M188 66 v10" stroke="#4F9C78" stroke-width="3" stroke-linecap="round"/>
+  <g filter="url(#n3)"><rect x="112" y="76" width="152" height="22" rx="11" fill="#16A34A"/>
+    <text x="188" y="92" font-family="Noto Sans JP" font-size="14" font-weight="900" fill="#fff" text-anchor="middle">決めるのはこの4つだけ</text></g>
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.113-2</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">設定は<span class="hl">1回だけ</span>（開く → テンプレを選ぶ → 届き方を決める）</div>
+    <img class="title-chara" src="${A}chara/chara_point.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svgw(P.bulb,2.2)}</div>
+    <div class="txt">自動化側は<b>標準コネクタのみ</b>。Power Automate のプレミアムは要りません</div>
+  </div>
+
+  <div class="stage">
+    <div class="col neutral">
+      <div class="ch2"><span class="n">1</span>ワークフローを開く</div>
+      <div class="scene">${s1}</div>
+      <div class="body"><div class="card">
+        <div class="cardh"><img src="${A}icons/pa_teams.png" alt="">Teams の左メニュー</div>
+        <div class="cardb">
+          <div class="menu">
+            <div class="mi"><img src="${A}icons/pa_teams.png" alt="">チャット</div>
+            <div class="mi"><img src="${A}icons/pa_teams.png" alt="">チーム</div>
+            <div class="mi on"><img src="${A}icons/pa_teams.png" alt="">アプリ ＞ ワークフロー</div>
+          </div>
+          <div class="fld"><span class="fl">押すボタン</span><span class="fi sel">＋ 新しいワークフロー</span></div>
+        </div>
+      </div></div>
+      <div class="cap">Power Automate の画面ではなく、<b>Teamsの中</b>から始めます</div>
+    </div>
+
+    <div class="col info">
+      <div class="ch2"><span class="n">2</span>テンプレを選ぶ</div>
+      <div class="scene">${s2}</div>
+      <div class="body"><div class="card">
+        <div class="cardh">テンプレートを探す</div>
+        <div class="cardb">
+          <div class="search"><span class="mg">${svgw(P.mg,2.4)}</span>重要なポイント</div>
+          <div class="tpl"><span class="tn">最近の会議の重要なポイントの概要を作成する</span>
+            <span class="td">前日ぶんの要点をまとめて送る</span></div>
+          <div class="note">名前が長いので「重要なポイント」で探すと早いです</div>
+        </div>
+      </div></div>
+      <div class="cap">用意されているものを選ぶだけ。<b>作り込みは要りません</b></div>
+    </div>
+
+    <div class="col good">
+      <div class="ch2"><span class="n">3</span>届き方を決める</div>
+      <div class="scene">${s3}</div>
+      <div class="body"><div class="card">
+        <div class="cardh">決めるのは4つだけ</div>
+        <div class="cardb">
+          <div class="four">
+            <div class="f4"><span class="fk">要約の期間</span><span class="fv">過去24時間</span></div>
+            <div class="f4"><span class="fk">送信先</span><span class="fv">Outlook（メール）</span></div>
+            <div class="f4"><span class="fk">送信時刻</span><span class="fv">08:00</span></div>
+            <div class="f4"><span class="fk">送信曜日</span><span class="fv">平日のみ</span></div>
+          </div>
+          <div class="note">1日の始まりの時刻にすると読みやすいです</div>
+        </div>
+      </div></div>
+      <div class="cap">要約は<b>Copilot Pages</b>にも自動保存され、日付ごとに見返せます</div>
+    </div>
+  </div>
+
+  <div class="warnbar">
+    <span class="na">${svgw(P.warn,2.4)}</span>
+    <span class="ws"><span>Teams会議として開催していること</span><span>録画が有効、または文字起こしが生成されていること</span>
+      <span>AI要約には Microsoft 365 Copilot が必要</span></span>
+  </div>
+  <div class="src">出典：Microsoft Learn「Teams のワークフロー」／画面は再現イメージ</div>
+`;
+</script>
+</body>
+</html>

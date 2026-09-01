@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.118-2 毎朝のニュース要約の作り方</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/tips-base.css">
+<style>
+  .scene{height:100px;}
+  .cardb{gap:5px;padding:7px 9px;}
+  .col.ai{background:#F7F3FF;border:2.5px solid #C9B4F4;}
+  .col.ai .ch2{color:#5B21B6;}
+  .col.ai .ch2 .n{background:linear-gradient(180deg,#A78BFA,#6D28D9);}
+  .col.ai .card{border-color:#C9B4F4;}
+  .col.ai .cardh{background:#EDE4FF;border-bottom-color:#D8C9FA;color:#5B21B6;}
+  .col.ai .cap{background:#E4D8FA;color:#5B21B6;}
+  .fld{display:flex;flex-direction:column;gap:2px;}
+  .fld .fl{font-size:14px;font-weight:900;color:#475569;}
+  .fld .fi{display:flex;align-items:center;gap:6px;background:#fff;border:2px solid #B9C7DC;border-radius:7px;
+    padding:5px 9px;font-size:15.5px;font-weight:900;color:var(--navy);line-height:1.24;}
+  .fld .fi.hot{border-color:var(--orange);background:#FFF7ED;}
+  .fld .fi.pv{border-color:#7C3AED;background:#F7F3FF;color:#3B2A66;}
+  .fld .fi.url{font-family:'Roboto Mono',monospace;font-size:14px;word-break:break-all;}
+  .feeds{display:flex;flex-direction:column;gap:4px;background:#fff;border:2px solid #C7D6EE;border-radius:8px;padding:6px 8px;}
+  .fd{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:900;color:var(--navy);}
+  .fd .rs{flex:0 0 auto;width:20px;height:20px;border-radius:5px;background:#EA580C;color:#fff;font-size:11px;
+    display:flex;align-items:center;justify-content:center;font-weight:900;}
+  .prm{display:flex;flex-direction:column;gap:3px;background:#fff;border:2px solid #C9B4F4;border-radius:8px;padding:6px 9px;}
+  .prm .pl{font-size:13.5px;font-weight:900;color:#7C3AED;}
+  .prm .pt{font-size:15px;font-weight:700;color:#3B2A66;line-height:1.38;}
+  .note{display:flex;align-items:center;gap:7px;background:#FFF7ED;border:1.6px solid #FDBA74;border-radius:8px;
+    padding:4px 8px;font-size:14.5px;font-weight:900;color:#9A3412;line-height:1.24;}
+  .sched{display:flex;flex-direction:column;gap:4px;background:#fff;border:2px solid var(--green-line);border-radius:8px;padding:6px 9px;}
+  .sched .sr2{display:flex;align-items:center;gap:8px;font-size:15.5px;font-weight:900;color:var(--navy);}
+  .sched .sr2 .sk{flex:0 0 78px;font-size:13.5px;font-weight:900;color:#64748B;}
+  .sched .sr2 .sv{flex:1;background:#EAF9F1;border-radius:6px;padding:3px 9px;color:var(--green-dark);}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={warn:'<path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>',
+  bulb:'<path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/>'};
+const VB='0 0 388 100';
+const SPARK='<path d="M0 -13l2.4 6.4 6.4 2.4 -6.4 2.4 -2.4 6.4 -2.4 -6.4 -6.4 -2.4 6.4 -2.4z"/><path d="M8.5 4.5l1.1 3 3 1.1 -3 1.1 -1.1 3 -1.1 -3 -3 -1.1 3 -1.1z"/>';
+
+/* ① 見たいサイトのフィードを登録する */
+const s1=`<svg viewBox="${VB}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs><filter id="r1f" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#1B2A44" flood-opacity=".2"/></filter></defs>
+  <rect x="0" y="0" width="388" height="100" fill="#EDF3FA"/>
+  ${[0,1,2].map(i=>`<g filter="url(#r1f)"><rect x="12" y="${12+i*30}" width="128" height="24" rx="6" fill="#fff" stroke="#C7D6EE" stroke-width="1.8"/>
+    <rect x="20" y="${18+i*30}" width="12" height="12" rx="3" fill="#EA580C"/>
+    <rect x="40" y="${21+i*30}" width="${[76,62,88][i]}" height="6" rx="3" fill="#C3D6F2"/></g>`).join('')}
+  <path d="M148 50 H 176" stroke="#2563EB" stroke-width="4.4" stroke-linecap="round"/>
+  <path d="M170 44 l8 6 l-8 6" fill="none" stroke="#2563EB" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <g filter="url(#r1f)"><rect x="186" y="20" width="190" height="60" rx="9" fill="#EAF1FE" stroke="#2563EB" stroke-width="2.6"/>
+    <text x="281" y="44" font-family="Noto Sans JP" font-size="14" font-weight="900" fill="#1E40AF" text-anchor="middle">フィード項目が</text>
+    <text x="281" y="64" font-family="Noto Sans JP" font-size="14" font-weight="900" fill="#1E40AF" text-anchor="middle">発行されたとき</text></g>
+</svg>`;
+
+/* ② 長い本文が3行になる */
+const s2=`<svg viewBox="${VB}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="r2g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#A78BFA"/><stop offset="1" stop-color="#6D28D9"/></linearGradient>
+    <filter id="r2f" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#3B2A66" flood-opacity=".24"/></filter>
+  </defs>
+  <rect x="0" y="0" width="388" height="100" fill="#F3EEFF"/>
+  <g filter="url(#r2f)"><rect x="12" y="10" width="110" height="80" rx="8" fill="#fff" stroke="#B79CF0" stroke-width="2.2"/>
+    ${[0,1,2,3,4,5,6].map(i=>`<rect x="22" y="${20+i*10}" width="${[88,76,90,68,84,72,80][i]}" height="5" rx="2.5" fill="#DDD3F7"/>`).join('')}
+  </g>
+  <text x="67" y="98" font-family="Noto Sans JP" font-size="12.5" font-weight="900" fill="#5B21B6" text-anchor="middle">記事の本文</text>
+  <path d="M130 50 H 152" stroke="#7C3AED" stroke-width="4.4" stroke-linecap="round"/>
+  <g filter="url(#r2f)"><circle cx="184" cy="50" r="24" fill="url(#r2g)"/>
+    <g transform="translate(184,50) scale(0.95)" fill="#fff">${SPARK}</g></g>
+  <path d="M216 50 H 240" stroke="#7C3AED" stroke-width="4.4" stroke-linecap="round"/>
+  <path d="M234 44 l8 6 l-8 6" fill="none" stroke="#7C3AED" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <g filter="url(#r2f)"><rect x="248" y="22" width="128" height="56" rx="8" fill="#fff" stroke="#7C3AED" stroke-width="2.6"/>
+    ${[0,1,2].map(i=>`<rect x="260" y="${34+i*14}" width="${[104,88,96][i]}" height="6" rx="3" fill="#C4B5FD"/>`).join('')}
+  </g>
+  <text x="312" y="98" font-family="Noto Sans JP" font-size="12.5" font-weight="900" fill="#5B21B6" text-anchor="middle">3行の要約</text>
+</svg>`;
+
+/* ③ 前日ぶんをまとめて毎朝1通 */
+const s3=`<svg viewBox="${VB}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs><filter id="r3f" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#0B5136" flood-opacity=".22"/></filter></defs>
+  <rect x="0" y="0" width="388" height="100" fill="#DCF3E7"/>
+  <text x="70" y="18" font-family="Noto Sans JP" font-size="13" font-weight="900" fill="#0B5136" text-anchor="middle">前日ぶん</text>
+  ${[0,1,2,3].map(i=>`<g filter="url(#r3f)"><rect x="${12+i*6}" y="${26+i*17}" width="104" height="14" rx="4" fill="#fff" stroke="#7FCEA9" stroke-width="1.5"/>
+    <rect x="${20+i*6}" y="${30+i*17}" width="${[64,52,72,58][i]}" height="5" rx="2.5" fill="#BFE7D3"/></g>`).join('')}
+  <path d="M138 58 H 164" stroke="#16A34A" stroke-width="4.4" stroke-linecap="round"/>
+  <g filter="url(#r3f)"><circle cx="196" cy="58" r="24" fill="#fff" stroke="#16A34A" stroke-width="2.8"/>
+    <path d="M196 42 v16 l11 7" stroke="#16A34A" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>
+  <text x="196" y="98" font-family="Noto Sans JP" font-size="13" font-weight="900" fill="#0B5136" text-anchor="middle">毎朝 8:00</text>
+  <path d="M228 58 H 252" stroke="#16A34A" stroke-width="4.4" stroke-linecap="round"/>
+  <path d="M246 52 l8 6 l-8 6" fill="none" stroke="#16A34A" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <g filter="url(#r3f)"><rect x="260" y="20" width="116" height="66" rx="9" fill="#fff" stroke="#5B5FC7" stroke-width="2.6"/>
+    <rect x="260" y="20" width="116" height="18" rx="9" fill="#5B5FC7"/><rect x="260" y="30" width="116" height="8" fill="#5B5FC7"/>
+    <text x="318" y="33" font-family="Noto Sans JP" font-size="11" font-weight="900" fill="#fff" text-anchor="middle">今朝の3本</text>
+    ${[0,1,2].map(i=>`<rect x="272" y="${46+i*12}" width="${[86,70,78][i]}" height="6" rx="3" fill="#D6D8F2"/>`).join('')}
+  </g>
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.118-2</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">作り方は<span class="hl">3ステップ</span>（フィード → 要約 → 毎朝まとめて投稿）</div>
+    <img class="title-chara" src="${A}chara/chara_point.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svgw(P.bulb,2.2)}</div>
+    <div class="txt">記事が出るたびに投げるのではなく、<b>ためて朝に1通</b>にするのがコツ。<br>通知が増えません</div>
+  </div>
+
+  <div class="stage">
+    <div class="col neutral">
+      <div class="ch2"><span class="n">1</span>フィードを登録</div>
+      <div class="scene">${s1}</div>
+      <div class="body"><div class="card">
+        <div class="cardh">フィード項目が発行されたとき</div>
+        <div class="cardb">
+          <div class="fld"><span class="fl">フィード URL</span>
+            <span class="fi url">https://example.com/news/feed</span></div>
+          <div class="feeds">
+            <div class="fd"><span class="rs">RSS</span>業界ニュースA</div>
+            <div class="fd"><span class="rs">RSS</span>製品ブログB</div>
+            <div class="fd"><span class="rs">RSS</span>官公庁の発表C</div>
+          </div>
+          <div class="note">見たいサイトのぶんだけフローを増やします</div>
+        </div>
+      </div></div>
+      <div class="cap">RSSは<b>最短30分間隔</b>。<br>即時ではありません</div>
+    </div>
+
+    <div class="col ai">
+      <div class="ch2"><span class="n">2</span>3行に要約</div>
+      <div class="scene">${s2}</div>
+      <div class="body"><div class="card">
+        <div class="cardh"><img src="${A}icons/pa_logo.png" alt="">プロンプトの実行</div>
+        <div class="cardb">
+          <div class="prm"><span class="pl">指示</span>
+            <span class="pt">記事の本文を3行で要約し、制度／製品／競合のどれかに分類する。書かれていないことは足さない。</span></div>
+          <div class="fld"><span class="fl">入力</span>
+            <span class="fi hot"><span class="dyn">フィードの本文</span></span></div>
+        </div>
+      </div></div>
+      <div class="cap">分類まで頼むと、<b>朝いちで拾う順番</b>が決まります</div>
+    </div>
+
+    <div class="col good">
+      <div class="ch2"><span class="n">3</span>朝に1通で送る</div>
+      <div class="scene">${s3}</div>
+      <div class="body"><div class="card">
+        <div class="cardh"><img src="${A}icons/pa_schedule.png" alt="">繰り返し（スケジュール）</div>
+        <div class="cardb">
+          <div class="sched">
+            <div class="sr2"><span class="sk">間隔</span><span class="sv">1 日</span></div>
+            <div class="sr2"><span class="sk">時刻</span><span class="sv">08:00（東京）</span></div>
+            <div class="sr2"><span class="sk">対象</span><span class="sv">前日ぶんの要約</span></div>
+            <div class="sr2"><span class="sk">送り先</span><span class="sv">Teams／メール</span></div>
+          </div>
+          <div class="note">記事ごとに投げると通知だらけになります</div>
+        </div>
+      </div></div>
+      <div class="cap">ためてから送るので、<b>読む場所が1か所</b>で済みます</div>
+    </div>
+  </div>
+
+  <div class="warnbar">
+    <span class="na">${svgw(P.warn,2.4)}</span>
+    <span class="ws"><span>RSSは最短30分間隔（即時ではない）</span><span>要約はクレジット消費（プレミアム）</span>
+      <span>認証が要る社内限定URLは読めない</span></span>
+  </div>
+  <div class="src">出典：Microsoft Learn「RSSコネクタ」「Power Automate でプロンプトを使用する」「プロンプトのFAQ」</div>
+`;
+</script>
+</body>
+</html>

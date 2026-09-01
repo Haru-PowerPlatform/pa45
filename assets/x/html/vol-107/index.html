@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.107-1 たまたまの失敗は、フローが自分で立ち直る</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/tips-base.css">
+<style>
+  .stage{gap:9px;}
+  .col.bad{flex:1.06;} .col.good{flex:1.06;}
+  .scene{height:132px;}
+  .scene .chara{height:126px;right:2px;}
+
+  .engine{flex:0 0 268px;display:flex;flex-direction:column;gap:6px;border-radius:14px;padding:8px 10px 9px;
+    background:linear-gradient(180deg,#F5F0FF,#EDE4FF);border:2.5px solid #B79CF0;min-height:0;}
+  .engine .eh{flex:0 0 auto;display:flex;align-items:center;gap:8px;font-weight:900;font-size:19px;color:#5B21B6;line-height:1.16;}
+  .engine .eh img{width:30px;height:30px;object-fit:contain;flex:0 0 auto;background:#fff;border-radius:8px;padding:2px;}
+  .steps{flex:0 0 auto;display:flex;flex-direction:column;gap:5px;}
+  .step{display:flex;align-items:center;gap:8px;background:#fff;border:2px solid #C9B4F4;border-radius:9px;padding:6px 9px;}
+  .step .t{flex:0 0 auto;width:58px;font-family:'Roboto Mono',monospace;font-size:17px;font-weight:700;color:#6D28D9;}
+  .step .d{flex:1;font-size:15.5px;font-weight:900;color:#3B2A66;line-height:1.22;}
+  .step.ok{background:#EAF9F1;border-color:#16A34A;}
+  .step.ok .t{color:var(--green-dark);} .step.ok .d{color:var(--green-dark);}
+  .ecard{flex:1;min-height:0;display:flex;flex-direction:column;gap:5px;background:#fff;border:2px solid #C9B4F4;
+    border-radius:10px;padding:7px 8px;}
+  .ecard .et{font-size:14.5px;font-weight:900;color:#6D28D9;}
+  .erow{flex:1;min-height:0;display:flex;align-items:center;gap:7px;border-radius:7px;padding:4px 7px;
+    font-size:15px;font-weight:900;line-height:1.2;}
+  .erow.y{background:#EAF9F1;color:var(--green-dark);}
+  .erow.n{background:#FFECEC;color:var(--red-dark);}
+  .erow .mk2{flex:0 0 auto;width:20px;height:20px;}
+
+  .runrow{flex:1;min-height:0;display:flex;align-items:center;gap:8px;background:#F7F9FC;border:1.5px solid #E2EAF5;
+    border-radius:7px;padding:5px 8px;font-size:15.5px;font-weight:900;color:var(--navy);}
+  .runrow .st{flex:0 0 auto;border-radius:5px;padding:3px 8px;font-size:14px;}
+  .runrow .tm{flex:0 0 auto;font-family:'Roboto Mono',monospace;font-size:14.5px;color:var(--weak);font-weight:700;}
+  .runrow .nm2{flex:1;line-height:1.2;}
+  .runrow.ng{background:#FFECEC;border-color:#F0AEAE;color:var(--red-dark);}
+  .runrow.ng .st{background:#DC2626;color:#fff;}
+  .runrow.ok{background:#EAF9F1;border-color:#7FCEA9;color:var(--green-dark);}
+  .runrow.ok .st{background:#16A34A;color:#fff;}
+  .runrow .st.gray{background:#CBD5E1;color:#334155;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={bulb:'<path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/>',
+  arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',
+  x:'<path d="M6 6l12 12M18 6L6 18"/>', ck:'<path d="M4 12.5l5 5L20 6.5"/>'};
+
+/* 情景① 深夜に通信が一瞬こけて、そのまま朝まで止まる（460x132） */
+const sc1=`<svg viewBox="0 0 460 132" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="sky1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#33254A"/><stop offset="1" stop-color="#6A4A66"/></linearGradient>
+    <linearGradient id="srv1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F3F6FB"/><stop offset="1" stop-color="#D5DEEA"/></linearGradient>
+    <filter id="sh1" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2.4" stdDeviation="2.2" flood-color="#170A20" flood-opacity=".45"/></filter>
+  </defs>
+  <rect x="0" y="0" width="460" height="132" fill="url(#sky1)"/>
+  <circle cx="40" cy="26" r="13" fill="#FDE68A" opacity=".95"/><circle cx="34" cy="21" r="12" fill="#33254A"/>
+  <g fill="#FFF7D6" opacity=".8"><circle cx="86" cy="15" r="1.8"/><circle cx="120" cy="30" r="1.4"/><circle cx="66" cy="47" r="1.3"/><circle cx="152" cy="13" r="1.7"/><circle cx="196" cy="26" r="1.3"/><circle cx="238" cy="12" r="1.5"/></g>
+  <text x="14" y="68" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#E7D9F2">深夜 2:14</text>
+
+  <g filter="url(#sh1)"><rect x="14" y="74" width="72" height="48" rx="8" fill="url(#srv1)" stroke="#94A3B8" stroke-width="2"/>
+    <rect x="23" y="82" width="54" height="9" rx="3.5" fill="#C6D1E0"/><rect x="23" y="96" width="54" height="9" rx="3.5" fill="#C6D1E0"/>
+    <circle cx="75" cy="114" r="4.4" fill="#DC2626"/></g>
+
+  <path d="M94 98 H 130" stroke="#F87171" stroke-width="5" stroke-linecap="round"/>
+  <path d="M172 98 H 208" stroke="#F87171" stroke-width="5" stroke-linecap="round"/>
+  <g transform="translate(132,76)"><path d="M16 0 L2 24 h14 L9 44 L32 16 H17 z" fill="#FCA5A5" stroke="#DC2626" stroke-width="2.2" stroke-linejoin="round"/></g>
+  <text x="185" y="66" font-family="Noto Sans JP" font-size="16.5" font-weight="900" fill="#FCA5A5" text-anchor="middle">通信が一瞬こけただけ</text>
+
+  <g filter="url(#sh1)" transform="translate(212,74)"><rect x="0" y="0" width="60" height="48" rx="10" fill="#fff" stroke="#DC2626" stroke-width="2.8"/>
+    <path d="M30 11 v18 M30 37 v.01" stroke="#DC2626" stroke-width="5" stroke-linecap="round"/></g>
+  <text x="242" y="129" font-family="Noto Sans JP" font-size="13.5" font-weight="900" fill="#FCA5A5" text-anchor="middle">フロー停止</text>
+</svg>`;
+
+/* 情景③ 自分で粘って、朝には終わっている（460x132） */
+const sc3=`<svg viewBox="0 0 460 132" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="sky3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E6F7EE"/><stop offset="1" stop-color="#BCE7D0"/></linearGradient>
+    <linearGradient id="srv3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#E4F5EC"/></linearGradient>
+    <filter id="sh3" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2.4" stdDeviation="2.2" flood-color="#0B5136" flood-opacity=".32"/></filter>
+  </defs>
+  <rect x="0" y="0" width="460" height="132" fill="url(#sky3)"/>
+  <circle cx="44" cy="28" r="16" fill="#FCD34D"/>
+  <g stroke="#FBBF24" stroke-width="3.4" stroke-linecap="round"><path d="M44 3 v7"/><path d="M44 46 v7"/><path d="M19 28 h-7"/><path d="M69 28 h7"/><path d="M26 10 l5 5"/><path d="M57 41 l5 5"/><path d="M62 10 l-5 5"/><path d="M31 41 l-5 5"/></g>
+  <text x="90" y="34" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#0B5136">朝 9:00 には終わっている</text>
+
+  <g filter="url(#sh3)"><rect x="14" y="74" width="72" height="48" rx="8" fill="url(#srv3)" stroke="#16A34A" stroke-width="2.2"/>
+    <rect x="23" y="82" width="54" height="9" rx="3.5" fill="#BFE7D3"/><rect x="23" y="96" width="54" height="9" rx="3.5" fill="#BFE7D3"/>
+    <circle cx="75" cy="114" r="4.4" fill="#16A34A"/></g>
+
+  <path d="M94 98 H 134" stroke="#16A34A" stroke-width="5" stroke-linecap="round" stroke-dasharray="9 7"/>
+  <text x="114" y="88" font-family="Noto Sans JP" font-size="13.5" font-weight="900" fill="#0B5136" text-anchor="middle">1分待つ</text>
+  <path d="M186 98 H 226" stroke="#16A34A" stroke-width="5" stroke-linecap="round"/>
+  <text x="206" y="88" font-family="Noto Sans JP" font-size="13.5" font-weight="900" fill="#0B5136" text-anchor="middle">2分待つ</text>
+  <g transform="translate(138,76)"><circle cx="23" cy="23" r="23" fill="#fff" stroke="#16A34A" stroke-width="3"/>
+    <path d="M23 10 v13 l9 6" stroke="#16A34A" stroke-width="3.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>
+  <g transform="translate(230,76)"><circle cx="23" cy="23" r="23" fill="#16A34A"/>
+    <path d="M13 23.5 l7 7 L34 14" stroke="#fff" stroke-width="4.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>
+  <text x="253" y="129" font-family="Noto Sans JP" font-size="14" font-weight="900" fill="#0B5136" text-anchor="middle">2回目で成功</text>
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.107-1</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">たまたまの失敗は、<span class="hl">フローが自分で立ち直る</span></div>
+    <img class="title-chara" src="${A}chara/chara_confident.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svgw(P.bulb,2.2)}</div>
+    <div class="txt">アクションに<b>再試行ポリシー</b>を入れるだけ。1分後・2分後・4分後と待ちながら、フローが勝手に粘ります</div>
+  </div>
+
+  <div class="stage">
+    <div class="col bad">
+      <div class="ph"><span class="mk">${svgw(P.x,3.2)}</span>入れていないと</div>
+      <div class="scene">${sc1}<img class="chara" src="${A}chara/chara_tired.png" alt=""></div>
+      <div class="body"><div class="card">
+        <div class="cardh">実行履歴</div>
+        <div class="cardb">
+          <div class="runrow ng"><span class="st">失敗</span><span class="nm2">日次の請求データ連携</span><span class="tm">02:14</span></div>
+          <div class="runrow"><span class="st gray">－</span><span class="nm2">誰も気づかないまま朝まで</span><span class="tm">〜09:00</span></div>
+          <div class="runrow ng"><span class="st">手動</span><span class="nm2">朝いちで自分が動かし直す</span><span class="tm">09:05</span></div>
+          <div class="runrow ng"><span class="st">遅延</span><span class="nm2">その日の集計が1時間おくれる</span><span class="tm">10:00</span></div>
+        </div>
+      </div></div>
+      <div class="cap">一瞬の通信エラーでも、<b>止まったら止まりっぱなし</b></div>
+    </div>
+
+    <div class="engine">
+      <div class="eh"><img src="${A}icons/pa_logo.png" alt="">再試行ポリシー</div>
+      <div class="steps">
+        <div class="step"><span class="t">1分後</span><span class="d">1回目の再挑戦</span></div>
+        <div class="step"><span class="t">2分後</span><span class="d">2回目の再挑戦</span></div>
+        <div class="step ok"><span class="t">4分後</span><span class="d">通った → 続行</span></div>
+      </div>
+      <div class="ecard">
+        <div class="et">効くエラー / 効かないエラー</div>
+        <div class="erow y"><span class="mk2">${svgw(P.ck,3.4)}</span>通信が一瞬こけた</div>
+        <div class="erow y"><span class="mk2">${svgw(P.ck,3.4)}</span>相手が混んでいた</div>
+        <div class="erow n"><span class="mk2">${svgw(P.x,3.2)}</span>権限がない</div>
+        <div class="erow n"><span class="mk2">${svgw(P.x,3.2)}</span>列名が違う</div>
+      </div>
+      <div class="cap" style="background:#E4D8FA;color:#5B21B6;font-size:15px;">公式のおすすめは<b>指数間隔</b></div>
+    </div>
+
+    <div class="col good">
+      <div class="ph"><span class="mk">${svgw(P.ck,3.4)}</span>入れておくと</div>
+      <div class="scene">${sc3}<img class="chara" src="${A}chara/chara_guts.png" alt=""></div>
+      <div class="body"><div class="card">
+        <div class="cardh">実行履歴</div>
+        <div class="cardb">
+          <div class="runrow ok"><span class="st">再試行</span><span class="nm2">1回目 待って再挑戦</span><span class="tm">02:15</span></div>
+          <div class="runrow ok"><span class="st">再試行</span><span class="nm2">2回目 待って再挑戦</span><span class="tm">02:17</span></div>
+          <div class="runrow ok"><span class="st">成功</span><span class="nm2">日次の請求データ連携</span><span class="tm">02:18</span></div>
+          <div class="runrow"><span class="st gray">－</span><span class="nm2">朝にやることは残っていない</span><span class="tm">09:00</span></div>
+        </div>
+      </div></div>
+      <div class="cap">朝いちで<b>手で動かし直す、がなくなる</b></div>
+    </div>
+  </div>
+
+  <div class="next">
+    <span class="na">${svgw(P.arrow,3)}</span>
+    <span>置く場所は「アクションの <b>…</b> → 設定」。<b>作り方は2枚目へ</b></span>
+  </div>
+  <div class="src">出典：Microsoft Learn「堅牢なエラー処理を採用する」</div>
+`;
+</script>
+</body>
+</html>

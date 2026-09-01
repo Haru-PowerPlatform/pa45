@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.115-1 その自動化、数字にすると伝わる</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/tips-base.css">
+<style>
+  .stage{gap:11px;}
+  .left{flex:0 0 328px;display:flex;flex-direction:column;gap:8px;min-height:0;}
+  .right{flex:1;min-height:0;display:flex;flex-direction:column;gap:8px;}
+
+  .flowbox{flex:0 0 auto;background:#F8FAFC;border:2.5px solid #DCE3EE;border-radius:13px;padding:9px 11px;
+    display:flex;flex-direction:column;gap:5px;}
+  .flowbox .fh{display:flex;align-items:center;gap:8px;font-size:18.5px;font-weight:900;color:var(--navy);}
+  .fstep{display:flex;align-items:center;gap:8px;background:#fff;border:1.8px solid #C7D6EE;border-radius:8px;
+    padding:5px 9px;font-size:15px;font-weight:900;color:#475569;}
+  .fstep img{width:24px;height:24px;object-fit:contain;flex:0 0 auto;}
+  .fstep.add{border:2.5px solid var(--orange);background:#FFF7ED;color:#9A3412;font-size:16px;}
+  .fstep.add .badge2{margin-left:auto;background:var(--orange);color:#fff;border-radius:999px;padding:1px 9px;font-size:12.5px;}
+  .fdots{text-align:center;font-size:16px;font-weight:900;color:#94A3B8;line-height:1;}
+
+  .sc{flex:1;min-height:0;border-radius:12px;overflow:hidden;position:relative;background:#EDF3FA;}
+  .sc svg{position:absolute;inset:0;width:100%;height:100%;}
+  .sc .chara{position:absolute;right:2px;bottom:0;height:104px;z-index:2;filter:drop-shadow(0 3px 5px rgba(0,0,0,.22));}
+
+  /* SharePointリスト「効果ログ」 */
+  .list{flex:1;min-height:0;background:#fff;border:2.5px solid var(--blue-line);border-radius:13px;overflow:hidden;
+    display:flex;flex-direction:column;box-shadow:0 5px 13px rgba(20,40,90,.15);}
+  .lh{flex:0 0 auto;display:flex;align-items:center;gap:9px;padding:7px 12px;background:linear-gradient(90deg,#0B6A4F,#12876A);color:#fff;}
+  .lh img{width:26px;height:26px;object-fit:contain;background:#fff;border-radius:7px;padding:2px;flex:0 0 auto;}
+  .lh .lt{font-size:17px;font-weight:900;}
+  .lh .lp{margin-left:auto;background:rgba(255,255,255,.22);border-radius:999px;padding:3px 11px;font-size:14px;font-weight:900;}
+  .lb{flex:1;min-height:0;display:flex;flex-direction:column;gap:3px;padding:8px 10px;background:#F6F9FD;}
+  .lr{flex:1;min-height:0;display:flex;align-items:center;gap:9px;background:#fff;border:1.6px solid #DDE5F0;
+    border-radius:7px;padding:3px 10px;font-size:15.5px;font-weight:900;color:var(--navy);}
+  .lr.hd{flex:0 0 auto;background:#EAF1FE;border-color:#C7D6EE;color:#1E40AF;font-size:14px;}
+  .lr .c1{flex:0 0 132px;font-family:'Roboto Mono',monospace;font-size:14.5px;font-weight:700;color:#475569;}
+  .lr .c2{flex:1;}
+  .lr .c3{flex:0 0 96px;text-align:right;font-family:'Roboto Mono',monospace;color:var(--green-dark);}
+  .lr .c4{flex:0 0 68px;text-align:right;font-family:'Roboto Mono',monospace;color:#475569;}
+  .lr.hd .c1,.lr.hd .c3,.lr.hd .c4{font-family:"Noto Sans JP",sans-serif;color:#1E40AF;font-weight:900;}
+  .total{flex:0 0 auto;display:flex;align-items:center;gap:12px;background:linear-gradient(90deg,#065F46,#12876A);
+    color:#fff;border-radius:9px;padding:7px 14px;}
+  .total .tl{font-size:16px;font-weight:900;}
+  .total .tv{margin-left:auto;font-size:30px;font-weight:900;line-height:1.16;white-space:nowrap;}
+  .total .tv small{font-size:16px;margin-left:2px;}
+  .total .tsub{font-size:14px;font-weight:900;opacity:.9;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={bulb:'<path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/>',
+  arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>'};
+
+/* 情景：実行のたびに1行たまり、そのまま効果のデータになる */
+const sc=`<svg viewBox="0 0 328 252" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs><filter id="j1" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#1B2A44" flood-opacity=".2"/></filter></defs>
+  <rect x="0" y="0" width="328" height="252" fill="#EDF3FA"/>
+  <text x="14" y="22" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#1E40AF">実行のたびに1行たまる</text>
+  ${[0,1,2,3,4,5,6].map(i=>`<g filter="url(#j1)"><rect x="${14+i*6}" y="${40+i*26}" width="188" height="22" rx="5" fill="#fff" stroke="#C7D6EE" stroke-width="1.6"/>
+    <rect x="${22+i*6}" y="${47+i*26}" width="52" height="8" rx="3.5" fill="#C3D6F2"/>
+    <rect x="${82+i*6}" y="${47+i*26}" width="42" height="8" rx="3.5" fill="#C3D6F2"/>
+    <rect x="${132+i*6}" y="${47+i*26}" width="30" height="8" rx="3.5" fill="#BFE7D3"/></g>`).join('')}
+  <path d="M212 140 C 250 140, 262 116, 266 96" stroke="#16A34A" stroke-width="4.4" fill="none" stroke-linecap="round"/>
+  <path d="M260 102 l6 -10 l8 8" fill="none" stroke="#16A34A" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <g filter="url(#j1)"><rect x="216" y="26" width="100" height="60" rx="10" fill="#EAF9F1" stroke="#16A34A" stroke-width="2.6"/>
+    <text x="266" y="52" font-family="Noto Sans JP" font-size="14" font-weight="900" fill="#0B5136" text-anchor="middle">そのまま</text>
+    <text x="266" y="72" font-family="Noto Sans JP" font-size="14" font-weight="900" fill="#0B5136" text-anchor="middle">効果のデータ</text></g>
+  <text x="14" y="240" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#0B5136">貯めるだけで、あとから効いてくる</text>
+</svg>`;
+
+const lr=(a,b,c,d,cls)=>`<div class="lr${cls?' '+cls:''}"><span class="c1">${a}</span><span class="c2">${b}</span>
+  <span class="c3">${c}</span><span class="c4">${d}</span></div>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.115-1</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">その自動化、<span class="hl">数字にすると伝わる</span></div>
+    <img class="title-chara" src="${A}chara/chara_confident.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svgw(P.bulb,2.2)}</div>
+    <div class="txt">フローの最後に<b>「項目の作成」を1つ足すだけ</b>。実行のたびに1行たまって、そのまま効果のデータになります</div>
+  </div>
+
+  <div class="stage">
+    <div class="left">
+      <div class="flowbox">
+        <div class="fh">足すのは末尾の1つだけ</div>
+        <div class="fstep"><img src="${A}icons/pa_outlook.png" alt="">メールが届いたとき</div>
+        <div class="fdots">︙</div>
+        <div class="fstep"><img src="${A}icons/pa_onedrive.png" alt="">添付ファイルを保存する</div>
+        <div class="fdots">︙</div>
+        <div class="fstep add"><img src="${A}icons/pa_sharepoint.png" alt="">項目の作成<span class="badge2">追加</span></div>
+      </div>
+      <div class="sc">${sc}<img class="chara" src="${A}chara/chara_guts.png" alt=""></div>
+    </div>
+
+    <div class="right">
+      <div class="list">
+        <div class="lh"><img src="${A}icons/pa_sharepoint.png" alt=""><span class="lt">効果ログ（SharePointリスト）</span>
+          <span class="lp">今月 82件</span></div>
+        <div class="lb">
+          ${lr('実行日時','フロー名','削減時間','件数','hd')}
+          ${lr('09/01 08:12','請求書の自動保存','8 分','1')}
+          ${lr('09/01 09:30','経費の自動振り分け','15 分','1')}
+          ${lr('09/01 17:05','日報の集約','10 分','12')}
+          ${lr('09/02 08:10','請求書の自動保存','8 分','1')}
+          ${lr('09/02 11:44','承認の連絡','5 分','3')}
+        </div>
+      </div>
+      <div class="total"><span class="tl">今月の合計</span>
+        <span class="tsub">リストのビューで合計を出すだけ</span>
+        <span class="tv">1,240<small>分</small></span></div>
+      <div class="uses"><span class="ul">聞かれる場面</span>
+        <span class="u">効果は？</span><span class="u">来期も続ける？</span><span class="u">横展開する？</span></div>
+    </div>
+  </div>
+
+  <div class="next">
+    <span class="na">${svgw(P.arrow,3)}</span>
+    <span>数字が動くのは<b>回数のほう</b>。放っておいても積み上がります。<b>作り方は2枚目へ</b></span>
+  </div>
+  <div class="src">出典：Microsoft Learn「SharePoint コネクタ（項目の作成）」「日付と時刻の変換」／フロー名・数値は架空の例</div>
+`;
+</script>
+</body>
+</html>

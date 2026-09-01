@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.114-3 つまずくのはこの3つ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/tips-base.css">
+<style>
+  .scene{height:126px;}
+  .cardb{gap:6px;padding:8px 9px;}
+  .sym{display:flex;align-items:center;gap:8px;background:#FFECEC;border:2px solid var(--red-line);border-radius:8px;
+    padding:5px 9px;font-size:15.5px;font-weight:900;color:var(--red-dark);line-height:1.24;}
+  .sym .b{flex:0 0 auto;background:#DC2626;color:#fff;border-radius:5px;padding:2px 8px;font-size:13px;}
+  .fix{display:flex;flex-direction:column;gap:3px;background:#EAF9F1;border:2px solid #7FCEA9;border-radius:8px;padding:6px 9px;}
+  .fix .fl2{font-size:13.5px;font-weight:900;color:var(--green-dark);}
+  .fix .code3{font-family:'Roboto Mono',monospace;font-size:15px;font-weight:700;color:var(--green-dark);
+    line-height:1.3;word-break:break-all;}
+  .kv{display:flex;align-items:center;gap:7px;background:#fff;border:1.8px solid #DDE5F0;border-radius:7px;padding:4px 9px;}
+  .kv .kk{flex:0 0 auto;font-family:'Roboto Mono',monospace;font-size:15px;font-weight:700;color:#334155;
+    background:#EEF2F7;border-radius:5px;padding:2px 8px;}
+  .kv .kr{flex:1;font-size:14.5px;font-weight:900;color:#64748B;text-align:right;}
+  .kv.ng .kr{color:var(--red-dark);} .kv.ok .kr{color:var(--green-dark);}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={warn:'<path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>',
+  bulb:'<path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/>'};
+const VB='0 0 388 126';
+
+/* ① 空欄と空文字は別もの */
+const s1=`<svg viewBox="${VB}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs><filter id="c1" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#1B2A44" flood-opacity=".2"/></filter></defs>
+  <rect x="0" y="0" width="388" height="126" fill="#EDF3FA"/>
+  <g filter="url(#c1)"><rect x="14" y="14" width="160" height="44" rx="9" fill="#fff" stroke="#94A3B8" stroke-width="2.2"/>
+    <text x="94" y="34" font-family="Noto Sans JP" font-size="13" font-weight="900" fill="#64748B" text-anchor="middle">一度も入れていない</text>
+    <text x="94" y="52" font-family="Roboto Mono" font-size="16" font-weight="700" fill="#334155" text-anchor="middle">null</text></g>
+  <g filter="url(#c1)"><rect x="214" y="14" width="160" height="44" rx="9" fill="#fff" stroke="#94A3B8" stroke-width="2.2"/>
+    <text x="294" y="34" font-family="Noto Sans JP" font-size="13" font-weight="900" fill="#64748B" text-anchor="middle">入れたけど空にした</text>
+    <text x="294" y="52" font-family="Roboto Mono" font-size="16" font-weight="700" fill="#334155" text-anchor="middle">''</text></g>
+  <path d="M94 62 v14 M294 62 v14" stroke="#DC2626" stroke-width="3" stroke-linecap="round"/>
+  <g filter="url(#c1)"><rect x="88" y="80" width="212" height="34" rx="17" fill="#FFECEC" stroke="#DC2626" stroke-width="2.4"/>
+    <text x="194" y="102" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#991B1B" text-anchor="middle">empty() はどちらも true</text></g>
+</svg>`;
+
+/* ② 時刻は9時間ずれる */
+const s2=`<svg viewBox="${VB}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs><filter id="c2" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#1B2A44" flood-opacity=".2"/></filter></defs>
+  <rect x="0" y="0" width="388" height="126" fill="#EDF3FA"/>
+  <g filter="url(#c2)"><circle cx="80" cy="56" r="38" fill="#fff" stroke="#DC2626" stroke-width="3"/>
+    <path d="M80 30 v26 l17 11" stroke="#DC2626" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="80" y="112" font-family="Noto Sans JP" font-size="14" font-weight="900" fill="#991B1B" text-anchor="middle">UTC 00:30</text></g>
+  <g filter="url(#c2)"><rect x="136" y="42" width="102" height="30" rx="15" fill="#EA580C"/>
+    <text x="187" y="62" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#fff" text-anchor="middle">+9時間</text></g>
+  <path d="M124 57 H 132 M242 57 H 254" stroke="#EA580C" stroke-width="4" stroke-linecap="round"/>
+  <g filter="url(#c2)"><circle cx="300" cy="56" r="38" fill="#fff" stroke="#16A34A" stroke-width="3"/>
+    <path d="M300 30 v26 l22 6" stroke="#16A34A" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="300" y="112" font-family="Noto Sans JP" font-size="14" font-weight="900" fill="#0B5136" text-anchor="middle">JST 09:30</text></g>
+</svg>`;
+
+/* ③ 数字と文字は比べられない */
+const s3=`<svg viewBox="${VB}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs><filter id="c3" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#1B2A44" flood-opacity=".2"/></filter></defs>
+  <rect x="0" y="0" width="388" height="126" fill="#EDF3FA"/>
+  <g filter="url(#c3)"><rect x="14" y="16" width="106" height="40" rx="9" fill="#fff" stroke="#94A3B8" stroke-width="2.2"/>
+    <text x="67" y="34" font-family="Noto Sans JP" font-size="12.5" font-weight="900" fill="#64748B" text-anchor="middle">数値</text>
+    <text x="67" y="50" font-family="Roboto Mono" font-size="15" font-weight="700" fill="#334155" text-anchor="middle">100</text></g>
+  <text x="140" y="42" font-family="Noto Sans JP" font-size="22" font-weight="900" fill="#DC2626" text-anchor="middle">≠</text>
+  <g filter="url(#c3)"><rect x="160" y="16" width="106" height="40" rx="9" fill="#fff" stroke="#94A3B8" stroke-width="2.2"/>
+    <text x="213" y="34" font-family="Noto Sans JP" font-size="12.5" font-weight="900" fill="#64748B" text-anchor="middle">文字</text>
+    <text x="213" y="50" font-family="Roboto Mono" font-size="15" font-weight="700" fill="#334155" text-anchor="middle">'100'</text></g>
+  <g filter="url(#c3)"><rect x="280" y="16" width="94" height="40" rx="9" fill="#FFECEC" stroke="#DC2626" stroke-width="2.4"/>
+    <text x="327" y="42" font-family="Roboto Mono" font-size="15" font-weight="700" fill="#991B1B" text-anchor="middle">false</text></g>
+  <path d="M194 64 v10" stroke="#16A34A" stroke-width="3.4" stroke-linecap="round"/>
+  <g filter="url(#c3)"><rect x="48" y="78" width="292" height="36" rx="18" fill="#EAF9F1" stroke="#16A34A" stroke-width="2.4"/>
+    <text x="194" y="102" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#0B5136" text-anchor="middle">string() / int() で型を揃えると通る</text></g>
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.114-3</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">つまずくのは<span class="hl">この3つ</span>だけ</div>
+    <img class="title-chara" src="${A}chara/chara_think.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svgw(P.bulb,2.2)}</div>
+    <div class="txt">式が思ったとおりに動かないときは、たいてい<b>この3つのどれか</b>です</div>
+  </div>
+
+  <div class="stage">
+    <div class="col neutral">
+      <div class="ch2"><span class="n">1</span>空欄と空文字</div>
+      <div class="scene">${s1}</div>
+      <div class="body"><div class="card">
+        <div class="cardh">同じに見えて、別もの</div>
+        <div class="cardb">
+          <div class="kv ng"><span class="kk">empty(null)</span><span class="kr">true</span></div>
+          <div class="kv ng"><span class="kk">empty('')</span><span class="kr">true</span></div>
+          <div class="sym"><span class="b">症状</span>空欄チェックが両方に効いてしまう</div>
+          <div class="fix"><span class="fl2">分けたいときは</span>
+            <span class="code3">equals(担当者,'')</span></div>
+        </div>
+      </div></div>
+      <div class="cap">「一度も入れていない」と「入れて空にした」は<b>別</b></div>
+    </div>
+
+    <div class="col info">
+      <div class="ch2"><span class="n">2</span>時刻が9時間ずれる</div>
+      <div class="scene">${s2}</div>
+      <div class="body"><div class="card">
+        <div class="cardh">utcNow() は世界標準時</div>
+        <div class="cardb">
+          <div class="kv ng"><span class="kk">utcNow()</span><span class="kr">00:30 と出る</span></div>
+          <div class="sym"><span class="b">症状</span>深夜のメールが前日の日付になる</div>
+          <div class="fix"><span class="fl2">日本時間にするなら</span>
+            <span class="code3">convertTimeZone(utcNow(),'UTC',<br>'Tokyo Standard Time','yyyy/MM/dd HH:mm')</span></div>
+        </div>
+      </div></div>
+      <div class="cap">メール本文・ファイル名・台帳の日時、<b>全部これ</b></div>
+    </div>
+
+    <div class="col good">
+      <div class="ch2"><span class="n">3</span>数字と文字</div>
+      <div class="scene">${s3}</div>
+      <div class="body"><div class="card">
+        <div class="cardh">型が違うと比べられない</div>
+        <div class="cardb">
+          <div class="kv ng"><span class="kk">100 = '100'</span><span class="kr">false</span></div>
+          <div class="sym"><span class="b">症状</span>条件がいつも「いいえ」に流れる</div>
+          <div class="fix"><span class="fl2">型を揃えると通る</span>
+            <span class="code3">int(金額) / string(番号)</span></div>
+        </div>
+      </div></div>
+      <div class="cap">Excelから来た数字は<b>文字のことがあります</b></div>
+    </div>
+  </div>
+
+  <div class="warnbar">
+    <span class="na">${svgw(P.warn,2.4)}</span>
+    <span class="ws"><span>動的コンテンツは一重引用符で囲まない</span><span>手入力の日時は ISO 8601</span>
+      <span>迷ったら「式」タブの候補から選ぶ</span></span>
+  </div>
+  <div class="src">出典：Microsoft Learn「ワークフロー式関数」「日付と時刻の変換」</div>
+`;
+</script>
+</body>
+</html>

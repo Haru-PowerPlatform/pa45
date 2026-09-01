@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.109-2 赤い一覧メールの作り方</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/tips-base.css">
+<style>
+  .scene{height:100px;}
+  .cardb{gap:4px;padding:7px 9px;}
+  .fld{display:flex;flex-direction:column;gap:2px;}
+  .fld .fl{font-size:14px;font-weight:900;color:#475569;}
+  .fld .fi{display:flex;align-items:center;gap:6px;background:#fff;border:2px solid #B9C7DC;border-radius:7px;
+    padding:5px 9px;font-size:15.5px;font-weight:900;color:var(--navy);line-height:1.2;}
+  .fld .fi.exp{border-color:var(--blue);background:#F4F8FF;font-family:'Roboto Mono',monospace;font-size:14px;
+    color:var(--blue-dark);word-break:break-all;line-height:1.34;}
+  .cond{display:flex;align-items:center;gap:6px;background:#fff;border:2px solid #B9C7DC;border-radius:8px;padding:6px 8px;}
+  .cond .cv{flex:1;font-size:15px;font-weight:900;color:var(--navy);background:#EEF2F7;border-radius:5px;padding:3px 7px;
+    text-align:center;line-height:1.2;}
+  .cond .op{flex:0 0 auto;font-size:14px;font-weight:900;color:#fff;background:#64748B;border-radius:5px;padding:3px 7px;}
+  .tog{display:flex;align-items:center;gap:8px;background:#EAF9F1;border:2px solid #16A34A;border-radius:8px;padding:6px 9px;}
+  .tog .sw{flex:0 0 auto;width:40px;height:22px;border-radius:11px;background:#16A34A;position:relative;}
+  .tog .sw::after{content:"";position:absolute;right:3px;top:3px;width:16px;height:16px;border-radius:50%;background:#fff;}
+  .tog .tl{font-size:16px;font-weight:900;color:var(--green-dark);}
+  .branch{display:flex;flex-direction:column;gap:3px;}
+  .br{display:flex;align-items:center;gap:7px;border-radius:7px;padding:3px 8px;font-size:14.5px;font-weight:900;line-height:1.2;}
+  .br .bl{flex:0 0 auto;color:#fff;border-radius:5px;padding:2px 8px;font-size:13.5px;}
+  .br.y{background:#FFECEC;color:#B91C1C;} .br.y .bl{background:#DC2626;}
+  .br.n{background:#EEF2F7;color:#475569;} .br.n .bl{background:#94A3B8;}
+  .fld .fi img{width:22px;height:22px;object-fit:contain;flex:0 0 auto;}
+  .note{display:flex;align-items:center;gap:7px;background:#FFF7ED;border:1.6px solid #FDBA74;border-radius:8px;
+    padding:4px 8px;font-size:14.5px;font-weight:900;color:#9A3412;line-height:1.24;}
+  .note.nb{background:#EEF4FF;border-color:#A9C6F5;color:var(--blue-dark);}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={warn:'<path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>',
+  bulb:'<path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/>'};
+
+/* ① 期限と今日を比べる（388x100） */
+const s1=`<svg viewBox="0 0 388 100" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="0" width="388" height="100" fill="#EDF3FA"/>
+  <path d="M20 56 H 368" stroke="#A9BBD3" stroke-width="3" stroke-linecap="round"/>
+  <g transform="translate(196,30)"><rect x="-40" y="0" width="80" height="26" rx="13" fill="#2563EB"/>
+    <text x="0" y="18" font-family="Noto Sans JP" font-size="14" font-weight="900" fill="#fff" text-anchor="middle">今日</text></g>
+  <path d="M196 56 v-6" stroke="#2563EB" stroke-width="3" stroke-linecap="round"/>
+  <g><rect x="34" y="64" width="66" height="26" rx="7" fill="#FFECEC" stroke="#DC2626" stroke-width="2.2"/>
+    <text x="67" y="82" font-family="Roboto Mono" font-size="15" font-weight="700" fill="#B91C1C" text-anchor="middle">09/28</text></g>
+  <g><rect x="112" y="64" width="66" height="26" rx="7" fill="#FFECEC" stroke="#DC2626" stroke-width="2.2"/>
+    <text x="145" y="82" font-family="Roboto Mono" font-size="15" font-weight="700" fill="#B91C1C" text-anchor="middle">09/30</text></g>
+  <g><rect x="236" y="64" width="66" height="26" rx="7" fill="#EAF9F1" stroke="#16A34A" stroke-width="2.2"/>
+    <text x="269" y="82" font-family="Roboto Mono" font-size="15" font-weight="700" fill="#0B5136" text-anchor="middle">10/09</text></g>
+  <text x="106" y="24" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#B91C1C" text-anchor="middle">遅れている</text>
+  <text x="300" y="24" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#0B5136" text-anchor="middle">まだ先</text>
+</svg>`;
+
+/* ② 値を色タグで包む（388x100） */
+const s2=`<svg viewBox="0 0 388 100" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs><filter id="w2" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#3B2A66" flood-opacity=".22"/></filter></defs>
+  <rect x="0" y="0" width="388" height="100" fill="#EDF3FA"/>
+  <g filter="url(#w2)"><rect x="12" y="32" width="112" height="36" rx="8" fill="#fff" stroke="#94A3B8" stroke-width="2"/>
+    <text x="68" y="55" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#475569" text-anchor="middle">北陸 定期点検</text></g>
+  <text x="68" y="24" font-family="Noto Sans JP" font-size="14" font-weight="900" fill="#64748B" text-anchor="middle">もとの値</text>
+  <path d="M132 50 H 164" stroke="#7C3AED" stroke-width="4.4" stroke-linecap="round"/>
+  <path d="M158 44 l8 6 l-8 6" fill="none" stroke="#7C3AED" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <g filter="url(#w2)"><rect x="174" y="24" width="202" height="52" rx="9" fill="#fff" stroke="#7C3AED" stroke-width="2.4"/>
+    <text x="184" y="46" font-family="Roboto Mono" font-size="13" font-weight="700" fill="#7C3AED">&lt;span style='color:red'&gt;</text>
+    <rect x="184" y="52" width="106" height="14" rx="4" fill="#FFECEC" stroke="#DC2626" stroke-width="1.6"/>
+    <text x="237" y="63" font-family="Noto Sans JP" font-size="12" font-weight="900" fill="#B91C1C" text-anchor="middle">北陸 定期点検</text>
+    <text x="298" y="64" font-family="Roboto Mono" font-size="13" font-weight="700" fill="#7C3AED">&lt;/span&gt;</text></g>
+  <text x="275" y="16" font-family="Noto Sans JP" font-size="14" font-weight="900" fill="#5B21B6" text-anchor="middle">遅れている行だけ包む</text>
+</svg>`;
+
+/* ③ IsHtmlの有無で見え方が変わる（388x100） */
+const s3=`<svg viewBox="0 0 388 100" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs><filter id="w3" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#0B5136" flood-opacity=".22"/></filter></defs>
+  <rect x="0" y="0" width="388" height="100" fill="#DCF3E7"/>
+  <text x="96" y="18" font-family="Noto Sans JP" font-size="14" font-weight="900" fill="#B91C1C" text-anchor="middle">IsHtml オフ</text>
+  <g filter="url(#w3)"><rect x="12" y="24" width="168" height="64" rx="8" fill="#fff" stroke="#DC2626" stroke-width="2.2"/>
+    <text x="22" y="44" font-family="Roboto Mono" font-size="11.5" font-weight="700" fill="#94A3B8">&lt;table&gt;&lt;tr&gt;&lt;td&gt;北陸</text>
+    <text x="22" y="60" font-family="Roboto Mono" font-size="11.5" font-weight="700" fill="#94A3B8">&lt;/td&gt;&lt;td&gt;09/28&lt;/td&gt;</text>
+    <text x="96" y="80" font-family="Noto Sans JP" font-size="13.5" font-weight="900" fill="#B91C1C" text-anchor="middle">タグが文字で出る</text></g>
+  <text x="290" y="18" font-family="Noto Sans JP" font-size="14" font-weight="900" fill="#0B5136" text-anchor="middle">IsHtml オン</text>
+  <g filter="url(#w3)"><rect x="204" y="24" width="172" height="64" rx="8" fill="#fff" stroke="#16A34A" stroke-width="2.6"/>
+    <rect x="212" y="32" width="156" height="12" fill="#EAF9F1"/>
+    <rect x="218" y="35" width="40" height="5" rx="2.5" fill="#BFE7D3"/><rect x="268" y="35" width="34" height="5" rx="2.5" fill="#BFE7D3"/><rect x="312" y="35" width="46" height="5" rx="2.5" fill="#BFE7D3"/>
+    <rect x="212" y="48" width="156" height="13" fill="#FFECEC"/>
+    <rect x="218" y="51.5" width="40" height="5" rx="2.5" fill="#F19C9C"/><rect x="268" y="51.5" width="34" height="5" rx="2.5" fill="#F19C9C"/><rect x="312" y="51.5" width="46" height="5" rx="2.5" fill="#F19C9C"/>
+    <rect x="212" y="65" width="156" height="12" fill="#fff"/>
+    <rect x="218" y="68" width="40" height="5" rx="2.5" fill="#D9E2EC"/><rect x="268" y="68" width="34" height="5" rx="2.5" fill="#D9E2EC"/><rect x="312" y="68" width="46" height="5" rx="2.5" fill="#D9E2EC"/>
+    <text x="290" y="86" font-family="Noto Sans JP" font-size="13.5" font-weight="900" fill="#0B5136" text-anchor="middle">表として出る</text></g>
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.109-2</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">作り方は<span class="hl">3ステップ</span>（見分ける → 色を付ける → 表にして送る）</div>
+    <img class="title-chara" src="${A}chara/chara_point.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svgw(P.bulb,2.2)}</div>
+    <div class="txt">順番が肝心。<b>色を付けてから表にする</b>。表ができたあとで色を付けようとすると、やることが増えます</div>
+  </div>
+
+  <div class="stage">
+    <div class="col neutral">
+      <div class="ch2"><span class="n">1</span>遅れを見分ける</div>
+      <div class="scene">${s1}</div>
+      <div class="body"><div class="card">
+        <div class="cardh"><img src="${A}icons/pa_condition.png" alt="">条件</div>
+        <div class="cardb">
+          <div class="cond"><span class="cv">期限</span><span class="op">より前</span><span class="cv">今日</span></div>
+          <div class="fld"><span class="fl">今日（日本時間）</span>
+            <span class="fi exp">convertTimeZone(utcNow(),'UTC',<br>'Tokyo Standard Time','yyyy/MM/dd')</span></div>
+          <div class="note">UTCのまま比べると、深夜ぶんが1日ずれます</div>
+          <div class="branch">
+            <div class="br y"><span class="bl">はい</span><span class="bt">遅れている → 赤で包む</span></div>
+            <div class="br n"><span class="bl">いいえ</span><span class="bt">そのままの値を渡す</span></div>
+          </div>
+        </div>
+      </div></div>
+      <div class="cap">まず<b>遅れているかどうか</b>だけを決めておく</div>
+    </div>
+
+    <div class="col info">
+      <div class="ch2"><span class="n">2</span>色を付ける</div>
+      <div class="scene">${s2}</div>
+      <div class="body"><div class="card">
+        <div class="cardh"><img src="${A}icons/pa_dataoperation.png" alt="">選択</div>
+        <div class="cardb">
+          <div class="fld"><span class="fl">開始</span><span class="fi">案件の一覧</span></div>
+          <div class="fld"><span class="fl">マップ（案件の列）</span>
+            <span class="fi exp">if(遅れ,<br>concat('&lt;span style=''color:red''&gt;',案件,'&lt;/span&gt;'),<br>案件)</span></div>
+          <div class="note nb">この出力を「HTML テーブルの作成」の開始へ</div>
+        </div>
+      </div></div>
+      <div class="cap">表に渡す<b>値そのもの</b>を作り替える。列は増やさない</div>
+    </div>
+
+    <div class="col good">
+      <div class="ch2"><span class="n">3</span>表にして送る</div>
+      <div class="scene">${s3}</div>
+      <div class="body"><div class="card">
+        <div class="cardh"><img src="${A}icons/pa_outlook.png" alt="">メールの送信 (V2)</div>
+        <div class="cardb">
+          <div class="fld"><span class="fl">件名</span><span class="fi">【日次】案件の進捗一覧</span></div>
+          <div class="fld"><span class="fl">本文</span><span class="fi">HTML テーブルの作成 の出力</span></div>
+          <div class="tog"><span class="sw"></span><span class="tl">IsHtml：はい</span></div>
+          <div class="note">ここを切ると、タグがそのまま文字で表示されます</div>
+        </div>
+      </div></div>
+      <div class="cap">「HTML テーブルの作成」に渡して、<b>本文に入れるだけ</b></div>
+    </div>
+  </div>
+
+  <div class="warnbar">
+    <span class="na">${svgw(P.warn,2.4)}</span>
+    <span class="ws"><span>IsHtmlを切るとタグが文字で出る</span><span>メールソフトで効く装飾が違う</span>
+      <span>色は2色までがおすすめ</span><span>色分けの書き方は公式手順ではなく広く使われているやり方</span></span>
+  </div>
+  <div class="src">出典：Microsoft Learn「Power Automate でデータ操作を使用する」「日付と時刻の変換」（案件名は架空）</div>
+`;
+</script>
+</body>
+</html>

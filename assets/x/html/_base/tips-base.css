@@ -1,0 +1,166 @@
+/* ==========================================================================
+   X技術Tips 1枚スライド 共通ベース（1280x720／PNGは2560x1440で書き出す）
+   ブランド軸（タイトルバー・結論バー・注意帯・出典・マスコット）はここで固定する。
+   レイアウト型（A:Before/After ／ B:流れ3列 ／ C:主役モック ／ D:会話 ／ E:早見表 ／ F:4コマ）は
+   下の「型」セクションのクラスを使い分ける。個別の作り込みは各 index.html の <style> に書く。
+   文字サイズ下限＝パネル見出し25px／流れ3列見出し22px／手順18.5px／モック本文15.5px（13px以下を作らない）
+   ========================================================================== */
+
+:root{
+  --blue:#2563EB; --blue-bg:#EFF6FF; --blue-dark:#1E40AF; --blue-line:#C7D6EE;
+  --green:#16A34A; --green-bg:#ECFDF5; --green-dark:#065F46; --green-line:#7FCEA9;
+  --red:#DC2626; --red-bg:#FEF2F2; --red-dark:#991B1B; --red-line:#F0AEAE;
+  --orange:#EA580C; --amber:#F59E0B; --violet:#7C3AED;
+  --ink:#1F2937; --gray:#374151; --weak:#6B7280; --line:#E5E7EB;
+  --navy:#1B2A44;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:#52555c;display:flex;justify-content:center;align-items:center;min-height:100vh;
+  font-family:"Noto Sans JP",sans-serif;}
+#slide{width:1280px;height:720px;background:#fff;position:relative;overflow:hidden;
+  display:flex;flex-direction:column;color:var(--gray);}
+.ic{display:block;width:100%;height:100%;
+  /* 保険：サイズを持たない箱に直接置かれても暴走しないよう上限を切る（過去に何度も踏んだ罠）*/
+  max-width:40px;max-height:40px;}
+
+/* ── タイトルバー（固定）───────────────────────────────── */
+.titlebar{height:90px;flex:0 0 auto;z-index:5;position:relative;display:flex;align-items:center;gap:16px;padding:0 24px;
+  background:linear-gradient(180deg,rgba(255,255,255,.32),rgba(255,255,255,.05) 46%,rgba(0,0,0,.06) 100%),
+             linear-gradient(135deg,#1D4ED8 0%,#2563EB 52%,#3B82F6 100%);
+  box-shadow:inset 0 0 0 3px rgba(255,255,255,.92),inset 0 2px 1px rgba(255,255,255,.45),
+             inset 0 -4px 6px rgba(0,0,0,.16),0 5px 14px rgba(30,58,138,.36);}
+.vol-pill{background:#fff;color:var(--blue);font-weight:900;font-size:26px;border-radius:999px;padding:7px 20px;
+  white-space:nowrap;flex:0 0 auto;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+.vol-logo{height:50px;width:50px;object-fit:contain;flex:0 0 auto;background:#fff;border-radius:12px;padding:5px;
+  box-shadow:0 2px 5px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.8);}
+.title-text{color:#fff;font-weight:900;font-size:27px;line-height:1.14;text-shadow:0 1px 2px rgba(0,0,0,.18);
+  padding-right:158px;}
+.title-text .hl{color:#FFE08A;}
+.title-chara{position:absolute;right:14px;bottom:-44px;height:146px;z-index:50;
+  filter:drop-shadow(0 3px 6px rgba(0,0,0,.35));}
+
+/* ── 結論バー（固定）──────────────────────────────────── */
+.concl{margin:9px 16px 0;flex:0 0 auto;background:var(--blue-bg);border:2.5px solid var(--blue);border-radius:13px;
+  display:flex;align-items:center;gap:13px;padding:8px 18px;
+  box-shadow:0 4px 11px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+.concl .chip{flex:0 0 auto;width:40px;height:40px;border-radius:11px;background:linear-gradient(180deg,#3B82F6,#2563EB);
+  color:#fff;display:flex;align-items:center;justify-content:center;padding:8px;
+  box-shadow:0 3px 6px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.5);}
+.concl .txt{font-weight:800;font-size:19px;color:var(--blue-dark);line-height:1.3;padding-right:158px;}
+.concl .txt b{color:var(--orange);}
+
+/* ── 本体ステージ ─────────────────────────────────────── */
+.stage{flex:1 1 auto;margin:10px 16px 0;display:flex;align-items:stretch;gap:11px;min-height:0;}
+
+/* 汎用の列（型A/B/Cで共有）*/
+.col{flex:1;min-height:0;display:flex;flex-direction:column;gap:7px;border-radius:14px;padding:8px 10px 9px;position:relative;}
+.col.neutral{background:#F8FAFC;border:2.5px solid #DCE3EE;}
+.col.bad{background:var(--red-bg);border:2.5px solid var(--red-line);}
+.col.good{background:var(--green-bg);border:2.5px solid var(--green-line);}
+.col.info{background:var(--blue-bg);border:2.5px solid #A9C6F5;}
+
+/* 列見出し（流れ3列＝22px以上）*/
+.ch2{flex:0 0 auto;display:flex;align-items:center;gap:9px;font-weight:900;font-size:22px;line-height:1.16;color:var(--navy);}
+.col.bad .ch2{color:var(--red-dark);} .col.good .ch2{color:var(--green-dark);} .col.info .ch2{color:var(--blue-dark);}
+.ch2 .n{flex:0 0 auto;width:34px;height:34px;border-radius:9px;color:#fff;display:flex;align-items:center;justify-content:center;
+  font-size:19px;font-weight:900;background:linear-gradient(180deg,#3B82F6,#2563EB);box-shadow:0 2px 4px rgba(0,0,0,.22);}
+.col.bad .ch2 .n{background:linear-gradient(180deg,#EF6A6A,#DC2626);}
+.col.good .ch2 .n{background:linear-gradient(180deg,#34D399,#16A34A);}
+
+/* パネル見出し（型A＝対比の要・25px以上）*/
+.ph{flex:0 0 auto;display:flex;align-items:center;gap:10px;font-weight:900;font-size:25px;line-height:1.14;}
+.col.bad .ph{color:var(--red-dark);} .col.good .ph{color:var(--green-dark);}
+.ph .mk{flex:0 0 auto;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  color:#fff;box-shadow:0 2px 5px rgba(0,0,0,.25);}
+.col.bad .ph .mk{background:linear-gradient(180deg,#EF6A6A,#DC2626);}
+.col.good .ph .mk{background:linear-gradient(180deg,#34D399,#16A34A);}
+.ph .mk svg{width:22px;height:22px;}
+
+/* 情景SVG（空白はここで埋める。文字で埋めない）*/
+.scene{flex:0 0 auto;height:120px;border-radius:11px;position:relative;overflow:hidden;background:#EDF3FA;}
+.col.bad .scene{background:#FCE4E4;} .col.good .scene{background:#DCF3E7;}
+.scene svg{position:absolute;inset:0;width:100%;height:100%;}
+.scene .chara{position:absolute;right:4px;bottom:0;height:114px;z-index:2;filter:drop-shadow(0 3px 5px rgba(0,0,0,.22));}
+
+/* 実画面モック */
+.body{flex:1;min-height:0;display:flex;flex-direction:column;gap:7px;}
+.card{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:2.5px solid var(--blue-line);
+  border-radius:11px;overflow:hidden;box-shadow:0 4px 10px rgba(20,40,90,.13);}
+.col.bad .card{border-color:var(--red-line);} .col.good .card{border-color:var(--green-line);}
+.cardh{flex:0 0 auto;display:flex;align-items:center;gap:9px;padding:8px 10px;font-weight:900;font-size:15.5px;
+  color:var(--navy);background:#F2F7FD;border-bottom:1.5px solid #E2EAF5;}
+.col.bad .cardh{background:linear-gradient(90deg,#B91C1C,#DC2626);color:#fff;border-bottom:none;}
+.col.good .cardh{background:#EAF9F1;border-bottom-color:#BFE7D3;color:var(--green-dark);}
+.cardh img{width:28px;height:28px;object-fit:contain;flex:0 0 auto;}
+.cardh .ci{width:26px;height:26px;flex:0 0 auto;}
+.cardb{flex:1;min-height:0;padding:8px 10px;display:flex;flex-direction:column;gap:5px;}
+
+/* 補足キャプション（何が起きているか）*/
+.cap{flex:0 0 auto;font-size:15.5px;font-weight:900;line-height:1.32;border-radius:9px;padding:7px 10px;
+  color:#334155;background:#E7EEF7;}
+.col.bad .cap{color:var(--red-dark);background:#FBD9D9;}
+.col.good .cap{color:var(--green-dark);background:#CFEFE0;}
+.cap b{color:var(--orange);}
+
+/* ── 下部の帯（固定）─────────────────────────────────── */
+.next{flex:0 0 auto;margin:9px 16px 18px;background:linear-gradient(180deg,#EAF2FF,#DCEAFE);border:2.5px solid var(--blue);
+  border-radius:13px;padding:9px 18px;display:flex;align-items:center;gap:11px;font-weight:900;font-size:19px;
+  color:var(--blue-dark);box-shadow:0 3px 9px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+.next .na{flex:0 0 auto;width:26px;height:26px;color:var(--blue);}
+.next b{color:var(--orange);}
+.warnbar{flex:0 0 auto;margin:9px 16px 18px;background:linear-gradient(180deg,#FFF7ED,#FFEDD5);border:2.5px solid var(--orange);
+  border-radius:13px;padding:8px 16px;display:flex;align-items:center;gap:11px;color:#9A3412;
+  box-shadow:0 3px 9px rgba(0,0,0,.10),inset 0 1px 0 rgba(255,255,255,.7);}
+.warnbar .na{flex:0 0 auto;width:26px;height:26px;color:var(--orange);}
+.warnbar .ws{display:flex;gap:8px;flex-wrap:wrap;font-weight:900;font-size:15px;line-height:1.3;}
+.warnbar .ws span{background:#fff;border:1.5px solid #FDBA74;border-radius:7px;padding:3px 9px;}
+.src{position:absolute;left:16px;bottom:3px;font-size:10px;color:#AEB6C2;font-weight:700;z-index:3;}
+
+/* ── 使いどころチップ帯（下部を埋める）───────────────── */
+.uses{flex:0 0 auto;display:flex;align-items:center;gap:7px;flex-wrap:wrap;}
+.uses .ul{font-size:14px;font-weight:900;color:var(--weak);}
+.uses span.u{background:#EEF4FF;border:1.5px solid #C7D6EE;border-radius:999px;padding:3px 11px;
+  font-size:14.5px;font-weight:900;color:var(--blue-dark);}
+
+/* ── 数字の見せ場（before→after ピル）──────────────── */
+.metric{flex:0 0 auto;display:flex;align-items:center;justify-content:center;gap:10px;background:#FFFBEB;
+  border:2.5px solid var(--amber);border-radius:12px;padding:7px 12px;}
+.metric .mv{font-size:26px;font-weight:900;color:#92400E;line-height:1;}
+.metric .mv.to{color:var(--green-dark);}
+.metric .ml{font-size:13.5px;font-weight:900;color:#B45309;}
+.metric .ar{width:26px;height:26px;color:var(--amber);flex:0 0 auto;}
+
+/* ── 型E：早見表 ─────────────────────────────────────── */
+.tbl{flex:1;min-height:0;display:flex;flex-direction:column;gap:4px;}
+.trow{flex:1;min-height:0;display:flex;align-items:center;gap:9px;background:#F7F9FC;border:1.5px solid #E2EAF5;
+  border-radius:8px;padding:5px 9px;}
+.trow .k{flex:1.05;font-size:17px;font-weight:900;color:var(--navy);line-height:1.2;}
+.trow .v{flex:1;font-family:'Roboto Mono',monospace;font-size:15.5px;font-weight:700;color:var(--blue-dark);
+  background:#EAF1FE;border-radius:6px;padding:4px 8px;line-height:1.2;word-break:break-all;}
+.trow.hot{background:#FFF7ED;border-color:#FDBA74;}
+.trow.hot .v{background:#FFEDD5;color:#9A3412;}
+
+/* ── 型D：会話スレッド ───────────────────────────────── */
+.msg{display:flex;gap:8px;align-items:flex-start;}
+.msg .av{flex:0 0 auto;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:13.5px;font-weight:900;background:#64748B;}
+.msg.bot .av{background:linear-gradient(180deg,#8B5CF6,#6D28D9);}
+.msg .bub{flex:1;background:#F4F6FA;border-radius:9px;padding:6px 9px;}
+.msg.bot .bub{background:#F3EEFF;border:1.5px solid #D8C9FA;}
+.msg .nm{font-size:13.5px;font-weight:900;color:var(--weak);margin-bottom:2px;}
+.msg .tx{font-size:15.5px;font-weight:700;color:var(--navy);line-height:1.36;}
+
+/* ── コード・式 ──────────────────────────────────────── */
+.code{background:#1E293B;border-radius:8px;padding:8px 10px;font-family:'Roboto Mono',monospace;font-size:15.5px;
+  font-weight:700;color:#93C5FD;line-height:1.42;word-break:break-all;}
+.code .g{color:#86EFAC;} .code .r{color:#FCA5A5;} .code .y{color:#FDE68A;}
+
+/* ── 動的コンテンツのピル（実画面の再現に使う）──────── */
+.dyn{display:inline-flex;align-items:center;gap:4px;background:#EEF2FF;border:1.5px solid #A5B4FC;border-radius:6px;
+  padding:1px 7px;font-size:14.5px;font-weight:900;color:#4338CA;}
+.dyn::before{content:"\26A1";font-size:13px;}
+
+/* 保険：サイズ指定の無い箱に .ic を直接置くと 100% 指定で巨大化するので、
+   帯・チップ類の直下に来た場合だけ既定サイズを与える（過去に何度も踏んだ罠）*/
+.cap > svg.ic, .uses > svg.ic, .warnbar > svg.ic, .next > svg.ic, .concl > svg.ic,
+.findbar > svg.ic, .ch2 > svg.ic, .ph > svg.ic{width:22px;height:22px;flex:0 0 auto;}

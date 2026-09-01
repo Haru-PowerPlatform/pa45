@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.120-1 アンケートの自由記述が、AIで論点別にまとまる</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/tips-base.css">
+<style>
+  .stage{gap:11px;}
+  .left{flex:0 0 328px;display:flex;flex-direction:column;gap:8px;min-height:0;}
+  .right{flex:1;min-height:0;display:flex;flex-direction:column;gap:8px;}
+
+  .pile{flex:0 0 auto;background:var(--red-bg);border:2.5px solid var(--red-line);border-radius:13px;padding:8px 10px 9px;
+    display:flex;flex-direction:column;gap:6px;position:relative;}
+  .pile .ph3{display:flex;align-items:center;gap:9px;font-size:21px;font-weight:900;color:var(--red-dark);line-height:1.16;}
+  .pile .ph3 .mk{flex:0 0 auto;width:32px;height:32px;border-radius:50%;background:linear-gradient(180deg,#EF6A6A,#DC2626);
+    color:#fff;display:flex;align-items:center;justify-content:center;}
+  .pile .ph3 .mk svg{width:19px;height:19px;}
+  .pile .cnt2{margin-left:auto;background:#DC2626;color:#fff;border-radius:999px;padding:2px 11px;font-size:14px;font-weight:900;}
+  .cmt{display:flex;gap:8px;align-items:flex-start;background:#fff;border:1.6px solid var(--red-line);border-radius:7px;
+    padding:4px 8px;font-size:14.5px;font-weight:700;color:#7F1D1D;line-height:1.3;}
+  .cmt .qm{flex:0 0 auto;width:18px;height:18px;border-radius:50%;background:#F3C6C6;color:#7F1D1D;font-size:11px;
+    font-weight:900;display:flex;align-items:center;justify-content:center;margin-top:1px;}
+
+  .sc{flex:1;min-height:0;border-radius:12px;overflow:hidden;position:relative;background:#F3EEFF;}
+  .sc svg{position:absolute;inset:0;width:100%;height:100%;}
+  .sc .chara{position:absolute;right:2px;bottom:0;height:100px;z-index:2;filter:drop-shadow(0 3px 5px rgba(0,0,0,.22));}
+
+  /* 論点別サマリー */
+  .sum{flex:1;min-height:0;background:#fff;border:2.5px solid #C9B4F4;border-radius:13px;overflow:hidden;
+    display:flex;flex-direction:column;box-shadow:0 5px 13px rgba(59,42,102,.16);}
+  .sh{flex:0 0 auto;display:flex;align-items:center;gap:9px;padding:7px 12px;background:linear-gradient(90deg,#5B21B6,#7C3AED);color:#fff;}
+  .sh .ai3{flex:0 0 auto;width:24px;height:24px;}
+  .sh .st2{flex:1;font-size:17px;font-weight:900;}
+  .sh .sp2{background:rgba(255,255,255,.24);border-radius:999px;padding:2px 11px;font-size:13.5px;font-weight:900;}
+  .sb{flex:1;min-height:0;display:flex;flex-direction:column;gap:6px;padding:9px 11px;background:#FAF8FF;}
+  .tp{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;gap:4px;background:#fff;
+    border:1.8px solid #E4DAFB;border-left:6px solid #7C3AED;border-radius:10px;padding:6px 11px;
+    box-shadow:0 2px 5px rgba(59,42,102,.09);}
+  .tp .th4{display:flex;align-items:center;gap:9px;}
+  .tp .nm4{flex:0 0 128px;font-size:17.5px;font-weight:900;color:var(--navy);line-height:1.2;}
+  .tp .bar{flex:1;height:14px;border-radius:7px;background:#EFEAFB;overflow:hidden;}
+  .tp .bar i{display:block;height:100%;border-radius:7px;background:linear-gradient(90deg,#A78BFA,#6D28D9);}
+  .tp .num{flex:0 0 auto;font-family:'Roboto Mono',monospace;font-size:16px;font-weight:700;color:#5B21B6;}
+  .tp .voice{display:flex;gap:7px;align-items:flex-start;font-size:15px;font-weight:700;color:#475569;line-height:1.34;}
+  .tp .voice .qq{flex:0 0 auto;font-size:17px;font-weight:900;color:#C4B5FD;line-height:1;}
+  .tp.a{border-left-color:#DC2626;} .tp.a .bar i{background:linear-gradient(90deg,#F87171,#DC2626);} .tp.a .num{color:var(--red-dark);}
+  .tp.b{border-left-color:#EA580C;} .tp.b .bar i{background:linear-gradient(90deg,#FDBA74,#EA580C);} .tp.b .num{color:#9A3412;}
+  .tp.c{border-left-color:#16A34A;} .tp.c .bar i{background:linear-gradient(90deg,#6EE7B7,#16A34A);} .tp.c .num{color:var(--green-dark);}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={bulb:'<path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/>',
+  arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>', x:'<path d="M6 6l12 12M18 6L6 18"/>'};
+const AI=`<svg viewBox="0 0 24 24" fill="#fff" xmlns="http://www.w3.org/2000/svg">
+  <path d="M12 2.2l1.9 5.1 5.1 1.9-5.1 1.9L12 16.2l-1.9-5.1L5 9.2l5.1-1.9z"/>
+  <path d="M18.6 14.6l.9 2.4 2.4.9-2.4.9-.9 2.4-.9-2.4-2.4-.9 2.4-.9z"/></svg>`;
+
+/* 情景：バラバラのコメント → AI → 論点の束（328x192） */
+const sc=`<svg viewBox="0 0 328 192" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="u2g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#A78BFA"/><stop offset="1" stop-color="#6D28D9"/></linearGradient>
+    <filter id="u2f" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#3B2A66" flood-opacity=".24"/></filter>
+  </defs>
+  <rect x="0" y="0" width="328" height="192" fill="#F3EEFF"/>
+  <text x="14" y="18" font-family="Noto Sans JP" font-size="14" font-weight="900" fill="#5B21B6">バラバラのまま届く</text>
+  ${[[14,26,84],[102,24,70],[14,50,64],[88,50,82],[14,74,88],[106,74,58],[14,98,72],[92,98,76]].map(([x,y,w])=>
+    `<g filter="url(#u2f)"><rect x="${x}" y="${y}" width="${w}" height="18" rx="5" fill="#fff" stroke="#C4B5FD" stroke-width="1.5"/>
+      <rect x="${x+7}" y="${y+6}" width="${w-16}" height="5" rx="2.5" fill="#DDD3F7"/></g>`).join('')}
+  <path d="M180 66 C 206 72, 214 82, 220 90" stroke="#7C3AED" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <g filter="url(#u2f)"><circle cx="252" cy="102" r="25" fill="url(#u2g)"/>
+    <g transform="translate(252,102) scale(0.98)" fill="#fff">
+      <path d="M0 -13l2.4 6.4 6.4 2.4 -6.4 2.4 -2.4 6.4 -2.4 -6.4 -6.4 -2.4 6.4 -2.4z"/>
+      <path d="M8.5 4.5l1.1 3 3 1.1 -3 1.1 -1.1 3 -1.1 -3 -3 -1.1 3 -1.1z"/></g></g>
+  <text x="252" y="68" font-family="Noto Sans JP" font-size="13.5" font-weight="900" fill="#5B21B6" text-anchor="middle">論点で分類</text>
+  ${[[0,'#DC2626',92],[1,'#EA580C',66],[2,'#16A34A',44]].map(([i,c,w])=>
+    `<g filter="url(#u2f)"><rect x="14" y="${118+i*22}" width="140" height="17" rx="5" fill="#fff" stroke="${c}" stroke-width="1.8"/>
+      <rect x="21" y="${123+i*22}" width="${w}" height="7" rx="3.5" fill="${c}"/></g>`).join('')}
+  <text x="14" y="186" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#5B21B6">読んで分類する半日が消える。</text>
+</svg>`;
+
+const tp=(cls,nm,pct,n,voice)=>`<div class="tp ${cls}">
+  <span class="th4"><span class="nm4">${nm}</span><span class="bar"><i style="width:${pct}%"></i></span>
+    <span class="num">${n}件</span></span>
+  <span class="voice"><span class="qq">“</span>${voice}</span></div>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.120-1</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">アンケートの自由記述が、<span class="hl">AIで論点別にまとまる</span></div>
+    <img class="title-chara" src="${A}chara/chara_confident.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svgw(P.bulb,2.2)}</div>
+    <div class="txt">論点ごとに<b>件数と代表の声つき</b>でまとまります。<br>多い順に並ぶので、どこから手を付けるかが決まります</div>
+  </div>
+
+  <div class="stage">
+    <div class="left">
+      <div class="pile">
+        <div class="ph3"><span class="mk">${svgw(P.x,3.2)}</span>これまで<span class="cnt2">自由記述 100件</span></div>
+        <div class="cmt"><span class="qm">1</span>金額のわりに機能が少ないと感じました</div>
+        <div class="cmt"><span class="qm">2</span>問い合わせの返事が早くて助かりました</div>
+        <div class="cmt"><span class="qm">3</span>スマホから使えるようにしてほしい</div>
+        <div class="cmt"><span class="qm">4</span>他社と比べて割高な印象です</div>
+        <div class="cmt"><span class="qm">5</span>担当の方の説明が丁寧でした</div>
+      </div>
+      <div class="sc">${sc}<img class="chara" src="${A}chara/chara_guts.png" alt=""></div>
+    </div>
+
+    <div class="right">
+      <div class="sum">
+        <div class="sh"><span class="ai3">${AI}</span><span class="st2">満足度アンケート 論点別サマリー</span>
+          <span class="sp2">自由記述 100件</span></div>
+        <div class="sb">
+          ${tp('a','価格',86,43,'金額のわりに機能が少ないと感じました。他社と比べて割高な印象です。')}
+          ${tp('b','機能要望',58,29,'スマホから使えるようにしてほしい。検索の条件をもっと細かく指定したいです。')}
+          ${tp('c','接客',36,18,'問い合わせの返事が早くて助かりました。担当の方の説明が丁寧でした。')}
+          ${tp('','導入のしやすさ',20,10,'初期設定に思ったより時間がかかりました。手順書があると助かります。')}
+        </div>
+      </div>
+      <div class="metric">
+        <span><span class="mv">半日</span><br><span class="ml">100件を読んで分類</span></span>
+        <span class="ar">${svgw(P.arrow,3)}</span>
+        <span><span class="mv to">5分</span><br><span class="ml">多い順に読むだけ</span></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="next">
+    <span class="na">${svgw(P.arrow,3)}</span>
+    <span>件数が出るので、<b>直す順番を数字で決められます</b>。<b>作り方は2枚目へ</b></span>
+  </div>
+  <div class="src">出典：Microsoft Learn「Power Automate でプロンプトを使用する」「Microsoft Formsコネクタ」／回答の内容は架空の例</div>
+`;
+</script>
+</body>
+</html>

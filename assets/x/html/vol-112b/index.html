@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.112-2 Teams会議を自動で立てる作り方</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/tips-base.css">
+<style>
+  .scene{height:100px;}
+  .cardb{gap:5px;padding:7px 9px;}
+  .fld{display:flex;flex-direction:column;gap:2px;}
+  .fld .fl{font-size:14px;font-weight:900;color:#475569;}
+  .fld .fi{display:flex;align-items:center;gap:6px;background:#fff;border:2px solid #B9C7DC;border-radius:7px;
+    padding:5px 9px;font-size:15.5px;font-weight:900;color:var(--navy);line-height:1.2;}
+  .fld .fi.hot{border-color:var(--orange);background:#FFF7ED;}
+  .fld .fi.sel{border-color:var(--blue);background:#F4F8FF;}
+  .fld .fi .cv{margin-left:auto;color:#64748B;font-size:14px;}
+  .trg{display:flex;align-items:center;gap:8px;border-radius:8px;padding:5px 9px;font-size:15.5px;font-weight:900;
+    line-height:1.2;background:#F7F9FC;border:1.6px solid #E2EAF5;color:var(--navy);}
+  .trg img{width:24px;height:24px;object-fit:contain;flex:0 0 auto;}
+  .trg.on{background:#EAF1FE;border-color:var(--blue);color:var(--blue-dark);}
+  .note{display:flex;align-items:center;gap:7px;background:#FFF7ED;border:1.6px solid #FDBA74;border-radius:8px;
+    padding:4px 8px;font-size:14.5px;font-weight:900;color:#9A3412;line-height:1.24;}
+  .att2{display:flex;flex-wrap:wrap;gap:5px;background:#fff;border:2px solid var(--orange);border-radius:7px;padding:5px 8px;}
+  .att2 span{background:#FFF7ED;border:1.5px solid #FDBA74;border-radius:6px;padding:2px 8px;font-size:14.5px;
+    font-weight:900;color:#9A3412;}
+  .att2 .semi{background:none;border:none;color:#94A3B8;padding:2px 0;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={warn:'<path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>',
+  bulb:'<path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/>'};
+
+/* ① きっかけは差し替えできる（388x100） */
+const s1=`<svg viewBox="0 0 388 100" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs><filter id="k1" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#1B2A44" flood-opacity=".2"/></filter></defs>
+  <rect x="0" y="0" width="388" height="100" fill="#EDF3FA"/>
+  ${[['承認が完了',10],['フォーム送信',38],['毎週この曜日',66]].map(([t,y])=>
+    `<g filter="url(#k1)"><rect x="12" y="${y}" width="130" height="24" rx="12" fill="#fff" stroke="#94A3B8" stroke-width="2"/>
+      <text x="77" y="${y+17}" font-family="Noto Sans JP" font-size="14" font-weight="900" fill="#475569" text-anchor="middle">${t}</text></g>`).join('')}
+  <path d="M148 22 C 176 22, 186 46, 208 50" stroke="#94A3B8" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M148 50 H 208" stroke="#2563EB" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <path d="M148 78 C 176 78, 186 54, 208 50" stroke="#94A3B8" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <g filter="url(#k1)"><rect x="214" y="24" width="162" height="52" rx="10" fill="#EAEBFA" stroke="#5B5FC7" stroke-width="2.6"/>
+    <text x="295" y="46" font-family="Noto Sans JP" font-size="14.5" font-weight="900" fill="#3B3F9E" text-anchor="middle">Teams 会議の作成</text>
+    <text x="295" y="65" font-family="Noto Sans JP" font-size="13" font-weight="900" fill="#5B5FC7" text-anchor="middle">ここは差し替えない</text></g>
+</svg>`;
+
+/* ② タイムゾーンを入れないと9時間ずれる（388x100） */
+const s2=`<svg viewBox="0 0 388 100" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs><filter id="k2" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#1B2A44" flood-opacity=".2"/></filter></defs>
+  <rect x="0" y="0" width="388" height="100" fill="#EDF3FA"/>
+  <g filter="url(#k2)"><rect x="12" y="14" width="164" height="32" rx="8" fill="#FFECEC" stroke="#DC2626" stroke-width="2.2"/>
+    <text x="94" y="35" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#991B1B" text-anchor="middle">タイム ゾーン なし</text></g>
+  <path d="M184 30 H 210" stroke="#DC2626" stroke-width="4" stroke-linecap="round"/>
+  <g filter="url(#k2)"><rect x="218" y="12" width="158" height="36" rx="8" fill="#fff" stroke="#DC2626" stroke-width="2.4"/>
+    <text x="297" y="35" font-family="Roboto Mono" font-size="16" font-weight="700" fill="#B91C1C" text-anchor="middle">05:00 に立つ</text></g>
+  <g filter="url(#k2)"><rect x="12" y="58" width="164" height="32" rx="8" fill="#EAF9F1" stroke="#16A34A" stroke-width="2.4"/>
+    <text x="94" y="79" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#0B5136" text-anchor="middle">(UTC+09:00) 東京</text></g>
+  <path d="M184 74 H 210" stroke="#16A34A" stroke-width="4" stroke-linecap="round"/>
+  <g filter="url(#k2)"><rect x="218" y="56" width="158" height="36" rx="8" fill="#fff" stroke="#16A34A" stroke-width="2.6"/>
+    <text x="297" y="79" font-family="Roboto Mono" font-size="16" font-weight="700" fill="#0B5136" text-anchor="middle">14:00 に立つ</text></g>
+</svg>`;
+
+/* ③ 出席者はデータから（388x100） */
+const s3=`<svg viewBox="0 0 388 100" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs><filter id="k3" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#0B5136" flood-opacity=".22"/></filter></defs>
+  <rect x="0" y="0" width="388" height="100" fill="#DCF3E7"/>
+  <g filter="url(#k3)"><rect x="12" y="16" width="140" height="68" rx="9" fill="#fff" stroke="#16A34A" stroke-width="2.2"/>
+    <rect x="12" y="16" width="140" height="18" rx="9" fill="#EAF9F1"/><rect x="12" y="26" width="140" height="8" fill="#EAF9F1"/>
+    <text x="24" y="29" font-family="Noto Sans JP" font-size="12" font-weight="900" fill="#0B5136">申請の台帳</text>
+    <text x="24" y="50" font-family="Noto Sans JP" font-size="12.5" font-weight="700" fill="#334155">申請者</text>
+    <text x="24" y="70" font-family="Noto Sans JP" font-size="12.5" font-weight="700" fill="#334155">上長</text>
+    <rect x="82" y="41" width="58" height="11" rx="5" fill="#D6EFE1"/><rect x="82" y="61" width="58" height="11" rx="5" fill="#D6EFE1"/></g>
+  <path d="M160 50 H 192" stroke="#16A34A" stroke-width="4.4" stroke-linecap="round"/>
+  <path d="M186 44 l8 6 l-8 6" fill="none" stroke="#16A34A" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <g filter="url(#k3)"><rect x="200" y="26" width="176" height="48" rx="9" fill="#fff" stroke="#EA580C" stroke-width="2.4"/>
+    <text x="288" y="46" font-family="Noto Sans JP" font-size="13" font-weight="900" fill="#9A3412" text-anchor="middle">必須出席者</text>
+    <text x="288" y="64" font-family="Roboto Mono" font-size="12.5" font-weight="700" fill="#9A3412" text-anchor="middle">a@… ; b@…</text></g>
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.112-2</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">作り方は<span class="hl">3ステップ</span>（きっかけ → 3種類入れる → 出席者）</div>
+    <img class="title-chara" src="${A}chara/chara_point.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svgw(P.bulb,2.2)}</div>
+    <div class="txt">きっかけを差し替えても、<b>会議を立てる部分はそのまま</b>使えます。作り直しは要りません</div>
+  </div>
+
+  <div class="stage">
+    <div class="col neutral">
+      <div class="ch2"><span class="n">1</span>きっかけを決める</div>
+      <div class="scene">${s1}</div>
+      <div class="body"><div class="card">
+        <div class="cardh"><img src="${A}icons/pa_logo.png" alt="">トリガーはどれでもいい</div>
+        <div class="cardb">
+          <div class="trg on"><img src="${A}icons/pa_logo.png" alt="">承認が完了したとき</div>
+          <div class="trg"><img src="${A}icons/pa_sharepoint.png" alt="">フォームが送信されたとき</div>
+          <div class="trg"><img src="${A}icons/pa_schedule.png" alt="">毎週この曜日になったとき</div>
+        </div>
+      </div></div>
+      <div class="cap">きっかけを差し替えても、<b>そのあとは使い回せます</b></div>
+    </div>
+
+    <div class="col info">
+      <div class="ch2"><span class="n">2</span>3種類を入れる</div>
+      <div class="scene">${s2}</div>
+      <div class="body"><div class="card">
+        <div class="cardh"><img src="${A}icons/pa_teams.png" alt="">Teams 会議の作成</div>
+        <div class="cardb">
+          <div class="fld"><span class="fl">件名</span><span class="fi hot"><span class="dyn">申請の件名</span></span></div>
+          <div class="fld"><span class="fl">開始時刻 / 終了時刻</span><span class="fi hot"><span class="dyn">希望日 14:00 / 15:00</span></span></div>
+          <div class="fld"><span class="fl">タイム ゾーン</span>
+            <span class="fi sel">(UTC+09:00) 大阪、札幌、東京<span class="cv">▾</span></span></div>
+        </div>
+      </div></div>
+      <div class="cap">タイム ゾーンを入れ忘れると<b>UTC扱いで9時間ずれます</b></div>
+    </div>
+
+    <div class="col good">
+      <div class="ch2"><span class="n">3</span>出席者を渡す</div>
+      <div class="scene">${s3}</div>
+      <div class="body"><div class="card">
+        <div class="cardh">必須出席者</div>
+        <div class="cardb">
+          <div class="att2"><span>申請者のメールアドレス</span><span class="semi">;</span><span>上長のメールアドレス</span></div>
+          <div class="fld"><span class="fl">カレンダー ID</span><span class="fi">自分の予定表</span></div>
+          <div class="note">複数人はセミコロン区切りです</div>
+        </div>
+      </div></div>
+      <div class="cap">担当が変わっても<b>フローは触りません</b>。台帳を直すだけ</div>
+    </div>
+  </div>
+
+  <div class="warnbar">
+    <span class="na">${svgw(P.warn,2.4)}</span>
+    <span class="ws"><span>タイム ゾーン忘れで9時間ずれる</span><span>カレンダー IDを間違えると別の予定表に立つ</span>
+      <span>最初のテストは自分だけを出席者に</span></span>
+  </div>
+  <div class="src">出典：Microsoft Learn「Microsoft Teams コネクタ」（Teams 会議の作成）／件名・人名は架空</div>
+`;
+</script>
+</body>
+</html>
