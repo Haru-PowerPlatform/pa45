@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>コパスタ Vol.11-2 開発用の環境の作り方</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/cs-base.css">
+<style>
+  .body{gap:13px;}
+  .left{flex:1.45;min-height:0;display:flex;flex-direction:column;}
+  .right{flex:1;min-height:0;display:flex;flex-direction:column;gap:9px;}
+
+  .pane{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:1.5px solid var(--segline);
+    border-radius:10px;overflow:hidden;box-shadow:0 6px 14px rgba(0,0,0,.15);}
+  .pane .ph5{flex:0 0 auto;display:flex;align-items:center;gap:9px;padding:8px 12px;background:#F3F2F1;
+    border-bottom:1px solid #E1DFDD;font-size:15.5px;font-weight:700;color:#242424;}
+  .pane .pb5{flex:1;min-height:0;padding:8px 12px;display:flex;flex-direction:column;gap:5px;overflow:hidden;}
+  .fl2{font-size:13px;font-weight:700;color:#616161;margin-bottom:2px;}
+  .inp{border:1px solid #8A8886;border-bottom:2px solid #616161;border-radius:2px;padding:5px 9px;
+    font-size:14.5px;font-weight:700;color:#242424;background:#fff;}
+  .pills{display:flex;gap:6px;flex-wrap:wrap;}
+  .pills span{border:1.5px solid #C8C6C4;border-radius:999px;padding:4px 12px;font-size:13.5px;font-weight:700;
+    color:#424242;background:#fff;}
+  .pills span.on{background:var(--cs);border-color:var(--cs);color:#fff;}
+  .adv{border:1px solid #E1DFDD;border-radius:6px;background:#FAF9F8;}
+  .adv .at3{display:flex;align-items:center;gap:7px;padding:5px 10px;font-size:13.5px;font-weight:700;color:#242424;
+    border-bottom:1px solid #EDEBE9;}
+  .adv .at3 .cv2{color:var(--cs);font-size:12px;}
+  .adv .ar3{display:flex;align-items:center;gap:9px;padding:3px 10px;font-size:13.5px;font-weight:700;color:#242424;}
+  .adv .ar3 .k2{flex:1;}
+  .adv .ar3 .tg{flex:0 0 auto;width:34px;height:17px;border-radius:9px;background:#C8C6C4;position:relative;}
+  .adv .ar3 .tg::after{content:"";position:absolute;left:2px;top:2px;width:13px;height:13px;border-radius:50%;background:#fff;}
+  .adv .ar3 .tg.on{background:var(--cs);} .adv .ar3 .tg.on::after{left:19px;}
+  .adv .ar3.gray{color:#A19F9D;}
+  .adv .ar3 .yn{border:1.5px solid var(--cs);border-radius:999px;padding:2px 12px;font-size:13px;font-weight:900;
+    color:#fff;background:var(--cs);}
+  .btnrow{display:flex;justify-content:flex-end;gap:8px;margin-top:auto;}
+  .btnrow span{border-radius:3px;padding:6px 18px;font-size:14px;font-weight:700;}
+  .btnrow .pri{background:var(--cs);color:#fff;} .btnrow .sec{background:#fff;border:1px solid #8A8886;color:#242424;}
+
+  .stp{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;gap:5px;background:#fff;
+    border:2px solid var(--cs-line);border-left:6px solid var(--cs);border-radius:11px;padding:8px 13px;
+    box-shadow:0 3px 9px rgba(59,42,102,.13);}
+  .stp .sh3{display:flex;align-items:center;gap:9px;}
+  .stp .no5{flex:0 0 auto;width:26px;height:26px;border-radius:8px;background:var(--cs);color:#fff;font-size:15px;
+    font-weight:900;display:flex;align-items:center;justify-content:center;}
+  .stp .sn{flex:1;font-size:18px;font-weight:900;color:var(--navy);line-height:1.2;}
+  .stp .why2{display:flex;gap:8px;align-items:flex-start;background:#FFF7ED;border:1.4px solid #FDBA74;
+    border-radius:7px;padding:5px 9px;}
+  .stp .why2 .wb2{flex:0 0 auto;background:var(--orange);color:#fff;border-radius:5px;padding:1px 8px;
+    font-size:12.5px;font-weight:900;}
+  .stp .why2 .wt2{flex:1;font-size:14px;font-weight:700;color:#9A3412;line-height:1.34;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">コパスタ Vol.11</div>
+    <div class="part-pill">後編 <b>(2/2)</b></div>
+    <div class="title-text">「新しい環境」で、<br>決めるのは3つだけ<span class="q">。</span></div>
+    <img class="title-chara" src="${A}chara/chara_point_g.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">結論</div>
+    <div class="txt">表に出ているのは<b>名前・地域・種類の3つ</b>だけ。<br>
+      Dataverse は<em>「既定の設定を変更する」を開くと出てきます</em>。</div>
+  </div>
+
+  <div class="body">
+    <div class="left">
+      <div class="pane seg">
+        <div class="ph5">新しい環境</div>
+        <div class="pb5">
+          <div><div class="fl2">名前 *</div><div class="inp">CopilotStudio45 開発</div></div>
+          <div><div class="fl2">マクロ地域の地域 *</div><div class="inp">アジア太平洋</div></div>
+          <div><div class="fl2">種類 *</div>
+            <div class="pills"><span>試用版</span><span class="on">開発者</span><span>実稼働</span>
+              <span>サンドボックス</span><span>Teams</span></div></div>
+          <div class="adv">
+            <div class="at3"><span class="cv2">▾</span>既定の設定を変更する</div>
+            <div class="ar3"><span class="k2">マネージド環境として有効にする</span><span class="tg"></span></div>
+            <div class="ar3"><span class="k2">この環境用のデータベースを追加しますか？（Dataverse）</span><span class="yn">はい</span></div>
+            <div class="ar3 gray"><span class="k2">Azure の従量課金プランを有効にする</span><span class="tg"></span></div>
+          </div>
+          <div class="btnrow"><span class="sec">キャンセル</span><span class="pri">次へ</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="right">
+      <div class="stp">
+        <div class="sh3"><span class="no5">1</span><span class="sn">種類は「開発者」</span></div>
+        <div class="why2"><span class="wb2">なぜ</span>
+          <span class="wt2">自分だけの練習場になり、本番に影響しない。追加費用もかからない</span></div>
+      </div>
+      <div class="stp">
+        <div class="sh3"><span class="no5">2</span><span class="sn">Dataverse は「はい」</span></div>
+        <div class="why2"><span class="wb2">なぜ</span>
+          <span class="wt2">エージェントの入れ物（ソリューション）が使えるようになる。あとから足すのは手間</span></div>
+      </div>
+      <div class="stp">
+        <div class="sh3"><span class="no5">3</span><span class="sn">名前に用途を書く</span></div>
+        <div class="why2"><span class="wb2">なぜ</span>
+          <span class="wt2">一覧で並んだときに、試作用か本番かがひと目で分かる</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="darkband">
+    <div class="nf">
+      <div class="label">実機で分かったこと</div>
+      <div class="grid">
+        <div class="fc"><div class="ft">① 表に出るのは3つ</div><div class="fd">名前・地域・種類。ほかは折りたたまれている</div></div>
+        <div class="fc"><div class="ft">② 従量課金はグレー</div><div class="fd">開発者を選ぶと、Azure従量課金は押せない</div></div>
+        <div class="fc"><div class="ft">③ はいで2ページ目</div><div class="fd">Dataverse を「はい」にすると、次の画面に進む</div></div>
+      </div>
+    </div>
+    <div class="note">
+      <div class="label">⚠ 作ったあと</div>
+      <div class="txt">環境の詳細で<b>セキュリティ グループ</b>が「割り当てられていません」<br>
+        になっていないか、あわせて確認します。</div>
+    </div>
+    <div class="src">出典：Power Platform 管理センターでの実機／画面は説明用の再現です</div>
+  </div>
+  <img class="band-chara" src="${A}chara/chara_laptop_g.png" alt="">
+`;
+</script>
+</body>
+</html>

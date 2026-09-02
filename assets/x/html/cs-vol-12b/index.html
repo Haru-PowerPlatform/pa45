@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>コパスタ Vol.12-2 データポリシーの作り方</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/cs-base.css">
+<style>
+  .body{gap:13px;}
+  .left{flex:1.5;min-height:0;display:flex;flex-direction:column;}
+  .right{flex:1;min-height:0;display:flex;flex-direction:column;gap:9px;}
+
+  .wiz{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:1.5px solid var(--segline);
+    border-radius:10px;overflow:hidden;box-shadow:0 6px 14px rgba(0,0,0,.15);}
+  .wiz .wz{flex:0 0 auto;display:flex;align-items:center;gap:0;padding:7px 12px;background:#F3F2F1;
+    border-bottom:1px solid #E1DFDD;}
+  .wiz .wz span{font-size:12.5px;font-weight:700;color:#A19F9D;padding:0 9px;}
+  .wiz .wz span.on{color:var(--cs);border-bottom:2.5px solid var(--cs);padding-bottom:5px;margin-bottom:-7px;}
+  .wiz .wb2{flex:1;min-height:0;padding:9px 12px;display:flex;flex-direction:column;gap:8px;}
+  .boxes{display:flex;gap:8px;}
+  .bx{flex:1;border:1.5px solid #E1DFDD;border-radius:7px;padding:6px 9px;display:flex;flex-direction:column;gap:2px;}
+  .bx .bn{font-size:12.5px;font-weight:700;color:#616161;}
+  .bx .bc{font-family:'Roboto Mono',monospace;font-size:20px;font-weight:700;color:#242424;line-height:1.1;}
+  .bx.blk{border-color:#D13438;background:#FDE7E9;} .bx.blk .bn{color:#A4262C;} .bx.blk .bc{color:#D13438;}
+  .search2{display:flex;align-items:center;gap:8px;border:1px solid #8A8886;border-radius:2px;padding:5px 10px;
+    font-size:14px;font-weight:700;color:#242424;}
+  .search2 .mg2{flex:0 0 auto;width:16px;height:16px;border-radius:50%;border:2px solid #616161;}
+  .search2 .zz{margin-left:auto;font-size:12px;font-weight:900;color:#A4262C;font-family:"Noto Sans JP",sans-serif;}
+  .clist{flex:1;min-height:0;display:flex;flex-direction:column;border:1px solid #E1DFDD;border-radius:6px;overflow:hidden;}
+  .clist .ch3{display:flex;align-items:center;gap:9px;padding:5px 10px;background:#FAF9F8;border-bottom:1px solid #E1DFDD;
+    font-size:12.5px;font-weight:700;color:#616161;}
+  .clist .cr2{flex:1;min-height:0;display:flex;align-items:center;gap:9px;padding:4px 10px;border-bottom:1px solid #EDEBE9;
+    font-size:14px;font-weight:700;color:#242424;}
+  .clist .cr2:last-child{border-bottom:none;}
+  .clist .nm5{flex:1.5;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
+  .clist .gr{flex:1;font-size:13px;color:#616161;}
+  .clist .dots2{flex:0 0 auto;font-size:16px;font-weight:900;color:#616161;letter-spacing:1px;}
+  .clist .ico{flex:0 0 auto;width:20px;height:20px;border-radius:5px;object-fit:contain;}
+  .mmwrap{flex:0 0 auto;display:flex;justify-content:flex-end;padding-right:8px;}
+  .mm{background:#fff;border:1px solid #C8C6C4;border-radius:4px;box-shadow:0 6px 14px rgba(0,0,0,.22);min-width:168px;}
+  .mi2{padding:5px 12px;font-size:13.5px;font-weight:700;color:#242424;border-bottom:1px solid #F3F2F1;}
+  .mi2:last-child{border-bottom:none;}
+  .mi2.on{background:#FDE7E9;color:#A4262C;font-weight:900;}
+
+  .stp{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;gap:5px;background:#fff;
+    border:2px solid var(--cs-line);border-left:6px solid var(--cs);border-radius:11px;padding:8px 13px;
+    box-shadow:0 3px 9px rgba(59,42,102,.13);}
+  .stp .sh3{display:flex;align-items:center;gap:9px;}
+  .stp .no5{flex:0 0 auto;width:26px;height:26px;border-radius:8px;background:var(--cs);color:#fff;font-size:15px;
+    font-weight:900;display:flex;align-items:center;justify-content:center;}
+  .stp .sn{flex:1;font-size:17.5px;font-weight:900;color:var(--navy);line-height:1.2;}
+  .stp .sd2{font-size:14.5px;font-weight:700;color:#475569;line-height:1.36;}
+  .stp .sd2 b{color:var(--cs-dark);}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">コパスタ Vol.12</div>
+    <div class="part-pill">後編 <b>(2/2)</b></div>
+    <div class="title-text">データポリシーは、<br>コネクタを箱に振り分けるだけ<span class="q">。</span></div>
+    <img class="title-chara" src="${A}chara/chara_point_g.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">結論</div>
+    <div class="txt">やることは<b>コネクタを「ブロック済み」に移す</b>こと。<br>
+      <em>「認証」で探しても0件</em>なので、<b>Studio</b> で探します。</div>
+  </div>
+
+  <div class="body">
+    <div class="left">
+      <div class="wiz seg">
+        <div class="wz"><span class="on">プレフィックス</span><span>スコープ</span><span>接続</span>
+          <span>カスタム</span><span>確認</span></div>
+        <div class="wb2">
+          <div class="boxes">
+            <div class="bx"><span class="bn">ビジネス</span><span class="bc">0</span></div>
+            <div class="bx"><span class="bn">非ビジネス</span><span class="bc">1710</span></div>
+            <div class="bx blk"><span class="bn">ブロック済み</span><span class="bc">1</span></div>
+          </div>
+          <div class="search2"><span class="mg2"></span>Studio
+            <span class="zz">※「認証」で探すと0件</span></div>
+          <div class="clist">
+            <div class="ch3"><span class="nm5">コネクタ</span><span class="gr">グループ</span><span style="width:22px"></span></div>
+            <div class="cr2"><img class="ico" src="${A}icons/cs_logo.png" alt="">
+              <span class="nm5">Microsoft Copilot Studio</span><span class="gr">非ビジネス</span>
+              <span class="dots2">⋮</span></div>
+            <div class="cr2"><img class="ico" src="${A}icons/cs_logo.png" alt="">
+              <span class="nm5">Copilot Studio（プレビュー）</span><span class="gr">非ビジネス</span>
+              <span class="dots2">⋮</span></div>
+          </div>
+          <div class="mmwrap">
+            <div class="mm"><div class="mi2">ビジネスへ移動</div><div class="mi2">非ビジネスへ移動</div>
+              <div class="mi2 on">ブロック</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="right">
+      <div class="stp">
+        <div class="sh3"><span class="no5">1</span><span class="sn">場所をたどる</span></div>
+        <div class="sd2">管理センター ＞ <b>セキュリティ ＞ データとプライバシー ＞ データポリシー</b></div>
+      </div>
+      <div class="stp">
+        <div class="sh3"><span class="no5">2</span><span class="sn">Studio で検索して移す</span></div>
+        <div class="sd2">出てきた行の <b>⋮ → ブロック</b> を選び、「ブロック済み」の箱に入れる</div>
+      </div>
+      <div class="stp">
+        <div class="sh3"><span class="no5">3</span><span class="sn">効かせる範囲を決める</span></div>
+        <div class="sd2">スコープの初期値は<b>すべての環境</b>。開発だけに効かせたいなら、ここで環境を選ぶ</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="darkband">
+    <div class="nf">
+      <div class="label">実機で分かったこと</div>
+      <div class="grid">
+        <div class="fc"><div class="ft">① 最初は0本</div><div class="fd">既定ではポリシーが1本もない。作らないと何も効かない</div></div>
+        <div class="fc"><div class="ft">② 「認証」では出ない</div><div class="fd">検索語は Studio。設定名ではなくコネクタ名で探す</div></div>
+        <div class="fc"><div class="ft">③ 適用対象の列を見る</div><div class="fd">一覧に戻ったら、どの環境に効いているかを確かめる</div></div>
+      </div>
+    </div>
+    <div class="note">
+      <div class="label">⚠ ブロックできないもの</div>
+      <div class="txt"><b>SharePoint や OneDrive はブロック不可</b>です。<br>
+        違反の明細は、エージェントのチャネル画面から見ます。</div>
+    </div>
+    <div class="src">出典：Power Platform 管理センターでの実機／画面は説明用の再現です</div>
+  </div>
+  <img class="band-chara" src="${A}chara/chara_laptop_g.png" alt="">
+`;
+</script>
+</body>
+</html>

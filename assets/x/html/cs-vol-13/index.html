@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>コパスタ Vol.13-1 AIが読んでいるのは「説明」のほう</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/cs-base.css">
+<style>
+  .body{gap:13px;}
+  .left{flex:1.08;min-height:0;display:flex;flex-direction:column;gap:9px;}
+  .right{flex:1;min-height:0;display:flex;flex-direction:column;gap:8px;}
+
+  .desc{flex:0 0 auto;background:#fff;border:1.5px solid var(--segline);border-radius:10px;overflow:hidden;
+    box-shadow:0 5px 12px rgba(0,0,0,.14);}
+  .desc .dh3{display:flex;align-items:center;gap:8px;padding:6px 11px;background:#F3F2F1;
+    border-bottom:1px solid #E1DFDD;font-size:13.5px;font-weight:700;color:#242424;}
+  .desc .db3{padding:8px 11px;display:flex;flex-direction:column;gap:6px;}
+  .desc .fl3{font-size:12.5px;font-weight:700;color:#616161;}
+  .desc .tx3{border:1px solid #8A8886;border-radius:2px;padding:6px 9px;font-size:14px;font-weight:700;
+    color:#242424;line-height:1.44;}
+  .desc .tx3.hot{border:2px solid var(--cs);background:#F7F3FF;}
+  .desc .rd{font-size:12.5px;font-weight:900;color:var(--cs-dark);}
+
+  .sc3{flex:1;min-height:0;border-radius:12px;overflow:hidden;position:relative;background:var(--cs-bg);}
+  .sc3 svg{position:absolute;inset:0;width:100%;height:100%;}
+
+  .tbl4{flex:1;min-height:0;display:flex;flex-direction:column;gap:5px;}
+  .th5{flex:0 0 auto;display:flex;align-items:center;gap:9px;background:linear-gradient(90deg,#5B21B6,#7C3AED);
+    color:#fff;border-radius:9px;padding:6px 12px;font-size:15.5px;font-weight:900;}
+  .th5 .a1{flex:1.05;} .th5 .a2{flex:1.35;}
+  .tr4{flex:1;min-height:0;display:flex;align-items:center;gap:9px;background:#fff;border:1.8px solid var(--cs-line);
+    border-radius:9px;padding:5px 12px;box-shadow:0 2px 5px rgba(59,42,102,.09);}
+  .tr4 .a1{flex:1.05;font-size:16.5px;font-weight:900;color:var(--navy);line-height:1.2;}
+  .tr4 .a2{flex:1.35;font-size:14.5px;font-weight:700;color:#475569;line-height:1.32;}
+  .warn2{flex:0 0 auto;display:flex;align-items:center;gap:10px;background:#FFF7ED;border:2px solid #FDBA74;
+    border-radius:10px;padding:8px 12px;}
+  .warn2 .wi{flex:0 0 auto;width:26px;height:26px;border-radius:50%;background:var(--orange);color:#fff;
+    font-size:16px;font-weight:900;display:flex;align-items:center;justify-content:center;}
+  .warn2 .wt3{flex:1;font-size:16px;font-weight:900;color:#9A3412;line-height:1.28;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+
+/* オーケストレーターが説明を読んで道具を選ぶ */
+const pick=`<svg viewBox="0 0 639 203" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="og" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7C3AED"/><stop offset=".55" stop-color="#C026D3"/><stop offset="1" stop-color="#EC4899"/></linearGradient>
+    <filter id="pf" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2.4" stdDeviation="2.2" flood-color="#3B2A66" flood-opacity=".26"/></filter>
+  </defs>
+  <rect x="0" y="0" width="639" height="203" fill="#F5F3FF"/>
+  <text x="16" y="24" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#5B21B6">道具の選び方</text>
+  <g filter="url(#pf)"><rect x="14" y="34" width="190" height="34" rx="17" fill="#fff" stroke="#B79CF0" stroke-width="2.2"/>
+    <text x="109" y="56" font-family="Noto Sans JP" font-size="14" font-weight="900" fill="#5B21B6" text-anchor="middle">ことばで頼む</text></g>
+  <path d="M109 72 v18" stroke="#7C3AED" stroke-width="4" stroke-linecap="round"/>
+  <path d="M103 84 l6 8 l6 -8" fill="none" stroke="#7C3AED" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <g filter="url(#pf)"><rect x="14" y="98" width="190" height="48" rx="12" fill="url(#og)"/>
+    <text x="109" y="119" font-family="Noto Sans JP" font-size="13.5" font-weight="900" fill="#fff" text-anchor="middle">オーケストレーター</text>
+    <text x="109" y="137" font-family="Noto Sans JP" font-size="12.5" font-weight="700" fill="#F3E8FF" text-anchor="middle">名前と説明を読む</text></g>
+  <path d="M212 108 C 248 96, 262 88, 286 84" stroke="#7C3AED" stroke-width="3.6" fill="none" stroke-linecap="round"/>
+  <path d="M212 122 H 286" stroke="#16A34A" stroke-width="4.4" stroke-linecap="round"/>
+  <path d="M212 136 C 248 148, 262 156, 286 160" stroke="#7C3AED" stroke-width="3.6" fill="none" stroke-linecap="round"/>
+  ${[['台帳に記録する','#B79CF0','#fff',68],['メールを送る','#16A34A','#EAF9F1',106],['担当者に通知する','#B79CF0','#fff',144]].map(([t,c,bg,y])=>
+    `<g filter="url(#pf)"><rect x="292" y="${y}" width="238" height="32" rx="8" fill="${bg}" stroke="${c}" stroke-width="2.2"/>
+      <text x="411" y="${+y+21}" font-family="Noto Sans JP" font-size="14" font-weight="900" fill="${c==='#16A34A'?'#0B5136':'#5B21B6'}" text-anchor="middle">${t}</text></g>`).join('')}
+  <text x="411" y="192" font-family="Noto Sans JP" font-size="14.5" font-weight="900" fill="#0B5136" text-anchor="middle">説明が合った1つが選ばれる</text>
+  <text x="109" y="178" font-family="Noto Sans JP" font-size="14" font-weight="700" fill="#5B21B6" text-anchor="middle">＝ 名前だけでは判断していない</text>
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">コパスタ Vol.13</div>
+    <div class="part-pill">前編 <b>(1/2)</b></div>
+    <div class="title-text">道具を足しても呼ばれない。<br>AIが読むのは「説明」のほう<span class="q">。</span></div>
+    <img class="title-chara" src="${A}chara/chara_confident_g.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">結論</div>
+    <div class="txt">オーケストレーターは<b>名前と説明を読んで</b>道具を選びます。<br>
+      説明があいまいだと、<em>持たせていても一度も呼ばれません</em>。</div>
+  </div>
+
+  <div class="body">
+    <div class="left">
+      <div class="desc seg">
+        <div class="dh3">ツールの設定</div>
+        <div class="db3">
+          <div><div class="fl3">名前</div><div class="tx3">問い合わせを記録する</div></div>
+          <div><div class="fl3">説明</div>
+            <div class="tx3 hot">社内からの問い合わせ内容と困りごとの種類を、問い合わせ台帳に1行追加するときに使う。</div>
+            <div class="rd">← AIはここを読んで、使うかどうかを決める</div></div>
+        </div>
+      </div>
+      <div class="sc3">${pick}</div>
+    </div>
+
+    <div class="right">
+      <div class="th5"><span class="a1">説明を書く欄</span><span class="a2">書かないとどうなるか</span></div>
+      <div class="tbl4">
+        <div class="tr4"><span class="a1">ツール</span>
+          <span class="a2">道具は並んでいるのに、いつまでも選ばれない</span></div>
+        <div class="tr4"><span class="a1">接続された<br>エージェント</span>
+          <span class="a2">取り次ぎ先があるのに、受付AIが自分で答えてしまう</span></div>
+        <div class="tr4"><span class="a1">ナレッジ</span>
+          <span class="a2">資料を入れても検索されず、一般論で返ってくる</span></div>
+        <div class="tr4"><span class="a1">フローの入力</span>
+          <span class="a2">何を入れる欄か分からず、見当ちがいの値が入る</span></div>
+      </div>
+      <div class="warn2"><span class="wi">!</span>
+        <span class="wt3">あいまいな説明・似た説明が2つあるのも、選ばれない原因</span></div>
+    </div>
+  </div>
+
+  <div class="darkband">
+    <div class="nf">
+      <div class="label">説明の書き方（そのまま使える型）</div>
+      <div class="grid">
+        <div class="fc"><div class="ft">① いつ使うか</div><div class="fd">「〜と聞かれたとき」「〜を頼まれたとき」から書き出す</div></div>
+        <div class="fc"><div class="ft">② 何をするか</div><div class="fd">どこに、何を、どう書くのか。動詞で言い切る</div></div>
+        <div class="fc"><div class="ft">③ かぶらせない</div><div class="fd">似た道具が2つあるなら、違いが分かる言葉を入れる</div></div>
+      </div>
+    </div>
+    <div class="note">
+      <div class="label">⚠ それでも呼ばれないとき</div>
+      <div class="txt">説明を直しても動かないことがあります。<br>
+        実機で効いた直し方は<b>後編</b>で。</div>
+    </div>
+    <div class="src">出典：Microsoft Learn（新しいエクスペリエンス／ツール）＋PA45 Demo環境での実機／画面は説明用の再現です</div>
+  </div>
+  <img class="band-chara" src="${A}chara/chara_guts_g.png" alt="">
+`;
+</script>
+</body>
+</html>

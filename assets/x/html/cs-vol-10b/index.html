@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>コパスタ Vol.10-2 足りないと、回答は返るのに記録だけ残らない</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/cs-base.css">
+<style>
+  .body{flex-direction:column;gap:9px;}
+  .top{flex:0 0 auto;display:flex;flex-direction:column;gap:5px;border-radius:14px;padding:8px 14px 10px;
+    background:var(--cs-bg);border:2px solid var(--cs-line);box-shadow:0 5px 12px rgba(0,0,0,.11);}
+  .row3{display:flex;gap:10px;align-items:flex-start;}
+  .row3 .av6{flex:0 0 auto;width:28px;height:28px;border-radius:50%;background:#64748B;color:#fff;font-size:12.5px;
+    font-weight:900;display:flex;align-items:center;justify-content:center;}
+  .row3 .av6.bot{background:linear-gradient(120deg,#7C3AED,#C026D3 55%,#EC4899);}
+  .row3 .bd{flex:1;display:flex;flex-direction:column;gap:5px;}
+  .st3{display:flex;align-items:center;gap:8px;border-radius:8px;padding:5px 10px;font-size:15px;font-weight:900;}
+  .st3.ok{background:#EAF9F1;border:1.8px solid var(--green);color:var(--green-dark);}
+  .st3.ng{background:#FFECEC;border:1.8px solid var(--red);color:var(--red-dark);}
+  .st3 .mk4{flex:0 0 auto;width:20px;height:20px;border-radius:50%;color:#fff;font-size:12px;
+    display:flex;align-items:center;justify-content:center;}
+  .st3.ok .mk4{background:var(--green);} .st3.ng .mk4{background:var(--red);}
+
+  .low{flex:1;min-height:0;display:flex;gap:13px;}
+  .err{flex:1.25;min-height:0;display:flex;flex-direction:column;background:#1E293B;border-radius:12px;
+    overflow:hidden;box-shadow:0 6px 14px rgba(0,0,0,.24);}
+  .err .eh2{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:7px 12px;background:#0F172A;
+    color:#FCA5A5;font-size:14.5px;font-weight:900;}
+  .err .eb{flex:1;min-height:0;padding:7px 12px;font-family:'Roboto Mono',monospace;font-size:14px;
+    font-weight:700;color:#93C5FD;line-height:1.5;}
+  .err .k{color:#C4B5FD;} .err .s{color:#86EFAC;} .err .r{color:#FCA5A5;background:#3B1D1D;border-radius:4px;padding:0 4px;}
+
+  .adm{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:2px solid var(--cs-line);
+    border-radius:12px;overflow:hidden;box-shadow:0 5px 12px rgba(0,0,0,.13);}
+  .adm .ah2{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:7px 11px;background:#F3F2F1;
+    border-bottom:1px solid #E1DFDD;font-size:13.5px;font-weight:700;color:#242424;}
+  .adm .crumb{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+  .adm .crumb span{color:#616161;} .adm .crumb b{color:var(--cs-dark);}
+  .adm .ab{flex:1;min-height:0;padding:8px 11px;display:flex;flex-direction:column;gap:7px;}
+  .adm .meter{border:1.5px solid #E1DFDD;border-radius:8px;padding:7px 10px;display:flex;flex-direction:column;gap:5px;}
+  .adm .mn{font-size:14.5px;font-weight:700;color:#242424;}
+  .adm .mv2{display:flex;align-items:baseline;gap:8px;}
+  .adm .mv2 .big{font-family:'Roboto Mono',monospace;font-size:26px;font-weight:700;color:var(--red);line-height:1;}
+  .adm .mv2 .u2{font-size:13.5px;font-weight:700;color:#616161;}
+  .adm .bar3{height:10px;border-radius:5px;background:#EDEBE9;overflow:hidden;}
+  .adm .bar3 i{display:block;height:100%;width:0;background:var(--red);}
+  .adm .hint{background:#FFF7ED;border:1.5px solid #FDBA74;border-radius:8px;padding:7px 10px;
+    font-size:14px;font-weight:900;color:#9A3412;line-height:1.36;font-family:"Noto Sans JP",sans-serif;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">コパスタ Vol.10</div>
+    <div class="part-pill">後編 <b>(2/2)</b></div>
+    <div class="title-text">足りないと、<br>回答は返るのに記録だけ残らない<span class="q">。</span></div>
+    <img class="title-chara" src="${A}chara/chara_think_g.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">結論</div>
+    <div class="txt">クレジットが尽きても<b>会話は止まりません</b>。<br>
+      落ちるのは<em>ツールの実行だけ</em>なので、気づかないまま抜けます。</div>
+  </div>
+
+  <div class="body">
+    <div class="top">
+      <div class="dlabel"><span class="dot"></span>Preview のチャット（実機）</div>
+      <div class="row3 seg"><span class="av6">山</span>
+        <span class="bd"><span class="bub me">問い合わせを1件、記録しておいて</span></span></div>
+      <div class="row3 seg"><span class="av6 bot">AI</span>
+        <span class="bd">
+          <span class="bub">承知しました。「システム」で記録しました。</span>
+          <span class="st3 ok"><span class="mk4">✓</span>回答は成功している</span>
+          <span class="st3 ng"><span class="mk4">✕</span>ツールだけ失敗（HTTP 403）</span>
+        </span></div>
+    </div>
+
+    <div class="low">
+      <div class="err">
+        <div class="eh2">Error details</div>
+        <div class="eb">{<br>
+          &nbsp;&nbsp;<span class="k">"error"</span>: <span class="s">"Flow returned HTTP 403"</span>,<br>
+          &nbsp;&nbsp;<span class="k">"code"</span>: <span class="s">"Http403"</span>,<br>
+          &nbsp;&nbsp;<span class="k">"reason"</span>: <span class="r">"InsufficientMcsCredits"</span>,<br>
+          &nbsp;&nbsp;<span class="k">"filledParameters"</span>: { … }<br>
+          }</div>
+      </div>
+
+      <div class="adm">
+        <div class="ah2 seg"><span class="crumb"><span>Power Platform 管理センター</span><span>＞</span>
+          <span>ライセンス</span><span>＞</span><span>容量</span><span>＞</span><b>アドオン</b></span></div>
+        <div class="ab seg">
+          <div class="meter">
+            <div class="mn">Microsoft Copilot Studio メッセージ</div>
+            <div class="mv2"><span class="big">0 / 0</span><span class="u2">割り当て済み / 購入済み</span></div>
+            <div class="bar3"><i></i></div>
+          </div>
+          <div class="hint">ここが 0 なら、ツールやフローの実行は通りません</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="darkband">
+    <div class="nf">
+      <div class="label">気づくための3つ</div>
+      <div class="grid">
+        <div class="fc"><div class="ft">① 会話を信じない</div><div class="fd">「登録しました」と返っていても、実際に書けたかは別</div></div>
+        <div class="fc"><div class="ft">② 記録先を見る</div><div class="fd">台帳やリストに1行増えているかを、その場で確かめる</div></div>
+        <div class="fc"><div class="ft">③ 残量を見る</div><div class="fd">403 が出たら、まずアドオンの容量を疑う</div></div>
+      </div>
+    </div>
+    <div class="note">
+      <div class="label">⚠ 見分けの目印</div>
+      <div class="txt">エラーの中の <b>InsufficientMcsCredits</b> が出ていれば、<br>
+        作りのミスではなく<b>残量切れ</b>です。</div>
+    </div>
+    <div class="src">出典：PA45 Demo環境での実機（エラー文言は実際に出たもの）／画面は説明用の再現です</div>
+  </div>
+  <img class="band-chara" src="${A}chara/chara_point_g.png" alt="">
+`;
+</script>
+</body>
+</html>

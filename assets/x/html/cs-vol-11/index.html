@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>コパスタ Vol.11-1 会社で使う前に、開発用の環境を分ける</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/cs-base.css">
+<style>
+  .panel{gap:8px;}
+  .rm{flex:0 0 116px;border-radius:11px;overflow:hidden;position:relative;}
+  .rm svg{position:absolute;inset:0;width:100%;height:100%;}
+  .envs{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:1.5px solid var(--segline);
+    border-radius:9px;overflow:hidden;box-shadow:0 4px 11px rgba(0,0,0,.13);}
+  .envs .eh3{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:6px 10px;background:#F3F2F1;
+    border-bottom:1px solid #E1DFDD;font-size:13px;font-weight:700;color:#616161;}
+  .envs .eh3 .c1{flex:1.5;} .envs .eh3 .c2{flex:1;} .envs .eh3 .c3{flex:.9;}
+  .envs .er2{flex:1;min-height:0;display:flex;align-items:center;gap:8px;padding:4px 10px;
+    border-bottom:1px solid #EDEBE9;font-size:14px;font-weight:700;color:#242424;}
+  .envs .er2:last-child{border-bottom:none;}
+  .envs .er2 .c1{flex:1.5;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
+  .envs .er2 .c2{flex:1;}
+  .envs .er2 .c3{flex:.9;font-size:13px;color:#616161;}
+  .envs .er2 .tagd{background:#EDEBE9;border-radius:4px;padding:1px 7px;font-size:12.5px;font-weight:700;color:#424242;}
+  .envs .er2.new{background:#F3EEFF;}
+  .envs .er2.new .c1{color:var(--cs-dark);font-weight:900;}
+  .envs .er2.new .tagd{background:var(--cs);color:#fff;}
+  .envs .er2.all .c1{color:var(--red-dark);}
+  .cap2{flex:0 0 auto;border-radius:9px;padding:7px 11px;font-size:15.5px;font-weight:900;line-height:1.34;}
+  .panel.p-ng .cap2{background:#FBD9D9;color:var(--red-dark);}
+  .panel.p-ok .cap2{background:#CFEFE0;color:var(--green-dark);}
+  .cap2 b{color:var(--cs-dark);}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+
+/* 部屋の絵：1部屋に全部同居 ／ 部屋を分ける */
+const room=(mode)=>{
+  const c = mode==='ng' ? {wall:'#FCE4E4',line:'#E88A8A',box:'#fff',bd:'#DC2626',ink:'#991B1B'}
+                        : {wall:'#DCF3E7',line:'#7FCEA9',box:'#fff',bd:'#16A34A',ink:'#0B5136'};
+  if(mode==='ng'){
+    return `<svg viewBox="0 0 583 116" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+      <rect x="0" y="0" width="583" height="116" fill="${c.wall}"/>
+      <rect x="14" y="14" width="384" height="88" rx="9" fill="${c.box}" stroke="${c.bd}" stroke-width="2.6"/>
+      <text x="206" y="32" font-family="Noto Sans JP" font-size="13.5" font-weight="900" fill="${c.ink}" text-anchor="middle">既定の環境（ひと部屋）</text>
+      ${[0,1,2,3,4,5,6,7].map(i=>`<g><rect x="${32+(i%4)*92}" y="${42+Math.floor(i/4)*30}" width="80" height="22" rx="5"
+        fill="#FFECEC" stroke="${c.line}" stroke-width="1.6"/>
+        <rect x="${41+(i%4)*92}" y="${50+Math.floor(i/4)*30}" width="${[34,26,40,30,36,24,32,38][i]}" height="5" rx="2.5" fill="#E8B4B4"/></g>`).join('')}
+      <text x="492" y="46" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="${c.ink}" text-anchor="middle">試作も本番も</text>
+      <text x="492" y="68" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="${c.ink}" text-anchor="middle">同じ部屋の中</text>
+    </svg>`;
+  }
+  return `<svg viewBox="0 0 583 116" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+    <rect x="0" y="0" width="583" height="116" fill="${c.wall}"/>
+    <rect x="14" y="14" width="248" height="88" rx="9" fill="${c.box}" stroke="#94A3B8" stroke-width="2.2"/>
+    <text x="138" y="32" font-family="Noto Sans JP" font-size="13.5" font-weight="900" fill="#475569" text-anchor="middle">本番（さわらない）</text>
+    ${[0,1,2,3].map(i=>`<rect x="${30+(i%2)*116}" y="${42+Math.floor(i/2)*30}" width="100" height="22" rx="5" fill="#EEF2F7" stroke="#CBD5E1" stroke-width="1.4"/>`).join('')}
+    <rect x="280" y="14" width="289" height="88" rx="9" fill="${c.box}" stroke="${c.bd}" stroke-width="2.8"/>
+    <text x="424" y="32" font-family="Noto Sans JP" font-size="13.5" font-weight="900" fill="${c.ink}" text-anchor="middle">開発（ここで試す）</text>
+    ${[0,1,2,3].map(i=>`<rect x="${294+(i%2)*134}" y="${42+Math.floor(i/2)*30}" width="118" height="22" rx="5" fill="#EAF9F1" stroke="${c.line}" stroke-width="1.6"/>`).join('')}
+    <path d="M271 24 v68" stroke="${c.bd}" stroke-width="3" stroke-linecap="round" stroke-dasharray="7 6"/>
+  </svg>`;
+};
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">コパスタ Vol.11</div>
+    <div class="part-pill">前編 <b>(1/2)</b></div>
+    <div class="title-text">会社で使う前に、<br>まず開発用の環境をひとつ分ける<span class="q">。</span></div>
+    <img class="title-chara" src="${A}chara/chara_confident_g.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">結論</div>
+    <div class="txt">何もしないと、全員が<b>「既定の環境」</b>に作り続けます。<br>
+      先に分けておけば、<em>壊しても本番に届きません</em>。</div>
+  </div>
+
+  <div class="body">
+    <div class="panel p-ng">
+      <div class="dlabel"><span class="dot"></span>分けていないと</div>
+      <div class="rm">${room('ng')}</div>
+      <div class="envs seg">
+        <div class="eh3"><span class="c1">環境</span><span class="c2">種類</span><span class="c3">地域</span></div>
+        <div class="er2"><span class="c1">Microsoft 365</span><span class="c2"><span class="tagd">サンドボックス</span></span><span class="c3">Japan</span></div>
+        <div class="er2 all"><span class="c1">PA45 Demo</span><span class="c2"><span class="tagd">既定</span></span><span class="c3">Japan</span></div>
+      </div>
+      <div class="cap2">試作も本番も同じ場所。<br>消したり壊したりが、そのまま全員に効きます</div>
+    </div>
+
+    <div class="panel p-ok">
+      <div class="dlabel"><span class="dot"></span>ひとつ足すと</div>
+      <div class="rm">${room('ok')}</div>
+      <div class="envs seg">
+        <div class="eh3"><span class="c1">環境</span><span class="c2">種類</span><span class="c3">地域</span></div>
+        <div class="er2"><span class="c1">Microsoft 365</span><span class="c2"><span class="tagd">サンドボックス</span></span><span class="c3">Japan</span></div>
+        <div class="er2"><span class="c1">PA45 Demo</span><span class="c2"><span class="tagd">既定</span></span><span class="c3">Japan</span></div>
+        <div class="er2 new"><span class="c1">CopilotStudio45 開発</span><span class="c2"><span class="tagd">開発者</span></span><span class="c3">アジア太平洋</span></div>
+      </div>
+      <div class="cap2">試すのは<b>開発者の環境</b>。<br>本番はさわらないまま残ります</div>
+    </div>
+  </div>
+
+  <div class="darkband">
+    <div class="nf">
+      <div class="label">なぜ「既定の環境」で作り続けると困るのか</div>
+      <div class="grid">
+        <div class="fc"><div class="ft">① 全員が同居する</div><div class="fd">テナントに1つだけ。だれの試作もここに集まる</div></div>
+        <div class="fc"><div class="ft">② 消せない</div><div class="fd">既定の環境は削除できない。散らかっても片づかない</div></div>
+        <div class="fc"><div class="ft">③ 区別がつかない</div><div class="fd">試作か本番かが名前でしか分からず、事故が起きる</div></div>
+      </div>
+    </div>
+    <div class="note">
+      <div class="label">⚠ 作るときの選択</div>
+      <div class="txt">種類は<b>開発者</b>、Dataverse は<b>「はい」</b>で作ります。<br>
+        手順は<b>後編</b>で。</div>
+    </div>
+    <div class="src">出典：Microsoft Learn（環境の種類）＋Power Platform 管理センターでの実機／画面は説明用の再現です</div>
+  </div>
+  <img class="band-chara" src="${A}chara/chara_guts_g.png" alt="">
+`;
+</script>
+</body>
+</html>

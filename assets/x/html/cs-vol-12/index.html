@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>コパスタ Vol.12-1 「認証なしで誰でも話せるAI」は会社として止められる</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/cs-base.css">
+<style>
+  .body{gap:12px;}
+  .left{flex:0 0 342px;min-height:0;display:flex;flex-direction:column;gap:9px;}
+  .sc2{flex:1;min-height:0;border-radius:12px;overflow:hidden;position:relative;background:#FCE4E4;}
+  .sc2 svg{position:absolute;inset:0;width:100%;height:100%;}
+  .sc2 .chara{position:absolute;right:2px;bottom:0;height:104px;z-index:2;filter:drop-shadow(0 3px 5px rgba(0,0,0,.22));}
+  .lock{flex:0 0 auto;display:flex;align-items:center;gap:11px;background:linear-gradient(180deg,#F5F0FF,#EDE4FF);
+    border:2.5px solid var(--cs-line);border-radius:12px;padding:9px 13px;}
+  .lock .lk2{flex:0 0 auto;width:40px;height:40px;}
+  .lock .lt{flex:1;font-size:17px;font-weight:900;color:var(--cs-dark);line-height:1.26;}
+
+  .right{flex:1;min-height:0;display:flex;flex-direction:column;gap:9px;}
+  .mk5{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:1.5px solid var(--segline);
+    border-radius:10px;overflow:hidden;box-shadow:0 5px 12px rgba(0,0,0,.14);}
+  .mk5 .mh5{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:6px 11px;background:#F3F2F1;
+    border-bottom:1px solid #E1DFDD;font-size:13.5px;font-weight:700;color:#242424;}
+  .mk5 .mh5 .st4{margin-left:auto;border-radius:999px;padding:1px 10px;font-size:12.5px;font-weight:900;color:#fff;
+    font-family:"Noto Sans JP",sans-serif;}
+  .mk5.bf .mh5 .st4{background:#DC2626;} .mk5.af .mh5 .st4{background:#16A34A;}
+  .mk5 .mb5{flex:1;min-height:0;padding:9px 12px;display:flex;flex-direction:column;gap:7px;}
+  .bar4{display:flex;gap:9px;align-items:flex-start;background:#FDE7E9;border:1px solid #D13438;border-radius:4px;
+    padding:7px 10px;}
+  .bar4 .ex4{flex:0 0 auto;width:18px;height:18px;border-radius:50%;background:#D13438;color:#fff;font-size:12px;
+    font-weight:900;display:flex;align-items:center;justify-content:center;}
+  .bar4 .bt2{flex:1;font-size:12.8px;font-weight:700;color:#242424;line-height:1.44;}
+  .rdo{display:flex;align-items:center;gap:9px;padding:4px 2px;font-size:14.5px;font-weight:700;color:#242424;}
+  .rdo .ci{flex:0 0 auto;width:17px;height:17px;border-radius:50%;border:2px solid #616161;position:relative;background:#fff;}
+  .rdo.on .ci{border-color:var(--cs);}
+  .rdo.on .ci::after{content:"";position:absolute;left:3px;top:3px;width:7px;height:7px;border-radius:50%;background:var(--cs);}
+  .rdo.dis{color:#A19F9D;} .rdo.dis .ci{border-color:#C8C6C4;background:#F3F2F1;}
+  .rdo .nb{margin-left:auto;font-size:12px;font-weight:900;color:#A19F9D;font-family:"Noto Sans JP",sans-serif;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const LOCK=`<svg viewBox="0 0 24 24" fill="none" stroke="#5B21B6" stroke-width="2.2" stroke-linecap="round"
+  stroke-linejoin="round" style="width:100%;height:100%"><rect x="4" y="10.5" width="16" height="11" rx="2.5"/>
+  <path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/><circle cx="12" cy="16" r="1.4" fill="#5B21B6"/></svg>`;
+
+/* 鍵のない玄関 */
+const door=`<svg viewBox="0 0 342 322" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs><filter id="d0" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2.4" stdDeviation="2.2" flood-color="#4A1414" flood-opacity=".26"/></filter></defs>
+  <rect x="0" y="0" width="342" height="322" fill="#FCE4E4"/>
+  <text x="16" y="24" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#991B1B">認証なし＝鍵のない玄関</text>
+  <g filter="url(#d0)">
+    <rect x="24" y="48" width="148" height="228" rx="6" fill="#fff" stroke="#DC2626" stroke-width="3"/>
+    <rect x="38" y="66" width="120" height="84" rx="4" fill="#FFECEC" stroke="#E88A8A" stroke-width="1.8"/>
+    <circle cx="148" cy="172" r="7" fill="none" stroke="#DC2626" stroke-width="2.6"/>
+    <path d="M141 165 l14 14" stroke="#DC2626" stroke-width="2.6" stroke-linecap="round"/>
+  </g>
+  <text x="98" y="300" font-family="Noto Sans JP" font-size="14" font-weight="900" fill="#991B1B" text-anchor="middle">だれでも入れる</text>
+  ${[0,1,2,3].map(i=>`<g transform="translate(${196+ (i%2)*66}, ${58 + Math.floor(i/2)*84})">
+    <circle cx="20" cy="16" r="13" fill="#F3C6C6"/>
+    <path d="M2 46 a18 18 0 0 1 36 0 z" fill="#F3C6C6"/></g>`).join('')}
+  <text x="262" y="252" font-family="Noto Sans JP" font-size="14.5" font-weight="900" fill="#991B1B" text-anchor="middle">社外の人も</text>
+  <text x="262" y="274" font-family="Noto Sans JP" font-size="14.5" font-weight="900" fill="#991B1B" text-anchor="middle">話しかけられる</text>
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">コパスタ Vol.12</div>
+    <div class="part-pill">前編 <b>(1/2)</b></div>
+    <div class="title-text">「認証なしで誰でも話せるAI」は、<br>会社として止められる<span class="q">。</span></div>
+    <img class="title-chara" src="${A}chara/chara_confident_g.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">結論</div>
+    <div class="txt">管理側で<b>データポリシー</b>を1本作ると、<br>
+      作る人の画面から<em>「認証なし」が選べなくなります</em>。</div>
+  </div>
+
+  <div class="body">
+    <div class="left">
+      <div class="sc2">${door}<img class="chara" src="${A}chara/chara_trouble_g.png" alt=""></div>
+      <div class="lock"><span class="lk2">${LOCK}</span>
+        <span class="lt">止めるのは作る人ではなく、<br>管理側のポリシー</span></div>
+    </div>
+
+    <div class="right">
+      <div class="mk5 bf">
+        <div class="mh5 seg">エージェントの設定 ＞ セキュリティ ＞ 認証
+          <span class="st4">ポリシー前</span></div>
+        <div class="mb5 seg">
+          <div class="rdo on"><span class="ci"></span>認証なし</div>
+          <div class="rdo"><span class="ci"></span>Microsoft でサインインする</div>
+          <div class="rdo"><span class="ci"></span>認証する（サービス プロバイダー）</div>
+        </div>
+      </div>
+
+      <div class="mk5 af">
+        <div class="mh5 seg">エージェントの設定 ＞ セキュリティ ＞ 認証
+          <span class="st4">ポリシー後</span></div>
+        <div class="mb5 seg">
+          <div class="bar4"><span class="ex4">!</span>
+            <span class="bt2">組織の データ損失防止ポリシー の変更により、認証なしとサービス プロバイダー汎用 OAuth 2 を使用できません。ご質問がある場合は管理者に問い合わせてください</span></div>
+          <div class="rdo dis"><span class="ci"></span>認証なし<span class="nb">選べない</span></div>
+          <div class="rdo on"><span class="ci"></span>Microsoft でサインインする</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="darkband">
+    <div class="nf">
+      <div class="label">効き方（作る人の画面が変わる）</div>
+      <div class="grid">
+        <div class="fc"><div class="ft">① 管理側で1本作る</div><div class="fd">データポリシーで、該当のコネクタをブロックに置く</div></div>
+        <div class="fc"><div class="ft">② 選択肢が消える</div><div class="fd">作る人の認証画面で「認証なし」がグレーになる</div></div>
+        <div class="fc"><div class="ft">③ 発行も止まる</div><div class="fd">違反したままだと、発行ボタンが押せなくなる</div></div>
+      </div>
+    </div>
+    <div class="note">
+      <div class="label">⚠ 範囲の初期値</div>
+      <div class="txt">適用範囲の初期値は<b>「すべての環境」</b>です。<br>
+        どこに効かせるかを、作るときに必ず見ます。</div>
+    </div>
+    <div class="src">出典：Power Platform 管理センターでの実機（メッセージは実際の文言）／画面は説明用の再現です</div>
+  </div>
+  <img class="band-chara" src="${A}chara/chara_guts_g.png" alt="">
+`;
+</script>
+</body>
+</html>

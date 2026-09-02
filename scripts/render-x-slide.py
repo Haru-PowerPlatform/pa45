@@ -12,6 +12,13 @@
 """
 import sys
 import json
+
+# Windows のコンソールは cp932 なので、絵文字や記号で落ちないようにする
+for _st in (sys.stdout, sys.stderr):
+    try:
+        _st.reconfigure(errors="replace")
+    except Exception:
+        pass
 from pathlib import Path
 
 from playwright.sync_api import sync_playwright
@@ -53,7 +60,9 @@ MEASURE = r"""
     const svg = box.querySelector(':scope > svg');
     if (svg && getComputedStyle(box).overflow !== 'hidden') return;
     if (!svg || !svg.getAttribute('viewBox')) return;
-    if ((svg.getAttribute('preserveAspectRatio') || '').includes('none')) return;
+    // 端が切れるのは slice のときだけ。meet(既定)は余白が出るだけなので対象外。
+    const par = svg.getAttribute('preserveAspectRatio') || '';
+    if (!par.includes('slice')) return;
     const r = box.getBoundingClientRect();
     const vb = svg.getAttribute('viewBox').trim().split(/[\s,]+/).map(Number);
     if (vb.length !== 4 || !vb[2] || !vb[3] || !r.width || !r.height) return;

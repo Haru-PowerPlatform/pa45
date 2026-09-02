@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>コパスタ Vol.16-2 囲いは3つ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/cs-base.css">
+<style>
+  .body{gap:13px;}
+  .left{flex:1.18;min-height:0;display:flex;flex-direction:column;}
+  .right{flex:1;min-height:0;display:flex;flex-direction:column;gap:8px;}
+
+  .cfg{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:1.5px solid var(--segline);
+    border-radius:10px;overflow:hidden;box-shadow:0 6px 14px rgba(0,0,0,.15);}
+  .cfg .ch5{flex:0 0 auto;display:flex;align-items:center;gap:9px;padding:6px 12px;background:#F3F2F1;
+    border-bottom:1px solid #E1DFDD;font-size:14px;font-weight:700;color:#242424;}
+  .cfg .cw{flex:1;min-height:0;display:flex;}
+  .cfg .nav{flex:0 0 176px;min-height:0;display:flex;flex-direction:column;gap:1px;padding:6px 6px;
+    background:#FAF9F8;border-right:1px solid #E1DFDD;}
+  .nv{display:flex;align-items:center;gap:6px;border-radius:5px;padding:3px 8px;font-size:12.5px;font-weight:700;
+    color:#484644;}
+  .nv .dotv{flex:0 0 auto;width:14px;height:14px;border-radius:4px;background:#E1DFDD;}
+  .nv .nn{flex:1;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
+  .nv.on{background:#EDE9FE;color:var(--cs-dark);font-weight:900;}
+  .nv.on .dotv{background:var(--cs);}
+  .nv .bdg{flex:0 0 auto;width:17px;height:17px;border-radius:50%;background:var(--cs);color:#fff;font-size:11px;
+    font-weight:900;display:flex;align-items:center;justify-content:center;font-family:"Noto Sans JP",sans-serif;}
+  .nv.g2 .bdg{background:#0EA5E9;} .nv.g3 .bdg{background:var(--green);}
+
+  .nav .nfoot{margin-top:auto;display:flex;gap:6px;padding-top:6px;}
+  .nav .nfoot span{border-radius:3px;padding:3px 10px;font-size:12px;font-weight:900;}
+  .nav .nfoot .sv{background:var(--cs);color:#fff;}
+  .nav .nfoot .cn{background:#fff;border:1px solid #8A8886;color:#242424;}
+
+  .cfg .pane{flex:1;min-width:0;min-height:0;display:flex;flex-direction:column;gap:4px;padding:7px 12px;}
+  .pane .plb{display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:900;color:#616161;}
+  .pane .plb i{flex:0 0 auto;width:16px;height:16px;border-radius:50%;background:var(--cs);color:#fff;font-size:10.5px;
+    font-style:normal;display:flex;align-items:center;justify-content:center;}
+  .pane .plb.b2 i{background:#0EA5E9;} .pane .plb.b3 i{background:var(--green);}
+  .chk{display:flex;flex-wrap:wrap;gap:4px 8px;border:1px solid #E1DFDD;border-radius:7px;padding:5px 9px;}
+  .chk .cr{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:#242424;}
+  .chk .cr .bx{flex:0 0 auto;width:15px;height:15px;border-radius:3px;background:#0EA5E9;color:#fff;font-size:10px;
+    font-weight:900;display:flex;align-items:center;justify-content:center;}
+  .chk .cr.off .bx{background:#fff;border:1.5px solid #8A8886;}
+  .rad{display:flex;gap:6px;}
+  .rad .rr{flex:1;display:flex;flex-direction:column;gap:2px;border:1px solid #E1DFDD;border-radius:7px;
+    padding:5px 8px;font-size:12.5px;font-weight:700;color:#484644;}
+  .rad .rr .rt{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:900;color:#242424;
+    white-space:nowrap;}
+  .rad .rr .rt i{flex:0 0 auto;width:13px;height:13px;border-radius:50%;border:1.5px solid #8A8886;}
+  .rad .rr.on{border:2px solid var(--green);background:#F2FBF6;}
+  .rad .rr.on .rt{color:var(--green-dark);}
+  .rad .rr.on .rt i{border:4px solid var(--green);}
+  .rad .rr .rd{font-size:11.5px;color:#616161;line-height:1.28;}
+  .allow{display:flex;flex-direction:column;gap:3px;border:1px solid #E1DFDD;border-radius:7px;padding:5px 8px;}
+  .allow .ar{display:flex;align-items:center;gap:7px;font-size:13.5px;font-weight:700;color:#242424;
+    font-family:'Roboto Mono',monospace;}
+  .allow .ar .ck{flex:0 0 auto;width:15px;height:15px;border-radius:3px;background:var(--green);color:#fff;
+    font-size:10px;font-weight:900;display:flex;align-items:center;justify-content:center;
+    font-family:"Noto Sans JP",sans-serif;}
+  .allow .ar.no{color:#A19F9D;} .allow .ar.no .ck{background:#DC2626;}
+  .allow .plus{display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;color:var(--cs);
+    font-family:"Noto Sans JP",sans-serif;}
+  .tgl{display:flex;align-items:center;gap:9px;border:1px solid #E1DFDD;border-radius:7px;padding:5px 9px;
+    font-size:13.5px;font-weight:700;color:#242424;}
+  .tgl .sw{flex:0 0 auto;width:34px;height:18px;border-radius:9px;background:var(--cs);position:relative;}
+  .tgl .sw i{position:absolute;right:2px;top:2px;width:14px;height:14px;border-radius:50%;background:#fff;}
+  .tgl .st6{margin-left:auto;font-size:12px;font-weight:900;color:var(--cs-dark);}
+  .apv{display:flex;align-items:center;gap:9px;background:#FFF7ED;border:1.5px solid #FDBA74;border-radius:7px;
+    padding:5px 9px;}
+  .apv .at{flex:1;}
+  .apv .at{font-size:13px;font-weight:900;color:#9A3412;}
+  .apv .ab{display:flex;gap:6px;}
+  .apv .ab span{border-radius:4px;padding:2px 12px;font-size:12px;font-weight:900;}
+  .apv .ab .y{background:var(--cs);color:#fff;} .apv .ab .n{background:#fff;border:1px solid #8A8886;color:#242424;}
+
+  .gate{flex:1;min-height:0;display:flex;align-items:center;gap:10px;background:#fff;border:2px solid var(--cs-line);
+    border-left:6px solid var(--cs);border-radius:11px;padding:8px 12px;box-shadow:0 3px 9px rgba(59,42,102,.13);}
+  .gate .gi{flex:0 0 52px;height:52px;}
+  .gate .gt{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;}
+  .gate .gn{display:flex;align-items:center;gap:8px;font-size:17.5px;font-weight:900;color:var(--navy);line-height:1.2;}
+  .gate .gn .num{flex:0 0 auto;width:23px;height:23px;border-radius:50%;background:var(--cs);color:#fff;font-size:13px;
+    display:flex;align-items:center;justify-content:center;}
+  .gate.g2 .gn .num{background:#0EA5E9;} .gate.g2{border-left-color:#0EA5E9;}
+  .gate.g3 .gn .num{background:var(--green);} .gate.g3{border-left-color:var(--green);}
+  .gate .gd{font-size:14px;font-weight:700;color:#475569;line-height:1.32;}
+  .gate .gd b{color:var(--cs-dark);}
+  .gate .chips{display:flex;gap:5px;flex-wrap:wrap;}
+  .gate .chips span{background:#F1F5F9;border:1px solid #CBD5E1;border-radius:11px;padding:1px 9px;font-size:12px;
+    font-weight:900;color:#334155;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+
+const GATE = `<svg class="gi" viewBox="0 0 52 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M8 47V25a18 18 0 0 1 36 0v22" stroke="#7C3AED" stroke-width="6" stroke-linecap="round"/>
+  <rect x="4" y="44" width="44" height="5" rx="2.5" fill="#5B21B6"/>
+  <rect x="10" y="28" width="32" height="5" rx="2.5" fill="#C4B5FD"/>
+  <rect x="10" y="37" width="32" height="5" rx="2.5" fill="#C4B5FD"/>
+  <circle cx="26" cy="19" r="6" fill="#A855F7"/>
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">コパスタ Vol.16</div>
+    <div class="part-pill">後編 <b>(2/2)</b></div>
+    <div class="title-text">自由に動かす前に、<br>囲いを3つ立てる<span class="q">。</span></div>
+    <img class="title-chara" src="${A}chara/chara_point_g.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">結論</div>
+    <div class="txt">止めるところは<b>行き先・人の承認・走る場所</b>の3つです。<br>
+      <em>設定画面で先に決めてから動かします</em>。</div>
+  </div>
+
+  <div class="body">
+    <div class="left">
+      <div class="cfg seg">
+        <div class="ch5">Computer use ／ 設定</div>
+        <div class="cw">
+          <div class="nav">
+            <div class="nv on g1"><span class="dotv"></span><span class="nn">許可するサイト</span>
+              <span class="bdg">1</span></div>
+            <div class="nv g2"><span class="dotv"></span><span class="nn">実行前の承認</span>
+              <span class="bdg">2</span></div>
+            <div class="nv g3"><span class="dotv"></span><span class="nn">実行する場所</span>
+              <span class="bdg">3</span></div>
+            <div class="nv"><span class="dotv"></span><span class="nn">使用するモデル</span></div>
+            <div class="nv"><span class="dotv"></span><span class="nn">最大ステップ数</span></div>
+            <div class="nv"><span class="dotv"></span><span class="nn">タイムアウト</span></div>
+            <div class="nv"><span class="dotv"></span><span class="nn">スクリーンショット保存</span></div>
+            <div class="nv"><span class="dotv"></span><span class="nn">実行ログ</span></div>
+            <div class="nfoot"><span class="sv">保存</span><span class="cn">キャンセル</span></div>
+          </div>
+          <div class="pane">
+            <div class="plb"><i>1</i>許可するサイト（ここに無い所へは行けない）</div>
+            <div class="allow">
+              <div class="ar"><span class="ck">✓</span>connpass.com</div>
+              <div class="ar"><span class="ck">✓</span>learn.microsoft.com</div>
+              <div class="ar no"><span class="ck">✕</span>*（それ以外は全部ブロック）</div>
+            </div>
+            <div class="tgl"><span class="sw"><i></i></span>HTTPS のページだけ許可
+              <span class="st6">オン</span></div>
+            <div class="plb b2"><i>2</i>実行前に人の承認をもらう操作</div>
+            <div class="chk">
+              <div class="cr"><span class="bx">✓</span>送信ボタンを押す</div>
+              <div class="cr"><span class="bx">✓</span>購入・決済に進む</div>
+              <div class="cr"><span class="bx">✓</span>削除する</div>
+            </div>
+            <div class="apv">
+              <div class="at">送信ボタンを押す前に確認しますか？</div>
+              <div class="ab"><span class="y">許可</span><span class="n">中止</span></div>
+            </div>
+            <div class="plb b3"><i>3</i>実行する場所</div>
+            <div class="rad">
+              <div class="rr on"><span class="rt"><i></i>ホスト型ブラウザー</span>
+                <span class="rd">Microsoft が用意。すぐ試せる</span></div>
+              <div class="rr"><span class="rt"><i></i>クラウドPC</span>
+                <span class="rd">Windows 365。社内アプリも触れる</span></div>
+              <div class="rr"><span class="rt"><i></i>自前マシン</span>
+                <span class="rd">自分で用意した端末につなぐ</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="right">
+      <div class="gate g1">
+        ${GATE}
+        <div class="gt">
+          <div class="gn"><span class="num">1</span>行き先を決める</div>
+          <div class="gd">許可したサイト以外は開かせない。<b>HTTPSだけ</b>に絞る設定もある</div>
+        </div>
+      </div>
+      <div class="gate g2">
+        ${GATE.replace(/#7C3AED/g,'#0EA5E9').replace('#5B21B6','#0369A1').replace('#A855F7','#38BDF8').replace(/#C4B5FD/g,'#BAE6FD')}
+        <div class="gt">
+          <div class="gn"><span class="num">2</span>人が止める</div>
+          <div class="gd">送信・購入・削除の手前で<b>確認を挟む</b>。押すのは人</div>
+        </div>
+      </div>
+      <div class="gate g3">
+        ${GATE.replace(/#7C3AED/g,'#16A34A').replace('#5B21B6','#15803D').replace('#A855F7','#4ADE80').replace(/#C4B5FD/g,'#BBF7D0')}
+        <div class="gt">
+          <div class="gn"><span class="num">3</span>走る場所を選ぶ</div>
+          <div class="gd">自分のPCではなく<b>用意した場所</b>で動かす</div>
+          <div class="chips"><span>ホスト型ブラウザー</span><span>クラウドPC</span><span>自前マシン</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="darkband">
+    <div class="nf">
+      <div class="label">この3つを立てる理由</div>
+      <div class="grid">
+        <div class="fc"><div class="ft">① 迷子を防ぐ</div><div class="fd">画面を見て判断するので、想定外のページへ進むことがある</div></div>
+        <div class="fc"><div class="ft">② 取り消せない操作</div><div class="fd">送信や購入は戻せない。人の承認をここに置く</div></div>
+        <div class="fc"><div class="ft">③ 業務PCを守る</div><div class="fd">自分の端末を触らせない。落ちても影響が閉じる</div></div>
+      </div>
+    </div>
+    <div class="note">
+      <div class="label">⚠ 費用の目安</div>
+      <div class="txt">1ステップ<b>5クレジット</b>（上位モデルは15）。<br>
+        最大ステップ数も先に決めておく。</div>
+    </div>
+    <div class="src">出典：Microsoft Learn（Computer use）＋PA45 Demo環境での実機／画面は説明用の再現です</div>
+  </div>
+  <img class="band-chara" src="${A}chara/chara_smile_g.png" alt="">
+`;
+</script>
+</body>
+</html>

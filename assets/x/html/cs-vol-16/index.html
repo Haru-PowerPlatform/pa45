@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>コパスタ Vol.16-1 AIの試行錯誤が全部見える</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/cs-base.css">
+<style>
+  .body{gap:13px;}
+  .left{flex:1;min-height:0;display:flex;flex-direction:column;}
+  .right{flex:1.22;min-height:0;display:flex;flex-direction:column;gap:9px;}
+
+  .log{flex:1;min-height:0;display:flex;flex-direction:column;background:#1E293B;border-radius:12px;overflow:hidden;
+    box-shadow:0 6px 14px rgba(0,0,0,.24);}
+  .log .lh3{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:7px 12px;background:#0F172A;
+    color:#C4B5FD;font-size:14.5px;font-weight:900;}
+  .log .lb3{flex:1;min-height:0;padding:8px 12px;display:flex;flex-direction:column;gap:5px;}
+  .log .ln3{display:flex;gap:8px;align-items:flex-start;font-family:'Roboto Mono',monospace;font-size:13px;
+    font-weight:700;color:#93C5FD;line-height:1.4;}
+  .log .ln3 .dt3{flex:0 0 auto;width:7px;height:7px;border-radius:50%;background:#A78BFA;margin-top:6px;}
+  .log .ln3.hot{color:#FDE68A;} .log .ln3.hot .dt3{background:#F59E0B;}
+  .log .ln3.ok3{color:#86EFAC;} .log .ln3.ok3 .dt3{background:#22C55E;}
+  .log .ja2{font-family:"Noto Sans JP",sans-serif;font-size:13px;font-weight:700;color:#CBD5E1;line-height:1.34;
+    padding-left:15px;}
+  .log .ja2.big{color:#FDE68A;font-weight:900;font-size:14.5px;}
+  .log .lf3{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:6px 12px;background:#0F172A;
+    border-top:1px solid #334155;}
+  .log .lf3 .kpi{display:flex;align-items:baseline;gap:5px;color:#E2E8F0;font-size:13px;font-weight:900;}
+  .log .lf3 .kpi b{font-family:'Roboto Mono',monospace;font-size:19px;color:#FDE68A;}
+  .log .lf3 .kpi.g b{color:#86EFAC;}
+  .log .lf3 .sep{width:1px;height:20px;background:#334155;}
+
+  .brw{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:1.5px solid var(--segline);
+    border-radius:10px;overflow:hidden;box-shadow:0 6px 14px rgba(0,0,0,.15);}
+  .brw .bh2{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:6px 11px;background:#F3F2F1;
+    border-bottom:1px solid #E1DFDD;}
+  .brw .url2{flex:1;background:#fff;border:1px solid #E1DFDD;border-radius:12px;padding:3px 12px;
+    font-size:12.5px;font-weight:700;color:#616161;}
+  .brw .bb2{flex:1;min-height:0;padding:8px 11px;display:flex;flex-direction:column;gap:5px;}
+  .ev{display:flex;gap:10px;align-items:center;border:1px solid #E1DFDD;border-radius:8px;padding:5px 9px;}
+  .ev .thumb{flex:0 0 92px;height:46px;border-radius:5px;background:linear-gradient(135deg,#C7D2FE,#A5B4FC);
+    position:relative;}
+  .ev .thumb .imgtx{position:absolute;left:0;right:0;bottom:5px;text-align:center;font-size:11px;font-weight:900;
+    color:#4C51BF;font-family:"Noto Sans JP",sans-serif;}
+  .ev .thumb .mark{position:absolute;left:-8px;top:-8px;width:24px;height:24px;border-radius:50%;background:#DC2626;
+    color:#fff;font-size:14px;font-weight:900;display:flex;align-items:center;justify-content:center;
+    font-family:"Noto Sans JP",sans-serif;}
+  .ev .info{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;position:relative;}
+  .ev .ttl5{font-size:15px;font-weight:700;color:#0F6CBD;line-height:1.28;}
+  .ev .ttl5.sel{background:#FFF3CD;border-bottom:2.5px solid #16A34A;display:inline-block;}
+  .ev .meta2{font-size:12.5px;font-weight:700;color:#616161;}
+  .ev .mark2{position:absolute;right:-2px;top:-10px;width:24px;height:24px;border-radius:50%;background:#16A34A;
+    color:#fff;font-size:13px;font-weight:900;display:flex;align-items:center;justify-content:center;
+    font-family:"Noto Sans JP",sans-serif;}
+  .got{flex:0 0 auto;display:flex;flex-direction:column;gap:5px;background:#EAF9F1;border:2px solid var(--green);
+    border-radius:11px;padding:9px 13px;}
+  .got .gl{font-size:14px;font-weight:900;color:var(--green-dark);}
+  .got .gr2{display:flex;align-items:center;gap:9px;font-size:16.5px;font-weight:900;color:var(--navy);}
+  .ann{flex:0 0 auto;display:flex;flex-direction:column;gap:3px;padding:2px 2px 0;}
+  .ann .an{display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:700;color:#475569;line-height:1.25;}
+  .ann .an .n7{flex:0 0 auto;width:18px;height:18px;border-radius:50%;color:#fff;font-size:11.5px;font-weight:900;
+    display:flex;align-items:center;justify-content:center;}
+  .ann .an.x .n7{background:#DC2626;} .ann .an.o .n7{background:#16A34A;}
+  .ann .an b{color:var(--navy);}
+  .got .gr2 .kk2{flex:0 0 78px;font-size:13.5px;font-weight:900;color:var(--green-dark);}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">コパスタ Vol.16</div>
+    <div class="part-pill">前編 <b>(1/2)</b></div>
+    <div class="title-text">押し間違えて、<br>自分で気づいて戻った<span class="q">。</span></div>
+    <img class="title-chara" src="${A}chara/chara_confident_g.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">結論</div>
+    <div class="txt">ブラウザを操作させると、<b>試行錯誤がそのまま文字で残ります</b>。<br>
+      うまくいかなかった手順も、<em>直したところまで見えます</em>。</div>
+  </div>
+
+  <div class="body">
+    <div class="left">
+      <div class="log">
+        <div class="lh3">推論ログ（実機で出た文言）</div>
+        <div class="lb3">
+          <div class="ln3"><span class="dt3"></span>Opening connpass.com</div>
+          <div class="ja2">検索ページを開いた</div>
+          <div class="ln3"><span class="dt3"></span>Typing "PowerAutomate" in the search box</div>
+          <div class="ja2">検索ボックスに打ち込んだ</div>
+          <div class="ln3"><span class="dt3"></span>Clicking the first result</div>
+          <div class="ja2">1件目をクリックした（＝サムネイル画像）</div>
+          <div class="ln3 hot"><span class="dt3"></span>That was an image. Let me go back and click the title.</div>
+          <div class="ja2 big">「今のは画像だった。戻ってタイトルを押す」</div>
+          <div class="ln3"><span class="dt3"></span>Navigating back to the search results</div>
+          <div class="ja2">検索結果に戻った</div>
+          <div class="ln3"><span class="dt3"></span>Clicking the event title link</div>
+          <div class="ja2">今度はタイトルのリンクを押した</div>
+          <div class="ln3 ok3"><span class="dt3"></span>Extracted the event name and date.</div>
+          <div class="ja2">そのままイベント名と日時を取得した</div>
+        </div>
+        <div class="lf3">
+          <span class="kpi"><b>7</b>ステップ</span>
+          <span class="sep"></span>
+          <span class="kpi"><b>1</b>回やり直し</span>
+          <span class="sep"></span>
+          <span class="kpi g"><b>35</b>クレジット消費</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="right">
+      <div class="brw seg">
+        <div class="bh2"><span class="url2">connpass.com/search/?q=PowerAutomate</span></div>
+        <div class="bb2">
+          <div class="ev">
+            <span class="thumb"><span class="imgtx">画像</span><span class="mark">✕</span></span>
+            <span class="info">
+              <span class="ttl5 sel">Power Automate もくもく会 #45<span class="mark2">✓</span></span>
+              <span class="meta2">2026/09/12（木）20:15 〜 21:00 ／ オンライン</span></span>
+          </div>
+          <div class="ev">
+            <span class="thumb"><span class="imgtx">画像</span></span>
+            <span class="info"><span class="ttl5">Power Automate はじめの一歩</span>
+              <span class="meta2">2026/09/18（木）19:30 〜 ／ オンライン</span></span>
+          </div>
+          <div class="ev">
+            <span class="thumb"><span class="imgtx">画像</span></span>
+            <span class="info"><span class="ttl5">Power Automate 交流もくもく</span>
+              <span class="meta2">2026/09/25（木）20:00 〜 ／ 東京・オンライン</span></span>
+          </div>
+          <div class="ann">
+            <div class="an x"><span class="n7">✕</span>サムネイルは<b>ただの画像</b>。押しても詳細に進まない</div>
+            <div class="an o"><span class="n7">✓</span>詳細に進めるのは<b>タイトルのリンク</b>のほう</div>
+          </div>
+        </div>
+      </div>
+      <div class="got">
+        <span class="gl">取得できたもの</span>
+        <span class="gr2"><span class="kk2">イベント名</span>Power Automate もくもく会 #45</span>
+        <span class="gr2"><span class="kk2">日時</span>2026/09/12（木）20:15</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="darkband">
+    <div class="nf">
+      <div class="label">ここが他と違うところ</div>
+      <div class="grid">
+        <div class="fc"><div class="ft">① 過程が残る</div><div class="fd">結果だけでなく、どこで間違えたかが文字で読める</div></div>
+        <div class="fc"><div class="ft">② 自分で直す</div><div class="fd">押す場所を間違えても、戻ってやり直していた</div></div>
+        <div class="fc"><div class="ft">③ 教材になる</div><div class="fd">失敗と修正がそのまま、説明のネタとして使える</div></div>
+      </div>
+    </div>
+    <div class="note">
+      <div class="label">⚠ 動かす前に</div>
+      <div class="txt">実行は<b>1ステップ5クレジット</b>（上位モデルは15）。<br>
+        安全のための囲いは<b>後編</b>で。</div>
+    </div>
+    <div class="src">出典：PA45 Demo環境での実機（ログは実際に出た文言）／画面は説明用の再現です</div>
+  </div>
+  <img class="band-chara" src="${A}chara/chara_guts_g.png" alt="">
+`;
+</script>
+</body>
+</html>

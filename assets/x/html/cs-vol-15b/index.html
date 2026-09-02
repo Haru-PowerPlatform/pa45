@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>コパスタ Vol.15-2 Error と Fail は別もの</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/cs-base.css">
+<style>
+  .body{gap:13px;}
+  .left{flex:1.55;min-height:0;display:flex;flex-direction:column;gap:9px;}
+  .right{flex:1;min-height:0;display:flex;flex-direction:column;gap:8px;}
+
+  .res{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:1.5px solid var(--segline);
+    border-radius:10px;overflow:hidden;box-shadow:0 6px 14px rgba(0,0,0,.15);}
+  .res .rh{flex:0 0 auto;display:flex;align-items:center;gap:9px;padding:7px 12px;background:#F3F2F1;
+    border-bottom:1px solid #E1DFDD;font-size:14.5px;font-weight:700;color:#242424;}
+  .res .rb{flex:1;min-height:0;display:flex;flex-direction:column;}
+  .res .tr5{flex:1;min-height:0;display:flex;align-items:center;gap:10px;padding:4px 12px;
+    border-bottom:1px solid #EDEBE9;font-size:14px;font-weight:700;color:#242424;}
+  .res .tr5.hd6{flex:0 0 auto;background:#FAF9F8;color:#616161;font-size:12.5px;}
+  .res .tr5:last-child{border-bottom:none;}
+  .res .q2{flex:1.6;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
+  .res .sc4{flex:0 0 92px;font-family:'Roboto Mono',monospace;font-size:15px;text-align:right;}
+  .res .st5{flex:0 0 92px;display:flex;justify-content:flex-end;}
+  .res .st5 span{border-radius:4px;padding:2px 11px;font-size:12.5px;font-weight:900;color:#fff;
+    font-family:"Noto Sans JP",sans-serif;}
+  .res .st5 span.p{background:#16A34A;} .res .st5 span.f{background:#DC2626;} .res .st5 span.e{background:#A19F9D;}
+  .res .tr5.err .sc4{color:#A19F9D;}
+  .res .tr5.err{background:#F7F7F7;}
+  .res .empty2{color:#A19F9D;font-family:"Noto Sans JP",sans-serif;font-size:12.5px;font-weight:900;}
+
+  .lgd{flex:0 0 auto;display:flex;gap:9px;}
+  .lg{flex:1;display:flex;flex-direction:column;gap:3px;border-radius:10px;padding:8px 12px;}
+  .lg.e{background:#F1F1F1;border:2px solid #A19F9D;}
+  .lg.f{background:#FFECEC;border:2px solid var(--red);}
+  .lg .ln2{display:flex;align-items:center;gap:8px;font-size:17px;font-weight:900;}
+  .lg.e .ln2{color:#4B4B4B;} .lg.f .ln2{color:var(--red-dark);}
+  .lg .ln2 .tag2{border-radius:4px;padding:1px 10px;font-size:12.5px;color:#fff;}
+  .lg.e .ln2 .tag2{background:#A19F9D;} .lg.f .ln2 .tag2{background:var(--red);}
+  .lg .ld{font-size:14.5px;font-weight:700;color:#475569;line-height:1.34;}
+
+  .stp2{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;gap:4px;background:#fff;
+    border:2px solid var(--cs-line);border-left:6px solid var(--cs);border-radius:11px;padding:8px 13px;
+    box-shadow:0 3px 9px rgba(59,42,102,.13);}
+  .stp2 .sh4{display:flex;align-items:center;gap:9px;}
+  .stp2 .no9{flex:0 0 auto;width:26px;height:26px;border-radius:8px;background:var(--cs);color:#fff;font-size:15px;
+    font-weight:900;display:flex;align-items:center;justify-content:center;}
+  .stp2 .sn2{flex:1;font-size:17.5px;font-weight:900;color:var(--navy);line-height:1.2;}
+  .stp2 .sd3{font-size:14.5px;font-weight:700;color:#475569;line-height:1.34;}
+  .stp2 .sd3 b{color:var(--cs-dark);}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">コパスタ Vol.15</div>
+    <div class="part-pill">後編 <b>(2/2)</b></div>
+    <div class="title-text">同じ0%でも、<br>Error と Fail は別もの<span class="q">。</span></div>
+    <img class="title-chara" src="${A}chara/chara_point_g.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">結論</div>
+    <div class="txt">見分けるところは<b>スコア欄</b>です。<br>
+      <em>空なら Error（採点が動かなかった）／数字が入っていれば Fail（採点されて0点）</em>。</div>
+  </div>
+
+  <div class="body">
+    <div class="left">
+      <div class="res seg">
+        <div class="rh">評価結果 ／ General quality</div>
+        <div class="rb">
+          <div class="tr5 hd6"><span class="q2">テスト会話</span><span class="sc4">スコア</span>
+            <span class="st5">結果</span></div>
+          <div class="tr5"><span class="q2">PA45は何時からですか？</span><span class="sc4">92%</span>
+            <span class="st5"><span class="p">Pass</span></span></div>
+          <div class="tr5"><span class="q2">申し込みたいのですが</span><span class="sc4">88%</span>
+            <span class="st5"><span class="p">Pass</span></span></div>
+          <div class="tr5"><span class="q2">今日の天気は？（断るのが正解）</span><span class="sc4">0%</span>
+            <span class="st5"><span class="f">Fail</span></span></div>
+          <div class="tr5 err"><span class="q2">5問まとめて聞いた会話</span>
+            <span class="sc4 empty2">（空）</span>
+            <span class="st5"><span class="e">Error</span></span></div>
+        </div>
+      </div>
+      <div class="lgd">
+        <div class="lg e"><span class="ln2"><span class="tag2">Error</span>採点が動かなかった</span>
+          <span class="ld">スコア欄が空。長い会話やツールを含む会話で起きやすい</span></div>
+        <div class="lg f"><span class="ln2"><span class="tag2">Fail</span>採点されて0点</span>
+          <span class="ld">数字は出ている。正しく断った回答でも0%になることがある</span></div>
+      </div>
+    </div>
+
+    <div class="right">
+      <div class="stp2">
+        <div class="sh4"><span class="no9">1</span><span class="sn2">1会話1質問にする</span></div>
+        <div class="sd3">5問を1つの会話に入れると<b>Errorになりやすい</b>。分けると通る</div>
+      </div>
+      <div class="stp2">
+        <div class="sh4"><span class="no9">2</span><span class="sn2">断る質問を混ぜない</span></div>
+        <div class="sd3">「答えないのが正解」の質問は<b>Failと採点される</b>ので、別に見る</div>
+      </div>
+      <div class="stp2">
+        <div class="sh4"><span class="no9">3</span><span class="sn2">グレーの行は触らない</span></div>
+        <div class="sd3">Errorは<b>作りの良し悪しではない</b>。中身を直す前に条件を疑う</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="darkband">
+    <div class="nf">
+      <div class="label">評価の前提（公式）</div>
+      <div class="grid">
+        <div class="fc"><div class="ft">① テスト方法は1つ</div><div class="fd">いまは General quality のみ。模範解答との一致は見ない</div></div>
+        <div class="fc"><div class="ft">② 1テストケース＝1会話</div><div class="fd">質問ごとに分けたいなら、会話そのものを分ける</div></div>
+        <div class="fc"><div class="ft">③ プレビュー機能</div><div class="fd">仕様が変わることがある。数字は目安として見る</div></div>
+      </div>
+    </div>
+    <div class="note">
+      <div class="label">⚠ 評価にも費用がかかる</div>
+      <div class="txt">評価やプレビューでの実行でも<b>クレジットを消費します</b>。<br>
+        まとめて何度も回さない。</div>
+    </div>
+    <div class="src">出典：Microsoft Learn（Evaluate）＋PA45 Demo環境での実機／数値はイメージです</div>
+  </div>
+  <img class="band-chara" src="${A}chara/chara_laptop_g.png" alt="">
+`;
+</script>
+</body>
+</html>
