@@ -203,6 +203,49 @@
         <li><b>Recipient は実在するユーザーを選びます。</b> ここがカードの届け先です。まずは自分を選びます。</li>
       </ul>
     </div>
+
+    <div class="callout warn"><b>🧩 追加パネルで探すタイル名に注意：</b>
+      <ul style="margin:6px 0 0;padding-left:20px;">
+        <li>探すのは <b>「アダプティブ カードを投稿して応答を待機する」</b>（内部ID：<span class="k">PostCardAndWaitForResponse</span>）。押されるまで待つ＝これが今日の肝だからです。</li>
+        <li><b>投稿先を「フロー ボットとチャットをする」にすると</b>、表示名が <b>「…Teams ユーザーに投稿して応答を待機する」</b>に変わります（同じアクションです）。</li>
+        <li>左にある <b>「アダプティブ カードを<u>使用して</u>チ…」</b>は<b>別物</b>なので選びません（こちらは待機しません）。</li>
+        <li>前提：Teams に <b>「ワークフロー」アプリ</b>が入っていること（STEP 0）。</li>
+      </ul>
+    </div>
+
+    <h3 style="font-size:16px;color:var(--pa-dark);margin:22px 0 6px;">■ カードのJSONは、3つの部品で読む</h3>
+    <p class="part-note">上の <span class="k">メッセージ欄に貼るカードJSON</span> は、大きく3つのかたまり（①おまじない／②body＝見せる中身／③actions＝ボタン）でできています。フローで「受け取る」のは、<b>ひとこと</b>と<b>押した答え</b>の2つだけです。</p>
+    <table class="fx">
+      <tr><th style="width:34%;">JSONの部品</th><th>意味（なにをする？）</th><th style="width:26%;">フローでの受け取り方</th></tr>
+      <tr><td colspan="3" style="background:var(--teams-bg);color:var(--teams-dark);font-weight:800;">① おまじない（型宣言）― 「カードですよ」の宣言。ふつう触らない</td></tr>
+      <tr><td><code>$schema</code> / <code>"type":"AdaptiveCard"</code> / <code>"version":"1.4"</code></td><td>「これはアダプティブカードです」という決まり文句。設計図の種類とバージョン。</td><td style="color:#64748b;font-weight:700;">受け取らない</td></tr>
+      <tr><td colspan="3" style="background:var(--teams-bg);color:var(--teams-dark);font-weight:800;">② body（画面に見せる中身・上から順に並ぶ）</td></tr>
+      <tr><td><code>TextBlock</code>「今日の状況は？」</td><td>見出し（<b>weight:Bolder / size:Large</b>＝太字・大きめ）。</td><td style="color:#64748b;font-weight:700;">表示だけ</td></tr>
+      <tr><td><code>TextBlock</code>「ボタンを1つ…」</td><td>小さい説明（<b>isSubtle</b>＝うすいグレー字）。</td><td style="color:#64748b;font-weight:700;">表示だけ</td></tr>
+      <tr><td><code>Input.Text</code> <code>id:"comment"</code></td><td><b>ひとこと入力欄</b>（任意・複数行）。id が受け取るときの名前になる。</td><td class="v"><code>body/data/comment</code></td></tr>
+      <tr><td colspan="3" style="background:var(--teams-bg);color:var(--teams-dark);font-weight:800;">③ actions（ボタン）― 押すと送信される</td></tr>
+      <tr><td><code>Action.Submit</code> ×3</td><td><b>title</b>＝画面の文字（🟢 順調です 等）／<b>data の status</b>＝送られる答え（順調／相談／詰まってる）。</td><td class="v"><code>body/data/status</code></td></tr>
+    </table>
+    <div class="callout tm"><b>⭐一番のポイント：</b> 押したボタンの <span class="k">data.status</span> が"答え"になります。これを STEP 3 で <span class="k">body/data/status</span> として受け取り、記録のタイトルに使います。ひとことは <span class="k">comment</span>（＝<span class="k">body/data/comment</span>）で受け取ります。</div>
+
+    <h3 style="font-size:16px;color:var(--pa-dark);margin:22px 0 6px;">■ JSONは手書きしない。Copilotに書かせる</h3>
+    <p class="part-note">JSONを手書きすると記号のミスが起きやすく、直しに時間がかかります。初心者は書かず、<b>M365 Copilot チャット</b>（Power Automate内蔵のCopilotではなく）に頼んで作るのが速いです。頼み方は次の3つ。</p>
+    <ul class="sub" style="font-size:14px;">
+      <li><b>① バージョンを指定：</b>「Adaptive Card 1.4 の」と先に言う（古い書き方が混ざるのを防ぐため）。</li>
+      <li><b>② 要素を箇条書きで渡す：</b>見出し／ひとこと入力／🟢🟡🔴の3ボタンと各ボタンが送る値を1つずつ。</li>
+      <li><b>③ 「JSONだけ返して」と縛る：</b>説明文を混ぜさせない（そのまま貼れる形で受け取るため）。</li>
+    </ul>
+    <div class="codewrap">
+      <span class="lbl">Copilotへの例のプロンプト（そのままコピーして使えます）</span>
+      <button class="copybtn" data-code="copilotprompt">コピー</button>
+<pre id="copilotprompt">Adaptive Card 1.4 の JSON だけを作ってください。要素は次の通り：
+・見出し『今日の状況は？』（太字・大きめ）
+・小さい説明『ボタンを1つ押すだけ（記録します）』
+・任意の複数行入力『ひとこと』（id は comment）
+・ボタン3つ（Action.Submit）：🟢 順調です（data.status=順調）／🟡 相談したい（data.status=相談）／🔴 詰まってる（data.status=詰まってる）
+説明文は不要、JSON だけ返してください。</pre>
+    </div>
+    <div class="callout warn"><b>🔎 貼る前に検品：</b> 出てきたJSONを、アクションの<b>「メッセージ」欄に貼り付け</b>ます。ただし Copilot は見出しを <code style="background:#0f172a;color:#fbbf24;border-radius:5px;padding:2px 7px;">"style":"emphasis"</code>（グレー地）で出すことがあります。<b>カードデザイナー／プレビューで見た目を確認</b>し、違えば直します（第20回のCopilot実演でも同じ癖が出ました）。</div>
   </section>
 
   <!-- ===== 3. 記録 ===== -->
