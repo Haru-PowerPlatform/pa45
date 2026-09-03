@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PA45 第26回 ハンズオン手順｜毎日の報連相カードをワンタップに</title>
+<meta name="description" content="PA45 第26回のハンズオン手順書。毎日16時にTeamsへ「報連相カード」を送り、🟢🟡🔴のワンタップで状況を集めます。押した答えはSharePoint「報連相ログ」に記録し、相談・詰まりのときだけ上司へ自動で一報するフローを作ります。">
+<style>
+  :root{
+    --pa:#3a4fb8;--pa-dark:#2c3a94;--pa-bg:#eef1fc;
+    --sp:#0f6cbd;--sp-bg:#e6f0fb;
+    --teams:#5b5fc7;--teams-dark:#4347a8;--teams-bg:#eef0fb;
+    --blue-text:#14528f;--blue-mid:#2a7dd4;--blue-bg:#eaf2fc;
+    --ink:#1f2937;--muted:#475569;--border:#e2e8f0;--amber:#b45309;--code-bg:#0f172a;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:linear-gradient(160deg,#eef1fc 0%,#f5f8fc 42%,#fff 100%);
+    font-family:"Meiryo UI","Yu Gothic UI","Segoe UI",sans-serif;color:var(--ink);
+    min-height:100vh;padding:0 16px 70px;line-height:1.7;}
+  .wrap{max-width:860px;margin:0 auto;}
+
+  .topbar{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.93);
+    -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+    border:1px solid var(--border);border-top:none;border-radius:0 0 14px 14px;
+    box-shadow:0 2px 10px rgba(20,82,143,.08);margin-bottom:18px;}
+  .topbar-in{display:flex;align-items:center;gap:10px;padding:9px 14px;flex-wrap:wrap;}
+  .brand{display:flex;flex-direction:column;text-decoration:none;color:var(--blue-text);font-weight:800;font-size:18px;line-height:1;}
+  .brand span{font-size:9px;font-weight:600;color:var(--muted);letter-spacing:.04em;margin-top:3px;}
+  .tnav{display:flex;gap:3px;flex-wrap:wrap;margin-left:auto;}
+  .tnav a{text-decoration:none;color:var(--blue-text);font-size:12.5px;font-weight:700;padding:6px 10px;border-radius:8px;white-space:nowrap;}
+  .tnav a:hover{background:var(--blue-bg);}
+  .tnav a.cur{background:var(--pa);color:#fff;}
+
+  header{text-align:center;margin-bottom:6px;}
+  .eyebrow{display:inline-block;background:var(--pa);color:#fff;font-weight:700;font-size:13px;letter-spacing:.06em;padding:5px 16px;border-radius:20px;}
+  h1{font-size:29px;font-weight:800;color:var(--pa-dark);margin:14px 0 6px;line-height:1.28;}
+  h1 small{display:block;font-size:15.5px;color:var(--muted);font-weight:600;margin-top:6px;}
+  .crumbs{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:12.5px;color:var(--muted);margin-bottom:14px;justify-content:center;}
+  .crumbs a{color:var(--blue-mid);text-decoration:none;font-weight:700;}
+  .crumbs .sep{color:#cbd5e1;}
+
+  .goal{background:#fff;border:1px solid var(--border);border-left:5px solid var(--pa);border-radius:12px;padding:14px 20px;margin-bottom:16px;box-shadow:0 2px 8px rgba(20,82,143,.05);}
+  .goal b{color:var(--pa-dark);}
+  .flowpath{display:flex;flex-wrap:wrap;align-items:center;gap:8px;justify-content:center;margin:14px 0 0;font-weight:800;color:var(--pa-dark);font-size:14.5px;}
+  .flowpath .st{background:var(--sp-bg);border:1px solid #a9cdec;border-radius:22px;padding:7px 15px;}
+  .flowpath .st.hot{background:var(--teams-bg);border-color:#c3c5ef;color:var(--teams-dark);}
+  .flowpath .st.end{background:#fff7ed;border-color:#fdba74;color:#9a3412;}
+  .flowpath .ar{color:var(--pa);font-size:18px;}
+
+  .toc{display:flex;flex-wrap:wrap;gap:8px;background:#fff;border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:22px;box-shadow:0 2px 8px rgba(20,82,143,.05);}
+  .toc-lbl{font-size:12px;font-weight:800;color:var(--pa-dark);background:var(--pa-bg);padding:4px 11px;border-radius:8px;}
+  .toc a{text-decoration:none;color:var(--blue-text);font-size:13px;font-weight:700;padding:6px 12px;border-radius:8px;border:1px solid var(--border);}
+  .toc a:hover{background:var(--blue-bg);border-color:var(--blue-mid);}
+
+  .part{scroll-margin-top:70px;margin:26px 0 0;}
+  .part-h{display:flex;align-items:center;gap:12px;margin-bottom:6px;}
+  .part-badge{flex:0 0 auto;background:var(--pa);color:#fff;font-weight:800;font-size:14px;padding:6px 14px;border-radius:20px;}
+  .part-badge.sp{background:var(--sp);}
+  .part-badge.tm{background:var(--teams);}
+  .part-h h2{font-size:20px;font-weight:800;color:var(--pa-dark);margin:0;}
+  .part-note{font-size:14px;color:var(--muted);margin:0 0 12px;}
+
+  ol.steps{list-style:none;counter-reset:st;padding:0;margin:0;}
+  ol.steps>li{position:relative;padding:14px 16px 14px 54px;background:#fff;border:1px solid var(--border);border-radius:12px;margin-bottom:10px;box-shadow:0 2px 6px rgba(20,82,143,.05);font-size:15px;}
+  ol.steps>li::before{counter-increment:st;content:counter(st);position:absolute;left:14px;top:13px;width:28px;height:28px;border-radius:50%;background:var(--pa);color:#fff;font-weight:800;font-size:15px;display:flex;align-items:center;justify-content:center;}
+  ol.steps.sp>li::before{background:var(--sp);}
+  ol.steps.tm>li::before{background:var(--teams);}
+  ol.steps>li b{color:var(--pa-dark);}
+  .k{display:inline-block;background:#f1f5f9;border:1px solid #d7dee7;border-radius:6px;padding:1px 8px;font-weight:700;font-size:13.5px;color:#334155;white-space:nowrap;}
+  .pick{display:inline-block;background:#fff7ed;border:1px solid #fdba74;border-radius:6px;padding:1px 8px;font-weight:800;font-size:13.5px;color:#c2410c;}
+  ul.sub{margin:8px 0 0;padding-left:20px;font-size:14px;color:var(--muted);}
+  ul.sub li{margin:3px 0;}
+
+  .setrow{display:flex;flex-wrap:wrap;gap:6px 10px;margin:8px 0 0;padding:10px 12px;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:10px;font-size:13.5px;}
+  .setrow .kv{display:flex;gap:6px;align-items:center;}
+  .setrow .kv .kk{font-weight:800;color:var(--pa-dark);}
+  .setrow .kv .vv{background:#fff;border:1px solid #d7dee7;border-radius:6px;padding:1px 9px;font-weight:700;color:#334155;}
+
+  .callout{border-radius:10px;padding:12px 18px;font-size:14px;margin:12px 0;line-height:1.7;}
+  .callout.tip{background:var(--sp-bg);border-left:5px solid var(--sp);color:#0b4a7a;}
+  .callout.warn{background:#fffbeb;border-left:5px solid #f59e0b;color:#78350f;}
+  .callout.info{background:var(--blue-bg);border-left:5px solid var(--blue-mid);color:#14528f;}
+  .callout.pa{background:var(--pa-bg);border-left:5px solid var(--pa);color:var(--pa-dark);}
+  .callout.tm{background:var(--teams-bg);border-left:5px solid var(--teams);color:var(--teams-dark);}
+
+  .codewrap{position:relative;margin:10px 0;}
+  .codewrap .lbl{font-size:12px;font-weight:800;color:#cbd5e1;background:#1e293b;display:inline-block;padding:4px 12px;border-radius:8px 8px 0 0;}
+  pre{margin:0;background:var(--code-bg);color:#e2e8f0;border-radius:0 10px 10px 10px;padding:16px 18px;overflow-x:auto;font-size:12.5px;line-height:1.65;
+    font-family:"Cascadia Code","Consolas","SFMono-Regular",monospace;white-space:pre-wrap;word-break:break-word;}
+  .copybtn{position:absolute;top:6px;right:8px;background:#334155;color:#e2e8f0;border:none;border-radius:7px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer;}
+  .copybtn:hover{background:#475569;}
+
+  table.fx{width:100%;border-collapse:collapse;margin:12px 0;font-size:13.5px;}
+  table.fx th{background:var(--pa-bg);color:var(--pa-dark);font-weight:800;border:1px solid #cbd5e1;padding:8px 10px;text-align:left;}
+  table.fx td{border:1px solid #cbd5e1;padding:8px 10px;vertical-align:top;}
+  table.fx code{background:#0f172a;color:#fbbf24;border-radius:5px;padding:2px 7px;font-family:"Consolas",monospace;font-size:12px;}
+  table.fx td.v{font-weight:800;color:#0b5e37;white-space:nowrap;}
+
+  .backrow{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:30px;}
+  .btn.sec{display:inline-flex;align-items:center;gap:6px;background:#fff;color:var(--blue-text);border:1px solid var(--blue-mid);text-decoration:none;font-size:14px;font-weight:700;padding:10px 20px;border-radius:9px;}
+  .btn.sec:hover{background:var(--blue-bg);}
+  figure.shot{margin:14px 0 6px;}
+  figure.shot img{display:block;width:100%;border:1px solid #cbd5e1;border-radius:10px;box-shadow:0 6px 18px rgba(20,82,143,.14);}
+  figure.shot.narrow img{max-width:420px;margin:0 auto;}
+  figure.shot figcaption{font-size:12.5px;color:var(--muted);margin-top:7px;text-align:center;}
+  footer{margin-top:26px;text-align:center;color:#94a3b8;font-size:12px;line-height:1.8;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <nav class="topbar" aria-label="サイト内メニュー">
+    <div class="topbar-in">
+      <a class="brand" href="../../">PA45<span>Power Automate 45</span></a>
+      <div class="tnav">
+        <a href="../../">🏠 ホーム</a>
+        <a href="links.html">🗂️ 第26回の資料</a>
+        <a href="./" class="cur">🛠️ ハンズオン手順</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="crumbs">
+    <a href="../../">🏠 PA45トップ</a><span class="sep">›</span>
+    <a href="links.html">第26回 資料</a><span class="sep">›</span>
+    <span>ハンズオン手順</span>
+  </div>
+
+  <header>
+    <span class="eyebrow">PA45 第26回｜ハンズオン手順</span>
+    <h1>毎日の報連相カードを、ワンタップに<small>毎日16時にTeamsへ「報連相カード」が届き、🟢🟡🔴のワンタップで状況を集めます。押した答えは「報連相ログ」に記録し、相談・詰まりのときだけ上司へ自動で一報します。順番どおりに進めればできます。</small></h1>
+  </header>
+
+  <div class="goal">
+    <b>今日つくるもの：</b> 毎日16時に Teams へ<b>報連相カード</b>が届き、<b>🟢順調です／🟡相談したい／🔴詰まってる</b>をワンタップで選ぶと、その答えが SharePoint「報連相ログ」に1行残り、<b>🟡🔴のときだけ上司へ一報</b>が飛ぶフロー。
+    <div class="flowpath">
+      <span class="st">⏰ 毎日16時に起動</span><span class="ar">→</span>
+      <span class="st hot">🗂️ 3択カードを送って待つ</span><span class="ar">→</span>
+      <span class="st">📝 報連相ログに記録</span><span class="ar">→</span>
+      <span class="st end">📣 相談・詰まりは上司へ</span>
+    </div>
+  </div>
+
+  <div class="callout info" style="margin-bottom:4px;"><b>🔰 初参加の方へ：</b> ここから始めても大丈夫です。<b>まず自分1人あての版</b>を作ります——自分あてにカードを送るだけでテストできます。前回までの内容は必要ありません。</div>
+
+  <nav class="toc" aria-label="手順の目次">
+    <span class="toc-lbl">目次</span>
+    <a href="#p0">0. 準備（リスト＋アプリ）</a>
+    <a href="#p1">1. 毎日16時に起動</a>
+    <a href="#p2">2. カードを送って待つ</a>
+    <a href="#p3">3. 報連相ログに記録</a>
+    <a href="#p4">4. 相談・詰まりは上司へ</a>
+    <a href="#pt">5. テスト</a>
+  </nav>
+
+  <!-- ===== 0. 準備 ===== -->
+  <section class="part" id="p0">
+    <div class="part-h"><span class="part-badge sp">STEP 0</span><h2>準備（記録先のリストと、Teamsアプリの確認）</h2></div>
+    <p class="part-note">作るものは2つ。<b>記録先のSharePointリストを1つ</b>と、<b>Teamsに「ワークフロー」アプリが入っているか</b>の確認だけです。</p>
+    <ol class="steps sp">
+      <li>SharePoint サイトで <b>「新規」→「リスト」</b>を選び、空のリストを作ります。名前は <span class="k">報連相ログ</span>。<ul class="sub"><li><b>列は増やしません。</b> 最初からある <b>「タイトル」列だけ</b>を使い、そこに「状態｜ひとこと｜日時」を1行で入れます。</li></ul></li>
+      <li>Teams の左メニューで <b>「ワークフロー」アプリ</b>が使えるか確認します。<ul class="sub"><li>カードは<b>このアプリ経由（フローボット）</b>で届きます。無い場合は「アプリ」から「ワークフロー（Workflows）」を追加します。</li></ul></li>
+    </ol>
+    <div class="callout warn"><b>⚠️ なぜ先にリストを作る？</b> リストが無いと、あとで「項目の作成」が <b>List not found</b> で失敗します。<b>名前を一字一句同じ</b>（報連相ログ）にしておくと、フロー側で選ぶだけで済みます。</div>
+  </section>
+
+  <!-- ===== 1. 繰り返し ===== -->
+  <section class="part" id="p1">
+    <div class="part-h"><span class="part-badge">STEP 1</span><h2>毎日16時に、自動で起動する</h2></div>
+    <p class="part-note">Power Automate で<b>「最初から作成」→ スケジュール済みクラウド フロー</b>を選びます。</p>
+    <ol class="steps">
+      <li>トリガーは <b>「繰り返し」（スケジュール）</b>。頻度と時刻を下のとおりに入れます。<div class="setrow"><span class="kv"><span class="kk">間隔</span><span class="vv">1</span></span><span class="kv"><span class="kk">頻度</span><span class="vv">日</span></span><span class="kv"><span class="kk">設定時刻（時間）</span><span class="vv">16</span></span><span class="kv"><span class="kk">タイム ゾーン</span><span class="vv">(UTC+09:00) 大阪, 札幌, 東京</span></span></div></li>
+    </ol>
+    <div class="callout warn"><b>⚠️ タイムゾーンは必ず「東京」に：</b>
+      <ul style="margin:6px 0 0;padding-left:20px;">
+        <li>Power Automate の時刻は<b>初期設定がUTC（世界標準時）</b>です。指定しないと日本時間の<b>朝1時ごろ</b>にカードが届いてしまいます。</li>
+        <li><b>タイム ゾーン</b>を「東京」にして、ちょうど16時に届くようにします。</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===== 2. カード ===== -->
+  <section class="part" id="p2">
+    <div class="part-h"><span class="part-badge tm">STEP 2</span><h2>3択カードを送って、押されるまで待つ（肝）</h2></div>
+    <p class="part-note">Teams の <b>「アダプティブ カードを Teams ユーザーに投稿して応答を待機する」</b>を追加します。ここが今日いちばんの山場です。</p>
+    <ol class="steps tm">
+      <li><b>＋新しいステップ</b>→ <b>Microsoft Teams</b> → <b>「アダプティブ カードを Teams ユーザーに投稿して応答を待機する」</b>を選びます。</li>
+      <li>3つの欄を埋めます。<div class="setrow"><span class="kv"><span class="kk">投稿者</span><span class="vv">フロー ボット</span></span><span class="kv"><span class="kk">投稿先</span><span class="vv">フロー ボットとチャットをする</span></span><span class="kv"><span class="kk">Recipient</span><span class="vv">自分（本人）</span></span></div></li>
+      <li><b>メッセージ</b>欄に、下の<b>カードのJSON</b>を貼り付けます。3つのボタンと「ひとこと」入力欄が入ったカードです。</li>
+    </ol>
+    <figure class="shot"><img src="assets/set-card.png" alt="カードアクションの設定画面（投稿者・投稿先・メッセージ＝カードJSON・Recipient）"><figcaption>実際の画面。メッセージ欄にカードのJSONを貼り、Recipient に本人を選んだ状態。</figcaption></figure>
+    <div class="codewrap">
+      <span class="lbl">メッセージ欄に貼るカードJSON</span>
+      <button class="copybtn" data-code="cardjson">コピー</button>
+<pre id="cardjson">{"$schema":"http://adaptivecards.io/schemas/adaptive-card.json","type":"AdaptiveCard","version":"1.4","body":[{"type":"TextBlock","text":"今日の状況は？","weight":"Bolder","size":"Large","wrap":true},{"type":"TextBlock","text":"ボタンを1つ押すだけ（記録します）","isSubtle":true,"wrap":true,"spacing":"None"},{"type":"Input.Text","id":"comment","label":"ひとこと（任意）","placeholder":"例）午後から資料づくり","isMultiline":true}],"actions":[{"type":"Action.Submit","title":"🟢 順調です","data":{"status":"順調"}},{"type":"Action.Submit","title":"🟡 相談したい","data":{"status":"相談"}},{"type":"Action.Submit","title":"🔴 詰まってる","data":{"status":"詰まってる"}}]}</pre>
+    </div>
+    <div class="callout tm"><b>★このアクションは、ここが特殊です（必ず読む）：</b>
+      <ul style="margin:6px 0 0;padding-left:20px;">
+        <li><b>「投稿するだけ」のアクションはありません。</b> 必ず名前に「<b>応答を待機する</b>」が付くものを使います。＝ボタンが押されるまで、<b>フローはその場で一時停止</b>（実行中のまま待機）します。</li>
+        <li><b>前提：Teamsに「ワークフロー」アプリ</b>が入っていること（STEP 0）。無いとカードが届きません。</li>
+        <li><b>カードの見た目は、メッセージ欄にJSONを貼って</b>作ります。デザイナー画面で貼り付けます（コードからは入れられない上級者向けの注意点）。</li>
+        <li><b>3つのボタンは Action.Submit で、それぞれ <span class="k">data.status</span> を持たせます。</b> 押した答えは <span class="k">body/data/status</span> で受け取ります（<b>submitActionId より確実</b>）。</li>
+        <li><b>Recipient は実在するユーザーを選びます。</b> ここがカードの届け先です。まずは自分を選びます。</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===== 3. 記録 ===== -->
+  <section class="part" id="p3">
+    <div class="part-h"><span class="part-badge sp">STEP 3</span><h2>押した答えを「報連相ログ」に記録する</h2></div>
+    <p class="part-note">カードの下に、SharePoint <b>「項目の作成」</b>を追加します。タイトル1列に3つの情報を並べて記録します。</p>
+    <ol class="steps sp">
+      <li><b>＋新しいステップ</b>→ <b>SharePoint</b> → <b>「項目の作成」</b>を追加します。</li>
+      <li><b>サイトのアドレス</b>＝記録先のサイト、<b>リスト名</b>＝<span class="k">報連相ログ</span> を選びます。</li>
+      <li><b>タイトル</b>に、下の3つを <span class="k">｜</span>（縦棒）でつないで入れます。<ul class="sub"><li>①状態（動的コンテンツ）→ ②<b>｜</b>を入力 → ③ひとことの式 → ④<b>｜</b>を入力 → ⑤日時の式、の順。</li></ul></li>
+    </ol>
+    <figure class="shot"><img src="assets/set-createitem.png" alt="項目の作成の設定画面（リスト名＝報連相ログ／タイトルの式）"><figcaption>実際の画面。タイトルに body/data/status ｜ coalesce(…) ｜ convertTimeZone(…) が入った状態。</figcaption></figure>
+    <div class="codewrap">
+      <span class="lbl">① 状態（動的コンテンツ、または式で取り出す）</span>
+      <button class="copybtn" data-code="fx1">コピー</button>
+<pre id="fx1">body/data/status</pre>
+    </div>
+    <div class="codewrap">
+      <span class="lbl">③ ひとこと（fx に貼る・未入力なら「（ひとことなし）」）</span>
+      <button class="copybtn" data-code="fx2">コピー</button>
+<pre id="fx2">coalesce(triggerBody()?['comment'],'（ひとことなし）')</pre>
+    </div>
+    <div class="callout tip" style="margin:6px 0 12px;"><b>💡 ひとことの取り出し方：</b> ひとことは<b>カードの動的コンテンツ「comment」</b>から入れるのが簡単です。式で書くときは、上のように<b>カードのアクションから <span class="k">comment</span> を参照</b>します（動的コンテンツが出ないときは fx で書きます）。</div>
+    <div class="codewrap">
+      <span class="lbl">⑤ 日時（fx に貼る・日本時間の文字にする）</span>
+      <button class="copybtn" data-code="fx3">コピー</button>
+<pre id="fx3">convertTimeZone(utcNow(),'UTC','Tokyo Standard Time','yyyy/MM/dd HH:mm')</pre>
+    </div>
+
+    <div class="callout pa"><b>★タイトルの式を、3つの部品に分けて読む：</b> タイトルは、下の3つを <span class="k">｜</span> でつないだものです。</div>
+    <table class="fx">
+      <tr><th style="width:44%;">式の部品</th><th>なにをする？</th><th>今回の値</th></tr>
+      <tr><td><code>body/data/status</code></td><td>押したボタンの答え（<b>data.status</b>）を取り出す。🟢なら「順調」。</td><td class="v">順調</td></tr>
+      <tr><td><code>coalesce(comment,'（ひとことなし）')</code></td><td><b>coalesce＝前が空なら後ろを使う</b>。ひとこと未入力なら「（ひとことなし）」に。</td><td class="v">順調です</td></tr>
+      <tr><td><code>convertTimeZone(utcNow(),'UTC','Tokyo Standard Time','yyyy/MM/dd HH:mm')</code></td><td>今の時刻（UTC）を<b>日本時間に直して</b>、決めた書式の文字にする。</td><td class="v">2026/09/02 14:24</td></tr>
+    </table>
+    <div class="callout tip"><b>できあがるタイトル：</b> <span class="k" style="font-size:14px;">順調｜順調です｜2026/09/02 14:24</span> ── 列を増やさなくても、1行で「状態・ひとこと・日時」が読めます。</div>
+  </section>
+
+  <!-- ===== 4. 条件・通知 ===== -->
+  <section class="part" id="p4">
+    <div class="part-h"><span class="part-badge">STEP 4</span><h2>相談・詰まりのときだけ、上司へ一報</h2></div>
+    <p class="part-note">記録の下に <b>「条件」</b>を追加し、<b>「順調」でないとき</b>だけ上司へ知らせます。</p>
+    <ol class="steps">
+      <li><b>＋新しいステップ</b>→ <b>コントロール</b> → <b>「条件」</b>を追加します。</li>
+      <li>条件を <b>状態 ＝ body/data/status</b>／<b>次の値に等しくない</b>／<b>順調</b> にします。<div class="setrow"><span class="kv"><span class="kk">左辺</span><span class="vv">body/data/status</span></span><span class="kv"><span class="kk">演算子</span><span class="vv">次の値に等しくない</span></span><span class="kv"><span class="kk">右辺</span><span class="vv">順調</span></span></div></li>
+      <li><b>「はい」（True）</b>の中に、Teams <b>「チャットまたはチャネルでメッセージを投稿する」</b>を入れ、上司（デモでは自分）あてに一報を投稿します。</li>
+      <li><b>「いいえ」（False）</b>は<b>空のまま</b>でOK。順調な日は記録だけ残します。</li>
+    </ol>
+    <div class="codewrap">
+      <span class="lbl">上司へのメッセージ（［　］は動的コンテンツ・式に置き換え）</span>
+      <button class="copybtn" data-code="notify">コピー</button>
+<pre id="notify">📣 報連相：本人が「［状態］」を選びました
+ひとこと：［ひとこと］
+時刻：［日本時間の日時］</pre>
+    </div>
+    <figure class="shot narrow"><img src="assets/notify-boss.png" alt="上司への通知メッセージの実物"><figcaption>実際に届いた一報。状態・ひとこと・時刻が差し込まれます。</figcaption></figure>
+    <div class="callout pa"><b>なぜ「順調」だけ通知しない？</b> 毎日すべて通知すると、上司の画面が埋もれます。<b>手を打つべきもの（相談・詰まり）だけ</b>を届けると、通知が「困りごと」だけになり、見落としが減ります。記録はどちらの場合も残っています。</div>
+  </section>
+
+  <!-- ===== 5. テスト ===== -->
+  <section class="part" id="pt">
+    <div class="part-h"><span class="part-badge">STEP 5</span><h2>保存して、テストする</h2></div>
+    <ol class="steps">
+      <li>右上の <b>「保存」</b>→ <b>「テスト」→「手動」</b>で今すぐ実行します（毎日16時を待たずに試せます）。</li>
+      <li>Teams にカードが届きます。<b>ひとこと</b>を書いて、<b>🟡相談したい</b>を押します。</li>
+      <li>SharePoint「報連相ログ」に<b>1行追加</b>され、🟡なので<b>上司への一報</b>も届きます。🟢で試すと、記録だけで通知は来ません。</li>
+    </ol>
+    <figure class="shot"><img src="assets/sp-result.png" alt="報連相ログに記録された行"><figcaption>実際の画面。「状態｜ひとこと｜日時」が1行で記録されています。</figcaption></figure>
+    <div class="callout tip"><b>💡 ここまで来たら完成です。</b> あとは Recipient を各メンバーにして <b>Apply to each</b> で全員へ配れば、チーム全体の報連相が毎日回りはじめます（毎日新しいカードなので重複しても問題ありません）。まずは1人版で十分です。</div>
+    <div class="callout warn"><b>うまくいかないとき：</b>
+      <ul style="margin:6px 0 0;padding-left:20px;">
+        <li>カードが届かない → Teams に <b>「ワークフロー」アプリ</b>が入っているか／Recipient が正しいか。</li>
+        <li>記録でエラー → <b>「報連相ログ」リスト</b>ができているか／リスト名が一字一句同じか（List not found）。</li>
+        <li>時刻がずれる → タイム ゾーンが <b>東京</b> になっているか。</li>
+        <li>ひとことが空欄で「（ひとことなし）」にならない → coalesce の1つ目に、カードの <span class="k">comment</span> を正しく参照しているか。</li>
+        <li>順調でも通知が来る → 条件が「<b>次の値に等しくない</b>／順調」になっているか。右辺の文字は data.status と同じ「順調」に。</li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="backrow">
+    <a class="btn sec" href="links.html">← 第26回の資料にもどる</a>
+    <a class="btn sec" href="../../">🏠 サイトのトップへ</a>
+  </div>
+
+  <footer>
+    PA45 第26回 ハンズオン手順 ／ 報連相カード × Teams × SharePoint<br>
+    人名・数値はすべて架空のサンプルです。画面や手順は公開日時点のもので、今後変わる可能性があります。
+  </footer>
+</div>
+
+<script>
+  document.querySelectorAll('.copybtn').forEach(function(b){
+    b.addEventListener('click', function(){
+      var el = document.getElementById(b.dataset.code);
+      var text = el.innerText;
+      navigator.clipboard.writeText(text).then(function(){
+        var o = b.textContent; b.textContent = 'コピーしました'; setTimeout(function(){ b.textContent = o; }, 1400);
+      });
+    });
+  });
+</script>
+</body>
+</html>
