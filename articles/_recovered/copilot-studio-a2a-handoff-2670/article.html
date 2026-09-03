@@ -1,0 +1,123 @@
+<div class="mb-body"><div class="cs-preface">&#x1f4dd; 実際に <b>Copilot Studio を触って検証</b>し、スクショを撮りながら気づいたことをまとめた記録です。<br>機能・画面・料金は更新が続きます。<br>最新の正確な情報は <a href="https://learn.microsoft.com/ja-jp/microsoft-copilot-studio/" target="_blank" rel="noopener">Microsoft 公式（Microsoft Learn）</a> をご確認ください。</div>
+
+<div class="mb-intro">エージェントを増やすと、1体に機能を詰め込みがちです。<br>この記録は、受付役が専門エージェントに取り次ぐ仕組み（A2A＝Connected agents）を実機で動かしたもの。<br>つなぎ方と、実際に出た3つの落とし穴をまとめました。</div>
+
+<p class="mb-lead">案内役のエージェントに「Power Automate のフローの作り方を教えて」と聞かれても、そこは別に作ってある専門のエージェントの担当でした。<br>1体で抱え込まず、質問を適切な相手に渡せると、指示文もナレッジも各エージェントに分けられて、それぞれが見通しよくなります。</p>
+
+<p class="mb-lead">この記事では、<strong>①取り次ぎとは何か ②つなぎ方 ③実際に動かした様子 ④やってみてわかった3つの落とし穴</strong>、の順にまとめます。</p>
+
+<figure class="mb-fig"><svg viewBox="0 0 720 300" font-family="'Noto Sans JP',sans-serif"><defs><marker id="ah" markerWidth="10" markerHeight="10" refX="6" refY="3" orient="auto"><path d="M0 0l6 3-6 3z" fill="#a78bda"/></marker></defs><rect x="40" y="120" width="180" height="64" rx="14" fill="#F5F3FF" stroke="#7C3AED" stroke-width="2.5"/><text x="130" y="148" text-anchor="middle" font-size="15" font-weight="800" fill="#5B21B6">受付エージェント</text><text x="130" y="170" text-anchor="middle" font-size="12" fill="#6D28D9">まず全部ここが受ける</text><path d="M224 138 L300 70" stroke="#a78bda" stroke-width="3" marker-end="url(#ah)"/><path d="M224 152 H300" stroke="#a78bda" stroke-width="3" marker-end="url(#ah)"/><path d="M224 166 L300 234" stroke="#a78bda" stroke-width="3" marker-end="url(#ah)"/><rect x="308" y="38" width="220" height="64" rx="12" fill="#EFF6FF" stroke="#2563EB" stroke-width="2"/><text x="418" y="64" text-anchor="middle" font-size="14" font-weight="700" fill="#1E40AF">総務のエージェント</text><text x="418" y="86" text-anchor="middle" font-size="12" fill="#1D4ED8">休暇・申請のこと</text><rect x="308" y="120" width="220" height="64" rx="12" fill="#EFF6FF" stroke="#2563EB" stroke-width="2"/><text x="418" y="146" text-anchor="middle" font-size="14" font-weight="700" fill="#1E40AF">経理のエージェント</text><text x="418" y="168" text-anchor="middle" font-size="12" fill="#1D4ED8">経費・精算のこと</text><rect x="308" y="202" width="220" height="64" rx="12" fill="#EFF6FF" stroke="#2563EB" stroke-width="2"/><text x="418" y="228" text-anchor="middle" font-size="14" font-weight="700" fill="#1E40AF">情シスのエージェント</text><text x="418" y="250" text-anchor="middle" font-size="12" fill="#1D4ED8">PC・パスワードのこと</text><rect x="560" y="120" width="128" height="64" rx="12" fill="#FDF2F8" stroke="#EC4899" stroke-width="2"/><text x="624" y="150" text-anchor="middle" font-size="13" font-weight="800" fill="#9D174D">質問した人へ</text><text x="624" y="170" text-anchor="middle" font-size="11.5" fill="#BE185D">答えが返る</text><path d="M532 70 C560 90 560 110 566 122" stroke="#f0abcf" stroke-width="2.5" fill="none" marker-end="url(#ah)"/><path d="M532 152 H556" stroke="#f0abcf" stroke-width="2.5" marker-end="url(#ah)"/><path d="M532 234 C560 214 560 195 566 182" stroke="#f0abcf" stroke-width="2.5" fill="none" marker-end="url(#ah)"/></svg><figcaption>▲ 受付エージェントがまず受けて、内容に応じて専門のエージェントへ渡す。答えは受付を通して返る</figcaption></figure>
+
+&nbsp;
+
+<div class="mb-nav"><span class="lb">いまここ</span><div class="cells"><div class="n on"><span class="ix">1</span>取り次ぎとは</div><div class="n"><span class="ix">2</span>つなぎ方</div><div class="n"><span class="ix">3</span>動かしてみる</div><div class="n"><span class="ix">4</span>3つの落とし穴</div></div></div>
+
+<h2>① 取り次ぎ（Connected agents）とは</h2>
+
+<div class="mb-goal"><div class="row"><span class="g">この節で分かること</span><div>1体で全部やらせない、という考え方を確認します。</div></div><div class="row"><span class="g af">読み終えるとこうなる</span><div>なぜ分けるのかが分かります。</div></div></div>
+
+<p>メインのエージェントが、会話の途中で<strong>別のエージェントを呼び出せる</strong>仕組みです。<br>受付役が質問の内容を見て、担当の専門エージェントに渡し、その答えを受付が受け取って返します。</p>
+
+<p>この記事の時点では、いくつか前提があります。</p>
+
+<ul>
+<li>つなげるのは、今のところ <strong>Copilot Studio で作ったエージェントどうし</strong></li>
+<li><strong>同じ環境</strong>で、<strong>新しいエクスペリエンス</strong>で作ってあること</li>
+<li>取り次ぎ先が <strong>公開（Publish）済み</strong>で、接続できる設定になっていること</li>
+</ul>
+
+&nbsp;
+
+<div class="speech-wrap sb-id-14 sbs-stn sbp-l sbis-cb cf"><div class="speech-person"><figure class="speech-icon"><img class="speech-icon-image" src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="" width="1024" height="1024" /></figure></div><div class="speech-balloon">1体で全部やらせようとすると指示文がふくらんで、だんだん精度が落ちます。<br>受付役と専門役で分けると、それぞれの指示がすっきりしました。</div></div>
+
+<div class="mb-nav"><span class="lb">いまここ</span><div class="cells"><div class="n done"><span class="ix">1</span>&#x2713; 取り次ぎとは</div><div class="n on"><span class="ix">2</span>つなぎ方</div><div class="n"><span class="ix">3</span>動かしてみる</div><div class="n"><span class="ix">4</span>3つの落とし穴</div></div></div>
+
+<h2>② つなぎ方</h2>
+
+<div class="mb-goal"><div class="row"><span class="g">この節ですること</span><div>受付から専門エージェントへ取り次ぐ設定をします。</div></div><div class="row"><span class="g af">終わるとこうなる</span><div>2体がつながった状態になります。</div></div></div>
+
+<p>受付エージェントの右パネルにある <strong>Connected agents</strong> から追加します。<br>順番があり、ここでつまずきやすい点が2つありました。</p>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-a2a-build-2.png" alt="" /><figcaption>▲ メイン（案内係）エージェントの Build 画面。<br>右パネルには上から <strong>Skills・Tools・Knowledge・Connected agents</strong> が縦に並びます。<br>取り次ぎ先は、<strong>赤枠の「Connected agents」（一番下）</strong>に追加します。<br>この例では、接続先として専門役の『PA45受付エージェント』が1体つながっている状態です（チップに名前が表示されます）。</figcaption></figure>
+
+<div class="mb-step"><div class="st-ttl"><span class="st-no">1</span>取り次ぎ先を先に公開する</div><ol><li>渡したい専門エージェントを開いて <strong>Publish（公開）</strong>する</li><li>発行直後は、受付側の一覧に <strong>&ldquo;still drafts&rdquo;（まだ下書き）</strong>と出て選べないことがある</li><li>その場合は次の手順で <strong>Refresh（更新）</strong>を押すと選べるようになる</li></ol></div>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-a2a-add-1.png" alt="" /><figcaption>▲ 取り次ぎ先の追加ダイアログ。未公開のエージェントは「まだ下書き（still drafts）」と出て選べない。公開してから Refresh で一覧に出す</figcaption></figure>
+
+<div class="mb-step"><div class="st-ttl"><span class="st-no">2</span>受付側でつないで、説明を書く</div><ol><li>受付エージェントの <strong>Connected agents の「＋」</strong>を押す</li><li><strong>Refresh</strong> を押して、公開済みのエージェントを一覧に出す</li><li>取り次ぎ先を選び、<strong>Description（説明）</strong>に「どんなときに渡すか／渡さないか」を書く</li><li><strong>Connect</strong> して保存する</li></ol></div>
+
+<div class="mb-note"><p class="nt-ttl">&#x203b; 説明を書くのが肝</p>取り次ぎ先を選んだあとの <strong>Description が、そのまま「いつ渡すか」の判断材料</strong>になります。<br>ここが空だと、受付エージェントは取り次ぐべき場面を判断できません。<br>道具（ツール）を足すときと同じで、<strong>「こういう質問が来たら、この専門エージェントに渡す」</strong>と具体的に書いておきます。</div>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-a2a-desc-1.png" alt="" /><figcaption>▲ つなぐときの Description 欄。「どんな質問に答える相手か」を書いておくと、受付エージェントが取り次ぐ場面を判断できる。ここが空だと取り次ぎが発火しない</figcaption></figure>
+
+<div class="mb-point">つなぐ前の前提が「公開済み」だという点は、<span class="hl">フローやチャネルと同じ</span>です。<strong>公開していないものは、道具としても取り次ぎ先としても選べない</strong>。<br>作ったばかりのものが一覧に出てこないときは、まず公開できているかを疑うのが早いです。</div>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-a2a-connected.png" alt="" /><figcaption>▲ 接続した専門エージェント（PA45受付エージェント）は、右パネルの Connected agents にチップで並ぶ。ここに並んだ相手に、受付エージェントが取り次ぐ</figcaption></figure>
+
+&nbsp;
+
+<div class="mb-nav"><span class="lb">いまここ</span><div class="cells"><div class="n done"><span class="ix">1</span>&#x2713; 取り次ぎとは</div><div class="n done"><span class="ix">2</span>&#x2713; つなぎ方</div><div class="n on"><span class="ix">3</span>動かしてみる</div><div class="n"><span class="ix">4</span>3つの落とし穴</div></div></div>
+
+<h2>③ 実際に動かしてみる</h2>
+
+<div class="mb-goal"><div class="row"><span class="g">この節ですること</span><div>会話して、取り次ぎが起きるかを見ます。</div></div><div class="row"><span class="g af">終わるとこうなる</span><div>動いていることを自分の目で確認できます。</div></div></div>
+
+<p>エージェントを Teams で使うには、事前に Publish（公開）→チャネル追加が必要です（公開の手順は別記事で解説）。</p>
+
+<p>受付エージェントを Teams に置いて、専門エージェント（フローの作り方に答えるエージェント）を取り次ぎ先につないだ状態で試しました。</p>
+
+<p>Teams で <strong>「Power Automate のフローの作り方を教えてください」</strong>と送ると、受付エージェントが<strong>「専門の案内役に引き継ぎますね」</strong>と返し、そのあとに専門エージェントが、フローの種類や手順を<strong>表つき</strong>で答えてくれました。<br>1体では抱えていなかった内容が、取り次ぎで返ってきた形です。</p>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-a2a-handoff-1.png" alt="" /><figcaption>▲ Teams での実際のやりとり。「フローの作り方を教えて」に受付が『専門の案内係に引き継ぎますね』と返し、続けて専門エージェントがフローの種類を表つきで回答した。上部のチャット名が長いID（GUID）で表示されているのも、実際の画面のまま</figcaption></figure>
+
+<div class="mb-note"><p class="nt-ttl">&#x1f4dd; Teams では名前がGUIDで出ることがある</p>Teams のチャット一覧では、エージェントの名前が<strong>長いID（GUID）で表示される</strong>ことがありました。<br>開けば名前は出ますが、一覧では判別しづらいので、名前を控えておくと探しやすくなります。</div>
+
+&nbsp;
+
+<div class="speech-wrap sb-id-14 sbs-stn sbp-l sbis-cb cf"><div class="speech-person"><figure class="speech-icon"><img class="speech-icon-image" src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="" width="1024" height="1024" /></figure></div><div class="speech-balloon">会話していると、裏で別のエージェントに切り替わっているのが分かります。<br>ここは動かしてみると仕組みが腹落ちすると思います。</div></div>
+
+<div class="mb-nav"><span class="lb">いまここ</span><div class="cells"><div class="n done"><span class="ix">1</span>&#x2713; 取り次ぎとは</div><div class="n done"><span class="ix">2</span>&#x2713; つなぎ方</div><div class="n done"><span class="ix">3</span>&#x2713; 動かしてみる</div><div class="n on"><span class="ix">4</span>3つの落とし穴</div></div></div>
+
+<h2>④ やってみてわかった、3つの落とし穴</h2>
+
+<div class="mb-goal"><div class="row"><span class="g">この節で分かること</span><div>実際にはまった3点をまとめます。</div></div><div class="row"><span class="g af">読み終えるとこうなる</span><div>同じところで止まらずに済みます。</div></div></div>
+
+<p>ここが、実際につないで動かさないと見えてこなかった部分です。</p>
+
+<div class="mb-warn"><span class="wt">落とし穴1：取り次ぎは、一時的に失敗することがある</span>同じ質問でも、<strong>1回目は取り次ぎに失敗し、少し時間をおいて再試行したら成功</strong>する、ということがありました。<br>情報が無かったわけではありません。<br>対処としては「少し時間をおいて、もう一度試す」で通ることが多かったです。<br>一度の失敗で「使えない」と判断しないほうがよさそうです。</div>
+
+<div class="mb-warn"><span class="wt">落とし穴2：失敗が、もっともらしい言い訳にすり替わる</span>取り次ぎが落ちたとき、受付エージェントが返してきたのは<strong>「ただいま担当が混み合っており…」といった、それらしい説明</strong>でした。<br>これは受付エージェントが作った文章で、<strong>実際の失敗の原因ではありません</strong>。<br>もっともらしく聞こえてしまうぶん、<strong>裏で取り次ぎが落ちていることに気づきにくく、調査が遅れます</strong>。<br>うまく動かないときは、返答の文面ではなく、取り次ぎ自体が成立しているかを疑うのが早道です。</div>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-a2a-excuse-1.png" alt="" /><figcaption>▲ 取り次ぎが落ちたときの実際の返答。『ただいま…混み合っており』はエージェントが作った文章で、本当の失敗原因ではない。もっともらしいぶん、裏で失敗していることに気づきにくい</figcaption></figure>
+
+<figure class="mb-fig"><svg viewBox="0 0 720 210" font-family="'Noto Sans JP',sans-serif"><defs><marker id="ah2" markerWidth="10" markerHeight="10" refX="6" refY="3" orient="auto"><path d="M0 0l6 3-6 3z" fill="#a78bda"/></marker></defs><rect x="40" y="30" width="250" height="60" rx="12" fill="#F5F3FF" stroke="#7C3AED" stroke-width="2"/><text x="165" y="55" text-anchor="middle" font-size="13.5" font-weight="700" fill="#5B21B6">指示文（自分で書いた設定）</text><text x="165" y="76" text-anchor="middle" font-size="12" fill="#6D28D9">例：「毎月開催」</text><rect x="40" y="120" width="250" height="60" rx="12" fill="#ECFEFF" stroke="#0891B2" stroke-width="2"/><text x="165" y="145" text-anchor="middle" font-size="13.5" font-weight="700" fill="#155E75">Web検索（本物のページ）</text><text x="165" y="166" text-anchor="middle" font-size="12" fill="#0E7490">例：「毎週木曜 20:15〜」</text><path d="M296 60 C360 60 360 100 424 100" stroke="#a78bda" stroke-width="3" fill="none" marker-end="url(#ah2)"/><path d="M296 150 C360 150 360 110 424 110" stroke="#a78bda" stroke-width="3" fill="none" marker-end="url(#ah2)"/><rect x="432" y="66" width="248" height="78" rx="14" fill="#FEF2F2" stroke="#EF4444" stroke-width="2"/><text x="556" y="96" text-anchor="middle" font-size="14" font-weight="800" fill="#991B1B">合成された回答</text><text x="556" y="120" text-anchor="middle" font-size="12" fill="#B91C1C">Webが指示文を上書きすることがある</text></svg><figcaption>▲ 回答は「指示文」と「Web検索」の合成。ときに Web の内容が指示文を上書きする</figcaption></figure>
+
+<div class="mb-warn"><span class="wt">落とし穴3：回答は「指示文＋Web検索」の合成で、Webが指示文を上書きすることがある</span>専門エージェントの指示文には「毎月開催」と書いてあったのに、返ってきた答えは<strong>「毎週木曜 20:15〜」＋本物のイベントページのリンク</strong>でした。<br>Web検索で見つけた本物の情報が、<strong>指示文の内容を上書きした</strong>形です。<br>今回はたまたま Web のほうが正しく、古い指示文が直る方向に働きました。<br>ですが<strong>逆だったら、誤った情報のほうが勝ってしまいます</strong>。</div>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-a2a-weboverride-1.png" alt="" /><figcaption>▲ 指示文は「毎月開催」なのに、回答は『毎週木曜 20:15〜21:00』＋本物の connpass リンク。Web検索で見つけた情報が、指示文を上書きした例</figcaption></figure>
+
+<div class="mb-point">だから、<span class="hl">正確に答えさせたいことは、Web任せにしない</span>。<strong>開催日や料金のような「間違えたら困る情報」は、指示文かナレッジに自分で書いておく</strong>。<br>Web検索は便利ですが、そのまま信じさせる設計にはしない、という線引きが要ります。</div>
+
+&nbsp;
+
+<div class="mb-nav"><span class="lb">ここまで完了</span><div class="cells"><div class="n done"><span class="ix">1</span>&#x2713; 取り次ぎとは</div><div class="n done"><span class="ix">2</span>&#x2713; つなぎ方</div><div class="n done"><span class="ix">3</span>&#x2713; 動かしてみる</div><div class="n done"><span class="ix">4</span>&#x2713; 3つの落とし穴</div></div></div>
+
+<h2>まとめ</h2>
+
+<p>取り次ぎ（Connected agents）を使うと、1体のエージェントに全部を背負わせず、質問を担当ごとに分けられます。<br>指示文やナレッジも分割できて、それぞれが見通しよくなります。</p>
+
+<ul>
+<li><strong>①</strong> 受付が受けて、内容に応じて専門エージェントに渡す仕組み</li>
+<li><strong>②</strong> つなぐ前提は「公開済み・同じ環境・新UI」。<br>Description に「いつ渡すか」を書く</li>
+<li><strong>③</strong> Teams で、受付→専門への取り次ぎが表つき回答で成立した</li>
+<li><strong>④</strong> 落とし穴＝一時的に失敗する／失敗が言い訳にすり替わる／Webが指示文を上書きする</li>
+</ul>
+
+<p>便利なぶん、<strong>「うまくいったように見えて、裏で失敗している」</strong>が起きやすい仕組みでもあります。<br>正確さが要る部分は Web に任せきりにせず、自分の指示文とナレッジで固めておく。<br>そこまでやって、はじめて実務で使える形になると感じました。</p>
+
+<p style="font-size:13px;color:#888;line-height:1.9;">※ 本記事は公開日時点の情報をもとに、筆者が実際に試した内容を整理しました。Copilot Studio は更新が続いており、画面や挙動、接続の条件は変わることがあります。最新の状況は公式情報（Microsoft Learn）もあわせてご確認ください。</p>
+
+<p style="font-size:13px;color:#888;line-height:1.9;">※ 図解は説明用に作成しました。構成や図解の一部は、AI と壁打ちしながら作成しています。</p>
+
+</div>
+<style> .mb-body > p{margin:1.9em 0!important;line-height:2.05!important;} .mb-body > h2{margin-top:2.8em!important;} .mb-body > h3{margin-top:2.4em!important;} .mb-body > ul{margin:1.7em 0!important;line-height:2.0;} .mb-body > ul li{margin:.55em 0;} .mb-lead{line-height:2.1;} .hl{color:#6D28D9;font-weight:700;} .mb-fig{margin:40px 0;display:flex;flex-direction:column;align-items:center;background:#e7e0f5;border:1px solid #d0c4ec;border-radius:16px;padding:18px 16px 12px;box-shadow:0 2px 8px rgba(76,29,149,.08);} .mb-fig svg{width:100%;max-width:760px;height:auto;display:block;margin:0 auto;background:#fff;border-radius:10px;padding:14px 10px;} .mb-fig figcaption{font-size:.85em;color:#5b4a7a;margin-top:12px;} .mb-point{background:#f7f4fd;border-left:6px solid #8b5cf6;border-radius:8px;padding:18px 24px;margin:36px 0;line-height:2.1;} .mb-note{background:#fffdf5;border:2px solid #ffd54f;border-radius:12px;padding:18px 24px;margin:38px 0;line-height:2.1;} .mb-note .nt-ttl{font-weight:700;color:#e8920c;margin:0 0 14px;} .mb-warn{background:#fff6f6;border-left:6px solid #e57373;border-radius:8px;padding:18px 24px;margin:36px 0;line-height:2.1;} .mb-warn .wt{font-weight:800;color:#c0392b;display:block;margin-bottom:8px;} .mb-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:30px 0;} .mb-cards .cd{background:#fff;border:1px solid #e4dbf6;border-left:5px solid #8b5cf6;border-radius:12px;padding:15px 17px;box-shadow:0 2px 8px rgba(76,29,149,.07);} .mb-cards .cd .cd-t{display:block;color:#5b21b6;font-weight:800;font-size:1.02em;margin-bottom:6px;} .mb-cards .cd .cd-d{font-size:.9em;color:#4b5563;line-height:1.65;} @media(max-width:600px){.mb-cards{grid-template-columns:1fr;}} .mb-step{background:#f7f4fd;border:2px solid #ddd0f2;border-radius:14px;padding:18px 22px 6px;margin:34px 0;} .mb-step .st-ttl{display:flex;align-items:center;gap:12px;font-weight:800;color:#5b21b6;font-size:1.06em;margin-bottom:6px;} .mb-step .st-no{flex:none;width:32px;height:32px;border-radius:50%;background:#7c3aed;color:#fff;display:flex;align-items:center;justify-content:center;} .mb-step ol{margin:6px 0 14px;padding-left:0;list-style:none;counter-reset:s;} .mb-step ol li{position:relative;padding:8px 0 8px 30px;line-height:1.8;border-top:1px solid #ece4f9;} .mb-step ol li:first-child{border-top:none;} .mb-step ol li::before{counter-increment:s;content:counter(s);position:absolute;left:0;top:8px;width:22px;height:22px;background:#ede9fe;color:#5b21b6;border-radius:50%;font-size:.78em;font-weight:800;display:flex;align-items:center;justify-content:center;} .mb-intro{background:#f6f4fb;border:1px solid #e0d7f3;border-left:5px solid #a78bda;border-radius:10px;padding:13px 18px;margin:4px 0 30px;font-size:.9em;color:#5b4a7a;line-height:1.8;} .mb-shot{margin:40px 0;background:#eceef2;border:1px solid #d9dce3;border-radius:16px;padding:16px 16px 13px;box-shadow:0 3px 12px rgba(15,23,42,.09);display:flex;flex-direction:column;align-items:center;} .mb-shot .sh-tag{align-self:flex-start;display:inline-flex;font-size:12.5px;font-weight:800;color:#475569;background:#dde1e9;border-radius:999px;padding:5px 14px;margin-bottom:12px;} .mb-shot img{max-width:100%;height:auto;display:block;border-radius:10px;border:1px solid #c7cad3;box-shadow:0 6px 18px rgba(15,23,42,.14);} .mb-shot figcaption{font-size:1.02em;color:#463f57;font-weight:500;margin-top:14px;line-height:1.8;align-self:flex-start;} .cs-preface{background:#eef7f1;border:1px solid #cfe8db;border-left:5px solid #5f8a6e;border-radius:10px;padding:14px 18px;margin:0 0 26px;font-size:.86em;color:#3d5647;line-height:1.85;} .cs-preface b{color:#2f6b4f;} .cs-preface a{color:#1d4ed8;font-weight:700;} .speech-balloon{line-height:1.95;}.mb-nav{margin:38px 0 6px;}.mb-nav .lb{display:inline-block;font-size:11.5px;font-weight:800;color:#7c3aed;letter-spacing:.1em;margin-bottom:8px;}.mb-nav .cells{display:flex;gap:6px;flex-wrap:wrap;}.mb-nav .n{flex:1;min-width:126px;background:#f5f2fc;border:1px solid #e4dcf7;border-radius:9px;padding:9px 10px;font-size:.8em;color:#9c94b3;line-height:1.45;text-align:center;font-weight:700;}.mb-nav .n .ix{display:block;font-size:.85em;opacity:.75;margin-bottom:2px;}.mb-nav .n.done{background:#ede9fe;border-color:#d9cdf5;color:#6d28d9;}.mb-nav .n.on{background:#7c3aed;border-color:#7c3aed;color:#fff;box-shadow:0 3px 10px rgba(124,58,237,.28);}.mb-goal{background:#fff;border:2px solid #ddd0f2;border-radius:12px;padding:6px 20px;margin:14px 0 32px;}.mb-goal .row{display:flex;gap:14px;align-items:flex-start;padding:12px 0;border-top:1px solid #f0eafb;line-height:1.9;font-size:.96em;}.mb-goal .row:first-child{border-top:none;}.mb-goal .g{flex:none;width:112px;font-size:11.5px;font-weight:800;color:#7c3aed;background:#f3eefc;border-radius:999px;padding:4px 0;text-align:center;margin-top:5px;}.mb-goal .g.af{color:#2f855a;background:#eaf5ee;}@media(max-width:600px){.mb-nav .n{min-width:calc(50% - 3px);}.mb-goal .g{width:96px;font-size:11px;}}</style>

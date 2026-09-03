@@ -1,0 +1,128 @@
+<div class="mb-body"><div class="cs-preface">&#x1f4dd; 実際に <b>Copilot Studio を触って検証</b>し、スクショを撮りながら気づいたことをまとめた記録です。<br>機能・画面・料金は更新が続きます。<br>最新の正確な情報は <a href="https://learn.microsoft.com/ja-jp/microsoft-copilot-studio/" target="_blank" rel="noopener">Microsoft 公式（Microsoft Learn）</a> をご確認ください。</div>
+
+<div class="mb-intro">エージェントを動かしていて、ひとつの会話の中で「社内資料の検索は普通に動くのに、ツールの実行だけがエラーで止まる」という場面に出くわしました。<br>なぜ片方だけ止まるのか。<br>公式の課金ドキュメントで確認したら、はっきりした線引きがありました。<br>この記事はその整理です。</div>
+
+<p class="mb-lead">先に結論です。<br>Copilot Studio で<strong>クレジットの壁（＝実行が止まる）を生むのは「実行する」系の操作だけ</strong>でした。<strong>「読む・答える」系（回答・社内データの検索）は、Microsoft 365 Copilot ライセンスの範囲で無償</strong>になり、壁に当たりません。</p>
+
+&nbsp;
+
+<div class="mb-nav"><span class="lb">いまここ</span><div class="cells"><div class="n on"><span class="ix">1</span>実際に起きたこと</div><div class="n"><span class="ix">2</span>公式の答え</div><div class="n"><span class="ix">3</span>実行系とは</div><div class="n"><span class="ix">4</span>前提と注意</div><div class="n"><span class="ix">5</span>実務での使いどころ</div></div></div>
+
+<h2>① 実際に起きたこと</h2>
+
+<div class="mb-goal"><div class="row"><span class="g">この節で分かること</span><div>実機で出た403エラーの画面を見ます。</div></div><div class="row"><span class="g af">読み終えるとこうなる</span><div>何が止まったのかが分かります。</div></div></div>
+
+<p>社内資料（SharePoint）を根拠に答えられるか試していたときのことです。<br>ひとつの質問に対して、エージェントは2つのことをしようとしました。</p>
+
+<ul>
+<li><strong>社内資料を検索して読む</strong> → 動いた（資料の中身をちゃんと読めていた）</li>
+<li><strong>「質問を記録する」ツール（フロー）を実行する</strong> → 止まった</li>
+</ul>
+
+<p>この画面は、エージェントを Preview（テスト）したときに、各ステップの成否を一覧できる「トレース（活動履歴）」の表示です。<br>回答の下にある詳細から開けます。</p>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-boundary-trace.png" alt="" /><figcaption>▲ 実際のトレース。同じ会話の中で、上の「質問を記録する」（ツールの実行）は 403 で止まり、下の「Searched knowledge」（社内資料の検索）はそのまま進んでいる。実行系だけが壁に当たっている</figcaption></figure>
+
+<p>止まったほうのエラーは、これでした。</p>
+
+<div class="mb-quote" style="font-family:'Segoe UI',monospace;font-size:13px;">"toolDisplayName": "質問を記録する",<br>"errorMessage": "Flow returned HTTP 403.",<br>"errorCode": "Http403",<br>"errorMetadata": { "InnerErrorCode": "<b>InsufficientMcsCredits</b>" }</div>
+
+<p><strong>クレジット不足（InsufficientMcsCredits）</strong>。<br>同じ会話の中で、<strong>検索は通ったのに、ツール実行だけが 403 で止まった</strong>。<br>この非対称が、最初は不思議でした。</p>
+
+&nbsp;
+
+<div class="speech-wrap sb-id-14 sbs-stn sbp-l sbis-cb cf"><div class="speech-person"><figure class="speech-icon"><img class="speech-icon-image" src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="" width="1024" height="1024" /></figure></div><div class="speech-balloon">実行系のツールだけが403で止まって、答え自体は返っていました。<br>止まる場所が「実行系」に寄っている、というのが分かった場面でした。</div></div>
+
+<div class="mb-nav"><span class="lb">いまここ</span><div class="cells"><div class="n done"><span class="ix">1</span>&#x2713; 実際に起きたこと</div><div class="n on"><span class="ix">2</span>公式の答え</div><div class="n"><span class="ix">3</span>実行系とは</div><div class="n"><span class="ix">4</span>前提と注意</div><div class="n"><span class="ix">5</span>実務での使いどころ</div></div></div>
+
+<h2>② 公式の答え：「読む・答える」はゼロ評価</h2>
+
+<div class="mb-goal"><div class="row"><span class="g">この節で分かること</span><div>読む・答えるがゼロ評価になる根拠を確認します。</div></div><div class="row"><span class="g af">読み終えるとこうなる</span><div>無償で使える範囲が分かります。</div></div></div>
+
+<p>Microsoft の課金ドキュメント（標準ハーネスのライセンス・2026年8月時点）に、はっきり書かれていました。</p>
+
+<div class="mb-quote">Microsoft 365 Copilot ライセンスをお持ちの場合、Copilot Chat、Microsoft Teams、または SharePoint のエージェントを使用して、<strong>クラシックの回答・生成回答・Microsoft Graph テナントの基礎づけ（tenant grounding）</strong>を行うことは、<strong>Copilot Studio のメッセージパックやメーターにカウントされません</strong>（ゼロ評価の使用状況になります）。</div>
+
+<p>つまり、<strong>Microsoft 365 Copilot ライセンスがあれば</strong>、次の3つは<strong>ゼロ評価（無償）</strong>です。</p>
+
+<ul>
+<li><strong>定型回答（classic answers）</strong></li>
+<li><strong>生成回答（generative answers）</strong></li>
+<li><strong>社内データの検索（Microsoft Graph テナント根拠）</strong>＝いわゆる Work IQ 相当</li>
+</ul>
+
+<div class="mb-point">言いかえると、<span class="hl">「答える・読む・社内資料を検索する」は、ライセンスの範囲で課金されない</span>。<br>だから、クレジットが 0 の環境でも、これらは動きます。<br>実際に、社内資料の検索が通ったのはこのためでした。</div>
+
+&nbsp;
+
+<div class="speech-wrap sb-id-14 sbs-stn sbp-l sbis-cb cf"><div class="speech-person"><figure class="speech-icon"><img class="speech-icon-image" src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="" width="1024" height="1024" /></figure></div><div class="speech-balloon">読む・答えるはゼロ評価、というのが公式の線でした。<br>ここを押さえると、どこから費用がかかるかの見当がつきます。</div></div>
+
+<div class="mb-nav"><span class="lb">いまここ</span><div class="cells"><div class="n done"><span class="ix">1</span>&#x2713; 実際に起きたこと</div><div class="n done"><span class="ix">2</span>&#x2713; 公式の答え</div><div class="n on"><span class="ix">3</span>実行系とは</div><div class="n"><span class="ix">4</span>前提と注意</div><div class="n"><span class="ix">5</span>実務での使いどころ</div></div></div>
+
+<h2>③ では、壁を生む「実行系」とは</h2>
+
+<div class="mb-goal"><div class="row"><span class="g">この節で分かること</span><div>課金される実行系の中身を並べます。</div></div><div class="row"><span class="g af">読み終えるとこうなる</span><div>どこから有料になるかが分かります。</div></div></div>
+
+<p>一方で、上のゼロ評価リストに<strong>入っていない</strong>操作があります。<br>それが「実行する」系です。</p>
+
+<table class="ctbl"><tr><th>操作</th><th>種類</th><th>ライセンスで無償？</th></tr><tr><td>定型回答</td><td>答える</td><td class="ok">無償（ゼロ評価）</td></tr><tr><td>生成回答</td><td>答える</td><td class="ok">無償（ゼロ評価）</td></tr><tr><td>社内資料の検索（テナント根拠）</td><td>読む</td><td class="ok">無償（ゼロ評価）</td></tr><tr><td>ツール／フローの実行（エージェントのアクション）</td><td class="pt">実行する</td><td class="ng">消費する</td></tr><tr><td>自律トリガーの起動</td><td class="pt">実行する</td><td class="ng">消費する（重い）</td></tr></table>
+
+<p>今回 403 で止まった「質問を記録する」は、まさに<strong>ツール（フロー）の実行＝エージェントのアクション</strong>でした。<br>ここは無償の対象外なので、<strong>クレジットが要る</strong>。<br>クレジットが 0 の環境（無料の試用版など）では、必ずここで止まります。</p>
+
+<div class="mb-point"><span class="hl">壁を生んでいるのは「実行する」系だけ</span>。<br>「読む・答える」はライセンスで越えられる——今回の非対称は、この線引きどおりでした。</div>
+
+&nbsp;
+
+<div class="mb-nav"><span class="lb">いまここ</span><div class="cells"><div class="n done"><span class="ix">1</span>&#x2713; 実際に起きたこと</div><div class="n done"><span class="ix">2</span>&#x2713; 公式の答え</div><div class="n done"><span class="ix">3</span>&#x2713; 実行系とは</div><div class="n on"><span class="ix">4</span>前提と注意</div><div class="n"><span class="ix">5</span>実務での使いどころ</div></div></div>
+
+<h2>④ 前提と注意</h2>
+
+<div class="mb-goal"><div class="row"><span class="g">この節で分かること</span><div>前提条件と注意点を整理します。</div></div><div class="row"><span class="g af">読み終えるとこうなる</span><div>誤解したまま人に説明せずに済みます。</div></div></div>
+
+<div class="mb-warn"><span class="wt">「無償」には条件がある</span>この無償（ゼロ評価）は、<strong>Microsoft 365 Copilot ライセンスを持つユーザーが、Copilot Chat・Teams・SharePoint といった Microsoft 365 の場でエージェントを使う</strong>ときの話です。<br>ライセンスが無ければ、これらもクレジットを消費します。</div>
+
+<div class="mb-note"><p class="nt-ttl">&#x203b; 「実行系」を動かすには</p>ツール実行・フロー・自律トリガーを実際に動かすには、Copilot Studio の<strong>クレジット</strong>が必要です。<br>従量課金（使った分だけ）か、前払いの容量パックで用意します。<br>無料の試用版にはクレジットが付いていないので、実行系は止まります。</div>
+
+<div class="mb-link">料金の全体像は <a href="https://www.automate136.com/copilot-studio-cost-design/" target="_blank" rel="noopener">Copilot Studioは“使うほど課金”される</a>、学習環境（試用版で何ができて何で詰まるか）は <a href="https://www.automate136.com/copilot-studio-learning-environment/" target="_blank" rel="noopener">Copilot Studioを学ぶ“テスト環境”の話</a> にまとめています。</div>
+
+&nbsp;
+
+<div class="mb-nav"><span class="lb">いまここ</span><div class="cells"><div class="n done"><span class="ix">1</span>&#x2713; 実際に起きたこと</div><div class="n done"><span class="ix">2</span>&#x2713; 公式の答え</div><div class="n done"><span class="ix">3</span>&#x2713; 実行系とは</div><div class="n done"><span class="ix">4</span>&#x2713; 前提と注意</div><div class="n on"><span class="ix">5</span>実務での使いどころ</div></div></div>
+
+<h2>⑤ 実務での使いどころ</h2>
+
+<div class="mb-goal"><div class="row"><span class="g">この節で分かること</span><div>実務でどう使い分けるかを整理します。</div></div><div class="row"><span class="g af">読み終えるとこうなる</span><div>次に作るときの判断ができます。</div></div></div>
+
+<p>この線引きが分かってからは、<strong>「動かない」の原因を切り分けやすくなりました</strong>。</p>
+
+<div class="mb-fig"><p class="fig-ttl">「動かない」ときの切り分け</p><div class="mb-flow"><div class="step"><span class="st-n">①</span><div class="st-t">ある操作だけ止まる</div></div><div class="arrow">→</div><div class="step"><span class="st-n">②</span><div class="st-t">「読む・答える」か<br>「実行する」か</div></div><div class="arrow">→</div><div class="step"><span class="st-n">③</span><div class="st-t">実行系ならクレジット不足を疑う</div></div></div></div>
+
+<ul>
+<li><strong>読む・答えるが動くのに、ある操作だけ止まる</strong> → 止まっているのは「実行系」。<br>原因はクレジット（ライセンスや指示文ではない）</li>
+<li><strong>社内資料の検索や回答そのものが出ない</strong> → そちらはライセンスや認証・データ側の話</li>
+<li>設定を直しに行く前に、まず<strong>「読む・答える」なのか「実行する」なのか</strong>を見る</li>
+</ul>
+
+<div class="mb-note"><p class="nt-ttl">&#x203b; 2026年8月21日の追記：いつも止まるわけではない</p>同じ構成のフロー実行を別の日に試したところ、<strong>403 は出ず、最後まで動きました</strong>。<br>前払いクレジットの残量は 0 のままで、消費レポートの数字もその日は増えていません。<br>猶予期間や枠の扱いによって挙動が変わるようです。<br><strong>「クレジットが無いから実行系は必ず止まる」とは考えず、動く前提で費用を見積もる</strong>ほうが安全です。</div>
+
+&nbsp;
+
+<div class="mb-nav"><span class="lb">ここまで完了</span><div class="cells"><div class="n done"><span class="ix">1</span>&#x2713; 実際に起きたこと</div><div class="n done"><span class="ix">2</span>&#x2713; 公式の答え</div><div class="n done"><span class="ix">3</span>&#x2713; 実行系とは</div><div class="n done"><span class="ix">4</span>&#x2713; 前提と注意</div><div class="n done"><span class="ix">5</span>&#x2713; 実務での使いどころ</div></div></div>
+
+<h2>まとめ</h2>
+
+<ul>
+<li><strong>読む・答える（定型/生成回答・社内データ検索）</strong>＝ M365 Copilot ライセンスでゼロ評価（無償）</li>
+<li><strong>実行する（ツール/フロー・自律トリガー）</strong>＝ クレジットを消費する</li>
+<li><strong>壁を生むのは「実行系」だけ</strong>。<br>読む・答えるはライセンスで越えられる</li>
+<li>クレジット0の環境では、実行系だけが 403（InsufficientMcsCredits）で止まる</li>
+</ul>
+
+<p>「クレジットが足りない」と「ライセンスが足りない」を混ぜて考えると、対処を間違えやすくなります。<strong>その操作は"読む・答える"か、"実行する"か</strong>。<br>ここを見るだけで、原因の切り分けがはっきりしました。</p>
+
+<p style="font-size:13px;color:#888;line-height:1.9;">※ 本記事は公開日時点の公式情報（Microsoft Learn「標準ハーネスライセンス」2026年8月時点）と、筆者が自分の環境で確認した挙動をもとに整理しました。ライセンス・課金の条件は変わることがあり、環境によっても異なります。正確な条件は公式のライセンスガイドと、ご自身の契約内容をご確認ください。</p>
+
+<p style="font-size:13px;color:#888;line-height:1.9;">※ 引用したエラーは、筆者が実際の環境で遭遇しました。構成の一部は、AI と壁打ちしながら整理しました。</p>
+
+</div>
+<style> .mb-body > p{margin:1.9em 0!important;line-height:2.05!important;} .mb-body > h2{margin-top:2.8em!important;} .mb-body > ul{margin:1.7em 0!important;line-height:2.0;} .mb-body > ul li{margin:.55em 0;} .mb-lead{line-height:2.1;} .hl{color:#6D28D9;font-weight:700;} .mb-point{background:#f7f4fd;border-left:6px solid #8b5cf6;border-radius:8px;padding:18px 24px;margin:36px 0;line-height:2.1;} .mb-note{background:#fffdf5;border:2px solid #ffd54f;border-radius:12px;padding:18px 24px;margin:38px 0;line-height:2.1;} .mb-note .nt-ttl{font-weight:700;color:#e8920c;margin:0 0 14px;} .mb-warn{background:#fff6f6;border-left:6px solid #e57373;border-radius:8px;padding:18px 24px;margin:36px 0;line-height:2.1;} .mb-warn .wt{font-weight:800;color:#c0392b;display:block;margin-bottom:8px;} .mb-quote{background:#f4f7fb;border-left:5px solid #94a3b8;border-radius:8px;padding:16px 22px;margin:28px 0;color:#334155;line-height:2.0;font-size:.96em;} .ctbl{width:100%;border-collapse:collapse;font-size:.92em;margin:22px 0;background:#fff;} .ctbl th,.ctbl td{border:1px solid #e4dbf6;padding:11px 13px;text-align:left;line-height:1.7;vertical-align:top;} .ctbl th{background:#f3f0fb;color:#3b2a5a;font-size:.9em;} .ctbl td.ok{color:#166534;font-weight:700;white-space:nowrap;} .ctbl td.ng{color:#991b1b;font-weight:700;white-space:nowrap;} .mb-link{background:#eef5ff;border:1px solid #cfe0f7;border-radius:12px;padding:16px 20px;margin:34px 0;line-height:1.9;} .mb-link a{color:#1d4ed8;font-weight:700;} .mb-shot{margin:40px 0;background:#eceef2;border:1px solid #d9dce3;border-radius:16px;padding:16px 16px 13px;box-shadow:0 3px 12px rgba(15,23,42,.09);display:flex;flex-direction:column;align-items:center;} .mb-shot .sh-tag{align-self:flex-start;display:inline-flex;font-size:12.5px;font-weight:800;color:#475569;background:#dde1e9;border-radius:999px;padding:5px 14px;margin-bottom:12px;} .mb-shot img{max-width:100%;height:auto;display:block;border-radius:10px;border:1px solid #c7cad3;box-shadow:0 6px 18px rgba(15,23,42,.14);} .mb-shot figcaption{font-size:1.02em;color:#5b4a7a;margin-top:14px;line-height:1.8;align-self:flex-start;} .mb-intro{background:#f6f4fb;border:1px solid #e0d7f3;border-left:5px solid #a78bda;border-radius:10px;padding:13px 18px;margin:4px 0 30px;font-size:.9em;color:#5b4a7a;line-height:1.8;} .cs-preface{background:#eef7f1;border:1px solid #cfe8db;border-left:5px solid #5f8a6e;border-radius:10px;padding:14px 18px;margin:0 0 26px;font-size:.86em;color:#3d5647;line-height:1.85;} .cs-preface b{color:#2f6b4f;} .cs-preface a{color:#1d4ed8;font-weight:700;} .mb-fig{margin:34px 0;padding:22px 20px 20px;background:#faf8ff;border:1px solid #e6ddf7;border-radius:14px;} .mb-fig .fig-ttl{font-size:.95em;font-weight:800;color:#5B21B6;margin:0 0 16px;text-align:center;} .mb-flow{display:flex;flex-wrap:wrap;align-items:stretch;justify-content:center;gap:10px;} .mb-flow .step{flex:1 1 150px;min-width:128px;background:#fff;border:2px solid #ddd0f2;border-radius:12px;padding:14px 12px;text-align:center;} .mb-flow .step .st-n{display:inline-block;font-size:.78em;font-weight:800;color:#fff;background:#7C3AED;border-radius:999px;padding:2px 11px;margin-bottom:9px;} .mb-flow .step .st-t{font-size:.92em;font-weight:700;color:#2b2540;line-height:1.6;} .mb-flow .arrow{align-self:center;color:#a78bda;font-weight:900;font-size:1.35em;} .speech-balloon{line-height:1.95;}.mb-nav{margin:38px 0 6px;}.mb-nav .lb{display:inline-block;font-size:11.5px;font-weight:800;color:#7c3aed;letter-spacing:.1em;margin-bottom:8px;}.mb-nav .cells{display:flex;gap:6px;flex-wrap:wrap;}.mb-nav .n{flex:1;min-width:126px;background:#f5f2fc;border:1px solid #e4dcf7;border-radius:9px;padding:9px 10px;font-size:.8em;color:#9c94b3;line-height:1.45;text-align:center;font-weight:700;}.mb-nav .n .ix{display:block;font-size:.85em;opacity:.75;margin-bottom:2px;}.mb-nav .n.done{background:#ede9fe;border-color:#d9cdf5;color:#6d28d9;}.mb-nav .n.on{background:#7c3aed;border-color:#7c3aed;color:#fff;box-shadow:0 3px 10px rgba(124,58,237,.28);}.mb-goal{background:#fff;border:2px solid #ddd0f2;border-radius:12px;padding:6px 20px;margin:14px 0 32px;}.mb-goal .row{display:flex;gap:14px;align-items:flex-start;padding:12px 0;border-top:1px solid #f0eafb;line-height:1.9;font-size:.96em;}.mb-goal .row:first-child{border-top:none;}.mb-goal .g{flex:none;width:112px;font-size:11.5px;font-weight:800;color:#7c3aed;background:#f3eefc;border-radius:999px;padding:4px 0;text-align:center;margin-top:5px;}.mb-goal .g.af{color:#2f855a;background:#eaf5ee;}@media(max-width:600px){.mb-nav .n{min-width:calc(50% - 3px);}.mb-goal .g{width:96px;font-size:11px;}}</style>

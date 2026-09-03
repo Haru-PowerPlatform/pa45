@@ -1,0 +1,232 @@
+<div class="mb-body">
+
+<div class="mb-intro">作ったエージェントを、別の環境へ届けるところまで実機で確認しました。<br>開発環境で作り、ソリューションに入れて出し、テスト環境に入れる、という流れです。<br>本番のエージェントを直接さわらずに更新する、企業での基本形にあたります。<br>操作した画面をすべて順番に載せているので、この記事だけで同じ移送を再現できます。</div>
+
+<div class="mb-link">この記事は企業導入編の6本目です。<br>①：<a href="https://www.automate136.com/copilot-studio-dev-environment/" target="_blank" rel="noopener">開発用の環境を分ける</a>／②：<a href="https://www.automate136.com/copilot-studio-dlp-policy/" target="_blank" rel="noopener">DLPで「認証なし」を止める</a>／③：<a href="https://www.automate136.com/copilot-studio-managed-environment/" target="_blank" rel="noopener">マネージド環境で共有範囲を絞る</a>／④：<a href="https://www.automate136.com/copilot-studio-credit-visibility/" target="_blank" rel="noopener">クレジットの消費を見る</a>／⑤：<a href="https://www.automate136.com/copilot-studio-knowledge-governance/" target="_blank" rel="noopener">ナレッジ ソースを絞る</a></div>
+
+<p class="mb-lead">①〜⑤で、作る場所・公開の仕方・配る範囲・費用・読ませるデータを決めました。<br>運用に入ると、次に出てくるのが<strong>更新のたびにどうやって本番へ反映するか</strong>です。</p>
+
+<p class="mb-lead">本番のエージェントを直接編集すると、失敗したときに戻せません。<br>そこで<strong>開発環境で直し、まとめて運ぶ</strong>形にします。<br>この仕組みがソリューションです。</p>
+
+<div class="mb-term"><span class="tm">用語</span><b>ALM（アプリケーション ライフサイクル管理）</b>：作ったものを、開発 → テスト → 本番と段階を追って届け、更新し続けるための進め方。<br>ここでは「本番を直接さわらずに更新する仕組み」と読み替えて構いません。</div>
+
+<div class="mb-term"><span class="tm">用語</span><b>ソリューション</b>：移したいものをまとめて入れる箱。<br>エージェントやフロー、テーブルなどをこの箱に入れて、環境から環境へ運びます。</div>
+
+<div class="mb-map">この記事の道のり<br><b>①</b> いまの入れ物を確認する → <b>②</b> 移送用のソリューションを作る → <b>③</b> エージェントを入れる → <b>④</b> エクスポートする → <b>⑤</b> 移送先を用意する → <b>⑥</b> インポートして確認する</div>
+
+<figure class="mb-fig"><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-alm-fig-alm-flow.png" alt="" /><figcaption>▲ 開発で作り、zipにして出し、テストへ入れる。本番を直接さわらないのが基本形</figcaption></figure>
+
+&nbsp;
+
+<div class="mb-nav"><span class="lb">いまここ</span><div class="cells"><div class="n on"><span class="ix">1</span>いまの入れ物を確認</div><div class="n"><span class="ix">2</span>ソリューションを作る</div><div class="n"><span class="ix">3</span>エージェントを入れる</div><div class="n"><span class="ix">4</span>エクスポートする</div><div class="n"><span class="ix">5</span>移送先を用意する</div><div class="n"><span class="ix">6</span>インポートして確認</div></div></div>
+
+<h2>① いまの入れ物を確認する</h2>
+
+<div class="mb-goal"><div class="row"><span class="g">この節ですること</span><div>作ったエージェントが、いまどこに入っているのかを見ます。</div></div><div class="row"><span class="g af">終わるとこうなる</span><div>そのままでは他の環境へ移せない、という理由が分かります。</div></div></div>
+
+<div class="mb-step"><p class="st-ttl"><span class="st-no">1</span>エージェントが入っているソリューションを見る</p><ol>
+<li>Copilot Studio で対象の環境を開く</li>
+<li>エージェントを開き、右上の「…」をクリック</li>
+<li>「ソリューションを表示する」を選ぶ</li></ol></div>
+
+<div class="mb-term"><span class="tm">用語</span><b>既定のソリューション</b>：環境ごとに最初から用意されている作業場。<br>作ったものは自動でここに入りますが、この箱ごと持ち出すことはできません。</div>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-alm-default-sol.png" alt="" /><figcaption>▲ 既定のソリューション。エージェント1件とトピック14件が自動で入っている</figcaption></figure>
+
+<p>入っていたのは <strong>Common Data Services Default Solution</strong>、いわゆる既定のソリューションでした。<br>エージェントを作ると自動でここに入ります。</p>
+
+<div class="mb-why"><span class="wy">なぜそうするか</span>既定のソリューションは、その環境の作業場のようなもので<strong>エクスポートの対象にならない</strong>。<br>移送するには、自分でソリューションを作って入れ直す必要がある。<br>ALMの出発点がここになる。</div>
+
+&nbsp;
+
+<div class="speech-wrap sb-id-14 sbs-stn sbp-l sbis-cb cf"><div class="speech-person"><figure class="speech-icon"><img class="speech-icon-image" src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="" width="1024" height="1024" /></figure></div><div class="speech-balloon">作ったエージェントは既定のソリューションに入っていて、そのままだと別の環境へ運べません。<br>まずここを確認するのが出発点でした。</div></div>
+
+<div class="mb-nav"><span class="lb">いまここ</span><div class="cells"><div class="n done"><span class="ix">1</span>&#x2713; いまの入れ物を確認</div><div class="n on"><span class="ix">2</span>ソリューションを作る</div><div class="n"><span class="ix">3</span>エージェントを入れる</div><div class="n"><span class="ix">4</span>エクスポートする</div><div class="n"><span class="ix">5</span>移送先を用意する</div><div class="n"><span class="ix">6</span>インポートして確認</div></div></div>
+
+<h2>② 移送用のソリューションを作る</h2>
+
+<div class="mb-goal"><div class="row"><span class="g">この節ですること</span><div>移送用のソリューションと、独自の発行元を新しく作ります。</div></div><div class="row"><span class="g af">終わるとこうなる</span><div>まとめて運べる箱ができます。</div></div></div>
+
+<div class="mb-step"><p class="st-ttl"><span class="st-no">2</span>新しいソリューションを作る</p><ol>
+<li>ソリューションの一覧に戻る</li>
+<li>「＋ 新しいソリューション」をクリック</li>
+<li>表示名を入れる（ここでは「コパスタ45」）</li>
+<li>発行元を選ぶ</li></ol></div>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-alm-new-sol.png" alt="" /><figcaption>▲ 新しいソリューションのパネル。表示名・名前・発行元・バージョンを決める</figcaption></figure>
+
+<p>ここで判断が要るのが<strong>発行元</strong>です。<br>発行元は接頭辞を持っていて、そのソリューションで作った部品の内部名に付きます。</p>
+
+<div class="mb-term"><span class="tm">用語</span><b>発行元（パブリッシャー）と接頭辞</b>：そのソリューションで作った部品の内部名に付く、作り手を示す名札。<br>接頭辞は cs45_ のような数文字で、あとから変更できません。</div>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-alm-new-pub.png" alt="" /><figcaption>▲ 発行元も新規に作れる。表示名・名前・接頭辞（ここでは cs45）を入れる</figcaption></figure>
+
+<div class="mb-why"><span class="wy">なぜそうするか</span>接頭辞は<strong>あとから変更できない</strong>。<br>既定の発行元だと `cr3ab_` のような自動生成の文字列が付く。<br>企業では自社を示す接頭辞を最初に決めて、全社で統一しておく。</div>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-alm-sol-empty.png" alt="" /><figcaption>▲ 作成直後。中身は0件で、ここに運びたいものを入れていく</figcaption></figure>
+
+&nbsp;
+
+<div class="speech-wrap sb-id-14 sbs-stn sbp-l sbis-cb cf"><div class="speech-person"><figure class="speech-icon"><img class="speech-icon-image" src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="" width="1024" height="1024" /></figure></div><div class="speech-balloon">発行元の接頭辞は後から変えられないので、ここだけは最初に決めておくのがよかったです。<br>私は独自の発行元を作って、社内で分かる名前にしました。</div></div>
+
+<div class="mb-nav"><span class="lb">いまここ</span><div class="cells"><div class="n done"><span class="ix">1</span>&#x2713; いまの入れ物を確認</div><div class="n done"><span class="ix">2</span>&#x2713; ソリューションを作る</div><div class="n on"><span class="ix">3</span>エージェントを入れる</div><div class="n"><span class="ix">4</span>エクスポートする</div><div class="n"><span class="ix">5</span>移送先を用意する</div><div class="n"><span class="ix">6</span>インポートして確認</div></div></div>
+
+<h2>③ エージェントを入れる</h2>
+
+<div class="mb-goal"><div class="row"><span class="g">この節ですること</span><div>作ったソリューションに、既存のエージェントを入れます。</div></div><div class="row"><span class="g af">終わるとこうなる</span><div>運ぶ中身が決まります。</div></div></div>
+
+<div class="mb-step"><p class="st-ttl"><span class="st-no">3</span>既存のエージェントを追加する</p><ol>
+<li>コマンドバーの「既存を追加」をクリック</li>
+<li>「エージェント」を選ぶ</li>
+<li>対象のエージェントにチェックを入れて「追加」</li></ol></div>
+
+<div class="mb-term"><span class="tm">用語</span><b>Dataverse</b>：Power Platform の共通データ保管庫。<br>エージェントもソリューションもここに保存されるため、Dataverse がない環境では扱えません。</div>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-alm-add-agent.png" alt="" /><figcaption>▲ 「既存のエージェントを追加する」。説明に「Dataverse にも追加されます」と出る</figcaption></figure>
+
+<div class="mb-why"><span class="wy">なぜそうするか</span>新しく作るのではなく<strong>参照を追加する</strong>。<br>実体は1つで、それを箱に入れて運ぶ形になる。<br>説明文にあるとおり Dataverse に載るので、①で Dataverse を入れておいた環境である必要がある。</div>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-alm-sol-list.png" alt="" /><figcaption>▲ 一覧に戻ると、コパスタ45（公開元＝コパスタ45／バージョン 1.0.0.0）が並ぶ</figcaption></figure>
+
+&nbsp;
+
+<div class="mb-nav"><span class="lb">いまここ</span><div class="cells"><div class="n done"><span class="ix">1</span>&#x2713; いまの入れ物を確認</div><div class="n done"><span class="ix">2</span>&#x2713; ソリューションを作る</div><div class="n done"><span class="ix">3</span>&#x2713; エージェントを入れる</div><div class="n on"><span class="ix">4</span>エクスポートする</div><div class="n"><span class="ix">5</span>移送先を用意する</div><div class="n"><span class="ix">6</span>インポートして確認</div></div></div>
+
+<h2>④ エクスポートする</h2>
+
+<div class="mb-goal"><div class="row"><span class="g">この節ですること</span><div>先に公開してからエクスポートし、zipファイルを受け取ります。</div></div><div class="row"><span class="g af">終わるとこうなる</span><div>持ち運べるファイルが手元にできます。</div></div></div>
+
+<div class="mb-step"><p class="st-ttl"><span class="st-no">4</span>エクスポートを開始する</p><ol>
+<li>ソリューションの行の「⋮」から「エクスポート」を選ぶ</li>
+<li>「エクスポート前」の画面で「公開」をクリックする</li>
+<li>公開が終わったら「次へ」</li></ol></div>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-alm-export-before.png" alt="" /><figcaption>▲ エクスポート前。未公開の変更を反映する導線と、パイプラインでの展開の案内が出る</figcaption></figure>
+
+<div class="mb-term"><span class="tm">用語</span><b>公開（パブリッシュ）</b>：編集した内容を、実際に動く状態へ反映する操作。<br>下書きのままでは利用者にも移送先にも届きません。</div>
+
+<div class="mb-warn"><span class="wt">先に公開する</span>Power Platform は編集内容をいったん下書きとして持ちます。<br><strong>公開していない変更はエクスポートに含まれません</strong>。<br>移送先で「作ったはずのものが無い」となる原因がこれです。</div>
+
+<div class="mb-term"><span class="tm">用語</span><b>パイプライン</b>：ファイルを介さずに、環境から環境へ直接配る仕組み。<br>承認や履歴も残せるため、企業で展開を回すときの本命になります。</div>
+
+<p>この画面には<strong>パイプラインで展開する</strong>という選択肢も出ていました。<br>ファイルを介さずに環境へ直接コピーする仕組みで、企業で展開を自動化するときの本命です。<br>今回は基本形を通すため、ファイルのエクスポートとインポートで進めます。</p>
+
+<div class="mb-step"><p class="st-ttl"><span class="st-no">5</span>マネージドを選ぶ</p><ol>
+<li>バージョン番号を確認する（自動で上がる）</li>
+<li>「次としてエクスポート」で マネージド を選ぶ</li>
+<li>「エクスポート」をクリックする</li></ol></div>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-alm-export-choice.png" alt="" /><figcaption>▲ バージョンは 1.0.0.0 → 1.0.0.1 に自動更新。マネージドが推奨として選ばれている</figcaption></figure>
+
+<div class="mb-term"><span class="tm">用語</span><b>マネージド／アンマネージド</b>：移送するときの2つの形式。<br>マネージドは移送先で編集できない完成品、アンマネージドは編集できる素材と考えると分かりやすいです。</div>
+
+<figure class="mb-fig"><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-alm-fig-managed.png" alt="" /><figcaption>▲ マネージドとアンマネージドの違い。用途が分かれている</figcaption></figure>
+
+<div class="mb-why"><span class="wy">なぜそうするか</span>今回の目的は「開発で作ったものを別の環境へ配る」こと。<br>マネージドで出すと移送先では直接編集できず、<strong>本番で勝手に直される事故を防げる</strong>。<br>別の開発環境へ渡す場合やGitに入れる場合はアンマネージドを選ぶ。</div>
+
+<p>画面下には「エクスポート時にソリューション チェッカーを実行する」もあり、既定でチェックが入っています。<br>③で見たマネージド環境の「ソリューション チェッカー強制」と同じ検査です。</p>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-alm-export-done.png" alt="" /><figcaption>▲ 「ソリューション 「コパスタ45 1.0.0.1」 が正常にエクスポートされました」</figcaption></figure>
+
+<div class="mb-note"><p class="nt-ttl">&#x203b; ダウンロードを取り逃さない</p>エクスポートは「処理 → 完了通知 → ダウンロード」の3段階です。<br>完了の通知を閉じるとファイルを取り逃すことがあります。<br>その場合はもう一度エクスポートすれば、バージョンが上がった状態で出し直せます。</div>
+
+&nbsp;
+
+<div class="speech-wrap sb-id-14 sbs-stn sbp-l sbis-cb cf"><div class="speech-person"><figure class="speech-icon"><img class="speech-icon-image" src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="" width="1024" height="1024" /></figure></div><div class="speech-balloon">エクスポートは処理→完了通知→ダウンロードの3段階で、通知を閉じると取り逃します。<br>私は一度閉じてしまって、やり直しました。</div></div>
+
+<div class="mb-nav"><span class="lb">いまここ</span><div class="cells"><div class="n done"><span class="ix">1</span>&#x2713; いまの入れ物を確認</div><div class="n done"><span class="ix">2</span>&#x2713; ソリューションを作る</div><div class="n done"><span class="ix">3</span>&#x2713; エージェントを入れる</div><div class="n done"><span class="ix">4</span>&#x2713; エクスポートする</div><div class="n on"><span class="ix">5</span>移送先を用意する</div><div class="n"><span class="ix">6</span>インポートして確認</div></div></div>
+
+<h2>⑤ 移送先を用意する</h2>
+
+<div class="mb-goal"><div class="row"><span class="g">この節ですること</span><div>移送先になるテスト環境を用意します。</div></div><div class="row"><span class="g af">終わるとこうなる</span><div>受け入れ先が整います。</div></div></div>
+
+<p>移送先の環境を作ります。<br>手順は①と同じで、種類＝開発者、地域＝アジア太平洋、名前は `CopilotStudio45 テスト` にしました。</p>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-alm-testenv-no-dv.png" alt="" /><figcaption>▲ 作成直後。Dataverse 列が「いいえ」のままだと、この環境にはインポートできない</figcaption></figure>
+
+<p>作成時に Dataverse を有効にしていなかったため、あとから追加します。<br>環境の詳細ページに「Dataverse を追加」の導線がありました。</p>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-alm-add-dv.png" alt="" /><figcaption>▲ あとからでも Dataverse は追加できる。言語・通貨を決めて「追加」</figcaption></figure>
+
+<div class="mb-warn"><span class="wt">元に戻せない選択がある</span>このパネルの「Dynamics 365 アプリを有効にしますか?」には<strong>「この決定は元に戻せません」</strong>と明記されています。<br>Copilot Studio のエージェントを移すだけなら「いいえ」で構いませんが、企業では先に方針を決めておく項目です。</div>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-alm-testenv-ready.png" alt="" /><figcaption>▲ 数分後。Dataverse＝はい、状態＝準備完了になれば移送先として使える</figcaption></figure>
+
+<div class="mb-why"><span class="wy">なぜそうするか</span>ソリューションは Dataverse に取り込まれる。<br>①で「Dataverseがないと Copilot Studio が使えない」と分かったが、<strong>移送先にも同じ条件が要る</strong>。<br>作成時に有効にしておくほうが手戻りがない。</div>
+
+&nbsp;
+
+<div class="mb-nav"><span class="lb">いまここ</span><div class="cells"><div class="n done"><span class="ix">1</span>&#x2713; いまの入れ物を確認</div><div class="n done"><span class="ix">2</span>&#x2713; ソリューションを作る</div><div class="n done"><span class="ix">3</span>&#x2713; エージェントを入れる</div><div class="n done"><span class="ix">4</span>&#x2713; エクスポートする</div><div class="n done"><span class="ix">5</span>&#x2713; 移送先を用意する</div><div class="n on"><span class="ix">6</span>インポートして確認</div></div></div>
+
+<h2>⑥ インポートして確認する</h2>
+
+<div class="mb-goal"><div class="row"><span class="g">この節ですること</span><div>zipをインポートして、届いたかどうかを確認します。</div></div><div class="row"><span class="g af">終わるとこうなる</span><div>開発からテストへの1往復が通り、ALMの形ができます。</div></div></div>
+
+<div class="mb-step"><p class="st-ttl"><span class="st-no">6</span>テスト環境にインポートする</p><ol>
+<li>環境をテスト環境に切り替える</li>
+<li>ソリューションの一覧を開く</li>
+<li>「ソリューションをインポート」をクリック</li>
+<li>「参照」でダウンロードした zip を選び、「次へ」→「インポート」</li></ol></div>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-alm-test-before.png" alt="" /><figcaption>▲ インポート前のテスト環境。ソリューションは既定の2つだけ</figcaption></figure>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-alm-import-file.png" alt="" /><figcaption>▲ ファイルを選んだ状態。名前に managed が入っているのがマネージドで出した証拠</figcaption></figure>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-alm-import-ok.png" alt="" /><figcaption>▲ 「ソリューション 「コパスタ45」 を正常にインポートしました」。一覧にも追加された</figcaption></figure>
+
+<p>一覧のコパスタ45は、バージョン <strong>1.0.0.1</strong>、<strong>マネージド＝はい</strong>、公開元＝コパスタ45 と表示されていました。<br>開発環境で出したものが、そのまま届いています。</p>
+
+<div class="mb-note"><p class="nt-ttl">&#x203b; 絞り込みに注意</p>ソリューション一覧の既定の絞り込みは「アンマネージド」です。<br>マネージドで入れたものは、この表示のままでは出てきません。<br><strong>「マネージド」または「すべて」に切り替えて</strong>確認します。</div>
+
+<div class="mb-step"><p class="st-ttl"><span class="st-no">7</span>エージェントが届いたことを確認する</p><ol>
+<li>左のメニューから「エージェント」を開く</li>
+<li>一覧に対象のエージェントが出ているか見る</li>
+<li>「保護の状態」の列を確認する</li></ol></div>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-alm-arrived.png" alt="" /><figcaption>▲ テスト環境のエージェント一覧。DLPテスト用が届き、保護の状態は「保護済み」</figcaption></figure>
+
+<div class="mb-point">マネージドで運んだ結果が、<span class="hl">「保護済み」という列の表示</span>になって現れました。<br>この環境では直接編集できない状態です。<br>直したいときは開発環境で直し、もう一度出して入れる。<br>この往復が、本番を守りながら更新する形になります。</div>
+
+&nbsp;
+
+<div class="speech-wrap sb-id-14 sbs-stn sbp-l sbis-cb cf"><div class="speech-person"><figure class="speech-icon"><img class="speech-icon-image" src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="" width="1024" height="1024" /></figure></div><div class="speech-balloon">届いたエージェントは「保護済み」になっていて、そのままでは編集できません。<br>運ぶ側と直す側は別、と分けて考えると混乱しにくいです。</div></div>
+
+<div class="mb-nav"><span class="lb">ここまで完了</span><div class="cells"><div class="n done"><span class="ix">1</span>&#x2713; いまの入れ物を確認</div><div class="n done"><span class="ix">2</span>&#x2713; ソリューションを作る</div><div class="n done"><span class="ix">3</span>&#x2713; エージェントを入れる</div><div class="n done"><span class="ix">4</span>&#x2713; エクスポートする</div><div class="n done"><span class="ix">5</span>&#x2713; 移送先を用意する</div><div class="n done"><span class="ix">6</span>&#x2713; インポートして確認</div></div></div>
+
+<h2>⑦ 作業前に押さえておく仕様</h2>
+
+<ul>
+<li><strong>エージェントは既定のソリューションに入る</strong>：そのままでは移送できない</li>
+<li><strong>発行元の接頭辞は変更できない</strong>：最初に自社の接頭辞を決めておく</li>
+<li><strong>公開していない変更は含まれない</strong>：エクスポート前に「公開」を実行する</li>
+<li><strong>バージョンは自動で上がる</strong>：1.0.0.0 → 1.0.0.1 のように管理される</li>
+<li><strong>移送先にも Dataverse が要る</strong>：あとから追加もできる</li>
+<li><strong>一覧の既定はアンマネージド表示</strong>：入れたものが見えないときは絞り込みを切り替える</li>
+<li><strong>ソリューションは Power Platform 共通の仕組み</strong>：Power Apps 側の画面からも同じものが見える</li>
+</ul>
+
+&nbsp;
+
+<div class="mb-nav"><span class="lb">ここまで完了</span><div class="cells"><div class="n done"><span class="ix">1</span>&#x2713; いまの入れ物を確認</div><div class="n done"><span class="ix">2</span>&#x2713; ソリューションを作る</div><div class="n done"><span class="ix">3</span>&#x2713; エージェントを入れる</div><div class="n done"><span class="ix">4</span>&#x2713; エクスポートする</div><div class="n done"><span class="ix">5</span>&#x2713; 移送先を用意する</div><div class="n done"><span class="ix">6</span>&#x2713; インポートして確認</div></div></div>
+
+<h2>まとめ</h2>
+
+<ul>
+<li><strong>①</strong> 移送には、自分で作ったソリューションが要る</li>
+<li><strong>②</strong> 発行元と接頭辞は最初に決める。<br>あとから変えられない</li>
+<li><strong>③</strong> エクスポート前に公開する</li>
+<li><strong>④</strong> テスト・本番へ配るならマネージド、開発間の受け渡しならアンマネージド</li>
+<li><strong>⑤</strong> 移送先にも Dataverse が必要</li>
+<li><strong>⑥</strong> 届いたエージェントは「保護済み」になり、そこでは直接編集できない</li>
+</ul>
+
+<p>6本を通して触ったのは、環境・公開・共有・費用・データ・更新の6か所でした。<br>どれも設定そのものは短時間で終わります。<br>企業で時間がかかるのは、これらを<strong>誰がどう決めるか</strong>を合意するほうです。<br>実物の画面を見せながら話すと、その合意が早く進みます。</p>
+
+<div class="mb-link">①：<a href="https://www.automate136.com/copilot-studio-dev-environment/" target="_blank" rel="noopener">開発用の環境を分けて、既定の環境から出る</a><br>②：<a href="https://www.automate136.com/copilot-studio-dlp-policy/" target="_blank" rel="noopener">DLPで「認証なし」の公開を止める</a><br>③：<a href="https://www.automate136.com/copilot-studio-managed-environment/" target="_blank" rel="noopener">マネージド環境で、エージェントの共有範囲を絞る</a><br>④：<a href="https://www.automate136.com/copilot-studio-credit-visibility/" target="_blank" rel="noopener">クレジットの消費をどこで見るか</a><br>⑤：<a href="https://www.automate136.com/copilot-studio-knowledge-governance/" target="_blank" rel="noopener">ナレッジ ソースを管理側で絞る</a></div>
+
+<p style="font-size:13px;color:#888;line-height:1.9;">※ 本記事は公開日時点の情報をもとに、筆者が実際に試した内容を整理しました。<br>Copilot Studio と Power Platform 管理センターは更新が続いており、画面や名称、既定値は変わることがあります。<br>最新の状況は公式情報（Microsoft Learn）もあわせてご確認ください。</p>
+
+<p style="font-size:13px;color:#888;line-height:1.9;">※ 掲載している画面は、操作中に撮りました。<br>氏名・メールアドレス・環境IDなどは伏せています。<br>構成や図解の一部は、AI と壁打ちしながら作成しています。</p>
+
+</div>
+<style> .mb-body > p{margin:1.9em 0!important;line-height:2.05!important;} .mb-body > h2{margin-top:2.8em!important;} .mb-body > h3{margin-top:2.2em!important;font-size:1.12em;} .mb-body > ul{margin:1.7em 0!important;line-height:2.0;} .mb-body > ul li{margin:.55em 0;} .mb-lead{line-height:2.1;} .hl{color:#6D28D9;font-weight:700;} .mb-fig{margin:40px 0;display:flex;flex-direction:column;align-items:center;background:#e7e0f5;border:1px solid #d0c4ec;border-radius:16px;padding:18px 16px 12px;box-shadow:0 2px 8px rgba(76,29,149,.08);} .mb-fig img{width:100%;max-width:720px;height:auto;display:block;margin:0 auto;background:#fff;border-radius:10px;} .mb-fig figcaption{font-size:.85em;color:#5b4a7a;margin-top:12px;} .mb-shot{margin:44px 0;background:#eceef2;border:1px solid #d9dce3;border-radius:16px;padding:16px 16px 13px;box-shadow:0 3px 12px rgba(15,23,42,.09);} .mb-shot .sh-tag{display:inline-flex;font-size:12.5px;font-weight:800;color:#475569;background:#dde1e9;border-radius:999px;padding:5px 14px;margin-bottom:12px;} .mb-shot img{width:100%;height:auto;display:block;border-radius:10px;border:1px solid #c7cad3;box-shadow:0 6px 18px rgba(15,23,42,.14);} .mb-shot figcaption{font-size:.85em;color:#5b4a7a;margin-top:14px;line-height:1.65;} .mb-point{background:#f7f4fd;border-left:6px solid #8b5cf6;border-radius:8px;padding:18px 24px;margin:36px 0;line-height:2.1;} .mb-why{background:#f2f9f4;border-left:6px solid #4caf82;border-radius:8px;padding:16px 22px;margin:30px 0;line-height:2.0;} .mb-why .wy{font-weight:800;color:#2f855a;display:block;margin-bottom:6px;font-size:.95em;} .mb-note{background:#fffdf5;border:2px solid #ffd54f;border-radius:12px;padding:18px 24px;margin:38px 0;line-height:2.1;} .mb-note .nt-ttl{font-weight:700;color:#e8920c;margin:0 0 14px;} .mb-warn{background:#fff6f6;border-left:6px solid #e57373;border-radius:8px;padding:18px 24px;margin:36px 0;line-height:2.1;} .mb-warn .wt{font-weight:800;color:#c0392b;display:block;margin-bottom:8px;} .mb-code{background:#f6f4fb;border:1px solid #e0d7f3;border-radius:10px;padding:13px 16px;margin:26px 0;font-size:.86em;color:#42335f;line-height:1.9;font-family:'Consolas','SFMono-Regular',monospace;} .mb-step{background:#f7f4fd;border:2px solid #ddd0f2;border-radius:14px;padding:18px 22px 6px;margin:34px 0;} .mb-step .st-ttl{display:flex;align-items:center;gap:12px;font-weight:800;color:#5b21b6;font-size:1.06em;margin-bottom:6px;} .mb-step .st-no{flex:none;width:32px;height:32px;border-radius:50%;background:#7c3aed;color:#fff;display:flex;align-items:center;justify-content:center;} .mb-step ol{margin:6px 0 14px;padding-left:0;list-style:none;counter-reset:s;} .mb-step ol li{position:relative;padding:8px 0 8px 30px;line-height:1.8;border-top:1px solid #ece4f9;} .mb-step ol li:first-child{border-top:none;} .mb-step ol li::before{counter-increment:s;content:counter(s);position:absolute;left:0;top:8px;width:22px;height:22px;background:#ede9fe;color:#5b21b6;border-radius:50%;font-size:.78em;font-weight:800;display:flex;align-items:center;justify-content:center;} .mb-intro{background:#f6f4fb;border:1px solid #e0d7f3;border-left:5px solid #a78bda;border-radius:10px;padding:13px 18px;margin:4px 0 30px;font-size:.9em;color:#5b4a7a;line-height:1.8;} .mb-map{background:#eef2ff;border:1px solid #c7d2fe;border-radius:12px;padding:14px 20px;margin:30px 0;font-size:.92em;color:#3730a3;line-height:1.95;} .mb-map b{color:#4338ca;} .mb-link{background:#eef5ff;border:1px solid #cfe0f7;border-radius:12px;padding:16px 20px;margin:34px 0;line-height:1.9;} .mb-link a{color:#1d4ed8;font-weight:700;} .mb-term{background:#f0f7ff;border:1px solid #cfe0f7;border-left:6px solid #3b82f6;border-radius:10px;padding:14px 20px;margin:28px 0;line-height:1.95;font-size:.96em;} .mb-term .tm{display:inline-flex;font-size:12px;font-weight:800;color:#fff;background:#3b82f6;border-radius:999px;padding:3px 12px;margin-right:10px;vertical-align:2px;} .mb-term b{color:#1e40af;} .speech-balloon{line-height:1.95;}.mb-nav{margin:38px 0 6px;}.mb-nav .lb{display:inline-block;font-size:11.5px;font-weight:800;color:#7c3aed;letter-spacing:.1em;margin-bottom:8px;}.mb-nav .cells{display:flex;gap:6px;flex-wrap:wrap;}.mb-nav .n{flex:1;min-width:126px;background:#f5f2fc;border:1px solid #e4dcf7;border-radius:9px;padding:9px 10px;font-size:.8em;color:#9c94b3;line-height:1.45;text-align:center;font-weight:700;}.mb-nav .n .ix{display:block;font-size:.85em;opacity:.75;margin-bottom:2px;}.mb-nav .n.done{background:#ede9fe;border-color:#d9cdf5;color:#6d28d9;}.mb-nav .n.on{background:#7c3aed;border-color:#7c3aed;color:#fff;box-shadow:0 3px 10px rgba(124,58,237,.28);}.mb-goal{background:#fff;border:2px solid #ddd0f2;border-radius:12px;padding:6px 20px;margin:14px 0 32px;}.mb-goal .row{display:flex;gap:14px;align-items:flex-start;padding:12px 0;border-top:1px solid #f0eafb;line-height:1.9;font-size:.96em;}.mb-goal .row:first-child{border-top:none;}.mb-goal .g{flex:none;width:112px;font-size:11.5px;font-weight:800;color:#7c3aed;background:#f3eefc;border-radius:999px;padding:4px 0;text-align:center;margin-top:5px;}.mb-goal .g.af{color:#2f855a;background:#eaf5ee;}@media(max-width:600px){.mb-nav .n{min-width:calc(50% - 3px);}.mb-goal .g{width:96px;font-size:11px;}}</style>

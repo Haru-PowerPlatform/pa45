@@ -1,0 +1,149 @@
+<div class="mb-body"><div class="cs-preface">&#x1f4dd; 実際に <b>Copilot Studio を触って検証</b>し、スクショを撮りながら気づいたことをまとめた記録です。<br>機能・画面・料金は更新が続きます。<br>最新の正確な情報は <a href="https://learn.microsoft.com/ja-jp/microsoft-copilot-studio/" target="_blank" rel="noopener">Microsoft 公式（Microsoft Learn）</a> をご確認ください。</div>
+
+<div class="mb-intro">2026年の Copilot Studio を触ると、必ず「ハーネス」という言葉に出会います。<br>むずかしそうな言葉ですが、触ってみると中身はシンプルでした。<br>この備忘録は、3つのハーネス（GitHub Copilot／Standard／Copilot Chat）が何が違うのか、どれで作ればいいのか、そして料金はどうなるのかを、Microsoft の公式ドキュメントで確認しながら整理しました。</div>
+
+<p class="mb-lead">Copilot Studio で作るものは、エージェントでもワークフローでも、その裏で必ず「ハーネス」が動いています。<br>ハーネスは、あなたの設計と AI モデルの“あいだ”に立って実際に処理を回す土台（ランタイム）です。</p>
+
+<p class="mb-lead">登場人物を分けると、こうなります。</p>
+
+<ul>
+<li><strong>あなた</strong>：「こう動いてほしい」を設計する（指示・ナレッジ・道具）</li>
+<li><strong>モデル（頭脳）</strong>：渡された材料で考えて、文章を返す</li>
+<li><strong>ハーネス（土台）</strong>：その間で実際に回す現場監督。<strong>いつモデルに聞くか・何を渡すか・どの道具を使うか</strong>を差配する</li>
+</ul>
+
+<figure class="mb-fig"><svg viewBox="0 0 720 210" font-family="'Noto Sans JP',sans-serif"><rect x="0" y="168" width="720" height="8" rx="4" fill="#e8e6f0"/><rect x="196" y="86" width="360" height="60" rx="16" fill="#EDE9FE" stroke="#7C3AED" stroke-width="2.5"/><rect x="250" y="60" width="180" height="34" rx="12" fill="#F5F2FF" stroke="#7C3AED" stroke-width="2"/><circle cx="262" cy="154" r="20" fill="#5B21B6"/><circle cx="262" cy="154" r="8" fill="#EDE9FE"/><circle cx="492" cy="154" r="20" fill="#5B21B6"/><circle cx="492" cy="154" r="8" fill="#EDE9FE"/><rect x="446" y="100" width="88" height="36" rx="8" fill="#EC4899"/><text x="490" y="123" font-size="14" font-weight="800" fill="#fff" text-anchor="middle">エンジン</text><circle cx="316" cy="77" r="11" fill="#7C3AED"/><text x="96" y="110" font-size="15" font-weight="800" fill="#DB2777" text-anchor="middle">モデル</text><text x="96" y="130" font-size="12" fill="#8a93a3" text-anchor="middle">＝エンジン</text><line x1="140" y1="118" x2="444" y2="118" stroke="#EC4899" stroke-width="1.5" stroke-dasharray="4 4"/><text x="376" y="200" font-size="15" font-weight="800" fill="#7C3AED" text-anchor="middle">ハーネス ＝ 車体（載せる土台）</text></svg><figcaption>▲ 車でいえば、モデル＝エンジン、ハーネス＝車体。同じエンジンでも、載せる車体が違えば“できること”も“燃費（料金）”も変わる</figcaption></figure>
+
+<p>Copilot Studio には、この土台が3種類あります。<strong>どれで作るかで、できることも課金の仕方も変わります。</strong></p>
+
+&nbsp;
+
+<div class="mb-nav"><span class="lb">いまここ</span><div class="cells"><div class="n on"><span class="ix">1</span>3つのハーネス</div><div class="n"><span class="ix">2</span>比較表</div><div class="n"><span class="ix">3</span>使い分け</div><div class="n"><span class="ix">4</span>料金の考え方</div></div></div>
+
+<h2>① 3つのハーネスを1枚ずつ</h2>
+
+<div class="mb-goal"><div class="row"><span class="g">この節で分かること</span><div>3つの土台を、それぞれ1枚で見ます。</div></div><div class="row"><span class="g af">読み終えるとこうなる</span><div>違いの輪郭がつかめます。</div></div></div>
+
+<p>賢さの順ではなく、<strong>得意な仕事の違い</strong>として見ると整理しやすいと感じました。</p>
+
+<p>Copilot Studio で新しいエージェントを作り始めると、最初にこの土台（ハーネス）を選ぶ画面が出ます。</p>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-harness-create-2.png" alt="" /><figcaption>▲ 新規エージェントの作成メニュー。上が GitHub Copilot ハーネス（「Uses credits」＝クレジット課金）、下が Standard ハーネス。土台を選んでから作り始める。※Copilot Chat 拡張は Microsoft 365 側の別の入り口から作る</figcaption></figure>
+
+<div class="mb-note"><p class="nt-ttl">&#x203b; 「GitHub Copilot ハーネス」は Copilot Studio のモード名</p>名前がまぎらわしいですが、この「GitHub Copilot」は <strong>Copilot Studio の“いちばん賢いモード（ハーネス）”の呼び名</strong>で、<strong>単体の GitHub Copilot（プログラミング支援ツール）とは別物・ライセンス不要</strong>です。<br>エンジンにその技術を使っている、という意味あいの名前です。</div>
+
+<div class="hcard hot"><h3>&#x1f9e0; GitHub Copilot ハーネス</h3><p class="sub">＝ いちばん賢い・自分で段取りする土台（新しいエクスペリエンス）</p>
+
+<p>ゴールを渡すと、<strong>自分でタスクに分解し、必要な道具を選び、途中で失敗しても別の手を試す</strong>タイプです。<br>人が手順を全部書かなくても、複雑な業務を最後までやり切ります。</p>
+
+<ul>
+<li><strong>働き方</strong>：目標から自分で段取り（推論して計画・実行・修正）</li>
+<li><strong>できること</strong>：Word／Excel／PowerPoint／PDF の作成・編集、スキル、記憶、コネクタ・ナレッジ・MCP・他エージェント連携、サンドボックス実行</li>
+<li><strong>公開先</strong>：社内チーム／社外のお客さま</li>
+<li><strong>料金</strong>：Copilot Credits の従量課金（使うほどメーターが回る）</li>
+</ul>
+
+<div class="mb-note"><p class="nt-ttl">&#x1f4a1; 向く例</p>請求書を読み取り、発注書と照合し、例外だけ承認へ回す——といった「支払処理（経理）」をまるごと自動化する用途。</div></div>
+
+<div class="hcard"><h3>&#x1f4cb; Standard ハーネス</h3><p class="sub">＝ 決めた通りに動く・予測できる土台（従来のエクスペリエンス）</p>
+
+<p>トピック・プロンプト・分岐を<strong>あなたが定義した通りに動きます</strong>。<br>勝手に考えて脱線しないので、<strong>答えのブレを避けたい定型対応</strong>に強いです。</p>
+
+<ul>
+<li><strong>働き方</strong>：あなたが決めたトピックとルールに沿って動く</li>
+<li><strong>できること</strong>：ルールベースの会話・定型ワークフロー、既存プロンプト資産や社内ナレッジの活用</li>
+<li><strong>公開先</strong>：社内チーム／社外のお客さま</li>
+<li><strong>料金</strong>：標準の Copilot Studio ライセンス／課金（従量メーターではない）</li>
+</ul>
+
+<div class="mb-note"><p class="nt-ttl">&#x1f4a1; 向く例</p>社内ヘルプデスク。<br>よくある質問に答え、簡単な依頼は決まったフローに流す用途。</div></div>
+
+<div class="hcard"><h3>&#x1f4ac; Copilot Chat ハーネス</h3><p class="sub">＝ M365 Copilot に社内知識を足す土台</p>
+
+<p>社員がいつもの Microsoft 365 Copilot Chat の画面のまま、<strong>会社の情報にもとづいた回答</strong>を得られるようにします。<br>ゴールは「人を情報につなぐ」ことです。</p>
+
+<ul>
+<li><strong>働き方</strong>：社内ナレッジを M365 Copilot Chat に接続（現行のチャットモデルで動く）</li>
+<li><strong>できること</strong>：SharePoint などの社内コンテンツを根拠にした回答。<br>※ファイル生成やスキル・記憶は主眼ではない</li>
+<li><strong>公開先</strong>：社内チームのみ</li>
+<li><strong>料金</strong>：消費ベース、または M365 Copilot ライセンスに含まれる</li>
+</ul>
+
+<div class="mb-note"><p class="nt-ttl">&#x1f4a1; 向く例</p>入社オンボーディングの案内。<br>SharePoint の社内資料から質問に答える用途。</div></div>
+
+&nbsp;
+
+<div class="speech-wrap sb-id-14 sbs-stn sbp-l sbis-cb cf"><div class="speech-person"><figure class="speech-icon"><img class="speech-icon-image" src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="" width="1024" height="1024" /></figure></div><div class="speech-balloon">ハーネスは、エージェントを動かす土台のことです。<br>3つあって役割が違うので、まず1枚ずつ眺めるのがいいかなと思います。</div></div>
+
+<div class="mb-nav"><span class="lb">いまここ</span><div class="cells"><div class="n done"><span class="ix">1</span>&#x2713; 3つのハーネス</div><div class="n on"><span class="ix">2</span>比較表</div><div class="n"><span class="ix">3</span>使い分け</div><div class="n"><span class="ix">4</span>料金の考え方</div></div></div>
+
+<h2>② 一目でわかる比較表</h2>
+
+<div class="mb-goal"><div class="row"><span class="g">この節で分かること</span><div>項目をそろえて並べた表を見ます。</div></div><div class="row"><span class="g af">読み終えるとこうなる</span><div>一目で比べられます。</div></div></div>
+
+<p>Microsoft Learn の公式比較表を、日本語で並べ直しました。</p>
+
+<table class="ptbl"><tr><th>観点</th><th>GitHub Copilot</th><th>Standard</th><th>Copilot Chat</th></tr><tr><td class="pt">得意な仕事</td><td class="hi">複雑・多段の業務プロセス</td><td>ルールベースの定型会話</td><td>M365 Chatに社内知識を追加</td></tr><tr><td class="pt">動き方</td><td class="hi">目標から自分で段取り</td><td>決めたトピック通り</td><td>社内知識をChatに接続</td></tr><tr><td class="pt">失敗時の回復</td><td class="hi"><span class="yes">自動でリトライ・別ルート</span></td><td>作った経路をたどる</td><td class="no">主眼ではない</td></tr><tr><td class="pt">ファイル作成</td><td class="hi"><span class="yes">Word/Excel/PPT/PDF ◯</span></td><td class="no">主眼ではない</td><td class="no">主眼ではない</td></tr><tr><td class="pt">スキル・記憶</td><td class="hi"><span class="yes">あり</span></td><td class="no">主眼ではない</td><td class="no">主眼ではない</td></tr><tr><td class="pt">公開先</td><td class="hi">社内・社外</td><td>社内・社外</td><td>社内のみ</td></tr><tr><td class="pt">料金</td><td class="hi"><strong>Credits・従量</strong>（LLM作成/実行）</td><td>Credits・レート課金（実行時／M365社内は無料枠）</td><td>M365利用はゼロ課金あり</td></tr></table>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-harness-powered-2.png" alt="" /><figcaption>▲ エージェント一覧の「Powered by」列。同じ画面の中に GitHub Copilot と Standard が混在している。土台はエージェントごとに決まっていて、あとから一覧で見分けられる</figcaption></figure>
+
+&nbsp;
+
+<div class="mb-nav"><span class="lb">いまここ</span><div class="cells"><div class="n done"><span class="ix">1</span>&#x2713; 3つのハーネス</div><div class="n done"><span class="ix">2</span>&#x2713; 比較表</div><div class="n on"><span class="ix">3</span>使い分け</div><div class="n"><span class="ix">4</span>料金の考え方</div></div></div>
+
+<h2>③ 使い分けは必要か</h2>
+
+<div class="mb-goal"><div class="row"><span class="g">この節で分かること</span><div>選ぶときの基準を確認します。</div></div><div class="row"><span class="g af">読み終えるとこうなる</span><div>迷わず決められます。</div></div></div>
+
+<p>結論、<strong>使い分けは必要</strong>です。<br>判断は1本道で、作りたいものを思い浮かべて、上から順に「はい」に当たった土台を選べば決まります。</p>
+
+<table class="ptbl"><tr><th>やりたいこと</th><th>選ぶ土台</th></tr><tr><td>いつもの M365 Copilot Chat の中で、社内情報から答えさせたいだけ</td><td class="pt">Copilot Chat</td></tr><tr><td>質問も対応も決まっていて、いつも同じ答え方でブレさせたくない</td><td class="pt">Standard</td></tr><tr><td>ゴールだけ渡して、複数の道具やファイルをまたいで最後までやり切らせたい</td><td class="pt">GitHub Copilot</td></tr></table>
+
+<div class="mb-point">迷ったときの目安。<span class="hl">答えが毎回同じでいい定型作業</span>なら Standard。<span class="hl">毎回状況が違い、考えて動いてほしい仕事</span>なら GitHub Copilot。<span class="hl">Copilot の画面はそのままで中身だけ賢くしたい</span>なら Copilot Chat。</div>
+
+&nbsp;
+
+<div class="speech-wrap sb-id-14 sbs-stn sbp-l sbis-cb cf"><div class="speech-person"><figure class="speech-icon"><img class="speech-icon-image" src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="" width="1024" height="1024" /></figure></div><div class="speech-balloon">使い分けは要りますが、判断は1本道です。<br>作りたいものを思い浮かべて、上から当てはめれば決まります。</div></div>
+
+<div class="mb-nav"><span class="lb">いまここ</span><div class="cells"><div class="n done"><span class="ix">1</span>&#x2713; 3つのハーネス</div><div class="n done"><span class="ix">2</span>&#x2713; 比較表</div><div class="n done"><span class="ix">3</span>&#x2713; 使い分け</div><div class="n on"><span class="ix">4</span>料金の考え方</div></div></div>
+
+<h2>④ 料金の考え方</h2>
+
+<div class="mb-goal"><div class="row"><span class="g">この節で分かること</span><div>料金の考え方を整理します。</div></div><div class="row"><span class="g af">読み終えるとこうなる</span><div>費用の見当がつきます。</div></div></div>
+
+<p>まず前提から。<strong>3つとも、基本は Copilot Credits という共通の“通貨”を消費します</strong>（2025年9月に「メッセージ」から一本化されました）。<br>「使う土台・使わない土台がある」のではなく、<strong>違うのは“消費の測り方と量”と“無料になる範囲”</strong>です。</p>
+
+<div class="priceg"><div class="pc"><span class="pt">&#x1f9e0; GitHub Copilot</span><span class="pb">Credits／フル従量</span><span class="pd">LLMのトークン・ツール・ハーネス自体まで従量。<strong>自然言語での作成・プレビュー・評価・実行で消費</strong>（手作業だけの設定や公開は無料）。自律的に動くほど多く消費し、量は読みにくい。</span></div><div class="pc"><span class="pt">&#x1f4cb; Standard</span><span class="pb">Credits／レート課金</span><span class="pd">こちらも Credits を消費するが、<strong>応答・アクション単位の固定レート</strong>（定型回答1／生成回答2／アクション5…）。<strong>公開するまでは無料</strong>で、回数×レートで見積もれる。</span></div><div class="pc"><span class="pt">&#x1f4ac; Copilot Chat</span><span class="pb">M365利用分はゼロ課金あり</span><span class="pd">M365 Copilot ライセンスがあれば、Chat／Teams／SharePoint での回答は課金対象外になる範囲がある。それ以外は消費。</span></div></div>
+
+<div class="mb-point">つまり——<span class="hl">クレジットが減るのは「動かす（実行）」とき</span>。<br>手作業だけの設定や、公開そのものは無料です。<br>さらに無料になるのは <strong>M365 Copilot ライセンス保有者が Standard／Chat の社内エージェントを使う場合</strong>。<strong>GitHub Copilot の実行にはこの無料枠がなく、必ず消費します。</strong></div>
+
+<div class="mb-note"><p class="nt-ttl">&#x1f4c5; 【2026-08時点の実機表示】既存エージェントは9月1日にクレジット課金へ移行</p>GitHub Copilot ハーネスの料金は、いま移行期間にあります。<br>管理画面には、次の内容の通知が出ていました（筆者が実機で確認）。<br><strong>2026年8月3日より前に作成した GitHub Copilot のエージェントは、9月1日までは現行の料金のまま。<br>9月1日以降、Copilot Credits（従量）へ移行する。</strong><br>8月3日は GitHub Copilot ハーネスが一般提供（GA）になった日で、それ以降に新しく作るエージェントは Copilot Credits が前提です。<br>移行の詳細は、通知の「詳細情報（Learn more）」から確認できます。</div>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-harness-banner.png" alt="" /><figcaption>▲ 管理画面に実際に出ていた移行の通知。「8月3日より前に作成したエージェントは9月1日まで現行料金、以降クレジット課金へ」とある（2026-08-11 時点）</figcaption></figure>
+
+<div class="mb-warn"><span class="wt">&#x26a0; つまずきやすいポイント：賢い＝タダ、ではない</span>“ゼロ課金”になるのは、M365 Copilot ライセンスを持つ人が Chat／Teams／SharePoint で使う定型的な回答など、限られた場合だけです。<strong>それ以外は Standard も Copilot Credits を消費します。</strong>そして <strong>GitHub Copilot ハーネスの自律的な処理は、この無料枠には一切当てはまりません。</strong>「賢い土台はいつでもメーターが回る」と覚えておくと安全です。</div>
+
+&nbsp;
+
+<div class="mb-nav"><span class="lb">ここまで完了</span><div class="cells"><div class="n done"><span class="ix">1</span>&#x2713; 3つのハーネス</div><div class="n done"><span class="ix">2</span>&#x2713; 比較表</div><div class="n done"><span class="ix">3</span>&#x2713; 使い分け</div><div class="n done"><span class="ix">4</span>&#x2713; 料金の考え方</div></div></div>
+
+<h2>まとめ</h2>
+
+<ul>
+<li><strong>ハーネス＝エージェントを動かす土台</strong>。<br>同じモデルでも、載せる土台で「できること」と「料金」が変わる</li>
+<li><strong>GitHub Copilot</strong>：自分で段取りする一番賢い土台。<br>ファイル作成・スキル・記憶つき。<br>実行はCredits従量（手動設定のみ無料・M365無償枠なし）</li>
+<li><strong>Standard</strong>：決めた通りに動く堅実な土台。<br>定型対応向け。<br>実行時にCredits（レート課金・M365社内利用は無料枠）</li>
+<li><strong>Copilot Chat</strong>：M365 Copilot Chat に社内知識を足す土台。<br>社内のみ。<br>消費 or ライセンス内</li>
+<li><strong>使い分け</strong>：やらせたい仕事の種類で決まる。<br>定型なら Standard、考えさせるなら GitHub Copilot、Chat拡張なら Copilot Chat</li>
+</ul>
+
+<p>「どれが一番いいか」ではなく、「この仕事にはどの土台か」で選ぶ。<br>そう考えると、機能の違いも料金の違いも、同じ地図の上で見られるようになります。</p>
+
+<div class="mb-link">この記事の事実関係は、Microsoft 公式ドキュメントで確認しています。<br>・<a href="https://learn.microsoft.com/en-us/microsoft-copilot-studio/harnesses-overview" target="_blank" rel="noopener">Microsoft Learn「Choose a harness - Microsoft Copilot Studio」</a>（2026-08-03 更新）<br>・<a href="https://learn.microsoft.com/en-us/microsoft-copilot-studio/billing-licensing" target="_blank" rel="noopener">Copilot Studio licensing</a> ／ <a href="https://learn.microsoft.com/en-us/microsoft-copilot-studio/agents-experience/billing-credit-overview" target="_blank" rel="noopener">Usage-based billing（Copilot Credits）</a></div>
+
+<p style="font-size:13px;color:#888;line-height:1.9;">※ 本記事は公開日時点の公開情報をもとに整理しました。Copilot Studio は更新が続いており、機能・料金・名称は変わることがあります。導入前に、最新の公式ドキュメントとご自身のライセンス条件を必ずご確認ください。具体的な単価・見積もりは環境によって異なります。</p>
+
+<p style="font-size:13px;color:#888;line-height:1.9;">※ 図解は説明用に作成しました。構成や図解の一部は、AI と壁打ちしながら作成しています。</p>
+
+</div>
+<style> .mb-body > p{margin:1.9em 0!important;line-height:2.05!important;} .mb-body > h2{margin-top:2.8em!important;} .mb-body > h3{margin-top:2.4em!important;} .mb-body > ul{margin:1.7em 0!important;line-height:2.0;} .mb-body > ul li{margin:.55em 0;} .mb-lead{line-height:2.1;} .hl{color:#6D28D9;font-weight:700;} .mb-fig{margin:40px 0;display:flex;flex-direction:column;align-items:center;background:#e7e0f5;border:1px solid #d0c4ec;border-radius:16px;padding:18px 16px 12px;box-shadow:0 2px 8px rgba(76,29,149,.08);} .mb-fig svg{width:100%;max-width:720px;height:auto;display:block;margin:0 auto;background:#fff;border-radius:10px;padding:14px 10px;} .mb-fig figcaption{font-size:.85em;color:#5b4a7a;margin-top:12px;} .mb-point{background:#f7f4fd;border-left:6px solid #8b5cf6;border-radius:8px;padding:18px 24px;margin:36px 0;line-height:2.1;} .mb-note{background:#fffdf5;border:2px solid #ffd54f;border-radius:12px;padding:18px 24px;margin:38px 0;line-height:2.1;} .mb-note .nt-ttl{font-weight:700;color:#e8920c;margin:0 0 14px;} .mb-warn{background:#fff6f6;border-left:6px solid #e57373;border-radius:8px;padding:18px 24px;margin:36px 0;line-height:2.1;} .mb-warn .wt{font-weight:800;color:#c0392b;display:block;margin-bottom:8px;} .mb-intro{background:#f6f4fb;border:1px solid #e0d7f3;border-left:5px solid #a78bda;border-radius:10px;padding:13px 18px;margin:4px 0 30px;font-size:.9em;color:#5b4a7a;line-height:1.8;} .mb-shot{margin:40px 0;background:#eceef2;border:1px solid #d9dce3;border-radius:16px;padding:16px 16px 13px;box-shadow:0 3px 12px rgba(15,23,42,.09);display:flex;flex-direction:column;align-items:center;} .mb-shot .sh-tag{align-self:flex-start;display:inline-flex;font-size:12.5px;font-weight:800;color:#475569;background:#dde1e9;border-radius:999px;padding:5px 14px;margin-bottom:12px;} .mb-shot img{max-width:100%;height:auto;display:block;border-radius:10px;border:1px solid #c7cad3;box-shadow:0 6px 18px rgba(15,23,42,.14);} .mb-shot figcaption{font-size:1.02em;color:#5b4a7a;margin-top:14px;line-height:1.8;align-self:flex-start;} .mb-link{background:#eef5ff;border:1px solid #cfe0f7;border-radius:12px;padding:16px 20px;margin:34px 0;line-height:1.9;} .mb-link a{color:#1d4ed8;font-weight:700;} .hcard{background:#fff;border:1px solid #e4dbf6;border-left:5px solid #8b5cf6;border-radius:14px;padding:6px 22px 14px;margin:26px 0;box-shadow:0 2px 8px rgba(76,29,149,.07);} .hcard.hot{border-left-color:#7c3aed;box-shadow:0 3px 12px rgba(124,58,237,.14);} .hcard h3{margin:18px 0 4px!important;color:#5b21b6;} .hcard .sub{font-size:.86em;color:#7c6aa0;margin:0 0 6px;} .ptbl{width:100%;border-collapse:collapse;font-size:.9em;margin:22px 0;background:#fff;} .ptbl th,.ptbl td{border:1px solid #e4dbf6;padding:11px 13px;text-align:left;line-height:1.7;vertical-align:top;} .ptbl th{background:#f3f0fb;color:#3b2a5a;font-size:.9em;} .ptbl td.pt{color:#5b21b6;font-weight:700;white-space:nowrap;} .ptbl td.hi{background:#faf7ff;} .ptbl .yes{color:#2e7d55;font-weight:700;} .ptbl .no{color:#9aa2af;} .priceg{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin:26px 0;} .priceg .pc{background:#fff;border:1px solid #e4dbf6;border-radius:12px;padding:15px 17px;box-shadow:0 2px 8px rgba(76,29,149,.07);} .priceg .pc .pt{display:block;font-weight:800;color:#5b21b6;margin-bottom:2px;} .priceg .pc .pb{display:block;font-weight:800;color:#3b2a5a;font-size:1.02em;margin:6px 0 8px;} .priceg .pc .pd{font-size:.86em;color:#4b5563;line-height:1.7;} @media(max-width:600px){.priceg{grid-template-columns:1fr;}} .cs-preface{background:#eef7f1;border:1px solid #cfe8db;border-left:5px solid #5f8a6e;border-radius:10px;padding:14px 18px;margin:0 0 26px;font-size:.86em;color:#3d5647;line-height:1.85;} .cs-preface b{color:#2f6b4f;} .cs-preface a{color:#1d4ed8;font-weight:700;} .speech-balloon{line-height:1.95;}.mb-nav{margin:38px 0 6px;}.mb-nav .lb{display:inline-block;font-size:11.5px;font-weight:800;color:#7c3aed;letter-spacing:.1em;margin-bottom:8px;}.mb-nav .cells{display:flex;gap:6px;flex-wrap:wrap;}.mb-nav .n{flex:1;min-width:126px;background:#f5f2fc;border:1px solid #e4dcf7;border-radius:9px;padding:9px 10px;font-size:.8em;color:#9c94b3;line-height:1.45;text-align:center;font-weight:700;}.mb-nav .n .ix{display:block;font-size:.85em;opacity:.75;margin-bottom:2px;}.mb-nav .n.done{background:#ede9fe;border-color:#d9cdf5;color:#6d28d9;}.mb-nav .n.on{background:#7c3aed;border-color:#7c3aed;color:#fff;box-shadow:0 3px 10px rgba(124,58,237,.28);}.mb-goal{background:#fff;border:2px solid #ddd0f2;border-radius:12px;padding:6px 20px;margin:14px 0 32px;}.mb-goal .row{display:flex;gap:14px;align-items:flex-start;padding:12px 0;border-top:1px solid #f0eafb;line-height:1.9;font-size:.96em;}.mb-goal .row:first-child{border-top:none;}.mb-goal .g{flex:none;width:112px;font-size:11.5px;font-weight:800;color:#7c3aed;background:#f3eefc;border-radius:999px;padding:4px 0;text-align:center;margin-top:5px;}.mb-goal .g.af{color:#2f855a;background:#eaf5ee;}@media(max-width:600px){.mb-nav .n{min-width:calc(50% - 3px);}.mb-goal .g{width:96px;font-size:11px;}}</style>

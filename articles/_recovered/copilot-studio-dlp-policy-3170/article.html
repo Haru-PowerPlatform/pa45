@@ -1,0 +1,434 @@
+<div class="mb-body">
+<div class="mb-intro">Copilot Studio で作ったエージェントは、<b>「認証なし」で公開する</b>ことができます。リンクを知っていれば社外の誰でも話せる状態です。
+この記事では、その選択肢を<b>管理側から選べなくする設定</b>を1本作ります。
+DLPを初めて触る方に向けて、押す場所と、そこで何が起きるかを画面ごとに載せました。</div>
+<div class="mb-link">この記事は企業導入編の2本目です。
+前編：<a href="https://www.automate136.com/copilot-studio-dev-environment/" target="_blank" rel="noopener">Copilot Studioを会社で使う前に①｜開発用の環境を分けて、既定の環境から出る</a></div>
+<p class="mb-lead">会社でCopilot Studioを使い始めるとき、情報システム部門から聞かれることはだいたい2つに絞られます。<strong>「誰でも勝手に作れる状態にならないか」</strong>と<strong>「社内のデータが外に出ないか」</strong>です。</p>
+<p class="mb-lead">前編で環境を分けたのが前者への答えでした。
+今回のDLPが、後者への答えにあたります。</p>
+
+<div class="mb-map"><b>この記事のゴール</b>
+エージェントの設定画面で、<b>「認証なし」が選べなくなる</b>。
+しかも、なぜ選べないのかという理由が、作った人の画面に表示される。
+口頭で「やらないでね」とお願いするのではなく、選べない状態を会社として作ります。</div>
+<div class="mb-note">
+<p class="nt-ttl">はじめる前に用意するもの</p>
+<b>1.</b> Power Platform 管理センターに入れる権限（Power Platform 管理者、またはグローバル管理者）。
+<b>2.</b> 試してよい環境を1つ。
+前編で作った開発用の環境を使います。
+<b>3.</b> 時間は30分ほど。
+途中で保存されるので、分けて進めても大丈夫です。
+
+</div>
+<div class="mb-point"><span class="hl">この設定は、あとから元に戻せます。</span>
+ポリシーを削除するか、対象の環境を外せば、元の状態に戻ります。
+戻し方は記事の最後にまとめました。
+開発用の環境で試すぶんには、失敗しても影響は出ません。</div>
+&nbsp;
+<div class="mb-nav">
+
+<span class="lb">いまここ</span>
+<div class="cells">
+<div class="n on"><span class="ix">1</span>DLPとは何か</div>
+<div class="n"><span class="ix">2</span>いまの状態を記録する</div>
+<div class="n"><span class="ix">3</span>ポリシーを1本作る</div>
+<div class="n"><span class="ix">4</span>効き目を確かめる</div>
+</div>
+</div>
+<h2>① DLPとは何か</h2>
+<div class="mb-goal">
+<div class="row">
+
+<span class="g">この節ですること</span>
+<div>DLPが何をする仕組みなのかを、絵で1回だけ確認します。
+まだ操作はしません。</div>
+</div>
+<div class="row">
+
+<span class="g af">終わるとこうなる</span>
+<div>このあと自分が何を作ろうとしているのかが分かった状態になります。</div>
+</div>
+</div>
+DLP はデータ損失防止のことです。
+管理センターの画面上では<strong>データ ポリシー</strong>という名前で並んでいます。
+<div class="mb-term"><span class="tm">用語</span><b>DLP（データ損失防止）</b>：社内のデータが外へ流れる経路をふさぐ仕組みのことです。
+管理センターの画面では「データ ポリシー」と表示されます。</div>
+やっていることは1つだけです。<strong>つなぎ先を3つの箱に分けて、違う箱どうしを一緒に使わせない</strong>。
+これだけです。
+<div class="mb-term"><span class="tm">用語</span><b>コネクタ</b>：つなぎ先を表す部品です。
+SharePoint や Outlook のような外部サービスのほか、Copilot Studio では「認証なしで公開する」といった機能も、1本のコネクタとして並びます。</div>
+<figure class="mb-fig"><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-envdlp-fig-dlp.png" alt="" /><figcaption>▲ DLPの考え方。3つの箱に分け、違う箱どうしを混ぜられなくする</figcaption></figure>
+箱は3つです。
+<ul>
+ 	<li><strong>業務</strong>：仕事で使ってよいもの</li>
+ 	<li><strong>非ビジネス</strong>：仕事のデータとは混ぜてほしくないもの</li>
+ 	<li><strong>ブロック済み</strong>：そもそも使わせないもの</li>
+</ul>
+同じ箱の中どうしなら組み合わせられます。<strong>業務と非ビジネスをまたぐ組み合わせは作れません</strong>。
+たとえば SharePoint を業務に、Twitter を非ビジネスに置くと、社内文書をSNSへ流すフローが作れなくなります。
+<div class="mb-point">Copilot Studio では、これに<span class="hl">もう1つの使い方</span>が加わります。
+データの流れだけでなく、<span class="hl">エージェントに何をさせないか</span>を決められます。
+認証なしの公開、Teamsへの公開、スキルの利用が、それぞれ1本のコネクタとして並んでいます。</div>
+今回止めるのは、このうち<strong>「認証なしで公開する」の1本</strong>です。
+
+&nbsp;
+<div class="speech-wrap sb-id-14 sbs-stn sbp-l sbis-cb cf">
+<div class="speech-person">
+<figure class="speech-icon"><img class="speech-icon-image" src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="" width="1024" height="1024" /></figure>
+</div>
+<div class="speech-balloon">DLPって言葉はいかつく聞こえますが、中身は<b>つなぎ先を3つの箱に分けて、違う箱どうしはまたがせない</b>という仕組みです。
+ここが分かると、この先の画面もそんなに身構えずに読めると思います。</div>
+</div>
+<h2>② いまの状態を記録する</h2>
+<div class="mb-goal">
+<div class="row">
+
+<span class="g">この節ですること</span>
+<div>空のエージェントを1体だけ作り、設定を変える前の認証画面を控えておきます。</div>
+</div>
+<div class="row">
+
+<span class="g af">終わるとこうなる</span>
+<div>ポリシーを作ったあとに同じ画面を開けば、効いたかどうかを自分の目で確認できます。</div>
+</div>
+</div>
+<div class="mb-why"><span class="wy">なぜそうするか</span>DLPの効き目は、管理センターの画面には出てきません。
+<strong>作る人の画面</strong>にだけ現れます。
+そのため、先に「変える前」を見ておかないと、効いたのかどうかを確かめようがありません。</div>
+<div class="mb-step">
+<p class="st-ttl"><span class="st-no">1</span>空のエージェントを作る</p>
+
+<ol>
+ 	<li>Copilot Studio を開き、右上の環境が「CopilotStudio45 開発」になっていることを確認する</li>
+ 	<li>左ナビの「エージェント」を開く</li>
+ 	<li>右上の「＋ 空のエージェントを作成する」をクリック</li>
+ 	<li>名前を入れて「作成」（ここでは「DLPテスト用」）。
+指示文もナレッジも入れなくてよい</li>
+</ol>
+</div>
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-envdlp-cs-agents.png" alt="" /><figcaption>▲ 前編で作った環境のエージェント一覧。まだ自分で作ったものは無い</figcaption></figure>
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-envdlp-cs-create.png" alt="" /><figcaption>▲ 名前を入れるだけで作れる。「エージェント設定（オプション）」は開かなくてよい</figcaption></figure>
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-envdlp-cs-created.png" alt="" /><figcaption>▲ 作成直後の画面。Agent status が Setting up... の間は少し待つ</figcaption></figure>
+<div class="mb-step">
+<p class="st-ttl"><span class="st-no">2</span>変更前の認証設定を見ておく</p>
+
+<ol>
+ 	<li>右上の「設定」をクリック</li>
+ 	<li>左メニューの「セキュリティ」を選ぶ</li>
+ 	<li>「認証」を開く</li>
+ 	<li>この画面を控えておく（あとで見比べる）</li>
+</ol>
+</div>
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-envdlp-cs-security.png" alt="" /><figcaption>▲ 設定のセキュリティ。認証／Webチャネルのセキュリティ／許可リストが並ぶ</figcaption></figure>
+「認証」を開くと、選択肢が3つ出てきます。
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-envdlp-auth-before.png" alt="" /><figcaption>▲ 設定を変える前。「認証なし」が黒い文字で、選べる状態になっている</figcaption></figure>
+<div class="mb-term"><span class="tm">用語</span><b>Microsoft Entra ID</b>：会社のアカウントを管理する仕組みです。
+以前は Azure Active Directory と呼ばれていました。</div>
+<ul>
+ 	<li><strong>認証なし</strong>：すべてのチャネルで一般的に公開する。
+リンクを知っていれば誰でも話せて、使った人が誰かは分からない</li>
+ 	<li><strong>Microsoft で認証する</strong>（既定）：Entra ID で自社のユーザーだけが使える。
+Teams・SharePoint・Power Apps・Microsoft 365 Copilot 上で会話する</li>
+ 	<li><strong>手動で認証する</strong>：任意のチャネル向けに、認証を自分で構成する</li>
+</ul>
+<div class="mb-point">社内のデータを<span class="hl">その人の権限で</span>検索させたい場合、Microsoft で認証するのが前提になります。
+相手が誰か分からないままでは、権限を見て絞り込むことができないためです。
+「認証なし」に警告アイコンが付いているのは、公開範囲が一気に広がるからです。</div>
+<div class="mb-note">
+<p class="nt-ttl">この画面をあとで開き直します</p>
+いま見た<strong>「認証なし」が黒い文字で選べる</strong>状態を覚えておいてください。
+ポリシーを作り終えたあと、同じ画面がどう変わるかを見比べます。
+
+</div>
+&nbsp;
+<div class="speech-wrap sb-id-14 sbs-stn sbp-l sbis-cb cf">
+<div class="speech-person">
+<figure class="speech-icon"><img class="speech-icon-image" src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="" width="1024" height="1024" /></figure>
+</div>
+<div class="speech-balloon">効いたかどうかは管理センター側には出なくて、<b>作る人の画面にだけ</b>出ます。
+私は変える前の認証画面を1枚だけ控えておいて、あとで見比べるようにしました。</div>
+</div>
+<h2>③ ポリシーを1本作る</h2>
+<div class="mb-goal">
+<div class="row">
+
+<span class="g">この節ですること</span>
+<div>管理センターに移り、「認証なしで公開する」を止めるポリシーを作ります。
+ここが本題で、手順は9つあります。</div>
+</div>
+<div class="row">
+
+<span class="g af">終わるとこうなる</span>
+<div>開発用の環境にだけ効くルールが1本できあがります。</div>
+</div>
+</div>
+<div class="mb-map"><b>③の中の道のり</b>（全9手）
+画面を開く → 名前をつける → 箱を見る → 止めたいものを探す → ブロックする → カスタムは素通り → 効く範囲を選ぶ → 環境を追加する → 確認して作成</div>
+<div class="mb-step">
+<p class="st-ttl"><span class="st-no">3</span>データポリシーの画面を開く</p>
+
+<ol>
+ 	<li>Power Platform 管理センター（admin.powerplatform.microsoft.com）を開く</li>
+ 	<li>左ナビの「セキュリティ」（盾のアイコン）をクリック</li>
+ 	<li>「データとプライバシー」を選ぶ</li>
+ 	<li>一覧の中から「データ ポリシー」を開く</li>
+</ol>
+</div>
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-envdlp-dlp-menu.png" alt="" /><figcaption>▲ データ保護とプライバシーの一覧。下のほうに「エージェントのナレッジ ソース」「Copilot Studio のスキル」も並ぶ</figcaption></figure>
+この一覧には、データポリシーとは別に <strong>Copilot Studio 専用の項目</strong>も並んでいます。
+今回使うのは一番上の「データ ポリシー」です。
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-envdlp-dlp-empty.png" alt="" /><figcaption>▲ ポリシーがまだ1本もない状態。ここから1本目を作る</figcaption></figure>
+<div class="mb-step">
+<p class="st-ttl"><span class="st-no">4</span>ポリシーに名前をつける</p>
+
+<ol>
+ 	<li>「＋ 新しいポリシー」をクリック</li>
+ 	<li>名前を入れる（ここでは「コパスタ45 開発環境 お試しポリシー」）</li>
+ 	<li>「次へ」をクリック</li>
+</ol>
+</div>
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-envdlp-dlp-name.png" alt="" /><figcaption>▲ 作成は5ステップ（ポリシー名 → 事前構築済みコネクタ → カスタムコネクタ → スコープ → レビュー）</figcaption></figure>
+<div class="mb-why"><span class="wy">なぜそうするか</span>ポリシーはこの先どんどん増えていきます。
+名前を見ただけで「何のための、どこに効くルールか」が分かるようにしておくと、あとで他の人に引き継ぐときに説明が要りません。</div>
+<div class="mb-step">
+<p class="st-ttl"><span class="st-no">5</span>コネクタの箱を見る</p>
+
+<ol>
+ 	<li>「事前構築済みコネクタ」の画面が開く</li>
+ 	<li>タブが3つ並んでいる（業務／非ビジネス／ブロック済み）</li>
+ 	<li>まだ何も動かさず、既定の状態を見ておく</li>
+</ol>
+</div>
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-envdlp-dlp-groups.png" alt="" /><figcaption>▲ 既定では1711本すべてが「非ビジネス」に入っている。業務とブロック済みはどちらも0</figcaption></figure>
+<div class="mb-point">1711本すべてが同じ箱に入っています。
+つまり<span class="hl">まだ何も分かれていない</span>ので、実質的に何も止まっていない状態です。
+ポリシーを作るというのは、ここから必要なものだけを別の箱へ移す作業です。</div>
+「ブロック可能」という列もあります。
+SharePoint と OneDrive for Business は<strong>「いいえ」</strong>になっていて、これらは土台にあたるため止められません。
+<div class="mb-step">
+<p class="st-ttl"><span class="st-no">6</span>止めたいコネクタを探す</p>
+
+<ol>
+ 	<li>右上の検索ボックスにキーワードを入れる</li>
+ 	<li>日本語の「認証」では結果が出ない</li>
+ 	<li>「Studio」と英語で検索すると Copilot Studio 関連が並ぶ</li>
+</ol>
+</div>
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-envdlp-dlp-nores.png" alt="" /><figcaption>▲ 日本語で検索すると0件になる</figcaption></figure>
+<div class="mb-warn"><span class="wt">ここは名前で引っかかりやすい場所です</span>管理センターの表示は日本語ですが、<strong>コネクタ名は英語のまま</strong>です。
+「認証」で検索しても1件も出ないので、無いと思ってしまいがちです。
+<strong>「Studio」と英語で入れてください</strong>。</div>
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-envdlp-dlp-studio.png" alt="" /><figcaption>▲ 「Studio」で検索した結果。目的のものは Chat without Microsoft Entra ID authentication in Copilot Studio</figcaption></figure>
+<div class="mb-note">
+<p class="nt-ttl">※ コネクタ名の読み方</p>
+Copilot Studio 系のコネクタは、つなぎ先のサービスではなく<strong>機能そのもの</strong>を指しています。
+<b>Chat without Microsoft Entra ID authentication in Copilot Studio</b> ＝ 認証なしでチャットさせる機能。
+<b>Microsoft Teams + M365 Channel</b> ＝ Teams と Microsoft 365 への公開。
+<b>Direct Line channels</b> ＝ Webサイトやアプリへの公開。
+<b>Skills with Copilot Studio</b> ＝ スキルの利用。
+
+</div>
+<div class="mb-step">
+<p class="st-ttl"><span class="st-no">7</span>ブロックする</p>
+
+<ol>
+ 	<li>該当の行の右にある「⋮」をクリック</li>
+ 	<li>メニューから「ブロック」を選ぶ</li>
+ 	<li>「ブロック済み」タブの数字が増えたことを確認する</li>
+</ol>
+</div>
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-envdlp-dlp-menu2.png" alt="" /><figcaption>▲ ⋮ のメニュー。ビジネスに移動する／ブロック／コネクタを構成する の3つ</figcaption></figure>
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-envdlp-dlp-blocked.png" alt="" /><figcaption>▲ ブロック済みが (1) になり、非ビジネスが 1711 から 1710 に減った</figcaption></figure>
+数字が動いたら成功です。
+この1本を「使わせない箱」に移したことになります。
+<div class="mb-step">
+<p class="st-ttl"><span class="st-no">8</span>カスタムコネクタは素通りする</p>
+
+<ol>
+ 	<li>「次へ」をクリック</li>
+ 	<li>カスタム コネクタのパターンの画面が出る</li>
+ 	<li>既定のまま（パターン * ／データグループ＝無視）で「次へ」</li>
+</ol>
+</div>
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-envdlp-dlp-custom.png" alt="" /><figcaption>▲ 自作コネクタ向けのルール。今回は何も変えない</figcaption></figure>
+<div class="mb-why"><span class="wy">なぜそうするか</span>ここは自分で作ったコネクタがある場合の設定です。
+作っていなければ関係がないので、そのまま次へ進んで問題ありません。</div>
+<div class="mb-step">
+<p class="st-ttl"><span class="st-no">9</span>効く範囲を選ぶ</p>
+
+<ol>
+ 	<li>「スコープ」の画面で選択肢を見る</li>
+ 	<li>既定は「すべての環境を追加する」になっている</li>
+ 	<li>「複数の環境を追加する」に変更して「次へ」</li>
+</ol>
+</div>
+<div class="mb-term"><span class="tm">用語</span><b>スコープ</b>：そのポリシーを効かせる範囲のことです。
+すべての環境に効かせるか、選んだ環境だけに効かせるかを決めます。</div>
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-envdlp-dlp-scope.png" alt="" /><figcaption>▲ 既定は「すべての環境を追加する」。ここを変えないとテナント全体が対象になる</figcaption></figure>
+<div class="mb-warn"><span class="wt">ここが一番のポイントです</span>既定のまま進むと、<strong>会社のすべての環境</strong>にこのルールが当たります。
+すでに動いているエージェントが止まる可能性があります。
+必ず「複数の環境を追加する」に変えてください。</div>
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-envdlp-dlp-scope2.png" alt="" /><figcaption>▲ 「複数の環境を追加する」を選ぶと、左のステップに「環境」が増える</figcaption></figure>
+<div class="mb-why"><span class="wy">なぜそうするか</span>まず1つの環境で効き方を見てから広げます。
+今回も、既存のエージェントが入っている既定の環境には当てていません。
+効き目を確認できてから範囲を広げるほうが、止まったときの原因が分かります。</div>
+<div class="mb-step">
+<p class="st-ttl"><span class="st-no">10</span>環境を選んで追加する</p>
+
+<ol>
+ 	<li>環境の一覧から「CopilotStudio45 開発」にチェックを入れる</li>
+ 	<li>上の「＋ ポリシーに追加する」をクリック</li>
+ 	<li>「ポリシーに追加しました (1)」に変わったことを確認する</li>
+</ol>
+</div>
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-envdlp-dlp-envsel.png" alt="" /><figcaption>▲ チェックを入れた状態。まだ「ポリシーに追加しました (0)」のまま</figcaption></figure>
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-envdlp-dlp-envadd.png" alt="" /><figcaption>▲ 追加ボタンを押すと (1) になる</figcaption></figure>
+<div class="mb-warn"><span class="wt">チェックだけでは追加されません</span>チェックを入れた時点では、まだ (0) のままです。
+<strong>「＋ ポリシーに追加する」を押して、数字が (1) になる</strong>ところまでが1手順です。
+ここを飛ばすと、どの環境にも効かないポリシーができあがります。</div>
+<div class="mb-step">
+<p class="st-ttl"><span class="st-no">11</span>内容を確認して作成する</p>
+
+<ol>
+ 	<li>レビュー画面で、各グループの本数と環境の数を確認する</li>
+ 	<li>「ポリシーの作成」をクリック</li>
+ 	<li>一覧に戻り、1本追加されたことを確認する</li>
+</ol>
+</div>
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-envdlp-dlp-review.png" alt="" /><figcaption>▲ レビュー画面。(0) ビジネス、(1710) 非ビジネス、(1) ブロック済み、環境は1件</figcaption></figure>
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-envdlp-dlp-created.png" alt="" /><figcaption>▲ 一覧に1本入った。適用対象の列が CopilotStudio45 開発 になっている</figcaption></figure>
+これでポリシーができました。
+次に、本当に効いているかを見にいきます。
+
+&nbsp;
+<div class="speech-wrap sb-id-14 sbs-stn sbp-l sbis-cb cf">
+<div class="speech-person">
+<figure class="speech-icon"><img class="speech-icon-image" src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="" width="1024" height="1024" /></figure>
+</div>
+<div class="speech-balloon">コネクタ名が<b>英語のまま</b>なので、日本語の「認証」では検索に出てきません。
+「Studio」で探すと見つかります。
+あとスコープは既定が「すべての環境」なので、私は自分の環境だけに絞るようにしました。
+全社に当たると影響が大きいので。</div>
+</div>
+<h2>④ 効き目を確かめる</h2>
+<div class="mb-goal">
+<div class="row">
+
+<span class="g">この節ですること</span>
+<div>② で控えておいた画面を、もう一度開きます。</div>
+</div>
+<div class="row">
+
+<span class="g af">終わるとこうなる</span>
+<div>「認証なし」が選べなくなっていれば完了です。</div>
+</div>
+</div>
+<div class="mb-step">
+<p class="st-ttl"><span class="st-no">12</span>同じ画面をもう一度開く</p>
+
+<ol>
+ 	<li>Copilot Studio に戻る</li>
+ 	<li>「DLPテスト用」エージェントを開く</li>
+ 	<li>右上の「設定」→「セキュリティ」→「認証」を開く</li>
+ 	<li>② で見た画面と見比べる</li>
+</ol>
+</div>
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-envdlp-auth-after.png" alt="" /><figcaption>▲ 設定を当てたあと。「認証なし」がグレーになり、理由まで画面に表示される</figcaption></figure>
+「認証なし」が選べなくなり、画面の上に理由が出ました。
+文面はこのとおりです。
+<div class="mb-code">組織の データ損失防止ポリシー の変更により、認証なしとサービス プロバイダー汎用 OAuth 2 を使用できません。
+ご質問がある場合は管理者に問い合わせてください。</div>
+<div class="mb-point">管理側で決めたことが、作る人の画面に<span class="hl">理由つきで表示されました</span>。
+「管理者に問い合わせてください」という次の一手まで、製品側が用意しています。
+ルールを口頭のお願いではなく仕組みで効かせる、というのはこういう状態を指します。</div>
+反映は早く、ポリシーを作ったあとに画面を開き直しただけで切り替わっていました。
+待ち時間はありません。
+
+&nbsp;
+<div class="speech-wrap sb-id-14 sbs-stn sbp-l sbis-cb cf">
+<div class="speech-person">
+<figure class="speech-icon"><img class="speech-icon-image" src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="" width="1024" height="1024" /></figure>
+</div>
+<div class="speech-balloon">禁止した理由と「管理者に問い合わせてください」まで、作る人の画面に出ます。
+口頭でお願いするより、設定で外しておくほうが、あとで揉めずに済むかなと思います。</div>
+</div>
+<div class="mb-nav">
+
+<span class="lb">いまここ</span>
+<div class="cells">
+<div class="n done"><span class="ix">1</span>✓ DLPとは何か</div>
+<div class="n done"><span class="ix">2</span>✓ いまの状態を記録する</div>
+<div class="n done"><span class="ix">3</span>✓ ポリシーを1本作る</div>
+<div class="n done"><span class="ix">4</span>✓ 効き目を確かめる</div>
+</div>
+</div>
+<h2>元に戻したくなったら</h2>
+試しに作ったポリシーは、いつでも外せます。
+方法は2つです。
+<ul>
+ 	<li><strong>ポリシーごと消す</strong>：データ ポリシーの一覧で、対象の行の「⋮」から削除する</li>
+ 	<li><strong>環境だけ外す</strong>：ポリシーを編集し、スコープの環境からチェックを外す。
+ポリシー自体は残る</li>
+</ul>
+どちらの場合も、作る人の画面はすぐ元に戻ります。
+「認証なし」がまた黒い文字で選べるようになります。
+<div class="mb-why"><span class="wy">なぜそうするか</span>元に戻せると分かっていれば、本番の環境を触る前に開発用の環境で気楽に試せます。
+効き方を目で見てから広げるほうが、社内に説明するときも話が早くなります。</div>
+&nbsp;
+<div class="mb-nav">
+
+<span class="lb">いまここ</span>
+<div class="cells">
+<div class="n done"><span class="ix">1</span>✓ DLPとは何か</div>
+<div class="n done"><span class="ix">2</span>✓ いまの状態を記録する</div>
+<div class="n done"><span class="ix">3</span>✓ ポリシーを1本作る</div>
+<div class="n done"><span class="ix">4</span>✓ 効き目を確かめる</div>
+</div>
+</div>
+<h2>作業前に押さえておく仕様</h2>
+今回の検証で確認できた、画面の既定値と仕様です。
+手順書を作るときは、この6つを書いておくと詰まりにくくなります。
+<ul>
+ 	<li><strong>コネクタ名は英語表記</strong>：日本語のキーワードでは検索に出ない。
+「Studio」など英語で探す</li>
+ 	<li><strong>Copilot Studio 系のコネクタは機能を指す</strong>：認証・公開チャネル・スキルが、それぞれ1本のコネクタになっている</li>
+ 	<li><strong>既定ではすべてが「非ビジネス」</strong>：ポリシーが無い状態は、制限が無い状態と同じ</li>
+ 	<li><strong>スコープの既定は「すべての環境」</strong>：変更しないとテナント全体が対象になる</li>
+ 	<li><strong>環境はチェックだけでは追加されない</strong>：「＋ ポリシーに追加する」を押すまでが1手順</li>
+ 	<li><strong>止められないコネクタがある</strong>：SharePoint や OneDrive for Business は「ブロック可能：いいえ」</li>
+</ul>
+&nbsp;
+<div class="mb-nav">
+
+<span class="lb">いまここ</span>
+<div class="cells">
+<div class="n done"><span class="ix">1</span>✓ DLPとは何か</div>
+<div class="n done"><span class="ix">2</span>✓ いまの状態を記録する</div>
+<div class="n done"><span class="ix">3</span>✓ ポリシーを1本作る</div>
+<div class="n done"><span class="ix">4</span>✓ 効き目を確かめる</div>
+</div>
+</div>
+<h2>まとめ</h2>
+<ul>
+ 	<li><strong>①</strong> DLPは、つなぎ先を3つの箱に分けて、違う箱どうしを一緒に使わせない仕組み</li>
+ 	<li><strong>②</strong> Copilot Studio では「認証なしで公開する」なども1本のコネクタとして止められる</li>
+ 	<li><strong>③</strong> 効き目は作る人の画面に現れるので、検証用のエージェントを1体置いてから設定する</li>
+ 	<li><strong>④</strong> スコープは1つの環境に絞ってから広げる</li>
+ 	<li><strong>⑤</strong> 禁止された理由と問い合わせ先が、作る人の画面に表示される</li>
+</ul>
+環境を分けてポリシーを1本当てるまで、作業時間は30分ほどでした。
+手順の数は多く見えますが、自分で判断するのは<strong>どのコネクタを止めるか</strong>と<strong>どの環境に当てるか</strong>の2か所です。
+次は、この環境にマネージド環境の設定を入れて、共有できる範囲を絞るところを見ていきます。
+<div class="mb-link">前編：<a href="https://www.automate136.com/copilot-studio-dev-environment/" target="_blank" rel="noopener">Copilot Studioを会社で使う前に①｜開発用の環境を分けて、既定の環境から出る</a>
+費用の考え方：<a href="https://www.automate136.com/copilot-studio-cost-design/" target="_blank" rel="noopener">Copilot Studioは“使うほど課金”される｜Power Automateとの使い分けと、コスト暴走を防ぐには</a>
+課金の境界：<a href="https://www.automate136.com/copilot-studio-credit-boundary/" target="_blank" rel="noopener">Copilot Studioの「無償で使える線」はどこか｜クレジット消費の境界を実機で確かめた</a></div>
+<p style="font-size: 13px; color: #888; line-height: 1.9;">※ 本記事は公開日時点の情報をもとに、筆者が実際に試した内容を整理しました。
+Copilot Studio と Power Platform 管理センターは更新が続いており、画面や名称、既定値は変わることがあります。
+最新の状況は公式情報（Microsoft Learn）もあわせてご確認ください。</p>
+<p style="font-size: 13px; color: #888; line-height: 1.9;">※ 掲載している画面は、操作中に撮りました。
+氏名・メールアドレス・環境IDなどは伏せています。
+構成や図解の一部は、AI と壁打ちしながら作成しています。</p>
+
+</div>
+<style> .mb-body > p{margin:1.9em 0!important;line-height:2.05!important;} .mb-body > h2{margin-top:2.8em!important;} .mb-body > h3{margin-top:2.2em!important;font-size:1.12em;} .mb-body > ul{margin:1.7em 0!important;line-height:2.0;} .mb-body > ul li{margin:.55em 0;} .mb-lead{line-height:2.1;} .hl{color:#6D28D9;font-weight:700;} .mb-fig{margin:40px 0;display:flex;flex-direction:column;align-items:center;background:#e7e0f5;border:1px solid #d0c4ec;border-radius:16px;padding:18px 16px 12px;box-shadow:0 2px 8px rgba(76,29,149,.08);} .mb-fig img{width:100%;max-width:720px;height:auto;display:block;margin:0 auto;background:#fff;border-radius:10px;} .mb-fig figcaption{font-size:.85em;color:#5b4a7a;margin-top:12px;} .mb-shot{margin:44px 0;background:#eceef2;border:1px solid #d9dce3;border-radius:16px;padding:16px 16px 13px;box-shadow:0 3px 12px rgba(15,23,42,.09);} .mb-shot .sh-tag{display:inline-flex;font-size:12.5px;font-weight:800;color:#475569;background:#dde1e9;border-radius:999px;padding:5px 14px;margin-bottom:12px;} .mb-shot img{width:100%;height:auto;display:block;border-radius:10px;border:1px solid #c7cad3;box-shadow:0 6px 18px rgba(15,23,42,.14);} .mb-shot figcaption{font-size:.85em;color:#5b4a7a;margin-top:14px;line-height:1.65;} .mb-point{background:#f7f4fd;border-left:6px solid #8b5cf6;border-radius:8px;padding:18px 24px;margin:36px 0;line-height:2.1;} .mb-why{background:#f2f9f4;border-left:6px solid #4caf82;border-radius:8px;padding:16px 22px;margin:30px 0;line-height:2.0;} .mb-why .wy{font-weight:800;color:#2f855a;display:block;margin-bottom:6px;font-size:.95em;} .mb-note{background:#fffdf5;border:2px solid #ffd54f;border-radius:12px;padding:18px 24px;margin:38px 0;line-height:2.1;} .mb-note .nt-ttl{font-weight:700;color:#e8920c;margin:0 0 14px;} .mb-warn{background:#fff6f6;border-left:6px solid #e57373;border-radius:8px;padding:18px 24px;margin:36px 0;line-height:2.1;} .mb-warn .wt{font-weight:800;color:#c0392b;display:block;margin-bottom:8px;} .mb-code{background:#f6f4fb;border:1px solid #e0d7f3;border-radius:10px;padding:13px 16px;margin:26px 0;font-size:.86em;color:#42335f;line-height:1.9;font-family:'Consolas','SFMono-Regular',monospace;} .mb-step{background:#f7f4fd;border:2px solid #ddd0f2;border-radius:14px;padding:18px 22px 6px;margin:34px 0;} .mb-step .st-ttl{display:flex;align-items:center;gap:12px;font-weight:800;color:#5b21b6;font-size:1.06em;margin-bottom:6px;} .mb-step .st-no{flex:none;width:32px;height:32px;border-radius:50%;background:#7c3aed;color:#fff;display:flex;align-items:center;justify-content:center;} .mb-step ol{margin:6px 0 14px;padding-left:0;list-style:none;counter-reset:s;} .mb-step ol li{position:relative;padding:8px 0 8px 30px;line-height:1.8;border-top:1px solid #ece4f9;} .mb-step ol li:first-child{border-top:none;} .mb-step ol li::before{counter-increment:s;content:counter(s);position:absolute;left:0;top:8px;width:22px;height:22px;background:#ede9fe;color:#5b21b6;border-radius:50%;font-size:.78em;font-weight:800;display:flex;align-items:center;justify-content:center;} .mb-intro{background:#f6f4fb;border:1px solid #e0d7f3;border-left:5px solid #a78bda;border-radius:10px;padding:13px 18px;margin:4px 0 30px;font-size:.9em;color:#5b4a7a;line-height:1.8;} .mb-map{background:#eef2ff;border:1px solid #c7d2fe;border-radius:12px;padding:14px 20px;margin:30px 0;font-size:.92em;color:#3730a3;line-height:1.95;} .mb-map b{color:#4338ca;} .mb-link{background:#eef5ff;border:1px solid #cfe0f7;border-radius:12px;padding:16px 20px;margin:34px 0;line-height:1.9;} .mb-link a{color:#1d4ed8;font-weight:700;} .mb-term{background:#f0f7ff;border:1px solid #cfe0f7;border-left:6px solid #3b82f6;border-radius:10px;padding:14px 20px;margin:28px 0;line-height:1.95;font-size:.96em;} .mb-term .tm{display:inline-flex;font-size:12px;font-weight:800;color:#fff;background:#3b82f6;border-radius:999px;padding:3px 12px;margin-right:10px;vertical-align:2px;} .mb-term b{color:#1e40af;} .mb-nav{margin:38px 0 6px;}.mb-nav .lb{display:inline-block;font-size:11.5px;font-weight:800;color:#7c3aed;letter-spacing:.1em;margin-bottom:8px;}.mb-nav .cells{display:flex;gap:6px;flex-wrap:wrap;}.mb-nav .n{flex:1;min-width:132px;background:#f5f2fc;border:1px solid #e4dcf7;border-radius:9px;padding:9px 10px;font-size:.82em;color:#9c94b3;line-height:1.45;text-align:center;font-weight:700;}.mb-nav .n .ix{display:block;font-size:.85em;opacity:.75;margin-bottom:2px;}.mb-nav .n.done{background:#ede9fe;border-color:#d9cdf5;color:#6d28d9;}.mb-nav .n.on{background:#7c3aed;border-color:#7c3aed;color:#fff;box-shadow:0 3px 10px rgba(124,58,237,.28);}.mb-goal{background:#fff;border:2px solid #ddd0f2;border-radius:12px;padding:6px 20px;margin:14px 0 32px;}.mb-goal .row{display:flex;gap:14px;align-items:flex-start;padding:12px 0;border-top:1px solid #f0eafb;line-height:1.9;font-size:.96em;}.mb-goal .row:first-child{border-top:none;}.mb-goal .g{flex:none;width:112px;font-size:11.5px;font-weight:800;color:#7c3aed;background:#f3eefc;border-radius:999px;padding:4px 0;text-align:center;margin-top:5px;}.mb-goal .g.af{color:#2f855a;background:#eaf5ee;} .speech-balloon{line-height:1.95;}</style>

@@ -1,0 +1,138 @@
+<div class="mb-body"><div class="cs-preface">&#x1f4dd; 実際に <b>Copilot Studio を触って検証</b>し、スクショを撮りながら気づいたことをまとめた記録です。<br>機能・画面・料金は更新が続きます。<br>最新の正確な情報は <a href="https://learn.microsoft.com/ja-jp/microsoft-copilot-studio/" target="_blank" rel="noopener">Microsoft 公式（Microsoft Learn）</a> をご確認ください。</div>
+
+<div class="mb-intro">Copilot Studio のエージェントに、右パネルの「Skills」という項目があります。<br>指示文（Instructions）にもツールにも見えて、最初は違いが分かりませんでした。<br>実際に1つ作って、指示文の一部を Skill に切り出してみた記録です。<br>触ってみて、これは「手順を“型”に切り出す」仕組みだと分かってきました。</div>
+
+<p class="mb-lead">エージェントに「あれもこれも」と手順を書き足していくと、Instructions（指示文）がどんどん長くなっていきます。<br>Skills は、その手順を<strong>名前をつけた“型”として、指示文の外に出しておく</strong>ための仕組みです。</p>
+
+&nbsp;
+
+<div class="mb-nav"><span class="lb">いまここ</span><div class="cells"><div class="n on"><span class="ix">1</span>4つめの持たせ方</div><div class="n"><span class="ix">2</span>追加画面を開く</div><div class="n"><span class="ix">3</span>何でできているか</div><div class="n"><span class="ix">4</span>右パネルに並ぶ</div><div class="n"><span class="ix">5</span>指示文から切り出す</div></div></div>
+
+<h2>① Skills は「4つめの持たせ方」</h2>
+
+<div class="mb-goal"><div class="row"><span class="g">この節で分かること</span><div>Skills が4つめの持たせ方だと確認します。</div></div><div class="row"><span class="g af">読み終えるとこうなる</span><div>他の3つとの違いが分かります。</div></div></div>
+
+<p>エージェントに何かを持たせる方法は、これまで触ってきた中では3つでした。<br>Skills は、そこに加わる4つめです。</p>
+
+<table class="ptbl"><tr><th>持たせ方</th><th>中身</th><th>たとえると</th></tr><tr><td>Instructions</td><td>自由文の指示</td><td>人柄・全体ルール</td></tr><tr><td>Tools</td><td>外部のアクション</td><td>道具</td></tr><tr><td>Knowledge</td><td>参照する資料</td><td>手元の本</td></tr><tr><td class="pt">Skills</td><td class="pt">構造化した手順</td><td class="pt">手順書・型</td></tr></table>
+
+<p>Instructions を「常にはたらく性格」だとすると、Skill は「<strong>ある場面のときだけ呼び出される、決まったやり方</strong>」。<br>こう並べてみて、ようやく違いが飲み込めました。</p>
+
+&nbsp;
+
+<div class="speech-wrap sb-id-14 sbs-stn sbp-l sbis-cb cf"><div class="speech-person"><figure class="speech-icon"><img class="speech-icon-image" src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="" width="1024" height="1024" /></figure></div><div class="speech-balloon">Skills は、ナレッジ・ツール・フローに続く4つめの持たせ方です。<br>手順を型に切り出しておくイメージです。</div></div>
+
+<div class="mb-nav"><span class="lb">いまここ</span><div class="cells"><div class="n done"><span class="ix">1</span>&#x2713; 4つめの持たせ方</div><div class="n on"><span class="ix">2</span>追加画面を開く</div><div class="n"><span class="ix">3</span>何でできているか</div><div class="n"><span class="ix">4</span>右パネルに並ぶ</div><div class="n"><span class="ix">5</span>指示文から切り出す</div></div></div>
+
+<h2>② Skill の追加画面を開く（中身は SKILL.md）</h2>
+
+<div class="mb-goal"><div class="row"><span class="g">この節ですること</span><div>追加画面を開いて、中身が SKILL.md だと確かめます。</div></div><div class="row"><span class="g af">終わるとこうなる</span><div>どこで作るのかが分かります。</div></div></div>
+
+<p>いきなり操作に入る前に、「どの画面のどこを触るのか」を先に見ておきます。<br>Skill を足す場所は、エージェントの編集画面です。<br>前回つくった案内係を Copilot Studio で開くと、下の「Build」という編集画面になります。</p>
+
+<div class="mb-fig"><p class="fig-ttl">Skill の追加画面にたどり着くまで</p><div class="mb-flow"><div class="step"><span class="st-n">①</span><div class="st-t">Copilot Studio<br>を開く</div></div><div class="arrow">→</div><div class="step"><span class="st-n">②</span><div class="st-t">エージェントを開く<br>（前回の案内係）</div></div><div class="arrow">→</div><div class="step"><span class="st-n">③</span><div class="st-t">編集画面（Build）<br>が開く</div></div><div class="arrow">→</div><div class="step"><span class="st-n">④</span><div class="st-t">右パネルの<br>Skills の「＋」</div></div></div></div>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-skills-overview.png" alt="" /><figcaption>▲ エージェントの編集画面（Build）。画面の右側に Skills／Tools／Knowledge が縦に並んでいる。赤枠が、今回さわる Skills</figcaption></figure>
+
+<p>右パネルのいちばん上に <strong>Skills</strong> があります。<br>今回さわるのはここです。<br>その右にある「＋」を押すと、Skill の追加画面が開きます。<br>この画面を見て、機能の性格が少し見えてきました。</p>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-skills-req-1.png" alt="" /><figcaption>▲ Skills の「＋」を押すと開く、Skill の追加画面。ファイルの条件に「SKILL.md（または SKILL.md を含む .zip）」「名前と説明を YAML 形式で書く」とある</figcaption></figure>
+
+<p>目にとまったのは <strong>File requirements</strong> の欄です。<br>画面には、Skill は <strong>SKILL.md というファイル</strong>で表し、その中に<strong>名前と説明を YAML 形式</strong>で書く、とありました。<br>つまり Skill は、<strong>手順をファイルにまとめて持ち運べる</strong>、ということになります。</p>
+
+<div class="mb-note"><p class="nt-ttl">&#x203b; これは Claude の「Agent Skills」と似ている</p>「SKILL.md ＋ 名前・説明」という形は、Anthropic（Claude）の Agent Skills と同じ考え方に見えます。<strong>振る舞いを1つのファイルにまとめて、別のエージェントでも使い回す</strong>——という流れは、いくつかの製品で共通してきています。<br>ここは私の見立てなので、正確な仕様は各社の公式ドキュメントで確認してください。</div>
+
+&nbsp;
+
+<div class="mb-nav"><span class="lb">いまここ</span><div class="cells"><div class="n done"><span class="ix">1</span>&#x2713; 4つめの持たせ方</div><div class="n done"><span class="ix">2</span>&#x2713; 追加画面を開く</div><div class="n on"><span class="ix">3</span>何でできているか</div><div class="n"><span class="ix">4</span>右パネルに並ぶ</div><div class="n"><span class="ix">5</span>指示文から切り出す</div></div></div>
+
+<h2>③ Skill は何でできているか</h2>
+
+<div class="mb-goal"><div class="row"><span class="g">この節で分かること</span><div>Skill の構成要素を見ます。</div></div><div class="row"><span class="g af">読み終えるとこうなる</span><div>何を書けばよいかが分かります。</div></div></div>
+
+<p>ファイルを用意しなくても、<strong>「Create from blank」</strong>から中身を作れました。<br>開いてみると、Skill は Name／Description／Instructions の3つでできていました。</p>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-skills-editor-1.png" alt="" /><figcaption>▲ Create from blank で作った Skill。Name／Description／Instructions の3つでできている</figcaption></figure>
+
+<ul>
+<li><strong>Name</strong>：スキルの名前（英数字・64字まで）</li>
+<li><strong>Description</strong>：何をする／いつ使うか。<strong>ここで発火が決まります</strong>（ツールや取り次ぎと同じ原理）</li>
+<li><strong>Instructions</strong>：手順そのもの。<br>決まった型がある</li>
+</ul>
+
+<p>Instructions には、最初からテンプレートが入っていました。<br>こういう形です。</p>
+
+<div class="mb-code">When this skill is activated:
+1. [最初にやること]
+2. [次にやること]
+
+## Guidelines
+- [守ること・制約]
+
+## Examples
+User request:「[入力例]」
+Expected behavior: [どう振る舞うか]
+
+## Notes
+[補足・例外・知っておくべきこと]</div>
+
+<div class="mb-point">「発動したら①②の順にやる。<br>守ることはこれ。<br>例はこれ」——という<span class="hl">手順書そのもの</span>に、名前をつけて持たせる。<br>触ってみて、これが Skill だと分かりました。<strong>Description が入口（いつ使うか）、Instructions が中身（どうやるか）</strong>、という役割分担です。</div>
+
+&nbsp;
+
+<div class="mb-nav"><span class="lb">いまここ</span><div class="cells"><div class="n done"><span class="ix">1</span>&#x2713; 4つめの持たせ方</div><div class="n done"><span class="ix">2</span>&#x2713; 追加画面を開く</div><div class="n done"><span class="ix">3</span>&#x2713; 何でできているか</div><div class="n on"><span class="ix">4</span>右パネルに並ぶ</div><div class="n"><span class="ix">5</span>指示文から切り出す</div></div></div>
+
+<h2>④ 作ると、右パネルに並ぶ</h2>
+
+<div class="mb-goal"><div class="row"><span class="g">この節で分かること</span><div>作ったあと、画面のどこに出るかを見ます。</div></div><div class="row"><span class="g af">読み終えるとこうなる</span><div>使われる場所が分かります。</div></div></div>
+
+<p>「Create」を押すと、Skill が右パネルの Skills 欄にチップとして並びました。<br>ツールや取り次ぎと同じ見た目ですが、中身は「手順書」です。</p>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-skills-panel-2.png" alt="" /><figcaption>▲ 作った Skill（apply-handling）が Skills 欄に追加された。Tools・Knowledge・Connected agents と並ぶ</figcaption></figure>
+
+&nbsp;
+
+<div class="mb-nav"><span class="lb">いまここ</span><div class="cells"><div class="n done"><span class="ix">1</span>&#x2713; 4つめの持たせ方</div><div class="n done"><span class="ix">2</span>&#x2713; 追加画面を開く</div><div class="n done"><span class="ix">3</span>&#x2713; 何でできているか</div><div class="n done"><span class="ix">4</span>&#x2713; 右パネルに並ぶ</div><div class="n on"><span class="ix">5</span>指示文から切り出す</div></div></div>
+
+<h2>⑤ 指示文から手順を切り出す（散らからせない）</h2>
+
+<div class="mb-goal"><div class="row"><span class="g">この節ですること</span><div>長い指示文から手順を切り出します。</div></div><div class="row"><span class="g af">終わるとこうなる</span><div>指示文が散らからずに済みます。</div></div></div>
+
+<p>Skill のありがたみが分かってきたのは、<strong>長くなった指示文から、手順を切り出したとき</strong>でした。</p>
+
+<p>今回の案内係は、Instructions に「受講生が申し込みたいと言ったら、メール送信ツールで担当に知らせる。<br>宛先は…、件名は…」という手順を、長い箇条書きで書いていました。<br>これを <code>apply-handling</code> という Skill に切り出し、<strong>Instructions からはその箇条書きを削除</strong>しました。</p>
+
+<ul>
+<li><strong>切り出す前</strong>：Instructions に「性格」と「申込対応の手順」が混在して長い</li>
+<li><strong>切り出した後</strong>：Instructions は「性格・全体ルール」だけになって短い。<br>申込対応の手順は Skill に独立</li>
+</ul>
+
+<div class="mb-point"><span class="hl">性格は Instructions、個別の手順は Skill</span>。<br>この2つを分けてみたら、指示文が散らからず、手順も使い回せました。<strong>手順が増えるほど、この切り分けが効いてくるはずです。</strong></div>
+
+&nbsp;
+
+<div class="speech-wrap sb-id-14 sbs-stn sbp-l sbis-cb cf"><div class="speech-person"><figure class="speech-icon"><img class="speech-icon-image" src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="" width="1024" height="1024" /></figure></div><div class="speech-balloon">指示文が長くなってきたら、手順を Skill に切り出すと散らかりません。<br>私は指示文が膨らんだときに整理用として使っています。</div></div>
+
+<div class="mb-nav"><span class="lb">ここまで完了</span><div class="cells"><div class="n done"><span class="ix">1</span>&#x2713; 4つめの持たせ方</div><div class="n done"><span class="ix">2</span>&#x2713; 追加画面を開く</div><div class="n done"><span class="ix">3</span>&#x2713; 何でできているか</div><div class="n done"><span class="ix">4</span>&#x2713; 右パネルに並ぶ</div><div class="n done"><span class="ix">5</span>&#x2713; 指示文から切り出す</div></div></div>
+
+<h2>まとめ</h2>
+
+<p>今回ひととおり触ってみて、分かったことを整理します。</p>
+
+<ul>
+<li><strong>Skills は4つめの持たせ方</strong>（Instructions／Tools／Knowledge に続く）</li>
+<li><strong>中身は SKILL.md</strong>：名前・説明を YAML で書く、と画面にあった。<br>ファイルで持ち運べる</li>
+<li><strong>3要素</strong>：Name／Description（いつ使う）／Instructions（手順の型）</li>
+<li><strong>使い分け</strong>：性格は Instructions、個別の手順は Skill に切り出す</li>
+</ul>
+
+<p>手順を全部 Instructions に書くと、いずれ読みづらくなります。<br>Skill は、その手順を名前つきの“型”に外へ出して、指示文をすっきり保つための道具でした。<br>まだ使いはじめたばかりなので、これから使い込む中で気づいたことがあれば、また書き足していきます。</p>
+
+<div class="mb-link">エージェントに持たせる要素（部品）を、困りごとにどう当てるかは <a href="https://www.automate136.com/copilot-studio-translate-problems-to-parts/" target="_blank" rel="noopener">困りごとを“部品”に翻訳する</a> にまとめています。</div>
+
+<p style="font-size:13px;color:#888;line-height:1.9;">※ 本記事は公開日時点の情報をもとに、筆者が実際に試した内容を整理しました。Copilot Studio は更新が続いており、画面や名称は変わることがあります。最新の状況は公式情報（Microsoft Learn）もあわせてご確認ください。</p>
+
+<p style="font-size:13px;color:#888;line-height:1.9;">※ 掲載している画面は、操作中に撮影しました。構成や図解の一部は、AI と壁打ちしながら作成しています。</p>
+
+</div>
+<style> .mb-body > p{margin:1.9em 0!important;line-height:2.05!important;} .mb-body > h2{margin-top:2.8em!important;} .mb-body > ul{margin:1.7em 0!important;line-height:2.0;} .mb-body > ul li{margin:.55em 0;} .mb-lead{line-height:2.1;} .hl{color:#6D28D9;font-weight:700;} .mb-shot{margin:40px 0;background:#eceef2;border:1px solid #d9dce3;border-radius:16px;padding:16px 16px 13px;box-shadow:0 3px 12px rgba(15,23,42,.09);display:flex;flex-direction:column;align-items:center;} .mb-shot .sh-tag{align-self:flex-start;display:inline-flex;font-size:12.5px;font-weight:800;color:#475569;background:#dde1e9;border-radius:999px;padding:5px 14px;margin-bottom:12px;} .mb-shot img{max-width:100%;height:auto;display:block;border-radius:10px;border:1px solid #c7cad3;box-shadow:0 6px 18px rgba(15,23,42,.14);} .mb-shot figcaption{font-size:1.02em;color:#5b4a7a;margin-top:14px;line-height:1.8;align-self:flex-start;} .mb-point{background:#f7f4fd;border-left:6px solid #8b5cf6;border-radius:8px;padding:18px 24px;margin:36px 0;line-height:2.1;} .mb-note{background:#fffdf5;border:2px solid #ffd54f;border-radius:12px;padding:18px 24px;margin:38px 0;line-height:2.1;} .mb-note .nt-ttl{font-weight:700;color:#e8920c;margin:0 0 14px;} .mb-code{background:#1f2937;color:#e5e7eb;border-radius:10px;padding:16px 18px;margin:26px 0;font-family:'Segoe UI',monospace;font-size:13px;line-height:1.75;white-space:pre-wrap;overflow-x:auto;} .ptbl{width:100%;border-collapse:collapse;font-size:.92em;margin:22px 0;background:#fff;} .ptbl th,.ptbl td{border:1px solid #e4dbf6;padding:11px 13px;text-align:left;line-height:1.7;vertical-align:top;} .ptbl th{background:#f3f0fb;color:#3b2a5a;font-size:.9em;} .ptbl td.pt{color:#5b21b6;font-weight:700;white-space:nowrap;} .mb-link{background:#eef5ff;border:1px solid #cfe0f7;border-radius:12px;padding:16px 20px;margin:34px 0;line-height:1.9;} .mb-link a{color:#1d4ed8;font-weight:700;} .mb-intro{background:#f6f4fb;border:1px solid #e0d7f3;border-left:5px solid #a78bda;border-radius:10px;padding:13px 18px;margin:4px 0 30px;font-size:.9em;color:#5b4a7a;line-height:1.8;} .cs-preface{background:#eef7f1;border:1px solid #cfe8db;border-left:5px solid #5f8a6e;border-radius:10px;padding:14px 18px;margin:0 0 26px;font-size:.86em;color:#3d5647;line-height:1.85;} .cs-preface b{color:#2f6b4f;} .cs-preface a{color:#1d4ed8;font-weight:700;} .mb-fig{margin:34px 0;padding:22px 20px 20px;background:#faf8ff;border:1px solid #e6ddf7;border-radius:14px;} .mb-fig .fig-ttl{font-size:.95em;font-weight:800;color:#5B21B6;margin:0 0 16px;text-align:center;} .mb-flow{display:flex;flex-wrap:wrap;align-items:stretch;justify-content:center;gap:10px;} .mb-flow .step{flex:1 1 150px;min-width:128px;background:#fff;border:2px solid #ddd0f2;border-radius:12px;padding:14px 12px;text-align:center;} .mb-flow .step .st-n{display:inline-block;font-size:.78em;font-weight:800;color:#fff;background:#7C3AED;border-radius:999px;padding:2px 11px;margin-bottom:9px;} .mb-flow .step .st-t{font-size:.92em;font-weight:700;color:#2b2540;line-height:1.6;} .mb-flow .arrow{align-self:center;color:#a78bda;font-weight:900;font-size:1.35em;} .speech-balloon{line-height:1.95;}.mb-nav{margin:38px 0 6px;}.mb-nav .lb{display:inline-block;font-size:11.5px;font-weight:800;color:#7c3aed;letter-spacing:.1em;margin-bottom:8px;}.mb-nav .cells{display:flex;gap:6px;flex-wrap:wrap;}.mb-nav .n{flex:1;min-width:126px;background:#f5f2fc;border:1px solid #e4dcf7;border-radius:9px;padding:9px 10px;font-size:.8em;color:#9c94b3;line-height:1.45;text-align:center;font-weight:700;}.mb-nav .n .ix{display:block;font-size:.85em;opacity:.75;margin-bottom:2px;}.mb-nav .n.done{background:#ede9fe;border-color:#d9cdf5;color:#6d28d9;}.mb-nav .n.on{background:#7c3aed;border-color:#7c3aed;color:#fff;box-shadow:0 3px 10px rgba(124,58,237,.28);}.mb-goal{background:#fff;border:2px solid #ddd0f2;border-radius:12px;padding:6px 20px;margin:14px 0 32px;}.mb-goal .row{display:flex;gap:14px;align-items:flex-start;padding:12px 0;border-top:1px solid #f0eafb;line-height:1.9;font-size:.96em;}.mb-goal .row:first-child{border-top:none;}.mb-goal .g{flex:none;width:112px;font-size:11.5px;font-weight:800;color:#7c3aed;background:#f3eefc;border-radius:999px;padding:4px 0;text-align:center;margin-top:5px;}.mb-goal .g.af{color:#2f855a;background:#eaf5ee;}@media(max-width:600px){.mb-nav .n{min-width:calc(50% - 3px);}.mb-goal .g{width:96px;font-size:11px;}}</style>

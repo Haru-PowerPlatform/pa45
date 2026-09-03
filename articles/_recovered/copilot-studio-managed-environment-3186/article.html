@@ -1,0 +1,413 @@
+<div class="mb-body">
+<div class="mb-intro">Copilot Studio を会社で使うときの3つ目、マネージド環境を実機で検証しました。
+環境を分けてDLPを当てても、「作った人が誰にでも配れる」状態は残ります。
+ここでは、エージェントを共有できる相手と人数を管理側から絞ります。
+操作した画面をすべて順番に載せているので、この記事だけで同じ設定を再現できます。</div>
+<div class="mb-link">前編：<a href="https://www.automate136.com/copilot-studio-dev-environment/" target="_blank" rel="noopener">①開発用の環境を分けて、既定の環境から出る</a>
+中編：<a href="https://www.automate136.com/copilot-studio-dlp-policy/" target="_blank" rel="noopener">②DLPで「認証なし」の公開を止める</a></div>
+<p class="mb-lead">①で開発用の環境を作り、②でDLPを1本当てました。
+ここまでで「どこで作るか」と「どう公開させないか」が決まっています。</p>
+<p class="mb-lead">残っているのは<strong>配る範囲</strong>です。
+作った本人が組織の全員に共有できる状態のままだと、環境を分けた意味が薄れます。</p>
+
+<div class="mb-map">この記事の道のり
+<b>①</b> マネージド環境とは何か → <b>②</b> 有効にする前の状態を確認する → <b>③</b> 設定パネルの中身を見る → <b>④</b> 共有の制限を入れて有効にする → <b>⑤</b> 作る側の画面で確認する → <b>⑥</b> 環境に入れる人を絞る</div>
+&nbsp;
+<div class="mb-nav">
+
+<span class="lb">いまここ</span>
+<div class="cells">
+<div class="n on"><span class="ix">1</span>マネージド環境とは</div>
+<div class="n"><span class="ix">2</span>有効にする前を見る</div>
+<div class="n"><span class="ix">3</span>設定の中身を見る</div>
+<div class="n"><span class="ix">4</span>共有の制限を入れる</div>
+<div class="n"><span class="ix">5</span>作る側で確認する</div>
+<div class="n"><span class="ix">6</span>入れる人を絞る</div>
+</div>
+</div>
+<h2>① マネージド環境とは何か</h2>
+<div class="mb-goal">
+<div class="row">
+
+<span class="g">この節ですること</span>
+<div>マネージド環境が何をする仕組みなのかを確認します。
+まだ操作はしません。</div>
+</div>
+<div class="row">
+
+<span class="g af">終わるとこうなる</span>
+<div>有料の追加機能ではなく、管理する側の道具だと分かります。</div>
+</div>
+</div>
+マネージド環境は、<strong>その環境だけ管理者の目と制御を強める設定</strong>です。
+有効にすると、共有できる範囲の制限、ソリューションの検査、利用状況の週次レポートなどが使えるようになります。
+
+今回の目的は、この中の<strong>共有の管理</strong>です。
+エージェントを誰に、何人まで渡せるかを管理側で決めます。
+<div class="mb-term"><span class="tm">用語</span><b>マネージド環境</b>：その環境だけ管理者の制御を強める設定。
+共有の制限や検査、利用状況のレポートが使えるようになります。</div>
+<div class="mb-term"><span class="tm">用語</span><b>編集者と閲覧者</b>：エージェントを渡すときの2つの権限。
+編集者は中身を直せて、閲覧者は使うだけです。</div>
+<figure class="mb-fig"><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-managed-fig-share.png" alt="" /><figcaption>▲ 共有の制限は4段階。既定は制限なしで、下の1行が今回いちばん重要な前提</figcaption></figure>
+<div class="mb-point">図の最下段のとおり、<span class="hl">認証が「認証なし」のエージェントには、共有の制限が適用されません</span>。
+②でDLPを使って「認証なし」を止めておくことが、この設定を効かせる前提になります。
+3本の記事が、ここで1本につながりました。</div>
+&nbsp;
+<div class="speech-wrap sb-id-14 sbs-stn sbp-l sbis-cb cf">
+<div class="speech-person">
+<figure class="speech-icon"><img class="speech-icon-image" src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="" width="1024" height="1024" /></figure>
+</div>
+<div class="speech-balloon">マネージド環境は、有料の追加機能ではなく管理する側の道具です。
+まずここを勘違いしないでおくと、話が早いです。</div>
+</div>
+<div class="mb-nav">
+
+<span class="lb">いまここ</span>
+<div class="cells">
+<div class="n done"><span class="ix">1</span>✓ マネージド環境とは</div>
+<div class="n on"><span class="ix">2</span>有効にする前を見る</div>
+<div class="n"><span class="ix">3</span>設定の中身を見る</div>
+<div class="n"><span class="ix">4</span>共有の制限を入れる</div>
+<div class="n"><span class="ix">5</span>作る側で確認する</div>
+<div class="n"><span class="ix">6</span>入れる人を絞る</div>
+</div>
+</div>
+<h2>② 有効にする前の状態を確認する</h2>
+<div class="mb-goal">
+<div class="row">
+
+<span class="g">この節ですること</span>
+<div>環境の一覧で、いまマネージドになっているかどうかを見ます。</div>
+</div>
+<div class="row">
+
+<span class="g af">終わるとこうなる</span>
+<div>変える前の状態が残るので、あとで見比べられます。</div>
+</div>
+</div>
+<div class="mb-step">
+<p class="st-ttl"><span class="st-no">1</span>環境の一覧でマネージドの列を見る</p>
+
+<ol>
+ 	<li>管理センター（admin.powerplatform.microsoft.com）を開く</li>
+ 	<li>左ナビの「管理」→「環境」</li>
+ 	<li>一覧の「マネージド」列を確認する</li>
+</ol>
+</div>
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-managed-list-before.png" alt="" /><figcaption>▲ 3つとも「いいえ」。まだどの環境にも管理の網がかかっていない状態</figcaption></figure>
+<div class="mb-step">
+<p class="st-ttl"><span class="st-no">2</span>環境の詳細を開く</p>
+
+<ol>
+ 	<li>対象の環境名（ここでは CopilotStudio45 開発）をクリック</li>
+ 	<li>詳細ページが開く</li>
+ 	<li>セキュリティ グループの欄を確認する</li>
+</ol>
+</div>
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-managed-detail.png" alt="" /><figcaption>▲ 詳細ページ。セキュリティ グループは「割り当てられていません」＝入れる人を絞っていない状態</figcaption></figure>
+<div class="mb-why"><span class="wy">なぜそうするか</span>マネージド環境を有効にする前に、いまの状態を控えておく。
+あとで見比べられるだけでなく、「セキュリティ グループが未割り当て」のように、別に手を打つべき点もここで分かる。</div>
+同じページを下にスクロールすると、<strong>生成 AI 機能</strong>の欄がありました。
+リージョン間でのデータ移動、Bing 検索、Microsoft 365 サービスが、それぞれ「許可する」になっています。
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-managed-detail-ai.png" alt="" /><figcaption>▲ 生成AI機能の3項目。エージェントが外部の検索や他サービスを使えるかどうかも、環境単位で決まる</figcaption></figure>
+&nbsp;
+<div class="mb-nav">
+
+<span class="lb">いまここ</span>
+<div class="cells">
+<div class="n done"><span class="ix">1</span>✓ マネージド環境とは</div>
+<div class="n done"><span class="ix">2</span>✓ 有効にする前を見る</div>
+<div class="n on"><span class="ix">3</span>設定の中身を見る</div>
+<div class="n"><span class="ix">4</span>共有の制限を入れる</div>
+<div class="n"><span class="ix">5</span>作る側で確認する</div>
+<div class="n"><span class="ix">6</span>入れる人を絞る</div>
+</div>
+</div>
+<h2>③ 設定パネルの中身を見る</h2>
+<div class="mb-goal">
+<div class="row">
+
+<span class="g">この節ですること</span>
+<div>有効化のパネルを開いて、どんな設定が並んでいるかを一通り見ます。</div>
+</div>
+<div class="row">
+
+<span class="g af">終わるとこうなる</span>
+<div>どれを触ればよいかの見当がつきます。</div>
+</div>
+</div>
+<div class="mb-step">
+<p class="st-ttl"><span class="st-no">3</span>マネージド環境のパネルを開く</p>
+
+<ol>
+ 	<li>詳細ページ上部のコマンドバーで「マネージド環境を有効にする」をクリック</li>
+ 	<li>右側に設定パネルが開く</li>
+ 	<li>まだ「有効にする」は押さず、項目を確認する</li>
+</ol>
+</div>
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-managed-panel-top.png" alt="" /><figcaption>▲ パネルの上部。ライセンスの要件と、共有の管理（Power Apps／Power Automate／Copilot Studio）が並ぶ</figcaption></figure>
+<div class="mb-warn"><span class="wt">先にライセンスの確認</span>パネルの冒頭に「マネージド環境のすべてのユーザーには、Power Apps、Power Automate、またはプレミアム使用許可の付いた Dynamics 365 のライセンスが必要です」と書かれています。
+無償ライセンスだけの利用者がいる環境で有効にすると、その人たちが使えなくなる可能性があります。
+本番のテナントでは、対象環境の利用者のライセンスを先に確認します。</div>
+下にスクロールすると、共有の管理のほかに3つの機能がありました。
+<div class="mb-term"><span class="tm">用語</span><b>ソリューション チェッカー</b>：持ち込むソリューションを自動で検査する機能。
+問題があるものをブロックすることもできます。</div>
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-managed-panel-checker.png" alt="" /><figcaption>▲ ソリューション チェッカー強制（なし／警告／ブロックの3段・既定は警告）と、使用状況の分析情報</figcaption></figure>
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-managed-panel-ai.png" alt="" /><figcaption>▲ 作成者向けの「ようこそ」コンテンツ、AIで生成されたアプリの説明（プレビュー）、データ ポリシーへの導線</figcaption></figure>
+<ul>
+ 	<li><strong>ソリューション チェッカー強制</strong>：持ち込むソリューションを自動で検査する。
+ブロックまで上げると、問題があるものは取り込めない</li>
+ 	<li><strong>使用状況の分析情報</strong>：週ごとのダイジェストメールに、この環境の利用状況を含める</li>
+ 	<li><strong>作成者を歓迎するコンテンツ</strong>：作り始める人に社内ルールを表示できる。
+利用規約のURLも設定できる</li>
+</ul>
+&nbsp;
+<div class="mb-nav">
+
+<span class="lb">いまここ</span>
+<div class="cells">
+<div class="n done"><span class="ix">1</span>✓ マネージド環境とは</div>
+<div class="n done"><span class="ix">2</span>✓ 有効にする前を見る</div>
+<div class="n done"><span class="ix">3</span>✓ 設定の中身を見る</div>
+<div class="n on"><span class="ix">4</span>共有の制限を入れる</div>
+<div class="n"><span class="ix">5</span>作る側で確認する</div>
+<div class="n"><span class="ix">6</span>入れる人を絞る</div>
+</div>
+</div>
+<h2>④ 共有の制限を入れて有効にする</h2>
+<div class="mb-goal">
+<div class="row">
+
+<span class="g">この節ですること</span>
+<div>共有できる範囲を絞る設定を入れて、マネージド環境を有効にします。</div>
+</div>
+<div class="row">
+
+<span class="g af">終わるとこうなる</span>
+<div>作った人が勝手に全社へ共有できない状態になります。</div>
+</div>
+</div>
+<div class="mb-step">
+<p class="st-ttl"><span class="st-no">4</span>Copilot Studio の共有設定を開く</p>
+
+<ol>
+ 	<li>パネルの「共有の管理」まで戻る</li>
+ 	<li>「Copilot Studio」の左の「＞」をクリックして展開する</li>
+</ol>
+</div>
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-managed-share-cs.png" alt="" /><figcaption>▲ Copilot Studio の共有設定。編集者と閲覧者で分けて許可できる</figcaption></figure>
+説明文の最後に、今回いちばん重要な一文があります。
+<div class="mb-code">このエージェントの認証が「認証なし」に設定されている場合、共有制限は適用されません。</div>
+<div class="mb-step">
+<p class="st-ttl"><span class="st-no">5</span>人数の制限を入れる</p>
+
+<ol>
+ 	<li>「個人に限定して共有する (セキュリティ グループなし)」にチェックを入れる</li>
+ 	<li>グレーだった「各エージェントにアクセスできる閲覧者の人数を制限する」が押せるようになる</li>
+ 	<li>チェックを入れ、人数を入力する（ここでは 20）</li>
+</ol>
+</div>
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-managed-share-gray.png" alt="" /><figcaption>▲ 個人限定にチェックを入れる前。人数の制限はグレーで押せない</figcaption></figure>
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-managed-share-limit.png" alt="" /><figcaption>▲ 個人限定にチェックを入れると人数の制限が有効になり、20 を設定できた</figcaption></figure>
+<div class="mb-why"><span class="wy">なぜそうするか</span>セキュリティ グループに共有できる状態では、グループの人数によって実際の利用者数が変わる。
+人数で縛るには、先に個人単位の共有へ限定する必要がある。
+この順番があるため、人数の制限だけを単独で設定することはできない。</div>
+<div class="mb-step">
+<p class="st-ttl"><span class="st-no">6</span>有効にする</p>
+
+<ol>
+ 	<li>パネル下部の「有効にする」をクリック</li>
+ 	<li>完了すると緑のバナーが表示される</li>
+ 	<li>環境の一覧に戻って「マネージド」列を確認する</li>
+</ol>
+</div>
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-managed-enabled.png" alt="" /><figcaption>▲ 「Power Platform のマネージド環境が CopilotStudio45 開発 に追加されました」</figcaption></figure>
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-managed-list-after.png" alt="" /><figcaption>▲ 対象の環境だけ「はい」。他の2つは「いいえ」のまま</figcaption></figure>
+<div class="mb-point">管理をかけたのは<span class="hl">1つの環境だけ</span>です。
+既定の環境や、他の利用者がいる環境には影響していません。
+まず1つで試してから広げる、という順番はDLPのときと同じです。</div>
+&nbsp;
+<div class="speech-wrap sb-id-14 sbs-stn sbp-l sbis-cb cf">
+<div class="speech-person">
+<figure class="speech-icon"><img class="speech-icon-image" src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="" width="1024" height="1024" /></figure>
+</div>
+<div class="speech-balloon">共有の範囲を絞る設定を入れてから有効にしました。
+作った人が勝手に全社へ広げられない、という状態にできます。</div>
+</div>
+<div class="mb-nav">
+
+<span class="lb">いまここ</span>
+<div class="cells">
+<div class="n done"><span class="ix">1</span>✓ マネージド環境とは</div>
+<div class="n done"><span class="ix">2</span>✓ 有効にする前を見る</div>
+<div class="n done"><span class="ix">3</span>✓ 設定の中身を見る</div>
+<div class="n done"><span class="ix">4</span>✓ 共有の制限を入れる</div>
+<div class="n on"><span class="ix">5</span>作る側で確認する</div>
+<div class="n"><span class="ix">6</span>入れる人を絞る</div>
+</div>
+</div>
+<h2>⑤ 作る側の画面で確認する</h2>
+<div class="mb-goal">
+<div class="row">
+
+<span class="g">この節ですること</span>
+<div>Copilot Studio に戻り、共有の画面がどう変わったかを見ます。</div>
+</div>
+<div class="row">
+
+<span class="g af">終わるとこうなる</span>
+<div>設定が効いていることを自分の目で確認できます。</div>
+</div>
+</div>
+<div class="mb-step">
+<p class="st-ttl"><span class="st-no">7</span>共有ダイアログを開く</p>
+
+<ol>
+ 	<li>Copilot Studio を開き、環境が対象のものになっていることを確認する</li>
+ 	<li>エージェントを開き、右上の「…」をクリック</li>
+ 	<li>メニューから「共有する」を選ぶ</li>
+</ol>
+</div>
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-managed-share-menu.png" alt="" /><figcaption>▲ 「…」メニューの中に共有する。インポート／エクスポート／ソリューションの表示も同じ場所</figcaption></figure>
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-managed-share-dialog.png" alt="" /><figcaption>▲ 共有ダイアログ。見た目は有効にする前と変わらない</figcaption></figure>
+ここで分かったのは、<strong>制限は画面から項目を消す形では現れない</strong>ということでした。
+ユーザーを追加する欄も、「組織内のすべてのユーザー」の選択肢もそのまま表示されています。
+<div class="mb-note">
+<p class="nt-ttl">※ 制限が効くのは「共有しようとしたとき」</p>
+マネージド環境の共有制限は、実際に共有を実行した時点で判定されます。
+人数の上限を超えたときや、セキュリティ グループを指定したときに止まります。
+②のDLPが「選択肢がグレーになる」形で現れたのとは、効き方が違います。
+
+</div>
+検証はここまでにしています。
+上限を超える共有を確かめるには、実際に多数の利用者へ配る必要があるためです。
+
+&nbsp;
+<div class="mb-nav">
+
+<span class="lb">いまここ</span>
+<div class="cells">
+<div class="n done"><span class="ix">1</span>✓ マネージド環境とは</div>
+<div class="n done"><span class="ix">2</span>✓ 有効にする前を見る</div>
+<div class="n done"><span class="ix">3</span>✓ 設定の中身を見る</div>
+<div class="n done"><span class="ix">4</span>✓ 共有の制限を入れる</div>
+<div class="n done"><span class="ix">5</span>✓ 作る側で確認する</div>
+<div class="n on"><span class="ix">6</span>入れる人を絞る</div>
+</div>
+</div>
+<h2>⑥ 環境に入れる人を絞る（セキュリティ グループ）</h2>
+<div class="mb-goal">
+<div class="row">
+
+<span class="g">この節ですること</span>
+<div>セキュリティ グループを割り当てて、環境に入れる人を絞ります。</div>
+</div>
+<div class="row">
+
+<span class="g af">終わるとこうなる</span>
+<div>指定した人だけが環境を開ける状態になります。</div>
+</div>
+</div>
+共有の範囲を絞ったので、最後に<strong>環境そのものに入れる人</strong>を確認します。
+②で見たとおり、この環境のセキュリティ グループは「割り当てられていません」のままです。
+<div class="mb-step">
+<p class="st-ttl"><span class="st-no">8</span>環境の詳細を編集する</p>
+
+<ol>
+ 	<li>環境の詳細ページを開く</li>
+ 	<li>「詳細」カード右上の「編集」をクリック</li>
+ 	<li>セキュリティ グループの欄を確認する</li>
+</ol>
+</div>
+<div class="mb-term"><span class="tm">用語</span><b>セキュリティ グループ</b>：人をまとめた名簿。
+環境に割り当てると、その名簿に載っている人だけが入れるようになります。</div>
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-managed-sg-dev.png" alt="" /><figcaption>▲ 開発者環境の編集パネル。セキュリティ グループは「この環境に割り当てることはできません」</figcaption></figure>
+開発者環境には、セキュリティ グループを割り当てられませんでした。
+所有者だけが使う環境なので、入れる人を絞るという設定自体が用意されていません。
+
+同じ画面をサンドボックス環境で開くと、表示が変わります。
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-managed-sg-sandbox.png" alt="" /><figcaption>▲ サンドボックス環境では鉛筆アイコンが出て、グループを割り当てられる</figcaption></figure>
+<div class="mb-note">
+<p class="nt-ttl">※ 未割り当ての意味</p>
+サンドボックス側の説明文には「テナント全体でアクセスを開くには、[なし] に設定します」と書かれています。
+裏を返すと、<strong>グループを割り当てていない環境はテナント全員が入れる</strong>ということです。
+環境を分けただけでは、入れる人は絞られていません。
+
+</div>
+<div class="mb-why"><span class="wy">なぜそうするか</span>環境を分ける目的が「関係者だけの場所を作る」ことなら、セキュリティ グループの割り当てまでが1セットになる。
+ここまでやって、分離が実際に効く。</div>
+<div class="mb-point">①で環境の種類を選ぶとき、<span class="hl">開発者を選ぶと入れる人を絞れない</span>という制約がここで効いてきます。
+1人で検証するなら開発者環境で足ります。
+チームで使う開発環境を作るなら、有料の容量を使ってでもサンドボックスを選ぶ理由がこれです。</div>
+&nbsp;
+<div class="speech-wrap sb-id-14 sbs-stn sbp-l sbis-cb cf">
+<div class="speech-person">
+<figure class="speech-icon"><img class="speech-icon-image" src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="" width="1024" height="1024" /></figure>
+</div>
+<div class="speech-balloon">セキュリティグループを割り当てると、環境に入れる人を絞れます。
+開発者環境には割り当てられないなど、環境の種類で挙動が違いました。</div>
+</div>
+<div class="mb-nav">
+
+<span class="lb">ここまで完了</span>
+<div class="cells">
+<div class="n done"><span class="ix">1</span>✓ マネージド環境とは</div>
+<div class="n done"><span class="ix">2</span>✓ 有効にする前を見る</div>
+<div class="n done"><span class="ix">3</span>✓ 設定の中身を見る</div>
+<div class="n done"><span class="ix">4</span>✓ 共有の制限を入れる</div>
+<div class="n done"><span class="ix">5</span>✓ 作る側で確認する</div>
+<div class="n done"><span class="ix">6</span>✓ 入れる人を絞る</div>
+</div>
+</div>
+<h2>⑦ 作業前に押さえておく仕様</h2>
+<ul>
+ 	<li><strong>プレミアムライセンスが前提</strong>：パネルの冒頭に明記されている。
+対象環境の利用者を先に確認する</li>
+ 	<li><strong>開発者環境にはセキュリティ グループを割り当てられない</strong>：入れる人を絞るならサンドボックス</li>
+ 	<li><strong>グループ未割り当て＝テナント全員が入れる</strong>：環境を分けただけでは絞られていない</li>
+ 	<li><strong>認証なしのエージェントには共有制限が効かない</strong>：DLPで「認証なし」を止めておくことが前提</li>
+ 	<li><strong>人数の制限は単独では設定できない</strong>：「個人に限定して共有する」を先に有効にする</li>
+ 	<li><strong>共有ダイアログの見た目は変わらない</strong>：制限は共有を実行した時点で効く</li>
+ 	<li><strong>ソリューション チェッカーの既定は「警告」</strong>：止めたい場合は「ブロック」に上げる</li>
+ 	<li><strong>マネージド環境は環境単位</strong>：1つだけ有効にして、他はそのままにできる</li>
+</ul>
+&nbsp;
+<div class="mb-nav">
+
+<span class="lb">ここまで完了</span>
+<div class="cells">
+<div class="n done"><span class="ix">1</span>✓ マネージド環境とは</div>
+<div class="n done"><span class="ix">2</span>✓ 有効にする前を見る</div>
+<div class="n done"><span class="ix">3</span>✓ 設定の中身を見る</div>
+<div class="n done"><span class="ix">4</span>✓ 共有の制限を入れる</div>
+<div class="n done"><span class="ix">5</span>✓ 作る側で確認する</div>
+<div class="n done"><span class="ix">6</span>✓ 入れる人を絞る</div>
+</div>
+</div>
+<h2>まとめ</h2>
+<ul>
+ 	<li><strong>①</strong> 環境を分けてDLPを当てても、「誰にでも配れる」状態は残る</li>
+ 	<li><strong>②</strong> マネージド環境を有効にすると、共有の相手と人数を管理側で決められる</li>
+ 	<li><strong>③</strong> 編集者・閲覧者・個人限定・人数上限の4段階で絞る</li>
+ 	<li><strong>④</strong> 認証なしのエージェントには共有制限が効かないため、DLPとセットで考える</li>
+ 	<li><strong>⑤</strong> 有効化は環境単位。
+まず1つで試してから広げる</li>
+ 	<li><strong>⑥</strong> 環境に入れる人を絞るにはセキュリティ グループ。
+開発者環境では割り当てられない</li>
+</ul>
+3本を通してやったことは、<strong>作る場所を分ける・公開の仕方を縛る・配る範囲を絞る</strong>の3つでした。
+どれも設定そのものは短時間で終わります。
+時間がかかるのは、社内で「どこまで許すか」を決めるほうです。
+<div class="mb-link">①：<a href="https://www.automate136.com/copilot-studio-dev-environment/" target="_blank" rel="noopener">開発用の環境を分けて、既定の環境から出る</a>
+②：<a href="https://www.automate136.com/copilot-studio-dlp-policy/" target="_blank" rel="noopener">DLPで「認証なし」の公開を止める</a>
+費用の考え方：<a href="https://www.automate136.com/copilot-studio-cost-design/" target="_blank" rel="noopener">Copilot Studioは“使うほど課金”される</a>
+課金の境界：<a href="https://www.automate136.com/copilot-studio-credit-boundary/" target="_blank" rel="noopener">Copilot Studioの「無償で使える線」はどこか</a></div>
+<p style="font-size: 13px; color: #888; line-height: 1.9;">※ 本記事は公開日時点の情報をもとに、筆者が実際に試した内容を整理しました。
+Copilot Studio と Power Platform 管理センターは更新が続いており、画面や名称、既定値は変わることがあります。
+最新の状況は公式情報（Microsoft Learn）もあわせてご確認ください。</p>
+<p style="font-size: 13px; color: #888; line-height: 1.9;">※ 掲載している画面は、操作中に撮りました。
+氏名・メールアドレス・環境IDなどは伏せています。
+構成や図解の一部は、AI と壁打ちしながら作成しています。</p>
+
+</div>
+<style> .mb-body > p{margin:1.9em 0!important;line-height:2.05!important;} .mb-body > h2{margin-top:2.8em!important;} .mb-body > h3{margin-top:2.2em!important;font-size:1.12em;} .mb-body > ul{margin:1.7em 0!important;line-height:2.0;} .mb-body > ul li{margin:.55em 0;} .mb-lead{line-height:2.1;} .hl{color:#6D28D9;font-weight:700;} .mb-fig{margin:40px 0;display:flex;flex-direction:column;align-items:center;background:#e7e0f5;border:1px solid #d0c4ec;border-radius:16px;padding:18px 16px 12px;box-shadow:0 2px 8px rgba(76,29,149,.08);} .mb-fig img{width:100%;max-width:720px;height:auto;display:block;margin:0 auto;background:#fff;border-radius:10px;} .mb-fig figcaption{font-size:.85em;color:#5b4a7a;margin-top:12px;} .mb-shot{margin:44px 0;background:#eceef2;border:1px solid #d9dce3;border-radius:16px;padding:16px 16px 13px;box-shadow:0 3px 12px rgba(15,23,42,.09);} .mb-shot .sh-tag{display:inline-flex;font-size:12.5px;font-weight:800;color:#475569;background:#dde1e9;border-radius:999px;padding:5px 14px;margin-bottom:12px;} .mb-shot img{width:100%;height:auto;display:block;border-radius:10px;border:1px solid #c7cad3;box-shadow:0 6px 18px rgba(15,23,42,.14);} .mb-shot figcaption{font-size:.85em;color:#5b4a7a;margin-top:14px;line-height:1.65;} .mb-point{background:#f7f4fd;border-left:6px solid #8b5cf6;border-radius:8px;padding:18px 24px;margin:36px 0;line-height:2.1;} .mb-why{background:#f2f9f4;border-left:6px solid #4caf82;border-radius:8px;padding:16px 22px;margin:30px 0;line-height:2.0;} .mb-why .wy{font-weight:800;color:#2f855a;display:block;margin-bottom:6px;font-size:.95em;} .mb-note{background:#fffdf5;border:2px solid #ffd54f;border-radius:12px;padding:18px 24px;margin:38px 0;line-height:2.1;} .mb-note .nt-ttl{font-weight:700;color:#e8920c;margin:0 0 14px;} .mb-warn{background:#fff6f6;border-left:6px solid #e57373;border-radius:8px;padding:18px 24px;margin:36px 0;line-height:2.1;} .mb-warn .wt{font-weight:800;color:#c0392b;display:block;margin-bottom:8px;} .mb-code{background:#f6f4fb;border:1px solid #e0d7f3;border-radius:10px;padding:13px 16px;margin:26px 0;font-size:.86em;color:#42335f;line-height:1.9;font-family:'Consolas','SFMono-Regular',monospace;} .mb-step{background:#f7f4fd;border:2px solid #ddd0f2;border-radius:14px;padding:18px 22px 6px;margin:34px 0;} .mb-step .st-ttl{display:flex;align-items:center;gap:12px;font-weight:800;color:#5b21b6;font-size:1.06em;margin-bottom:6px;} .mb-step .st-no{flex:none;width:32px;height:32px;border-radius:50%;background:#7c3aed;color:#fff;display:flex;align-items:center;justify-content:center;} .mb-step ol{margin:6px 0 14px;padding-left:0;list-style:none;counter-reset:s;} .mb-step ol li{position:relative;padding:8px 0 8px 30px;line-height:1.8;border-top:1px solid #ece4f9;} .mb-step ol li:first-child{border-top:none;} .mb-step ol li::before{counter-increment:s;content:counter(s);position:absolute;left:0;top:8px;width:22px;height:22px;background:#ede9fe;color:#5b21b6;border-radius:50%;font-size:.78em;font-weight:800;display:flex;align-items:center;justify-content:center;} .mb-intro{background:#f6f4fb;border:1px solid #e0d7f3;border-left:5px solid #a78bda;border-radius:10px;padding:13px 18px;margin:4px 0 30px;font-size:.9em;color:#5b4a7a;line-height:1.8;} .mb-map{background:#eef2ff;border:1px solid #c7d2fe;border-radius:12px;padding:14px 20px;margin:30px 0;font-size:.92em;color:#3730a3;line-height:1.95;} .mb-map b{color:#4338ca;} .mb-link{background:#eef5ff;border:1px solid #cfe0f7;border-radius:12px;padding:16px 20px;margin:34px 0;line-height:1.9;} .mb-link a{color:#1d4ed8;font-weight:700;} .mb-term{background:#f0f7ff;border:1px solid #cfe0f7;border-left:6px solid #3b82f6;border-radius:10px;padding:14px 20px;margin:28px 0;line-height:1.95;font-size:.96em;} .mb-term .tm{display:inline-flex;font-size:12px;font-weight:800;color:#fff;background:#3b82f6;border-radius:999px;padding:3px 12px;margin-right:10px;vertical-align:2px;} .mb-term b{color:#1e40af;} .speech-balloon{line-height:1.95;}.mb-nav{margin:38px 0 6px;}.mb-nav .lb{display:inline-block;font-size:11.5px;font-weight:800;color:#7c3aed;letter-spacing:.1em;margin-bottom:8px;}.mb-nav .cells{display:flex;gap:6px;flex-wrap:wrap;}.mb-nav .n{flex:1;min-width:126px;background:#f5f2fc;border:1px solid #e4dcf7;border-radius:9px;padding:9px 10px;font-size:.8em;color:#9c94b3;line-height:1.45;text-align:center;font-weight:700;}.mb-nav .n .ix{display:block;font-size:.85em;opacity:.75;margin-bottom:2px;}.mb-nav .n.done{background:#ede9fe;border-color:#d9cdf5;color:#6d28d9;}.mb-nav .n.on{background:#7c3aed;border-color:#7c3aed;color:#fff;box-shadow:0 3px 10px rgba(124,58,237,.28);}.mb-goal{background:#fff;border:2px solid #ddd0f2;border-radius:12px;padding:6px 20px;margin:14px 0 32px;}.mb-goal .row{display:flex;gap:14px;align-items:flex-start;padding:12px 0;border-top:1px solid #f0eafb;line-height:1.9;font-size:.96em;}.mb-goal .row:first-child{border-top:none;}.mb-goal .g{flex:none;width:112px;font-size:11.5px;font-weight:800;color:#7c3aed;background:#f3eefc;border-radius:999px;padding:4px 0;text-align:center;margin-top:5px;}.mb-goal .g.af{color:#2f855a;background:#eaf5ee;}@media(max-width:600px){.mb-nav .n{min-width:calc(50% - 3px);}.mb-goal .g{width:96px;font-size:11px;}}</style>

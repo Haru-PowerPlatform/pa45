@@ -1,0 +1,315 @@
+<div class="mb-body">
+<div class="mb-intro">Copilot Studio は使った分だけクレジットを消費します。
+では、その実績を管理側のどこで見るのか。
+Power Platform 管理センターの Copilot のページを実機で確認しました。
+合計は見えましたが、エージェント別の内訳は既定では出ませんでした。</div>
+<div class="mb-link">この記事は企業導入編の4本目です。
+①：<a href="https://www.automate136.com/copilot-studio-dev-environment/" target="_blank" rel="noopener">開発用の環境を分ける</a>／②：<a href="https://www.automate136.com/copilot-studio-dlp-policy/" target="_blank" rel="noopener">DLPで「認証なし」を止める</a>／③：<a href="https://www.automate136.com/copilot-studio-managed-environment/" target="_blank" rel="noopener">マネージド環境で共有範囲を絞る</a></div>
+<p class="mb-lead">①〜③で、作る場所・公開の仕方・配る範囲を決めました。
+ここまでは<strong>やらせない</strong>ための設定です。</p>
+<p class="mb-lead">運用に入ると、次に聞かれるのは<strong>「実際どれだけ使っているのか」</strong>です。
+使うほど課金される仕組みである以上、消費を見る場所を先に押さえておきます。</p>
+
+<div class="mb-map">この記事の道のり
+<b>①</b> 消費はどこで見るか → <b>②</b> 合計と傾向を読む → <b>③</b> 内訳が出ない理由 → <b>④</b> テナント単位の設定はどこか</div>
+&nbsp;
+<div class="mb-nav">
+
+<span class="lb">いまここ</span>
+<div class="cells">
+<div class="n on"><span class="ix">1</span>消費はどこで見るか</div>
+<div class="n"><span class="ix">2</span>合計と傾向を読む</div>
+<div class="n"><span class="ix">3</span>内訳が出ない理由</div>
+<div class="n"><span class="ix">4</span>テナント単位の設定</div>
+<div class="n"><span class="ix">5</span>実測してみる</div>
+</div>
+</div>
+<h2>① 消費はどこで見るか</h2>
+<div class="mb-goal">
+<div class="row">
+
+<span class="g">この節ですること</span>
+<div>管理センターのどこにクレジットの消費が出るのかを開きます。</div>
+</div>
+<div class="row">
+
+<span class="g af">終わるとこうなる</span>
+<div>毎月どこを見ればよいかが決まります。</div>
+</div>
+</div>
+<div class="mb-step">
+<p class="st-ttl"><span class="st-no">1</span>Copilot のページを開く</p>
+
+<ol>
+ 	<li>管理センター（admin.powerplatform.microsoft.com）を開く</li>
+ 	<li>左端のアイコン列から「Copilot」を選ぶ（セキュリティの1つ下）</li>
+ 	<li>パネルの「Copilot Studio」をクリック</li>
+</ol>
+</div>
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-credit-copilot-nav.png" alt="" /><figcaption>▲ Copilot のページ。製品ごとの Copilot がここにまとまっている</figcaption></figure>
+<div class="mb-why"><span class="wy">なぜそうするか</span>環境やDLPは「管理」「セキュリティ」の配下にあるが、消費と機能のオンオフは「Copilot」の配下にある。
+探す場所が別なので、最初に位置を覚えておく。</div>
+&nbsp;
+<div class="speech-wrap sb-id-14 sbs-stn sbp-l sbis-cb cf">
+<div class="speech-person">
+<figure class="speech-icon"><img class="speech-icon-image" src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="" width="1024" height="1024" /></figure>
+</div>
+<div class="speech-balloon">消費は Copilot → Copilot Studio の画面で見られます。
+毎月どこを開けばいいか、場所だけ先に決めておくとラクでした。</div>
+</div>
+<div class="mb-nav">
+
+<span class="lb">いまここ</span>
+<div class="cells">
+<div class="n done"><span class="ix">1</span>✓ 消費はどこで見るか</div>
+<div class="n on"><span class="ix">2</span>合計と傾向を読む</div>
+<div class="n"><span class="ix">3</span>内訳が出ない理由</div>
+<div class="n"><span class="ix">4</span>テナント単位の設定</div>
+<div class="n"><span class="ix">5</span>実測してみる</div>
+</div>
+</div>
+<h2>② 合計と傾向を読む</h2>
+<div class="mb-goal">
+<div class="row">
+
+<span class="g">この節ですること</span>
+<div>表示された数字とグラフの読み方を確認します。</div>
+</div>
+<div class="row">
+
+<span class="g af">終わるとこうなる</span>
+<div>いつ何にクレジットを使ったのかが分かります。</div>
+</div>
+</div>
+<div class="mb-term"><span class="tm">用語</span><b>Copilot クレジット</b>：Copilot Studio の利用量をはかる単位。
+会話や実行のたびに消費されます。</div>
+<div class="mb-term"><span class="tm">用語</span><b>前払いと従量課金</b>：先に買っておく枠と、使った分だけ後から請求される形。
+画面では別々の数字で表示されます。</div>
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-credit-usage.png" alt="" /><figcaption>▲ Copilot Studio のページ。使用量と、容量の消費を合計した傾向が並ぶ</figcaption></figure>
+画面に出ていたのは次の項目です。
+<ul>
+ 	<li><strong>請求済みのメッセージ</strong>／<strong>アクティブなエージェント</strong>／<strong>エージェント セッションの成功率</strong></li>
+ 	<li><strong>使用済みの前払い Copilot クレジット</strong>と<strong>従量課金制 Copilot クレジット</strong>の2本立て</li>
+ 	<li>日ごとの消費量を示す棒グラフ</li>
+</ul>
+検証に使っているテナントでは、前払いクレジットの消費が <strong>11</strong>、従量課金制が <strong>0</strong> でした。
+グラフを見ると、消費は8月1日に集中しています。
+この日はエージェント同士の取り次ぎと、評価（Evaluate）機能を試した日でした。
+<div class="mb-point">会話を試した分が、<span class="hl">日付つきで管理画面に残っていました</span>。
+「いつ・どれだけ使ったか」は、作った本人が申告しなくても管理側で見えます。
+前払いと従量課金が別々に出るので、上限を超えて課金に入ったかどうかもここで分かります。
+ただし<strong>反映には時間差があります</strong>。
+後述のとおり、当日の操作がその日のうちにグラフへ出ないことがありました。</div>
+<div class="mb-note">
+<p class="nt-ttl">※ この画面に出ないものがある</p>
+ページ上部に「このページには、Microsoft 365 Copilot の Copilot Studio のライト エクスペリエンスで作成されたエージェントに関するデータは含まれていません」と書かれています。
+Microsoft 365 Copilot 側で作られたエージェントは、この集計の外です。
+全体像を把握するには、別の管理画面も見る必要があります。
+
+</div>
+&nbsp;
+<div class="mb-nav">
+
+<span class="lb">いまここ</span>
+<div class="cells">
+<div class="n done"><span class="ix">1</span>✓ 消費はどこで見るか</div>
+<div class="n done"><span class="ix">2</span>✓ 合計と傾向を読む</div>
+<div class="n on"><span class="ix">3</span>内訳が出ない理由</div>
+<div class="n"><span class="ix">4</span>テナント単位の設定</div>
+<div class="n"><span class="ix">5</span>実測してみる</div>
+</div>
+</div>
+<h2>③ 内訳が出ない理由</h2>
+<div class="mb-goal">
+<div class="row">
+
+<span class="g">この節ですること</span>
+<div>エージェント別の内訳が出ない理由と、出すための設定を見ます。</div>
+</div>
+<div class="row">
+
+<span class="g af">終わるとこうなる</span>
+<div>内訳が空でも、設定漏れだと判断できるようになります。</div>
+</div>
+</div>
+合計が分かっても、運用で知りたいのは<strong>どのエージェントが使っているか</strong>です。
+ページを下にスクロールすると、その一覧がありました。
+<div class="mb-term"><span class="tm">用語</span><b>テナント全体の分析</b>：会社全体の利用状況を集める設定。
+有効にすると、どのエージェントがどれだけ使われたかが見えるようになります。</div>
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-credit-recommend.png" alt="" /><figcaption>▲ 下段。推奨事項（重大度 高）が2件と、エージェント別ランキングの枠</figcaption></figure>
+エージェント別の枠には、数字ではなくこう表示されていました。
+<div class="mb-code">使用状況データを表示するには、設定を更新してください</div>
+同じ画面の上には、管理者向けの推奨事項が並んでいます。
+1件目が<strong>「テナント全体の分析を有効にして、マネージド プラットフォーム全体のエクスペリエンスを向上させます」</strong>で、重大度は高でした。
+<div class="mb-warn"><span class="wt">既定では内訳が見えない</span>使った合計は最初から見えますが、<strong>どのエージェントが使ったかは既定では見えません</strong>。
+テナント全体の分析を有効にして、はじめて一覧が出ます。
+「使いすぎを検知したい」という要件があるなら、この有効化が前提になります。</div>
+<div class="mb-why"><span class="wy">なぜそうするか</span>内訳が見えないまま運用すると、合計が増えたときに原因を特定できない。
+止めるべき対象が分からないので、結局「全部禁止」の判断になりやすい。
+先に見える状態を作っておくほうが、あとで細かく許可できる。</div>
+&nbsp;
+<div class="speech-wrap sb-id-14 sbs-stn sbp-l sbis-cb cf">
+<div class="speech-person">
+<figure class="speech-icon"><img class="speech-icon-image" src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="" width="1024" height="1024" /></figure>
+</div>
+<div class="speech-balloon">エージェント別の内訳は既定だと出なくて、設定を変えないと空のままです。
+私は最初、使っていないだけかと思いました。</div>
+</div>
+<div class="mb-nav">
+
+<span class="lb">いまここ</span>
+<div class="cells">
+<div class="n done"><span class="ix">1</span>✓ 消費はどこで見るか</div>
+<div class="n done"><span class="ix">2</span>✓ 合計と傾向を読む</div>
+<div class="n done"><span class="ix">3</span>✓ 内訳が出ない理由</div>
+<div class="n on"><span class="ix">4</span>テナント単位の設定</div>
+<div class="n"><span class="ix">5</span>実測してみる</div>
+</div>
+</div>
+<h2>④ テナント単位の設定はどこか</h2>
+<div class="mb-goal">
+<div class="row">
+
+<span class="g">この節ですること</span>
+<div>テナント全体で機能ごとに止められる設定の場所を見ます。</div>
+</div>
+<div class="row">
+
+<span class="g af">終わるとこうなる</span>
+<div>環境単位と全社単位の2段があると分かります。</div>
+</div>
+</div>
+推奨事項の有効化は、同じ Copilot のパネルにある「<strong>設定</strong>」から行います。
+ここを開くと、Copilot Studio の機能がテナント単位で並んでいました。
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-credit-settings-cs.png" alt="" /><figcaption>▲ Copilot &gt; 設定 の Copilot Studio セクション。機能ごとにオン・オフが分かれている</figcaption></figure>
+<ul>
+ 	<li><strong>コンピューター ユース</strong>／<strong>computer use のアクセスの制御</strong></li>
+ 	<li><strong>コード生成と実行</strong>：エージェントがコードを書いて実行する機能</li>
+ 	<li><strong>接続されたエージェント</strong>（プレビュー）：エージェントから別のエージェントを呼び出す</li>
+ 	<li><strong>ホステッド ブラウザー</strong>（テナント レベル）：有効にすると、Azure のコンプライアンス境界を超えてデータが Windows 365 に送られることに同意したものと見なされる、と明記</li>
+ 	<li><strong>エージェントが使用するナレッジ ソース</strong>／<strong>エージェントのスキル</strong></li>
+</ul>
+さらに下には、セキュリティに近い項目が続きます。
+<div class="mb-term"><span class="tm">用語</span><b>トランスクリプト</b>：エージェントとの会話の記録。
+個人を特定できる情報が含まれることがあるため、誰が見られるかを決める項目があります。</div>
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-credit-settings-sec.png" alt="" /><figcaption>▲ 認証・共有の管理・アクセスチャネル・トランスクリプトへのアクセスもテナント単位で設定できる</figcaption></figure>
+<ul>
+ 	<li><strong>クライアント アプリケーションのアクセス制御</strong>：データ流出防止をサポート</li>
+ 	<li><strong>エージェントの認証</strong>（プレビュー）：公開されたエージェントへのアクセスを制限する</li>
+ 	<li><strong>共有の管理</strong>：③で環境単位に設定したものと同じ考え方</li>
+ 	<li><strong>エージェント アクセス チャネル</strong>（プレビュー）：どのチャネルからアクセスできるかを制御</li>
+ 	<li><strong>会話からトランスクリプトへのアクセス</strong>：会話には機密情報や個人を特定できる情報が含まれる可能性がある、と注記</li>
+</ul>
+<figure class="mb-fig"><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-credit-fig-two-levels.png" alt="" /><figcaption>▲ 同じ種類の設定が、テナント単位と環境単位の2段に分かれている</figcaption></figure>
+<div class="mb-point">③でやった「共有の管理」は環境単位でしたが、<span class="hl">同じ名前の設定がテナント単位にもあります</span>。
+まず1つの環境で試し、方針が固まったらテナント側に上げる、という順番が取れます。
+逆に、テナント側でオフにした機能は、環境で許可しても使えません。</div>
+<div class="mb-warn"><span class="wt">切り替えの範囲に注意</span>この画面の設定は<strong>テナント全体</strong>に効きます。
+1つの環境で試す、という逃げ道がないので、検証環境で確かめてから触ります。
+今回は内容の確認までにしています。</div>
+&nbsp;
+<div class="mb-nav">
+
+<span class="lb">いまここ</span>
+<div class="cells">
+<div class="n done"><span class="ix">1</span>✓ 消費はどこで見るか</div>
+<div class="n done"><span class="ix">2</span>✓ 合計と傾向を読む</div>
+<div class="n done"><span class="ix">3</span>✓ 内訳が出ない理由</div>
+<div class="n done"><span class="ix">4</span>✓ テナント単位の設定</div>
+<div class="n on"><span class="ix">5</span>実測してみる</div>
+</div>
+</div>
+<h2>⑤ 実測：クレジットが0でも実行できることがある</h2>
+<div class="mb-goal">
+<div class="row">
+
+<span class="g">この節ですること</span>
+<div>クレジットが残っていない状態で実行して、何が起きるかを見ます。</div>
+</div>
+<div class="row">
+
+<span class="g af">終わるとこうなる</span>
+<div>必ず止まるとは限らないので、動く前提で見積もる判断ができます。</div>
+</div>
+</div>
+この画面の数字がどう動くかを、日をまたいで確かめました。
+結果は一定ではありませんでした。
+<ul>
+ 	<li><strong>8月10日</strong>：エージェントからフローを実行しようとしたところ、<code>403 InsufficientMcsCredits</code> で止まった</li>
+ 	<li><strong>8月21日</strong>：別のエージェントで同じ形のフローを実行したところ、<strong>最後まで動いて Teams に通知が届いた</strong></li>
+ 	<li>同じ日にこの画面を開いても、<strong>前払いクレジットの数字は 11 のまま</strong>で、当日の棒はグラフに立っていなかった</li>
+</ul>
+<div class="mb-warn"><span class="wt">「必ず止まる」わけではない</span>クレジットの枠が無いと実行系は止まる、と一度は確認しました。
+しかし別の日には同じ構成が通りました。
+<strong>猶予期間や枠の扱いが変わると挙動も変わります</strong>。
+「止まるはず」を前提に設計せず、実際に動いた前提で費用を見積もるほうが安全です。</div>
+<div class="mb-why"><span class="wy">なぜそうするか</span>管理側の数字は<strong>その場で増えない</strong>ことがある。
+操作した直後にグラフを見て「消費していない」と判断すると、翌日に計上されて驚くことになる。
+費用を確認するなら、日をまたいで同じ画面を見る。</div>
+&nbsp;
+<div class="speech-wrap sb-id-14 sbs-stn sbp-l sbis-cb cf">
+<div class="speech-person">
+<figure class="speech-icon"><img class="speech-icon-image" src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="" width="1024" height="1024" /></figure>
+</div>
+<div class="speech-balloon">クレジットが残っていなくても動くことがありました。
+「必ず止まる」前提だと見誤るので、動く前提で見積もるようにしています。</div>
+</div>
+<div class="mb-nav">
+
+<span class="lb">ここまで完了</span>
+<div class="cells">
+<div class="n done"><span class="ix">1</span>✓ 消費はどこで見るか</div>
+<div class="n done"><span class="ix">2</span>✓ 合計と傾向を読む</div>
+<div class="n done"><span class="ix">3</span>✓ 内訳が出ない理由</div>
+<div class="n done"><span class="ix">4</span>✓ テナント単位の設定</div>
+<div class="n done"><span class="ix">5</span>✓ 実測してみる</div>
+</div>
+</div>
+<h2>作業前に押さえておく仕様</h2>
+<ul>
+ 	<li><strong>消費の実績は Copilot → Copilot Studio</strong>：前払いと従量課金が別々に出る</li>
+ 	<li><strong>反映には時間差がある</strong>：当日の操作がその日のグラフに出ないことがある</li>
+ 	<li><strong>クレジットが0でも実行できる場合がある</strong>：403で止まった日と、通った日の両方を実測した</li>
+ 	<li><strong>エージェント別の内訳は既定で非表示</strong>：テナント全体の分析を有効にする必要がある</li>
+ 	<li><strong>Microsoft 365 Copilot 側のエージェントは集計外</strong>：この画面だけでは全体を把握できない</li>
+ 	<li><strong>機能のオンオフは Copilot → 設定</strong>：コード実行・ホステッドブラウザー・スキルなどが個別に並ぶ</li>
+ 	<li><strong>ホステッド ブラウザーはデータの送り先が変わる</strong>：有効化＝コンプライアンス境界を超える同意</li>
+ 	<li><strong>設定はテナント全体に効く</strong>：環境単位のDLPやマネージド環境とは範囲が違う</li>
+</ul>
+&nbsp;
+<div class="mb-nav">
+
+<span class="lb">ここまで完了</span>
+<div class="cells">
+<div class="n done"><span class="ix">1</span>✓ 消費はどこで見るか</div>
+<div class="n done"><span class="ix">2</span>✓ 合計と傾向を読む</div>
+<div class="n done"><span class="ix">3</span>✓ 内訳が出ない理由</div>
+<div class="n done"><span class="ix">4</span>✓ テナント単位の設定</div>
+<div class="n done"><span class="ix">5</span>✓ 実測してみる</div>
+</div>
+</div>
+<h2>まとめ</h2>
+<ul>
+ 	<li><strong>①</strong> 消費の実績は管理センターの Copilot → Copilot Studio で見える</li>
+ 	<li><strong>②</strong> 前払いクレジットと従量課金が分かれて表示され、日ごとの傾向も出る</li>
+ 	<li><strong>③</strong> エージェント別の内訳は、テナント全体の分析を有効にしないと出ない</li>
+ 	<li><strong>④</strong> 機能のオンオフは Copilot → 設定にテナント単位で並ぶ</li>
+ 	<li><strong>⑤</strong> 同じ「共有の管理」がテナント単位と環境単位の2段にある</li>
+</ul>
+①〜③が「やらせない」の設定だとすると、今回は「見る」の設定でした。
+使わせる範囲を決めたら、次は使われ方を見る。
+この2つがそろって、はじめて運用の話ができます。
+<div class="mb-link">①：<a href="https://www.automate136.com/copilot-studio-dev-environment/" target="_blank" rel="noopener">開発用の環境を分けて、既定の環境から出る</a>
+②：<a href="https://www.automate136.com/copilot-studio-dlp-policy/" target="_blank" rel="noopener">DLPで「認証なし」の公開を止める</a>
+③：<a href="https://www.automate136.com/copilot-studio-managed-environment/" target="_blank" rel="noopener">マネージド環境で、エージェントの共有範囲を絞る</a>
+費用の考え方：<a href="https://www.automate136.com/copilot-studio-cost-design/" target="_blank" rel="noopener">Copilot Studioは“使うほど課金”される</a>
+課金の境界：<a href="https://www.automate136.com/copilot-studio-credit-boundary/" target="_blank" rel="noopener">Copilot Studioの「無償で使える線」はどこか</a></div>
+<p style="font-size: 13px; color: #888; line-height: 1.9;">※ 本記事は公開日時点の情報をもとに、筆者が実際に試した内容を整理しました。
+Copilot Studio と Power Platform 管理センターは更新が続いており、画面や名称、既定値は変わることがあります。
+最新の状況は公式情報（Microsoft Learn）もあわせてご確認ください。</p>
+<p style="font-size: 13px; color: #888; line-height: 1.9;">※ 掲載している画面は、操作中に撮りました。
+氏名・メールアドレス・環境IDなどは伏せています。
+構成や図解の一部は、AI と壁打ちしながら作成しています。</p>
+
+</div>
+<style> .mb-body > p{margin:1.9em 0!important;line-height:2.05!important;} .mb-body > h2{margin-top:2.8em!important;} .mb-body > h3{margin-top:2.2em!important;font-size:1.12em;} .mb-body > ul{margin:1.7em 0!important;line-height:2.0;} .mb-body > ul li{margin:.55em 0;} .mb-lead{line-height:2.1;} .hl{color:#6D28D9;font-weight:700;} .mb-fig{margin:40px 0;display:flex;flex-direction:column;align-items:center;background:#e7e0f5;border:1px solid #d0c4ec;border-radius:16px;padding:18px 16px 12px;box-shadow:0 2px 8px rgba(76,29,149,.08);} .mb-fig img{width:100%;max-width:720px;height:auto;display:block;margin:0 auto;background:#fff;border-radius:10px;} .mb-fig figcaption{font-size:.85em;color:#5b4a7a;margin-top:12px;} .mb-shot{margin:44px 0;background:#eceef2;border:1px solid #d9dce3;border-radius:16px;padding:16px 16px 13px;box-shadow:0 3px 12px rgba(15,23,42,.09);} .mb-shot .sh-tag{display:inline-flex;font-size:12.5px;font-weight:800;color:#475569;background:#dde1e9;border-radius:999px;padding:5px 14px;margin-bottom:12px;} .mb-shot img{width:100%;height:auto;display:block;border-radius:10px;border:1px solid #c7cad3;box-shadow:0 6px 18px rgba(15,23,42,.14);} .mb-shot figcaption{font-size:.85em;color:#5b4a7a;margin-top:14px;line-height:1.65;} .mb-point{background:#f7f4fd;border-left:6px solid #8b5cf6;border-radius:8px;padding:18px 24px;margin:36px 0;line-height:2.1;} .mb-why{background:#f2f9f4;border-left:6px solid #4caf82;border-radius:8px;padding:16px 22px;margin:30px 0;line-height:2.0;} .mb-why .wy{font-weight:800;color:#2f855a;display:block;margin-bottom:6px;font-size:.95em;} .mb-note{background:#fffdf5;border:2px solid #ffd54f;border-radius:12px;padding:18px 24px;margin:38px 0;line-height:2.1;} .mb-note .nt-ttl{font-weight:700;color:#e8920c;margin:0 0 14px;} .mb-warn{background:#fff6f6;border-left:6px solid #e57373;border-radius:8px;padding:18px 24px;margin:36px 0;line-height:2.1;} .mb-warn .wt{font-weight:800;color:#c0392b;display:block;margin-bottom:8px;} .mb-code{background:#f6f4fb;border:1px solid #e0d7f3;border-radius:10px;padding:13px 16px;margin:26px 0;font-size:.86em;color:#42335f;line-height:1.9;font-family:'Consolas','SFMono-Regular',monospace;} .mb-step{background:#f7f4fd;border:2px solid #ddd0f2;border-radius:14px;padding:18px 22px 6px;margin:34px 0;} .mb-step .st-ttl{display:flex;align-items:center;gap:12px;font-weight:800;color:#5b21b6;font-size:1.06em;margin-bottom:6px;} .mb-step .st-no{flex:none;width:32px;height:32px;border-radius:50%;background:#7c3aed;color:#fff;display:flex;align-items:center;justify-content:center;} .mb-step ol{margin:6px 0 14px;padding-left:0;list-style:none;counter-reset:s;} .mb-step ol li{position:relative;padding:8px 0 8px 30px;line-height:1.8;border-top:1px solid #ece4f9;} .mb-step ol li:first-child{border-top:none;} .mb-step ol li::before{counter-increment:s;content:counter(s);position:absolute;left:0;top:8px;width:22px;height:22px;background:#ede9fe;color:#5b21b6;border-radius:50%;font-size:.78em;font-weight:800;display:flex;align-items:center;justify-content:center;} .mb-intro{background:#f6f4fb;border:1px solid #e0d7f3;border-left:5px solid #a78bda;border-radius:10px;padding:13px 18px;margin:4px 0 30px;font-size:.9em;color:#5b4a7a;line-height:1.8;} .mb-map{background:#eef2ff;border:1px solid #c7d2fe;border-radius:12px;padding:14px 20px;margin:30px 0;font-size:.92em;color:#3730a3;line-height:1.95;} .mb-map b{color:#4338ca;} .mb-link{background:#eef5ff;border:1px solid #cfe0f7;border-radius:12px;padding:16px 20px;margin:34px 0;line-height:1.9;} .mb-link a{color:#1d4ed8;font-weight:700;} .mb-term{background:#f0f7ff;border:1px solid #cfe0f7;border-left:6px solid #3b82f6;border-radius:10px;padding:14px 20px;margin:28px 0;line-height:1.95;font-size:.96em;} .mb-term .tm{display:inline-flex;font-size:12px;font-weight:800;color:#fff;background:#3b82f6;border-radius:999px;padding:3px 12px;margin-right:10px;vertical-align:2px;} .mb-term b{color:#1e40af;} .speech-balloon{line-height:1.95;}.mb-nav{margin:38px 0 6px;}.mb-nav .lb{display:inline-block;font-size:11.5px;font-weight:800;color:#7c3aed;letter-spacing:.1em;margin-bottom:8px;}.mb-nav .cells{display:flex;gap:6px;flex-wrap:wrap;}.mb-nav .n{flex:1;min-width:126px;background:#f5f2fc;border:1px solid #e4dcf7;border-radius:9px;padding:9px 10px;font-size:.8em;color:#9c94b3;line-height:1.45;text-align:center;font-weight:700;}.mb-nav .n .ix{display:block;font-size:.85em;opacity:.75;margin-bottom:2px;}.mb-nav .n.done{background:#ede9fe;border-color:#d9cdf5;color:#6d28d9;}.mb-nav .n.on{background:#7c3aed;border-color:#7c3aed;color:#fff;box-shadow:0 3px 10px rgba(124,58,237,.28);}.mb-goal{background:#fff;border:2px solid #ddd0f2;border-radius:12px;padding:6px 20px;margin:14px 0 32px;}.mb-goal .row{display:flex;gap:14px;align-items:flex-start;padding:12px 0;border-top:1px solid #f0eafb;line-height:1.9;font-size:.96em;}.mb-goal .row:first-child{border-top:none;}.mb-goal .g{flex:none;width:112px;font-size:11.5px;font-weight:800;color:#7c3aed;background:#f3eefc;border-radius:999px;padding:4px 0;text-align:center;margin-top:5px;}.mb-goal .g.af{color:#2f855a;background:#eaf5ee;}@media(max-width:600px){.mb-nav .n{min-width:calc(50% - 3px);}.mb-goal .g{width:96px;font-size:11px;}}</style>

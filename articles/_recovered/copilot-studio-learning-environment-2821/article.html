@@ -1,0 +1,112 @@
+<div class="mb-body"><div class="cs-preface">&#x1f4dd; 実際に <b>Copilot Studio を触って検証</b>し、スクショを撮りながら気づいたことをまとめた記録です。<br>機能・画面・料金は更新が続きます。<br>最新の正確な情報は <a href="https://learn.microsoft.com/ja-jp/microsoft-copilot-studio/" target="_blank" rel="noopener">Microsoft 公式（Microsoft Learn）</a> をご確認ください。</div>
+
+<div class="mb-intro">Copilot Studio を手を動かして学ぼうとすると、最初にぶつかるのが「どの環境で・どのライセンスでやるか」です。<br>同じ操作でも、環境によってできたり、途中で止まったりします。<br>自分の学習用テスト環境で実際に確認した「何ができて、何で詰まるか」の記録です。</div>
+
+<p class="mb-lead">結論から書くと、<strong>Copilot Studio の無料の試用版でも「作る・設定する」はひととおりできます。<br>ですが「実際に動かす（フローやAIを実行する）」段で止まります</strong>。<br>この線引きを知らないうちは、「設定は合ってるのに動かない」と悩んで時間を使ってしまいました。</p>
+
+&nbsp;
+
+<div class="mb-nav"><span class="lb">いまここ</span><div class="cells"><div class="n on"><span class="ix">1</span>専用テナントで学ぶ</div><div class="n"><span class="ix">2</span>あるライセンス</div><div class="n"><span class="ix">3</span>作れるが動かない</div><div class="n"><span class="ix">4</span>M365 Copilotが開くもの</div><div class="n"><span class="ix">5</span>学習環境の考え方</div></div></div>
+
+<h2>① 学習は「本番と分けた専用テナント」で</h2>
+
+<div class="mb-goal"><div class="row"><span class="g">この節で分かること</span><div>本番と分けた学習用テナントの話です。</div></div><div class="row"><span class="g af">読み終えるとこうなる</span><div>なぜ分けるかが分かります。</div></div></div>
+
+<p>まず前提として、学習・デモは<strong>本番の業務環境とは分けたテナント（デモ用テナント）</strong>で行っています。<br>実験で設定を変えたり、テスト用のエージェントを作ったりするので、本番と混ぜないほうが安全です。</p>
+
+<div class="mb-note"><p class="nt-ttl">&#x203b; なぜ分けるか</p>エージェントの公開・権限・データ接続などを試すと、環境の設定に触れます。<br>本番テナントでやると影響範囲が読めないので、<strong>壊しても困らない学習用テナント</strong>を1つ用意しておくと安心でした。</div>
+
+&nbsp;
+
+<div class="speech-wrap sb-id-14 sbs-stn sbp-l sbis-cb cf"><div class="speech-person"><figure class="speech-icon"><img class="speech-icon-image" src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="" width="1024" height="1024" /></figure></div><div class="speech-balloon">学習は、本番と分けた専用の場所でやるのが安心です。<br>壊しても影響がないので、思い切って試せます。</div></div>
+
+<div class="mb-nav"><span class="lb">いまここ</span><div class="cells"><div class="n done"><span class="ix">1</span>&#x2713; 専用テナントで学ぶ</div><div class="n on"><span class="ix">2</span>あるライセンス</div><div class="n"><span class="ix">3</span>作れるが動かない</div><div class="n"><span class="ix">4</span>M365 Copilotが開くもの</div><div class="n"><span class="ix">5</span>学習環境の考え方</div></div></div>
+
+<h2>② その環境にあるライセンス</h2>
+
+<div class="mb-goal"><div class="row"><span class="g">この節で分かること</span><div>その環境に何のライセンスがあるかを見ます。</div></div><div class="row"><span class="g af">読み終えるとこうなる</span><div>できることの範囲が分かります。</div></div></div>
+
+<p>学習用テナントに入っているライセンスは、だいたいこういう構成です（管理センターのライセンス画面で確認できます）。</p>
+
+<p>（ライセンスは Microsoft 365 管理センター admin.microsoft.com →「課金情報」→「ライセンス」で確認できます）。</p>
+
+<table class="ltbl"><tr><th>ライセンス</th><th>これは何か</th></tr><tr><td>Microsoft Copilot Studio バイラル試用版</td><td>Copilot Studio の無料の自己サービス試用版。エージェントを作る・設定するために使う</td></tr><tr><td>Microsoft 365 Copilot</td><td>Microsoft 365 側の Copilot ライセンス。社内データ（SharePoint等）を根拠にする機能に関わる</td></tr><tr><td>Microsoft 365 Business Standard</td><td>Office アプリ・SharePoint・Teams などの土台</td></tr><tr><td>Power Automate（無料）</td><td>フローの土台</td></tr></table>
+
+<p>ポイントは、<strong>「Copilot Studio の試用版」と「Microsoft 365 Copilot」は別物</strong>だということです。<br>名前が似ていますが、役割も課金も別です。<br>ここが最初のつまずきどころでした。</p>
+
+&nbsp;
+
+<div class="mb-nav"><span class="lb">いまここ</span><div class="cells"><div class="n done"><span class="ix">1</span>&#x2713; 専用テナントで学ぶ</div><div class="n done"><span class="ix">2</span>&#x2713; あるライセンス</div><div class="n on"><span class="ix">3</span>作れるが動かない</div><div class="n"><span class="ix">4</span>M365 Copilotが開くもの</div><div class="n"><span class="ix">5</span>学習環境の考え方</div></div></div>
+
+<h2>③ バイラル試用版＝「作れる」けど「動かす」と止まる</h2>
+
+<div class="mb-goal"><div class="row"><span class="g">この節で分かること</span><div>バイラル試用版で詰まる場所を見ます。</div></div><div class="row"><span class="g af">読み終えるとこうなる</span><div>止まったときの原因が分かります。</div></div></div><figure style="margin:32px 0;background:#eceef2;border:1px solid #d9dce3;border-radius:14px;padding:14px;box-shadow:0 3px 12px rgba(15,23,42,.09);"><span style="display:inline-block;font-size:12.5px;font-weight:800;color:#475569;background:#dde1e9;border-radius:999px;padding:5px 14px;margin-bottom:10px;">&#x1f5a5;&#xfe0f; 実際の画面</span><br><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-learnenv-thin.png" alt="" style="max-width:100%;height:auto;border-radius:8px;border:1px solid #c7cad3;box-shadow:0 6px 18px rgba(15,23,42,.14);" /><figcaption style="font-size:1.02em;color:#5b4a7a;margin-top:12px;line-height:1.65;">&#x25b2; 管理センターのライセンス一覧。「Microsoft Copilot Studio バイラル試験版」が 9999／10000 で入っている。作れるが、動かすとクレジットで止まるのがこの試用版（組織名は伏せています）</figcaption></figure>
+
+<p>Copilot Studio の無料試用版で、実際にできたこと・止まったことを分けると、こうなります。</p>
+
+<table class="ltbl"><tr><th>やったこと</th><th>結果</th></tr><tr><td>エージェントを作る／指示文・ナレッジ・ツールを設定する</td><td class="ok">できる</td></tr><tr><td>Teamsに公開する・Previewで会話する（軽いもの）</td><td class="ok">おおむねできる</td></tr><tr><td>フロー（自律・AIアクション）を実行する</td><td class="ng">止まる</td></tr></table>
+
+<p>フローを実行しようとしたとき、エラーはこう出ました。</p>
+
+<p style="text-align:center;font-family:'Segoe UI',monospace;background:#1f2937;color:#fca5a5;border-radius:10px;padding:14px 16px;font-size:13.5px;line-height:1.7;">Flow returned HTTP 403.<br>InnerErrorCode: <b>InsufficientMcsCredits</b></p>
+
+<div class="mb-point">原因は<span class="hl">クレジット不足（InsufficientMcsCredits）</span>でした。<strong>バイラル試用版には、実行のためのクレジット容量が付いていません</strong>。<br>だから「作る・設定する」まではできても、「フローやAIを実際に動かす」段で止まります。<br>これは指示文や作りのミスではなく、<strong>環境（ライセンス容量）の問題</strong>です。<br>ここを取り違えると、直さなくていい設定を直しに行くことになります。</div>
+
+<div class="mb-link">Copilot Studio の料金・クレジットの仕組みは <a href="https://www.automate136.com/copilot-studio-cost-design/" target="_blank" rel="noopener">Copilot Studioは“使うほど課金”される</a> にまとめています。実際に動かすには、従量課金（pay-as-you-go）か容量パックでクレジットを用意する必要があります。</div>
+
+&nbsp;
+
+<div class="speech-wrap sb-id-14 sbs-stn sbp-l sbis-cb cf"><div class="speech-person"><figure class="speech-icon"><img class="speech-icon-image" src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="" width="1024" height="1024" /></figure></div><div class="speech-balloon">作るところまでは無料でいけて、動かす段で止まることがあります。<br>「作れる＝使える」ではない、と知っておくと戸惑いにくいです。</div></div>
+
+<div class="mb-nav"><span class="lb">いまここ</span><div class="cells"><div class="n done"><span class="ix">1</span>&#x2713; 専用テナントで学ぶ</div><div class="n done"><span class="ix">2</span>&#x2713; あるライセンス</div><div class="n done"><span class="ix">3</span>&#x2713; 作れるが動かない</div><div class="n on"><span class="ix">4</span>M365 Copilotが開くもの</div><div class="n"><span class="ix">5</span>学習環境の考え方</div></div></div>
+
+<h2>④ Microsoft 365 Copilot ライセンスが開くもの</h2>
+
+<div class="mb-goal"><div class="row"><span class="g">この節で分かること</span><div>M365 Copilot ライセンスで開くものを見ます。</div></div><div class="row"><span class="g af">読み終えるとこうなる</span><div>何を足せば動くのかが分かります。</div></div></div>
+
+<p>もうひとつ分かったのは、<strong>Microsoft 365 Copilot ライセンス（Copilot Studio の試用版とは別）</strong>があると、開く機能があることです。</p>
+
+<p>具体的には、<strong>社内資料（SharePoint など）を、その人の権限で検索して根拠にする</strong>機能（テナントグラフの根拠 ／ セマンティック検索）です。<br>これは Microsoft 365 Copilot 側のライセンスに関わる機能で、Copilot Studio の実行クレジットとはまた別枠です。</p>
+
+<div class="mb-fig"><p class="fig-ttl">「使えない」には2種類ある</p><div class="mb-cards"><div class="kc"><div class="kc-h">フローが実行できない</div><div class="kc-d">Copilot Studio のクレジット不足（InsufficientMcsCredits）。従量課金か容量パックでクレジットを足すと動きます。</div></div><div class="kc"><div class="kc-h">社内データを根拠にできない</div><div class="kc-d">Microsoft 365 Copilot ライセンスの話。SharePoint などを根拠にする機能はこちらに関わります。</div></div></div></div>
+
+<div class="mb-warn"><span class="wt">「ライセンスが無い」と「クレジットが無い」は別物</span>同じ「使えない」でも、<strong>①社内データ系＝Microsoft 365 Copilot ライセンスの話</strong>、<strong>②フロー実行＝Copilot Studio のクレジットの話</strong>、と原因が分かれます。<br>両方を「ライセンスが足りない」で一括りにすると、対処を間違えます。<strong>何が足りなくて止まっているのか</strong>を、まず切り分けるのが早道です。</div>
+
+&nbsp;
+
+<div class="mb-nav"><span class="lb">いまここ</span><div class="cells"><div class="n done"><span class="ix">1</span>&#x2713; 専用テナントで学ぶ</div><div class="n done"><span class="ix">2</span>&#x2713; あるライセンス</div><div class="n done"><span class="ix">3</span>&#x2713; 作れるが動かない</div><div class="n done"><span class="ix">4</span>&#x2713; M365 Copilotが開くもの</div><div class="n on"><span class="ix">5</span>学習環境の考え方</div></div></div>
+
+<h2>⑤ だから、学習環境はこう考える</h2>
+
+<div class="mb-goal"><div class="row"><span class="g">この節で分かること</span><div>学習環境の組み方を整理します。</div></div><div class="row"><span class="g af">読み終えるとこうなる</span><div>自分の環境をどうするか決められます。</div></div></div>
+
+<p>ここまでを踏まえた、現実的な学習環境の組み方です。</p>
+
+<ul>
+<li><strong>まず無料の試用版で「作る・設定する」を一通り学ぶ</strong>（クレジット不要の範囲。<br>ここだけでもかなり学べる）</li>
+<li><strong>「実際に動かす」デモが要るなら、従量課金を少額で足す</strong>（使った分だけ）</li>
+<li><strong>社内データ（SharePoint等）を触るなら、Microsoft 365 Copilot ライセンスのある環境で</strong></li>
+<li><strong>本番テナントとは分ける</strong>（学習用のデモテナントを用意）</li>
+</ul>
+
+&nbsp;
+
+<div class="mb-nav"><span class="lb">ここまで完了</span><div class="cells"><div class="n done"><span class="ix">1</span>&#x2713; 専用テナントで学ぶ</div><div class="n done"><span class="ix">2</span>&#x2713; あるライセンス</div><div class="n done"><span class="ix">3</span>&#x2713; 作れるが動かない</div><div class="n done"><span class="ix">4</span>&#x2713; M365 Copilotが開くもの</div><div class="n done"><span class="ix">5</span>&#x2713; 学習環境の考え方</div></div></div>
+
+<h2>まとめ</h2>
+
+<ul>
+<li>学習は<strong>本番と分けたテナント</strong>で。<br>壊しても困らない環境を1つ持つ</li>
+<li><strong>「Copilot Studio 試用版」と「Microsoft 365 Copilot」は別物</strong>（役割も課金も別）</li>
+<li>試用版は<strong>作れるが、動かすとクレジット不足（403）で止まる</strong></li>
+<li><strong>「ライセンスが無い」と「クレジットが無い」を切り分ける</strong>と、対処を間違えない</li>
+</ul>
+
+<p>「設定は合ってるのに動かない」の多くは、腕の問題ではなく<strong>環境（ライセンス・クレジット）の問題</strong>でした。<br>学ぶ前に、自分の環境で「何ができて、何で止まるか」を一度確かめておくと、あとがずっと楽になります。</p>
+
+<p style="font-size:13px;color:#888;line-height:1.9;">※ 本記事は公開日時点の情報をもとに、筆者が自分の学習用テナントで確認した内容を整理しました。ライセンスの名称・内容・料金は変わることがあり、環境によっても異なります。正確な条件は公式情報（Microsoft Learn）と、ご自身の契約内容をご確認ください。</p>
+
+<p style="font-size:13px;color:#888;line-height:1.9;">※ 具体的なテナント名などの固有情報は伏せています。構成の一部は、AI と壁打ちしながら整理しました。</p>
+
+</div>
+<style> .mb-body > p{margin:1.9em 0!important;line-height:2.05!important;} .mb-body > h2{margin-top:2.8em!important;} .mb-body > ul{margin:1.7em 0!important;line-height:2.0;} .mb-body > ul li{margin:.55em 0;} .mb-lead{line-height:2.1;} .hl{color:#6D28D9;font-weight:700;} .mb-point{background:#f7f4fd;border-left:6px solid #8b5cf6;border-radius:8px;padding:18px 24px;margin:36px 0;line-height:2.1;} .mb-note{background:#fffdf5;border:2px solid #ffd54f;border-radius:12px;padding:18px 24px;margin:38px 0;line-height:2.1;} .mb-note .nt-ttl{font-weight:700;color:#e8920c;margin:0 0 14px;} .mb-warn{background:#fff6f6;border-left:6px solid #e57373;border-radius:8px;padding:18px 24px;margin:36px 0;line-height:2.1;} .mb-warn .wt{font-weight:800;color:#c0392b;display:block;margin-bottom:8px;} .ltbl{width:100%;border-collapse:collapse;font-size:.92em;margin:22px 0;background:#fff;} .ltbl th,.ltbl td{border:1px solid #e4dbf6;padding:11px 13px;text-align:left;line-height:1.7;vertical-align:top;} .ltbl th{background:#f3f0fb;color:#3b2a5a;font-size:.9em;} .ltbl td.ok{color:#166534;font-weight:700;} .ltbl td.ng{color:#991b1b;font-weight:700;} .mb-link{background:#eef5ff;border:1px solid #cfe0f7;border-radius:12px;padding:16px 20px;margin:34px 0;line-height:1.9;} .mb-link a{color:#1d4ed8;font-weight:700;} .mb-intro{background:#f6f4fb;border:1px solid #e0d7f3;border-left:5px solid #a78bda;border-radius:10px;padding:13px 18px;margin:4px 0 30px;font-size:.9em;color:#5b4a7a;line-height:1.8;} .cs-preface{background:#eef7f1;border:1px solid #cfe8db;border-left:5px solid #5f8a6e;border-radius:10px;padding:14px 18px;margin:0 0 26px;font-size:.86em;color:#3d5647;line-height:1.85;} .cs-preface b{color:#2f6b4f;} .cs-preface a{color:#1d4ed8;font-weight:700;} .mb-fig{margin:34px 0;padding:22px 20px 20px;background:#faf8ff;border:1px solid #e6ddf7;border-radius:14px;} .mb-fig .fig-ttl{font-size:.95em;font-weight:800;color:#5B21B6;margin:0 0 16px;text-align:center;} .mb-flow{display:flex;flex-wrap:wrap;align-items:stretch;justify-content:center;gap:10px;} .mb-flow .step{flex:1 1 150px;min-width:128px;background:#fff;border:2px solid #ddd0f2;border-radius:12px;padding:14px 12px;text-align:center;} .mb-flow .step .st-n{display:inline-block;font-size:.78em;font-weight:800;color:#fff;background:#7C3AED;border-radius:999px;padding:2px 11px;margin-bottom:9px;} .mb-flow .step .st-t{font-size:.92em;font-weight:700;color:#2b2540;line-height:1.6;} .mb-flow .arrow{align-self:center;color:#a78bda;font-weight:900;font-size:1.35em;} .mb-cards{display:flex;flex-wrap:wrap;gap:12px;} .mb-cards .kc{flex:1 1 150px;min-width:140px;background:#fff;border:1px solid #e6ddf7;border-left:5px solid #7C3AED;border-radius:10px;padding:14px 16px;} .mb-cards .kc .kc-h{font-size:.9em;font-weight:800;color:#5B21B6;margin-bottom:6px;line-height:1.5;} .mb-cards .kc .kc-d{font-size:.88em;color:#4b4460;line-height:1.7;} .speech-balloon{line-height:1.95;}.mb-nav{margin:38px 0 6px;}.mb-nav .lb{display:inline-block;font-size:11.5px;font-weight:800;color:#7c3aed;letter-spacing:.1em;margin-bottom:8px;}.mb-nav .cells{display:flex;gap:6px;flex-wrap:wrap;}.mb-nav .n{flex:1;min-width:126px;background:#f5f2fc;border:1px solid #e4dcf7;border-radius:9px;padding:9px 10px;font-size:.8em;color:#9c94b3;line-height:1.45;text-align:center;font-weight:700;}.mb-nav .n .ix{display:block;font-size:.85em;opacity:.75;margin-bottom:2px;}.mb-nav .n.done{background:#ede9fe;border-color:#d9cdf5;color:#6d28d9;}.mb-nav .n.on{background:#7c3aed;border-color:#7c3aed;color:#fff;box-shadow:0 3px 10px rgba(124,58,237,.28);}.mb-goal{background:#fff;border:2px solid #ddd0f2;border-radius:12px;padding:6px 20px;margin:14px 0 32px;}.mb-goal .row{display:flex;gap:14px;align-items:flex-start;padding:12px 0;border-top:1px solid #f0eafb;line-height:1.9;font-size:.96em;}.mb-goal .row:first-child{border-top:none;}.mb-goal .g{flex:none;width:112px;font-size:11.5px;font-weight:800;color:#7c3aed;background:#f3eefc;border-radius:999px;padding:4px 0;text-align:center;margin-top:5px;}.mb-goal .g.af{color:#2f855a;background:#eaf5ee;}@media(max-width:600px){.mb-nav .n{min-width:calc(50% - 3px);}.mb-goal .g{width:96px;font-size:11px;}}</style>

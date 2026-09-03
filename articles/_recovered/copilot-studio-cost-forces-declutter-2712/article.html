@@ -1,0 +1,201 @@
+<div class="mb-body">
+<div class="cs-preface">&#x1f4dd; 実際に <b>Copilot Studio を触って検証</b>し、スクショを撮りながら気づいたことをまとめた記録です。
+機能・画面・料金は更新が続きます。
+最新の正確な情報は <a href="https://learn.microsoft.com/ja-jp/microsoft-copilot-studio/" target="_blank" rel="noopener">Microsoft 公式（Microsoft Learn）</a> をご確認ください。</div>
+<div class="mb-intro">Copilot Studio で「毎朝AIが質問箱を要約して通知する」自律フローを作っている途中で、「これは課金されるよね」と一度手が止まりました。
+その“立ち止まり”が、じつは悪くないと思った話をまとめます。
+無料ではないという制約が、自動化の前に業務を見直すきっかけになる、という考察です。</div>
+<p class="mb-lead">前に、料金の仕組みを整理した記事を書きました。
+Copilot Studio は使うほどクレジットを消費し、とくに自律実行とAIの呼び出しは費用がかかります。
+この「無料ではない」という点を、最初はマイナスに感じていました。</p>
+<p class="mb-lead">ですが、実際にフローを組んでいると、費用という<strong>値札</strong>がついているおかげで、作る前に何度も立ち止まることになりました。
+そしてその立ち止まりが、結果的に業務そのものを見直す時間になっていました。</p>
+&nbsp;
+<div class="mb-nav">
+
+<span class="lb">いまここ</span>
+<div class="cells">
+<div class="n on"><span class="ix">1</span>無料じゃない</div>
+<div class="n"><span class="ix">2</span>3つの問い</div>
+<div class="n"><span class="ix">3</span>良い制約</div>
+<div class="n"><span class="ix">4</span>業務の断捨離</div>
+</div>
+</div>
+<h2>① 無料じゃないから、作る前に立ち止まる</h2>
+<div class="mb-goal">
+<div class="row">
+
+<span class="g">この節で分かること</span>
+<div>費用がかかるから作る前に立ち止まる、という話です。</div>
+</div>
+<div class="row">
+
+<span class="g af">読み終えるとこうなる</span>
+<div>この記事の立場が分かります。</div>
+</div>
+</div>
+<figure style="margin: 32px 0; background: #eceef2; border: 1px solid #d9dce3; border-radius: 14px; padding: 14px; box-shadow: 0 3px 12px rgba(15,23,42,.09);"><span style="display: inline-block; font-size: 12.5px; font-weight: 800; color: #475569; background: #dde1e9; border-radius: 999px; padding: 5px 14px; margin-bottom: 10px;">&#x1f5a5;&#xfe0f; 実際の画面</span>
+<img style="max-width: 100%; height: auto; border-radius: 8px; border: 1px solid #c7cad3; box-shadow: 0 6px 18px rgba(15,23,42,.14);" src="https://www.automate136.com/wp-content/uploads/2026/08/cs-declutter-nobox.png" alt="" /><figcaption style="font-size: 1.02em; color: #5b4a7a; margin-top: 12px; line-height: 1.65;">▲ エージェントの画面に出る通知。「9月1日以降はクレジットを使い始める（begin using credits）」とある。“無料の道具”ではなく“メーターの回る道具”だと分かる</figcaption></figure>
+もし完全に無料だったら、「とりあえず全部AIにやらせよう」と雑に足していたと思います。
+無料は、手を動かすハードルを下げるかわりに、<strong>本当に必要かどうかを考えないまま増やす</strong>方向にも働きます。
+
+費用がかかると分かっていると、1つ足すごとに「これは要るのか」を考えます。
+今回のフローでも、AIに要約させるノードを足す前に、いくつかの問いが自然と立ちました。
+
+&nbsp;
+<div class="speech-wrap sb-id-14 sbs-stn sbp-l sbis-cb cf">
+<div class="speech-person">
+<figure class="speech-icon"><img class="speech-icon-image" src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="" width="1024" height="1024" /></figure>
+</div>
+<div class="speech-balloon">無料じゃないと分かると、作る前に一度立ち止まります。
+この立ち止まりが、実はけっこう効くと思っています。</div>
+</div>
+<div class="mb-nav">
+
+<span class="lb">いまここ</span>
+<div class="cells">
+<div class="n done"><span class="ix">1</span>✓ 無料じゃない</div>
+<div class="n on"><span class="ix">2</span>3つの問い</div>
+<div class="n"><span class="ix">3</span>良い制約</div>
+<div class="n"><span class="ix">4</span>業務の断捨離</div>
+</div>
+</div>
+<h2>② 値札がつくと、3つの問いが立つ</h2>
+<div class="mb-goal">
+<div class="row">
+
+<span class="g">この節で分かること</span>
+<div>値札がつくと立つ3つの問いを見ます。</div>
+</div>
+<div class="row">
+
+<span class="g af">読み終えるとこうなる</span>
+<div>自動化の前に考えることが決まります。</div>
+</div>
+</div>
+「毎朝、質問箱をAIに要約させて通知する」を作りながら、実際に考えたのは次の3つでした。
+<div class="mb-cards">
+<div class="cd"><span class="cd-t">① そもそも要る？</span><span class="cd-d">この通知は本当に必要か。
+担当が自分でたまに見れば済むなら、フロー自体が要らない。</span></div>
+<div class="cd"><span class="cd-t">② Power Automateで十分？</span><span class="cd-d">決まった処理（読む・送る）だけなら、AIは要らない。
+判断が要らない部分は、固定費で動く自動化に寄せられる。</span></div>
+<div class="cd"><span class="cd-t">③ AIをかます価値ある？</span><span class="cd-d">要約という「判断・生成」が本当に効くのか。
+効くならAIの費用を払う価値があるし、効かないなら外す。</span></div>
+</div>
+この3つは、上から順に<strong>ふるい</strong>になっています。
+要らないものは消し、決まった処理はPower Automateに寄せ、最後に残った「AIにしかできない判断・生成」だけを Copilot Studio に任せる。
+図にすると、こうなります。
+<figure class="mb-fig">やりたい業務① そもそも、この業務は要る？要らなければ ＝ 消す（自動化しない）② AIの判断は要る？決まった処理だけなら ＝ Power Automate（固定費）③ 残った「判断・生成」だけここだけ ＝ Copilot Studio（クレジット）値札があるから、上の2つのふるいを通す気になる<figcaption>▲ 3つのふるい。値札があるから、上の2つを通す気になる。最後に残ったところだけAIに任せる</figcaption></figure>
+<div class="mb-point">大事なのは、<span class="hl">この3つの問いは、費用がかかると分かっているから立った</span>ということです。
+無料なら、②や③を飛ばして「ぜんぶAIで」に流れていたはずです。</div>
+&nbsp;
+<div class="mb-nav">
+
+<span class="lb">いまここ</span>
+<div class="cells">
+<div class="n done"><span class="ix">1</span>✓ 無料じゃない</div>
+<div class="n done"><span class="ix">2</span>✓ 3つの問い</div>
+<div class="n on"><span class="ix">3</span>良い制約</div>
+<div class="n"><span class="ix">4</span>業務の断捨離</div>
+</div>
+</div>
+<h2>③ これは制約だが、良い制約だと思う</h2>
+<div class="mb-goal">
+<div class="row">
+
+<span class="g">この節で分かること</span>
+<div>制約を前向きにとらえる理由を整理します。</div>
+</div>
+<div class="row">
+
+<span class="g af">読み終えるとこうなる</span>
+<div>費用の話を後ろ向きに終わらせずに済みます。</div>
+</div>
+</div>
+「無料ではない」は、たしかに制約です。
+ですが、制約があるからこそ、無駄が見えるようになります。
+
+たとえば今回のフローは、突き詰めると「ただの朝のリマインド」でした。
+それなら、AIも自律エージェントも使わず、Power Automate の定期フロー（クレジットを消費しない）で十分です。<strong>費用という物差しがあったから、「これは過剰だ」と気づけました</strong>。
+無料だったら、気づかないまま高い作りで動かしていたと思います。
+<div class="mb-note">
+<p class="nt-ttl">※ 制約が設計を良くする</p>
+選択肢が無限にあると、迷って雑に盛ってしまいがちです。
+予算や費用という制約があると、「本当に効くところにだけ使う」という判断に寄せられます。
+結果として、設計はむしろシンプルで筋の良いものになりました。
+
+</div>
+&nbsp;
+<div class="mb-nav">
+
+<span class="lb">いまここ</span>
+<div class="cells">
+<div class="n done"><span class="ix">1</span>✓ 無料じゃない</div>
+<div class="n done"><span class="ix">2</span>✓ 3つの問い</div>
+<div class="n done"><span class="ix">3</span>✓ 良い制約</div>
+<div class="n on"><span class="ix">4</span>業務の断捨離</div>
+</div>
+</div>
+<h2>④ 自動化の“前”に、業務の断捨離が進む</h2>
+<div class="mb-goal">
+<div class="row">
+
+<span class="g">この節で分かること</span>
+<div>自動化の前に業務を減らす、という流れを見ます。</div>
+</div>
+<div class="row">
+
+<span class="g af">読み終えるとこうなる</span>
+<div>何から手をつけるかが決まります。</div>
+</div>
+</div>
+AI導入でよく聞く失敗が、<strong>「いまの非効率な業務を、そのままAIで自動化してしまう」</strong>ことです。
+これは、無駄な作業を高速に回すだけで、根っこの問題は残ります。
+
+本当は、自動化する前に「その業務、そもそも要るのか」を棚卸しする必要があります。
+ですが、その棚卸しは面倒で、後回しにされがちです。
+
+Copilot Studio の値札は、その棚卸しを<strong>半ば強制してくれます</strong>。
+費用がかかると分かっているから、作る前に「これは要るのか」「AIじゃなくていいのでは」と考える。
+その過程で、AI以前の「なんとなく続けていた作業」まで見直すことになります。
+<div class="mb-point">つまり、Copilot Studio が完全無料でないおかげで、<span class="hl">自動化の前に“業務の断捨離”が進む</span>。
+これは遠回りに見えて、実はいちばん効く順番だと思います。<strong>断捨離してから自動化すれば、残った本当に必要なものだけが、きれいに回ります。</strong></div>
+&nbsp;
+<div class="speech-wrap sb-id-14 sbs-stn sbp-l sbis-cb cf">
+<div class="speech-person">
+<figure class="speech-icon"><img class="speech-icon-image" src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="" width="1024" height="1024" /></figure>
+</div>
+<div class="speech-balloon">自動化の前に、そもそもこの作業いる？ を考えるようになりました。
+費用がかかることが、逆にいい整理のきっかけになっています。</div>
+</div>
+<div class="mb-nav">
+
+<span class="lb">ここまで完了</span>
+<div class="cells">
+<div class="n done"><span class="ix">1</span>✓ 無料じゃない</div>
+<div class="n done"><span class="ix">2</span>✓ 3つの問い</div>
+<div class="n done"><span class="ix">3</span>✓ 良い制約</div>
+<div class="n done"><span class="ix">4</span>✓ 業務の断捨離</div>
+</div>
+</div>
+<h2>まとめ</h2>
+Copilot Studio は完全無料ではありません。
+最初はそれを不便に感じました。
+ですが、費用という値札があるおかげで、作る前に立ち止まり、業務そのものを見直すようになりました。
+<ul>
+ 	<li><strong>無料じゃない</strong>から、作る前に「本当に要るか」を考える</li>
+ 	<li><strong>3つのふるい</strong>：そもそも要るか／Power Automateで十分か／AIの価値があるか</li>
+ 	<li><strong>制約は設計を良くする</strong>。
+無駄が可視化され、シンプルな作りになる</li>
+ 	<li><strong>自動化の前に断捨離</strong>が進む。
+非効率をそのまま自動化しないで済む</li>
+</ul>
+AIを使った自動化を考えるとき、いきなり作り始める前に、まず業務を棚卸しする。
+その順番を、Copilot Studio の値札が思い出させてくれました。
+制約は、思っていたより悪くありませんでした。
+<div class="mb-link">この考察のきっかけになった、料金の仕組みと使い分けは <a href="https://www.automate136.com/copilot-studio-cost-design/" target="_blank" rel="noopener">Copilot Studioは“使うほど課金”される</a> に、実際に作った自律＋AI通知フローの手順は <a href="https://www.automate136.com/copilot-studio-scheduled-ai-notify/" target="_blank" rel="noopener">毎朝、AIが質問箱を要約してTeamsに通知する</a> にまとめています。</div>
+<p style="font-size: 13px; color: #888; line-height: 1.9;">※ 本記事は公開日時点の情報をもとに、筆者が実際に Copilot Studio を触りながら考えたことを整理しました。料金や仕様は変わることがあります。最新の条件は公式情報（Microsoft Learn）と、ご自身の契約内容をご確認ください。</p>
+<p style="font-size: 13px; color: #888; line-height: 1.9;">※ 図解は説明用に作成しました。構成や図解の一部は、AI と壁打ちしながら作成しています。</p>
+
+</div>
+<style> .mb-body > p{margin:1.9em 0!important;line-height:2.05!important;} .mb-body > h2{margin-top:2.8em!important;} .mb-body > h3{margin-top:2.4em!important;} .mb-body > ul{margin:1.7em 0!important;line-height:2.0;} .mb-body > ul li{margin:.55em 0;} .mb-lead{line-height:2.1;} .hl{color:#6D28D9;font-weight:700;} .mb-fig{margin:40px 0;display:flex;flex-direction:column;align-items:center;background:#e7e0f5;border:1px solid #d0c4ec;border-radius:16px;padding:18px 16px 12px;box-shadow:0 2px 8px rgba(76,29,149,.08);} .mb-fig svg{width:100%;max-width:720px;height:auto;display:block;margin:0 auto;background:#fff;border-radius:10px;padding:14px 10px;} .mb-fig figcaption{font-size:.85em;color:#5b4a7a;margin-top:12px;} .mb-point{background:#f7f4fd;border-left:6px solid #8b5cf6;border-radius:8px;padding:18px 24px;margin:36px 0;line-height:2.1;} .mb-note{background:#fffdf5;border:2px solid #ffd54f;border-radius:12px;padding:18px 24px;margin:38px 0;line-height:2.1;} .mb-note .nt-ttl{font-weight:700;color:#e8920c;margin:0 0 14px;} .mb-cards{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin:30px 0;} .mb-cards .cd{background:#fff;border:1px solid #e4dbf6;border-top:5px solid #8b5cf6;border-radius:12px;padding:16px 17px;box-shadow:0 2px 8px rgba(76,29,149,.07);} .mb-cards .cd .cd-t{display:block;color:#5b21b6;font-weight:800;font-size:1.0em;margin-bottom:8px;} .mb-cards .cd .cd-d{font-size:.88em;color:#4b5563;line-height:1.7;} @media(max-width:640px){.mb-cards{grid-template-columns:1fr;}} .mb-intro{background:#f6f4fb;border:1px solid #e0d7f3;border-left:5px solid #a78bda;border-radius:10px;padding:13px 18px;margin:4px 0 30px;font-size:.9em;color:#5b4a7a;line-height:1.8;} .mb-link{background:#eef5ff;border:1px solid #cfe0f7;border-radius:12px;padding:16px 20px;margin:34px 0;line-height:1.9;} .mb-link a{color:#1d4ed8;font-weight:700;} .cs-preface{background:#eef7f1;border:1px solid #cfe8db;border-left:5px solid #5f8a6e;border-radius:10px;padding:14px 18px;margin:0 0 26px;font-size:.86em;color:#3d5647;line-height:1.85;} .cs-preface b{color:#2f6b4f;} .cs-preface a{color:#1d4ed8;font-weight:700;} .speech-balloon{line-height:1.95;}.mb-nav{margin:38px 0 6px;}.mb-nav .lb{display:inline-block;font-size:11.5px;font-weight:800;color:#7c3aed;letter-spacing:.1em;margin-bottom:8px;}.mb-nav .cells{display:flex;gap:6px;flex-wrap:wrap;}.mb-nav .n{flex:1;min-width:126px;background:#f5f2fc;border:1px solid #e4dcf7;border-radius:9px;padding:9px 10px;font-size:.8em;color:#9c94b3;line-height:1.45;text-align:center;font-weight:700;}.mb-nav .n .ix{display:block;font-size:.85em;opacity:.75;margin-bottom:2px;}.mb-nav .n.done{background:#ede9fe;border-color:#d9cdf5;color:#6d28d9;}.mb-nav .n.on{background:#7c3aed;border-color:#7c3aed;color:#fff;box-shadow:0 3px 10px rgba(124,58,237,.28);}.mb-goal{background:#fff;border:2px solid #ddd0f2;border-radius:12px;padding:6px 20px;margin:14px 0 32px;}.mb-goal .row{display:flex;gap:14px;align-items:flex-start;padding:12px 0;border-top:1px solid #f0eafb;line-height:1.9;font-size:.96em;}.mb-goal .row:first-child{border-top:none;}.mb-goal .g{flex:none;width:112px;font-size:11.5px;font-weight:800;color:#7c3aed;background:#f3eefc;border-radius:999px;padding:4px 0;text-align:center;margin-top:5px;}.mb-goal .g.af{color:#2f855a;background:#eaf5ee;}@media(max-width:600px){.mb-nav .n{min-width:calc(50% - 3px);}.mb-goal .g{width:96px;font-size:11px;}}</style>

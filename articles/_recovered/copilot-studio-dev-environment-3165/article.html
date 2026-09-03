@@ -1,0 +1,346 @@
+<div class="mb-body">
+<div class="mb-intro">Copilot Studio を会社で使うときに、最初に整える2つを実機で検証しました。
+開発用の環境を1つ作ることと、そこにデータ損失防止（DLP）のルールを1本当てることです。
+管理側で決めた設定が、作る人の画面にどう現れるかまで確認しています。
+操作した画面をすべて順番に載せているので、この記事だけで同じ構成を再現できます。</div>
+<p class="mb-lead">これまでは、エージェントを作る・資料を読ませる・道具を持たせる、といった<strong>作る側</strong>の話を書いてきました。
+今回は方向が違い、<strong>会社として使うための土台</strong>の話です。</p>
+<p class="mb-lead">検証に使っているテナントは、環境が2つで、エージェントは<strong>既定の環境</strong>に置いてありました。
+個人やチームで試し始めた組織で、そのまま既定の環境に集まっているのはよくある構成です。
+ここを起点に、分ける手順を通しで確認します。</p>
+
+<div class="mb-map">この記事の道のり
+<b>①</b> なぜ土台の話から始めるのか → <b>②</b> 開発用の環境を作る（10ステップ） → <b>③</b> その環境でCopilot Studioが使えるか確かめる
+後編でDLPを作り、作る人の画面がどう変わるかを確認します。</div>
+&nbsp;
+<div class="mb-nav">
+
+<span class="lb">いまここ</span>
+<div class="cells">
+<div class="n on"><span class="ix">1</span>なぜ土台から始めるか</div>
+<div class="n"><span class="ix">2</span>開発用の環境を作る</div>
+<div class="n"><span class="ix">3</span>使えるか確かめる</div>
+</div>
+</div>
+<h2>① なぜ「土台」の話から始めるのか</h2>
+<div class="mb-goal">
+<div class="row">
+
+<span class="g">この節ですること</span>
+<div>既定の環境をそのまま使うと何が起きるのかを見ます。
+まだ操作はしません。</div>
+</div>
+<div class="row">
+
+<span class="g af">終わるとこうなる</span>
+<div>なぜ環境を分けるのかを、自分の言葉で人に説明できる状態になります。</div>
+</div>
+</div>
+Copilot Studio を会社に入れようとすると、情報システム部門から必ず2つのことを聞かれます。<strong>「誰でも勝手に作れる状態にならないか」</strong>と、<strong>「社内のデータが外に出ないか」</strong>です。
+
+この2つに対する答えが、今回の<strong>環境を分ける</strong>ことと<strong>DLP</strong>にあたります。
+機能の話より前に、ここが決まらないと導入は進みません。
+
+まず言葉を2つだけ整理します。<strong>環境</strong>は、エージェントやフローが入る「部屋」です。
+部屋ごとに中身も、入れる人も別になります。<strong>既定の環境</strong>は、テナントに最初からある部屋で、全社員が自動的に「作れる人」として入っています。
+<div class="mb-term"><span class="tm">用語</span><b>テナント</b>：会社ごとに割り当てられた Microsoft 365 の領域。
+この中に環境やユーザーが入っています。</div>
+<div class="mb-term"><span class="tm">用語</span><b>環境（かんきょう）</b>：エージェントやフローが入る部屋。
+部屋ごとに中身も、入れる人も別になります。</div>
+<div class="mb-term"><span class="tm">用語</span><b>既定の環境</b>：テナントに最初からある共有の部屋。
+全社員が自動で作れる人として入っていて、削除もできません。</div>
+<figure class="mb-fig"><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-envdlp-fig-rooms.png" alt="" /><figcaption>▲ 既定の環境と、開発用に分けた環境。分けておくと、試して壊しても他に影響しない</figcaption></figure>
+管理センターで自分のテナントを見ると、環境は2つでした。
+案内役のエージェントが入っている <strong>PA45 Demo</strong> は、種類が<strong>「既定」</strong>です。
+つまり、これまでずっと全社員共有の部屋で作っていたことになります。
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-envdlp-env-before.png" alt="" /><figcaption>▲ 分ける前の環境一覧。PA45 Demo は種類が「既定」＝テナント共有の部屋。マネージドの列も両方「いいえ」</figcaption></figure>
+<div class="mb-point">確認する順番は、この一覧の<span class="hl">「種類」の列</span>です。
+ここが「既定」の環境で作られていると、全社員が作れる部屋にエージェントが置かれている状態になります。
+導入の相談を受けたら、まずこの画面を開いて現状を押さえるのが早道です。</div>
+&nbsp;
+<div class="speech-wrap sb-id-14 sbs-stn sbp-l sbis-cb cf">
+<div class="speech-person">
+<figure class="speech-icon"><img class="speech-icon-image" src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="" width="1024" height="1024" /></figure>
+</div>
+<div class="speech-balloon">最初に環境を分けておくと、後で本番と混ざらずに済みます。
+既定の環境はみんなの共有スペースなので、実験は別に分けておくのが安心です。</div>
+</div>
+<div class="mb-nav">
+
+<span class="lb">いまここ</span>
+<div class="cells">
+<div class="n done"><span class="ix">1</span>✓ なぜ土台から始めるか</div>
+<div class="n on"><span class="ix">2</span>開発用の環境を作る</div>
+<div class="n"><span class="ix">3</span>使えるか確かめる</div>
+</div>
+</div>
+<h2>② 開発用の環境を作る</h2>
+<div class="mb-goal">
+<div class="row">
+
+<span class="g">この節ですること</span>
+<div>Power Platform 管理センターで、開発用の環境を1つ作ります。
+手順は10あります。</div>
+</div>
+<div class="row">
+
+<span class="g af">終わるとこうなる</span>
+<div>壊しても他に影響が出ない、自分専用の場所ができます。</div>
+</div>
+</div>
+ここからが手順です。
+作るのは開発者タイプの環境が1つで、既存の環境には触りません。
+<div class="mb-step">
+<p class="st-ttl"><span class="st-no">1</span>管理センターを開く</p>
+
+<ol>
+ 	<li>ブラウザで <strong>admin.powerplatform.microsoft.com</strong> を開く</li>
+ 	<li>Copilot Studio と同じアカウントでサインインする</li>
+ 	<li>左側にホーム／管理／セキュリティ／ライセンスなどのアイコンが並ぶ</li>
+</ol>
+</div>
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-envdlp-admin-home.png" alt="" /><figcaption>▲ Power Platform 管理センターのホーム。エージェントを作る画面（Copilot Studio）とは別のサイト</figcaption></figure>
+<div class="mb-why"><span class="wy">なぜそうするか</span>作る画面と管理する画面は別々になっている。
+環境やポリシーなど、会社としてのルールはすべてこちらで決める。</div>
+<div class="mb-step">
+<p class="st-ttl"><span class="st-no">2</span>容量の空きを見ておく</p>
+
+<ol>
+ 	<li>左ナビの「ライセンス」を開く</li>
+ 	<li>上部の検索ボックスに「容量」と入れて、Dataverse 容量のページを開く</li>
+ 	<li>環境ごとの使用量と、テナントの空きを確認する</li>
+</ol>
+</div>
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-envdlp-capacity.png" alt="" /><figcaption>▲ 容量は「ライセンス」の配下にある。検索ボックスから開くほうが早い</figcaption></figure>
+<div class="mb-why"><span class="wy">なぜそうするか</span>Dataverse付きの環境を作るには、テナントに1GB以上の空きが要る。
+足りないまま進むと作成が失敗するので、先に見ておく。</div>
+<div class="mb-note">
+<p class="nt-ttl">※ 「概要」タブには数字が出ないことがある</p>
+この日は概要タブに使用量が表示されず、新しいDataverseライセンス体験への案内リンクだけが出ていました。
+実数は「Dataverse」タブの表で環境ごとに確認できます。
+あわせて、アドオン欄に「Copilot Studio メッセージ 0/0」と出ていました。
+これは会話や実行に使うクレジットの枠がゼロという意味で、あとで効いてくる情報です。
+
+</div>
+<div class="mb-step">
+<p class="st-ttl"><span class="st-no">3</span>新しい環境を作り始める</p>
+
+<ol>
+ 	<li>左ナビの「管理」→「環境」を開く</li>
+ 	<li>コマンドバーの「＋ 新規」をクリック</li>
+ 	<li>右側に入力パネルが開く</li>
+</ol>
+</div>
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-envdlp-env-new.png" alt="" /><figcaption>▲ 「新しい環境」パネル。表に出ているのは種類・マクロ地域の地域・名前の3つだけ</figcaption></figure>
+<div class="mb-note">
+<p class="nt-ttl">※ 公開情報の手順と画面構成が異なる</p>
+解説記事や公式の手順で挙がる「目的」「Dataverse データストアの追加」といった欄は、この画面の表側には出ません。
+下の「› 既定の設定を変更する」を開いた中にあります。
+管理センターは更新が続いているため、手順書を作るときは<strong>折りたたみの中まで含めて</strong>書いておくと、読む人が迷いません。
+
+</div>
+<div class="mb-step">
+<p class="st-ttl"><span class="st-no">4</span>種類を選ぶ</p>
+
+<ol>
+ 	<li>「種類」のドロップダウンを開く</li>
+ 	<li>選択肢は5つ（試用（サブスクリプション ベース）／開発者／実稼働／試用版／サンドボックス）</li>
+ 	<li>今回は「開発者」を選ぶ</li>
+</ol>
+</div>
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-envdlp-env-type.png" alt="" /><figcaption>▲ 環境の種類は5つ。今回は無料で作れる「開発者」を選んだ</figcaption></figure>
+<div class="mb-why"><span class="wy">なぜそうするか</span>開発者環境は無料枠で作れて、所有者だけが使う。
+有料の容量を消費せず、既存の環境にも影響しない。
+企業で同じ位置に置くのは通常「サンドボックス」で、こちらはコピーやリセットができるかわりに容量を使う。</div>
+<div class="mb-step">
+<p class="st-ttl"><span class="st-no">5</span>マクロ地域を選ぶ</p>
+
+<ol>
+ 	<li>「マクロ地域の地域」のドロップダウンを開く</li>
+ 	<li>国名ではなく大きな地域が並ぶ（アジア太平洋／ヨーロッパ、英国、中東、アフリカ／欧州連合とEFTA/ヨーロッパと英国／北米／南北アメリカ）</li>
+ 	<li>日本はアジア太平洋に含まれるので「アジア太平洋」を選ぶ</li>
+</ol>
+</div>
+<div class="mb-term"><span class="tm">用語</span><b>マクロ地域</b>：データを置く大きな地域の区分。
+日本はアジア太平洋に含まれ、環境を作る時点で決まります。</div>
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-envdlp-env-region.png" alt="" /><figcaption>▲ 地域は国単位ではなくマクロ地域。日本はアジア太平洋に含まれる</figcaption></figure>
+<div class="mb-why"><span class="wy">なぜそうするか</span>環境は地理的な場所に固定され、そこで作ったエージェントやフローはその地域のデータセンターに置かれる。
+つまり<strong>データの保存先を、環境を作る時点で決めている</strong>。
+あとから変更できないので、「とりあえず」で選ばない。
+「うちのデータはどこに置かれるのか」という質問への答えが、この画面にある。</div>
+<div class="mb-step">
+<p class="st-ttl"><span class="st-no">6</span>名前を入れる</p>
+
+<ol>
+ 	<li>自動で入っている仮の名前（dev-tst-… など）を消す</li>
+ 	<li>分かる名前を入れる。
+ここでは「CopilotStudio45 開発」</li>
+ 	<li>下の要約に、種類・地域・名前が反映されていることを確認する</li>
+</ol>
+</div>
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-envdlp-env-filled.png" alt="" /><figcaption>▲ 3項目を入れた状態。要約の「データベース：いいえ」に注目</figcaption></figure>
+<div class="mb-warn"><span class="wt">保存の前に確認する</span>要約に<strong>「データベース：いいえ」</strong>と出ます。
+この既定のまま作成すると、Dataverse のない環境ができます。
+Copilot Studio のエージェントは Dataverse に保存されるため、その環境では Copilot Studio を使えません。
+保存の前に折りたたみを開いて、次の手順で切り替えます。</div>
+<div class="mb-step">
+<p class="st-ttl"><span class="st-no">7</span>既定の設定を開く</p>
+
+<ol>
+ 	<li>パネル下の「› 既定の設定を変更する」をクリック</li>
+ 	<li>環境グループ／これをマネージド環境にする／代理で作成／Dataverse データストアを追加しますか?／Azure の従量課金制、の5項目が出る</li>
+ 	<li>今回は Dataverse だけを操作する</li>
+</ol>
+</div>
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-envdlp-env-advanced.png" alt="" /><figcaption>▲ 折りたたみの中身。企業導入で効く設定がここにまとまっている</figcaption></figure>
+「Azure の従量課金制」はグレーで押せず、<strong>「従量課金制を設定できるのは、運用とサンドボックス タイプの環境のみです」</strong>と注記が出ていました。
+開発者環境が課金の対象外であることが、画面でも確認できます。
+<div class="mb-step">
+<p class="st-ttl"><span class="st-no">8</span>Dataverse を「はい」にする</p>
+
+<ol>
+ 	<li>「Dataverse データ ストアを追加しますか?」のトグルをクリック</li>
+ 	<li>「はい」（緑）に変わる</li>
+ 	<li>ボタンの表示が「保存」から「次へ」に変わる</li>
+</ol>
+</div>
+<div class="mb-term"><span class="tm">用語</span><b>Dataverse</b>：Power Platform の共通データ保管庫。
+Copilot Studio のエージェントもここに保存されます。</div>
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-envdlp-env-dataverse.png" alt="" /><figcaption>▲ Dataverse を「はい」にすると、ボタンが「次へ」に変わり、設定が1ページ増える</figcaption></figure>
+<div class="mb-why"><span class="wy">なぜそうするか</span>Copilot Studio のエージェントは Dataverse に保存される。
+Dataverse のない環境では Copilot Studio が使えず、このあとのDLPの確認もできない。
+あとから追加することもできるが、先に入れておくほうが手戻りがない。</div>
+<div class="mb-step">
+<p class="st-ttl"><span class="st-no">9</span>言語と通貨を確認する</p>
+
+<ol>
+ 	<li>「次へ」をクリックすると2ページ目（Dataverse を追加）が開く</li>
+ 	<li>言語＝日本語(日本)、通貨＝JPY(¥) になっているかを見る</li>
+ 	<li>URLは自動で決まる。
+サンプルアプリの展開は「いいえ」のままでよい</li>
+ 	<li>「保存」をクリック</li>
+</ol>
+</div>
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-envdlp-env-page2.png" alt="" /><figcaption>▲ 2ページ目。言語と通貨はあとから変えにくいので、ここで確認しておく</figcaption></figure>
+<div class="mb-step">
+<p class="st-ttl"><span class="st-no">10</span>できあがりを待つ</p>
+
+<ol>
+ 	<li>一覧に新しい行が増え、状態が「準備中」になる</li>
+ 	<li>数分待って「最新の情報に更新」を押す</li>
+ 	<li>状態が「準備完了」、Dataverse 列が「はい」になれば完成</li>
+</ol>
+</div>
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-envdlp-env-creating.png" alt="" /><figcaption>▲ 保存直後。状態は「準備中」で、Dataverse 列もまだ「いいえ」</figcaption></figure>
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-envdlp-env-after.png" alt="" /><figcaption>▲ 数分後。「準備完了」「Dataverse＝はい」になり、マクロ地域にアジア太平洋が入った</figcaption></figure>
+<div class="mb-point">分ける前（環境が2つ）と、分けたあと（開発環境が増えた）の2枚がそろいました。
+やったことは<span class="hl">環境を1つ足しただけ</span>で、既存の環境には何も触っていません。</div>
+&nbsp;
+<div class="speech-wrap sb-id-14 sbs-stn sbp-l sbis-cb cf">
+<div class="speech-person">
+<figure class="speech-icon"><img class="speech-icon-image" src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="" width="1024" height="1024" /></figure>
+</div>
+<div class="speech-balloon">環境自体は無料で作れます。
+マクロ地域だけは後から変えられないので、ここだけ最初に確認しておくといいかなと思います。</div>
+</div>
+<div class="mb-nav">
+
+<span class="lb">いまここ</span>
+<div class="cells">
+<div class="n done"><span class="ix">1</span>✓ なぜ土台から始めるか</div>
+<div class="n done"><span class="ix">2</span>✓ 開発用の環境を作る</div>
+<div class="n on"><span class="ix">3</span>使えるか確かめる</div>
+</div>
+</div>
+<h2>③ 新しい環境で Copilot Studio が使えるか確かめる</h2>
+<div class="mb-goal">
+<div class="row">
+
+<span class="g">この節ですること</span>
+<div>作った環境に切り替えて、Copilot Studio が使えるかを確かめます。</div>
+</div>
+<div class="row">
+
+<span class="g af">終わるとこうなる</span>
+<div>エージェントを作れる状態になり、次のDLPの設定に進めます。</div>
+</div>
+</div>
+環境を作っただけでは、まだ使えるとは限りません。
+Dataverse を入れた判断が正しかったかを、先に確かめておきます。
+<div class="mb-step">
+<p class="st-ttl"><span class="st-no">11</span>環境を切り替える</p>
+
+<ol>
+ 	<li>copilotstudio.microsoft.com を開く</li>
+ 	<li>右上の環境名をクリックして、環境の一覧を開く</li>
+ 	<li>「CopilotStudio45 開発」を選ぶ</li>
+</ol>
+</div>
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-envdlp-cs-picker.png" alt="" /><figcaption>▲ Copilot Studio 側の環境一覧。「対応している環境」と「既定の環境」に分かれて表示される</figcaption></figure>
+この一覧は、<strong>既定の環境が別枠で表示される</strong>のが特徴です。
+いま作業している環境がどちらなのかを、切り替えのたびに確認できます。
+受講者や利用部門に説明するときも、この画面を見せると早く伝わります。
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-envdlp-cs-home.png" alt="" /><figcaption>▲ 切り替えたあとのホーム。エラーは出ず、エージェントを作れる状態になっている</figcaption></figure>
+<div class="mb-why"><span class="wy">なぜそうするか</span>ここでエラーが出るなら、環境の作り方（Dataverseの有無）が間違っている。
+先に確かめておくと、あとの工程で原因を探さずに済む。</div>
+&nbsp;
+<div class="mb-nav">
+
+<span class="lb">ここまで完了</span>
+<div class="cells">
+<div class="n done"><span class="ix">1</span>✓ なぜ土台から始めるか</div>
+<div class="n done"><span class="ix">2</span>✓ 開発用の環境を作る</div>
+<div class="n done"><span class="ix">3</span>✓ 使えるか確かめる</div>
+</div>
+</div>
+<h2>④ 作業前に押さえておく仕様</h2>
+今回の検証で確認できた、画面の既定値と仕様です。
+手順書を作るときは、この3点を明記しておくと再現できます。
+<ul>
+ 	<li><strong>新しい環境のパネルは3項目だけ</strong>：目的やDataverseの設定は「既定の設定を変更する」の中にある</li>
+ 	<li><strong>Dataverse の既定はオフ</strong>：既定のまま作ると、Copilot Studio を使えない環境ができる</li>
+ 	<li><strong>容量の「概要」タブに数字が出ないことがある</strong>：実数は Dataverse タブ側で確認する</li>
+</ul>
+<div class="mb-note">
+<p class="nt-ttl">※ 費用の目安</p>
+開発者環境そのものに追加料金はかかりません。
+費用が関係するのは、容量（ストレージ）とライセンスです。
+Dataverse付きの環境は最低1GBの容量を使い、テナントの容量プールから引かれます。
+今回の画面でも、Azure の従量課金は「運用とサンドボックス タイプのみ」と表示され、開発者環境は対象外でした。
+
+</div>
+&nbsp;
+<div class="mb-nav">
+
+<span class="lb">ここまで完了</span>
+<div class="cells">
+<div class="n done"><span class="ix">1</span>✓ なぜ土台から始めるか</div>
+<div class="n done"><span class="ix">2</span>✓ 開発用の環境を作る</div>
+<div class="n done"><span class="ix">3</span>✓ 使えるか確かめる</div>
+</div>
+</div>
+<h2>まとめ</h2>
+<ul>
+ 	<li><strong>①</strong> 会社で使う話は、機能より先に「環境を分ける」と「DLP」の2つで決まる</li>
+ 	<li><strong>②</strong> 環境の一覧で「種類」の列を見れば、既定の環境で作っているかどうかが分かる</li>
+ 	<li><strong>③</strong> 開発用の環境は、種類＝開発者・Dataverse＝はい で作る。
+既存の環境には影響しない</li>
+ 	<li><strong>④</strong> 地域は作成時に決まり、あとから変更できない</li>
+ 	<li><strong>⑤</strong> 作った環境で Copilot Studio が開けるかを、先に確かめておく</li>
+</ul>
+環境を1つ作るまで、作業時間は15分ほどでした。
+設定の数は多くありません。
+判断が要るのは、種類・地域・Dataverse の3か所だけです。
+後編では、この環境にだけ効くDLPを1本作り、作る人の画面がどう変わるかを確かめます。
+<div class="mb-link">後編：<a href="https://www.automate136.com/copilot-studio-dlp-policy/" target="_blank" rel="noopener">Copilot Studioを会社で使う前に②｜DLPで「認証なし」の公開を止める</a>
+費用の考え方：<a href="https://www.automate136.com/copilot-studio-cost-design/" target="_blank" rel="noopener">Copilot Studioは“使うほど課金”される｜Power Automateとの使い分けと、コスト暴走を防ぐには</a>
+課金の境界：<a href="https://www.automate136.com/copilot-studio-credit-boundary/" target="_blank" rel="noopener">Copilot Studioの「無償で使える線」はどこか｜クレジット消費の境界を実機で確かめた</a></div>
+<p style="font-size: 13px; color: #888; line-height: 1.9;">※ 本記事は公開日時点の情報をもとに、筆者が実際に試した内容を整理しました。
+Copilot Studio と Power Platform 管理センターは更新が続いており、画面や名称、既定値は変わることがあります。
+最新の状況は公式情報（Microsoft Learn）もあわせてご確認ください。</p>
+<p style="font-size: 13px; color: #888; line-height: 1.9;">※ 掲載している画面は、操作中に撮りました。
+氏名・メールアドレス・環境IDなどは伏せています。
+構成や図解の一部は、AI と壁打ちしながら作成しています。</p>
+
+</div>
+<style> .mb-body > p{margin:1.9em 0!important;line-height:2.05!important;} .mb-body > h2{margin-top:2.8em!important;} .mb-body > h3{margin-top:2.2em!important;font-size:1.12em;} .mb-body > ul{margin:1.7em 0!important;line-height:2.0;} .mb-body > ul li{margin:.55em 0;} .mb-lead{line-height:2.1;} .hl{color:#6D28D9;font-weight:700;} .mb-fig{margin:40px 0;display:flex;flex-direction:column;align-items:center;background:#e7e0f5;border:1px solid #d0c4ec;border-radius:16px;padding:18px 16px 12px;box-shadow:0 2px 8px rgba(76,29,149,.08);} .mb-fig img{width:100%;max-width:720px;height:auto;display:block;margin:0 auto;background:#fff;border-radius:10px;} .mb-fig figcaption{font-size:.85em;color:#5b4a7a;margin-top:12px;} .mb-shot{margin:44px 0;background:#eceef2;border:1px solid #d9dce3;border-radius:16px;padding:16px 16px 13px;box-shadow:0 3px 12px rgba(15,23,42,.09);} .mb-shot .sh-tag{display:inline-flex;font-size:12.5px;font-weight:800;color:#475569;background:#dde1e9;border-radius:999px;padding:5px 14px;margin-bottom:12px;} .mb-shot img{width:100%;height:auto;display:block;border-radius:10px;border:1px solid #c7cad3;box-shadow:0 6px 18px rgba(15,23,42,.14);} .mb-shot figcaption{font-size:.85em;color:#5b4a7a;margin-top:14px;line-height:1.65;} .mb-point{background:#f7f4fd;border-left:6px solid #8b5cf6;border-radius:8px;padding:18px 24px;margin:36px 0;line-height:2.1;} .mb-why{background:#f2f9f4;border-left:6px solid #4caf82;border-radius:8px;padding:16px 22px;margin:30px 0;line-height:2.0;} .mb-why .wy{font-weight:800;color:#2f855a;display:block;margin-bottom:6px;font-size:.95em;} .mb-note{background:#fffdf5;border:2px solid #ffd54f;border-radius:12px;padding:18px 24px;margin:38px 0;line-height:2.1;} .mb-note .nt-ttl{font-weight:700;color:#e8920c;margin:0 0 14px;} .mb-warn{background:#fff6f6;border-left:6px solid #e57373;border-radius:8px;padding:18px 24px;margin:36px 0;line-height:2.1;} .mb-warn .wt{font-weight:800;color:#c0392b;display:block;margin-bottom:8px;} .mb-code{background:#f6f4fb;border:1px solid #e0d7f3;border-radius:10px;padding:13px 16px;margin:26px 0;font-size:.86em;color:#42335f;line-height:1.9;font-family:'Consolas','SFMono-Regular',monospace;} .mb-step{background:#f7f4fd;border:2px solid #ddd0f2;border-radius:14px;padding:18px 22px 6px;margin:34px 0;} .mb-step .st-ttl{display:flex;align-items:center;gap:12px;font-weight:800;color:#5b21b6;font-size:1.06em;margin-bottom:6px;} .mb-step .st-no{flex:none;width:32px;height:32px;border-radius:50%;background:#7c3aed;color:#fff;display:flex;align-items:center;justify-content:center;} .mb-step ol{margin:6px 0 14px;padding-left:0;list-style:none;counter-reset:s;} .mb-step ol li{position:relative;padding:8px 0 8px 30px;line-height:1.8;border-top:1px solid #ece4f9;} .mb-step ol li:first-child{border-top:none;} .mb-step ol li::before{counter-increment:s;content:counter(s);position:absolute;left:0;top:8px;width:22px;height:22px;background:#ede9fe;color:#5b21b6;border-radius:50%;font-size:.78em;font-weight:800;display:flex;align-items:center;justify-content:center;} .mb-intro{background:#f6f4fb;border:1px solid #e0d7f3;border-left:5px solid #a78bda;border-radius:10px;padding:13px 18px;margin:4px 0 30px;font-size:.9em;color:#5b4a7a;line-height:1.8;} .mb-map{background:#eef2ff;border:1px solid #c7d2fe;border-radius:12px;padding:14px 20px;margin:30px 0;font-size:.92em;color:#3730a3;line-height:1.95;} .mb-map b{color:#4338ca;} .mb-link{background:#eef5ff;border:1px solid #cfe0f7;border-radius:12px;padding:16px 20px;margin:34px 0;line-height:1.9;} .mb-link a{color:#1d4ed8;font-weight:700;} .mb-term{background:#f0f7ff;border:1px solid #cfe0f7;border-left:6px solid #3b82f6;border-radius:10px;padding:14px 20px;margin:28px 0;line-height:1.95;font-size:.96em;} .mb-term .tm{display:inline-flex;font-size:12px;font-weight:800;color:#fff;background:#3b82f6;border-radius:999px;padding:3px 12px;margin-right:10px;vertical-align:2px;} .mb-term b{color:#1e40af;} .speech-balloon{line-height:1.95;}.mb-nav{margin:38px 0 6px;}.mb-nav .lb{display:inline-block;font-size:11.5px;font-weight:800;color:#7c3aed;letter-spacing:.1em;margin-bottom:8px;}.mb-nav .cells{display:flex;gap:6px;flex-wrap:wrap;}.mb-nav .n{flex:1;min-width:126px;background:#f5f2fc;border:1px solid #e4dcf7;border-radius:9px;padding:9px 10px;font-size:.8em;color:#9c94b3;line-height:1.45;text-align:center;font-weight:700;}.mb-nav .n .ix{display:block;font-size:.85em;opacity:.75;margin-bottom:2px;}.mb-nav .n.done{background:#ede9fe;border-color:#d9cdf5;color:#6d28d9;}.mb-nav .n.on{background:#7c3aed;border-color:#7c3aed;color:#fff;box-shadow:0 3px 10px rgba(124,58,237,.28);}.mb-goal{background:#fff;border:2px solid #ddd0f2;border-radius:12px;padding:6px 20px;margin:14px 0 32px;}.mb-goal .row{display:flex;gap:14px;align-items:flex-start;padding:12px 0;border-top:1px solid #f0eafb;line-height:1.9;font-size:.96em;}.mb-goal .row:first-child{border-top:none;}.mb-goal .g{flex:none;width:112px;font-size:11.5px;font-weight:800;color:#7c3aed;background:#f3eefc;border-radius:999px;padding:4px 0;text-align:center;margin-top:5px;}.mb-goal .g.af{color:#2f855a;background:#eaf5ee;}@media(max-width:600px){.mb-nav .n{min-width:calc(50% - 3px);}.mb-goal .g{width:96px;font-size:11px;}}</style>

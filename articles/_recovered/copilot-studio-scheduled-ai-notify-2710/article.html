@@ -1,0 +1,132 @@
+<div class="mb-body"><div class="cs-preface">&#x1f4dd; 実際に <b>Copilot Studio を触って検証</b>し、スクショを撮りながら気づいたことをまとめた記録です。<br>機能・画面・料金は更新が続きます。<br>最新の正確な情報は <a href="https://learn.microsoft.com/ja-jp/microsoft-copilot-studio/" target="_blank" rel="noopener">Microsoft 公式（Microsoft Learn）</a> をご確認ください。</div>
+
+<div class="mb-intro">Copilot Studio で、毎朝決まった時刻に自動で動き、質問箱（Excel）をAIが要約して Teams に通知するフローを作ったときの手順書です。<br>人が操作しなくても自分で動く「定期実行（自律）」のトリガーと、AIによる要約を組み合わせます。<br>実行にはクレジットがかかるため、この記事では組み立てと保存までを扱います（末尾に費用の注意）。</div>
+
+<p class="mb-lead">案内役のエージェントが、届いた質問を Excel に記録するところまでは別で作ってあります。<br>ここでは、その<strong>質問箱を毎朝AIが要約して、担当に Teams で知らせる</strong>フローを組みます。</p>
+
+<figure class="mb-fig"><svg viewBox="0 0 300 360" font-family="'Noto Sans JP',sans-serif"><defs><marker id="ah" markerWidth="9" markerHeight="9" refX="5.5" refY="3" orient="auto"><path d="M0 0l6 3-6 3z" fill="#a78bda"/></marker></defs><rect x="40" y="14" width="220" height="52" rx="12" fill="#F5F3FF" stroke="#7C3AED" stroke-width="2"/><text x="150" y="38" text-anchor="middle" font-size="13.5" font-weight="800" fill="#5B21B6">① 定期実行（毎朝9時）</text><text x="150" y="56" text-anchor="middle" font-size="11" fill="#6D28D9">Recurrence トリガー</text><path d="M150 66 V86" stroke="#a78bda" stroke-width="2.5" marker-end="url(#ah)"/><rect x="40" y="88" width="220" height="52" rx="12" fill="#EFFaF3" stroke="#22A06B" stroke-width="2"/><text x="150" y="112" text-anchor="middle" font-size="13.5" font-weight="800" fill="#15803D">② 質問箱を読む</text><text x="150" y="130" text-anchor="middle" font-size="11" fill="#15803D">Excel：行を一覧表示</text><path d="M150 140 V160" stroke="#a78bda" stroke-width="2.5" marker-end="url(#ah)"/><rect x="40" y="162" width="220" height="52" rx="12" fill="#EEF2FF" stroke="#6366F1" stroke-width="2"/><text x="150" y="186" text-anchor="middle" font-size="13.5" font-weight="800" fill="#3730A3">③ AIが要約する</text><text x="150" y="204" text-anchor="middle" font-size="11" fill="#4338CA">M365 Copilot</text><path d="M150 214 V234" stroke="#a78bda" stroke-width="2.5" marker-end="url(#ah)"/><rect x="40" y="236" width="220" height="52" rx="12" fill="#EFF6FF" stroke="#2563EB" stroke-width="2"/><text x="150" y="260" text-anchor="middle" font-size="13.5" font-weight="800" fill="#1E40AF">④ 担当に通知</text><text x="150" y="278" text-anchor="middle" font-size="11" fill="#1D4ED8">Teams：メッセージ投稿</text></svg><figcaption>▲ 作るフローの全体像。毎朝、読む→要約→通知の4ステップ</figcaption></figure>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-schednotify-flow-1.png" alt="" /><figcaption>▲ 実際のフロー。上から Recurrence（定期実行）→ 質問箱を読む → M365 Copilot（AI）→ Teams通知 と並ぶ</figcaption></figure>
+
+&nbsp;
+
+<div class="mb-nav"><span class="lb">いまここ</span><div class="cells"><div class="n on"><span class="ix">1</span>定期トリガーを作る</div><div class="n"><span class="ix">2</span>Excelを読む</div><div class="n"><span class="ix">3</span>AIに要約させる</div><div class="n"><span class="ix">4</span>Teamsに通知</div><div class="n"><span class="ix">5</span>保存する</div></div></div>
+
+<h2>① 定期実行（Recurrence）トリガーを作る</h2>
+
+<div class="mb-goal"><div class="row"><span class="g">この節ですること</span><div>毎朝動かすための定期実行トリガーを置きます。</div></div><div class="row"><span class="g af">終わるとこうなる</span><div>時刻で起動する土台ができます。</div></div></div>
+
+<p>この手順は、すでに作ってあるエージェントの編集画面から始めます。<br>Copilot Studio を開き、対象のエージェントを開くと、左側にメニューが並びます。</p>
+
+<div class="csflow-w"><p class="csflow-t">定期通知フローを作る画面まで</p><div class="csflow"><div class="stp"><span class="sn">①</span><div class="st">Copilot Studioを開く</div></div><div class="ar">→</div><div class="stp"><span class="sn">②</span><div class="st">対象エージェントを開く</div></div><div class="ar">→</div><div class="stp"><span class="sn">③</span><div class="st">左メニューの<br>「ワークフロー」</div></div><div class="ar">→</div><div class="stp"><span class="sn">④</span><div class="st">新しいワークフロー</div></div><div class="ar">→</div><div class="stp"><span class="sn">⑤</span><div class="st">トリガーで<br>「Recurrence」</div></div></div></div>
+
+<p>左メニューの「ワークフロー」から新しいワークフローを作り、トリガーに <strong>「Recurrence（Run on a schedule ／ 定期実行）」</strong>を選びます。<br>これが「人が呼ばなくても、時間で自分から動く」きっかけです。</p>
+
+<div class="mb-step"><div class="st-ttl"><span class="st-no">1</span>動く頻度と時刻を決める</div><ol><li><strong>Frequency</strong> を「Day（毎日）」、<strong>Interval</strong> を「1」にする</li><li><strong>At these hours</strong> に動かす時刻（例：9）を入れる</li><li><strong>At these minutes</strong> に分（例：0）を入れる</li></ol></div>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-schednotify-recur-1.png" alt="" /><figcaption>▲ Recurrence の設定。毎日・指定した時・分に動く。ここでは 9時と17時・0分と30分（＝1日4回）にしている</figcaption></figure>
+
+<div class="mb-warn"><span class="wt">Time zone は必ず確認する</span>初期値が <strong>「(UTC) Coordinated Universal Time（世界標準時）」</strong>になっています。<br>このままだと日本時間より9時間ずれます（UTCの9時＝日本の18時）。<br>Time zone を <strong>「(UTC+09:00) Osaka, Sapporo, Tokyo」</strong>に変えて、「9時」が日本の朝9時になるようにします。</div>
+
+<div class="mb-note"><p class="nt-ttl">&#x203b; 動く回数は費用に直結する</p>「9時・17時 × 0分・30分」だと1日4回動きます。<br>あとで書くとおり、定期実行は動くたびに費用がかかります。<strong>用途が「毎朝の通知」なら、9時・0分の1回だけ</strong>にしておくのが無難です。</div>
+
+&nbsp;
+
+<div class="speech-wrap sb-id-14 sbs-stn sbp-l sbis-cb cf"><div class="speech-person"><figure class="speech-icon"><img class="speech-icon-image" src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="" width="1024" height="1024" /></figure></div><div class="speech-balloon">人がいなくても時刻で動く、というのが定期実行です。<br>ここが自律エージェントの入口になります。</div></div>
+
+<div class="mb-nav"><span class="lb">いまここ</span><div class="cells"><div class="n done"><span class="ix">1</span>&#x2713; 定期トリガーを作る</div><div class="n on"><span class="ix">2</span>Excelを読む</div><div class="n"><span class="ix">3</span>AIに要約させる</div><div class="n"><span class="ix">4</span>Teamsに通知</div><div class="n"><span class="ix">5</span>保存する</div></div></div>
+
+<h2>② 質問箱（Excel）を読む</h2>
+
+<div class="mb-goal"><div class="row"><span class="g">この節ですること</span><div>質問箱のExcelを読み込みます。</div></div><div class="row"><span class="g af">終わるとこうなる</span><div>要約する材料がそろいます。</div></div></div>
+
+<p>アクションは、ノードの下の「＋」を押すと足せます。</p>
+
+<p>トリガーの後ろに、Excel の <strong>「表内に存在する行を一覧表示（List rows present in a table）」</strong>を足します。<br>記録用の Excel から、たまっている質問を読み取るステップです。</p>
+
+<div class="mb-step"><div class="st-ttl"><span class="st-no">2</span>読み取り先を指定する</div><ol><li><strong>場所</strong>＝OneDrive for Business</li><li><strong>ファイル</strong>＝記録用の Excel（質問箱）</li><li><strong>テーブル</strong>＝質問を貯めているテーブル</li></ol></div>
+
+<div class="mb-note"><p class="nt-ttl">&#x203b; 「行を追加」と間違えやすい</p>Excel には名前の似たアクションがあります。<br>書き込みは「表に行を追加」、今回の読み取りは <strong>「表内に存在する行を一覧表示」</strong>です。</div>
+
+&nbsp;
+
+<div class="mb-nav"><span class="lb">いまここ</span><div class="cells"><div class="n done"><span class="ix">1</span>&#x2713; 定期トリガーを作る</div><div class="n done"><span class="ix">2</span>&#x2713; Excelを読む</div><div class="n on"><span class="ix">3</span>AIに要約させる</div><div class="n"><span class="ix">4</span>Teamsに通知</div><div class="n"><span class="ix">5</span>保存する</div></div></div>
+
+<h2>③ AIに要約させる（M365 Copilot）</h2>
+
+<div class="mb-goal"><div class="row"><span class="g">この節ですること</span><div>M365 Copilot に要約させます。</div></div><div class="row"><span class="g af">終わるとこうなる</span><div>長い一覧が短い文になります。</div></div></div>
+
+<p>読み取った質問を、AIに要約させます。<br>②と④の間に <strong>「M365 Copilot」</strong>のノードを差し込みます。<br>最初は接続（Connection）を作る必要があり、作ると指示を書く欄が出ます。</p>
+
+<div class="mb-step"><div class="st-ttl"><span class="st-no">3</span>指示（プロンプト）と、質問データを渡す</div><ol><li><strong>Connection</strong> を作成する（表示名は任意）</li><li><strong>Message</strong> 欄に指示を書く（例：件数と主なテーマを3行以内で要約して）</li><li>指示の後ろに、②で読んだ<strong>質問データ（Value）</strong>を動的コンテンツで差し込む</li></ol></div>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-schednotify-ai-1.png" alt="" /><figcaption>▲ M365 Copilot の設定。Message 欄に「要約して」という指示を書き、その後ろに②で読んだ質問データ（Value）を差し込んでいる</figcaption></figure>
+
+<div class="mb-warn"><span class="wt">M365 Copilot は別のライセンスが要る</span>この「M365 Copilot」ノードは、Copilot Studio とは別の <strong>Microsoft 365 Copilot ライセンス</strong>を使います。<br>接続の作成まではできても、<strong>実際に動かす段でライセンスが無いと失敗します</strong>。<br>環境にライセンスが無い場合は、この手順は「組み立ての確認」までになります。</div>
+
+&nbsp;
+
+<div class="speech-wrap sb-id-14 sbs-stn sbp-l sbis-cb cf"><div class="speech-person"><figure class="speech-icon"><img class="speech-icon-image" src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="" width="1024" height="1024" /></figure></div><div class="speech-balloon">長い一覧をそのまま送らず、AIに要約させてから通知すると、受け取る側がラクです。</div></div>
+
+<div class="mb-nav"><span class="lb">いまここ</span><div class="cells"><div class="n done"><span class="ix">1</span>&#x2713; 定期トリガーを作る</div><div class="n done"><span class="ix">2</span>&#x2713; Excelを読む</div><div class="n done"><span class="ix">3</span>&#x2713; AIに要約させる</div><div class="n on"><span class="ix">4</span>Teamsに通知</div><div class="n"><span class="ix">5</span>保存する</div></div></div>
+
+<h2>④ 担当に Teams で通知する</h2>
+
+<div class="mb-goal"><div class="row"><span class="g">この節ですること</span><div>担当者へ Teams で通知します。</div></div><div class="row"><span class="g af">終わるとこうなる</span><div>毎朝届く形になります。</div></div></div>
+
+<p>最後に、Teams の <strong>「チャットまたはチャネルにメッセージを投稿する」</strong>で通知します。</p>
+
+<div class="mb-step"><div class="st-ttl"><span class="st-no">4</span>宛先とメッセージを決める</div><ol><li><strong>投稿者</strong>＝フロー ボット</li><li><strong>投稿先</strong>＝Chat with Flow bot（担当にDMで届く）</li><li><strong>Recipient（宛先）</strong>＝通知したい担当</li><li><strong>メッセージ</strong>＝見出し＋③のAI要約（M365 Copilotの出力）を差し込む</li></ol></div>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-schednotify-teams-1.png" alt="" /><figcaption>▲ Teams通知の設定。投稿先を「Chat with Flow bot」にして、宛先に担当を指定する。メッセージ本文に③の要約を差し込むと、中身のある通知になる</figcaption></figure>
+
+&nbsp;
+
+<div class="speech-wrap sb-id-14 sbs-stn sbp-l sbis-cb cf"><div class="speech-person"><figure class="speech-icon"><img class="speech-icon-image" src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="" width="1024" height="1024" /></figure></div><div class="speech-balloon">毎朝 Teams に勝手に届くようにすると、質問箱を見に行く手間がなくなります。<br>小さいですが、これが地味に効きます。</div></div>
+
+<div class="mb-nav"><span class="lb">いまここ</span><div class="cells"><div class="n done"><span class="ix">1</span>&#x2713; 定期トリガーを作る</div><div class="n done"><span class="ix">2</span>&#x2713; Excelを読む</div><div class="n done"><span class="ix">3</span>&#x2713; AIに要約させる</div><div class="n done"><span class="ix">4</span>&#x2713; Teamsに通知</div><div class="n on"><span class="ix">5</span>保存する</div></div></div>
+
+<h2>⑤ 保存する（公開はしない）</h2>
+
+<div class="mb-goal"><div class="row"><span class="g">この節ですること</span><div>保存だけして、公開はしません。</div></div><div class="row"><span class="g af">終わるとこうなる</span><div>費用をかけずに形だけ残せます。</div></div></div>
+
+<p>左上の名前を分かるものに変えて、保存します。<strong>このフローは自律実行なので、公開して有効化すると動くたびに費用がかかります</strong>。<br>組み立ての確認だけなら、<strong>Draft（下書き）のまま保存し、公開はしない</strong>のが安全です。</p>
+
+&nbsp;
+
+<h2>費用の注意（作る前に知っておく）</h2>
+
+<p>このフローは「自律実行（定期トリガー）」と「AIの呼び出し」を両方使います。<br>触ってみた範囲では、この2つが、Copilot Studio の中で<span class="hl">いちばん費用のかさむ組み合わせ</span>でした。</p>
+
+<ul>
+<li><strong>定期実行の起動</strong>＝1回あたり相応のクレジットを消費（人がいなくても動くぶん重い）</li>
+<li><strong>動く回数ぶん、そのまま費用になる</strong>（1日4回なら4回ぶん）</li>
+<li><strong>AIの要約（M365 Copilot）</strong>＝別のライセンス／メータリングも乗る</li>
+</ul>
+
+<div class="mb-link">「作るだけ」なら費用はかかりませんが、公開して動かすと積み上がります。料金の仕組みと、費用を抑える考え方は別記事にまとめました。→ <a href="https://www.automate136.com/copilot-studio-cost-design/" target="_blank" rel="noopener">Copilot Studioは“使うほど課金”される｜Power Automateとの使い分けと、コスト暴走を防ぐには</a><br>また、エージェントにフロー（手）を持たせる基本は <a href="https://www.automate136.com/copilot-studio-agent-flow/" target="_blank" rel="noopener">会話するAIに“手”を持たせる</a> にまとめています。</div>
+
+&nbsp;
+
+<div class="mb-nav"><span class="lb">ここまで完了</span><div class="cells"><div class="n done"><span class="ix">1</span>&#x2713; 定期トリガーを作る</div><div class="n done"><span class="ix">2</span>&#x2713; Excelを読む</div><div class="n done"><span class="ix">3</span>&#x2713; AIに要約させる</div><div class="n done"><span class="ix">4</span>&#x2713; Teamsに通知</div><div class="n done"><span class="ix">5</span>&#x2713; 保存する</div></div></div>
+
+<h2>まとめ</h2>
+
+<div class="mb-fig"><p class="fig-ttl">この記事の3つの要点</p><div class="mb-cards"><div class="kc"><div class="kc-h">自律トリガー</div><div class="kc-d">定期実行（Recurrence）で、人が呼ばなくても時間で自分から動く。</div></div><div class="kc"><div class="kc-h">AIで要約</div><div class="kc-d">たまった質問箱（Excel）を M365 Copilot がまとめる。</div></div><div class="kc"><div class="kc-h">費用は最大級</div><div class="kc-d">自律実行とAI呼び出しの組み合わせは、いちばん費用がかさむ。</div></div></div></div>
+
+<ul>
+<li><strong>①</strong> 定期実行（Recurrence）トリガーで、時間で自分から動くようにする。<br>Time zone は Tokyo に</li>
+<li><strong>②</strong> Excel「表内に存在する行を一覧表示」で質問箱を読む</li>
+<li><strong>③</strong> M365 Copilot に「要約して」と指示し、読んだデータを渡す（別ライセンスに注意）</li>
+<li><strong>④</strong> Teams「メッセージを投稿する」で担当に通知。<br>本文に要約を差し込む</li>
+<li><strong>⑤</strong> 自律実行は費用がかかるので、確認だけなら公開せずDraft保存</li>
+</ul>
+
+<p>人がいなくても動く「自律」と、中身を考えさせる「AI」を足すと、通知は便利になります。<br>ただし費用も一番かかる作りなので、動かす前に「本当に自律で回す必要があるか」「AIの要約は要るか」を決めておくのが現実的です。</p>
+
+<p style="font-size:13px;color:#888;line-height:1.9;">※ 本記事は公開日時点の情報をもとに、筆者が実際に作って試した内容を整理しました。Copilot Studio は更新が続いており、画面や名称、料金は変わることがあります。最新の状況は公式情報（Microsoft Learn）と、ご自身の契約内容をご確認ください。</p>
+
+<p style="font-size:13px;color:#888;line-height:1.9;">※ 掲載している画面は、操作中に撮っました。構成や図解の一部は、AI と壁打ちしながら作成しています。</p>
+
+</div>
+<style> .mb-body > p{margin:1.9em 0!important;line-height:2.05!important;} .mb-body > h2{margin-top:2.8em!important;} .mb-body > ul{margin:1.7em 0!important;line-height:2.0;} .mb-body > ul li{margin:.55em 0;} .mb-lead{line-height:2.1;} .hl{color:#6D28D9;font-weight:700;} .mb-fig{margin:38px 0;display:flex;flex-direction:column;align-items:center;background:#e7e0f5;border:1px solid #d0c4ec;border-radius:16px;padding:18px 16px 12px;box-shadow:0 2px 8px rgba(76,29,149,.08);} .mb-fig svg{width:100%;max-width:720px;height:auto;display:block;margin:0 auto;background:#fff;border-radius:10px;padding:14px 10px;} .mb-fig figcaption{font-size:.85em;color:#5b4a7a;margin-top:12px;} .mb-shot{margin:40px 0;background:#eceef2;border:1px solid #d9dce3;border-radius:16px;padding:16px 16px 13px;box-shadow:0 3px 12px rgba(15,23,42,.09);display:flex;flex-direction:column;align-items:center;} .mb-shot .sh-tag{align-self:flex-start;display:inline-flex;font-size:12.5px;font-weight:800;color:#475569;background:#dde1e9;border-radius:999px;padding:5px 14px;margin-bottom:12px;} .mb-shot img{max-width:100%;height:auto;display:block;border-radius:10px;border:1px solid #c7cad3;box-shadow:0 6px 18px rgba(15,23,42,.14);} .mb-shot figcaption{font-size:1.02em;color:#5b4a7a;margin-top:14px;line-height:1.8;align-self:flex-start;} .mb-note{background:#fffdf5;border:2px solid #ffd54f;border-radius:12px;padding:18px 24px;margin:36px 0;line-height:2.1;} .mb-note .nt-ttl{font-weight:700;color:#e8920c;margin:0 0 14px;} .mb-warn{background:#fff6f6;border-left:6px solid #e57373;border-radius:8px;padding:18px 24px;margin:36px 0;line-height:2.1;} .mb-warn .wt{font-weight:800;color:#c0392b;display:block;margin-bottom:8px;} .mb-step{background:#f7f4fd;border:2px solid #ddd0f2;border-radius:14px;padding:18px 22px 6px;margin:34px 0;} .mb-step .st-ttl{display:flex;align-items:center;gap:12px;font-weight:800;color:#5b21b6;font-size:1.06em;margin-bottom:6px;} .mb-step .st-no{flex:none;width:32px;height:32px;border-radius:50%;background:#7c3aed;color:#fff;display:flex;align-items:center;justify-content:center;} .mb-step ol{margin:6px 0 14px;padding-left:0;list-style:none;counter-reset:s;} .mb-step ol li{position:relative;padding:8px 0 8px 30px;line-height:1.8;border-top:1px solid #ece4f9;} .mb-step ol li:first-child{border-top:none;} .mb-step ol li::before{counter-increment:s;content:counter(s);position:absolute;left:0;top:8px;width:22px;height:22px;background:#ede9fe;color:#5b21b6;border-radius:50%;font-size:.78em;font-weight:800;display:flex;align-items:center;justify-content:center;} .mb-intro{background:#f6f4fb;border:1px solid #e0d7f3;border-left:5px solid #a78bda;border-radius:10px;padding:13px 18px;margin:4px 0 30px;font-size:.9em;color:#5b4a7a;line-height:1.8;} .mb-link{background:#eef5ff;border:1px solid #cfe0f7;border-radius:12px;padding:16px 20px;margin:34px 0;line-height:1.9;} .mb-link a{color:#1d4ed8;font-weight:700;} .cs-preface{background:#eef7f1;border:1px solid #cfe8db;border-left:5px solid #5f8a6e;border-radius:10px;padding:14px 18px;margin:0 0 26px;font-size:.86em;color:#3d5647;line-height:1.85;} .cs-preface b{color:#2f6b4f;} .cs-preface a{color:#1d4ed8;font-weight:700;} .mb-fig .fig-ttl{font-size:.95em;font-weight:800;color:#5B21B6;margin:0 0 16px;text-align:center;} .mb-cards{display:flex;flex-wrap:wrap;gap:12px;} .mb-cards .kc{flex:1 1 150px;min-width:140px;background:#fff;border:1px solid #e6ddf7;border-left:5px solid #7C3AED;border-radius:10px;padding:14px 16px;} .mb-cards .kc .kc-h{font-size:.9em;font-weight:800;color:#5B21B6;margin-bottom:6px;line-height:1.5;} .mb-cards .kc .kc-d{font-size:.88em;color:#4b4460;line-height:1.7;} .csflow-w{margin:30px 0;padding:20px 18px 18px;background:#faf8ff;border:1px solid #e6ddf7;border-radius:14px;} .csflow-t{font-size:.92em;font-weight:800;color:#5B21B6;margin:0 0 15px;text-align:center;} .csflow{display:flex;flex-wrap:wrap;align-items:stretch;justify-content:center;gap:9px;} .csflow .stp{flex:1 1 140px;min-width:120px;background:#fff;border:2px solid #ddd0f2;border-radius:12px;padding:13px 11px;text-align:center;} .csflow .stp .sn{display:inline-block;font-size:.76em;font-weight:800;color:#fff;background:#7C3AED;border-radius:999px;padding:2px 10px;margin-bottom:8px;} .csflow .stp .st{font-size:.9em;font-weight:700;color:#2b2540;line-height:1.55;} .csflow .ar{align-self:center;color:#a78bda;font-weight:900;font-size:1.3em;} .speech-balloon{line-height:1.95;}.mb-nav{margin:38px 0 6px;}.mb-nav .lb{display:inline-block;font-size:11.5px;font-weight:800;color:#7c3aed;letter-spacing:.1em;margin-bottom:8px;}.mb-nav .cells{display:flex;gap:6px;flex-wrap:wrap;}.mb-nav .n{flex:1;min-width:126px;background:#f5f2fc;border:1px solid #e4dcf7;border-radius:9px;padding:9px 10px;font-size:.8em;color:#9c94b3;line-height:1.45;text-align:center;font-weight:700;}.mb-nav .n .ix{display:block;font-size:.85em;opacity:.75;margin-bottom:2px;}.mb-nav .n.done{background:#ede9fe;border-color:#d9cdf5;color:#6d28d9;}.mb-nav .n.on{background:#7c3aed;border-color:#7c3aed;color:#fff;box-shadow:0 3px 10px rgba(124,58,237,.28);}.mb-goal{background:#fff;border:2px solid #ddd0f2;border-radius:12px;padding:6px 20px;margin:14px 0 32px;}.mb-goal .row{display:flex;gap:14px;align-items:flex-start;padding:12px 0;border-top:1px solid #f0eafb;line-height:1.9;font-size:.96em;}.mb-goal .row:first-child{border-top:none;}.mb-goal .g{flex:none;width:112px;font-size:11.5px;font-weight:800;color:#7c3aed;background:#f3eefc;border-radius:999px;padding:4px 0;text-align:center;margin-top:5px;}.mb-goal .g.af{color:#2f855a;background:#eaf5ee;}@media(max-width:600px){.mb-nav .n{min-width:calc(50% - 3px);}.mb-goal .g{width:96px;font-size:11px;}}</style>

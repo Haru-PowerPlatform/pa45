@@ -1,0 +1,153 @@
+<div class="mb-body"><div class="cs-preface">&#x1f4dd; 実際に <b>Copilot Studio を触って検証</b>し、スクショを撮りながら気づいたことをまとめた記録です。<br>機能・画面・料金は更新が続きます。<br>最新の正確な情報は <a href="https://learn.microsoft.com/ja-jp/microsoft-copilot-studio/" target="_blank" rel="noopener">Microsoft 公式（Microsoft Learn）</a> をご確認ください。</div>
+
+<div class="mb-intro">Microsoft Copilot Studio は、社内向けのAIエージェント（チャットで応対する担当者のようなもの）をノーコードで作れるサービスです。<br>最近は、質問に答えるだけでなく、エージェントに「フロー」を持たせて、記録や通知といった実際の作業までやらせられるようになってきました。<br>この備忘録は、その“作業をさせる”フローを組んで動かしていたときに、料金まわりの仕様を確かめた記録です。<br>実際に出たエラーと、そこから調べた課金の仕組み・Power Automate との使い分けを、自分用にまとめました。</div>
+
+<p class="mb-lead">その一例として、案内役のエージェントに、<strong>届いた質問を Excel に記録するフロー</strong>を持たせようとしていました。<br>あとで見返せるように、問い合わせを一覧で残しておきたかったからです。</p>
+
+<p class="mb-lead">ところが動かしてみると、<strong>回答はきちんと返るのに、記録だけが動いていませんでした</strong>。</p>
+
+<p>Preview は、エージェントの編集画面にあるタブです。<br>公開前に、手元で1回試すための場所です。</p>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-cost-error-1.png" alt="" /><figcaption>実際のPreview画面。回答（下）はきちんと返っているのに、上にエラーが出ている。裏で動くはずのツール（フロー）だけが失敗していた。</figcaption></figure>
+
+<p class="mb-lead">エラーの詳細を開くと、こう書いてありました。</p>
+
+<p style="text-align:center;font-family:'Segoe UI',monospace;background:#1f2937;color:#fca5a5;border-radius:10px;padding:14px 16px;font-size:13.5px;line-height:1.7;">Flow returned HTTP 403.<br>InnerErrorCode: <b>InsufficientMcsCredits</b></p>
+
+<p class="mb-lead">エラーにある「InsufficientMcsCredits」は、<strong>クレジット不足</strong>という意味です。<br>調べてみると、Copilot Studio は、<span class="hl-marker">AIに手を動かさせる（＝道具を実行する）たびに「クレジット」を消費する</span>仕組みでした。<br>これを知らないまま社内の大人数に配ると、想定外の請求につながりかねません。</p>
+
+<p class="mb-lead">この記事では、<strong>①なぜ使うほど課金なのか ②いくらかかるのか ③Power Automate との使い分け ④コスト暴走を防ぐ設計</strong>、の順にまとめます。</p>
+
+<figure class="mb-fig"><svg viewBox="0 0 720 300" font-family="'Noto Sans JP',sans-serif"><defs><marker id="ah" markerWidth="10" markerHeight="10" refX="6" refY="3" orient="auto"><path d="M0 0l6 3-6 3z" fill="#a78bda"/></marker></defs><rect x="270" y="18" width="180" height="52" rx="12" fill="#EEF2FF" stroke="#6366F1" stroke-width="2"/><text x="360" y="42" text-anchor="middle" font-size="14" font-weight="700" fill="#3730A3">受講生からの依頼</text><text x="360" y="60" text-anchor="middle" font-size="12" fill="#4338CA">「◯◯やって」「△△教えて」</text><path d="M360 72 V104" stroke="#a78bda" stroke-width="3" marker-end="url(#ah)"/><rect x="40" y="112" width="300" height="150" rx="16" fill="#F5F3FF" stroke="#7C3AED" stroke-width="2.5"/><text x="190" y="140" text-anchor="middle" font-size="15" font-weight="800" fill="#5B21B6">Copilot Studio（AI）</text><text x="190" y="166" text-anchor="middle" font-size="12.5" font-weight="700" fill="#6D28D9">判断・会話・あいまいの解釈</text><text x="190" y="190" text-anchor="middle" font-size="11.5" fill="#4b5563">「これは記録？それとも取り次ぎ？」</text><rect x="70" y="208" width="240" height="38" rx="9" fill="#FEE2E2" stroke="#EF4444" stroke-width="1.5"/><text x="190" y="232" text-anchor="middle" font-size="12.5" font-weight="800" fill="#B91C1C">使うたびクレジット消費（変動）</text><rect x="380" y="112" width="300" height="150" rx="16" fill="#EFF6FF" stroke="#2563EB" stroke-width="2.5"/><text x="530" y="140" text-anchor="middle" font-size="15" font-weight="800" fill="#1E40AF">Power Automate（フロー）</text><text x="530" y="166" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1D4ED8">決まった処理・大量・定期・承認</text><text x="530" y="190" text-anchor="middle" font-size="11.5" fill="#4b5563">Excelに書く・メール送る・承認回す</text><rect x="410" y="208" width="240" height="38" rx="9" fill="#DCFCE7" stroke="#22C55E" stroke-width="1.5"/><text x="530" y="232" text-anchor="middle" font-size="12.5" font-weight="800" fill="#15803D">ライセンス内・追加課金なし（固定）</text><text x="360" y="290" text-anchor="middle" font-size="12.5" font-weight="700" fill="#5b4a7a">判断だけAI、作業はフロー</text></svg><figcaption>▲ 「判断」はAI、「作業」はフロー。この線引きが、品質にもコストにも効く</figcaption></figure>
+
+<div class="speech-wrap sb-id-14 sbs-stn sbp-l sbis-cb cf"><div class="speech-person"><figure class="speech-icon"><img class="speech-icon-image" src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="" width="1024" height="1024" /></figure></div><div class="speech-balloon">動いた時点で満足して料金を後回しにすると、あとで想定外の請求につながります。<strong>誰が・どれくらい使うか</strong>は、設計の段階で見積もる項目です。</div></div>
+
+&nbsp;
+
+<div class="mb-nav"><span class="lb">いまここ</span><div class="cells"><div class="n on"><span class="ix">1</span>なぜ使うほど課金か</div><div class="n"><span class="ix">2</span>いくらかかるか</div><div class="n"><span class="ix">3</span>PAとの使い分け</div><div class="n"><span class="ix">4</span>自律と公正利用</div><div class="n"><span class="ix">5</span>5つのレバー</div></div></div>
+
+<h2>① なぜ“使うほど課金”なのか（クレジットの仕組み）</h2>
+
+<div class="mb-goal"><div class="row"><span class="g">この節で分かること</span><div>クレジットという仕組みを確認します。</div></div><div class="row"><span class="g af">読み終えるとこうなる</span><div>課金の単位が分かります。</div></div></div>
+
+<p>Copilot Studio は 2025年9月から、課金の単位が「メッセージ」から <strong>Copilotクレジット</strong>に変わりました。<br>仕様として押さえておきたいのは、<strong>処理の“重さ”によって、消費するクレジットが変わる</strong>点でした。</p>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-cost-grace.png" alt="" /><figcaption>エージェントの編集画面に出ていた案内。今は猶予期間だが、期限後は「credits（クレジット）」での課金に切り替わる、と書かれている。</figcaption></figure>
+
+<table class="ctbl"><tr><th>処理の種類</th><th>ざっくり何をするか</th><th>消費クレジット（目安）</th></tr><tr><td>定型回答</td><td>あらかじめ決めた文で返す</td><td class="n">1</td></tr><tr><td>生成回答（AI）</td><td>AIが文章を組み立てて答える</td><td class="n">2</td></tr><tr><td>エージェントのアクション</td><td>ツールやフローを実行する</td><td class="n">5</td></tr><tr><td>テナントデータのGrounding</td><td>社内データ（Graph）を参照する</td><td class="n">10</td></tr><tr class="big"><td>自律エージェントの起動</td><td>人がいないのに自分で動き出す</td><td class="n">25〜</td></tr></table>
+
+<p>しかも、これは<strong>1回のやりとりで積み上がります</strong>。<br>たとえば「AIが答えて、社内データを見て、道具を2つ実行した」場合は、次のようになります。</p>
+
+<figure class="mb-fig"><svg viewBox="0 0 720 210" font-family="'Noto Sans JP',sans-serif"><text x="24" y="30" font-size="13" font-weight="800" fill="#3b2a5a">1回のやりとりで、消費が積み上がる例</text><rect x="24" y="52" width="150" height="40" rx="8" fill="#EDE9FE" stroke="#8B5CF6"/><text x="99" y="72" text-anchor="middle" font-size="12" font-weight="700" fill="#5B21B6">生成回答</text><text x="99" y="86" text-anchor="middle" font-size="11" fill="#6D28D9">2</text><text x="184" y="78" font-size="16" font-weight="800" fill="#a78bda">+</text><rect x="204" y="52" width="150" height="40" rx="8" fill="#EDE9FE" stroke="#8B5CF6"/><text x="279" y="72" text-anchor="middle" font-size="12" font-weight="700" fill="#5B21B6">Grounding</text><text x="279" y="86" text-anchor="middle" font-size="11" fill="#6D28D9">10</text><text x="364" y="78" font-size="16" font-weight="800" fill="#a78bda">+</text><rect x="384" y="52" width="150" height="40" rx="8" fill="#EDE9FE" stroke="#8B5CF6"/><text x="459" y="72" text-anchor="middle" font-size="12" font-weight="700" fill="#5B21B6">アクション</text><text x="459" y="86" text-anchor="middle" font-size="11" fill="#6D28D9">5</text><text x="544" y="78" font-size="16" font-weight="800" fill="#a78bda">+</text><rect x="564" y="52" width="150" height="40" rx="8" fill="#EDE9FE" stroke="#8B5CF6"/><text x="639" y="72" text-anchor="middle" font-size="12" font-weight="700" fill="#5B21B6">アクション</text><text x="639" y="86" text-anchor="middle" font-size="11" fill="#6D28D9">5</text><path d="M370 104 V128" stroke="#a78bda" stroke-width="3" marker-end="url(#ah2)"/><defs><marker id="ah2" markerWidth="10" markerHeight="10" refX="6" refY="3" orient="auto"><path d="M0 0l6 3-6 3z" fill="#a78bda"/></marker></defs><rect x="250" y="132" width="220" height="54" rx="12" fill="#FEE2E2" stroke="#EF4444" stroke-width="2"/><text x="360" y="156" text-anchor="middle" font-size="13" font-weight="800" fill="#991B1B">合計 22 クレジット</text><text x="360" y="176" text-anchor="middle" font-size="11.5" fill="#B91C1C">＝この1往復ぶんの“お代”</text></svg><figcaption>▲ 生成回答2＋Grounding10＋アクション5＋アクション5＝22クレジット。1往復でこれだけ動く</figcaption></figure>
+
+<div class="mb-point">冒頭の 403 エラーは、この「アクション（＝5クレジット）」を実行しようとして、<strong>環境にクレジットの残りが無く弾かれていました</strong>。<br><span class="hl-marker">AIが答えるところまでは動く。<br>手を動かす（道具を実行する）ところで、クレジットの壁に当たる。</span><br>厄介なのは、回答だけを見ると成功しているように見える点です。<br>そのため、最初は原因の特定に手間取りました。</div>
+
+&nbsp;
+
+<div class="speech-wrap sb-id-14 sbs-stn sbp-l sbis-cb cf"><div class="speech-person"><figure class="speech-icon"><img class="speech-icon-image" src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="" width="1024" height="1024" /></figure></div><div class="speech-balloon">Copilot Studio は、使うたびにクレジットを消費します。<br>無料で作れるので忘れがちですが、動かす段になって費用が出る、という順番でした。</div></div>
+
+<div class="mb-nav"><span class="lb">いまここ</span><div class="cells"><div class="n done"><span class="ix">1</span>&#x2713; なぜ使うほど課金か</div><div class="n on"><span class="ix">2</span>いくらかかるか</div><div class="n"><span class="ix">3</span>PAとの使い分け</div><div class="n"><span class="ix">4</span>自律と公正利用</div><div class="n"><span class="ix">5</span>5つのレバー</div></div></div>
+
+<h2>② いくらかかるのか（料金の目安）</h2>
+
+<div class="mb-goal"><div class="row"><span class="g">この節で分かること</span><div>料金の目安を数字で見ます。</div></div><div class="row"><span class="g af">読み終えるとこうなる</span><div>見積もりの材料がそろいます。</div></div></div>
+
+<p>支払い方には、大きく2つの入口があります（この記事の時点）。</p>
+
+<table class="ctbl"><tr><th>方式</th><th>価格の目安</th><th>向いている使い方</th></tr><tr><td><b>従量課金（使った分だけ）</b></td><td>1クレジット ＝ 約 <b>1.5円</b><br>（$0.01／為替で変動）</td><td>学習・テスト・少人数</td></tr><tr><td><b>前払いの容量パック</b></td><td>月額 約 <b>3万円</b>で 25,000クレジット<br>（1クレジット約1.2円）</td><td>安定して動かす本番</td></tr></table>
+
+<p>たとえば「生成回答2＋道具5＝7クレジット」ほどの一往復なら、従量課金で <strong>1回あたり10円前後</strong>です。<br>個人の学習や検証であれば、月に数百円〜数千円程度で収まります。</p>
+
+<div class="mb-note"><p class="nt-ttl">“社内利用”なら、そんなにかからないことも</p><strong>Microsoft 365 Copilot のライセンスを持っている人</strong>が、社内で Teams や SharePoint 越しに<strong>対話的に</strong>使う分は、「公正利用（fair use）」の範囲で<strong>追加クレジットを消費しません</strong>（定型回答・生成回答・Grounding・アクション・フローを含む）。<br>つまり「社内の人がTeamsで会話して使う」なら、大人数でも基本はタダ側に寄ります。<br>課金が効いてくるのは、次章の<strong>自律・無人・外部公開</strong>のケースです。</div>
+
+&nbsp;
+
+<div class="mb-nav"><span class="lb">いまここ</span><div class="cells"><div class="n done"><span class="ix">1</span>&#x2713; なぜ使うほど課金か</div><div class="n done"><span class="ix">2</span>&#x2713; いくらかかるか</div><div class="n on"><span class="ix">3</span>PAとの使い分け</div><div class="n"><span class="ix">4</span>自律と公正利用</div><div class="n"><span class="ix">5</span>5つのレバー</div></div></div>
+
+<h2>③ Power Automate との使い分け</h2>
+
+<div class="mb-goal"><div class="row"><span class="g">この節で分かること</span><div>どちらに寄せるかの基準を整理します。</div></div><div class="row"><span class="g af">読み終えるとこうなる</span><div>設計の指針が決まります。</div></div></div>
+
+<p>ここまで触ってみて、<strong>「全部をAI（Copilot Studio）にやらせない」</strong>のが、品質でもコストでも現実的だと感じました。<br>判断の要らない“決まった作業”は、Power Automate に任せる。</p>
+
+<div class="mb-cards"><div class="cd"><span class="cd-t">Copilot Studio が得意なこと</span><span class="cd-d">相手の言葉の意味をくむ・あいまいな依頼をさばく・どの道具を使うか選ぶ・会話で答える。<b>「考える」ところ</b>。</span></div><div class="cd"><span class="cd-t">Power Automate が得意なこと</span><span class="cd-d">決まった手順をくり返す・大量データを処理する・定期実行する・承認を回す。<b>「手を動かす」ところ</b>。</span></div></div>
+
+<p>コスト面での違いがはっきりしています。<br>Copilot Studio は<strong>使うたびに変動</strong>する料金。<br>Power Automate は<strong>ライセンス内の固定費</strong>で、フローを何回動かしてもクレジットは減りません。</p>
+
+<div class="mb-point"><span class="hl-marker">「判断だけAI、あとの作業はフロー」</span>。<br>AIには“どうするか決める”ところだけを任せて、実際の重い処理は Power Automate 側でまとめて処理する。<br>自分の場合は、この分け方がいちばん整理しやすかったです。</div>
+
+<div class="mb-note"><p class="nt-ttl">「エージェント経由じゃない入口」も持たせる</p>同じフローでも、<strong>ボタン・定期実行・フォーム送信</strong>など“AIを通さない起動口”を用意すれば、その実行はクレジットを消費しません。<br>AIに判断させる必要が無い処理は、わざわざエージェント経由にしない。<br>これだけでムダな消費を減らせます。</div>
+
+&nbsp;
+
+<div class="speech-wrap sb-id-14 sbs-stn sbp-l sbis-cb cf"><div class="speech-person"><figure class="speech-icon"><img class="speech-icon-image" src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="" width="1024" height="1024" /></figure></div><div class="speech-balloon">判断や会話は Copilot Studio、決まった処理は Power Automate、と分けると費用が読みやすくなります。<br>私はこの線で組むようにしています。</div></div>
+
+<div class="mb-nav"><span class="lb">いまここ</span><div class="cells"><div class="n done"><span class="ix">1</span>&#x2713; なぜ使うほど課金か</div><div class="n done"><span class="ix">2</span>&#x2713; いくらかかるか</div><div class="n done"><span class="ix">3</span>&#x2713; PAとの使い分け</div><div class="n on"><span class="ix">4</span>自律と公正利用</div><div class="n"><span class="ix">5</span>5つのレバー</div></div></div>
+
+<h2>④ ここが要注意 ── 自律エージェントと「公正利用」</h2>
+
+<div class="mb-goal"><div class="row"><span class="g">この節で分かること</span><div>自律エージェントと公正利用の線引きを見ます。</div></div><div class="row"><span class="g af">読み終えるとこうなる</span><div>費用が跳ねる条件が分かります。</div></div></div>
+
+<p>「大人数で使ったら延々と課金されるのでは？」という不安は、半分は当たっていて、半分は外れています。</p>
+
+<h3>半分は当たり：自律エージェントは青天井になりうる</h3>
+
+<p><strong>自律エージェント</strong>とは、人が話しかけていないのに、<strong>新着メールや時刻・データ更新などをきっかけに、自分で起動して動く</strong>タイプです。</p>
+
+<ul>
+<li>1回の自律起動で <strong>25クレジット〜</strong>（＝会話型の何倍も重い）</li>
+<li><strong>M365 Copilot ライセンスを持っていても、自律トリガーは課金される</strong>（公正利用の“外”）</li>
+<li>会話型と違い「人が使った回数」で頭打ちにならず、<strong>トリガーの数だけ積み上がる</strong></li>
+</ul>
+
+<div class="mb-warn">たとえば「メールが届くたびに自律起動」のような設定を広めに入れて放置すると、<strong>誰も見ていない間に、25クレジットずつ積み上がっていきます</strong>。<br>自律は強力な一方で、使いどころを絞らないと費用が読めなくなります。<br>切り札として扱うのが無難です。</div>
+
+<h3>半分は外れ：社内の対話利用は「公正利用」で守られる</h3>
+
+<p>前章の note のとおり、ライセンス保持者の社内・対話利用は無償枠に収まります。<br>ただし、ここに<strong>2つの注意</strong>があります。</p>
+
+<ul>
+<li><strong>具体的な上限値を Microsoft は公表していない</strong>（“fair usage”とだけ書き、実態を見て変える権利を留保している）。<br>だから「1人あたり何回まで無料」とは言い切れません。</li>
+<li><strong>無人・自律の実行は、ライセンスに関係なく常に課金される</strong>（スケジュール実行・自律トリガー・バックグラウンド処理）。</li>
+</ul>
+
+&nbsp;
+
+<div class="mb-nav"><span class="lb">いまここ</span><div class="cells"><div class="n done"><span class="ix">1</span>&#x2713; なぜ使うほど課金か</div><div class="n done"><span class="ix">2</span>&#x2713; いくらかかるか</div><div class="n done"><span class="ix">3</span>&#x2713; PAとの使い分け</div><div class="n done"><span class="ix">4</span>&#x2713; 自律と公正利用</div><div class="n on"><span class="ix">5</span>5つのレバー</div></div></div>
+
+<h2>コスト暴走を防ぐ、5つの設計レバー</h2>
+
+<div class="mb-goal"><div class="row"><span class="g">この節で分かること</span><div>費用を抑える具体的な手を5つ並べます。</div></div><div class="row"><span class="g af">読み終えるとこうなる</span><div>作る前に打てる手が決まります。</div></div></div>
+
+<p>会社で大人数に配ることを考えるなら、この5つを最初から意識しておくと安全です。</p>
+
+<div class="mb-cards"><div class="cd"><span class="cd-t">① 無人処理はフロー側へ</span><span class="cd-d">判断が要らない自動処理は Power Automate に寄せる。<br>ライセンス内の固定費で回り、クレジットを消費しない。</span></div><div class="cd"><span class="cd-t">② 道具の呼び出し回数を減らす</span><span class="cd-d">アクションは1回5クレジット。<br>細かい道具を何度も呼ばせず、1本のフローにまとめて処理させる。</span></div><div class="cd"><span class="cd-t">③ 定型FAQは“定型回答”で</span><span class="cd-d">決まった案内は、生成（2）ではなく定型回答（1）で返す。<br>塵も積もれば、で効いてくる。</span></div><div class="cd"><span class="cd-t">④ 自律は条件を絞る</span><span class="cd-d">「全部で起動」ではなく「この条件のときだけ起動」。<br>トリガーの数がそのまま費用になる。</span></div><div class="cd"><span class="cd-t">⑤ 管理センターで上限を縛る</span><span class="cd-d">Cost Management で予算アラートと“ハードキャップ（上限で停止）”を設定。<br>暴走を物理的に止める安全弁。</span></div><div class="cd"><span class="cd-t">⑥ 使われ方を見える化する</span><span class="cd-d">Monitor や管理センターの分析で、どこがクレジットを食っているかを定期的に確認する。</span></div></div>
+
+<div class="mb-note"><p class="nt-ttl">&#x203b; 2026年8月21日の追記：いつも止まるわけではない</p>同じ構成のフロー実行を別の日に試したところ、<strong>403 は出ず、最後まで動きました</strong>。<br>前払いクレジットの残量は 0 のままで、消費レポートの数字もその日は増えていません。<br>猶予期間や枠の扱いによって挙動が変わるようです。<br><strong>「クレジットが無いから実行系は必ず止まる」とは考えず、動く前提で費用を見積もる</strong>ほうが安全です。</div>
+
+&nbsp;
+
+<div class="mb-nav"><span class="lb">ここまで完了</span><div class="cells"><div class="n done"><span class="ix">1</span>&#x2713; なぜ使うほど課金か</div><div class="n done"><span class="ix">2</span>&#x2713; いくらかかるか</div><div class="n done"><span class="ix">3</span>&#x2713; PAとの使い分け</div><div class="n done"><span class="ix">4</span>&#x2713; 自律と公正利用</div><div class="n done"><span class="ix">5</span>&#x2713; 5つのレバー</div></div></div>
+
+<h2>まとめ</h2>
+
+<p>Copilot Studio は「AIに手を持たせられる」のが強みですが、その手を動かすたびにクレジットを消費します。<br>だからこそ、<strong>Power Automate との使い分け＝コスト設計</strong>が、そのまま運用コストに効いてきます。</p>
+
+<ul>
+<li><strong>①</strong> 使うほど課金。<br>処理の重さでクレジットが変わる（定型1／生成2／アクション5／自律25〜）</li>
+<li><strong>②</strong> 学習・少量なら従量課金（1回10円前後）。<br>本番安定なら容量パック（月約3万円）</li>
+<li><strong>③</strong> 判断だけAI、作業はフロー。<br>決まった処理は Power Automate に逃がす</li>
+<li><strong>④</strong> 自律・無人・外部公開が費用の震源。<br>社内の対話利用は公正利用で守られる（上限は非公表）</li>
+<li><strong>⑤</strong> 管理センターのハードキャップで、暴走を物理的に止める</li>
+</ul>
+
+<p>今回やってみて、「作れること」と「配れること」は別物だと感じました。<strong>誰が・どれくらい使うかを、作る前に見積もっておく</strong>。<br>それだけでも、想定外の請求は避けやすくなります。</p>
+
+&nbsp;
+
+<p style="font-size:13px;color:#888;line-height:1.9;">※ 本記事は公開日時点の情報をもとに、筆者が実際に学んで試した内容を整理しました。料金・クレジットの消費量・公正利用の範囲は、地域や為替、契約内容、時期によって変わります。正確な金額や最新の条件は、必ず公式情報（Microsoft Learn / Microsoft Copilot Studio ライセンスガイド）と、ご自身の契約内容をご確認ください。</p>
+
+<p style="font-size:13px;color:#888;line-height:1.9;">※ 記事中の 403 エラーは、筆者が実際の環境で遭遇しました。構成や図解の一部は、AI と壁打ちしながら作成しています。</p>
+
+</div>
+<style> .mb-body > p{margin:1.9em 0!important;line-height:2.05!important;} .mb-body > h2{margin-top:2.8em!important;} .mb-body > h3{margin-top:2.4em!important;} .mb-body > ul{margin:1.7em 0!important;line-height:2.0;} .mb-body > ul li{margin:.55em 0;} .mb-lead{line-height:2.1;} .hl-marker{background:linear-gradient(transparent 58%,#e9d5ff 58%);font-weight:700;padding:0 .12em;border-radius:2px;} .mb-fig{margin:40px 0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#e7e0f5;border:1px solid #d0c4ec;border-radius:16px;padding:18px 16px 12px;box-shadow:0 2px 8px rgba(76,29,149,.08);} .mb-fig svg{width:100%;max-width:760px;height:auto;display:block;margin:0 auto;background:#fff;border-radius:10px;padding:14px 10px;} .mb-fig figcaption{font-size:.85em;color:#5b4a7a;margin-top:12px;} .mb-cta{margin:42px 0;padding:18px 22px;border-radius:16px;text-align:center;} .mb-cta.pa{background:linear-gradient(135deg,#eaf2fc,#d8e8fa);border:1px solid #b8d3ef;} .mb-cta.yt{background:#fff5f5;border:1px solid #f4c2c2;} .mb-cta .cta-ttl{font-weight:800;font-size:1.08em;margin:0 0 6px;color:#14528f;} .mb-cta.yt .cta-ttl{color:#b91c1c;} .mb-cta p{margin:0 0 12px;font-size:.92em;color:#475569;line-height:1.7;} .mb-btn{display:inline-block;text-decoration:none;font-weight:800;font-size:.98em;padding:12px 28px;border-radius:50px;color:#fff!important;} .mb-btn.pa{background:linear-gradient(135deg,#2a7dd4,#14528f);box-shadow:0 4px 14px rgba(42,125,212,.4);} .mb-btn.yt{background:linear-gradient(135deg,#ef4444,#b91c1c);box-shadow:0 4px 14px rgba(239,68,68,.35);} .mb-cta .cta-sub{display:block;margin-top:10px;font-size:.82em;color:#64748b;} .mb-point{background:#f7f4fd;border-left:6px solid #8b5cf6;border-radius:8px;padding:18px 24px;margin:36px 0;line-height:2.1;} .mb-note{background:#fffdf5;border:2px solid #ffd54f;border-radius:12px;padding:18px 24px;margin:38px 0;line-height:2.1;} .mb-note .nt-ttl{font-weight:700;color:#e8920c;margin:0 0 14px;} .mb-warn{background:#fff6f6;border-left:6px solid #e57373;border-radius:8px;padding:18px 24px;margin:36px 0;line-height:2.1;} .mb-check{border:1px solid #ddd0f2;border-radius:14px;padding:22px 26px;background:#fff;margin:40px 0;} .mb-check .ck-ttl{margin:0 0 14px;font-weight:800;font-size:1.05em;color:#5b21b6;} .mb-check label{display:flex;align-items:flex-start;gap:10px;line-height:1.7;font-size:1em;margin:10px 0;} .mb-check input{margin-top:4px;width:16px;height:16px;accent-color:#7c3aed;flex-shrink:0;} .speech-balloon{line-height:1.95;} .mb-intro{background:#f6f4fb;border:1px solid #e0d7f3;border-left:5px solid #a78bda;border-radius:10px;padding:13px 18px;margin:4px 0 30px;font-size:.9em;color:#5b4a7a;line-height:1.8;} .mb-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:30px 0;} .mb-cards .cd{background:#fff;border:1px solid #e4dbf6;border-left:5px solid #8b5cf6;border-radius:12px;padding:15px 17px;box-shadow:0 2px 8px rgba(76,29,149,.07);} .mb-cards .cd .cd-t{display:block;color:#5b21b6;font-weight:800;font-size:1.02em;margin-bottom:6px;} .mb-cards .cd .cd-d{font-size:.9em;color:#4b5563;line-height:1.65;} @media(max-width:600px){.mb-cards{grid-template-columns:1fr;}} .ctbl{width:100%;border-collapse:collapse;font-size:.92em;margin:18px 0;background:#fff;} .ctbl th,.ctbl td{border:1px solid #e4dbf6;padding:10px 12px;text-align:left;line-height:1.7;vertical-align:top;} .ctbl th{background:#f3f0fb;color:#3b2a5a;font-size:.9em;} .ctbl td.n{text-align:right;white-space:nowrap;font-weight:700;color:#5b21b6;} .ctbl tr.big td.n{color:#b91c1c;} .mb-shot{margin:44px 0;background:#eceef2;border:1px solid #d9dce3;border-radius:16px;padding:16px 16px 13px;box-shadow:0 3px 12px rgba(15,23,42,.09);} .mb-shot .sh-tag{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:800;color:#475569;background:#dde1e9;border-radius:999px;padding:5px 14px;margin-bottom:12px;} .mb-shot img{width:100%;height:auto;display:block;border-radius:10px;border:1px solid #c7cad3;box-shadow:0 6px 18px rgba(15,23,42,.14);} .mb-shot figcaption{font-size:1.02em;color:#5b4a7a;margin-top:14px;line-height:1.8;} .cs-preface{background:#eef7f1;border:1px solid #cfe8db;border-left:5px solid #5f8a6e;border-radius:10px;padding:14px 18px;margin:0 0 26px;font-size:.86em;color:#3d5647;line-height:1.85;} .cs-preface b{color:#2f6b4f;} .cs-preface a{color:#1d4ed8;font-weight:700;} .mb-nav{margin:38px 0 6px;}.mb-nav .lb{display:inline-block;font-size:11.5px;font-weight:800;color:#7c3aed;letter-spacing:.1em;margin-bottom:8px;}.mb-nav .cells{display:flex;gap:6px;flex-wrap:wrap;}.mb-nav .n{flex:1;min-width:126px;background:#f5f2fc;border:1px solid #e4dcf7;border-radius:9px;padding:9px 10px;font-size:.8em;color:#9c94b3;line-height:1.45;text-align:center;font-weight:700;}.mb-nav .n .ix{display:block;font-size:.85em;opacity:.75;margin-bottom:2px;}.mb-nav .n.done{background:#ede9fe;border-color:#d9cdf5;color:#6d28d9;}.mb-nav .n.on{background:#7c3aed;border-color:#7c3aed;color:#fff;box-shadow:0 3px 10px rgba(124,58,237,.28);}.mb-goal{background:#fff;border:2px solid #ddd0f2;border-radius:12px;padding:6px 20px;margin:14px 0 32px;}.mb-goal .row{display:flex;gap:14px;align-items:flex-start;padding:12px 0;border-top:1px solid #f0eafb;line-height:1.9;font-size:.96em;}.mb-goal .row:first-child{border-top:none;}.mb-goal .g{flex:none;width:112px;font-size:11.5px;font-weight:800;color:#7c3aed;background:#f3eefc;border-radius:999px;padding:4px 0;text-align:center;margin-top:5px;}.mb-goal .g.af{color:#2f855a;background:#eaf5ee;}@media(max-width:600px){.mb-nav .n{min-width:calc(50% - 3px);}.mb-goal .g{width:96px;font-size:11px;}}</style>

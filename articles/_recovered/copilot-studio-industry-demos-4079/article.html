@@ -1,0 +1,251 @@
+<div class="mb-body">
+
+<div class="mb-intro">人事・情シス・経理の3つの業務で、エージェントを1体ずつ作って試しました。<br>就業規程に答えるもの、問い合わせを記録するもの、経費の科目を判断するもの、の3つです。<br>同じ作り方でも、うまくいく場合とそうでない場合がはっきり分かれました。<br>その分かれ目を、実際の画面で並べて確認します。</div>
+
+<div class="mb-link">この記事は企業導入編の7本目です。<br>①：<a href="https://www.automate136.com/copilot-studio-dev-environment/" target="_blank" rel="noopener">開発用の環境を分ける</a>／②：<a href="https://www.automate136.com/copilot-studio-dlp-policy/" target="_blank" rel="noopener">DLPで「認証なし」を止める</a>／③：<a href="https://www.automate136.com/copilot-studio-managed-environment/" target="_blank" rel="noopener">マネージド環境で共有範囲を絞る</a>／④：<a href="https://www.automate136.com/copilot-studio-credit-visibility/" target="_blank" rel="noopener">クレジットの消費を見る</a>／⑤：<a href="https://www.automate136.com/copilot-studio-knowledge-governance/" target="_blank" rel="noopener">ナレッジ ソースを絞る</a>／⑥：<a href="https://www.automate136.com/copilot-studio-alm-solution/" target="_blank" rel="noopener">ソリューションで別の環境へ移す</a></div>
+
+<p class="mb-lead">①〜⑥は、環境・公開・共有・費用・データ・更新という<strong>土台の話</strong>でした。<br>ここからは、その上に載せる<strong>中身の話</strong>です。</p>
+
+<p class="mb-lead">研修で「Copilot Studio で何ができるか」を説明しても、抽象的なままでは伝わりません。<strong>相手の部署の業務で動かして見せる</strong>のがいちばん早いので、3つ作りました。</p>
+
+<div class="mb-map">この記事の道のり<br><b>①</b> 3本の位置づけ → <b>②</b> 人事：答える → <b>③</b> 情シス：記録する → <b>④</b> 経理：判断して人につなぐ（承認まで） → <b>⑤</b> うまく動かすための4点セット</div>
+
+&nbsp;
+
+<div class="mb-nav"><span class="lb">いまここ</span><div class="cells"><div class="n on"><span class="ix">1</span>3本の位置づけ</div><div class="n"><span class="ix">2</span>人事：答える</div><div class="n"><span class="ix">3</span>情シス：記録する</div><div class="n"><span class="ix">4</span>経理：人につなぐ</div><div class="n"><span class="ix">5</span>4点セット</div></div></div>
+
+<h2>① 3本の位置づけ</h2>
+
+<div class="mb-goal"><div class="row"><span class="g">この節ですること</span><div>3体それぞれの難易度と、必要になるものを整理します。</div></div><div class="row"><span class="g af">終わるとこうなる</span><div>どれから作ればよいかが決まります。</div></div></div>
+
+<p>作った3体は、できることが段階的に上がります。<br>同時に、必要なものと費用も上がります。</p>
+
+<figure class="mb-fig"><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-demos-fig-steps.png" alt="" /><figcaption>▲ 答える → 記録する → 判断して人につなぐ。段階が上がるほど必要なものが増える</figcaption></figure>
+
+<ul>
+<li><strong>人事（就業規程ヘルプ）</strong>：規程を読んで答える。<br>ナレッジだけで作れる</li>
+<li><strong>情シス（ヘルプデスク）</strong>：FAQで答え、答えられない質問を記録する。<br>フローが1本要る</li>
+<li><strong>経理（経費ナビ）</strong>：金額から科目を判断し、承認ルートを案内する</li>
+</ul>
+
+<p>検証にはすべて架空の会社「サンプル商事」の資料を使いました。<br>各資料には、<strong>意図的に書いていない項目</strong>を混ぜてあります。<br>答えられないときの振る舞いを見るためです。</p>
+
+&nbsp;
+
+<div class="speech-wrap sb-id-14 sbs-stn sbp-l sbis-cb cf"><div class="speech-person"><figure class="speech-icon"><img class="speech-icon-image" src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="" width="1024" height="1024" /></figure></div><div class="speech-balloon">3本とも作り方は同じで、難しさと必要なものが少しずつ上がります。<br>どれから作るか迷ったら、この順番が分かりやすいと思います。</div></div>
+
+<div class="mb-nav"><span class="lb">いまここ</span><div class="cells"><div class="n done"><span class="ix">1</span>&#x2713; 3本の位置づけ</div><div class="n on"><span class="ix">2</span>人事：答える</div><div class="n"><span class="ix">3</span>情シス：記録する</div><div class="n"><span class="ix">4</span>経理：人につなぐ</div><div class="n"><span class="ix">5</span>4点セット</div></div></div>
+
+<h2>② 人事：就業規程に答える</h2>
+
+<div class="mb-goal"><div class="row"><span class="g">この節ですること</span><div>就業規程を読ませて答えさせます。<br>最初の失敗と、直したあとを見比べます。</div></div><div class="row"><span class="g af">終わるとこうなる</span><div>資料を入れるだけでは使われない、という理由が分かります。</div></div></div>
+
+<p>最初に作ったのが人事向けです。<br>架空の就業規程をナレッジに入れ、社員からの質問に答えさせます。</p>
+
+<p>ところが最初の質問で、想定と違う答えが返りました。</p>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-demos-hr-before.png" alt="" /><figcaption>▲ 「社内の就業規程データベースから取得できませんでした」と言いながら、労働基準法の一般的な日数の表を提示している</figcaption></figure>
+
+<p>参照されたソースを見ると、社会保険労務士事務所のページと厚生労働省のサイトでした。<strong>アップロードした規程ではなく、世間一般の情報で答えています</strong>。</p>
+
+<div class="mb-warn"><span class="wt">企業でいちばん困る状態</span>答えとしては、もっともらしく見えます。<br>しかし社内の規程は、法定の日数より多く付与していることがあります。<br><strong>一般論で答えられると、正しいかどうかを読んだ人が判断できません</strong>。</div>
+
+<p>原因は1つではありませんでした。<br>ナレッジの説明が短かったこと、指示文で根拠を縛っていなかったこと、Web検索が有効だったことが重なっています。<br>3つを直して、同じ質問をやり直しました。</p>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-demos-hr-after.png" alt="" /><figcaption>▲ 直したあと。参照は規程のファイルのみになり、第4条の表を根拠に回答している</figcaption></figure>
+
+<div class="mb-point">同じファイルが入っていたのに、最初は読まれていませんでした。<br><span class="hl">資料は入れるだけでは使われません</span>。<br>説明文と指示文で「これを使え」と決めて、はじめて根拠になります。</div>
+
+<p>「入社3年目」という聞き方に対して、11日または12日と<strong>時期で場合分け</strong>している点も見どころです。<br>規程は勤続年数で日数が変わるので、断定を避けています。</p>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-demos-hr-q2.png" alt="" /><figcaption>▲ 急な体調不良での申請。原則の3営業日前と、当日の例外手順を読み分けている</figcaption></figure>
+
+<p>この回答は、規程の第5条にある「やむを得ない事由により事前申請ができない場合」を、質問の状況に当てはめた回答です。<br>原則と例外の両方を示しています。</p>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-demos-hr-q3.png" alt="" /><figcaption>▲ 規程に書いていない項目。「含まれていません」と答え、人事部へ案内している</figcaption></figure>
+
+<p>副業については、規程の末尾に「本抜粋には含まれていない」と書いてあります。<br>その記述を根拠にして、答えられないことを伝えました。</p>
+
+&nbsp;
+
+<div class="speech-wrap sb-id-14 sbs-stn sbp-l sbis-cb cf"><div class="speech-person"><figure class="speech-icon"><img class="speech-icon-image" src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="" width="1024" height="1024" /></figure></div><div class="speech-balloon">最初は資料を入れたのに一般論で答えてしまいました。<br>資料は入れるだけでなく、指示文で「これを使って」と縛って初めて根拠になりました。</div></div>
+
+<div class="mb-nav"><span class="lb">いまここ</span><div class="cells"><div class="n done"><span class="ix">1</span>&#x2713; 3本の位置づけ</div><div class="n done"><span class="ix">2</span>&#x2713; 人事：答える</div><div class="n on"><span class="ix">3</span>情シス：記録する</div><div class="n"><span class="ix">4</span>経理：人につなぐ</div><div class="n"><span class="ix">5</span>4点セット</div></div></div>
+
+<h2>③ 情シス：問い合わせを記録する</h2>
+
+<div class="mb-goal"><div class="row"><span class="g">この節ですること</span><div>社内FAQで答えさせ、答えられなかった質問をフローで記録させます。</div></div><div class="row"><span class="g af">終わるとこうなる</span><div>ツールが動く条件が分かります。</div></div></div>
+
+<p>2体目は情報システム部のヘルプデスクです。<br>人事で分かったことを<strong>最初からすべて入れて</strong>作りました。</p>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-demos-it-q1.png" alt="" /><figcaption>▲ 1回目のテストから社内FAQのみを根拠に回答。手順を番号つきで3つ、連絡先も添えている</figcaption></figure>
+
+<p>人事のような外部サイトへの逸脱は、一度も起きませんでした。<br>作り方をそろえれば再現できる、ということです。</p>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-demos-it-q2.png" alt="" /><figcaption>▲ FAQの条件分岐をそのまま読み取り、旧端末の有無で場合を分けている</figcaption></figure>
+
+<p>FAQには2文で書いてあるだけですが、見出しを分けて整理し、最後に「旧端末の状況はいかがでしょうか」と<strong>確認を返して</strong>います。</p>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-demos-it-q3.png" alt="" /><figcaption>▲ FAQに無い質問。対象外である旨の注記を引用して断り、ヘルプデスクへ案内している</figcaption></figure>
+
+<p>ここまでは人事と同じ「答えるだけ」です。<br>情シスでは、もう一段進めて<strong>答えられなかった質問を記録</strong>させます。<br>フローを1本作り、エージェントの道具として接続しました。</p>
+
+<div class="mb-term"><span class="tm">用語</span><b>エージェント フロー</b>：エージェントが呼び出せる処理。<br>今回は「問い合わせ内容と種類を受け取り、担当者へ通知して、結果を返す」だけの短いもの。</div>
+
+<p>接続の作成では、設定内容とは別の理由で止まる場面が2つありました。<br>あわせて残しておきます。</p>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-demos-it-popup.png" alt="" /><figcaption>▲ 接続の作成に失敗。原因は権限ではなく、ブラウザのポップアップブロックだった</figcaption></figure>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-demos-it-recipient.png" alt="" /><figcaption>▲ 投稿先にメールアドレスを直接入れるとエラー。先に種別を選ぶと受信者の欄が現れる</figcaption></figure>
+
+<div class="mb-note"><p class="nt-ttl">&#x203b; エラー文が原因を指している</p>2枚目のエラーは <code>MissingOrInvalidTeamsFlowbotRecipientType</code> でした。<br>受信者の<strong>種類</strong>が指定されていない、という意味です。<br>投稿先は「種別を選ぶ」と「相手を選ぶ」の2段構えになっていました。</div>
+
+<p>フローを公開して接続したあと、テストしても<strong>ツールが動きませんでした</strong>。</p>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-demos-it-nofire.png" alt="" /><figcaption>▲ 動いたのはナレッジ検索だけ。「問い合わせを記録する」は実行されていない</figcaption></figure>
+
+<p>指示文を見直すと、「ヘルプデスクへ引き継ぐよう案内します」とだけ書いてありました。<strong>ツールを使えとは書いていません</strong>。<br>次のように書き換えました。</p>
+
+<div class="mb-code">・FAQに該当がない場合は「FAQには記載がありません」と正直に伝えたうえで、必ず「問い合わせを記録する」ツールを実行して内容を記録し、ヘルプデスクへ引き継ぐと案内します。</div>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-demos-it-fired.png" alt="" /><figcaption>▲ 書き換えたあと。ナレッジ検索に続いてフローが実行され、種類は「アカウント」と自動で判定されている</figcaption></figure>
+
+<div class="mb-point">ナレッジは<span class="hl">説明文</span>で採用が決まり、ツールは<span class="hl">指示文の名指し</span>で呼ばれます。<br>どちらも「置いておけば使われる」ものではありません。</div>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-demos-it-teams.png" alt="" /><figcaption>▲ 担当者に届いた通知。質問の文章がそのままではなく、報告文に整えられている</figcaption></figure>
+
+<p>通知の本文は「〜について問い合わせがあった。<br>社内FAQに該当記載なし。」と要約されていました。<br>トリガーの入力に説明を書いておいたので、何を入れるかをエージェントが判断できています。</p>
+
+&nbsp;
+
+<div class="speech-wrap sb-id-14 sbs-stn sbp-l sbis-cb cf"><div class="speech-person"><figure class="speech-icon"><img class="speech-icon-image" src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="" width="1024" height="1024" /></figure></div><div class="speech-balloon">答えるだけでなく、答えられなかった質問を記録させると、運用がぐっと実務的になります。<br>ここはフローを1本足すだけでした。</div></div>
+
+<div class="mb-nav"><span class="lb">いまここ</span><div class="cells"><div class="n done"><span class="ix">1</span>&#x2713; 3本の位置づけ</div><div class="n done"><span class="ix">2</span>&#x2713; 人事：答える</div><div class="n done"><span class="ix">3</span>&#x2713; 情シス：記録する</div><div class="n on"><span class="ix">4</span>経理：人につなぐ</div><div class="n"><span class="ix">5</span>4点セット</div></div></div>
+
+<h2>④ 経理：金額で判断して、人につなぐ</h2>
+
+<div class="mb-goal"><div class="row"><span class="g">この節ですること</span><div>金額から科目を判断させ、承認を人に回します。</div></div><div class="row"><span class="g af">終わるとこうなる</span><div>会話から人の承認まで、1本でつながる形が分かります。</div></div></div>
+
+<p>3体目は経理です。<br>経費のルールを読ませて、勘定科目の判断と承認ルートの案内をさせます。</p>
+
+<p>ここでも1回目は失敗しました。<br>ただし原因は人事のときと違います。</p>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-demos-kr-before.png" alt="" /><figcaption>▲ 参照が外部の税務系サイトになり、「区分基準に関する記載を確認できませんでした」と回答している</figcaption></figure>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-demos-kr-processing.png" alt="" /><figcaption>▲ 原因はこちら。ナレッジの状態が「処理中」で、索引の作成が終わっていなかった</figcaption></figure>
+
+<div class="mb-warn"><span class="wt">準備完了になるまでテストしない</span>アップロード直後は、資料がまだ検索できる状態になっていません。<br>この状態で質問すると、<strong>Web検索を無効にしていても外の情報で答えます</strong>。<br>状態が「準備完了」になってから試します。<br>数分から10分ほどかかります。</div>
+
+<p>索引が終わってから、同じ質問をやり直しました。</p>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-demos-kr-q1.png" alt="" /><figcaption>▲ 20,000円 ÷ 4人 ＝ 1人5,000円。「5,000円以下」の条件を満たすので会議費、と計算を示して回答</figcaption></figure>
+
+<p>境目のちょうど5,000円を「以下」と正しく扱っています。<br>さらに、聞いていない<strong>申請時の記載事項と承認ルート</strong>まで 足しています。<br>ルールの別の章を読んで、必要だと判断したためです。</p>
+
+<p>次に、条件を1つだけ変えて聞きました。</p>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-demos-kr-q2.png" alt="" /><figcaption>▲ 40,000円 ÷ 5人 ＝ 1人8,000円。5,000円を超えるので交際費に変わり、必要な記載も増えている</figcaption></figure>
+
+<div class="mb-point">同じ「取引先との食事」でも、<span class="hl">金額を変えると答えが変わりました</span>。<br>暗記した知識ではなく、ルールを読んで計算しています。<br>さらに「交際費で1件5万円を超える場合は経理部長の承認も必要。<br>今回は4万円のため不要」と、<strong>該当しない条件まで先回りして打ち消して</strong>いました。</div>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-demos-kr-q3.png" alt="" /><figcaption>▲ ルールに無い項目は「本ルールには含まれていません」と答え、経理部へ案内している</figcaption></figure>
+
+<p>経理は3本のなかで、いちばん判断が要る業務です。<br>それでも<strong>承認そのものは人がやる</strong>と指示文で決めてあるので、案内で止まります。</p>
+
+<p>ここまでは案内だけです。<br>実際に<strong>申請を回して、人が承認する</strong>ところまで作りました。</p>
+
+<div class="mb-term"><span class="tm">用語</span><b>承認（Approvals）</b>：フローの途中で人の判断を待つ仕組み。<br>依頼がメールやTeamsに届き、承認か拒否が押されるまでフローは待機したままになる。</div>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-demos-kr-flow-design.png" alt="" /><figcaption>▲ フローの構成。入力は金額（数値）・内容・科目。金額が5万円以上かで分岐する</figcaption></figure>
+
+<div class="mb-why"><span class="wy">なぜそうするか</span>金額は<strong>数値の型</strong>にする。<br>テキストのままだと大小を比べられず、分岐が作れない。<br>入力の型は、あとの分岐でできることを決めてしまう。</div>
+
+<p>作ったフローをエージェントの道具として接続し、会話から申請してみました。</p>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-demos-kr-askback.png" alt="" /><figcaption>▲ 申請を頼むと、エージェントが足りない情報（目的・参加者）を先に聞き返した</figcaption></figure>
+
+<p>必要な情報がそろっていないと判断して、確認を挟んでいます。<br>指示文で「申請の可否は判断しない」と決めてあるので、勝手に埋めることはしません。</p>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-demos-kr-flow-fired.png" alt="" /><figcaption>▲ 情報を答えるとフローが実行された。金額は 60000 の数値として渡っている</figcaption></figure>
+
+<p>会話に書いた「6万円」が、フローの入力では <strong>60000（Number）</strong>になっています。<br>文章から数値を取り出して、型に合わせて渡しています。</p>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-demos-kr-mail.png" alt="" /><figcaption>▲ 届いた承認依頼。件名・金額・内容が入り、承認と拒否のボタンが付いている</figcaption></figure>
+
+<p>この依頼を<strong>翌日に承認</strong>してみました。<br>フローは待機したままだったので、そこから再開します。</p>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-demos-kr-history.png" alt="" /><figcaption>▲ 実行履歴。条件は True に進み、「開始して承認を待機」も完了している</figcaption></figure>
+
+<div class="mb-point">人が押すまで<span class="hl">1日近く待機して、押した瞬間に続きが動きました</span>。<br>AIがやったのは、科目の判断と、誰に回すかの振り分けまで。<br><strong>可否を決めるのは人</strong>という形が、そのまま残っています。</div>
+
+<div class="mb-note"><p class="nt-ttl">&#x203b; 差し込みのゴミに注意</p>届いたメールの詳細欄が「科目： ＋交際費／金額： ＋60000」となっています。<br>ラベルと動的な値の間に、全角の記号が残ったままでした。<br>動作には影響しませんが、実際に配るものでは消しておく箇所です。</div>
+
+&nbsp;
+
+<div class="speech-wrap sb-id-14 sbs-stn sbp-l sbis-cb cf"><div class="speech-person"><figure class="speech-icon"><img class="speech-icon-image" src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="" width="1024" height="1024" /></figure></div><div class="speech-balloon">金額で答えが変わるところまでは自動で、承認は人が押す、と分けました。<br>全部AIに任せない線引きが、実務では大事だと思います。</div></div>
+
+<div class="mb-nav"><span class="lb">いまここ</span><div class="cells"><div class="n done"><span class="ix">1</span>&#x2713; 3本の位置づけ</div><div class="n done"><span class="ix">2</span>&#x2713; 人事：答える</div><div class="n done"><span class="ix">3</span>&#x2713; 情シス：記録する</div><div class="n done"><span class="ix">4</span>&#x2713; 経理：人につなぐ</div><div class="n on"><span class="ix">5</span>4点セット</div></div></div>
+
+<h2>⑤ うまく動かすための4点セット</h2>
+
+<div class="mb-goal"><div class="row"><span class="g">この節ですること</span><div>3本の検証から見えた、うまく動かすための4つを整理します。</div></div><div class="row"><span class="g af">終わるとこうなる</span><div>次に自分で作るときの手順が決まります。</div></div></div>
+
+<p>3体を作って分かったのは、社内資料で答えさせるには4つがそろっている必要がある、ということでした。<br>人事では3つが欠け、経理では1つが欠けていました。</p>
+
+<figure class="mb-fig"><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-demos-fig-4set.png" alt="" /><figcaption>▲ 4つのうち1つでも欠けると、社内資料があるのに一般論が返ってくる</figcaption></figure>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-demos-hr-sp-error.png" alt="" /><figcaption>▲ 1つ目の実例。OneDrive上のファイルを参照で選ぶと SharePoint のソース扱いになり、索引に失敗した</figcaption></figure>
+
+<p>同じファイルでも、<strong>ローカルからドラッグ＆ドロップで入れると「ファイル」として登録され、問題なく索引されました</strong>。<br>参照でつなぐか、実体を持ち込むかで扱いが変わります。</p>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-demos-hr-ready.png" alt="" /><figcaption>▲ 正しく入った状態。ファイルは「準備完了」、Web 検索は無効になっている</figcaption></figure>
+
+<ul>
+<li><strong>① ローカルから入れる</strong>：参照でつなぐと種類が変わり、索引に失敗することがある</li>
+<li><strong>② 説明に質問の言葉を入れる</strong>：利用者が使う語を入れると検索が当たる</li>
+<li><strong>③ 指示文で根拠を縛る</strong>：「ナレッジに登録した資料のみを根拠にする」と書く</li>
+<li><strong>④ 準備完了まで待つ</strong>：処理中に質問すると、資料を読めずに答えてしまう</li>
+</ul>
+
+&nbsp;
+
+<div class="mb-nav"><span class="lb">ここまで完了</span><div class="cells"><div class="n done"><span class="ix">1</span>&#x2713; 3本の位置づけ</div><div class="n done"><span class="ix">2</span>&#x2713; 人事：答える</div><div class="n done"><span class="ix">3</span>&#x2713; 情シス：記録する</div><div class="n done"><span class="ix">4</span>&#x2713; 経理：人につなぐ</div><div class="n done"><span class="ix">5</span>&#x2713; 4点セット</div></div></div>
+
+<h2>⑥ 作業前に押さえておく仕様</h2>
+
+<ul>
+<li><strong>資料は入れるだけでは使われない</strong>：説明文と指示文で採用を決める</li>
+<li><strong>ツールは指示文で名指しする</strong>：「必ず〇〇ツールを実行して」と書く</li>
+<li><strong>フローは公開しないと接続できない</strong>：未公開のものは道具の一覧に出ない</li>
+<li><strong>トリガーの入力にも説明を書く</strong>：何を入れるかをエージェントが判断できる</li>
+<li><strong>入力の型が分岐を決める</strong>：金額は数値にしないと大小を比べられない</li>
+<li><strong>承認は待機したままになる</strong>：人が押すまでフローは止まって待つ</li>
+<li><strong>接続の失敗はポップアップブロックのことがある</strong>：権限を疑う前にブラウザを見る</li>
+<li><strong>テストは新しいセッションで</strong>：前の会話を引きずったまま比べない</li>
+</ul>
+
+&nbsp;
+
+<div class="mb-nav"><span class="lb">ここまで完了</span><div class="cells"><div class="n done"><span class="ix">1</span>&#x2713; 3本の位置づけ</div><div class="n done"><span class="ix">2</span>&#x2713; 人事：答える</div><div class="n done"><span class="ix">3</span>&#x2713; 情シス：記録する</div><div class="n done"><span class="ix">4</span>&#x2713; 経理：人につなぐ</div><div class="n done"><span class="ix">5</span>&#x2713; 4点セット</div></div></div>
+
+<h2>まとめ</h2>
+
+<ul>
+<li><strong>①</strong> 3本は「答える → 記録する → 判断して人につなぐ」と段階が上がる</li>
+<li><strong>②</strong> 人事は失敗から直す過程が、そのまま作り方の説明になった</li>
+<li><strong>③</strong> 情シスは同じ作り方を最初から適用して、1回で通った</li>
+<li><strong>④</strong> 経理は金額を変えると答えが変わり、ルールを読んで計算していることが分かった</li>
+<li><strong>⑤</strong> 経理は承認まで作った。<br>AIは判断材料まで、可否は人が押す</li>
+<li><strong>⑥</strong> どの業務でも、答えられないことは断って人につなぐ形で終わる</li>
+</ul>
+
+<p>3体に共通していたのは、<strong>最後は人に渡して終わる</strong>ことでした。<br>知らないことを知らないと言えて、その先の窓口を案内できる。<br>業務で使えるかどうかは、ここで決まります。<br>①〜⑥で土台を整えたうえで、この形を1つ作ってみるのが、社内で始めるときのいちばん軽い入り方になります。</p>
+
+<div class="mb-link">①：<a href="https://www.automate136.com/copilot-studio-dev-environment/" target="_blank" rel="noopener">開発用の環境を分けて、既定の環境から出る</a><br>②：<a href="https://www.automate136.com/copilot-studio-dlp-policy/" target="_blank" rel="noopener">DLPで「認証なし」の公開を止める</a><br>③：<a href="https://www.automate136.com/copilot-studio-managed-environment/" target="_blank" rel="noopener">マネージド環境で、エージェントの共有範囲を絞る</a><br>④：<a href="https://www.automate136.com/copilot-studio-credit-visibility/" target="_blank" rel="noopener">クレジットの消費をどこで見るか</a><br>⑤：<a href="https://www.automate136.com/copilot-studio-knowledge-governance/" target="_blank" rel="noopener">ナレッジ ソースを管理側で絞る</a><br>⑥：<a href="https://www.automate136.com/copilot-studio-alm-solution/" target="_blank" rel="noopener">作ったエージェントを別の環境へ移す</a></div>
+
+<p style="font-size:13px;color:#888;line-height:1.9;">※ 本記事は公開日時点の情報をもとに、筆者が実際に試した内容を整理しました。<br>登場する会社名・規程・FAQ・経費ルールは、すべて研修デモ用に作成した架空の内容です。<br>Copilot Studio は更新が続いており、画面や名称、既定値は変わることがあります。</p>
+
+<p style="font-size:13px;color:#888;line-height:1.9;">※ 掲載している画面は、操作中に撮りました。<br>氏名・メールアドレス・環境IDなどは伏せています。<br>構成や図解の一部は、AI と壁打ちしながら作成しています。</p>
+
+</div>
+<style> .mb-body > p{margin:1.9em 0!important;line-height:2.05!important;} .mb-body > h2{margin-top:2.8em!important;} .mb-body > h3{margin-top:2.2em!important;font-size:1.12em;} .mb-body > ul{margin:1.7em 0!important;line-height:2.0;} .mb-body > ul li{margin:.55em 0;} .mb-lead{line-height:2.1;} .hl{color:#6D28D9;font-weight:700;} .mb-fig{margin:40px 0;display:flex;flex-direction:column;align-items:center;background:#e7e0f5;border:1px solid #d0c4ec;border-radius:16px;padding:18px 16px 12px;box-shadow:0 2px 8px rgba(76,29,149,.08);} .mb-fig img{width:100%;max-width:720px;height:auto;display:block;margin:0 auto;background:#fff;border-radius:10px;} .mb-fig figcaption{font-size:.85em;color:#5b4a7a;margin-top:12px;} .mb-shot{margin:44px 0;background:#eceef2;border:1px solid #d9dce3;border-radius:16px;padding:16px 16px 13px;box-shadow:0 3px 12px rgba(15,23,42,.09);} .mb-shot .sh-tag{display:inline-flex;font-size:12.5px;font-weight:800;color:#475569;background:#dde1e9;border-radius:999px;padding:5px 14px;margin-bottom:12px;} .mb-shot img{width:100%;height:auto;display:block;border-radius:10px;border:1px solid #c7cad3;box-shadow:0 6px 18px rgba(15,23,42,.14);} .mb-shot figcaption{font-size:.85em;color:#5b4a7a;margin-top:14px;line-height:1.65;} .mb-point{background:#f7f4fd;border-left:6px solid #8b5cf6;border-radius:8px;padding:18px 24px;margin:36px 0;line-height:2.1;} .mb-why{background:#f2f9f4;border-left:6px solid #4caf82;border-radius:8px;padding:16px 22px;margin:30px 0;line-height:2.0;} .mb-why .wy{font-weight:800;color:#2f855a;display:block;margin-bottom:6px;font-size:.95em;} .mb-note{background:#fffdf5;border:2px solid #ffd54f;border-radius:12px;padding:18px 24px;margin:38px 0;line-height:2.1;} .mb-note .nt-ttl{font-weight:700;color:#e8920c;margin:0 0 14px;} .mb-warn{background:#fff6f6;border-left:6px solid #e57373;border-radius:8px;padding:18px 24px;margin:36px 0;line-height:2.1;} .mb-warn .wt{font-weight:800;color:#c0392b;display:block;margin-bottom:8px;} .mb-code{background:#f6f4fb;border:1px solid #e0d7f3;border-radius:10px;padding:13px 16px;margin:26px 0;font-size:.86em;color:#42335f;line-height:1.9;font-family:'Consolas','SFMono-Regular',monospace;} .mb-step{background:#f7f4fd;border:2px solid #ddd0f2;border-radius:14px;padding:18px 22px 6px;margin:34px 0;} .mb-step .st-ttl{display:flex;align-items:center;gap:12px;font-weight:800;color:#5b21b6;font-size:1.06em;margin-bottom:6px;} .mb-step .st-no{flex:none;width:32px;height:32px;border-radius:50%;background:#7c3aed;color:#fff;display:flex;align-items:center;justify-content:center;} .mb-step ol{margin:6px 0 14px;padding-left:0;list-style:none;counter-reset:s;} .mb-step ol li{position:relative;padding:8px 0 8px 30px;line-height:1.8;border-top:1px solid #ece4f9;} .mb-step ol li:first-child{border-top:none;} .mb-step ol li::before{counter-increment:s;content:counter(s);position:absolute;left:0;top:8px;width:22px;height:22px;background:#ede9fe;color:#5b21b6;border-radius:50%;font-size:.78em;font-weight:800;display:flex;align-items:center;justify-content:center;} .mb-intro{background:#f6f4fb;border:1px solid #e0d7f3;border-left:5px solid #a78bda;border-radius:10px;padding:13px 18px;margin:4px 0 30px;font-size:.9em;color:#5b4a7a;line-height:1.8;} .mb-map{background:#eef2ff;border:1px solid #c7d2fe;border-radius:12px;padding:14px 20px;margin:30px 0;font-size:.92em;color:#3730a3;line-height:1.95;} .mb-map b{color:#4338ca;} .mb-link{background:#eef5ff;border:1px solid #cfe0f7;border-radius:12px;padding:16px 20px;margin:34px 0;line-height:1.9;} .mb-link a{color:#1d4ed8;font-weight:700;} .mb-term{background:#f0f7ff;border:1px solid #cfe0f7;border-left:6px solid #3b82f6;border-radius:10px;padding:14px 20px;margin:28px 0;line-height:1.95;font-size:.96em;} .mb-term .tm{display:inline-flex;font-size:12px;font-weight:800;color:#fff;background:#3b82f6;border-radius:999px;padding:3px 12px;margin-right:10px;vertical-align:2px;} .mb-term b{color:#1e40af;} .speech-balloon{line-height:1.95;}.mb-nav{margin:38px 0 6px;}.mb-nav .lb{display:inline-block;font-size:11.5px;font-weight:800;color:#7c3aed;letter-spacing:.1em;margin-bottom:8px;}.mb-nav .cells{display:flex;gap:6px;flex-wrap:wrap;}.mb-nav .n{flex:1;min-width:126px;background:#f5f2fc;border:1px solid #e4dcf7;border-radius:9px;padding:9px 10px;font-size:.8em;color:#9c94b3;line-height:1.45;text-align:center;font-weight:700;}.mb-nav .n .ix{display:block;font-size:.85em;opacity:.75;margin-bottom:2px;}.mb-nav .n.done{background:#ede9fe;border-color:#d9cdf5;color:#6d28d9;}.mb-nav .n.on{background:#7c3aed;border-color:#7c3aed;color:#fff;box-shadow:0 3px 10px rgba(124,58,237,.28);}.mb-goal{background:#fff;border:2px solid #ddd0f2;border-radius:12px;padding:6px 20px;margin:14px 0 32px;}.mb-goal .row{display:flex;gap:14px;align-items:flex-start;padding:12px 0;border-top:1px solid #f0eafb;line-height:1.9;font-size:.96em;}.mb-goal .row:first-child{border-top:none;}.mb-goal .g{flex:none;width:112px;font-size:11.5px;font-weight:800;color:#7c3aed;background:#f3eefc;border-radius:999px;padding:4px 0;text-align:center;margin-top:5px;}.mb-goal .g.af{color:#2f855a;background:#eaf5ee;}@media(max-width:600px){.mb-nav .n{min-width:calc(50% - 3px);}.mb-goal .g{width:96px;font-size:11px;}}</style>

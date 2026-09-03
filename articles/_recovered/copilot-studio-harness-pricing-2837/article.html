@@ -1,0 +1,164 @@
+<div class="mb-body"><div class="cs-preface">&#x1f4dd; 実際に <b>Copilot Studio を触って検証</b>し、スクショを撮りながら気づいたことをまとめた記録です。<br>機能・画面・料金は更新が続きます。<br>最新の正確な情報は <a href="https://learn.microsoft.com/ja-jp/microsoft-copilot-studio/" target="_blank" rel="noopener">Microsoft 公式（Microsoft Learn）</a> をご確認ください。</div>
+
+<div class="mb-intro">Copilot Studio でエージェントを作るとき、いま選べる主な“作り方（モード）”が2つあります。<br>Microsoft はこれを「ハーネス」と呼び、名前が「GitHub Copilot」と「Standard」です。<br>同じ Copilot Studio の中の2モードですが、<strong>料金の仕組み・かかるタイミング・無料になる範囲</strong>がかなり違います。<br>この記事は、その2つの料金を Microsoft の公式情報（Microsoft Learn と Copilot Studio ライセンスガイド）で確認しながら、どんな時にいくらかかるのか、メリット・デメリット、どちらを選べばいいのかまで整理しました。</div>
+
+<div class="mb-note"><p class="nt-ttl">&#x203b; 「GitHub Copilot」＝ここでは Copilot Studio のモード名です</p>まぎらわしいですが、この記事の「GitHub Copilot」は、<strong>Copilot Studio の“いちばん高機能なモード（ハーネス）”につけられた名前</strong>です。<strong>単体の GitHub Copilot（プログラミング支援ツール）とは別物で、GitHub Copilot のライセンスも要りません。</strong>あくまで Copilot Studio の中の2モードの料金くらべです。</div>
+
+<p class="mb-lead">先に、いちばん大事な結論から。<strong>クレジットが減るのは「動かす（実行）」とき</strong>で、<strong>手作業で設定するだけ・公開するだけなら無料</strong>です。<br>そのうえで、2つのモードは「いつ・いくら・どこまで無料か」が違います。</p>
+
+<figure class="mb-fig"><svg viewBox="0 0 720 260" font-family="'Noto Sans JP',sans-serif"><text x="16" y="46" font-size="14" font-weight="800" fill="#1D4ED8">Standard</text><rect x="16" y="58" width="250" height="46" rx="10" fill="#EAF1FF" stroke="#2563EB" stroke-width="2"/><text x="141" y="80" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1E40AF">作成・設定</text><text x="141" y="97" text-anchor="middle" font-size="11.5" fill="#2e7d55">無料</text><rect x="278" y="58" width="120" height="46" rx="10" fill="#EAF1FF" stroke="#2563EB" stroke-width="2"/><text x="338" y="80" text-anchor="middle" font-size="12.5" font-weight="700" fill="#1E40AF">公開</text><text x="338" y="97" text-anchor="middle" font-size="11.5" fill="#2e7d55">無料</text><rect x="410" y="58" width="294" height="46" rx="10" fill="#FEecEc" stroke="#EF4444" stroke-width="2"/><text x="557" y="80" text-anchor="middle" font-size="12.5" font-weight="700" fill="#991B1B">実行（ランタイム）</text><text x="557" y="97" text-anchor="middle" font-size="11.5" fill="#c0392b">クレジット消費（社内はM365無料枠）</text><text x="16" y="164" font-size="14" font-weight="800" fill="#5B21B6">GitHub Copilot</text><rect x="16" y="176" width="120" height="46" rx="10" fill="#F3ECFF" stroke="#7C3AED" stroke-width="2"/><text x="76" y="198" text-anchor="middle" font-size="12" font-weight="700" fill="#5B21B6">手作業の設定</text><text x="76" y="215" text-anchor="middle" font-size="11.5" fill="#2e7d55">無料</text><rect x="148" y="176" width="266" height="46" rx="10" fill="#FEecEc" stroke="#EF4444" stroke-width="2"/><text x="281" y="196" text-anchor="middle" font-size="12" font-weight="700" fill="#991B1B">自然言語作成・プレビュー・評価</text><text x="281" y="213" text-anchor="middle" font-size="11.5" fill="#c0392b">クレジット消費</text><rect x="426" y="176" width="278" height="46" rx="10" fill="#FEecEc" stroke="#EF4444" stroke-width="2"/><text x="565" y="196" text-anchor="middle" font-size="12" font-weight="700" fill="#991B1B">実行（ランタイム）</text><text x="565" y="213" text-anchor="middle" font-size="11.5" fill="#c0392b">クレジット消費（無料枠なし）</text></svg><figcaption>▲ 課金の“始まり”が違う。Standard は公開後の実行から。GitHub Copilot は自然言語での作成・プレビュー・評価から（どちらも手作業の設定は無料）</figcaption></figure>
+
+&nbsp;
+
+<div class="mb-nav"><span class="lb">いまここ</span><div class="cells"><div class="n on"><span class="ix">1</span>共通の通貨</div><div class="n"><span class="ix">2</span>無料と課金の早見表</div><div class="n"><span class="ix">3</span>課金が始まる時</div><div class="n"><span class="ix">4</span>Standardの料金</div><div class="n"><span class="ix">5</span>GitHub側の料金</div><div class="n"><span class="ix">6</span>無料枠の線引き</div><div class="n"><span class="ix">7</span>長所と短所</div><div class="n"><span class="ix">8</span>どちらを選ぶか</div></div></div>
+
+<h2>① 大前提：料金は「Copilot Credits」という共通の通貨</h2>
+
+<div class="mb-goal"><div class="row"><span class="g">この節で分かること</span><div>料金の単位が Copilot Credits で共通だと確認します。</div></div><div class="row"><span class="g af">読み終えるとこうなる</span><div>比較の土台ができます。</div></div></div>
+
+<p>Copilot Studio の料金は、<strong>Copilot Credits（コパイロット クレジット）</strong>という共通の単位で数えます。<br>2025年9月に、それまでの「メッセージ」からこの呼び方に一本化されました。</p>
+
+<p>ここで最初のポイント。<strong>「使う土台・使わない土台」があるのではありません。</strong>GitHub Copilot も Standard も、<strong>動かせばクレジットを消費します</strong>。<br>違うのは、消費の<strong>測り方</strong>と<strong>量</strong>、そして<strong>無料になる範囲</strong>です。</p>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-hpricing-create-2.png" alt="" /><figcaption>▲ 新規作成メニュー。GitHub Copilot 側には「Uses credits（クレジットを使う）」と明示されている。作り始めから消費することへの注意書き</figcaption></figure>
+
+&nbsp;
+
+<div class="speech-wrap sb-id-14 sbs-stn sbp-l sbis-cb cf"><div class="speech-person"><figure class="speech-icon"><img class="speech-icon-image" src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="" width="1024" height="1024" /></figure></div><div class="speech-balloon">料金は Copilot Credits という共通の単位で数えます。<br>まずここをそろえると、2つを同じ物差しで比べられます。</div></div>
+
+<div class="mb-nav"><span class="lb">いまここ</span><div class="cells"><div class="n done"><span class="ix">1</span>&#x2713; 共通の通貨</div><div class="n on"><span class="ix">2</span>無料と課金の早見表</div><div class="n"><span class="ix">3</span>課金が始まる時</div><div class="n"><span class="ix">4</span>Standardの料金</div><div class="n"><span class="ix">5</span>GitHub側の料金</div><div class="n"><span class="ix">6</span>無料枠の線引き</div><div class="n"><span class="ix">7</span>長所と短所</div><div class="n"><span class="ix">8</span>どちらを選ぶか</div></div></div>
+
+<h2>② 何が無料で、何が課金か（早見表）</h2>
+
+<div class="mb-goal"><div class="row"><span class="g">この節で分かること</span><div>何が無料で何が課金かを表で見ます。</div></div><div class="row"><span class="g af">読み終えるとこうなる</span><div>おおまかな線が引けます。</div></div></div>
+
+<p>操作の種類ごとに、無料か課金かが決まります。<br>ハーネス共通で言えるのは「<strong>LLM（AI）を使う操作は課金／手作業の設定は無料</strong>」という線引きです。</p>
+
+<table class="ptbl"><tr><th>操作</th><th>Standard</th><th>GitHub Copilot</th></tr><tr><td class="pt">手作業の設定（LLM不使用）</td><td class="free">無料</td><td class="free">無料</td></tr><tr><td class="pt">自然言語での作成・プレビュー・評価</td><td>―（主に手作業で作る）</td><td class="paid">消費</td></tr><tr><td class="pt">公開（Publish）</td><td class="free">無料</td><td class="free">無料</td></tr><tr><td class="pt">実行（ランタイム）</td><td class="paid">消費<span style="color:#2e7d55">（社内はM365無料枠あり）</span></td><td class="paid">消費（無料枠なし）</td></tr><tr><td class="pt">ワークフロー実行</td><td colspan="2">エージェントフロー＝消費（100アクション=13）／Power Automateクラウドフロー＝PAライセンス（クレジット対象外）</td></tr></table>
+
+<div class="mb-note"><p class="nt-ttl">&#x203b; “作る”と“動かす”を分けて考える</p>設定を手で組むだけなら、どちらの土台でもお金はかかりません。<br>差が出るのは、AIに考えさせたり（作成・プレビュー・評価）、実際に動かしたり（実行）したときです。<br>GitHub Copilot は自然言語で作る前提なので、<strong>作っている段階から消費が始まりやすい</strong>点に注意します。</div>
+
+&nbsp;
+
+<div class="mb-nav"><span class="lb">いまここ</span><div class="cells"><div class="n done"><span class="ix">1</span>&#x2713; 共通の通貨</div><div class="n done"><span class="ix">2</span>&#x2713; 無料と課金の早見表</div><div class="n on"><span class="ix">3</span>課金が始まる時</div><div class="n"><span class="ix">4</span>Standardの料金</div><div class="n"><span class="ix">5</span>GitHub側の料金</div><div class="n"><span class="ix">6</span>無料枠の線引き</div><div class="n"><span class="ix">7</span>長所と短所</div><div class="n"><span class="ix">8</span>どちらを選ぶか</div></div></div>
+
+<h2>③ いちばんの違い：課金が「始まるタイミング」</h2>
+
+<div class="mb-goal"><div class="row"><span class="g">この節で分かること</span><div>2つのモードで、課金が始まるタイミングを比べます。</div></div><div class="row"><span class="g af">読み終えるとこうなる</span><div>違いの核心が分かります。</div></div></div>
+
+<ul>
+<li><strong>Standard</strong>：<strong>公開したあとの実行</strong>から課金。<br>作成中・テスト中は基本かからない（手作業の設定が中心のため）。</li>
+<li><strong>GitHub Copilot</strong>：<strong>作り始め（自然言語での作成・プレビュー・評価）から</strong>課金。<br>作って試すだけでもクレジットが減る。</li>
+</ul>
+
+<div class="mb-point">同じ「エージェントを1つ作る」でも、Standard は<span class="hl">公開して使い始めてから</span>、GitHub Copilot は<span class="hl">作って試している時点から</span>メーターが回り始めます。<br>試作をくり返すなら、この違いは地味に効いてきます。</div>
+
+&nbsp;
+
+<div class="speech-wrap sb-id-14 sbs-stn sbp-l sbis-cb cf"><div class="speech-person"><figure class="speech-icon"><img class="speech-icon-image" src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="" width="1024" height="1024" /></figure></div><div class="speech-balloon">2つの一番の違いは、課金が始まるタイミングでした。<br>ここが分かると、どちらが自分に向くか見えてきます。</div></div>
+
+<div class="mb-nav"><span class="lb">いまここ</span><div class="cells"><div class="n done"><span class="ix">1</span>&#x2713; 共通の通貨</div><div class="n done"><span class="ix">2</span>&#x2713; 無料と課金の早見表</div><div class="n done"><span class="ix">3</span>&#x2713; 課金が始まる時</div><div class="n on"><span class="ix">4</span>Standardの料金</div><div class="n"><span class="ix">5</span>GitHub側の料金</div><div class="n"><span class="ix">6</span>無料枠の線引き</div><div class="n"><span class="ix">7</span>長所と短所</div><div class="n"><span class="ix">8</span>どちらを選ぶか</div></div></div>
+
+<h2>④ Standard の料金：応答・アクション単位の「レート表」</h2>
+
+<div class="mb-goal"><div class="row"><span class="g">この節で分かること</span><div>Standard のレート表を見ます。</div></div><div class="row"><span class="g af">読み終えるとこうなる</span><div>回数から金額を出せます。</div></div></div>
+
+<p>Standard は、機能ごとに<strong>1回いくら</strong>が決まっています。<br>回数×レートで見積もれるのが強みです。</p>
+
+<table class="ptbl"><tr><th>機能</th><th>1回のレート</th></tr><tr><td class="pt">定型回答（Classic）</td><td class="num">1</td></tr><tr><td class="pt">生成回答（Generative）</td><td class="num">2</td></tr><tr><td class="pt">エージェントアクション（トリガー・推論・トピック遷移）</td><td class="num">5</td></tr><tr><td class="pt">テナント Graph グラウンディング</td><td class="num">10</td></tr><tr><td class="pt">エージェントフロー</td><td class="num">13 / 100アクション</td></tr><tr><td class="pt">AIツール（基本／標準／プレミアム推論）</td><td class="num">1 / 15 / 100（10応答）</td></tr><tr><td class="pt">コンテンツ処理</td><td class="num">8 / ページ</td></tr></table>
+
+<p>公式の計算例を見ると、規模感がつかめます（いずれも1日あたり）。</p>
+
+<div class="calc"><b>顧客サポート</b>（定型4＋生成2を1回、1日900人）：<code>[(4×1)+(2×2)] × 900 = 7,200 クレジット/日</code></div>
+
+<div class="calc"><b>社内・Graph参照</b>（生成4＋Graph4を1回、100人）：<code>[(4×2)+(4×10)] × 100 = 4,800 クレジット/日</code></div>
+
+<div class="calc"><b>自律オーダー処理</b>（注文ごとに4アクション）：<code>4 × 5 = 20 クレジット/回</code></div>
+
+<div class="mb-note"><p class="nt-ttl">&#x1f4a1; 見積りツールがある</p>Microsoft が用意している <strong>agent usage estimator</strong>（microsoft.github.io/copilot-studio-estimator）で、エージェントの種類・トラフィック・ナレッジ・ツールから、必要なクレジットを試算できます。</div>
+
+&nbsp;
+
+<div class="mb-nav"><span class="lb">いまここ</span><div class="cells"><div class="n done"><span class="ix">1</span>&#x2713; 共通の通貨</div><div class="n done"><span class="ix">2</span>&#x2713; 無料と課金の早見表</div><div class="n done"><span class="ix">3</span>&#x2713; 課金が始まる時</div><div class="n done"><span class="ix">4</span>&#x2713; Standardの料金</div><div class="n on"><span class="ix">5</span>GitHub側の料金</div><div class="n"><span class="ix">6</span>無料枠の線引き</div><div class="n"><span class="ix">7</span>長所と短所</div><div class="n"><span class="ix">8</span>どちらを選ぶか</div></div></div>
+
+<h2>⑤ GitHub Copilot の料金：複雑さで変わる「フル従量」</h2>
+
+<div class="mb-goal"><div class="row"><span class="g">この節で分かること</span><div>GitHub Copilot 側の従量の仕組みを見ます。</div></div><div class="row"><span class="g af">読み終えるとこうなる</span><div>金額が変動する理由が分かります。</div></div></div>
+
+<p>GitHub Copilot は、Standard のような固定レート表ではありません。<strong>LLM が使ったトークン量・ツール（ナレッジやMCP）・ハーネス自体</strong>までまとめて従量で計算されます。</p>
+
+<ul>
+<li><strong>何に課金されるか</strong>：LLMトークン＋ツール＋ハーネスの土台そのもの</li>
+<li><strong>いつ課金されるか</strong>：自然言語での作成・プレビュー・評価・実行（作り始めから）</li>
+<li><strong>量の決まり方</strong>：タスクが複雑で、自律的に何ステップも動くほど多くなる</li>
+<li><strong>無料になるのは</strong>：手作業だけの設定と、公開そのもの</li>
+</ul>
+
+<div class="mb-point">自律的に動ける代わりに、<span class="hl">消費量が読みにくい</span>のが GitHub Copilot でした。<br>自律的に動く＝裏で何回も考えて道具を使う、ということなので、<strong>コストの上限設定や消費モニタリングとセット</strong>で使うことになります。</div>
+
+&nbsp;
+
+<div class="mb-nav"><span class="lb">いまここ</span><div class="cells"><div class="n done"><span class="ix">1</span>&#x2713; 共通の通貨</div><div class="n done"><span class="ix">2</span>&#x2713; 無料と課金の早見表</div><div class="n done"><span class="ix">3</span>&#x2713; 課金が始まる時</div><div class="n done"><span class="ix">4</span>&#x2713; Standardの料金</div><div class="n done"><span class="ix">5</span>&#x2713; GitHub側の料金</div><div class="n on"><span class="ix">6</span>無料枠の線引き</div><div class="n"><span class="ix">7</span>長所と短所</div><div class="n"><span class="ix">8</span>どちらを選ぶか</div></div></div>
+
+<h2>⑥ 混乱しやすい「無料枠」の正確な線引き</h2>
+
+<div class="mb-goal"><div class="row"><span class="g">この節で分かること</span><div>無料枠の正確な線引きを確認します。</div></div><div class="row"><span class="g af">読み終えるとこうなる</span><div>誤って断言せずに済みます。</div></div></div>
+
+<p>「M365 Copilot ライセンスがあれば無料」とよく言われますが、<strong>それが効くのは Standard と Copilot Chat 側だけ</strong>です。</p>
+
+<ul>
+<li><strong>無料になる</strong>：M365 Copilot ライセンス保有者が、<strong>Standard／Copilot Chat</strong> の社内向け（B2E）エージェントを、Teams／Chat／SharePoint などの Microsoft チャネルで、自分の M365 Copilot の資格で使う場合（公正利用の範囲）。</li>
+<li><strong>無料にならない</strong>：<strong>GitHub Copilot ハーネスの実行</strong>。<br>M365 Copilot の権利には含まれず、必ずクレジットを消費する。</li>
+</ul>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-hpricing-banner.png" alt="" /><figcaption>▲ 管理画面に出ていた移行の通知。GitHub Copilot 側は、8月3日より前に作ったエージェントも9月1日以降はクレジット課金へ移行する（2026-08-11 時点）</figcaption></figure>
+
+<div class="mb-warn"><span class="wt">&#x26a0; ここを取り違えると見積りがズレる</span>「GitHub Copilot でも M365 の無料枠が効くはず」と思って設計すると、実行のたびにクレジットが減って想定が狂います。<strong>自律的に動く GitHub Copilot は、社内利用でも無料枠の対象外</strong>——ここだけは押さえておきます。</div>
+
+&nbsp;
+
+<div class="speech-wrap sb-id-14 sbs-stn sbp-l sbis-cb cf"><div class="speech-person"><figure class="speech-icon"><img class="speech-icon-image" src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="" width="1024" height="1024" /></figure></div><div class="speech-balloon">無料枠の線引きは誤解されやすい所です。<br>私も最初あいまいだったので、公式の書き方を確認してから整理しました。</div></div>
+
+<div class="mb-nav"><span class="lb">いまここ</span><div class="cells"><div class="n done"><span class="ix">1</span>&#x2713; 共通の通貨</div><div class="n done"><span class="ix">2</span>&#x2713; 無料と課金の早見表</div><div class="n done"><span class="ix">3</span>&#x2713; 課金が始まる時</div><div class="n done"><span class="ix">4</span>&#x2713; Standardの料金</div><div class="n done"><span class="ix">5</span>&#x2713; GitHub側の料金</div><div class="n done"><span class="ix">6</span>&#x2713; 無料枠の線引き</div><div class="n on"><span class="ix">7</span>長所と短所</div><div class="n"><span class="ix">8</span>どちらを選ぶか</div></div></div>
+
+<h2>⑦ メリット・デメリット</h2>
+
+<div class="mb-goal"><div class="row"><span class="g">この節で分かること</span><div>それぞれの長所と短所を並べます。</div></div><div class="row"><span class="g af">読み終えるとこうなる</span><div>判断の材料がそろいます。</div></div></div>
+
+<div class="cmp"><div class="col gh"><h4>&#x1f9e0; GitHub Copilot</h4><div class="lbl p">メリット</div><ul><li>ゴールを渡すだけで自律的に段取り・実行</li><li>複雑な多段業務を最後までやり切る</li><li>Word/Excel/PPT/PDF の作成・編集、スキル・記憶、失敗回復</li><li>手作業だけの設定は無料</li></ul><div class="lbl m">デメリット</div><ul><li>実行は必ず従量・M365無償枠なし</li><li>作成・プレビュー・評価でも消費（作り始めから）</li><li>消費量が読みにくい</li><li>上限設定・モニタリングが実質必須</li></ul></div><div class="col st"><h4>&#x1f4cb; Standard</h4><div class="lbl p">メリット</div><ul><li>レート表で見積もれる（回数×単価）</li><li>公開するまでは無料</li><li>M365 Copilot 保有者の社内利用は無料枠</li><li>大量の定型を安定してさばける・予測可能</li></ul><div class="lbl m">デメリット</div><ul><li>トピックや分岐を自分で全部設計</li><li>自律的・複雑な処理は不得意</li><li>ファイル生成やスキル・記憶は主眼ではない</li><li>融通が利きにくい</li></ul></div></div>
+
+&nbsp;
+
+<div class="mb-nav"><span class="lb">いまここ</span><div class="cells"><div class="n done"><span class="ix">1</span>&#x2713; 共通の通貨</div><div class="n done"><span class="ix">2</span>&#x2713; 無料と課金の早見表</div><div class="n done"><span class="ix">3</span>&#x2713; 課金が始まる時</div><div class="n done"><span class="ix">4</span>&#x2713; Standardの料金</div><div class="n done"><span class="ix">5</span>&#x2713; GitHub側の料金</div><div class="n done"><span class="ix">6</span>&#x2713; 無料枠の線引き</div><div class="n done"><span class="ix">7</span>&#x2713; 長所と短所</div><div class="n on"><span class="ix">8</span>どちらを選ぶか</div></div></div>
+
+<h2>⑧ どちらを選べばいいか</h2>
+
+<div class="mb-goal"><div class="row"><span class="g">この節で分かること</span><div>選び方を1つに絞ります。</div></div><div class="row"><span class="g af">読み終えるとこうなる</span><div>自分のケースで結論が出せます。</div></div></div>
+
+<table class="ptbl"><tr><th>やりたいこと・状況</th><th>選ぶ土台</th></tr><tr><td>定型で、コストを見積もって固定したい</td><td class="pt">Standard</td></tr><tr><td>M365 Copilot を配っていて、社内向けに使いたい</td><td class="pt">Standard／Chat</td></tr><tr><td>複雑・自律・ファイル生成・多ツール・失敗回復が要る</td><td class="pt">GitHub Copilot</td></tr><tr><td>手順を全部は書けない業務を、丸ごと任せたい</td><td class="pt">GitHub Copilot</td></tr></table>
+
+<div class="mb-point">ひとことで言うと——<span class="hl">Standard でできるなら Standard、Standard では無理な自律処理だけ GitHub Copilot</span>。<br>コスト面でも、予測できて社内なら無料枠もある Standard が基本で、GitHub Copilot は「そこまでやる必要がある業務」に絞ると無駄がありません。</div>
+
+&nbsp;
+
+<div class="mb-nav"><span class="lb">ここまで完了</span><div class="cells"><div class="n done"><span class="ix">1</span>&#x2713; 共通の通貨</div><div class="n done"><span class="ix">2</span>&#x2713; 無料と課金の早見表</div><div class="n done"><span class="ix">3</span>&#x2713; 課金が始まる時</div><div class="n done"><span class="ix">4</span>&#x2713; Standardの料金</div><div class="n done"><span class="ix">5</span>&#x2713; GitHub側の料金</div><div class="n done"><span class="ix">6</span>&#x2713; 無料枠の線引き</div><div class="n done"><span class="ix">7</span>&#x2713; 長所と短所</div><div class="n done"><span class="ix">8</span>&#x2713; どちらを選ぶか</div></div></div>
+
+<h2>まとめ</h2>
+
+<ul>
+<li><strong>通貨は共通</strong>（Copilot Credits）。<br>どちらも動かせば消費する</li>
+<li><strong>作る＝ほぼ無料／動かす＝課金</strong>。<br>手作業の設定・公開は無料</li>
+<li><strong>課金の始まり</strong>：Standard＝公開後の実行／GitHub Copilot＝作り始め（作成・プレビュー・評価）から</li>
+<li><strong>Standard＝レート課金</strong>（定型1・生成2・アクション5…）で見積もれる。<br>M365保有者の社内利用は無料枠</li>
+<li><strong>GitHub Copilot＝フル従量</strong>（複雑さで変動）。<br>M365無償枠なし。<br>上限管理とセットで</li>
+<li><strong>選び方</strong>：Standard を基本に、無理な自律処理だけ GitHub Copilot</li>
+</ul>
+
+<div class="mb-link">3つのハーネス（GitHub Copilot／Standard／Copilot Chat）の全体像は <a href="https://www.automate136.com/copilot-studio-harness/" target="_blank" rel="noopener">Copilot Studio の「ハーネス」とは｜3つの土台の違い</a> にまとめています。</div>
+
+<p style="font-size:13px;color:#888;line-height:1.9;">※ 本記事の料金・仕様は、公開日時点で Microsoft Learn および Copilot Studio ライセンスガイド（2026年8月）で確認した内容です。Copilot Studio は更新が続いており、レート・無料枠・名称は変わることがあります。導入前に、最新の公式情報とご自身のライセンス条件を必ずご確認ください。金額の見積もりは環境によって異なります。</p>
+
+<p style="font-size:13px;color:#888;line-height:1.9;">※ 図解は説明用に作成しました。構成や図解の一部は、AI と壁打ちしながら作成しています。</p>
+
+</div>
+<style> .mb-body > p{margin:1.9em 0!important;line-height:2.05!important;} .mb-body > h2{margin-top:2.8em!important;} .mb-body > h3{margin-top:2.4em!important;} .mb-body > ul{margin:1.7em 0!important;line-height:2.0;} .mb-body > ul li{margin:.55em 0;} .mb-lead{line-height:2.1;} .hl{color:#6D28D9;font-weight:700;} .mb-fig{margin:40px 0;display:flex;flex-direction:column;align-items:center;background:#e7e0f5;border:1px solid #d0c4ec;border-radius:16px;padding:18px 16px 12px;box-shadow:0 2px 8px rgba(76,29,149,.08);} .mb-fig svg{width:100%;max-width:720px;height:auto;display:block;margin:0 auto;background:#fff;border-radius:10px;padding:14px 10px;} .mb-fig figcaption{font-size:.85em;color:#5b4a7a;margin-top:12px;} .mb-shot{margin:40px 0;background:#eceef2;border:1px solid #d9dce3;border-radius:16px;padding:16px 16px 13px;box-shadow:0 3px 12px rgba(15,23,42,.09);display:flex;flex-direction:column;align-items:center;} .mb-shot .sh-tag{align-self:flex-start;display:inline-flex;font-size:12.5px;font-weight:800;color:#475569;background:#dde1e9;border-radius:999px;padding:5px 14px;margin-bottom:12px;} .mb-shot img{max-width:100%;height:auto;display:block;border-radius:10px;border:1px solid #c7cad3;box-shadow:0 6px 18px rgba(15,23,42,.14);} .mb-shot figcaption{font-size:1.02em;color:#5b4a7a;margin-top:14px;line-height:1.8;align-self:flex-start;} .mb-point{background:#f7f4fd;border-left:6px solid #8b5cf6;border-radius:8px;padding:18px 24px;margin:36px 0;line-height:2.1;} .mb-note{background:#fffdf5;border:2px solid #ffd54f;border-radius:12px;padding:18px 24px;margin:38px 0;line-height:2.1;} .mb-note .nt-ttl{font-weight:700;color:#e8920c;margin:0 0 14px;} .mb-warn{background:#fff6f6;border-left:6px solid #e57373;border-radius:8px;padding:18px 24px;margin:36px 0;line-height:2.1;} .mb-warn .wt{font-weight:800;color:#c0392b;display:block;margin-bottom:8px;} .mb-intro{background:#f6f4fb;border:1px solid #e0d7f3;border-left:5px solid #a78bda;border-radius:10px;padding:13px 18px;margin:4px 0 30px;font-size:.9em;color:#5b4a7a;line-height:1.8;} .mb-link{background:#eef5ff;border:1px solid #cfe0f7;border-radius:12px;padding:16px 20px;margin:34px 0;line-height:1.9;} .mb-link a{color:#1d4ed8;font-weight:700;} .ptbl{width:100%;border-collapse:collapse;font-size:.9em;margin:22px 0;background:#fff;} .ptbl th,.ptbl td{border:1px solid #e4dbf6;padding:11px 13px;text-align:left;line-height:1.7;vertical-align:top;} .ptbl th{background:#f3f0fb;color:#3b2a5a;font-size:.9em;} .ptbl td.pt{color:#5b21b6;font-weight:700;white-space:nowrap;} .ptbl td.num{text-align:right;font-weight:700;color:#1f2937;white-space:nowrap;} .ptbl td.free{color:#2e7d55;font-weight:700;} .ptbl td.paid{color:#c0392b;font-weight:700;} .cmp{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:28px 0;} @media(max-width:600px){.cmp{grid-template-columns:1fr;}} .cmp .col{border-radius:14px;padding:16px 18px;background:#fff;box-shadow:0 2px 8px rgba(76,29,149,.07);} .cmp .col.gh{border:1px solid #ddd0f2;border-top:5px solid #7C3AED;} .cmp .col.st{border:1px solid #cfe0f7;border-top:5px solid #2563EB;} .cmp .col h4{margin:2px 0 10px;font-size:1.05em;} .cmp .col.gh h4{color:#5b21b6;}.cmp .col.st h4{color:#1d4ed8;} .cmp .lbl{font-size:.82em;font-weight:800;letter-spacing:.02em;margin:10px 0 4px;} .cmp .lbl.p{color:#2e7d55;}.cmp .lbl.m{color:#c0392b;} .cmp ul{margin:.2em 0 .6em;padding-left:1.1em;font-size:.9em;line-height:1.7;color:#3b3b45;} .cmp ul li{margin:.25em 0;} .calc{background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:12px 16px;margin:14px 0;font-size:.9em;color:#334155;line-height:1.8;} .calc b{color:#0f172a;} .calc code{background:#eef2f7;border-radius:5px;padding:1px 7px;font-size:.92em;color:#334155;} .cs-preface{background:#eef7f1;border:1px solid #cfe8db;border-left:5px solid #5f8a6e;border-radius:10px;padding:14px 18px;margin:0 0 26px;font-size:.86em;color:#3d5647;line-height:1.85;} .cs-preface b{color:#2f6b4f;} .cs-preface a{color:#1d4ed8;font-weight:700;} .speech-balloon{line-height:1.95;}.mb-nav{margin:38px 0 6px;}.mb-nav .lb{display:inline-block;font-size:11.5px;font-weight:800;color:#7c3aed;letter-spacing:.1em;margin-bottom:8px;}.mb-nav .cells{display:flex;gap:6px;flex-wrap:wrap;}.mb-nav .n{flex:1;min-width:126px;background:#f5f2fc;border:1px solid #e4dcf7;border-radius:9px;padding:9px 10px;font-size:.8em;color:#9c94b3;line-height:1.45;text-align:center;font-weight:700;}.mb-nav .n .ix{display:block;font-size:.85em;opacity:.75;margin-bottom:2px;}.mb-nav .n.done{background:#ede9fe;border-color:#d9cdf5;color:#6d28d9;}.mb-nav .n.on{background:#7c3aed;border-color:#7c3aed;color:#fff;box-shadow:0 3px 10px rgba(124,58,237,.28);}.mb-goal{background:#fff;border:2px solid #ddd0f2;border-radius:12px;padding:6px 20px;margin:14px 0 32px;}.mb-goal .row{display:flex;gap:14px;align-items:flex-start;padding:12px 0;border-top:1px solid #f0eafb;line-height:1.9;font-size:.96em;}.mb-goal .row:first-child{border-top:none;}.mb-goal .g{flex:none;width:112px;font-size:11.5px;font-weight:800;color:#7c3aed;background:#f3eefc;border-radius:999px;padding:4px 0;text-align:center;margin-top:5px;}.mb-goal .g.af{color:#2f855a;background:#eaf5ee;}@media(max-width:600px){.mb-nav .n{min-width:calc(50% - 3px);}.mb-goal .g{width:96px;font-size:11px;}}</style>

@@ -1,0 +1,126 @@
+<div class="mb-body"><div class="cs-preface">&#x1f4dd; 実際に <b>Copilot Studio を触って検証</b>し、スクショを撮りながら気づいたことをまとめた記録です。<br>機能・画面・料金は更新が続きます。<br>最新の正確な情報は <a href="https://learn.microsoft.com/ja-jp/microsoft-copilot-studio/" target="_blank" rel="noopener">Microsoft 公式（Microsoft Learn）</a> をご確認ください。</div>
+
+<div class="mb-intro">Copilot Studio のエージェントは、質問に答えるだけでなく、「フロー」を持たせると記録や通知といった実際の作業までできます。<br>この備忘録は、案内役のエージェントに「届いた質問を Excel に記録するフロー」を持たせたときの、作り方の記録です。<br>新しいエージェントフローの作り方と、作る前に押さえておく仕様をまとめました。</div>
+
+<p class="mb-lead">案内役のエージェントに、受講生から届いた質問を Excel に残す仕事をさせたい、と考えていました。<br>会話で答えるところまではできていたので、そこに「手を動かす」部分を足す、という作業です。</p>
+
+<p class="mb-lead">この記事では、<strong>①フローとは何か ②新しいエージェントフローの作り方 ③中身（Excelに記録）④公開して道具として接続する ⑤動かしてみる</strong>、の順にまとめます。</p>
+
+<div class="cfig"><p class="fig-ttl">エージェントに“手”を持たせるまでの流れ</p><div class="cflow"><div class="step"><span class="st-n">①</span><div class="st-t">フローを作る<br>（エージェントから呼ばれる）</div></div><div class="arrow">→</div><div class="step"><span class="st-n">②</span><div class="st-t">中身を作る<br>（Excelに1行記録）</div></div><div class="arrow">→</div><div class="step"><span class="st-n">③</span><div class="st-t">公開して<br>道具として接続</div></div><div class="arrow">→</div><div class="step"><span class="st-n">④</span><div class="st-t">会話中に<br>エージェントが自動で実行</div></div></div></div>
+
+&nbsp;
+
+<div class="mb-nav"><span class="lb">いまここ</span><div class="cells"><div class="n on"><span class="ix">1</span>フローは手</div><div class="n"><span class="ix">2</span>フローを作る</div><div class="n"><span class="ix">3</span>中身を作る</div><div class="n"><span class="ix">4</span>公開して接続</div><div class="n"><span class="ix">5</span>動かす</div></div></div>
+
+<h2>① フローは、エージェントの“手”</h2>
+
+<div class="mb-goal"><div class="row"><span class="g">この節で分かること</span><div>フローがエージェントの手にあたる、という位置づけを確認します。</div></div><div class="row"><span class="g af">読み終えるとこうなる</span><div>なぜ必要かが分かります。</div></div></div>
+
+<p>エージェントの<strong>会話が「口」</strong>だとすると、<strong>フローは「手」</strong>です。<br>口だけでは答えるところで止まりますが、手があると、その内容を記録したり、メールを送ったりできます。</p>
+
+<figure class="mb-fig"><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-flow-figmain.png" alt="" /><figcaption>▲ 会話（口）で受けて、フロー（手）で作業する。この2つを組み合わせる</figcaption></figure>
+
+&nbsp;
+
+<div class="speech-wrap sb-id-14 sbs-stn sbp-l sbis-cb cf"><div class="speech-person"><figure class="speech-icon"><img class="speech-icon-image" src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="" width="1024" height="1024" /></figure></div><div class="speech-balloon">フローは、エージェントに持たせる「手」です。<br>会話で受け取った内容を、実際の作業につなげる部分になります。</div></div>
+
+<div class="mb-nav"><span class="lb">いまここ</span><div class="cells"><div class="n done"><span class="ix">1</span>&#x2713; フローは手</div><div class="n on"><span class="ix">2</span>フローを作る</div><div class="n"><span class="ix">3</span>中身を作る</div><div class="n"><span class="ix">4</span>公開して接続</div><div class="n"><span class="ix">5</span>動かす</div></div></div>
+
+<h2>② 新しいエージェントフローを作る</h2>
+
+<div class="mb-goal"><div class="row"><span class="g">この節ですること</span><div>エージェントフローを新しく作ります。</div></div><div class="row"><span class="g af">終わるとこうなる</span><div>空のフローができます。</div></div></div>
+
+<p>まず、どの画面から始めるかです。<br>Copilot Studio（copilotstudio.microsoft.com）にサインインした状態から始めます。<br>エージェントの中ではなく、画面いちばん外側の左メニューに「ワークフロー（Workflows）」があります。</p>
+
+<div class="csflow-w"><p class="csflow-t">エージェントフローを作る画面まで</p><div class="csflow"><div class="stp"><span class="sn">①</span><div class="st">Copilot Studioを開く</div></div><div class="ar">→</div><div class="stp"><span class="sn">②</span><div class="st">左メニューの<br>「ワークフロー」</div></div><div class="ar">→</div><div class="stp"><span class="sn">③</span><div class="st">新しいワークフローを作成</div></div><div class="ar">→</div><div class="stp"><span class="sn">④</span><div class="st">トリガーで<br>「Recurrence」等を選ぶ</div></div></div></div>
+
+<p>左メニューの「ワークフロー」から新規作成します。<br>まず決めるのは、<strong>何をきっかけに動くか（トリガー）</strong>です。<br>今回はエージェントから呼ばれて動いてほしいので、<strong>「When an agent calls the workflow（エージェントから呼ばれる）」</strong>を選びます。</p>
+
+<p>これを選ぶと、フローは最初から<strong>2つのまとまり</strong>に分かれました。<br>エージェントから呼ばれる入口と、結果をエージェントに返す出口です。</p>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-flow-flow.png" alt="" /><figcaption>▲ トリガーを「エージェントから呼ばれる」にすると、左の入口（When an agent calls the flow）と、右の出口（Respond to the agent）が自動で並ぶ。入力を受け取って処理し、エージェントに返す往復の形になる</figcaption></figure>
+
+<p>入口のノード（When an agent calls…）をクリックすると、右側に設定パネルが開きます。<br>ここで入力を足します。</p>
+
+<div class="mb-step"><div class="st-ttl"><span class="st-no">入力</span>エージェントから渡してもらう値を決める</div><ol><li>右パネルの <strong>「Add an input」</strong>で入力を1つ追加する</li><li>型は <strong>Text（文字列）</strong>、名前は「質問」にする</li><li>説明の欄に「受講生から届いた質問の文章」と書く</li></ol></div>
+
+<div class="mb-note"><p class="nt-ttl">&#x203b; 入力の「説明」は書いておく</p>入力の名前の横に、説明を書く欄があります。<br>ここを書いておくと、<strong>エージェントが「この入力に何を渡せばいいか」を判断しやすく</strong>なります。<br>空でも動きましたが、説明を入れておくほうが発火が安定しました。</div>
+
+&nbsp;
+
+<div class="mb-nav"><span class="lb">いまここ</span><div class="cells"><div class="n done"><span class="ix">1</span>&#x2713; フローは手</div><div class="n done"><span class="ix">2</span>&#x2713; フローを作る</div><div class="n on"><span class="ix">3</span>中身を作る</div><div class="n"><span class="ix">4</span>公開して接続</div><div class="n"><span class="ix">5</span>動かす</div></div></div>
+
+<h2>③ 中身：Excelに1行記録する</h2>
+
+<div class="mb-goal"><div class="row"><span class="g">この節ですること</span><div>Excelに1行足す処理を組みます。</div></div><div class="row"><span class="g af">終わるとこうなる</span><div>フローが単体で動く状態になります。</div></div></div><figure style="margin:32px 0;background:#eceef2;border:1px solid #d9dce3;border-radius:14px;padding:14px;box-shadow:0 3px 12px rgba(15,23,42,.09);"><span style="display:inline-block;font-size:12.5px;font-weight:800;color:#475569;background:#dde1e9;border-radius:999px;padding:5px 14px;margin-bottom:10px;">&#x1f5a5;&#xfe0f; 実際の画面</span><br><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-flow-node-thin-scaled.png" alt="" style="max-width:100%;height:auto;border-radius:8px;border:1px solid #c7cad3;box-shadow:0 6px 18px rgba(15,23,42,.14);" /><figcaption style="font-size:1.02em;color:#5b4a7a;margin-top:12px;line-height:1.65;">&#x25b2; フロー内で「＋」を押すと出る Add メニュー。Variable・Function・スコープなどの部品や、M365 Copilot・Agent などの AI ノード、コネクタ（Excel など）をここから選んで積み上げる</figcaption></figure>
+
+<p>入口のあとに、Excel の<strong>「表に行を追加」</strong>を足します。<br>ここで、記録先の Excel ファイルとテーブルを指定します。</p>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-flow-excel.png" alt="" /><figcaption>▲ 「表に行を追加」の設定。場所＝OneDrive for Business、ファイル＝記録用のExcel、テーブル＝記録先の表、を順に選ぶ</figcaption></figure>
+
+<div class="mb-warn"><span class="wt">つまずき1：似た名前のアクションを取り違える</span>Excel には名前のよく似たアクションがいくつもあります。<br>今回ほしいのは<strong>「表に行を追加」</strong>ですが、最初にうっかり<strong>「表にキー列を追加」</strong>（＝表に列を足す別物）を選んでいました。<strong>行を足すのか、列を足すのか</strong>を、名前でよく確かめます。</div>
+
+<div class="mb-warn"><span class="wt">つまずき2：ファイルの置き場所とアカウントを合わせる</span>「場所」の初期値が SharePoint サイトのままだと、<strong>OneDrive に置いたファイルが一覧に出てきません</strong>。<br>フローが使う接続のアカウントと、<strong>ファイルを置いた場所のアカウントは一致</strong>している必要があります。<br>今回は「OneDrive for Business」に変えて、そのアカウントの OneDrive に置いた Excel を選びました。</div>
+
+<p>最後に、追加する行の<strong>各列に何を入れるか</strong>を決めます。<br>日時の列には<strong>現在時刻を出す関数</strong>を、質問の列には<strong>入口で受け取った「質問」（前のステップの値）</strong>を入れます。</p>
+
+<div class="mb-warn"><span class="wt">つまずき3：関数と「前のステップの値」を取り違える</span>各列の入力欄には、<strong>関数を書く（数式）</strong>ボタンと、<strong>前のステップの値を選ぶ（動的コンテンツ）</strong>ボタンがあります。<br>日時は「関数」、質問は「前のステップの値」ですが、これを取り違えると、日時の欄に質問が入る、といったズレが起きます。<br>実際に一度やりました。</div>
+
+&nbsp;
+
+<div class="mb-nav"><span class="lb">いまここ</span><div class="cells"><div class="n done"><span class="ix">1</span>&#x2713; フローは手</div><div class="n done"><span class="ix">2</span>&#x2713; フローを作る</div><div class="n done"><span class="ix">3</span>&#x2713; 中身を作る</div><div class="n on"><span class="ix">4</span>公開して接続</div><div class="n"><span class="ix">5</span>動かす</div></div></div>
+
+<h2>④ 公開して、エージェントに“道具”として接続する</h2>
+
+<div class="mb-goal"><div class="row"><span class="g">この節ですること</span><div>公開してから、道具として接続します。</div></div><div class="row"><span class="g af">終わるとこうなる</span><div>エージェントの一覧に並びます。</div></div></div>
+
+<p>フローを公開したら、いったんフロー編集を離れ、エージェントの編集画面（Build）に戻ります。<br>右パネルの Tools が、このフローを道具として足す場所です。</p>
+
+<p>フローができたら、<strong>先に公開（Publish）</strong>します。<br>公開していないフローは、エージェントの道具として選べませんでした。<br>チャネルや取り次ぎと同じで、<span class="hl">公開していないものは使えない</span>という形になっていました。</p>
+
+<p>公開したら、エージェントの右パネルの <strong>Tools</strong> からこのフローを選んで接続します。<br>そして、<strong>Description（説明）に「いつ使うか」を書きます</strong>。</p>
+
+<figure class="mb-shot"><span class="sh-tag">実際の画面</span><img src="https://www.automate136.com/wp-content/uploads/2026/08/cs-flow-desc.png" alt="" /><figcaption>▲ 接続したフローの設定。Description に「受講生から質問を受け取ったら記録する。質問のたびに使う」と書いておく。この説明が、エージェントが道具を使うかどうかの判断材料になる</figcaption></figure>
+
+<div class="mb-point">この <span class="hl">Description が、道具を発火させる引き金</span>です。<strong>「こういうときに、この道具を使う」</strong>と書いておくと、エージェントが会話の中で自分で判断して呼び出します。<br>線でつなぐのではなく、日本語で使いどころを説明しておく、という作り方です。</div>
+
+&nbsp;
+
+<div class="speech-wrap sb-id-14 sbs-stn sbp-l sbis-cb cf"><div class="speech-person"><figure class="speech-icon"><img class="speech-icon-image" src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="" width="1024" height="1024" /></figure></div><div class="speech-balloon">フローは公開しないと、ツールの一覧に出てきません。<br>私は公開を忘れて、なぜ出ないのか少し探しました。</div></div>
+
+<div class="mb-nav"><span class="lb">いまここ</span><div class="cells"><div class="n done"><span class="ix">1</span>&#x2713; フローは手</div><div class="n done"><span class="ix">2</span>&#x2713; フローを作る</div><div class="n done"><span class="ix">3</span>&#x2713; 中身を作る</div><div class="n done"><span class="ix">4</span>&#x2713; 公開して接続</div><div class="n on"><span class="ix">5</span>動かす</div></div></div>
+
+<h2>⑤ 動かしてみる</h2>
+
+<div class="mb-goal"><div class="row"><span class="g">この節ですること</span><div>会話から呼び出して、記録されるかを見ます。</div></div><div class="row"><span class="g af">終わるとこうなる</span><div>会話 から 処理 までが1本でつながります。</div></div></div>
+
+<p>エージェントの Preview で質問を送ると、エージェントが会話で答えつつ、裏で「質問を記録する」フローを呼び、Excel に1行増えます。<br>会話（口）と作業（手）がつながった状態です。</p>
+
+<div class="mb-link">なお、<strong>エージェントにフローを実行させると Copilot Studio のクレジットを消費します</strong>。ここは知らないと請求で驚くところなので、料金の仕組みは別の記事にまとめました。→ <a href="https://www.automate136.com/copilot-studio-cost-design/" target="_blank" rel="noopener">Copilot Studioは“使うほど課金”される｜Power Automateとの使い分けと、コスト暴走を防ぐには</a></div>
+
+&nbsp;
+
+<div class="speech-wrap sb-id-14 sbs-stn sbp-l sbis-cb cf"><div class="speech-person"><figure class="speech-icon"><img class="speech-icon-image" src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="" width="1024" height="1024" /></figure></div><div class="speech-balloon">会話から呼び出して記録まで通ると、会話と作業が1本でつながります。<br>ここまで来ると仕組みが腹落ちすると思います。</div></div>
+
+<div class="mb-nav"><span class="lb">ここまで完了</span><div class="cells"><div class="n done"><span class="ix">1</span>&#x2713; フローは手</div><div class="n done"><span class="ix">2</span>&#x2713; フローを作る</div><div class="n done"><span class="ix">3</span>&#x2713; 中身を作る</div><div class="n done"><span class="ix">4</span>&#x2713; 公開して接続</div><div class="n done"><span class="ix">5</span>&#x2713; 動かす</div></div></div>
+
+<h2>まとめ</h2>
+
+<p>会話するだけのエージェントに、フローという「手」を足すと、記録や通知といった作業までこなせるようになります。</p>
+
+<ul>
+<li><strong>①</strong> フロー＝エージェントの手。<br>会話（口）と組み合わせる</li>
+<li><strong>②</strong> トリガーは「エージェントから呼ばれる」。<br>入口と出口の往復の形になる</li>
+<li><strong>③</strong> 中身は例えばExcelに1行追加。<br>似た名前・置き場所・関数と値の取り違えに注意</li>
+<li><strong>④</strong> 公開してから道具として接続し、Descriptionに「いつ使うか」を書く</li>
+<li><strong>⑤</strong> 実行するとクレジットを使うので、料金の仕組みは把握しておく</li>
+</ul>
+
+<p>作ってみると、いちばんの肝は<strong>「Descriptionにいつ使うかを書く」</strong>ところでした。<br>ここを日本語で書いておくだけで、あとはエージェントが場面を見て自分で道具を使ってくれます。</p>
+
+<p style="font-size:13px;color:#888;line-height:1.9;">※ 本記事は公開日時点の情報をもとに、筆者が実際に作って試した内容を整理しました。Copilot Studio は更新が続いており、画面や名称は変わることがあります。最新の状況は公式情報（Microsoft Learn）もあわせてご確認ください。</p>
+
+<p style="font-size:13px;color:#888;line-height:1.9;">※ 掲載している画面は、操作中に撮っました。構成や図解の一部は、AI と壁打ちしながら作成しています。</p>
+
+</div>
+<style> .mb-body > p{margin:1.9em 0!important;line-height:2.05!important;} .mb-body > h2{margin-top:2.8em!important;} .mb-body > h3{margin-top:2.4em!important;} .mb-body > ul{margin:1.7em 0!important;line-height:2.0;} .mb-body > ul li{margin:.55em 0;} .mb-lead{line-height:2.1;} .hl{color:#6D28D9;font-weight:700;} .mb-fig{margin:40px 0;display:flex;flex-direction:column;align-items:center;background:#e7e0f5;border:1px solid #d0c4ec;border-radius:16px;padding:18px 16px 12px;box-shadow:0 2px 8px rgba(76,29,149,.08);} .mb-fig svg{width:100%;max-width:720px;height:auto;display:block;margin:0 auto;background:#fff;border-radius:10px;padding:14px 10px;} .mb-fig img{width:100%;max-width:720px;height:auto;display:block;margin:0 auto;background:#fff;border-radius:10px;} .mb-fig figcaption{font-size:.85em;color:#5b4a7a;margin-top:12px;} .mb-shot{margin:44px 0;background:#eceef2;border:1px solid #d9dce3;border-radius:16px;padding:16px 16px 13px;box-shadow:0 3px 12px rgba(15,23,42,.09);} .mb-shot .sh-tag{display:inline-flex;font-size:12.5px;font-weight:800;color:#475569;background:#dde1e9;border-radius:999px;padding:5px 14px;margin-bottom:12px;} .mb-shot img{width:100%;height:auto;display:block;border-radius:10px;border:1px solid #c7cad3;box-shadow:0 6px 18px rgba(15,23,42,.14);} .mb-shot figcaption{font-size:1.02em;color:#5b4a7a;margin-top:14px;line-height:1.8;} .mb-point{background:#f7f4fd;border-left:6px solid #8b5cf6;border-radius:8px;padding:18px 24px;margin:36px 0;line-height:2.1;} .mb-note{background:#fffdf5;border:2px solid #ffd54f;border-radius:12px;padding:18px 24px;margin:38px 0;line-height:2.1;} .mb-note .nt-ttl{font-weight:700;color:#e8920c;margin:0 0 14px;} .mb-warn{background:#fff6f6;border-left:6px solid #e57373;border-radius:8px;padding:18px 24px;margin:36px 0;line-height:2.1;} .mb-warn .wt{font-weight:800;color:#c0392b;display:block;margin-bottom:8px;} .mb-step{background:#f7f4fd;border:2px solid #ddd0f2;border-radius:14px;padding:18px 22px 6px;margin:34px 0;} .mb-step .st-ttl{display:flex;align-items:center;gap:12px;font-weight:800;color:#5b21b6;font-size:1.06em;margin-bottom:6px;} .mb-step .st-no{flex:none;width:32px;height:32px;border-radius:50%;background:#7c3aed;color:#fff;display:flex;align-items:center;justify-content:center;} .mb-step ol{margin:6px 0 14px;padding-left:0;list-style:none;counter-reset:s;} .mb-step ol li{position:relative;padding:8px 0 8px 30px;line-height:1.8;border-top:1px solid #ece4f9;} .mb-step ol li:first-child{border-top:none;} .mb-step ol li::before{counter-increment:s;content:counter(s);position:absolute;left:0;top:8px;width:22px;height:22px;background:#ede9fe;color:#5b21b6;border-radius:50%;font-size:.78em;font-weight:800;display:flex;align-items:center;justify-content:center;} .mb-intro{background:#f6f4fb;border:1px solid #e0d7f3;border-left:5px solid #a78bda;border-radius:10px;padding:13px 18px;margin:4px 0 30px;font-size:.9em;color:#5b4a7a;line-height:1.8;} .mb-link{background:#eef5ff;border:1px solid #cfe0f7;border-radius:12px;padding:16px 20px;margin:34px 0;line-height:1.9;} .mb-link a{color:#1d4ed8;font-weight:700;} .cs-preface{background:#eef7f1;border:1px solid #cfe8db;border-left:5px solid #5f8a6e;border-radius:10px;padding:14px 18px;margin:0 0 26px;font-size:.86em;color:#3d5647;line-height:1.85;} .cs-preface b{color:#2f6b4f;} .cs-preface a{color:#1d4ed8;font-weight:700;} .cfig{margin:34px 0;padding:22px 20px 20px;background:#faf8ff;border:1px solid #e6ddf7;border-radius:14px;} .cfig .fig-ttl{font-size:.95em;font-weight:800;color:#5B21B6;margin:0 0 16px;text-align:center;} .cflow{display:flex;flex-wrap:wrap;align-items:stretch;justify-content:center;gap:10px;} .cflow .step{flex:1 1 150px;min-width:128px;background:#fff;border:2px solid #ddd0f2;border-radius:12px;padding:14px 12px;text-align:center;} .cflow .step .st-n{display:inline-block;font-size:.78em;font-weight:800;color:#fff;background:#7C3AED;border-radius:999px;padding:2px 11px;margin-bottom:9px;} .cflow .step .st-t{font-size:.92em;font-weight:700;color:#2b2540;line-height:1.6;} .cflow .arrow{align-self:center;color:#a78bda;font-weight:900;font-size:1.35em;} .csflow-w{margin:30px 0;padding:20px 18px 18px;background:#faf8ff;border:1px solid #e6ddf7;border-radius:14px;} .csflow-t{font-size:.92em;font-weight:800;color:#5B21B6;margin:0 0 15px;text-align:center;} .csflow{display:flex;flex-wrap:wrap;align-items:stretch;justify-content:center;gap:9px;} .csflow .stp{flex:1 1 140px;min-width:120px;background:#fff;border:2px solid #ddd0f2;border-radius:12px;padding:13px 11px;text-align:center;} .csflow .stp .sn{display:inline-block;font-size:.76em;font-weight:800;color:#fff;background:#7C3AED;border-radius:999px;padding:2px 10px;margin-bottom:8px;} .csflow .stp .st{font-size:.9em;font-weight:700;color:#2b2540;line-height:1.55;} .csflow .ar{align-self:center;color:#a78bda;font-weight:900;font-size:1.3em;} .speech-balloon{line-height:1.95;}.mb-nav{margin:38px 0 6px;}.mb-nav .lb{display:inline-block;font-size:11.5px;font-weight:800;color:#7c3aed;letter-spacing:.1em;margin-bottom:8px;}.mb-nav .cells{display:flex;gap:6px;flex-wrap:wrap;}.mb-nav .n{flex:1;min-width:126px;background:#f5f2fc;border:1px solid #e4dcf7;border-radius:9px;padding:9px 10px;font-size:.8em;color:#9c94b3;line-height:1.45;text-align:center;font-weight:700;}.mb-nav .n .ix{display:block;font-size:.85em;opacity:.75;margin-bottom:2px;}.mb-nav .n.done{background:#ede9fe;border-color:#d9cdf5;color:#6d28d9;}.mb-nav .n.on{background:#7c3aed;border-color:#7c3aed;color:#fff;box-shadow:0 3px 10px rgba(124,58,237,.28);}.mb-goal{background:#fff;border:2px solid #ddd0f2;border-radius:12px;padding:6px 20px;margin:14px 0 32px;}.mb-goal .row{display:flex;gap:14px;align-items:flex-start;padding:12px 0;border-top:1px solid #f0eafb;line-height:1.9;font-size:.96em;}.mb-goal .row:first-child{border-top:none;}.mb-goal .g{flex:none;width:112px;font-size:11.5px;font-weight:800;color:#7c3aed;background:#f3eefc;border-radius:999px;padding:4px 0;text-align:center;margin-top:5px;}.mb-goal .g.af{color:#2f855a;background:#eaf5ee;}@media(max-width:600px){.mb-nav .n{min-width:calc(50% - 3px);}.mb-goal .g{width:96px;font-size:11px;}}</style>
