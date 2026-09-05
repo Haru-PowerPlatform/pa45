@@ -160,6 +160,13 @@ def page(vol, sv, ses, prev_s, next_s, head, foot):
     h = re.sub(r'(<meta property="og:url" content=")[^"]*(")',
                lambda m: m.group(1) + f"{SITE}/achievements/insights/vol-{vol:02d}.html" + m.group(2),
                h, count=1)
+    # 回別のアンケートOGP（make-vol-survey-ogp.py で作る）があればそれを使う。
+    # 無い回は共通の insights-can-do.png のまま＝Xカードが空にならない。
+    ogp = ROOT / "assets" / "ogp" / f"pa45-vol{vol}-survey-ogp.png"
+    if ogp.exists():
+        h = re.sub(r'(<meta property="og:image" content=")[^"]*(")',
+                   lambda m: m.group(1) + f"{SITE}/assets/ogp/{ogp.name}" + m.group(2),
+                   h, count=1)
     h = h.replace("</head>", f"<style>{CSS}</style>\n</head>", 1)
     return h + body + foot
 
