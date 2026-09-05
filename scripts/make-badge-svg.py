@@ -48,6 +48,8 @@ SESSIONS = {
     22: ("Office Scripts × Copilot", "2026-08-06", "excelscript"),
     23: ("Return Value & Condition", "2026-08-15", "branch"),
     24: ("Reaction Attendance", "2026-08-22", "reaction"),
+    25: ("Mail Attachment Auto Save", "2026-08-27", "foldermail"),
+    26: ("Daily Status Card", "2026-09-03", "hourencard"),
 }
 
 
@@ -365,12 +367,49 @@ def icon_reaction(g):
   </g>'''
 
 
+
+def icon_hourencard(g):
+    """毎日の報連相カード = カードの3択ボタン（緑/黄/赤）を指でワンタップ。"""
+    gl, gm, gd = g
+    x, y, w, h, r = 336, 268, 208, 196, 20
+    # 見出しと本文の行
+    head = (f'<rect x="{x+20}" y="{y+26}" width="112" height="13" rx="6.5" fill="{gd}" opacity="0.60"/>'
+            f'<rect x="{x+20}" y="{y+50}" width="152" height="10" rx="5" fill="{gm}" opacity="0.40"/>')
+    # 3択ボタン（🟢順調 / 🟡相談したい / 🔴詰まってる）
+    picks = (("#22c55e", "#14532d"), ("#facc15", "#713f12"), ("#ef4444", "#7f1d1d"))
+    rows = ""
+    for i, (fill, edge) in enumerate(picks):
+        by = y + 78 + i * 38
+        rows += (f'<rect x="{x+20}" y="{by}" width="{w-40}" height="30" rx="15" '
+                 f'fill="#fffaf0" stroke="{gd}" stroke-width="3"/>'
+                 f'<circle cx="{x+40}" cy="{by+15}" r="10" fill="{fill}" stroke="{edge}" stroke-width="2.5"/>'
+                 f'<rect x="{x+58}" y="{by+10}" width="{[92, 108, 100][i]}" height="10" rx="5" '
+                 f'fill="{gm}" opacity="0.45"/>')
+    # ワンタップの指（2番目のボタンを押している）
+    tapy = y + 78 + 38 + 15
+    finger = (f'<path d="M{x+150} {tapy+8} q2 -30 18 -44 q12 -10 19 0 q6 8 0 21 l-9 21 h40 '
+              f'q17 0 13 17 l-11 40 q-4 13 -19 13 h-51 z" '
+              f'fill="url(#sparkgrad)" stroke="{gd}" stroke-width="4.5" stroke-linejoin="round"/>')
+    spark = "".join(f'<circle cx="{cx}" cy="{cy}" r="{cr}" fill="{gl}" opacity="0.85"/>'
+                    for cx, cy, cr in ((330, 252, 7), (556, 262, 6), (566, 306, 5)))
+    return f'''
+  <g filter="url(#ishadow)">
+    {spark}
+    <rect x="{x}" y="{y}" width="{w}" height="{h}" rx="{r}" fill="#fffaf0" stroke="{gd}" stroke-width="4.5"/>
+    <path d="M{x} {y+16} V{y+r} Q{x} {y} {x+r} {y} H{x+w-r} Q{x+w} {y} {x+w} {y+r} V{y+16} Z"
+          fill="url(#sparkgrad)"/>
+    {head}
+    {rows}
+    {finger}
+  </g>'''
+
 ICONS = {"foldermail": icon_foldermail, "copilot": icon_copilot,
          "deadline": icon_deadline, "approval": icon_approval,
          "dashboard": icon_dashboard, "card": icon_card,
          "firststep": icon_firststep, "excelscript": icon_excelscript,
          "branch": icon_branch,
-         "reaction": icon_reaction}
+         "reaction": icon_reaction,
+         "hourencard": icon_hourencard}
 
 
 def knurl_dots(cx, cy, r, n, color):
