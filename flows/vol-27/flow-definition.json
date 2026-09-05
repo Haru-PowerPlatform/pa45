@@ -1,0 +1,97 @@
+{
+  "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "$authentication": {
+      "defaultValue": {},
+      "type": "SecureObject"
+    }
+  },
+  "triggers": {
+    "手動でフローをトリガーします - ボタンを押して実行する": {
+      "type": "Request",
+      "kind": "Button",
+      "inputs": {
+        "schema": {
+          "type": "object",
+          "properties": {}
+        }
+      }
+    }
+  },
+  "actions": {
+    "作成 - サンプルデータ": {
+      "type": "Compose",
+      "runAfter": {},
+      "inputs": [
+        {
+          "タイトル": "見積書の作成",
+          "担当者": "山田",
+          "状況": "完了",
+          "登録日": "2026-09-07"
+        },
+        {
+          "タイトル": "検収データの整理",
+          "担当者": "佐藤",
+          "状況": "対応中",
+          "登録日": "2026-09-08"
+        },
+        {
+          "タイトル": "月次レポートの下書き",
+          "担当者": "田中",
+          "状況": "未着手",
+          "登録日": "2026-09-09"
+        }
+      ]
+    },
+    "作成 - 日本時間の今": {
+      "type": "Compose",
+      "runAfter": {
+        "作成 - サンプルデータ": [
+          "Succeeded"
+        ]
+      },
+      "inputs": "@convertTimeZone(utcNow(),'UTC','Tokyo Standard Time','yyyy/MM/dd HH:mm')"
+    },
+    "HTML テーブルの作成": {
+      "type": "Table",
+      "runAfter": {
+        "作成 - 日本時間の今": [
+          "Succeeded"
+        ]
+      },
+      "inputs": {
+        "from": [
+          {
+            "タイトル": "見積書の作成",
+            "担当者": "山田",
+            "状況": "完了",
+            "登録日": "2026-09-07"
+          },
+          {
+            "タイトル": "検収データの整理",
+            "担当者": "佐藤",
+            "状況": "対応中",
+            "登録日": "2026-09-08"
+          },
+          {
+            "タイトル": "月次レポートの下書き",
+            "担当者": "田中",
+            "状況": "未着手",
+            "登録日": "2026-09-09"
+          }
+        ],
+        "format": "HTML"
+      }
+    },
+    "作成 - わざと失敗させます": {
+      "type": "Compose",
+      "runAfter": {
+        "HTML テーブルの作成": [
+          "Succeeded"
+        ]
+      },
+      "inputs": "@startOfWeek(utcNow())"
+    }
+  }
+}
