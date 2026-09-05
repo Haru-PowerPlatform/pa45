@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PA45 第27回｜そのまま貼れるCopilotプロンプト集</title>
+<style>
+:root{
+  --ink:#16202e; --sub:#5c6878; --line:#e3e8f0; --bg:#f5f8fc; --card:#fff;
+  --blue:#2a7dd4; --blue-d:#1d4ed8; --blue-bg:#eaf2fd;
+  --warn:#d97706; --warn-bg:#fffbeb; --ok:#059669;
+  --shadow:0 1px 2px rgba(20,35,60,.06),0 8px 22px rgba(20,35,60,.07);
+}
+*{box-sizing:border-box}
+body{margin:0;padding:30px 18px 70px;background:var(--bg);color:var(--ink);
+  font-family:"Segoe UI","Yu Gothic UI","Meiryo",sans-serif;line-height:1.85;font-size:16px}
+.wrap{max-width:900px;margin:0 auto}
+.head{background:linear-gradient(135deg,#1d4ed8,#2a7dd4);color:#fff;border-radius:16px;
+  padding:26px 28px;box-shadow:var(--shadow);margin-bottom:26px}
+.head .pill{display:inline-block;background:rgba(255,255,255,.2);padding:3px 12px;
+  border-radius:999px;font-size:12.5px;font-weight:700;margin-bottom:8px}
+.head h1{margin:0 0 6px;font-size:25px;line-height:1.4}
+.head p{margin:0;font-size:14px;opacity:.93}
+h2{font-size:19px;margin:34px 0 4px;line-height:1.45}
+.why{color:var(--sub);font-size:14px;margin:0 0 12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;
+  padding:18px 20px;box-shadow:var(--shadow);margin:14px 0 26px}
+.no{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;
+  border-radius:50%;background:radial-gradient(circle at 32% 28%,#5b93f0,#1d4ed8);
+  color:#fff;font-weight:800;font-size:15px;margin-right:9px;vertical-align:-6px;
+  box-shadow:0 2px 5px rgba(29,78,216,.35)}
+pre{background:#0f1b2d;color:#e8eefc;border-radius:11px;padding:15px 17px;overflow-x:auto;
+  font-family:"Consolas","Courier New",monospace;font-size:13.5px;line-height:1.75;margin:0;
+  white-space:pre-wrap;word-break:break-word}
+.fill{color:#ffd479}
+.copy{display:block;margin:9px 0 0 auto;background:var(--blue-bg);border:1px solid rgba(42,125,212,.35);
+  color:var(--blue-d);font-weight:700;font-size:12.5px;padding:6px 15px;border-radius:8px;cursor:pointer}
+.copy:hover{background:#dceafb}
+.copy.done{background:#d1fae5;border-color:#6ee7b7;color:#065f46}
+.note{background:var(--warn-bg);border:1px solid #fcd34d;border-left:6px solid var(--warn);
+  border-radius:12px;padding:15px 18px;margin:16px 0}
+.stop{background:#fef2f2;border:1px solid #fca5a5;border-left:6px solid #dc2626;
+  border-radius:12px;padding:16px 19px;margin:26px 0}
+ul{margin:8px 0;padding-left:21px}li{margin:4px 0}
+footer{margin-top:46px;color:var(--sub);font-size:12.5px;border-top:1px solid var(--line);padding-top:15px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="head">
+  <span class="pill">PA45 第27回</span>
+  <h1>そのまま貼れる Copilot プロンプト集</h1>
+  <p>Power Automate でフローを作るとき、頼み方を変えるだけで返ってくる答えが変わります。<br>黄色の部分を自分の内容に置き換えて、Copilot チャットに貼ってください。</p>
+</div>
+
+<h2><span class="no">1</span>材料を先に見せてから頼む</h2>
+<p class="why">いきなり「作って」と言わない。テスト実行の出力を先に貼ると、項目名を推測されずに済みます。いちばん効きます。</p>
+<div class="card">
+<pre>Power Automate のフローを作っています。
+いまテスト実行したら、次の出力が返ってきました。
+
+<span class="fill">（ここにテスト実行の出力をそのまま貼る）</span>
+
+この中から <span class="fill">「○○」</span> と <span class="fill">「△△」</span> を取り出して、次のアクションで使いたいです。
+動的コンテンツの選び方か、式のどちらかで教えてください。</pre>
+<button class="copy" onclick="cp(this)">コピー</button>
+</div>
+
+<h2><span class="no">2</span>日本語のアクション名も書いてもらう</h2>
+<p class="why">そのまま聞くと英語のアクション名で返ってきます。日本語画面にその名前は無いので、毎回そこで手が止まります。先に頼んでおくと激減します。</p>
+<div class="card">
+<pre>Power Automate で <span class="fill">（やりたいこと）</span> を作りたいです。
+
+私の画面は日本語表示です。
+アクション名は「英語名（日本語名）」の形で、両方書いてください。
+設定する項目の名前も、日本語画面での表示名で書いてください。
+
+初心者なので、順番に、何をどこに入れるかまで教えてください。</pre>
+<button class="copy" onclick="cp(this)">コピー</button>
+</div>
+
+<h2><span class="no">3</span>形を指定する — 「式だけちょうだい」</h2>
+<p class="why">放っておくと長い解説が返ってきます。欲しい形を先に指定すると、必要な一行だけが返ります。</p>
+<div class="card">
+<pre>Power Automate の式だけを教えてください。説明は要りません。
+
+やりたいこと：<span class="fill">（例）UTCで届いた日時を、日本時間の「2026/09/10 20:15」の形にしたい</span>
+使う場所：<span class="fill">（例）メール本文の差し込み</span>
+
+式だけを1行で返してください。</pre>
+<button class="copy" onclick="cp(this)">コピー</button>
+</div>
+
+<h2><span class="no">4</span>エラー文は、訳さずそのまま貼る</h2>
+<p class="why">意味だけでなく、どこを直せばよいかまで返ってきます。自分で英語を訳す必要はありません。</p>
+<div class="card">
+<pre>Power Automate でフローを実行したら、次のエラーが出ました。
+
+<span class="fill">（エラーメッセージをそのまま貼る。訳さなくてよい）</span>
+
+・何が起きているのか
+・どのアクションの、どの設定を直せばよいのか
+
+この2つを、初心者にも分かる言葉で教えてください。</pre>
+<button class="copy" onclick="cp(this)">コピー</button>
+</div>
+
+<h2><span class="no">5</span>フローの中身を読ませて、説明させる</h2>
+<p class="why">人から引き継いだフロー、昔つくった自分のフロー。中を開いても分からないときに使います。</p>
+<div class="card">
+<pre>これは Power Automate のフローの中身です。
+
+<span class="fill">（フローのJSONを貼る）</span>
+
+・このフローが何をしているのか
+・つまずきそうな所はどこか
+
+この2つを、Power Automate を触ったことがない人にも分かる言葉で説明してください。</pre>
+<button class="copy" onclick="cp(this)">コピー</button>
+</div>
+
+<div class="stop">
+<b>⛔ 貼る前に、必ず</b>
+<ul>
+  <li>会社名・氏名・メールアドレス・取引先名・金額は、<b>サンプルの値に置き換えてから</b>貼る</li>
+  <li>返ってきた答えは<b>そのまま信じない</b>。引用元として示されたページが、中身と関係ないことがあります</li>
+  <li>必須の欄が空のまま返ってくることがあります。<b>空欄は、AIが人に渡した場所</b>だと思ってください</li>
+</ul>
+</div>
+
+<div class="note">
+<b>うまくいかないときは、会話を続ける</b><br>
+一発で正解が返ってこないのが普通です。「その表に余計な列が出ます」「もっと短く」のように、
+返ってきた答えに対してもう一度頼むと、ぐっと近づきます。
+</div>
+
+<footer>
+PA45 第27回（2026-09-10）配布資料 ／ Power Automate 45分ハンズオン<br>
+画面や仕様は変わることがあります。最新の情報は Microsoft Learn をご確認ください。
+</footer>
+
+</div>
+<script>
+function cp(btn){
+  var pre = btn.parentElement.querySelector('pre');
+  navigator.clipboard.writeText(pre.innerText).then(function(){
+    btn.textContent = 'コピーしました';
+    btn.classList.add('done');
+    setTimeout(function(){ btn.textContent='コピー'; btn.classList.remove('done'); }, 1800);
+  });
+}
+</script>
+</body>
+</html>
