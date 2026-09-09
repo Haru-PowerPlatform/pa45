@@ -1,0 +1,358 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PA45 第28回 ハンズオン手順｜カード1枚でやることをまとめて完了にする</title>
+<meta name="description" content="PA45 第28回のハンズオン手順書。SharePointの「今日のやること」から未完了3件をとってきて、チェックが3つ並んだアダプティブ カードをTeamsへ送り、チェックされたものだけをまとめて完了にするフローを作ります。カードのJSONと式はCopilotに書かせます。">
+<style>
+  :root{
+    --pa:#3a4fb8;--pa-dark:#2c3a94;--pa-bg:#eef1fc;
+    --sp:#0f6cbd;--sp-bg:#e6f0fb;
+    --teams:#5b5fc7;--teams-dark:#4347a8;--teams-bg:#eef0fb;
+    --blue-text:#14528f;--blue-mid:#2a7dd4;--blue-bg:#eaf2fc;
+    --ink:#1f2937;--muted:#475569;--border:#e2e8f0;--amber:#b45309;--code-bg:#0f172a;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:linear-gradient(160deg,#eef1fc 0%,#f5f8fc 42%,#fff 100%);
+    font-family:"Meiryo UI","Yu Gothic UI","Segoe UI",sans-serif;color:var(--ink);
+    min-height:100vh;padding:0 16px 70px;line-height:1.7;}
+  .wrap{max-width:860px;margin:0 auto;}
+
+  .topbar{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.93);
+    -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+    border:1px solid var(--border);border-top:none;border-radius:0 0 14px 14px;
+    box-shadow:0 2px 10px rgba(20,82,143,.08);margin-bottom:18px;}
+  .topbar-in{display:flex;align-items:center;gap:10px;padding:9px 14px;flex-wrap:wrap;}
+  .brand{display:flex;flex-direction:column;text-decoration:none;color:var(--blue-text);font-weight:800;font-size:18px;line-height:1;}
+  .brand span{font-size:9px;font-weight:600;color:var(--muted);letter-spacing:.04em;margin-top:3px;}
+  .tnav{display:flex;gap:3px;flex-wrap:wrap;margin-left:auto;}
+  .tnav a{text-decoration:none;color:var(--blue-text);font-size:12.5px;font-weight:700;padding:6px 10px;border-radius:8px;white-space:nowrap;}
+  .tnav a:hover{background:var(--blue-bg);}
+  .tnav a.cur{background:var(--pa);color:#fff;}
+
+  header{text-align:center;margin-bottom:6px;}
+  .eyebrow{display:inline-block;background:var(--pa);color:#fff;font-weight:700;font-size:13px;letter-spacing:.06em;padding:5px 16px;border-radius:20px;}
+  h1{font-size:29px;font-weight:800;color:var(--pa-dark);margin:14px 0 6px;line-height:1.28;}
+  h1 small{display:block;font-size:15.5px;color:var(--muted);font-weight:600;margin-top:6px;}
+  .crumbs{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:12.5px;color:var(--muted);margin-bottom:14px;justify-content:center;}
+  .crumbs a{color:var(--blue-mid);text-decoration:none;font-weight:700;}
+  .crumbs .sep{color:#cbd5e1;}
+
+  .goal{background:#fff;border:1px solid var(--border);border-left:5px solid var(--pa);border-radius:12px;padding:14px 20px;margin-bottom:16px;box-shadow:0 2px 8px rgba(20,82,143,.05);}
+  .goal b{color:var(--pa-dark);}
+  .flowpath{display:flex;flex-wrap:wrap;align-items:center;gap:8px;justify-content:center;margin:14px 0 0;font-weight:800;color:var(--pa-dark);font-size:14.5px;}
+  .flowpath .st{background:var(--sp-bg);border:1px solid #a9cdec;border-radius:22px;padding:7px 15px;}
+  .flowpath .st.hot{background:var(--teams-bg);border-color:#c3c5ef;color:var(--teams-dark);}
+  .flowpath .st.end{background:#fff7ed;border-color:#fdba74;color:#9a3412;}
+  .flowpath .ar{color:var(--pa);font-size:18px;}
+
+  .toc{display:flex;flex-wrap:wrap;gap:8px;background:#fff;border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:22px;box-shadow:0 2px 8px rgba(20,82,143,.05);}
+  .toc-lbl{font-size:12px;font-weight:800;color:var(--pa-dark);background:var(--pa-bg);padding:4px 11px;border-radius:8px;}
+  .toc a{text-decoration:none;color:var(--blue-text);font-size:13px;font-weight:700;padding:6px 12px;border-radius:8px;border:1px solid var(--border);}
+  .toc a:hover{background:var(--blue-bg);border-color:var(--blue-mid);}
+
+  .part{scroll-margin-top:70px;margin:26px 0 0;}
+  .part-h{display:flex;align-items:center;gap:12px;margin-bottom:6px;}
+  .part-badge{flex:0 0 auto;background:var(--pa);color:#fff;font-weight:800;font-size:14px;padding:6px 14px;border-radius:20px;}
+  .part-badge.sp{background:var(--sp);}
+  .part-badge.tm{background:var(--teams);}
+  .part-h h2{font-size:20px;font-weight:800;color:var(--pa-dark);margin:0;}
+  .part-note{font-size:14px;color:var(--muted);margin:0 0 12px;}
+
+  ol.steps{list-style:none;counter-reset:st;padding:0;margin:0;}
+  ol.steps>li{position:relative;padding:14px 16px 14px 54px;background:#fff;border:1px solid var(--border);border-radius:12px;margin-bottom:10px;box-shadow:0 2px 6px rgba(20,82,143,.05);font-size:15px;}
+  ol.steps>li::before{counter-increment:st;content:counter(st);position:absolute;left:14px;top:13px;width:28px;height:28px;border-radius:50%;background:var(--pa);color:#fff;font-weight:800;font-size:15px;display:flex;align-items:center;justify-content:center;}
+  ol.steps.sp>li::before{background:var(--sp);}
+  ol.steps.tm>li::before{background:var(--teams);}
+  ol.steps>li b{color:var(--pa-dark);}
+  .k{display:inline-block;background:#f1f5f9;border:1px solid #d7dee7;border-radius:6px;padding:1px 8px;font-weight:700;font-size:13.5px;color:#334155;white-space:nowrap;}
+  .pick{display:inline-block;background:#fff7ed;border:1px solid #fdba74;border-radius:6px;padding:1px 8px;font-weight:800;font-size:13.5px;color:#c2410c;}
+  ul.sub{margin:8px 0 0;padding-left:20px;font-size:14px;color:var(--muted);}
+  ul.sub li{margin:3px 0;}
+
+  .setrow{display:flex;flex-wrap:wrap;gap:6px 10px;margin:8px 0 0;padding:10px 12px;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:10px;font-size:13.5px;}
+  .setrow .kv{display:flex;gap:6px;align-items:center;}
+  .setrow .kv .kk{font-weight:800;color:var(--pa-dark);}
+  .setrow .kv .vv{background:#fff;border:1px solid #d7dee7;border-radius:6px;padding:1px 9px;font-weight:700;color:#334155;}
+
+  .callout{border-radius:10px;padding:12px 18px;font-size:14px;margin:12px 0;line-height:1.7;}
+  .callout.tip{background:var(--sp-bg);border-left:5px solid var(--sp);color:#0b4a7a;}
+  .callout.warn{background:#fffbeb;border-left:5px solid #f59e0b;color:#78350f;}
+  .callout.info{background:var(--blue-bg);border-left:5px solid var(--blue-mid);color:#14528f;}
+  .callout.pa{background:var(--pa-bg);border-left:5px solid var(--pa);color:var(--pa-dark);}
+  .callout.tm{background:var(--teams-bg);border-left:5px solid var(--teams);color:var(--teams-dark);}
+
+  .codewrap{position:relative;margin:10px 0;}
+  .codewrap .lbl{font-size:12px;font-weight:800;color:#cbd5e1;background:#1e293b;display:inline-block;padding:4px 12px;border-radius:8px 8px 0 0;}
+  pre{margin:0;background:var(--code-bg);color:#e2e8f0;border-radius:0 10px 10px 10px;padding:16px 18px;overflow-x:auto;font-size:12.5px;line-height:1.65;
+    font-family:"Cascadia Code","Consolas","SFMono-Regular",monospace;white-space:pre-wrap;word-break:break-word;}
+  .copybtn{position:absolute;top:6px;right:8px;background:#334155;color:#e2e8f0;border:none;border-radius:7px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer;}
+  .copybtn:hover{background:#475569;}
+
+  table.fx{width:100%;border-collapse:collapse;margin:12px 0;font-size:13.5px;}
+  table.fx th{background:var(--pa-bg);color:var(--pa-dark);font-weight:800;border:1px solid #cbd5e1;padding:8px 10px;text-align:left;}
+  table.fx td{border:1px solid #cbd5e1;padding:8px 10px;vertical-align:top;}
+  table.fx code{background:#0f172a;color:#fbbf24;border-radius:5px;padding:2px 7px;font-family:"Consolas",monospace;font-size:12px;}
+  table.fx td.v{font-weight:800;color:#0b5e37;white-space:nowrap;}
+
+  .backrow{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:30px;}
+  .btn.sec{display:inline-flex;align-items:center;gap:6px;background:#fff;color:var(--blue-text);border:1px solid var(--blue-mid);text-decoration:none;font-size:14px;font-weight:700;padding:10px 20px;border-radius:9px;}
+  .btn.sec:hover{background:var(--blue-bg);}
+  figure.shot{margin:14px 0 6px;}
+  figure.shot img{display:block;width:100%;border:1px solid #cbd5e1;border-radius:10px;box-shadow:0 6px 18px rgba(20,82,143,.14);}
+  figure.shot.narrow img{max-width:420px;margin:0 auto;}
+  figure.shot figcaption{font-size:12.5px;color:var(--muted);margin-top:7px;text-align:center;}
+  footer{margin-top:26px;text-align:center;color:#94a3b8;font-size:12px;line-height:1.8;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <nav class="topbar" aria-label="サイト内メニュー">
+    <div class="topbar-in">
+      <a class="brand" href="../../">PA45<span>Power Automate 45</span></a>
+      <div class="tnav">
+        <a href="../../">🏠 ホーム</a>
+        <a href="links.html">🗂️ 第28回の資料</a>
+        <a href="./" class="cur">🛠️ ハンズオン手順</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="crumbs">
+    <a href="../../">🏠 PA45トップ</a><span class="sep">›</span>
+    <a href="links.html">第28回 資料</a><span class="sep">›</span>
+    <span>ハンズオン手順</span>
+  </div>
+
+  <header>
+    <span class="eyebrow">PA45 第28回｜ハンズオン手順</span>
+    <h1>カード1枚で、やることをまとめて完了にする<small>やること3件を1枚のカードに出し、終わったものにチェックを入れて1回送るだけで、まとめて完了になります。カードのJSONと式は手で書かず、Copilotに書いてもらいます。順番どおりに進めればできます。</small></h1>
+  </header>
+
+  <div class="goal">
+    <b>今日つくるもの：</b> ボタンを押すと、SharePoint「今日のやること」から<b>まだ終わっていない3件</b>をとってきて、<b>チェックが3つ並んだカード</b>をTeamsへ送り、<b>チェックされたものだけ</b>を「完了」に書き換えるフロー。
+    <div class="flowpath">
+      <span class="st">🔘 ボタンで開始</span><span class="ar">→</span>
+      <span class="st">📋 未完了を3件とってくる</span><span class="ar">→</span>
+      <span class="st hot">🗂️ カードを送って待つ</span><span class="ar">→</span>
+      <span class="st end">✅ チェックした分だけ完了に</span>
+    </div>
+  </div>
+
+  <div class="callout info" style="margin-bottom:4px;"><b>🔰 初参加の方へ：</b> ここから始めても大丈夫です。前回までの内容は必要ありません。<b>自分あてにカードを送るだけでテストできます</b>。難しいところ（カードのJSON・答えを取り出す式・エラーの読み方）は、<b>Copilotに聞く前提</b>で進めます。</div>
+
+  <nav class="toc" aria-label="手順の目次">
+    <span class="toc-lbl">目次</span>
+    <a href="#p0">0. 準備（リストを作る）</a>
+    <a href="#p1">1. ボタンで開始</a>
+    <a href="#p2">2. 未完了を3件とってくる</a>
+    <a href="#p3">3. カードを送って待つ</a>
+    <a href="#p4">4. チェックした分だけ完了に</a>
+    <a href="#pt">5. テスト</a>
+    <a href="#pc">＋ Copilotに聞く4か所</a>
+  </nav>
+
+  <!-- ===== 0. 準備 ===== -->
+  <section class="part" id="p0">
+    <div class="part-h"><span class="part-badge sp">STEP 0</span><h2>準備（「今日のやること」リストを作る）</h2></div>
+    <p class="part-note">作るものは1つ。<b>SharePointのリスト</b>だけです。ここで<b>列の名前の付け方</b>を間違えると、あとの手順が全部動かなくなります。いちばん大事な下ごしらえです。</p>
+    <ol class="steps sp">
+      <li>SharePoint サイトで <b>「新規」→「リスト」</b>→ 空のリストを作ります。名前は <span class="k">今日のやること</span>。</li>
+      <li>列を1つ追加します。<b>ここで名前は半角の <span class="k">Done</span></b>、種類は <b>「はい/いいえ」</b>。<ul class="sub"><li>まだ日本語にしません。この時点の名前が、あとで変えられない「内部名」になります。</li></ul></li>
+      <li>作ったあとに、<b>その列の表示名だけ「完了」に変更</b>します。<ul class="sub"><li>画面に出る名前は「完了」、フローから指す名前は <span class="k">Done</span>。この2枚看板の状態にします。</li></ul></li>
+      <li><b>タイトル</b>列に、やることを3件入れます。<ul class="sub"><li>例）見積書を送る／議事録を共有する／請求書を確認する</li></ul></li>
+    </ol>
+    <div class="callout warn"><b>⚠️ なぜ半角で作ってから名前を変えるのか：</b>
+      <ul style="margin:6px 0 0;padding-left:20px;">
+        <li>SharePointの列には<b>表示名</b>と<b>内部名</b>の2つがあり、<b>内部名は作ったときの名前で決まって、あとから変わりません</b>。</li>
+        <li>最初から「完了」という日本語で作ると、内部名が <span class="k">_x5b8c__x4e86_</span> のような文字列になります。</li>
+        <li>フローの <b>フィルター クエリ</b>や<b>項目の更新</b>で使うのは<b>内部名</b>のほうです。日本語のままだと、書いても通りません。</li>
+      </ul>
+    </div>
+    <div class="callout tip"><b>💡 すでに日本語で作ってしまったら：</b> 列を作り直すのがいちばん早いです（データが3件だけなので、消して作り直しても数十秒です）。</div>
+  </section>
+
+  <!-- ===== 1. トリガー ===== -->
+  <section class="part" id="p1">
+    <div class="part-h"><span class="part-badge">STEP 1</span><h2>ボタンで開始する</h2></div>
+    <p class="part-note">Power Automate で <b>「作成」→「インスタント クラウド フロー」</b>を選びます。今日は時刻ではなく<b>自分でボタンを押して</b>動かします（そのほうが何度でも試せるからです）。</p>
+    <ol class="steps">
+      <li>トリガーは <b>「フローを手動でトリガーする」</b>を選びます。</li>
+      <li>入力の追加は<b>しません</b>。押すだけで動く形にします。</li>
+      <li>フロー名は <span class="k">やることをまとめて完了にする</span> など、分かる名前を付けます。</li>
+    </ol>
+    <div class="callout tip"><b>💡 今日は、追加したアクションの名前を変えないでください。</b> あとで式の中から<b>アクションの名前で</b>結果を指すので、名前を変えると式も直す必要が出てきます。慣れたら変えて構いません。</div>
+  </section>
+
+  <!-- ===== 2. 取得 ===== -->
+  <section class="part" id="p2">
+    <div class="part-h"><span class="part-badge sp">STEP 2</span><h2>まだ終わっていないものを、3件とってくる</h2></div>
+    <p class="part-note">SharePoint の <b>「項目の取得」</b>を追加します。全部とってくるのではなく、<b>まだ終わっていないものだけ</b>に絞るのがポイントです。</p>
+    <ol class="steps sp">
+      <li><b>＋新しいステップ</b>→ <b>SharePoint</b> → <b>「項目の取得」</b>を追加します。</li>
+      <li>4つの欄を埋めます。<b>詳細オプション</b>を開くと、下2つが出てきます。<div class="setrow"><span class="kv"><span class="kk">サイトのアドレス</span><span class="vv">リストを作ったサイト</span></span><span class="kv"><span class="kk">リスト名</span><span class="vv">今日のやること</span></span><span class="kv"><span class="kk">フィルター クエリ</span><span class="vv">Done eq 0</span></span><span class="kv"><span class="kk">上から順に取得</span><span class="vv">3</span></span></div></li>
+    </ol>
+    <div class="callout sp"><b>■ フィルター クエリの読み方：</b>
+      <ul style="margin:6px 0 0;padding-left:20px;">
+        <li><span class="k">Done</span>＝STEP 0 で半角で作った<b>内部名</b>。ここが日本語だと通りません。</li>
+        <li><span class="k">eq</span>＝「等しい」（equal）。<b>=</b> ではなくこう書く決まりです。</li>
+        <li><span class="k">0</span>＝「はい/いいえ」の<b>いいえ</b>。つまり<b>まだ完了していないもの</b>。</li>
+        <li><b>上から順に取得＝3</b>：カードのチェックを3つに固定するので、3件だけ持ってきます。</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===== 3. カード ===== -->
+  <section class="part" id="p3">
+    <div class="part-h"><span class="part-badge tm">STEP 3</span><h2>チェック3つのカードを送って、押されるまで待つ</h2></div>
+    <p class="part-note">Teams の <b>「アダプティブ カードを Teams ユーザーに投稿して応答を待機する」</b>を追加します。<b>「応答を待機する」</b>が名前に付くものを選んでください。付いていないものは、送って終わりで返事を受け取れません。</p>
+    <ol class="steps tm">
+      <li><b>＋新しいステップ</b>→ <b>Microsoft Teams</b> → <b>「アダプティブ カードを Teams ユーザーに投稿して応答を待機する」</b>。</li>
+      <li>3つの欄を埋めます。<div class="setrow"><span class="kv"><span class="kk">投稿者</span><span class="vv">フロー ボット</span></span><span class="kv"><span class="kk">投稿先</span><span class="vv">フロー ボットとチャットをする</span></span><span class="kv"><span class="kk">Recipient</span><span class="vv">自分（本人）</span></span></div></li>
+      <li><b>メッセージ</b>欄に、下のカードJSONを貼り付けます。</li>
+    </ol>
+    <div class="codewrap">
+      <span class="lbl">メッセージ欄に貼るカードJSON（チェック3つ＋送信ボタン）</span>
+      <button class="copybtn" data-code="cardjson">コピー</button>
+<pre id="cardjson">{"$schema":"http://adaptivecards.io/schemas/adaptive-card.json","type":"AdaptiveCard","version":"1.4","body":[{"type":"TextBlock","text":"今日のやること","weight":"Bolder","size":"Large","wrap":true},{"type":"TextBlock","text":"終わったものにチェックを入れて、まとめて送ってください。","isSubtle":true,"wrap":true,"spacing":"None"},{"type":"Input.Toggle","id":"t1","title":"@{body('項目の取得')?['value'][0]?['Title']}","valueOn":"true","valueOff":"false"},{"type":"Input.Toggle","id":"t2","title":"@{body('項目の取得')?['value'][1]?['Title']}","valueOn":"true","valueOff":"false"},{"type":"Input.Toggle","id":"t3","title":"@{body('項目の取得')?['value'][2]?['Title']}","valueOn":"true","valueOff":"false"}],"actions":[{"type":"Action.Submit","title":"チェックしたものを完了にする"}]}</pre>
+    </div>
+    <div class="callout tm"><b>★このJSONで押さえるところは3つだけです：</b>
+      <ul style="margin:6px 0 0;padding-left:20px;">
+        <li><span class="k">Input.Toggle</span> ＝チェックの部品。<b>3つ並べているので、チェックが3つ出ます</b>。</li>
+        <li><span class="k">id</span>（t1 / t2 / t3）＝答えを受け取るときの名前。<b>あとで <span class="k">body/data/t1</span> のように使います</b>。</li>
+        <li><span class="k">valueOn</span> / <span class="k">valueOff</span> ＝チェックしたとき／しないときに送られる値。ここでは <b>"true" / "false" という文字</b>を送るようにしています。</li>
+      </ul>
+    </div>
+    <div class="callout warn"><b>⚠️ title の中の式について：</b> 3つの title には <span class="k">body('項目の取得')?['value'][0]?['Title']</span> のような式が入っています。<b>[0] が1件目、[1] が2件目、[2] が3件目</b>です。STEP 2 のアクション名を<b>「項目の取得」のまま</b>にしておくと、この式がそのまま通ります。名前を変えた場合は、式の中の名前も同じに直してください。</div>
+  </section>
+
+  <!-- ===== 4. 更新 ===== -->
+  <section class="part" id="p4">
+    <div class="part-h"><span class="part-badge sp">STEP 4</span><h2>チェックが入ったものだけ、完了にする</h2></div>
+    <p class="part-note">カードの下に <b>「条件」</b>を置き、その「はいの場合」に <b>「項目の更新」</b>を入れます。これを<b>3件ぶん</b>並べます。</p>
+    <ol class="steps sp">
+      <li><b>＋新しいステップ</b>→ <b>「条件」</b>を追加します。</li>
+      <li>左辺に、カードの答え <span class="k">t1</span> を入れます（動的コンテンツから選ぶか、下の式を貼ります）。</li>
+      <li>真ん中は <b>「次の値に等しい」</b>、右辺は <b>true</b> と<b>手で入力</b>します。<ul class="sub"><li><b>「はい/いいえ」ではなく、true という4文字を打ちます。</b> カードから返ってくるのが文字だからです。</li></ul></li>
+      <li><b>「はいの場合」</b>の中に <b>SharePoint「項目の更新」</b>を追加します。<div class="setrow"><span class="kv"><span class="kk">サイトのアドレス／リスト名</span><span class="vv">STEP 2 と同じ</span></span><span class="kv"><span class="kk">ID</span><span class="vv">1件目のID（下の式）</span></span><span class="kv"><span class="kk">完了</span><span class="vv">はい</span></span></div></li>
+      <li><b>「いいえの場合」は空のまま</b>にします。まだ終わっていないので、何もしません。</li>
+      <li>できた条件を<b>まるごとコピーして2つ増やし</b>、<span class="k">t1</span> を <span class="k">t2</span> / <span class="k">t3</span> に、IDの <span class="k">[0]</span> を <span class="k">[1]</span> / <span class="k">[2]</span> に変えます。</li>
+    </ol>
+    <div class="codewrap">
+      <span class="lbl">条件の左辺に入れる式（1件目）</span>
+      <button class="copybtn" data-code="ex1">コピー</button>
+<pre id="ex1">outputs('アダプティブ_カードを_Teams_ユーザーに投稿して応答を待機する')?['body/data/t1']</pre>
+    </div>
+    <div class="codewrap">
+      <span class="lbl">「項目の更新」のID欄に入れる式（1件目）</span>
+      <button class="copybtn" data-code="ex2">コピー</button>
+<pre id="ex2">body('項目の取得')?['value'][0]?['ID']</pre>
+    </div>
+    <div class="callout warn"><b>⚠️ 式の中のアクション名は、自分の画面に合わせてください。</b>
+      <ul style="margin:6px 0 0;padding-left:20px;">
+        <li>式の中では、アクション名の<b>空白がアンダースコア <span class="k">_</span> に置き換わります</b>。</li>
+        <li>アクション名の表示は環境によって変わることがあります。<b>うまく参照できないときは、動的コンテンツの一覧から選ぶ</b>のが確実です。</li>
+        <li>それでも分からないときは、<b>1回テスト実行して出力をコピーし、Copilotに貼って式を作ってもらいます</b>（下の「Copilotに聞く4か所」③）。</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===== 5. テスト ===== -->
+  <section class="part" id="pt">
+    <div class="part-h"><span class="part-badge">STEP 5</span><h2>保存して、テストする</h2></div>
+    <ol class="steps">
+      <li>右上の <b>「保存」</b>→ <b>「テスト」→「手動」</b>で実行します。</li>
+      <li>Teams にカードが届きます。<b>3件のうち2件だけ</b>チェックを入れて、下のボタンを押します。</li>
+      <li>SharePoint「今日のやること」を開くと、<b>チェックした2件だけが完了</b>になり、<b>残り1件はそのまま</b>のはずです。</li>
+      <li>もう一度実行すると、<b>残り1件だけ</b>がカードに出ます（完了したものは <span class="k">Done eq 0</span> で除かれるため）。</li>
+    </ol>
+    <div class="callout warn"><b>うまくいかないとき：</b>
+      <ul style="margin:6px 0 0;padding-left:20px;">
+        <li>カードが届かない → Teams に <b>「ワークフロー」アプリ</b>が入っているか／Recipient が自分になっているか。</li>
+        <li>フィルター クエリでエラー → 列の<b>内部名</b>が <span class="k">Done</span> になっているか（STEP 0）。</li>
+        <li>チェックしたのに完了にならない → 条件の右辺が <b>true</b>（文字）になっているか。「はい」ではありません。</li>
+        <li>カードの項目名が空になる → リストの未完了が3件未満です。やることを足してください。</li>
+        <li><b>エラー文が英語で出た</b> → 読まずに、そのままコピーしてCopilotに貼ります（下の④）。</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===== Copilot ===== -->
+  <section class="part" id="pc">
+    <div class="part-h"><span class="part-badge tm">＋</span><h2>Copilotに聞く4か所（そのまま貼れます）</h2></div>
+    <p class="part-note">今日つまずくところは、だいたいこの4つです。<b>手を動かすのは自分</b>、分からないところだけ聞く、という使い方をします。Power Automate内蔵のCopilotではなく、<b>M365 Copilot チャット</b>を開いて貼ってください。</p>
+
+    <h3 style="font-size:16px;color:var(--pa-dark);margin:22px 0 6px;">① 日本語の列名が動かない理由を聞く</h3>
+    <div class="codewrap">
+      <button class="copybtn" data-code="cp1">コピー</button>
+<pre id="cp1">SharePointで「完了」という日本語の名前で列を作りました。
+Power Automateのフィルタークエリから指定できません。
+なぜですか。どう作り直せばよいですか。</pre>
+    </div>
+
+    <h3 style="font-size:16px;color:var(--pa-dark);margin:22px 0 6px;">② カードのJSONを書かせる</h3>
+    <p class="part-note">コツは<b>形を指定すること</b>です。放っておくと長い解説が付いてきて、どこを貼ればよいか分からなくなります。</p>
+    <div class="codewrap">
+      <button class="copybtn" data-code="cp2">コピー</button>
+<pre id="cp2">Adaptive Card 1.4 の JSON だけをください。要素は次のとおりです。
+・見出し『今日のやること』（太字・大きめ）
+・小さい説明『終わったものにチェックを入れて、まとめて送ってください。』
+・チェックを3つ（Input.Toggle、id は t1 / t2 / t3）
+・チェックの値は文字列の true / false（valueOn / valueOff）
+・送信ボタンを1つ（Action.Submit、表示は『チェックしたものを完了にする』）
+説明文は不要です。JSON だけ返してください。</pre>
+    </div>
+
+    <h3 style="font-size:16px;color:var(--pa-dark);margin:22px 0 6px;">③ 答えを取り出す式を作らせる（材料を先に見せる）</h3>
+    <p class="part-note"><b>先にテスト実行の出力を貼る</b>のがコツです。貼らずに聞くと、項目名を推測した式が返ってきて、そのままでは動きません。</p>
+    <div class="codewrap">
+      <button class="copybtn" data-code="cp3">コピー</button>
+<pre id="cp3">Power Automateの「アダプティブ カードを投稿して応答を待機する」の
+出力です。
+
+（ここにテスト実行の出力JSONを貼る）
+
+t1 の値を取り出す式を、Power Automateの書き方で教えてください。
+式だけで構いません。</pre>
+    </div>
+
+    <h3 style="font-size:16px;color:var(--pa-dark);margin:22px 0 6px;">④ エラー文は、訳さずそのまま貼る</h3>
+    <p class="part-note">エラー文には<b>アクション名・場所・型</b>が入っています。訳すとその手がかりが消えます。英語のまま全文を貼ってください。</p>
+    <div class="codewrap">
+      <button class="copybtn" data-code="cp4">コピー</button>
+<pre id="cp4">Power Automateでこのエラーが出ました。
+
+（エラー文を全文そのまま貼る）
+
+意味と、どこを直せばよいかを教えてください。</pre>
+    </div>
+    <div class="callout warn"><b>⚠️ 貼る前に一度だけ確認：</b> 社名・氏名・取引先など、そのまま貼ると困る文字が混ざっていないか見てください。混ざっていたら、サンプルの文字に置き換えてから貼ります。</div>
+    <div class="callout tip"><b>💡 一発で終わらなくて普通です。</b> 返ってきたものを試して、違ったらその結果をまた貼る。<b>会話を続けるのが正しい使い方</b>です。</div>
+  </section>
+
+  <div class="backrow">
+    <a class="btn sec" href="links.html">← 第28回の資料にもどる</a>
+    <a class="btn sec" href="../../">🏠 サイトのトップへ</a>
+  </div>
+
+  <footer>
+    PA45 第28回 ハンズオン手順 ／ アダプティブ カード × SharePoint × Copilot<br>
+    人名・数値はすべて架空のサンプルです。画面や手順は公開日時点のもので、今後変わる可能性があります。
+  </footer>
+</div>
+
+<script>
+  document.querySelectorAll('.copybtn').forEach(function(b){
+    b.addEventListener('click', function(){
+      var el = document.getElementById(b.dataset.code);
+      var text = el.innerText;
+      navigator.clipboard.writeText(text).then(function(){
+        var o = b.textContent; b.textContent = 'コピーしました'; setTimeout(function(){ b.textContent = o; }, 1400);
+      });
+    });
+  });
+</script>
+</body>
+</html>
