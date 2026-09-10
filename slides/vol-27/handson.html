@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PA45 第27回 ハンズオン手順｜フロー作りが速くなる Copilot の頼み方5選</title>
-<meta name="description" content="PA45 第27回のハンズオン手順書。Power Automate のフローを作るときに Copilot へどう頼むか、返ってくる答えが変わる5つの頼み方を順に試します。そのまま貼れるプロンプトと、Power Automate を触ってきた人向けのワンポイント付き。">
+<title>PA45 第27回 ハンズオン手順｜Copilot に頼りながら小さなフローを1本つくる</title>
+<meta name="description" content="PA45 第27回のハンズオン手順書。Copilot に頼りながら小さなフローを1本つくり、わざと壊して、聞いて直して、動くところまで進めます。コネクタは使わないので接続の設定は不要です。">
 <style>
   :root{
     --pa:#3a4fb8;--pa-dark:#2c3a94;--pa-bg:#eef1fc;
@@ -128,133 +128,157 @@
 
   <header>
     <span class="eyebrow">PA45 第27回｜ハンズオン手順</span>
-    <h1>フロー作りが速くなる、Copilot の頼み方5選<small>Copilot に聞いてはいるけれど、うまく答えてくれない。その原因の多くは頼み方にあります。
-    今日は、返ってくる答えが変わる頼み方を5つ、順に試します。フローを1本つくりきる回ではないので、手ぶらで見るだけでも成立します。</small></h1>
+    <h1>Copilot に頼りながら、小さなフローを1本つくる<small>作って、わざと壊して、Copilot に聞いて直して、最後に動かします。
+    使うのは「作成」と「HTML テーブルの作成」だけ。<b>コネクタを1つも使わないので、接続の設定は要りません。</b>
+    順番どおりに進めればできます。</small></h1>
   </header>
 
   <div class="goal">
-    <b>今日もちかえるもの：</b> ①材料を先に見せる ②日本語のアクション名も頼む ③形を指定する
-    ④エラー文をそのまま貼る ⑤フローの中身を読ませる ——
-    この5つと、<b>そのままコピーして使えるプロンプト</b>です。
+    <b>今日つくるもの：</b> ボタンで動く小さなフロー。作業ログのサンプルを<b>表に整えて</b>、日本時間を出します。
+    途中で<b>わざと1か所を壊し</b>、Copilot に聞いて直し、<b>全部緑になるところまで</b>持っていきます。
+    その道中で、<b>Copilot の頼み方5つ</b>を実際に使います。
   </div>
 
   <div class="callout warn">
-    <b>Copilot が使えない方へ。</b>
-    プロンプトは<a href="prompts.html">配布ページ</a>に置いてあります。あとからご自身の環境で試せます。
-    今日は画面を見ているだけで大丈夫です。
+    <b>Copilot が使えない方へ。</b> フロー作りは最後まで同じように進められます。
+    Copilot に聞く場面は講師の画面をご覧ください。プロンプトは<a href="prompts.html">配布ページ</a>に置いてあります。
   </div>
 
 <section class="part">
-  <div class="part-h"><span class="part-badge">準備</span><h2>練習用のフローを開く</h2></div>
-<div class="part-note">まず、今日さわる題材を用意します。</div>
+  <div class="part-h"><span class="part-badge">準備</span><h2>空のフローを1つ作る</h2></div>
+  <div class="part-note">ここから自分の手で進めます。</div>
 
 <div class="steps">
 <ol>
   <li>Power Automate（<span class="k">make.powerautomate.com</span>）を開きます。</li>
-  <li>今日の練習用フローは<b>コネクタを1つも使っていません</b>。接続の設定は要りません。</li>
-  <li>自分の環境で試したい方は、<a href="../../flows/vol-27/PA45-Vol27-Demo.zip">デモフローのZIP</a>を
-      左メニュー「ソリューション」→「インポート」から取り込みます。</li>
+  <li>左メニューの<b>「＋ 作成」</b>をクリックします。</li>
+  <li><b>「インスタント クラウド フロー」</b>を選びます。</li>
+  <li>フロー名に <span class="k">Copilotの頼み方5選</span> と入れます。</li>
+  <li>トリガーの一覧から<b>「フローを手動でトリガーする」</b>を選び、<b>「作成」</b>を押します。</li>
 </ol>
 </div>
-<div class="callout warn"><b>取り込まなくても進められます。</b>
-講師の画面で同じものを動かします。ZIPは持ち帰り用と思ってください。
-中身だけ見たい方は<a href="../../flows/vol-27/flow-definition.json">フローのJSON</a>をそのまま開けます。</div>
+<div class="callout warn"><b>手動トリガーにする理由。</b>
+今日は<b>何度もテスト実行して結果を見る</b>のが目的です。ボタンで動くフローなら、待たずに好きなだけ試せます。</div>
 
 </section>
 
 
 <section class="part">
-  <div class="part-h"><span class="part-badge">頼み方①</span><h2>材料を先に見せてから頼む</h2></div>
-<div class="part-note">テスト実行の出力を先に貼ると、項目名を推測されずに済みます。</div>
+  <div class="part-h"><span class="part-badge">STEP 1</span><h2>サンプルデータを置く（作成）</h2></div>
+  <div class="part-note">まず、あとで表にする材料を用意します。</div>
 
 <div class="steps">
 <ol>
-  <li>フローを<b>テスト実行</b>して、アクションの<b>出力</b>を開きます。</li>
-  <li>出力をコピーします。</li>
-  <li>下の文の黄色の部分に貼って、Copilot に送ります。</li>
+  <li><b>「＋ 新しいステップ」</b>を押します。</li>
+  <li>検索欄に <span class="k">作成</span> と入れて、<b>「作成」</b>（データ操作）を選びます。</li>
+  <li>アクション名を <span class="k">作成 - サンプルデータ</span> に変えます（右上の「…」→「名前の変更」）。</li>
+  <li><b>「入力」</b>に、下のJSONをそのまま貼ります。</li>
+  <li><b>保存</b> → <b>「テスト」→「手動」→「テスト」→「フローの実行」</b>で動かします。</li>
+  <li>実行結果で <span class="k">作成 - サンプルデータ</span> を開き、<b>「出力」</b>を確認します。</li>
 </ol>
 </div>
-<div class="codewrap"><span class="lbl">そのまま貼れます</span><button class="copybtn" data-code="c1">コピー</button><pre id="c1">Power Automate のフローを作っています。
-いまテスト実行したら、次の出力が返ってきました。
-
-（ここにテスト実行の出力をそのまま貼る）
-
-この中から 「○○」 と 「△△」 を取り出して、次のアクションで使いたいです。
-動的コンテンツの選び方か、式のどちらかで教えてください。</pre></div><div class="callout tip"><b>★ ワンポイント（Power Automate を触ってきた人向け）</b><br><b>コピーするなら「未加工の出力を表示する」から。</b><br>実行履歴の出力欄は見やすく整形されて表示されますが、<b>「未加工の出力を表示する」</b>を開くと本物のJSONがそのまま出ます。Copilot に渡すのはこちらです。整形された表示から書き写すと、<b>項目名が実物と変わってしまう</b>ことがあります。<br>あわせて、<b>会社名・氏名・メールアドレス・取引先名・金額はサンプルの値に置き換えてから</b>貼ってください。</div><div class="callout tip"><b>★ ワンポイント（Power Automate を触ってきた人向け）</b><br><b>なぜ「先に見せる」が効くのか。</b><br>動的コンテンツの名前は<b>環境ごと・リストごとに違います</b>。SharePointの列は、画面の表示名と内部名が別物であることも珍しくありません。見せないかぎり Copilot は当てられないので、推測で書かれた式を人が直す時間が生まれます。<b>先に見せると、その往復が消えます。</b></div>
+<div class="codewrap"><span class="lbl">入力に貼ります</span><button class="copybtn" data-code="c0">コピー</button><pre id="c0">[
+  { "タイトル": "見積書の作成",       "担当者": "山田", "状況": "完了",   "登録日": "2026-09-07" },
+  { "タイトル": "検収データの整理",   "担当者": "佐藤", "状況": "対応中", "登録日": "2026-09-08" },
+  { "タイトル": "月次レポートの下書き","担当者": "田中", "状況": "未着手", "登録日": "2026-09-09" }
+]</pre></div><div class="callout tip"><b>★ ワンポイント（Power Automate を触ってきた人向け）</b><br><b>アクション名は「既定名 - 一言説明」で付ける。ただし式からは参照しない。</b><br>PA45では読みやすさのために <span class='k'>作成 - サンプルデータ</span> のような名前を勧めています。一方で<b>日本語とハイフンが入った名前を式から参照すると壊れやすい</b>という副作用があります。繰り返しの中では <span class='k'>items('Apply_to_each')</span> ではなく <span class='k'>@item()</span> を使うと、名前を式に書かずに済んで安全です。</div><div class="callout tip"><b>★ ワンポイント（Power Automate を触ってきた人向け）</b><br><b>Copilot に渡す出力は「未加工の出力を表示する」からコピーする。</b><br>実行結果の出力欄は見やすく整形されて表示されますが、<b>「未加工の出力を表示する」</b>を開くと本物のJSONが出ます。Copilot に渡すのはこちらです。整形された表示から書き写すと、<b>項目名が実物と変わってしまう</b>ことがあります。<br><b>会社名・氏名・メールアドレス・取引先名・金額は、サンプルの値に置き換えてから</b>貼ってください。</div>
 </section>
 
 
 <section class="part">
-  <div class="part-h"><span class="part-badge">頼み方②</span><h2>「日本語のアクション名も書いて」と頼む</h2></div>
-<div class="part-note">そのまま聞くと英語名だけで返ってきて、日本語の画面で迷子になります。</div>
+  <div class="part-h"><span class="part-badge">STEP 2</span><h2>表に整える（HTML テーブルの作成）</h2></div>
+  <div class="part-note">頼み方②を使う場面です。</div>
 
 <div class="steps">
 <ol>
-  <li>下の文の黄色の部分に、作りたいことを書きます。</li>
-  <li>Copilot に送ります。</li>
-  <li>返ってきた手順の<b>アクション名</b>を見ます。</li>
+  <li><b>「＋ 新しいステップ」</b>を押します。</li>
+  <li>検索欄に <span class="k">HTML</span> と入れて、<b>「HTML テーブルの作成」</b>を選びます。</li>
+  <li><b>「開始」</b>をクリックし、動的コンテンツから <b>「作成 - サンプルデータ」の出力</b>を選びます。</li>
+  <li><b>保存</b>して、もう一度<b>テスト実行</b>します。表のHTMLが出力に出れば成功です。</li>
 </ol>
 </div>
-<div class="codewrap"><span class="lbl">そのまま貼れます</span><button class="copybtn" data-code="c2">コピー</button><pre id="c2">Power Automate で （やりたいこと） を作りたいです。
-
-私の画面は日本語表示です。
-アクション名は「英語名（日本語名）」の形で、両方書いてください。
-設定する項目の名前も、日本語画面での表示名で書いてください。
-
-初心者なので、順番に、何をどこに入れるかまで教えてください。</pre></div><div class="callout tip"><b>★ ワンポイント（Power Automate を触ってきた人向け）</b><br><b>英語名は「画面を探すため」だけに使う。式に持ち込まない。</b><br>Copilot は式の例を <span class='k'>outputs('Compose')</span> のような<b>英語のアクション名</b>で書いてきます。ところが日本語環境で作ったフローのアクション名は「作成」「作成 2」です。<b>英語名のまま貼ると動きません。</b><br>PA45では、アクション名を<b>「既定名 - 一言説明」</b>で付けることを勧めています（例：<span class='k'>作成 - サンプルデータ</span>）。読みやすくなる一方で、<b>日本語とハイフンが入った名前を式から参照すると壊れやすい</b>という副作用があります。繰り返しの中では <span class='k'>items('Apply_to_each')</span> ではなく <span class='k'>@item()</span> を使うと、名前を式に書かずに済んで安全です。</div><div class="callout tip"><b>★ ワンポイント（Power Automate を触ってきた人向け）</b><br><b>それでも英語のまま返ってきたら、もう一度頼む。</b><br>一度で切り替わらないことがあります。「日本語名も」ともう一度頼めば直ります。<b>一発で決まらないのが普通</b>で、会話を続けるのが正しい使い方です。</div>
+<div class="callout warn"><b>ここが今日の入口です。</b>
+このアクション、自力で見つけられたでしょうか。<b>「HTML テーブルの作成」は、名前を知らないと検索できません。</b>
+Copilot に聞くと教えてくれますが、返ってくるのは <span class="k">Create HTML table</span> という英語名です。</div>
+<div class="callout tip"><b>★ ワンポイント（Power Automate を触ってきた人向け）</b><br><b>英語名は「画面を探すため」だけに使う。式に持ち込まない。</b><br>Copilot は式の例を <span class='k'>outputs('Compose')</span> のような英語のアクション名で書いてきます。ところが日本語環境で作ったフローのアクション名は「作成」「作成 2」です。<b>英語名のまま式に貼っても動きません。</b><br>だから頼むときに<b>「アクション名は英語名（日本語名）の形で両方書いて」</b>と足します。それでも英語のまま返ってきたら、もう一度頼めば直ります。<b>一発で決まらないのが普通</b>です。</div>
 </section>
 
 
 <section class="part">
-  <div class="part-h"><span class="part-badge">頼み方③</span><h2>形を指定する ―「式だけちょうだい」</h2></div>
-<div class="part-note">放っておくと長い解説が返ってきます。欲しい形を先に伝えると、必要な一行だけが返ります。</div>
+  <div class="part-h"><span class="part-badge">STEP 3</span><h2>日本時間を出す（作成）</h2></div>
+  <div class="part-note">頼み方③を使う場面です。</div>
 
 <div class="steps">
 <ol>
-  <li>下の文の黄色の部分を、自分のやりたいことに置き換えます。</li>
-  <li>Copilot に送ります。</li>
-  <li>返ってきた式を、<b>そのアクションだけテスト実行</b>して確かめます。</li>
+  <li><b>「＋ 新しいステップ」</b>→ <span class="k">作成</span> をもう1つ追加します。</li>
+  <li>アクション名を <span class="k">作成 - 日本時間の今</span> に変えます。</li>
+  <li><b>「入力」</b>をクリックし、<b>式（fx）</b>のタブに下の式を貼ります。</li>
+  <li><b>保存</b>して<b>テスト実行</b>。日本時間が出れば成功です。</li>
 </ol>
 </div>
-<div class="codewrap"><span class="lbl">そのまま貼れます</span><button class="copybtn" data-code="c3">コピー</button><pre id="c3">Power Automate の式だけを教えてください。説明は要りません。
-
-やりたいこと：UTCで届いた日時を、日本時間の「2026/09/10 20:15」の形にしたい
-使う場所：メール本文の差し込み
-
-式だけを1行で返してください。</pre></div><div class="callout tip"><b>★ ワンポイント（Power Automate を触ってきた人向け）</b><br><b>時刻の式が返ってきたら、まずタイムゾーンを疑う。</b><br>Power Automate の時刻は<b>初期設定がUTC（世界標準時）</b>です。<span class='k'>utcNow()</span> をそのまま使う式が返ってきたら、日本時間になっていません。<span class='k'>convertTimeZone(utcNow(),'UTC','Tokyo Standard Time','yyyy/MM/dd HH:mm')</span> のように、<b>変換を自分で足す</b>必要がないかを確かめてください。スケジュールのトリガーなら、設定画面の<b>タイムゾーンで「(UTC+09:00) 大阪, 札幌, 東京」</b>を選びます。</div><div class="callout tip"><b>★ ワンポイント（Power Automate を触ってきた人向け）</b><br><b>「式だけ」以外にも、形は指定できる。</b><br>「3行で」「表にして」「箇条書きで」も同じように効きます。欲しい<b>形</b>を先に伝えるのがコツです。</div>
+<div class="codewrap"><span class="lbl">式（fx）に貼ります</span><button class="copybtn" data-code="c1">コピー</button><pre id="c1">convertTimeZone(utcNow(),'UTC','Tokyo Standard Time','yyyy/MM/dd HH:mm')</pre></div><div class="callout tip"><b>★ ワンポイント（Power Automate を触ってきた人向け）</b><br><b>時刻の式が返ってきたら、まずタイムゾーンを疑う。</b><br>Power Automate の時刻は<b>初期設定がUTC（世界標準時）</b>です。<span class='k'>utcNow()</span> をそのまま使う式が返ってきたら、日本時間になっていません。<b>変換が入っているか</b>を必ず確かめてください。スケジュールのトリガーなら、設定画面の<b>タイムゾーンで「(UTC+09:00) 大阪, 札幌, 東京」</b>を選びます。</div><div class="callout tip"><b>★ ワンポイント（Power Automate を触ってきた人向け）</b><br><b>「式だけちょうだい」と頼むと、長い解説が返ってこない。</b><br>「式だけ」「3行で」「表にして」——欲しい<b>形</b>を先に伝えるのがコツです。</div>
 </section>
 
 
 <section class="part">
-  <div class="part-h"><span class="part-badge">頼み方④</span><h2>エラー文は、訳さずそのまま貼る</h2></div>
-<div class="part-note">初心者がいちばん止まるのがエラーです。意味だけでなく、直す場所まで返ってきます。</div>
+  <div class="part-h"><span class="part-badge">STEP 4</span><h2>わざと壊す</h2></div>
+  <div class="part-note">ここからが今日の山場です。</div>
 
 <div class="steps">
 <ol>
-  <li>失敗したアクションをクリックして、エラー文をコピーします。</li>
-  <li>下の文の黄色の部分に貼って、Copilot に送ります。</li>
-  <li>返ってきた「直す場所」を確かめてから直します。</li>
+  <li><b>「＋ 新しいステップ」</b>→ <span class="k">作成</span> をもう1つ追加します。</li>
+  <li>アクション名を <span class="k">作成 - 今週の開始日</span> に変えます。</li>
+  <li><b>「入力」</b>の<b>式（fx）</b>に、下の式を貼ります。
+      <b>これは Copilot が実際に返してきた式です。</b></li>
+  <li><b>保存</b>します。……<b>保存できてしまいます。</b></li>
+  <li><b>テスト実行</b>します。ここで初めて赤くなります。</li>
 </ol>
 </div>
-<div class="codewrap"><span class="lbl">そのまま貼れます</span><button class="copybtn" data-code="c4">コピー</button><pre id="c4">Power Automate でフローを実行したら、次のエラーが出ました。
+<div class="codewrap"><span class="lbl">式（fx）に貼ります</span><button class="copybtn" data-code="c2">コピー</button><pre id="c2">startOfWeek(utcNow())</pre></div>
+<div class="callout warn"><b>出るエラー（実機で確認済み）</b><br>
+<span class="k">The template function 'startOfWeek' is not defined or not valid.</span><br>
+<b>startOfWeek という関数は、Power Automate には存在しません。</b>
+実在するのは <span class="k">startOfDay</span> ／ <span class="k">startOfHour</span> ／ <span class="k">startOfMonth</span> の3つだけです。
+</div>
+<div class="callout tip"><b>★ ワンポイント（Power Automate を触ってきた人向け）</b><br><b>いつ気づけるかは、間違いの種類で違う。</b><br><b>必須の欄が空</b>のときは、保存したときに<b>フロー チェッカー</b>が「'フォルダーのパス' は必須です。」のように教えてくれます。ここは気づけます。<br>ところが<b>式の中身の間違いは、保存でもフロー チェッカーでも素通り</b>します。実際このフローは、<b>ソリューションのインポートも保存もチェッカーも、何も言いませんでした</b>（実機で確認）。止まったのは実行したときだけです。<br>だから<b>式は、そのアクションだけ小さく試してから</b>先へ進みます。</div>
+</section>
+
+
+<section class="part">
+  <div class="part-h"><span class="part-badge">STEP 5</span><h2>Copilot に聞いて直す</h2></div>
+  <div class="part-note">頼み方④を使う場面です。ここで直って緑になります。</div>
+
+<div class="steps">
+<ol>
+  <li>赤くなったアクションをクリックして、<b>エラー文をコピー</b>します。</li>
+  <li>下の文の（　）にエラー文を貼って、Copilot に送ります。<b>英語のまま貼って構いません。</b></li>
+  <li>返ってきた<b>置き換えの式</b>を、<span class="k">作成 - 今週の開始日</span> の入力に入れ直します。</li>
+  <li><b>保存</b>して<b>テスト実行</b>。<b>全部緑になれば完成です。</b></li>
+</ol>
+</div>
+<div class="codewrap"><span class="lbl">そのまま貼れます</span><button class="copybtn" data-code="c3">コピー</button><pre id="c3">Power Automate でフローを実行したら、次のエラーが出ました。
 
 （エラーメッセージをそのまま貼る。訳さなくてよい）
 
 ・何が起きているのか
 ・どのアクションの、どの設定を直せばよいのか
 
-この2つを、初心者にも分かる言葉で教えてください。</pre></div><div class="callout tip"><b>★ ワンポイント（Power Automate を触ってきた人向け）</b><br><b>いつ気づけるかは、間違いの種類で違う。</b><br><b>必須の欄が空</b>のときは、保存したときに<b>フロー チェッカー</b>が「'フォルダーのパス' は必須です。」のように教えてくれます。ここは気づけます。<br>ところが<b>式の中身の間違いは、保存でもフロー チェッカーでも素通り</b>します。今日の練習用フローには、実在しない関数 <span class='k'>startOfWeek()</span> をわざと入れてありますが、<b>ソリューションのインポートも保存もチェッカーも、何も言いませんでした</b>（実機で確認）。止まったのは実行したときだけです。<br>だから<b>式は、そのアクションだけ小さく試してから</b>先へ進みます。</div><div class="callout tip"><b>★ ワンポイント（Power Automate を触ってきた人向け）</b><br><b>英語のまま貼ってよい理由。</b><br>自分で訳すと情報が落ちます。エラー文の中の<b>アクション名・関数名・行番号</b>が、そのまま原因の手がかりです。訳さず貼るほうが速く着きます。</div>
+この2つを、初心者にも分かる言葉で教えてください。</pre></div>
+<div class="callout warn"><b>うまく直らないときの逃げ道。</b>
+「7日前の0時」でよければ、下の式で代わりになります。<b>貼ったら必ずテスト実行して、緑になることを確かめてください。</b>
+</div>
+<div class="codewrap"><span class="lbl">うまくいかないときはこれ</span><button class="copybtn" data-code="c4">コピー</button><pre id="c4">startOfDay(addDays(utcNow(),-7))</pre></div><div class="callout tip"><b>★ ワンポイント（Power Automate を触ってきた人向け）</b><br><b>英語のまま貼ってよい理由。</b><br>自分で訳すと情報が落ちます。エラー文の中の<b>アクション名・関数名・行番号</b>が、そのまま原因の手がかりです。訳さず貼るほうが速く着きます。</div><div class="callout tip"><b>★ ワンポイント（Power Automate を触ってきた人向け）</b><br><b>失敗すると、デザイナーの Copilot も助けに来る。</b><br>実行に失敗すると、画面の右側に Copilot のパネルが開いて「次のエラーが見つかりました」と出ます。こちらから聞きに行かなくても、その場で相談できます。</div>
 </section>
 
 
 <section class="part">
-  <div class="part-h"><span class="part-badge">頼み方⑤</span><h2>フローの中身を読ませて、説明させる</h2></div>
-<div class="part-note">人から引き継いだフローや、昔つくった自分のフローを理解するときに使います。</div>
+  <div class="part-h"><span class="part-badge">STEP 6</span><h2>できたフローを読ませてみる</h2></div>
+  <div class="part-note">頼み方⑤。おまけですが、引き継ぎのときに効きます。</div>
 
 <div class="steps">
 <ol>
-  <li>フローの中身（JSON）を用意します。今日は<a href="../../flows/vol-27/flow-definition.json">こちら</a>を使えます。</li>
-  <li>下の文の黄色の部分に貼って、Copilot に送ります。</li>
+  <li>今日のフローの中身は<a href="../../flows/vol-27/flow-definition.json">こちら</a>から見られます。</li>
+  <li>下の文の（　）に貼って、Copilot に送ります。</li>
 </ol>
 </div>
 <div class="codewrap"><span class="lbl">そのまま貼れます</span><button class="copybtn" data-code="c5">コピー</button><pre id="c5">これは Power Automate のフローの中身です。
@@ -264,31 +288,23 @@
 ・このフローが何をしているのか
 ・つまずきそうな所はどこか
 
-この2つを、Power Automate を触ったことがない人にも分かる言葉で説明してください。</pre></div><div class="callout tip"><b>★ ワンポイント（Power Automate を触ってきた人向け）</b><br><b>自分のフロー全体を渡したいときは、ソリューションから書き出す。</b><br>フローの編集画面からは全体のJSONを取り出せません。<b>ソリューションを作る → そのフローを追加する → 一覧でその行を選んでエクスポート</b>（フローを開いた画面の中には無く、<b>一覧側</b>にあります）→ <b>アンマネージド</b>で書き出す、の順です。できたZIPを解凍すると、中の <span class='k'>Workflows</span> フォルダにJSONが入っています。</div><div class="callout tip"><b>★ ワンポイント（Power Automate を触ってきた人向け）</b><br><b>引き継ぎのときにいちばん効く。</b><br>作った人がいなくなったフロー、昔つくって忘れた自分のフロー。中を開いても分からないときに、<b>読める形に翻訳してもらう</b>使い方です。</div>
+この2つを、Power Automate を触ったことがない人にも分かる言葉で説明してください。</pre></div><div class="callout tip"><b>★ ワンポイント（Power Automate を触ってきた人向け）</b><br><b>自分のフロー全体を渡したいときは、ソリューションから書き出す。</b><br>フローの編集画面からは全体のJSONを取り出せません。<b>ソリューションを作る → そのフローを追加する → 一覧でその行を選んでエクスポート</b>（フローを開いた画面の中には無く、<b>一覧側</b>にあります）→ <b>アンマネージド</b>で書き出す、の順です。できたZIPを解凍すると、中の <span class='k'>Workflows</span> フォルダにJSONが入っています。</div>
 </section>
 
 
 <section class="part">
   <div class="part-h"><span class="part-badge">まとめ</span><h2>貼る前に、必ずやること</h2></div>
-<div class="part-note">5つの頼み方に共通する、最後の関門です。</div>
+  <div class="part-note">5つの頼み方に共通する、最後の関門です。</div>
 
-<div class="callout warn">
-<b>🔒 機密は置き換える。</b>
-会社名・氏名・メールアドレス・取引先名・金額は、サンプルの値にしてから貼ります。
-</div>
-<div class="callout warn">
-<b>🔍 そのまま信じない。</b>
-引用元として示されたページが、中身と関係ないことがあります。
-関数名は <a href="https://learn.microsoft.com/ja-jp/azure/logic-apps/workflow-definition-language-functions-reference" target="_blank" rel="noopener">公式の関数リファレンス</a>で確かめられます。
-</div>
-<div class="callout warn">
-<b>⬜ 空欄を疑う。</b>
-必須の欄が空のまま返ってくることがあります。<b>空欄は、AI が人に渡した場所</b>だと思ってください。
-</div>
-<div class="callout tip">
-<b>今日いちばん持ち帰ってほしいこと。</b><br>
-Copilot は<b>下書き役</b>です。<b>確かめるのは自分</b>——この順番さえ守れば、頼るほど速くなります。
-</div>
+<div class="callout warn"><b>🔒 機密は置き換える。</b>
+会社名・氏名・メールアドレス・取引先名・金額は、サンプルの値にしてから貼ります。</div>
+<div class="callout warn"><b>🔍 そのまま信じない。</b>
+引用元として示されたページが、中身と関係ないことがあります。関数名は
+<a href="https://learn.microsoft.com/ja-jp/azure/logic-apps/workflow-definition-language-functions-reference" target="_blank" rel="noopener">公式の関数リファレンス</a>で確かめられます。</div>
+<div class="callout warn"><b>⬜ 空欄を疑う。</b>
+必須の欄が空のまま返ってくることがあります。<b>空欄は、AI が人に渡した場所</b>だと思ってください。</div>
+<div class="callout tip"><b>今日いちばん持ち帰ってほしいこと。</b><br>
+Copilot は<b>下書き役</b>です。<b>確かめるのは自分</b>——この順番さえ守れば、頼るほど速くなります。</div>
 
 </section>
 
