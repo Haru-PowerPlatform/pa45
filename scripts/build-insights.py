@@ -12,12 +12,19 @@ data/insights.json を書き出します。achievements/insights/ 配下のペ�
 import json
 import re
 from collections import Counter
+from datetime import date
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 SURVEY_DIR = ROOT / "data" / "surveys"
 ACT_DIR = ROOT / "data" / "activities"
 OUT = ROOT / "data" / "insights.json"
+
+# 開催日が今日以降の回は集計に入れない。
+# connpass の申込レコードは開催前から participants を持つため、そのまま数えると
+# 開催前に「開催回数」と「のべ参加登録」が先に増えてしまう（実際に第27回で発生）。
+# 「その日が終わってから数える」ことで、実績が実態を先回りしないようにする。
+TODAY = date.today().isoformat()
 
 
 def load_json(path):
@@ -35,6 +42,8 @@ def session_rows():
             continue
         d = load_json(p)
         vol = int(m.group(1))
+        if (d.get("date") or "") >= TODAY:
+            continue
         # 録画レコード（type: Video）は講座回と同じ vol 番号を持つ別ファイルなので、
         # 回として数えず YouTube URL の補完だけに使う
         if d.get("type") != "PA45":

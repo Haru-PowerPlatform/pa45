@@ -157,6 +157,13 @@ def page(vol, sv, ses, prev_s, next_s, head, foot):
                lambda m: m.group(1) + E(title) + m.group(2), h, count=1)
     h = re.sub(r'(<meta property="og:description" content=")[^"]*(")',
                lambda m: m.group(1) + E(desc) + m.group(2), h, count=1)
+    # twitter: 側は雛形（can-do.html）の文言が残るため、必ず回別に差し替える。
+    # ここを入れ忘れていたので、全26回のXカードが「できるようになったことランキング」と
+    # 名乗っていた（2026-09-10 修正）。
+    h = re.sub(r'(<meta name="twitter:title" content=")[^"]*(")',
+               lambda m: m.group(1) + E(title) + m.group(2), h, count=1)
+    h = re.sub(r'(<meta name="twitter:description" content=")[^"]*(")',
+               lambda m: m.group(1) + E(desc) + m.group(2), h, count=1)
     h = re.sub(r'(<meta property="og:url" content=")[^"]*(")',
                lambda m: m.group(1) + f"{SITE}/achievements/insights/vol-{vol:02d}.html" + m.group(2),
                h, count=1)
@@ -165,6 +172,9 @@ def page(vol, sv, ses, prev_s, next_s, head, foot):
     ogp = ROOT / "assets" / "ogp" / f"pa45-vol{vol}-survey-ogp.png"
     if ogp.exists():
         h = re.sub(r'(<meta property="og:image" content=")[^"]*(")',
+                   lambda m: m.group(1) + f"{SITE}/assets/ogp/{ogp.name}" + m.group(2),
+                   h, count=1)
+        h = re.sub(r'(<meta name="twitter:image" content=")[^"]*(")',
                    lambda m: m.group(1) + f"{SITE}/assets/ogp/{ogp.name}" + m.group(2),
                    h, count=1)
     h = h.replace("</head>", f"<style>{CSS}</style>\n</head>", 1)
