@@ -51,72 +51,105 @@ footer{margin-top:46px;color:var(--sub);font-size:12.5px;border-top:1px solid va
 <div class="head">
   <span class="pill">PA45 第27回</span>
   <h1>そのまま貼れる Copilot プロンプト集</h1>
-  <p>Power Automate でフローを作るとき、頼み方を変えるだけで返ってくる答えが変わります。<br>黄色の部分を自分の内容に置き換えて、Copilot チャットに貼ってください。</p>
+  <p>Copilot への相談は、質問の文章より<b>「何を渡すか」</b>で答えが変わります。<br>黄色の部分を自分の内容に置き換えて、Copilot チャットに貼ってください。</p>
 </div>
 
-<h2><span class="no">1</span>材料を先に見せてから頼む</h2>
-<p class="why">いきなり「作って」と言わない。テスト実行の出力を先に貼ると、項目名を推測されずに済みます。いちばん効きます。</p>
+<div class="note" style="margin-top:0">
+<b>★ その前に：Think Deeper に切り替える</b><br>
+Copilot には<b>じっくり考えるモード</b>があります。通常のモードは速く返る代わりに、長いものを渡すと読み飛ばします。入力欄まわりのモード選択から <b>Think Deeper</b> を選んでから貼ってください。<br>
+特に <b>5（JSONを丸ごと渡す）</b> と <b>3（エラーの原因を追う）</b> で差が出ます。アクション名を聞くだけ・式を1行もらうだけなら、通常のままで十分です（待ち時間のほうが長くなります）。<br>
+<span style="font-size:13px">※ 画面の場所や呼び方は変わることがあります。</span>
+</div>
+
+<h2><span class="no">1</span>フロー全体のスクリーンショットを渡す</h2>
+<p class="why">Copilot はあなたの画面を見ていません。文章で説明するより、デザイナーを開いて全体を撮って貼るほうが速く、正確です。<b>アクションはすべて閉じた状態</b>で撮ってください。開いたままだと1つしか写りません。</p>
 <div class="card">
-<pre>Power Automate のフローを作っています。
-いまテスト実行したら、次の出力が返ってきました。
+<pre>Power Automate のフローについて相談です。
+いまのフロー全体のスクリーンショットを貼ります。
 
-<span class="fill">（ここにテスト実行の出力をそのまま貼る）</span>
+<span class="fill">（フロー全体のスクショを貼る）</span>
 
-この中から <span class="fill">「○○」</span> と <span class="fill">「△△」</span> を取り出して、次のアクションで使いたいです。
-動的コンテンツの選び方か、式のどちらかで教えてください。</pre>
+・このフローが何をしているのか
+・<span class="fill">「○○したい」</span>のですが、どのアクションを直せばよいか
+
+日本語で教えてください。</pre>
 <button class="copy" onclick="cp(this)">コピー</button>
 </div>
 
-<h2><span class="no">2</span>日本語のアクション名も書いてもらう</h2>
-<p class="why">そのまま聞くと英語のアクション名で返ってきます。日本語画面にその名前は無いので、毎回そこで手が止まります。先に頼んでおくと激減します。</p>
+<h2><span class="no">2</span>実行履歴の「出力」を渡す</h2>
+<p class="why">全体のスクショでは<b>形</b>しか伝わりません。中を流れたデータの実物を渡すと、答えが具体的になります。項目名は環境ごとに違うので、見せない限り推測で答えるしかありません。</p>
+<div class="note" style="margin-top:0">
+<b>どこを見るか</b><br>
+フローの画面 → <b>28日間の実行履歴</b> → 行をクリック → アクションを開いて<b>「出力」</b><br>
+<b>★ 「未加工の出力を表示する」から取ること。</b>画面の表示は見やすく整形されたものです。整形された表示から書き写すと、項目名が実物と変わってしまうことがあります。
+</div>
 <div class="card">
-<pre>Power Automate で <span class="fill">（やりたいこと）</span> を作りたいです。
+<pre>Power Automate のフローの、実行履歴の出力を貼ります。
+
+<span class="fill">（「未加工の出力を表示する」の中身をそのまま貼る）</span>
+
+・この中の <span class="fill">「○○」</span> を次のアクションで使いたいです
+・動的コンテンツの選び方か、式のどちらかで教えてください
+
+日本語で教えてください。</pre>
+<button class="copy" onclick="cp(this)">コピー</button>
+</div>
+
+<h2><span class="no">3</span>エラーは、スクリーンショットごと渡す</h2>
+<p class="why">訳さない・要約しない・そのまま渡す。エラー文だけコピーすると<b>どのアクションで出たか</b>が抜けます。スクショなら、アクション名・設定・エラー文が1枚に写ります。</p>
+<div class="card">
+<pre>Power Automate のフローが失敗しました。
+失敗したアクションの画面を貼ります。
+
+<span class="fill">（赤くなったアクションのスクショを貼る）</span>
+
+・何が起きているのか
+・どのアクションの、どの設定を直せばよいのか
+
+初心者にも分かる言葉で、日本語で教えてください。</pre>
+<button class="copy" onclick="cp(this)">コピー</button>
+</div>
+
+<h2><span class="no">4</span>「日本語で」を必ず足す</h2>
+<p class="why">Copilot は Power Automate の話になると、アクション名も式も英語で返してきます。ところが日本語画面には <code>Create HTML table</code> という名前はどこにも出てきません。日本語名は<b>画面で探すため</b>、英語名は<b>検索やドキュメントを読むため</b>に要るので、両方もらいます。</p>
+<div class="card">
+<pre>Power Automate で <span class="fill">（やりたいこと）</span> をしたいです。
 
 私の画面は日本語表示です。
+回答は日本語で書いてください。
 アクション名は「英語名（日本語名）」の形で、両方書いてください。
 設定する項目の名前も、日本語画面での表示名で書いてください。
 
 初心者なので、順番に、何をどこに入れるかまで教えてください。</pre>
 <button class="copy" onclick="cp(this)">コピー</button>
 </div>
-
-<h2><span class="no">3</span>形を指定する — 「式だけちょうだい」</h2>
-<p class="why">放っておくと長い解説が返ってきます。欲しい形を先に指定すると、必要な一行だけが返ります。</p>
-<div class="card">
-<pre>Power Automate の式だけを教えてください。説明は要りません。
-
-やりたいこと：<span class="fill">（例）UTCで届いた日時を、日本時間の「2026/09/10 20:15」の形にしたい</span>
-使う場所：<span class="fill">（例）メール本文の差し込み</span>
-
-式だけを1行で返してください。</pre>
-<button class="copy" onclick="cp(this)">コピー</button>
+<div class="note">
+<b>英語のまま返ってきたら、もう一度頼めば直ります。</b>一発で決まらないのが普通です。
 </div>
 
-<h2><span class="no">4</span>エラー文は、訳さずそのまま貼る</h2>
-<p class="why">意味だけでなく、どこを直せばよいかまで返ってきます。自分で英語を訳す必要はありません。</p>
-<div class="card">
-<pre>Power Automate でフローを実行したら、次のエラーが出ました。
-
-<span class="fill">（エラーメッセージをそのまま貼る。訳さなくてよい）</span>
-
-・何が起きているのか
-・どのアクションの、どの設定を直せばよいのか
-
-この2つを、初心者にも分かる言葉で教えてください。</pre>
-<button class="copy" onclick="cp(this)">コピー</button>
+<h2><span class="no">5</span>ZIP の中の JSON を渡す（いちばん正確）</h2>
+<p class="why">スクショに写るのは<b>見えている部分だけ</b>です。折りたたまれた設定・条件の中身・式は写りません。引き継いだフローを全部理解したいときや、式まで見てほしいときは、フローの中身そのもの（JSON）を渡します。</p>
+<div class="note" style="margin-top:0">
+<b>取り出し方（編集画面からは取り出せません）</b>
+<ol style="margin:8px 0;padding-left:22px">
+  <li>左メニュー <b>ソリューション</b> → <b>＋ 新しいソリューション</b> を作る</li>
+  <li>開いて <b>既存項目の追加 → クラウド フロー</b> で、そのフローを選ぶ</li>
+  <li><b>一覧でその行を選んで「エクスポート」</b> — ★ここでつまずきます。エクスポートは<b>フローを開いた画面の中にはありません</b>。ソリューションの<b>一覧側</b>で行にチェックを入れると上に出てきます</li>
+  <li><b>アンマネージド</b>を選んでダウンロード（マネージドは配布用で、中身を編集できません）</li>
+  <li>ZIPを右クリック → <b>すべて展開</b></li>
+  <li><b>Workflows</b> フォルダを開き、中の <b>.json</b> をメモ帳で開く</li>
+  <li>全選択してコピーし、Copilot に貼る</li>
+</ol>
 </div>
-
-<h2><span class="no">5</span>フローの中身を読ませて、説明させる</h2>
-<p class="why">人から引き継いだフロー、昔つくった自分のフロー。中を開いても分からないときに使います。</p>
 <div class="card">
-<pre>これは Power Automate のフローの中身です。
+<pre>これは Power Automate のフローの中身（JSON）です。
 
-<span class="fill">（フローのJSONを貼る）</span>
+<span class="fill">（Workflows フォルダの .json を全部貼る）</span>
 
-・このフローが何をしているのか
+・このフローが何をしているのか、上から順に
 ・つまずきそうな所はどこか
 
-この2つを、Power Automate を触ったことがない人にも分かる言葉で説明してください。</pre>
+Power Automate を触ったことがない人にも分かる言葉で、日本語で説明してください。</pre>
 <button class="copy" onclick="cp(this)">コピー</button>
 </div>
 
@@ -126,6 +159,7 @@ footer{margin-top:46px;color:var(--sub);font-size:12.5px;border-top:1px solid va
   <li>会社名・氏名・メールアドレス・取引先名・金額は、<b>サンプルの値に置き換えてから</b>貼る</li>
   <li>返ってきた答えは<b>そのまま信じない</b>。引用元として示されたページが、中身と関係ないことがあります</li>
   <li>必須の欄が空のまま返ってくることがあります。<b>空欄は、AIが人に渡した場所</b>だと思ってください</li>
+  <li><b>ZIP の中には環境のIDや接続の情報も入っています。</b>社外のAIに貼る前に、会社のルールを確認してください</li>
 </ul>
 </div>
 
@@ -136,7 +170,7 @@ footer{margin-top:46px;color:var(--sub);font-size:12.5px;border-top:1px solid va
 </div>
 
 <footer>
-PA45 第27回（2026-09-10）配布資料 ／ Power Automate 45分ハンズオン<br>
+PA45 第27回（2026-09-10）配布資料 ／ Power Automate 45分<br>
 画面や仕様は変わることがあります。最新の情報は Microsoft Learn をご確認ください。
 </footer>
 
