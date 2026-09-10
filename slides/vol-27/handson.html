@@ -241,6 +241,8 @@ Copilot に聞くと教えてくれますが、返ってくるのは <span class
 実在するのは <span class="k">startOfDay</span> ／ <span class="k">startOfHour</span> ／ <span class="k">startOfMonth</span> の3つだけです。
 </div>
 <div class="callout tip"><b>★ ワンポイント（Power Automate を触ってきた人向け）</b><br><b>いつ気づけるかは、間違いの種類で違う。</b><br><b>必須の欄が空</b>のときは、保存したときに<b>フロー チェッカー</b>が「'フォルダーのパス' は必須です。」のように教えてくれます。ここは気づけます。<br>ところが<b>式の中身の間違いは、保存でもフロー チェッカーでも素通り</b>します。実際このフローは、<b>ソリューションのインポートも保存もチェッカーも、何も言いませんでした</b>（実機で確認）。止まったのは実行したときだけです。<br>だから<b>式は、そのアクションだけ小さく試してから</b>先へ進みます。</div>
+<figure class="shot"><img src="assets/run-ng.png" alt="実行結果。手前の3つは成功し、最後だけ赤くなっている"><figcaption>実行するとこうなります。手前は成功し、<b>最後だけ赤</b>。保存もフロー チェッカーも何も言わなかったのに、ここで初めて止まります。</figcaption></figure>
+
 </section>
 
 
@@ -264,8 +266,10 @@ Copilot に聞くと教えてくれますが、返ってくるのは <span class
 ・どのアクションの、どの設定を直せばよいのか
 
 この2つを、初心者にも分かる言葉で教えてください。</pre></div>
-<div class="callout warn"><b>うまく直らないときの逃げ道。</b><br>「7日前の0時」でよければ、下の式で代わりになります。使っているのは <span class="k">utcNow</span> ／ <span class="k">addDays</span> ／ <span class="k">startOfDay</span> の3つだけで、<b>いずれも公式の関数リファレンスに載っています</b>（<span class="k">addDays</span> は負の数を渡せることも明記されています）。<br><b>それでも、貼ったら必ずテスト実行してください。</b>「リファレンスにある」と「自分のフローで動く」は別の話です。今日の <span class="k">startOfWeek</span> は、まさにそこを飛ばしたときに何が起きるかの実例でした。</div>
+<div class="callout warn"><b>うまく直らないときの逃げ道。</b><br>「7日前の0時」でよければ、下の式で代わりになります。使っているのは <span class="k">utcNow</span> ／ <span class="k">addDays</span> ／ <span class="k">startOfDay</span> の3つだけで、<b>いずれも公式の関数リファレンスに載っています</b>（<span class="k">addDays</span> は負の数を渡せることも明記されています）。<br><b>この式は実機で動くことを確認済みです</b>（実行すると「7日前の0時」が返ります）。<br>それでも、貼ったあとは<b>必ずテスト実行して自分の目で確かめてください</b>。「どこかで動いた」と「自分のフローで動く」は別の話です。今日の <span class="k">startOfWeek</span> は、そこを飛ばしたときに何が起きるかの実例でした。</div>
 <div class="codewrap"><span class="lbl">うまくいかないときはこれ</span><button class="copybtn" data-code="c4">コピー</button><pre id="c4">startOfDay(addDays(utcNow(),-7))</pre></div><div class="callout tip"><b>★ ワンポイント（Power Automate を触ってきた人向け）</b><br><b>英語のまま貼ってよい理由。</b><br>自分で訳すと情報が落ちます。エラー文の中の<b>アクション名・関数名・行番号</b>が、そのまま原因の手がかりです。訳さず貼るほうが速く着きます。</div><div class="callout tip"><b>★ ワンポイント（Power Automate を触ってきた人向け）</b><br><b>失敗すると、デザイナーの Copilot も助けに来る。</b><br>実行に失敗すると、画面の右側に Copilot のパネルが開いて「次のエラーが見つかりました」と出ます。こちらから聞きに行かなくても、その場で相談できます。</div>
+
+<figure class="shot"><img src="assets/run-ok.png" alt="直したあとの実行結果。5つすべてが緑になり、出力に7日前の日付が出ている"><figcaption><b>直すとこうなります。</b>「ご利用のフローが正常に実行されました。」と出て、5つすべてが緑。出力に7日前の日付（この画面では 2026-09-03）が入ります。<b>ここまで来たら完成です。</b></figcaption></figure>
 </section>
 
 
