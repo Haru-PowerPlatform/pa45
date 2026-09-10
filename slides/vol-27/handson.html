@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PA45 第27回 ハンズオン手順｜フロー作りが速くなる Copilot の頼み方5選</title>
+<meta name="description" content="PA45 第27回のハンズオン手順書。Power Automate のフローを作るときに Copilot へどう頼むか、返ってくる答えが変わる5つの頼み方を順に試します。そのまま貼れるプロンプトと、Power Automate を触ってきた人向けのワンポイント付き。">
+<style>
+  :root{
+    --pa:#3a4fb8;--pa-dark:#2c3a94;--pa-bg:#eef1fc;
+    --sp:#0f6cbd;--sp-bg:#e6f0fb;
+    --teams:#5b5fc7;--teams-dark:#4347a8;--teams-bg:#eef0fb;
+    --blue-text:#14528f;--blue-mid:#2a7dd4;--blue-bg:#eaf2fc;
+    --ink:#1f2937;--muted:#475569;--border:#e2e8f0;--amber:#b45309;--code-bg:#0f172a;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:linear-gradient(160deg,#eef1fc 0%,#f5f8fc 42%,#fff 100%);
+    font-family:"Meiryo UI","Yu Gothic UI","Segoe UI",sans-serif;color:var(--ink);
+    min-height:100vh;padding:0 16px 70px;line-height:1.7;}
+  .wrap{max-width:860px;margin:0 auto;}
+
+  .topbar{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.93);
+    -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+    border:1px solid var(--border);border-top:none;border-radius:0 0 14px 14px;
+    box-shadow:0 2px 10px rgba(20,82,143,.08);margin-bottom:18px;}
+  .topbar-in{display:flex;align-items:center;gap:10px;padding:9px 14px;flex-wrap:wrap;}
+  .brand{display:flex;flex-direction:column;text-decoration:none;color:var(--blue-text);font-weight:800;font-size:18px;line-height:1;}
+  .brand span{font-size:9px;font-weight:600;color:var(--muted);letter-spacing:.04em;margin-top:3px;}
+  .tnav{display:flex;gap:3px;flex-wrap:wrap;margin-left:auto;}
+  .tnav a{text-decoration:none;color:var(--blue-text);font-size:12.5px;font-weight:700;padding:6px 10px;border-radius:8px;white-space:nowrap;}
+  .tnav a:hover{background:var(--blue-bg);}
+  .tnav a.cur{background:var(--pa);color:#fff;}
+
+  header{text-align:center;margin-bottom:6px;}
+  .eyebrow{display:inline-block;background:var(--pa);color:#fff;font-weight:700;font-size:13px;letter-spacing:.06em;padding:5px 16px;border-radius:20px;}
+  h1{font-size:29px;font-weight:800;color:var(--pa-dark);margin:14px 0 6px;line-height:1.28;}
+  h1 small{display:block;font-size:15.5px;color:var(--muted);font-weight:600;margin-top:6px;}
+  .crumbs{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:12.5px;color:var(--muted);margin-bottom:14px;justify-content:center;}
+  .crumbs a{color:var(--blue-mid);text-decoration:none;font-weight:700;}
+  .crumbs .sep{color:#cbd5e1;}
+
+  .goal{background:#fff;border:1px solid var(--border);border-left:5px solid var(--pa);border-radius:12px;padding:14px 20px;margin-bottom:16px;box-shadow:0 2px 8px rgba(20,82,143,.05);}
+  .goal b{color:var(--pa-dark);}
+  .flowpath{display:flex;flex-wrap:wrap;align-items:center;gap:8px;justify-content:center;margin:14px 0 0;font-weight:800;color:var(--pa-dark);font-size:14.5px;}
+  .flowpath .st{background:var(--sp-bg);border:1px solid #a9cdec;border-radius:22px;padding:7px 15px;}
+  .flowpath .st.hot{background:var(--teams-bg);border-color:#c3c5ef;color:var(--teams-dark);}
+  .flowpath .st.end{background:#fff7ed;border-color:#fdba74;color:#9a3412;}
+  .flowpath .ar{color:var(--pa);font-size:18px;}
+
+  .toc{display:flex;flex-wrap:wrap;gap:8px;background:#fff;border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:22px;box-shadow:0 2px 8px rgba(20,82,143,.05);}
+  .toc-lbl{font-size:12px;font-weight:800;color:var(--pa-dark);background:var(--pa-bg);padding:4px 11px;border-radius:8px;}
+  .toc a{text-decoration:none;color:var(--blue-text);font-size:13px;font-weight:700;padding:6px 12px;border-radius:8px;border:1px solid var(--border);}
+  .toc a:hover{background:var(--blue-bg);border-color:var(--blue-mid);}
+
+  .part{scroll-margin-top:70px;margin:26px 0 0;}
+  .part-h{display:flex;align-items:center;gap:12px;margin-bottom:6px;}
+  .part-badge{flex:0 0 auto;background:var(--pa);color:#fff;font-weight:800;font-size:14px;padding:6px 14px;border-radius:20px;}
+  .part-badge.sp{background:var(--sp);}
+  .part-badge.tm{background:var(--teams);}
+  .part-h h2{font-size:20px;font-weight:800;color:var(--pa-dark);margin:0;}
+  .part-note{font-size:14px;color:var(--muted);margin:0 0 12px;}
+
+  ol.steps{list-style:none;counter-reset:st;padding:0;margin:0;}
+  ol.steps>li{position:relative;padding:14px 16px 14px 54px;background:#fff;border:1px solid var(--border);border-radius:12px;margin-bottom:10px;box-shadow:0 2px 6px rgba(20,82,143,.05);font-size:15px;}
+  ol.steps>li::before{counter-increment:st;content:counter(st);position:absolute;left:14px;top:13px;width:28px;height:28px;border-radius:50%;background:var(--pa);color:#fff;font-weight:800;font-size:15px;display:flex;align-items:center;justify-content:center;}
+  ol.steps.sp>li::before{background:var(--sp);}
+  ol.steps.tm>li::before{background:var(--teams);}
+  ol.steps>li b{color:var(--pa-dark);}
+  .k{display:inline-block;background:#f1f5f9;border:1px solid #d7dee7;border-radius:6px;padding:1px 8px;font-weight:700;font-size:13.5px;color:#334155;white-space:nowrap;}
+  .pick{display:inline-block;background:#fff7ed;border:1px solid #fdba74;border-radius:6px;padding:1px 8px;font-weight:800;font-size:13.5px;color:#c2410c;}
+  ul.sub{margin:8px 0 0;padding-left:20px;font-size:14px;color:var(--muted);}
+  ul.sub li{margin:3px 0;}
+
+  .setrow{display:flex;flex-wrap:wrap;gap:6px 10px;margin:8px 0 0;padding:10px 12px;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:10px;font-size:13.5px;}
+  .setrow .kv{display:flex;gap:6px;align-items:center;}
+  .setrow .kv .kk{font-weight:800;color:var(--pa-dark);}
+  .setrow .kv .vv{background:#fff;border:1px solid #d7dee7;border-radius:6px;padding:1px 9px;font-weight:700;color:#334155;}
+
+  .callout{border-radius:10px;padding:12px 18px;font-size:14px;margin:12px 0;line-height:1.7;}
+  .callout.tip{background:var(--sp-bg);border-left:5px solid var(--sp);color:#0b4a7a;}
+  .callout.warn{background:#fffbeb;border-left:5px solid #f59e0b;color:#78350f;}
+  .callout.info{background:var(--blue-bg);border-left:5px solid var(--blue-mid);color:#14528f;}
+  .callout.pa{background:var(--pa-bg);border-left:5px solid var(--pa);color:var(--pa-dark);}
+  .callout.tm{background:var(--teams-bg);border-left:5px solid var(--teams);color:var(--teams-dark);}
+
+  .codewrap{position:relative;margin:10px 0;}
+  .codewrap .lbl{font-size:12px;font-weight:800;color:#cbd5e1;background:#1e293b;display:inline-block;padding:4px 12px;border-radius:8px 8px 0 0;}
+  pre{margin:0;background:var(--code-bg);color:#e2e8f0;border-radius:0 10px 10px 10px;padding:16px 18px;overflow-x:auto;font-size:12.5px;line-height:1.65;
+    font-family:"Cascadia Code","Consolas","SFMono-Regular",monospace;white-space:pre-wrap;word-break:break-word;}
+  .copybtn{position:absolute;top:6px;right:8px;background:#334155;color:#e2e8f0;border:none;border-radius:7px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer;}
+  .copybtn:hover{background:#475569;}
+
+  table.fx{width:100%;border-collapse:collapse;margin:12px 0;font-size:13.5px;}
+  table.fx th{background:var(--pa-bg);color:var(--pa-dark);font-weight:800;border:1px solid #cbd5e1;padding:8px 10px;text-align:left;}
+  table.fx td{border:1px solid #cbd5e1;padding:8px 10px;vertical-align:top;}
+  table.fx code{background:#0f172a;color:#fbbf24;border-radius:5px;padding:2px 7px;font-family:"Consolas",monospace;font-size:12px;}
+  table.fx td.v{font-weight:800;color:#0b5e37;white-space:nowrap;}
+
+  .backrow{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:30px;}
+  .btn.sec{display:inline-flex;align-items:center;gap:6px;background:#fff;color:var(--blue-text);border:1px solid var(--blue-mid);text-decoration:none;font-size:14px;font-weight:700;padding:10px 20px;border-radius:9px;}
+  .btn.sec:hover{background:var(--blue-bg);}
+  figure.shot{margin:14px 0 6px;}
+  figure.shot img{display:block;width:100%;border:1px solid #cbd5e1;border-radius:10px;box-shadow:0 6px 18px rgba(20,82,143,.14);}
+  figure.shot.narrow img{max-width:420px;margin:0 auto;}
+  figure.shot figcaption{font-size:12.5px;color:var(--muted);margin-top:7px;text-align:center;}
+  footer{margin-top:26px;text-align:center;color:#94a3b8;font-size:12px;line-height:1.8;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <nav class="topbar" aria-label="サイト内メニュー">
+    <div class="topbar-in">
+      <a class="brand" href="../../">PA45<span>Power Automate 45</span></a>
+      <div class="tnav">
+        <a href="../../">🏠 ホーム</a>
+        <a href="links.html">🗂️ 第27回の資料</a>
+        <a href="./" class="cur">🛠️ ハンズオン手順</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="crumbs">
+    <a href="../../">🏠 PA45トップ</a><span class="sep">›</span>
+    <a href="links.html">第27回 資料</a><span class="sep">›</span>
+    <span>ハンズオン手順</span>
+  </div>
+
+  <header>
+    <span class="eyebrow">PA45 第27回｜ハンズオン手順</span>
+    <h1>フロー作りが速くなる、Copilot の頼み方5選<small>Copilot に聞いてはいるけれど、うまく答えてくれない。その原因の多くは頼み方にあります。
+    今日は、返ってくる答えが変わる頼み方を5つ、順に試します。フローを1本つくりきる回ではないので、手ぶらで見るだけでも成立します。</small></h1>
+  </header>
+
+  <div class="goal">
+    <b>今日もちかえるもの：</b> ①材料を先に見せる ②日本語のアクション名も頼む ③形を指定する
+    ④エラー文をそのまま貼る ⑤フローの中身を読ませる ——
+    この5つと、<b>そのままコピーして使えるプロンプト</b>です。
+  </div>
+
+  <div class="callout warn">
+    <b>Copilot が使えない方へ。</b>
+    プロンプトは<a href="prompts.html">配布ページ</a>に置いてあります。あとからご自身の環境で試せます。
+    今日は画面を見ているだけで大丈夫です。
+  </div>
+
+<section class="part">
+  <div class="part-h"><span class="part-badge">準備</span><h2>練習用のフローを開く</h2></div>
+<div class="part-note">まず、今日さわる題材を用意します。</div>
+
+<div class="steps">
+<ol>
+  <li>Power Automate（<span class="k">make.powerautomate.com</span>）を開きます。</li>
+  <li>今日の練習用フローは<b>コネクタを1つも使っていません</b>。接続の設定は要りません。</li>
+  <li>自分の環境で試したい方は、<a href="../../flows/vol-27/PA45-Vol27-Demo.zip">デモフローのZIP</a>を
+      左メニュー「ソリューション」→「インポート」から取り込みます。</li>
+</ol>
+</div>
+<div class="callout warn"><b>取り込まなくても進められます。</b>
+講師の画面で同じものを動かします。ZIPは持ち帰り用と思ってください。
+中身だけ見たい方は<a href="../../flows/vol-27/flow-definition.json">フローのJSON</a>をそのまま開けます。</div>
+
+</section>
+
+
+<section class="part">
+  <div class="part-h"><span class="part-badge">頼み方①</span><h2>材料を先に見せてから頼む</h2></div>
+<div class="part-note">テスト実行の出力を先に貼ると、項目名を推測されずに済みます。</div>
+
+<div class="steps">
+<ol>
+  <li>フローを<b>テスト実行</b>して、アクションの<b>出力</b>を開きます。</li>
+  <li>出力をコピーします。</li>
+  <li>下の文の黄色の部分に貼って、Copilot に送ります。</li>
+</ol>
+</div>
+<div class="codewrap"><span class="lbl">そのまま貼れます</span><button class="copybtn" data-code="c1">コピー</button><pre id="c1">Power Automate のフローを作っています。
+いまテスト実行したら、次の出力が返ってきました。
+
+（ここにテスト実行の出力をそのまま貼る）
+
+この中から 「○○」 と 「△△」 を取り出して、次のアクションで使いたいです。
+動的コンテンツの選び方か、式のどちらかで教えてください。</pre></div><div class="callout tip"><b>★ ワンポイント（Power Automate を触ってきた人向け）</b><br><b>コピーするなら「未加工の出力を表示する」から。</b><br>実行履歴の出力欄は見やすく整形されて表示されますが、<b>「未加工の出力を表示する」</b>を開くと本物のJSONがそのまま出ます。Copilot に渡すのはこちらです。整形された表示から書き写すと、<b>項目名が実物と変わってしまう</b>ことがあります。<br>あわせて、<b>会社名・氏名・メールアドレス・取引先名・金額はサンプルの値に置き換えてから</b>貼ってください。</div><div class="callout tip"><b>★ ワンポイント（Power Automate を触ってきた人向け）</b><br><b>なぜ「先に見せる」が効くのか。</b><br>動的コンテンツの名前は<b>環境ごと・リストごとに違います</b>。SharePointの列は、画面の表示名と内部名が別物であることも珍しくありません。見せないかぎり Copilot は当てられないので、推測で書かれた式を人が直す時間が生まれます。<b>先に見せると、その往復が消えます。</b></div>
+</section>
+
+
+<section class="part">
+  <div class="part-h"><span class="part-badge">頼み方②</span><h2>「日本語のアクション名も書いて」と頼む</h2></div>
+<div class="part-note">そのまま聞くと英語名だけで返ってきて、日本語の画面で迷子になります。</div>
+
+<div class="steps">
+<ol>
+  <li>下の文の黄色の部分に、作りたいことを書きます。</li>
+  <li>Copilot に送ります。</li>
+  <li>返ってきた手順の<b>アクション名</b>を見ます。</li>
+</ol>
+</div>
+<div class="codewrap"><span class="lbl">そのまま貼れます</span><button class="copybtn" data-code="c2">コピー</button><pre id="c2">Power Automate で （やりたいこと） を作りたいです。
+
+私の画面は日本語表示です。
+アクション名は「英語名（日本語名）」の形で、両方書いてください。
+設定する項目の名前も、日本語画面での表示名で書いてください。
+
+初心者なので、順番に、何をどこに入れるかまで教えてください。</pre></div><div class="callout tip"><b>★ ワンポイント（Power Automate を触ってきた人向け）</b><br><b>英語名は「画面を探すため」だけに使う。式に持ち込まない。</b><br>Copilot は式の例を <span class='k'>outputs('Compose')</span> のような<b>英語のアクション名</b>で書いてきます。ところが日本語環境で作ったフローのアクション名は「作成」「作成 2」です。<b>英語名のまま貼ると動きません。</b><br>PA45では、アクション名を<b>「既定名 - 一言説明」</b>で付けることを勧めています（例：<span class='k'>作成 - サンプルデータ</span>）。読みやすくなる一方で、<b>日本語とハイフンが入った名前を式から参照すると壊れやすい</b>という副作用があります。繰り返しの中では <span class='k'>items('Apply_to_each')</span> ではなく <span class='k'>@item()</span> を使うと、名前を式に書かずに済んで安全です。</div><div class="callout tip"><b>★ ワンポイント（Power Automate を触ってきた人向け）</b><br><b>それでも英語のまま返ってきたら、もう一度頼む。</b><br>一度で切り替わらないことがあります。「日本語名も」ともう一度頼めば直ります。<b>一発で決まらないのが普通</b>で、会話を続けるのが正しい使い方です。</div>
+</section>
+
+
+<section class="part">
+  <div class="part-h"><span class="part-badge">頼み方③</span><h2>形を指定する ―「式だけちょうだい」</h2></div>
+<div class="part-note">放っておくと長い解説が返ってきます。欲しい形を先に伝えると、必要な一行だけが返ります。</div>
+
+<div class="steps">
+<ol>
+  <li>下の文の黄色の部分を、自分のやりたいことに置き換えます。</li>
+  <li>Copilot に送ります。</li>
+  <li>返ってきた式を、<b>そのアクションだけテスト実行</b>して確かめます。</li>
+</ol>
+</div>
+<div class="codewrap"><span class="lbl">そのまま貼れます</span><button class="copybtn" data-code="c3">コピー</button><pre id="c3">Power Automate の式だけを教えてください。説明は要りません。
+
+やりたいこと：UTCで届いた日時を、日本時間の「2026/09/10 20:15」の形にしたい
+使う場所：メール本文の差し込み
+
+式だけを1行で返してください。</pre></div><div class="callout tip"><b>★ ワンポイント（Power Automate を触ってきた人向け）</b><br><b>時刻の式が返ってきたら、まずタイムゾーンを疑う。</b><br>Power Automate の時刻は<b>初期設定がUTC（世界標準時）</b>です。<span class='k'>utcNow()</span> をそのまま使う式が返ってきたら、日本時間になっていません。<span class='k'>convertTimeZone(utcNow(),'UTC','Tokyo Standard Time','yyyy/MM/dd HH:mm')</span> のように、<b>変換を自分で足す</b>必要がないかを確かめてください。スケジュールのトリガーなら、設定画面の<b>タイムゾーンで「(UTC+09:00) 大阪, 札幌, 東京」</b>を選びます。</div><div class="callout tip"><b>★ ワンポイント（Power Automate を触ってきた人向け）</b><br><b>「式だけ」以外にも、形は指定できる。</b><br>「3行で」「表にして」「箇条書きで」も同じように効きます。欲しい<b>形</b>を先に伝えるのがコツです。</div>
+</section>
+
+
+<section class="part">
+  <div class="part-h"><span class="part-badge">頼み方④</span><h2>エラー文は、訳さずそのまま貼る</h2></div>
+<div class="part-note">初心者がいちばん止まるのがエラーです。意味だけでなく、直す場所まで返ってきます。</div>
+
+<div class="steps">
+<ol>
+  <li>失敗したアクションをクリックして、エラー文をコピーします。</li>
+  <li>下の文の黄色の部分に貼って、Copilot に送ります。</li>
+  <li>返ってきた「直す場所」を確かめてから直します。</li>
+</ol>
+</div>
+<div class="codewrap"><span class="lbl">そのまま貼れます</span><button class="copybtn" data-code="c4">コピー</button><pre id="c4">Power Automate でフローを実行したら、次のエラーが出ました。
+
+（エラーメッセージをそのまま貼る。訳さなくてよい）
+
+・何が起きているのか
+・どのアクションの、どの設定を直せばよいのか
+
+この2つを、初心者にも分かる言葉で教えてください。</pre></div><div class="callout tip"><b>★ ワンポイント（Power Automate を触ってきた人向け）</b><br><b>いつ気づけるかは、間違いの種類で違う。</b><br><b>必須の欄が空</b>のときは、保存したときに<b>フロー チェッカー</b>が「'フォルダーのパス' は必須です。」のように教えてくれます。ここは気づけます。<br>ところが<b>式の中身の間違いは、保存でもフロー チェッカーでも素通り</b>します。今日の練習用フローには、実在しない関数 <span class='k'>startOfWeek()</span> をわざと入れてありますが、<b>ソリューションのインポートも保存もチェッカーも、何も言いませんでした</b>（実機で確認）。止まったのは実行したときだけです。<br>だから<b>式は、そのアクションだけ小さく試してから</b>先へ進みます。</div><div class="callout tip"><b>★ ワンポイント（Power Automate を触ってきた人向け）</b><br><b>英語のまま貼ってよい理由。</b><br>自分で訳すと情報が落ちます。エラー文の中の<b>アクション名・関数名・行番号</b>が、そのまま原因の手がかりです。訳さず貼るほうが速く着きます。</div>
+</section>
+
+
+<section class="part">
+  <div class="part-h"><span class="part-badge">頼み方⑤</span><h2>フローの中身を読ませて、説明させる</h2></div>
+<div class="part-note">人から引き継いだフローや、昔つくった自分のフローを理解するときに使います。</div>
+
+<div class="steps">
+<ol>
+  <li>フローの中身（JSON）を用意します。今日は<a href="../../flows/vol-27/flow-definition.json">こちら</a>を使えます。</li>
+  <li>下の文の黄色の部分に貼って、Copilot に送ります。</li>
+</ol>
+</div>
+<div class="codewrap"><span class="lbl">そのまま貼れます</span><button class="copybtn" data-code="c5">コピー</button><pre id="c5">これは Power Automate のフローの中身です。
+
+（フローのJSONを貼る）
+
+・このフローが何をしているのか
+・つまずきそうな所はどこか
+
+この2つを、Power Automate を触ったことがない人にも分かる言葉で説明してください。</pre></div><div class="callout tip"><b>★ ワンポイント（Power Automate を触ってきた人向け）</b><br><b>自分のフロー全体を渡したいときは、ソリューションから書き出す。</b><br>フローの編集画面からは全体のJSONを取り出せません。<b>ソリューションを作る → そのフローを追加する → 一覧でその行を選んでエクスポート</b>（フローを開いた画面の中には無く、<b>一覧側</b>にあります）→ <b>アンマネージド</b>で書き出す、の順です。できたZIPを解凍すると、中の <span class='k'>Workflows</span> フォルダにJSONが入っています。</div><div class="callout tip"><b>★ ワンポイント（Power Automate を触ってきた人向け）</b><br><b>引き継ぎのときにいちばん効く。</b><br>作った人がいなくなったフロー、昔つくって忘れた自分のフロー。中を開いても分からないときに、<b>読める形に翻訳してもらう</b>使い方です。</div>
+</section>
+
+
+<section class="part">
+  <div class="part-h"><span class="part-badge">まとめ</span><h2>貼る前に、必ずやること</h2></div>
+<div class="part-note">5つの頼み方に共通する、最後の関門です。</div>
+
+<div class="callout warn">
+<b>🔒 機密は置き換える。</b>
+会社名・氏名・メールアドレス・取引先名・金額は、サンプルの値にしてから貼ります。
+</div>
+<div class="callout warn">
+<b>🔍 そのまま信じない。</b>
+引用元として示されたページが、中身と関係ないことがあります。
+関数名は <a href="https://learn.microsoft.com/ja-jp/azure/logic-apps/workflow-definition-language-functions-reference" target="_blank" rel="noopener">公式の関数リファレンス</a>で確かめられます。
+</div>
+<div class="callout warn">
+<b>⬜ 空欄を疑う。</b>
+必須の欄が空のまま返ってくることがあります。<b>空欄は、AI が人に渡した場所</b>だと思ってください。
+</div>
+<div class="callout tip">
+<b>今日いちばん持ち帰ってほしいこと。</b><br>
+Copilot は<b>下書き役</b>です。<b>確かめるのは自分</b>——この順番さえ守れば、頼るほど速くなります。
+</div>
+
+</section>
+
+
+  <div class="backrow">
+    <a class="btn sec" href="prompts.html">📋 プロンプト集を開く</a>
+    <a class="btn sec" href="links.html">← 第27回の資料にもどる</a>
+    <a class="btn sec" href="../../">🏠 サイトのトップへ</a>
+  </div>
+
+  <footer>
+    PA45 第27回 ハンズオン手順 ／ Power Automate × Copilot<br>
+    人名・数値はすべて架空のサンプルです。画面や手順は公開日時点のもので、今後変わる可能性があります。
+    最新の情報は Microsoft Learn をご確認ください。
+  </footer>
+
+</div>
+
+<script>
+  document.querySelectorAll('.copybtn').forEach(function(b){
+    b.addEventListener('click', function(){
+      var el = document.getElementById(b.dataset.code);
+      var text = el.innerText;
+      navigator.clipboard.writeText(text).then(function(){
+        var o = b.textContent; b.textContent = 'コピーしました'; setTimeout(function(){ b.textContent = o; }, 1400);
+      });
+    });
+  });
+</script>
+</body>
+</html>
