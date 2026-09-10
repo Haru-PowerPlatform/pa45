@@ -284,6 +284,7 @@ def send_email(to_email: str, session_num: int, badge_path: Path, next_url_overr
         24: "Teamsの絵文字リアクションで出欠を自動集計",
         25: "メールの添付をSharePointへ自動保存",
         26: "毎日のカードで報連相をワンタップ",
+        27: "Copilotに何を渡すかで答えが変わる",
     }
     theme = THEMES_JP.get(session_num)
     theme_part = f"『{theme}』" if theme else ""

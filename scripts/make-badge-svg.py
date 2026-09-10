@@ -50,6 +50,7 @@ SESSIONS = {
     24: ("Reaction Attendance", "2026-08-22", "reaction"),
     25: ("Mail Attachment Auto Save", "2026-08-27", "foldermail"),
     26: ("Daily Status Card", "2026-09-03", "hourencard"),
+    27: ("Ask Copilot Right", "2026-09-10", "copilot"),
 }
 
 
