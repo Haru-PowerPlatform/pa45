@@ -17,7 +17,7 @@
 | 8 | 要望→第18回 承認 | youtu.be（第18回） | YouTube |
 | 9 | 「45分では足りない」→スライド常設 | slides/ | og-slides.png |
 | 10 | 「JSONが無理」→第14回 | youtu.be（第14回） | YouTube |
-| 11 | 動画アーカイブ{{VID}}本 | videos/ | og-videos.png |
+| 11 | 録画{{VID}}本・合計{{HRS}}（全部無料） | videos/ | og-videos.png |
 | 12 | 実行履歴の読み方（第11回） | youtu.be（第11回） | YouTube |
 | 13 | スライド全{{N}}回 | slides/ | og-slides.png |
 | 14 | 初参加ガイド | start-here/ | og-start-here.png |
@@ -171,31 +171,17 @@ https://haru-powerplatform.github.io/pa45/slides/
 https://youtu.be/9fkbQmOR6Fo
 ```
 
-## 11. 動画アーカイブ{{VID}}本
+## 11. 録画アーカイブ{{VID}}本（総時間・全部無料）
 ```
 【#PowerAutomate 45分ハンズオン講座＝PA45】
 
-【録画アーカイブ{{VID}}本】
+PA45はこれまで{{N}}回、合計{{HRS}}やってきました。全部無料です。
 
-PA45の過去回の録画を{{VID}}本公開しています。
-
-承認・Forms連携・通知・JSON・Copilotなど。気になるテーマの回だけ、その場で再生できます。1本45分です。
+録画は{{VID}}本ぶん＝{{VHRS}}を公開中。承認・Forms・通知・JSON・Copilotなど、気になる回だけその場で再生できます。登録もログインも要りません。
 
 https://haru-powerplatform.github.io/pa45/videos/
 ```
 
-## 12. 実行履歴の読み方（第11回）
-```
-【#PowerAutomate 45分ハンズオン講座＝PA45】
-
-【第11回・実行履歴の読み方】
-
-フローが失敗したとき、どこを見ればいいか分からない。そんな回でした。
-
-第11回は実行履歴の読み方だけをやりました。「出力結果の存在を初めて知りました」という声が多かったです。
-
-https://youtu.be/0Wvv6Bf3n18
-```
 
 ## 13. スライド全{{N}}回
 ```
@@ -481,17 +467,41 @@ PA45の{{N}}回は、3段階で積んできました。
 https://haru-powerplatform.github.io/pa45/videos/
 ```
 
-## 36. 第26回アンケート結果
+## 36. 最新回のアンケート結果
 ```
 【#PowerAutomate 45分ハンズオン講座＝PA45】
 
-第26回のアンケート結果です。毎日16時に届くTeamsカードを3択でタップして、報連相を記録する回。
+第27回のアンケート結果です。いま動いているフローについて、Copilotに何を渡すかで答えがどう変わるかを見た回。
 
-7名回答で、理解できた89%、役立ちそう93%。「Adaptive Cardは回答もしやすくていい」という声も。コメントはそのまま載せています。
+10名回答で、理解できた93%、役立ちそう100%。コメントはそのまま載せています。
 
-https://haru-powerplatform.github.io/pa45/achievements/insights/vol-26.html
+https://haru-powerplatform.github.io/pa45/achievements/insights/vol-27.html
 ```
 ※開催直後に出す用。回ごとの単発なので、次の回が終わったら差し替えていく。
+
+## 37. 最新回の録画
+```
+【#PowerAutomate 45分ハンズオン講座＝PA45】
+
+第27回の録画を公開しました。Copilotに聞いても的外れな答えが返るのは、質問の文章ではなく渡している材料かもしれません。
+
+スクショ・実行履歴・ZIPの中身。5つの渡し方を実際のフローで試しています。
+
+https://youtu.be/h3L75SsbRXE
+```
+※録画を上げた直後に出す用。36と同じく、次の回が終わったら差し替える。36と同じ日には出さない。
+
+## 38. 第25回の録画（単発）
+```
+【#PowerAutomate 45分ハンズオン講座＝PA45】
+
+第25回の録画を公開しました。メールの添付を開かずに、今月のフォルダへ名前を変えて自動保存する回です。
+
+トリガーの「添付ファイルを含める」は既定オフ。ここを見落とすと0KBの空ファイルが保存されます。
+
+https://youtu.be/oO1aHXgcjc8
+```
+※アーカイブの歯抜けを埋めた回ぶん。出したらこの枠は消してよい。
 
 ---
 

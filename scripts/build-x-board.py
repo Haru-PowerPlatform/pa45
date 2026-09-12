@@ -17,7 +17,7 @@ import io
 import json
 import re
 import urllib.parse
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone, timedelta, date
 from pathlib import Path
 
 # ビルド時刻（JST）。「開いている板が最新か」を一目で分かるようにする。
@@ -26,6 +26,250 @@ BUILT_AT = datetime.now(timezone(timedelta(hours=9))).strftime("%Y-%m-%d %H:%M")
 ROOT = Path(__file__).resolve().parent.parent          # ...\Documents\pa45
 OUT = ROOT.parent / "pa45-x-drafts.html"               # ...\Documents\pa45-x-drafts.html
 OGP_BASE = "https://haru-powerplatform.github.io/pa45/assets/ogp/"
+
+
+def _blog_published() -> int:
+    """automate136 の公開済み本数。blog-board.json は fetch-blog-status.py が更新する。"""
+    try:
+        d = json.loads((ROOT / "data" / "blog-board.json").read_text(encoding="utf-8"))
+        items = d.get("items", d if isinstance(d, list) else [])
+        return sum(1 for b in items if isinstance(b, dict) and b.get("status") == "publish")
+    except Exception:
+        return 0
+
+
+def mvp_overview() -> str:
+    """MVP申請ぜんたいの進捗。活動レコードを数えて出すので、記録した分がそのまま反映される。
+    詳細は各ボードに分かれているため、ここは「数字と入口」に徹する。"""
+    e = html.escape
+    act = ROOT / "data" / "activities"
+    cnt = {}
+    for f in act.glob("*.json"):
+        if f.name.startswith("_"):
+            continue
+        try:
+            t = json.loads(f.read_text(encoding="utf-8")).get("type", "?")
+        except Exception:
+            continue
+        cnt[t] = cnt.get(t, 0) + 1
+
+    today = datetime.now(timezone(timedelta(hours=9))).date()
+    submit = date(2027, 1, 15)
+    left = (submit - today).days
+
+    # 目標は mvp-progress.html の 4か月計画に合わせている
+    goals = [
+        ("外部登壇", cnt.get("Event", 0), 14, "speaking-board.html", "12か月窓に入る分。演目は3本を使い回す"),
+        ("製品フィードバック", cnt.get("Feedback", 0), 12, "product-feedback.html", "提出済みだけが実績。台帳の表が正"),
+        ("フォーラム回答", cnt.get("Support", 0), 34, "forum-watch.html", "Super User は週2本・Verified3割で届く"),
+        ("記事（automate136）", _blog_published(), 0, "publish-plan-v2.html", "公開済みの本数。公開は本人が手動"),
+    ]
+    rows = []
+    for name, now_, goal, board, note in goals:
+        if goal:
+            pct = min(100, int(now_ * 100 / goal))
+            num = f'<b class="mvpbig">{now_}</b><span class="mvp-sub"> / {goal}</span>'
+            bar = f'<div class="mvpbar"><i style="width:{pct}%"></i></div>'
+        else:
+            num = f'<b class="mvpbig">{now_}</b>'
+            bar = '<div class="mvpbar"></div>'
+        rows.append(
+            f'<tr><td><b>{e(name)}</b><div class="mvp-sub">{e(note)}</div></td>'
+            f'<td style="min-width:150px">{bar}{num}</td>'
+            f'<td><a href="mvp-application/{board}" target="_blank" rel="noopener">板を開く</a></td></tr>')
+
+    others = [
+        ("進捗ダッシュボード（司令塔）", "mvp-application/mvp-progress.html", "45項目のチェック・4か月計画・登壇先。まずここ"),
+        ("4か月計画", "mvp-application/mvp-4month-plan.html", "月別の流れ・焦らないための線引き"),
+        ("申請用の代表URL", "mvp-application/representative-urls.html", "提出時に貼るURLの束"),
+        ("活動レコード全件", "mvp-application/contribution-master.html", "生成物。build-contribution.py で作る"),
+        ("出したものの反応", "mvp-application/mine-watch.html", "票・状態・Verified を2時間ごとに追う"),
+    ]
+    links = "".join(
+        f'<li><a href="{u}" target="_blank" rel="noopener">{e(t)}</a>'
+        f' <span class="mvp-sub">{e(d)}</span></li>' for t, u, d in others)
+
+    rec = "".join(f'<span class="mvp-chip">{e(k)} {v}</span>' for k, v in sorted(cnt.items(), key=lambda x: -x[1]))
+
+    return f'''
+<div class="mvp-live">
+  <h3 class="mvp-h">MVP申請ぜんたい（提出まで <b>{left}</b> 日・2027-01-15）</h3>
+  <table class="mvp-t"><tr><th>柱</th><th>進み</th><th></th></tr>{"".join(rows)}</table>
+  <p class="mvp-sub">数字は <code>pa45/data/activities/</code> の実レコードを数えたもの。
+     <b>記録していないものは数えられない</b>ので、やったらその日のうちに1件足す。</p>
+  <p class="mvp-sub">種別の内訳：{rec}</p>
+
+  <h3 class="mvp-h">ほかのボード</h3>
+  <ul class="mvp-ul">{links}</ul>
+  <p class="mvp-sub">推薦者はあーちゃん（MS MVP）が約束済み。申請条件（推薦者＋12か月の貢献）は
+     <b>すでに両方満たしている</b>ので、残りは通る確率を上げる期間。</p>
+</div>
+'''
+
+
+def mvp_live() -> str:
+    """MVP実務タブの上に出す「いまの数字」。
+    元データは Documents/mvp-application/*.json（pa45リポジトリの外＝公開されない）。
+    forum-watch.py と mine-watch.py が更新するので、ここは読むだけ。"""
+    e = html.escape
+    base = ROOT.parent / "mvp-application"
+
+    def rd(name, default):
+        f = base / name
+        try:
+            return json.loads(f.read_text(encoding="utf-8"))
+        except Exception:
+            return default
+
+    pts_hist = rd("forum-points-history.json", [])
+    mine_hist = rd("mine-history.json", {})
+    tracked = rd("mine-tracked.json", {"ideas": [], "threads": []})
+    watch = rd("forum-watch-state.json", {"threads": {}, "runs": []})
+
+    cur = pts_hist[-1] if pts_hist else {}
+    pts = cur.get("points")
+    ver = cur.get("verified")
+    today = datetime.now(timezone(timedelta(hours=9))).date()
+    end = date(today.year, 6, 30) if today.month <= 6 else date(today.year, 12, 31)
+    days = (end - today).days
+    weeks = max(days / 7.0, 0.1)
+
+    def bar(v, goal, unit=""):
+        if v is None:
+            return '<div class="mvpbar"><i style="width:0"></i></div><span class="mvp-sub">取得できず</span>'
+        pct = min(100, int(v * 100 / goal))
+        return (f'<div class="mvpbar"><i style="width:{pct}%"></i></div>'
+                f'<span class="mvpbig">{v}</span><span class="mvp-sub"> / {goal}{unit}</span>')
+
+    need_v = max(50 - ver, 0) if ver is not None else None
+    pace = ""
+    if need_v is not None:
+        pace = (f'検証済みで <b>{need_v} pt</b> 足りない＝<b>週 {round(need_v/5/weeks,1)} 本</b> '
+                f'Verified を取るペース。')
+    elif pts is not None:
+        pace = f'残り <b>{max(100-pts,0)} pt</b>。返信だけで埋めるなら <b>週 {round(max(100-pts,0)/2/weeks,1)} 本</b>。'
+
+    # 出したものの反応
+    rows = []
+    for kind, key in (("Idea", "ideas"), ("フォーラム", "threads")):
+        for it in tracked.get(key, []):
+            h = mine_hist.get(it.get("id"), [])
+            c = h[-1] if h else {}
+            if kind == "Idea":
+                facts = (f'票 <b>{c.get("votes","?")}</b> ／ コメント <b>{c.get("comments","?")}</b>'
+                         f' ／ 状態 <b>{e(str(c.get("status","?")))}</b>')
+            else:
+                pub = "公開済み" if c.get("mine_public") else '<b class="mvp-no">まだ審査中</b>'
+                vf = '<b class="mvp-ok">付いた</b>' if c.get("verified") else "まだ"
+                facts = f'{pub} ／ Verified {vf} ／ 返信 <b>{c.get("responses","?")}</b>'
+            rows.append(f'<tr><td>{kind}</td>'
+                        f'<td><a href="{e(it.get("url",""))}" target="_blank" rel="noopener">'
+                        f'{e(it.get("title") or it.get("id",""))}</a></td><td>{facts}</td></tr>')
+    react = ("".join(rows) or '<tr><td colspan="3" class="mvp-sub">追跡中のものがありません。</td></tr>')
+
+    # 次に答える候補（forum-watch が拾った新しいもの）
+    cands = []
+    for tid, r in watch.get("threads", {}).items():
+        fs = r.get("first_seen", "")
+        cands.append((fs, tid, r))
+    cands.sort(reverse=True)
+    cl = []
+    for fs, tid, r in cands[:6]:
+        url = f"https://community.powerplatform.com/forums/thread/details/?threadid={tid}"
+        cl.append(f'<li><a href="{url}" target="_blank" rel="noopener">{e(r.get("title",""))[:70]}</a>'
+                  f' <span class="mvp-sub">{e(r.get("forum",""))}</span></li>')
+    cand = "".join(cl) or '<li class="mvp-sub">まだ拾えていません。</li>'
+    last_run = (watch.get("runs") or [{}])[-1].get("at", "—")
+
+    return f'''
+<div class="mvp-live">
+  <h3 class="mvp-h">いまの数字（Super User まで）</h3>
+  <div class="mvpcards">
+    <div><div class="mvp-sub">通算ポイント</div>{bar(pts, 100)}</div>
+    <div><div class="mvp-sub">うち検証済み回答</div>{bar(ver, 50)}</div>
+    <div><div class="mvp-sub">シーズン締切まで</div><div class="mvpbar"></div>
+      <span class="mvpbig">{days}</span><span class="mvp-sub"> 日</span></div>
+  </div>
+  <p class="mvp-sub">{pace}</p>
+
+  <h3 class="mvp-h">出したものの反応</h3>
+  <table class="mvp-t"><tr><th>種別</th><th>出したもの</th><th>いまの状態</th></tr>{react}</table>
+  <p class="mvp-sub">変化があると Windows の通知が出る（2時間ごとに確認）。
+     板＝<code>mvp-application/mine-watch.html</code></p>
+
+  <h3 class="mvp-h">直近で拾った質問</h3>
+  <ul class="mvp-ul">{cand}</ul>
+  <p class="mvp-sub">最終取得 {e(str(last_run))}　全候補＝<code>mvp-application\forum-watch.html</code></p>
+</div>
+'''
+
+
+def mvp_desk_pane(d: dict) -> str:
+    """MVP実務タブ。元データは data/local-mvp-desk.json（.gitignore 済み・実アカウント名を含む）。"""
+    if not d:
+        return ('<p class="lead">data/local-mvp-desk.json がありません。'
+                'このタブはローカル専用データで動きます。</p>')
+    e = html.escape
+    su = d.get("superuser", {})
+
+    acc = "".join(
+        f'<tr><td>{e(a["place"])}</td>'
+        f'<td><code>{e(a["account"])}</code><div class="mvp-sub">{e(a.get("label",""))}</div></td>'
+        f'<td class="mvp-sub">{e(a.get("why",""))}</td></tr>'
+        for a in d.get("accounts", []))
+
+    tr = "".join(
+        f'<tr><td>{e(t["n"])}</td>'
+        f'<td><a href="{e(t["url"])}" target="_blank" rel="noopener">{e(t["name"])}</a></td>'
+        f'<td class="mvp-sub">{e(t["what"])}</td></tr>'
+        for t in d.get("trails", []))
+
+    cond = "".join(f"<li>{e(c)}</li>" for c in su.get("conditions", []))
+    pts = "".join(f'<tr><td>{e(a)}</td><td class="mvp-pt">{e(b)}</td></tr>'
+                  for a, b in su.get("points", []))
+    fronts = "".join(f'<div class="mvp-front"><b>{e(f["k"])}</b><p>{e(f["d"])}</p></div>'
+                     for f in d.get("fronts", []))
+    done = "".join(
+        f'<li><b>{e(x["date"])}</b>　{e(x["what"])}'
+        + (f'<br><a href="{e(x["url"])}" target="_blank" rel="noopener">{e(x["url"])}</a>' if x.get("url") else "")
+        + "</li>" for x in d.get("done", []))
+    nxt = "".join(f"<li>{e(x)}</li>" for x in d.get("next", []))
+    links = "".join(f'<li>{e(l["label"])}　<code>{e(l["path"])}</code></li>'
+                    for l in d.get("links", []))
+
+    return f"""
+<div class="note"><b>1行ルール</b>　{e(d.get("rule",""))}<br>
+<span class="mvp-sub">このタブの元データは <code>data/local-mvp-desk.json</code>（<b>.gitignore 済み＝公開リポジトリには出ない</b>）。
+直したらそこを編集して <code>python scripts/build-x-board.py</code>。最終更新 {e(d.get("updated",""))}</span></div>
+
+<h3 class="mvp-h">どこに何でサインインするか</h3>
+<table class="mvp-t"><tr><th>場</th><th>アカウント</th><th>理由</th></tr>{acc}</table>
+
+<h3 class="mvp-h">証跡は3系統に分かれる（統合されない）</h3>
+<table class="mvp-t"><tr><th>#</th><th>プロフィール</th><th>何が乗るか</th></tr>{tr}</table>
+
+<h3 class="mvp-h">Super User の条件</h3>
+<div class="mvp-2col">
+<div><ul class="mvp-ul">{cond}</ul>
+<p class="mvp-sub">出典 <a href="{e(su.get("source",""))}" target="_blank" rel="noopener">{e(su.get("source",""))}</a></p></div>
+<div><table class="mvp-t"><tr><th>行動</th><th>pt</th></tr>{pts}</table></div>
+</div>
+<div class="note"><b>目標</b>　{e(su.get("target",""))}<br>
+<b>難所</b>　{e(su.get("catch",""))}<br>
+<b>効く理由</b>　{e(su.get("perk",""))}</div>
+
+<h3 class="mvp-h">2正面作戦</h3>
+{fronts}
+
+<h3 class="mvp-h">出したもの</h3>
+<ul class="mvp-ul">{done}</ul>
+
+<h3 class="mvp-h">次に出すもの</h3>
+<ul class="mvp-ul">{nxt}</ul>
+
+<h3 class="mvp-h">道具の置き場所</h3>
+<ul class="mvp-ul mvp-sub">{links}</ul>
+"""
 
 
 def x_len(body: str) -> int:
@@ -78,7 +322,16 @@ def _insight_tokens():
         "{{MAX}}":  str(s.get("participants_max", "")),
         "{{TIME}}": str(round(float(slot))),
         "{{VID}}":  str(s.get("archive_videos", "")),
+        # 1回45分 → 「20時間15分」の形にする（講座ぜんぶ／録画ぶん）
+        "{{HRS}}":  _hm(int(s.get("sessions", 0) or 0) * 45),
+        "{{VHRS}}": _hm(int(s.get("archive_videos", 0) or 0) * 45),
     }
+
+
+def _hm(minutes):
+    """分を「N時間M分」にする。0分のときは「N時間」。"""
+    h, m = divmod(int(minutes), 60)
+    return f"{h}時間{m}分" if m else f"{h}時間"
 
 
 def _apply_tokens(text, tokens):
@@ -506,6 +759,18 @@ body{font-family:"Noto Sans JP","Yu Gothic UI",sans-serif;background:var(--bg);c
 .wrap{max-width:1180px;margin:0 auto}
 h1{font-size:24px;font-weight:900;margin-bottom:4px}
 .lead{font-size:13px;color:var(--mu)}
+.mvp-h{font-size:15px;margin:22px 0 8px;padding-bottom:5px;border-bottom:2px solid var(--ac);display:inline-block}
+.mvp-t{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--ln);margin:0 0 6px;font-size:13.5px}
+.mvp-t th,.mvp-t td{padding:8px 10px;border-bottom:1px solid var(--ln);text-align:left;vertical-align:top}
+.mvp-t th{background:#f2f6fb;font-size:12px;white-space:nowrap}
+.mvp-t code{font-size:12.5px;word-break:break-all}
+.mvp-pt{font-weight:700;text-align:right;width:44px}
+.mvp-sub{color:var(--mu);font-size:12px}
+.mvp-ul{margin:4px 0 10px 18px;font-size:13.5px;line-height:1.75}
+.mvp-2col{display:flex;gap:14px;flex-wrap:wrap}
+.mvp-2col>div{flex:1;min-width:280px}
+.mvp-front{background:#fff;border:1px solid var(--ln);border-left:4px solid var(--ac);border-radius:5px;padding:10px 14px;margin:0 0 8px}
+.mvp-front p{margin:4px 0 0;font-size:13px;line-height:1.7}
 .tabs{display:flex;gap:8px;margin:18px 0 14px;border-bottom:1px solid var(--ln)}
 .tab{font-size:14px;font-weight:700;color:var(--mu);background:none;border:none;cursor:pointer;
   padding:11px 18px;border-bottom:3px solid transparent;font-family:inherit}
@@ -766,6 +1031,9 @@ def main():
     linkedin = lidata.get("items", [])
     li_note = lidata.get("note", "")
 
+    mvpf = ROOT / "data" / "local-mvp-desk.json"
+    mvpdesk = json.loads(mvpf.read_text(encoding="utf-8")) if mvpf.exists() else {}
+
     inf = ROOT / "data" / "insight-posts.json"
     insdata = json.loads(inf.read_text(encoding="utf-8")) if inf.exists() else {}
     ins_posts = insdata.get("items", [])
@@ -794,6 +1062,7 @@ def main():
   <button class="tab" data-pane="pane-blog">ブログ<span class="c">PA {pa_ready + pa_fix}／コパスタ {cs_ready + cs_fix}</span></button>
   <button class="tab" data-pane="pane-linkedin">LinkedIn<span class="c">{len(linkedin)}本</span></button>
   <button class="tab" data-pane="pane-insight">考察<span class="c">{len(ins_posts)}本</span></button>
+  <button class="tab" data-pane="pane-mvp">MVP実務<span class="c">アカウント/ポイント</span></button>
 </div>
 
 <div class="filter">
@@ -881,6 +1150,12 @@ def main():
     盛らない・脚色しない。新しい回は週次タスクが <code>data/insight-posts.json</code> に足して自動生成します（手で足すときは1件書いて <code>python scripts/build-x-board.py</code>）。
   </div>
   <div class="grid">{ins_cards or '<p class="lead">考察の下書きがありません。data/insight-posts.json に追加してください。</p>'}</div>
+</section>
+
+<section class="pane" id="pane-mvp">
+{mvp_overview()}
+{mvp_live()}
+{mvp_desk_pane(mvpdesk)}
 </section>
 
 </div><script>{JS}</script></body></html>'''
