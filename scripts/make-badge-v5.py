@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-PA45 参加バッジ v5 — フラット・六角形・モノラインアイコンの新デザイン（2026-09-15〜）。
+PA45 参加バッジ v5 — 六角形・モノラインアイコンに、立体の縁・光沢・リボン帯を足したデザイン（2026-09-15〜）。
 
 v4（make-badge-svg.py）の「メダル＋立体文字＋ギザ縁」から一新。
 資格バッジ系の落ち着いた見た目に寄せ、次の4点だけで構成する：
@@ -88,63 +88,151 @@ ICONS = {
 # ---------------------------------------------------------------------------
 # 本体
 # ---------------------------------------------------------------------------
+def _mix(hex_color, target, t):
+    """hex_color を target（'#ffffff' か '#000000'）へ t の割合で寄せる"""
+    a = [int(hex_color[i:i + 2], 16) for i in (1, 3, 5)]
+    b = [int(target[i:i + 2], 16) for i in (1, 3, 5)]
+    return "#" + "".join(f"{round(x + (y - x) * t):02x}" for x, y in zip(a, b))
+
+
 def build_svg(vol, title, date, icon_key, accent):
-    R_RIM, R_BODY, R_LINE = 396, 378, 350
+    # 帯の両端と落ち影のぶん、六角形を少し小さくしてある
+    R_RIM, R_BODY, R_LINE = 368, 350, 324
+    hi = _mix(accent, "#ffffff", 0.45)   # 明るい面
+    lo = _mix(accent, "#000000", 0.35)   # 暗い面
+    lo2 = _mix(accent, "#000000", 0.60)  # 折り返しの影
     icon = ICONS[icon_key](accent)
     body_pts = hex_points(R_BODY)
+
+    # 帯（リボン）の座標
+    BY, BH = 552, 72            # 帯の上端・高さ
+    BX0, BX1 = 92, 788          # 帯の左右端
+    TD = 20                     # 後ろに回る尾の下がり幅
+    tail_l = f"{BX0+22},{BY+TD} 40,{BY+TD} 62,{BY+TD+BH/2} 40,{BY+TD+BH} {BX0+22},{BY+TD+BH}"
+    tail_r = f"{BX1-22},{BY+TD} 840,{BY+TD} 818,{BY+TD+BH/2} 840,{BY+TD+BH} {BX1-22},{BY+TD+BH}"
+    fold_l = f"{BX0},{BY+BH} {BX0+22},{BY+BH+TD} {BX0+22},{BY+BH}"
+    fold_r = f"{BX1},{BY+BH} {BX1-22},{BY+BH+TD} {BX1-22},{BY+BH}"
+
     return f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {W}" width="{W}" height="{W}">
   <defs>
+    <!-- 縁：左上が明るく右下が暗い金属の面 -->
+    <linearGradient id="rim" x1="0.15" y1="0" x2="0.85" y2="1">
+      <stop offset="0" stop-color="{hi}"/>
+      <stop offset="0.45" stop-color="{accent}"/>
+      <stop offset="1" stop-color="{lo}"/>
+    </linearGradient>
+    <!-- 縁の面取りハイライト（上側だけ光る） -->
+    <linearGradient id="bevel" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.85"/>
+      <stop offset="0.5" stop-color="#ffffff" stop-opacity="0.10"/>
+      <stop offset="1" stop-color="#000000" stop-opacity="0.35"/>
+    </linearGradient>
+    <!-- 本体 -->
     <linearGradient id="body" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#26324a"/>
-      <stop offset="1" stop-color="#0d1422"/>
+      <stop offset="0" stop-color="#2e3d5c"/>
+      <stop offset="0.55" stop-color="#162036"/>
+      <stop offset="1" stop-color="#0a101d"/>
+    </linearGradient>
+    <!-- 上半分の光沢 -->
+    <linearGradient id="gloss" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.20"/>
+      <stop offset="1" stop-color="#ffffff" stop-opacity="0.00"/>
     </linearGradient>
     <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
-      <stop offset="0" stop-color="{accent}" stop-opacity="0.30"/>
+      <stop offset="0" stop-color="{accent}" stop-opacity="0.38"/>
       <stop offset="1" stop-color="{accent}" stop-opacity="0"/>
     </radialGradient>
+    <!-- 帯：上が明るく下が暗い -->
+    <linearGradient id="band" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="{hi}"/>
+      <stop offset="0.5" stop-color="{accent}"/>
+      <stop offset="1" stop-color="{lo}"/>
+    </linearGradient>
+    <linearGradient id="title" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="1" stop-color="#cfd9ea"/>
+    </linearGradient>
+
+    <filter id="drop" x="-20%" y="-20%" width="140%" height="150%">
+      <feDropShadow dx="0" dy="16" stdDeviation="16" flood-color="#000000" flood-opacity="0.45"/>
+    </filter>
+    <filter id="lift" x="-20%" y="-40%" width="140%" height="200%">
+      <feDropShadow dx="0" dy="4" stdDeviation="3.5" flood-color="#000000" flood-opacity="0.60"/>
+    </filter>
+    <filter id="bandshadow" x="-10%" y="-60%" width="120%" height="260%">
+      <feDropShadow dx="0" dy="8" stdDeviation="7" flood-color="#000000" flood-opacity="0.50"/>
+    </filter>
+    <filter id="blur10"><feGaussianBlur stdDeviation="12"/></filter>
+
     <clipPath id="clip"><polygon points="{body_pts}"/></clipPath>
-    <!-- 帯だけは本体の暗い縁の外側まで伸ばして、紫の縁とつなげる -->
-    <clipPath id="clipband"><polygon points="{hex_points(R_BODY + 14)}"/></clipPath>
     <style>
       .t {{ font-family: Bahnschrift, 'Segoe UI', sans-serif; font-stretch: condensed; }}
     </style>
   </defs>
 
-  <!-- 縁（角を丸めるため同色の太い線を重ねる） -->
-  <polygon points="{hex_points(R_RIM)}" fill="{accent}" stroke="{accent}"
-           stroke-width="28" stroke-linejoin="round"/>
-  <!-- 本体 -->
-  <polygon points="{body_pts}" fill="url(#body)" stroke="#0d1422"
-           stroke-width="22" stroke-linejoin="round"/>
+  <g filter="url(#drop)">
+    <!-- 帯の尾（本体の後ろ） -->
+    <polygon points="{tail_l}" fill="{lo}"/>
+    <polygon points="{tail_r}" fill="{lo}"/>
 
-  <g clip-path="url(#clip)">
-    <!-- アイコンの後ろの淡い光 -->
-    <circle cx="{CX}" cy="340" r="190" fill="url(#glow)"/>
-    <!-- 内側の細い線 -->
-    <polygon points="{hex_points(R_LINE)}" fill="none" stroke="#ffffff"
-             stroke-opacity="0.10" stroke-width="2" stroke-linejoin="round"/>
+    <!-- 縁 -->
+    <polygon points="{hex_points(R_RIM)}" fill="url(#rim)" stroke="url(#rim)"
+             stroke-width="30" stroke-linejoin="round"/>
+    <!-- 縁の面取り -->
+    <polygon points="{hex_points(R_RIM + 12)}" fill="none" stroke="url(#bevel)"
+             stroke-width="3" stroke-linejoin="round"/>
+    <polygon points="{hex_points(R_BODY + 10)}" fill="none" stroke="#000000"
+             stroke-opacity="0.35" stroke-width="3" stroke-linejoin="round"/>
+
+    <!-- 本体 -->
+    <polygon points="{body_pts}" fill="url(#body)" stroke="#0a101d"
+             stroke-width="18" stroke-linejoin="round"/>
+
+    <g clip-path="url(#clip)">
+      <!-- 縁から内側へ落ちる影（くぼみ） -->
+      <polygon points="{body_pts}" fill="none" stroke="#000000" stroke-opacity="0.65"
+               stroke-width="44" filter="url(#blur10)"/>
+      <!-- アイコンの後ろの光 -->
+      <circle cx="{CX}" cy="345" r="200" fill="url(#glow)"/>
+      <!-- 内側の細い線 -->
+      <polygon points="{hex_points(R_LINE)}" fill="none" stroke="#ffffff"
+               stroke-opacity="0.10" stroke-width="2" stroke-linejoin="round"/>
+      <!-- 光沢：上半分を弧で切った面 -->
+      <path d="M0,0 H{W} V330 Q{CX},270 0,380 Z" fill="url(#gloss)"/>
+      <!-- 斜めに走るつや（境目が出ないようにぼかす） -->
+      <polygon points="250,60 330,60 150,520 70,520" fill="#ffffff" fill-opacity="0.06"
+               filter="url(#blur10)"/>
+    </g>
+
+    <!-- 上の小さな名前 -->
+    <text class="t" x="{CX}" y="212" text-anchor="middle" font-size="24" font-weight="600"
+          letter-spacing="7" fill="#d5deeb" filter="url(#lift)">POWER AUTOMATE 45</text>
+    <rect x="{CX - 34}" y="230" width="68" height="4" rx="2" fill="{accent}"/>
+
+    <!-- アイコン（少し縮めて影をつける） -->
+    <g filter="url(#lift)" transform="translate({CX},352) scale(0.93) translate({-CX},-340)">
+      {icon}
+    </g>
+
+    <!-- タイトル -->
+    <text class="t" x="{CX}" y="512" text-anchor="middle" font-size="66" font-weight="700"
+          letter-spacing="3" fill="url(#title)" filter="url(#lift)">{title}</text>
+
+    <!-- 帯（リボン） -->
+    <polygon points="{fold_l}" fill="{lo2}"/>
+    <polygon points="{fold_r}" fill="{lo2}"/>
+    <g filter="url(#bandshadow)">
+      <rect x="{BX0}" y="{BY}" width="{BX1 - BX0}" height="{BH}" fill="url(#band)"/>
+    </g>
+    <rect x="{BX0}" y="{BY}" width="{BX1 - BX0}" height="3" fill="#ffffff" fill-opacity="0.55"/>
+    <rect x="{BX0}" y="{BY + BH - 3}" width="{BX1 - BX0}" height="3" fill="#000000" fill-opacity="0.30"/>
+    <text class="t" x="{CX}" y="{BY + 47}" text-anchor="middle" font-size="31" font-weight="700"
+          letter-spacing="5" fill="#ffffff" filter="url(#lift)">PARTICIPANT · VOL.{vol}</text>
+
+    <!-- 日付 -->
+    <text class="t" x="{CX}" y="676" text-anchor="middle" font-size="25" font-weight="400"
+          letter-spacing="4" fill="#9aa8bd">{date.replace("-", ".")}</text>
   </g>
-  <!-- 帯 -->
-  <rect x="0" y="566" width="{W}" height="70" fill="{accent}" clip-path="url(#clipband)"/>
-
-  <!-- 上の小さな名前 -->
-  <text class="t" x="{CX}" y="196" text-anchor="middle" font-size="25" font-weight="600"
-        letter-spacing="7" fill="#cbd5e1">POWER AUTOMATE 45</text>
-  <rect x="{CX - 36}" y="216" width="72" height="4" rx="2" fill="{accent}"/>
-
-  {icon}
-
-  <!-- タイトル -->
-  <text class="t" x="{CX}" y="520" text-anchor="middle" font-size="70" font-weight="700"
-        letter-spacing="3" fill="#ffffff">{title}</text>
-
-  <!-- 帯の文字 -->
-  <text class="t" x="{CX}" y="613" text-anchor="middle" font-size="32" font-weight="700"
-        letter-spacing="5" fill="#ffffff">PARTICIPANT · VOL.{vol}</text>
-
-  <!-- 日付 -->
-  <text class="t" x="{CX}" y="692" text-anchor="middle" font-size="26" font-weight="400"
-        letter-spacing="4" fill="#94a3b8">{date.replace("-", ".")}</text>
 </svg>'''
 
 
