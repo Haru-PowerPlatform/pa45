@@ -97,19 +97,19 @@ def _mix(hex_color, target, t):
 
 def build_svg(vol, title, date, icon_key, accent):
     # 帯の両端と落ち影のぶん、六角形を少し小さくしてある
-    R_RIM, R_BODY, R_LINE = 368, 350, 324
-    hi = _mix(accent, "#ffffff", 0.45)   # 明るい面
-    lo = _mix(accent, "#000000", 0.35)   # 暗い面
-    lo2 = _mix(accent, "#000000", 0.60)  # 折り返しの影
+    R_RIM, R_BODY, R_LINE = 372, 342, 316
+    hi = _mix(accent, "#ffffff", 0.55)   # 明るい面
+    lo = _mix(accent, "#000000", 0.50)   # 暗い面
+    lo2 = _mix(accent, "#000000", 0.72)  # 折り返しの影
     icon = ICONS[icon_key](accent)
     body_pts = hex_points(R_BODY)
 
     # 帯（リボン）の座標
     BY, BH = 552, 72            # 帯の上端・高さ
-    BX0, BX1 = 92, 788          # 帯の左右端
+    BX0, BX1 = 82, 798          # 帯の左右端
     TD = 20                     # 後ろに回る尾の下がり幅
-    tail_l = f"{BX0+22},{BY+TD} 40,{BY+TD} 62,{BY+TD+BH/2} 40,{BY+TD+BH} {BX0+22},{BY+TD+BH}"
-    tail_r = f"{BX1-22},{BY+TD} 840,{BY+TD} 818,{BY+TD+BH/2} 840,{BY+TD+BH} {BX1-22},{BY+TD+BH}"
+    tail_l = f"{BX0+22},{BY+TD} 30,{BY+TD} 52,{BY+TD+BH/2} 30,{BY+TD+BH} {BX0+22},{BY+TD+BH}"
+    tail_r = f"{BX1-22},{BY+TD} 850,{BY+TD} 828,{BY+TD+BH/2} 850,{BY+TD+BH} {BX1-22},{BY+TD+BH}"
     fold_l = f"{BX0},{BY+BH} {BX0+22},{BY+BH+TD} {BX0+22},{BY+BH}"
     fold_r = f"{BX1},{BY+BH} {BX1-22},{BY+BH+TD} {BX1-22},{BY+BH}"
 
@@ -123,15 +123,15 @@ def build_svg(vol, title, date, icon_key, accent):
     </linearGradient>
     <!-- 縁の面取りハイライト（上側だけ光る） -->
     <linearGradient id="bevel" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#ffffff" stop-opacity="0.85"/>
+      <stop offset="0" stop-color="#ffffff" stop-opacity="0.95"/>
       <stop offset="0.5" stop-color="#ffffff" stop-opacity="0.10"/>
-      <stop offset="1" stop-color="#000000" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#000000" stop-opacity="0.55"/>
     </linearGradient>
     <!-- 本体 -->
     <linearGradient id="body" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#2e3d5c"/>
-      <stop offset="0.55" stop-color="#162036"/>
-      <stop offset="1" stop-color="#0a101d"/>
+      <stop offset="0" stop-color="#34466c"/>
+      <stop offset="0.55" stop-color="#141d31"/>
+      <stop offset="1" stop-color="#060a13"/>
     </linearGradient>
     <!-- 上半分の光沢 -->
     <linearGradient id="gloss" x1="0" y1="0" x2="0" y2="1">
@@ -154,13 +154,13 @@ def build_svg(vol, title, date, icon_key, accent):
     </linearGradient>
 
     <filter id="drop" x="-20%" y="-20%" width="140%" height="150%">
-      <feDropShadow dx="0" dy="16" stdDeviation="16" flood-color="#000000" flood-opacity="0.45"/>
+      <feDropShadow dx="0" dy="14" stdDeviation="14" flood-color="#000000" flood-opacity="0.60"/>
     </filter>
     <filter id="lift" x="-20%" y="-40%" width="140%" height="200%">
-      <feDropShadow dx="0" dy="4" stdDeviation="3.5" flood-color="#000000" flood-opacity="0.60"/>
+      <feDropShadow dx="0" dy="5" stdDeviation="4" flood-color="#000000" flood-opacity="0.78"/>
     </filter>
     <filter id="bandshadow" x="-10%" y="-60%" width="120%" height="260%">
-      <feDropShadow dx="0" dy="8" stdDeviation="7" flood-color="#000000" flood-opacity="0.50"/>
+      <feDropShadow dx="0" dy="10" stdDeviation="8" flood-color="#000000" flood-opacity="0.68"/>
     </filter>
     <filter id="blur10"><feGaussianBlur stdDeviation="12"/></filter>
 
@@ -177,12 +177,12 @@ def build_svg(vol, title, date, icon_key, accent):
 
     <!-- 縁 -->
     <polygon points="{hex_points(R_RIM)}" fill="url(#rim)" stroke="url(#rim)"
-             stroke-width="30" stroke-linejoin="round"/>
+             stroke-width="38" stroke-linejoin="round"/>
     <!-- 縁の面取り -->
-    <polygon points="{hex_points(R_RIM + 12)}" fill="none" stroke="url(#bevel)"
-             stroke-width="3" stroke-linejoin="round"/>
+    <polygon points="{hex_points(R_RIM + 17)}" fill="none" stroke="url(#bevel)"
+             stroke-width="4" stroke-linejoin="round"/>
     <polygon points="{hex_points(R_BODY + 10)}" fill="none" stroke="#000000"
-             stroke-opacity="0.35" stroke-width="3" stroke-linejoin="round"/>
+             stroke-opacity="0.55" stroke-width="4" stroke-linejoin="round"/>
 
     <!-- 本体 -->
     <polygon points="{body_pts}" fill="url(#body)" stroke="#0a101d"
@@ -190,8 +190,8 @@ def build_svg(vol, title, date, icon_key, accent):
 
     <g clip-path="url(#clip)">
       <!-- 縁から内側へ落ちる影（くぼみ） -->
-      <polygon points="{body_pts}" fill="none" stroke="#000000" stroke-opacity="0.65"
-               stroke-width="44" filter="url(#blur10)"/>
+      <polygon points="{body_pts}" fill="none" stroke="#000000" stroke-opacity="0.90"
+               stroke-width="64" filter="url(#blur10)"/>
       <!-- アイコンの後ろの光 -->
       <circle cx="{CX}" cy="345" r="200" fill="url(#glow)"/>
       <!-- 内側の細い線 -->
@@ -225,7 +225,7 @@ def build_svg(vol, title, date, icon_key, accent):
       <rect x="{BX0}" y="{BY}" width="{BX1 - BX0}" height="{BH}" fill="url(#band)"/>
     </g>
     <rect x="{BX0}" y="{BY}" width="{BX1 - BX0}" height="3" fill="#ffffff" fill-opacity="0.55"/>
-    <rect x="{BX0}" y="{BY + BH - 3}" width="{BX1 - BX0}" height="3" fill="#000000" fill-opacity="0.30"/>
+    <rect x="{BX0}" y="{BY + BH - 3}" width="{BX1 - BX0}" height="3" fill="#000000" fill-opacity="0.45"/>
     <text class="t" x="{CX}" y="{BY + 47}" text-anchor="middle" font-size="31" font-weight="700"
           letter-spacing="5" fill="#ffffff" filter="url(#lift)">PARTICIPANT · VOL.{vol}</text>
 
