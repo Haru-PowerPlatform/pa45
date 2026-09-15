@@ -26,5 +26,6 @@ PA45 の各回で使ったスライドです。\
 
 - `index.html` は技術Tipsスライド（119本）の一覧です。元HTMLは `assets/x/html/` にあります。
 - `links.html` は全回の目次です。どちらも `scripts/` のスクリプトで生成しています。
+- スライドは [CC BY-NC 4.0](../LICENSE-CONTENT.md) です。出典を書けば、社内勉強会や研修で使えます。販売は不可です。
 
 この README は `scripts/build-readme.py` が生成しています。
