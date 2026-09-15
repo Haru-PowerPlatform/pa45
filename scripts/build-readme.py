@@ -127,6 +127,13 @@ def link(label: str, url: str | None) -> str:
     return f"[{label}]({url})" if url else "―"
 
 
+def para(sink, text: str) -> None:
+    """句点ごとに改行する。行末のバックスラッシュでハード改行にする（日本語の文の間に空白が入らないように）。"""
+    parts = re.findall(r"[^。]+。?", text)
+    for i, x in enumerate(parts):
+        sink(x + ("\\" if i < len(parts) - 1 else ""))
+
+
 def slide_cell(v: int) -> str:
     # 第1〜11回はHTMLスライド化の前でPPTX配布。回ごとの資料ページ（links.html）へ飛ばす
     if v in slide_vols:
@@ -142,11 +149,9 @@ w = L.append
 
 w("# PA45 ― Power Automate 45分ハンズオン")
 w("")
-w("Power Automate を初めて触る人が、45分で1本のフローを作り終えるオンライン講座です。")
-w("週1回、無料で開催しています。")
+para(w, "Power Automate を初めて触る人が、45分で1本のフローを作り終えるオンライン講座です。週1回、無料で開催しています。")
 w("")
-w("講座で使ったスライド、完成したフローのZIP、録画、アンケートの集計は、このリポジトリと公開サイトですべて無料で公開しています。")
-w("参加していない人でも、同じ手順をあとから再現できる形で残しています。")
+para(w, "講座で使ったスライド、完成したフローのZIP、録画、アンケートの集計は、このリポジトリと公開サイトですべて無料で公開しています。参加していない人でも、同じ手順をあとから再現できる形で残しています。")
 w("")
 w(f"- 公開サイト：{SITE}/")
 w(f"- 参加申込（connpass）：{CONNPASS_GROUP}")
@@ -253,7 +258,7 @@ w("")
 
 w("## フローZIPの使い方")
 w("")
-w("ZIPは Power Automate の「ソリューション」形式です。展開せずにそのままインポートします。")
+para(w, "ZIPは Power Automate の「ソリューション」形式です。展開せずにそのままインポートします。")
 w("")
 w("1. [フローのダウンロードページ](" + SITE + "/flows/) から、使いたい回のZIPを保存する")
 w("2. make.powerautomate.com の左メニュー「ソリューション」→「インポート」→「ソリューションのインポート」でZIPを選ぶ")
@@ -262,12 +267,12 @@ w("3. インポートしたフローを開き、接続が必要と表示され�
 w("   - 接続は作った人のアカウントに紐づくため、インポートした側で付け直す必要がある")
 w("4. 保存してフローをオンにし、講座スライドの手順に沿って動かす")
 w("")
-w("組織の環境によっては、ソリューションのインポート権限が無いことがあります。その場合は環境の管理者への確認が要ります。")
+para(w, "組織の環境によっては、ソリューションのインポート権限が無いことがあります。その場合は環境の管理者への確認が要ります。")
 w("")
 
 w("## リポジトリの構成")
 w("")
-w("このリポジトリは GitHub Pages で公開サイトとしてそのまま配信しています。URLを変えないため、フォルダはサイトの階層と一致させています。")
+para(w, "このリポジトリは GitHub Pages で公開サイトとしてそのまま配信しています。URLを変えないため、フォルダはサイトの階層と一致させています。")
 w("")
 w("**講座の教材（誰でも使えるもの）**")
 w("")
@@ -294,8 +299,9 @@ w("上記以外のフォルダ（`admin/` `tools/` `sites/` `articles/` `outputs
 w("")
 w("---")
 w("")
-w("この README は `scripts/build-readme.py` が `data/` から生成しています。数字は開催のたびに更新されます。")
-w("Microsoft、Power Automate、Copilot Studio、Microsoft Teams、SharePoint は Microsoft Corporation の商標です。PA45 は個人が運営するコミュニティ講座で、Microsoft とは関係ありません。")
+para(w, "この README は `scripts/build-readme.py` が `data/` から生成しています。数字は開催のたびに更新されます。"
+        "Microsoft、Power Automate、Copilot Studio、Microsoft Teams、SharePoint は Microsoft Corporation の商標です。"
+        "PA45 は個人が運営するコミュニティ講座で、Microsoft とは関係ありません。")
 w("")
 
 write_if_changed(ROOT / "README.md", "\n".join(L))
@@ -306,8 +312,8 @@ F: list[str] = []
 f = F.append
 f("# flows ― 講座で作ったフローのZIP")
 f("")
-f("PA45 の各回で作ったフローの完成品です。Power Automate の「ソリューション」形式なので、展開せずにそのままインポートできます。")
-f(f"手順つきのダウンロードページは {SITE}/flows/ にあります。")
+para(f, "PA45 の各回で作ったフローの完成品です。Power Automate の「ソリューション」形式なので、展開せずにそのままインポートできます。"
+      f"手順つきのダウンロードページは {SITE}/flows/ にあります。")
 f("")
 f("| 回 | テーマ | ZIP | 講座スライド |")
 f("|---:|---|---|:---:|")
@@ -333,8 +339,8 @@ S: list[str] = []
 s = S.append
 s("# slides ― 講座スライド")
 s("")
-s("PA45 の各回で使ったスライドです。1回ぶんが1つのHTMLで完結しているので、ブラウザで開けばそのまま手順を追えます。")
-s(f"回ごとの配布物（スライド・ZIP・アンケート）をまとめた目次は {SITE}/slides/links.html にあります。")
+para(s, "PA45 の各回で使ったスライドです。1回ぶんが1つのHTMLで完結しているので、ブラウザで開けばそのまま手順を追えます。"
+      f"回ごとの配布物（スライド・ZIP・アンケート）をまとめた目次は {SITE}/slides/links.html にあります。")
 s("")
 s("| 回 | 開催日 | テーマ | スライド |")
 s("|---:|---|---|:---:|")

@@ -1,9 +1,9 @@
 # PA45 ― Power Automate 45分ハンズオン
 
-Power Automate を初めて触る人が、45分で1本のフローを作り終えるオンライン講座です。
+Power Automate を初めて触る人が、45分で1本のフローを作り終えるオンライン講座です。\
 週1回、無料で開催しています。
 
-講座で使ったスライド、完成したフローのZIP、録画、アンケートの集計は、このリポジトリと公開サイトですべて無料で公開しています。
+講座で使ったスライド、完成したフローのZIP、録画、アンケートの集計は、このリポジトリと公開サイトですべて無料で公開しています。\
 参加していない人でも、同じ手順をあとから再現できる形で残しています。
 
 - 公開サイト：https://haru-powerplatform.github.io/pa45/
@@ -111,7 +111,8 @@ PA45 の外で、Power Platform／Copilot のコミュニティに関わった�
 
 ## フローZIPの使い方
 
-ZIPは Power Automate の「ソリューション」形式です。展開せずにそのままインポートします。
+ZIPは Power Automate の「ソリューション」形式です。\
+展開せずにそのままインポートします。
 
 1. [フローのダウンロードページ](https://haru-powerplatform.github.io/pa45/flows/) から、使いたい回のZIPを保存する
 2. make.powerautomate.com の左メニュー「ソリューション」→「インポート」→「ソリューションのインポート」でZIPを選ぶ
@@ -120,11 +121,13 @@ ZIPは Power Automate の「ソリューション」形式です。展開せず�
    - 接続は作った人のアカウントに紐づくため、インポートした側で付け直す必要がある
 4. 保存してフローをオンにし、講座スライドの手順に沿って動かす
 
-組織の環境によっては、ソリューションのインポート権限が無いことがあります。その場合は環境の管理者への確認が要ります。
+組織の環境によっては、ソリューションのインポート権限が無いことがあります。\
+その場合は環境の管理者への確認が要ります。
 
 ## リポジトリの構成
 
-このリポジトリは GitHub Pages で公開サイトとしてそのまま配信しています。URLを変えないため、フォルダはサイトの階層と一致させています。
+このリポジトリは GitHub Pages で公開サイトとしてそのまま配信しています。\
+URLを変えないため、フォルダはサイトの階層と一致させています。
 
 **講座の教材（誰でも使えるもの）**
 
@@ -151,5 +154,7 @@ ZIPは Power Automate の「ソリューション」形式です。展開せず�
 
 ---
 
-この README は `scripts/build-readme.py` が `data/` から生成しています。数字は開催のたびに更新されます。
-Microsoft、Power Automate、Copilot Studio、Microsoft Teams、SharePoint は Microsoft Corporation の商標です。PA45 は個人が運営するコミュニティ講座で、Microsoft とは関係ありません。
+この README は `scripts/build-readme.py` が `data/` から生成しています。\
+数字は開催のたびに更新されます。\
+Microsoft、Power Automate、Copilot Studio、Microsoft Teams、SharePoint は Microsoft Corporation の商標です。\
+PA45 は個人が運営するコミュニティ講座で、Microsoft とは関係ありません。
