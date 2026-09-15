@@ -51,6 +51,7 @@ SESSIONS = {
     25: ("Mail Attachment Auto Save", "2026-08-27", "foldermail"),
     26: ("Daily Status Card", "2026-09-03", "hourencard"),
     27: ("Ask Copilot Right", "2026-09-10", "copilot"),
+    28: ("Card Bulk Complete", "2026-09-17", "checkcard"),
 }
 
 
@@ -404,13 +405,47 @@ def icon_hourencard(g):
     {finger}
   </g>'''
 
+def icon_checkcard(g):
+    """カード1枚でまとめて完了 = チェック3行のカード（2つにチェック）＋角にCopilotのキラキラ。"""
+    gl, gm, gd = g
+    x, y, w, h, r = 330, 272, 214, 192, 20
+    head = f'<rect x="{x+22}" y="{y+28}" width="120" height="13" rx="6.5" fill="{gd}" opacity="0.60"/>'
+    rows = ""
+    for i, on in enumerate((True, False, True)):
+        by = y + 54 + i * 36
+        rows += (f'<rect x="{x+22}" y="{by}" width="28" height="28" rx="6" '
+                 f'fill="{"url(#sparkgrad)" if on else "#fffaf0"}" stroke="{gd}" stroke-width="3.5"/>'
+                 f'<rect x="{x+62}" y="{by+9}" width="{[118, 100, 124][i]}" height="10" rx="5" fill="{gm}" opacity="0.45"/>')
+        if on:
+            rows += (f'<path d="M{x+28} {by+14} l7 7 l12 -14" fill="none" stroke="#fffaf0" '
+                     f'stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>')
+    btn = f'<rect x="{x+22}" y="{y+h-30}" width="{w-44}" height="18" rx="9" fill="url(#sparkgrad)"/>'
+    def spark(cx, cy, rr, inner=0.30):
+        pts = []
+        for i in range(8):
+            ang = -math.pi / 2 + i * math.pi / 4
+            rad = rr if i % 2 == 0 else rr * inner
+            pts.append(f"{cx + rad*math.cos(ang):.1f},{cy + rad*math.sin(ang):.1f}")
+        return " ".join(pts)
+    return f'''
+  <g filter="url(#ishadow)">
+    <rect x="{x}" y="{y}" width="{w}" height="{h}" rx="{r}" fill="#fffaf0" stroke="{gd}" stroke-width="4.5"/>
+    <path d="M{x} {y+16} V{y+r} Q{x} {y} {x+r} {y} H{x+w-r} Q{x+w} {y} {x+w} {y+r} V{y+16} Z" fill="url(#sparkgrad)"/>
+    {head}
+    {rows}
+    {btn}
+    <polygon points="{spark(552, 276, 38)}" fill="url(#sparkgrad)" stroke="{gd}" stroke-width="3"/>
+    <polygon points="{spark(582, 322, 16)}" fill="{gl}"/>
+  </g>'''
+
 ICONS = {"foldermail": icon_foldermail, "copilot": icon_copilot,
          "deadline": icon_deadline, "approval": icon_approval,
          "dashboard": icon_dashboard, "card": icon_card,
          "firststep": icon_firststep, "excelscript": icon_excelscript,
          "branch": icon_branch,
          "reaction": icon_reaction,
-         "hourencard": icon_hourencard}
+         "hourencard": icon_hourencard,
+         "checkcard": icon_checkcard}
 
 
 def knurl_dots(cx, cy, r, n, color):
