@@ -105,6 +105,7 @@
   figure.shot figcaption{font-size:12.5px;color:var(--muted);margin-top:7px;text-align:center;}
   footer{margin-top:26px;text-align:center;color:#94a3b8;font-size:12px;line-height:1.8;}
 </style>
+<style>.shot img{max-width:640px;margin:0 auto;}</style>
 </head>
 <body>
 <div class="wrap">
@@ -164,6 +165,7 @@
       <li>作ったあとに、<b>その列の表示名だけ「完了」に変更</b>します。<ul class="sub"><li>画面に出る名前は「完了」、フローから指す名前は <span class="k">Done</span>。この2枚看板の状態にします。</li></ul></li>
       <li><b>タイトル</b>列に、やることを3件入れます。<ul class="sub"><li>例）見積書を送る／議事録を共有する／請求書を確認する</li></ul></li>
     </ol>
+    <figure class="shot"><img src="assets/shot-list.png" alt="リスト「今日のやること」。タイトル列と完了列に3件"><figcaption>実際の画面。表示名は「完了」、中の名前は Done の状態で3件入れたところ。</figcaption></figure>
     <div class="callout warn"><b>⚠️ なぜ半角で作ってから名前を変えるのか：</b>
       <ul style="margin:6px 0 0;padding-left:20px;">
         <li>SharePointの列には<b>表示名</b>と<b>内部名</b>の2つがあり、<b>内部名は作ったときの名前で決まって、あとから変わりません</b>。</li>
@@ -194,6 +196,7 @@
       <li><b>＋新しいステップ</b>→ <b>SharePoint</b> → <b>「項目の取得」</b>を追加します。</li>
       <li>4つの欄を埋めます。<b>詳細オプション</b>を開くと、下2つが出てきます。<div class="setrow"><span class="kv"><span class="kk">サイトのアドレス</span><span class="vv">リストを作ったサイト</span></span><span class="kv"><span class="kk">リスト名</span><span class="vv">今日のやること</span></span><span class="kv"><span class="kk">フィルター クエリ</span><span class="vv">Done eq 0</span></span><span class="kv"><span class="kk">上から順に取得</span><span class="vv">3</span></span></div></li>
     </ol>
+    <figure class="shot"><img src="assets/shot-getitems.png" alt="項目の取得の設定。リスト名、フィルター クエリ Done eq 0、上から順に取得 3"><figcaption>実際の画面（サイトのアドレスはぼかしています）。詳細パラメーターを開くと、フィルター クエリと上から順に取得が出てきます。</figcaption></figure>
     <div class="callout sp"><b>■ フィルター クエリの読み方：</b>
       <ul style="margin:6px 0 0;padding-left:20px;">
         <li><span class="k">Done</span>＝STEP 0 で半角で作った<b>内部名</b>。ここが日本語だと通りません。</li>
@@ -218,6 +221,7 @@
       <button class="copybtn" data-code="cardjson">コピー</button>
 <pre id="cardjson">{"$schema":"http://adaptivecards.io/schemas/adaptive-card.json","type":"AdaptiveCard","version":"1.4","body":[{"type":"TextBlock","text":"今日のやること","weight":"Bolder","size":"Large","wrap":true},{"type":"TextBlock","text":"終わったものにチェックを入れて、まとめて送ってください。","isSubtle":true,"wrap":true,"spacing":"None"},{"type":"Input.Toggle","id":"t1","title":"@{body('項目の取得')?['value'][0]?['Title']}","valueOn":"true","valueOff":"false"},{"type":"Input.Toggle","id":"t2","title":"@{body('項目の取得')?['value'][1]?['Title']}","valueOn":"true","valueOff":"false"},{"type":"Input.Toggle","id":"t3","title":"@{body('項目の取得')?['value'][2]?['Title']}","valueOn":"true","valueOff":"false"}],"actions":[{"type":"Action.Submit","title":"チェックしたものを完了にする"}]}</pre>
     </div>
+    <figure class="shot"><img src="assets/shot-card.png" alt="メッセージ欄にカードのJSONを貼った状態"><figcaption>実際の画面。貼ると、title の式が紫の fx body(...) の部品に変わります。これがリストの項目名です。</figcaption></figure>
     <div class="callout tm"><b>★このJSONで押さえるところは3つだけです：</b>
       <ul style="margin:6px 0 0;padding-left:20px;">
         <li><span class="k">Input.Toggle</span> ＝チェックの部品。<b>3つ並べているので、チェックが3つ出ます</b>。</li>
@@ -240,6 +244,8 @@
       <li><b>「いいえの場合」は空のまま</b>にします。まだ終わっていないので、何もしません。</li>
       <li>できた条件を<b>まるごとコピーして2つ増やし</b>、<span class="k">t1</span> を <span class="k">t2</span> / <span class="k">t3</span> に、IDの <span class="k">[0]</span> を <span class="k">[1]</span> / <span class="k">[2]</span> に変えます。</li>
     </ol>
+    <figure class="shot"><img src="assets/shot-condition.png" alt="条件の設定。body/data/t1 が true と等しい"><figcaption>実際の画面。左の値にカーソルを合わせると、中に入っている式が吹き出しで見えます。</figcaption></figure>
+    <figure class="shot"><img src="assets/shot-update.png" alt="項目の更新の設定。IDに式、完了をはい"><figcaption>はいの場合に入れる「項目の更新」。ID に式、完了は「はい」。</figcaption></figure>
     <div class="codewrap">
       <span class="lbl">条件の左辺に入れる式（1件目）</span>
       <button class="copybtn" data-code="ex1">コピー</button>
