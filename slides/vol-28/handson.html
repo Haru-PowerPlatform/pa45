@@ -150,8 +150,9 @@
     <a href="#p1">1. ボタンで開始</a>
     <a href="#p2">2. 未完了を3件とってくる</a>
     <a href="#p3">3. カードを送って待つ</a>
-    <a href="#p4">4. チェックした分だけ完了に</a>
-    <a href="#pt">5. テスト</a>
+    <a href="#p3b">4. 条件の前に1回動かす</a>
+    <a href="#p4">5. チェックした分だけ完了に</a>
+    <a href="#pt">6. もう一度テスト</a>
     <a href="#pc">＋ Copilotに聞く4か所</a>
   </nav>
 
@@ -232,13 +233,27 @@
     <div class="callout warn"><b>⚠️ title の中の式について：</b> 3つの title には <span class="k">body('項目の取得')?['value'][0]?['Title']</span> のような式が入っています。<b>[0] が1件目、[1] が2件目、[2] が3件目</b>です。STEP 2 のアクション名を<b>「項目の取得」のまま</b>にしておくと、この式がそのまま通ります。名前を変えた場合は、式の中の名前も同じに直してください。</div>
   </section>
 
+  <!-- ===== 3b. 条件の前に1回動かす ===== -->
+  <section class="part" id="p3b">
+    <div class="part-h"><span class="part-badge">STEP 4</span><h2>条件を入れる前に、1回動かして答えを見る</h2></div>
+    <p class="part-note">次の STEP で使う式は、<b>カードから返ってくる答えの形</b>が分からないと作れません。先に1回だけ動かして、答えを見ておきます。<b>条件がまだ無いので、リストは変わりません。</b></p>
+    <ol class="steps">
+      <li>右上の <b>「保存」</b> → <b>「テスト」→「手動」→「フローの実行」</b>。</li>
+      <li>Teams に届いたカードで、<b>3件のうち2件だけ</b>チェックを入れて送信します。</li>
+      <li>フローの実行結果の画面で、<b>カードのアクション</b>をクリックし、<b>出力</b>の中身をコピーします。</li>
+      <li>M365 Copilot チャットに、下の「Copilotに聞く4か所」の <a href="#pc">③</a> のプロンプトと一緒に貼り、<b>t1 の値を取り出す式</b>を聞きます。</li>
+    </ol>
+    <figure class="shot narrow"><img src="assets/card-real.png" alt="Teamsに届いたカード。3件のうち2件にチェック"><figcaption>実際の画面。2件にチェックして送信したところ。</figcaption></figure>
+    <div class="callout warn"><b>⚠️ 貼る前に：</b> 出力には、送信した人の名前やメールアドレスが入っていることがあります。Copilot に貼るのは <b>答えの部分（data の中身）だけ</b>にするか、サンプルの文字に置き換えてから貼ってください。</div>
+  </section>
+
   <!-- ===== 4. 更新 ===== -->
   <section class="part" id="p4">
-    <div class="part-h"><span class="part-badge sp">STEP 4</span><h2>チェックが入ったものだけ、完了にする</h2></div>
+    <div class="part-h"><span class="part-badge sp">STEP 5</span><h2>チェックが入ったものだけ、完了にする</h2></div>
     <p class="part-note">カードの下に <b>「条件」</b>を置き、その「はいの場合」に <b>「項目の更新」</b>を入れます。これを<b>3件ぶん</b>並べます。</p>
     <ol class="steps sp">
       <li><b>＋新しいステップ</b>→ <b>「条件」</b>を追加します。</li>
-      <li>左辺に、カードの答え <span class="k">t1</span> を入れます（動的コンテンツから選ぶか、下の式を貼ります）。</li>
+      <li>左辺に、カードの答え <span class="k">t1</span> を入れます（STEP 4 で Copilot が出した式、または下の式を貼ります）。</li>
       <li>真ん中は <b>「次の値に等しい」</b>、右辺は <b>true</b> と<b>手で入力</b>します。<ul class="sub"><li><b>「はい/いいえ」ではなく、true という4文字を打ちます。</b> カードから返ってくるのが文字だからです。</li></ul></li>
       <li><b>「はいの場合」</b>の中に <b>SharePoint「項目の更新」</b>を追加します。<div class="setrow"><span class="kv"><span class="kk">サイトのアドレス／リスト名</span><span class="vv">STEP 2 と同じ</span></span><span class="kv"><span class="kk">ID</span><span class="vv">1件目のID（下の式）</span></span><span class="kv"><span class="kk">完了</span><span class="vv">はい</span></span></div></li>
       <li><b>「いいえの場合」は空のまま</b>にします。まだ終わっていないので、何もしません。</li>
@@ -268,7 +283,7 @@
 
   <!-- ===== 5. テスト ===== -->
   <section class="part" id="pt">
-    <div class="part-h"><span class="part-badge">STEP 5</span><h2>保存して、テストする</h2></div>
+    <div class="part-h"><span class="part-badge">STEP 6</span><h2>もう一度テストする（完成）</h2></div>
     <ol class="steps">
       <li>右上の <b>「保存」</b>→ <b>「テスト」→「手動」</b>で実行します。</li>
       <li>Teams にカードが届きます。<b>3件のうち2件だけ</b>チェックを入れて、下のボタンを押します。</li>
