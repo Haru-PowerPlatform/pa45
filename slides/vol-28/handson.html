@@ -215,10 +215,26 @@
     <ol class="steps tm">
       <li><b>＋新しいステップ</b>→ <b>Microsoft Teams</b> → <b>「アダプティブ カードを Teams ユーザーに投稿して応答を待機する」</b>。</li>
       <li>3つの欄を埋めます。<div class="setrow"><span class="kv"><span class="kk">投稿者</span><span class="vv">フロー ボット</span></span><span class="kv"><span class="kk">投稿先</span><span class="vv">フロー ボットとチャットをする</span></span><span class="kv"><span class="kk">Recipient</span><span class="vv">自分（本人）</span></span></div></li>
-      <li><b>メッセージ</b>欄に、下のカードJSONを貼り付けます。</li>
+      <li><b>メッセージ</b>欄に、カードのJSONを貼り付けます。<b>Copilot に出してもらう</b>（下の指示をそのまま貼る）か、その下の<b>用意済みのJSON</b>をコピーします。</li>
     </ol>
     <div class="codewrap">
-      <span class="lbl">メッセージ欄に貼るカードJSON（チェック3つ＋送信ボタン）</span>
+      <span class="lbl">Copilot にそのまま貼る指示（このカードのJSONが返ってきます）</span>
+      <button class="copybtn" data-code="ask2">コピー</button>
+<pre id="ask2">Adaptive Card 1.4 の JSON だけをください。Power Automate の「アダプティブ カードを Teams ユーザーに投稿して応答を待機する」のメッセージ欄にそのまま貼ります。
+要素は次のとおりです。
+・見出し「今日のやること」（太字・大きめ）
+・その下に小さい説明「終わったものにチェックを入れて、まとめて送ってください。」（うすい色）
+・チェックを3つ（Input.Toggle）。id は t1 / t2 / t3、値は文字列の "true" / "false"（valueOn / valueOff）
+・3つのチェックの title には、次の式をそのまま入れる
+　t1：@{body('項目の取得')?['value'][0]?['Title']}
+　t2：@{body('項目の取得')?['value'][1]?['Title']}
+　t3：@{body('項目の取得')?['value'][2]?['Title']}
+・送信ボタンを1つ（Action.Submit、表示は「チェックしたものを完了にする」）
+説明は不要です。JSON だけ返してください。</pre>
+    </div>
+    <figure class="shot narrow"><img src="assets/card-target.png" alt="今日のやることカード。チェック3つと送信ボタン"><figcaption>返ってきたJSONを貼ると、Teams にこのカードが届きます。</figcaption></figure>
+    <div class="codewrap">
+      <span class="lbl">用意済みのカードJSON（Copilot の返事がうまく貼れないとき）</span>
       <button class="copybtn" data-code="cardjson">コピー</button>
 <pre id="cardjson">{"$schema":"http://adaptivecards.io/schemas/adaptive-card.json","type":"AdaptiveCard","version":"1.4","body":[{"type":"TextBlock","text":"今日のやること","weight":"Bolder","size":"Large","wrap":true},{"type":"TextBlock","text":"終わったものにチェックを入れて、まとめて送ってください。","isSubtle":true,"wrap":true,"spacing":"None"},{"type":"Input.Toggle","id":"t1","title":"@{body('項目の取得')?['value'][0]?['Title']}","valueOn":"true","valueOff":"false"},{"type":"Input.Toggle","id":"t2","title":"@{body('項目の取得')?['value'][1]?['Title']}","valueOn":"true","valueOff":"false"},{"type":"Input.Toggle","id":"t3","title":"@{body('項目の取得')?['value'][2]?['Title']}","valueOn":"true","valueOff":"false"}],"actions":[{"type":"Action.Submit","title":"チェックしたものを完了にする"}]}</pre>
     </div>
@@ -343,13 +359,17 @@ Power Automateのフィルタークエリから指定できません。
     <p class="part-note">コツは<b>形を指定すること</b>です。放っておくと長い解説が付いてきて、どこを貼ればよいか分からなくなります。</p>
     <div class="codewrap">
       <button class="copybtn" data-code="cp2">コピー</button>
-<pre id="cp2">Adaptive Card 1.4 の JSON だけをください。要素は次のとおりです。
-・見出し『今日のやること』（太字・大きめ）
-・小さい説明『終わったものにチェックを入れて、まとめて送ってください。』
-・チェックを3つ（Input.Toggle、id は t1 / t2 / t3）
-・チェックの値は文字列の true / false（valueOn / valueOff）
-・送信ボタンを1つ（Action.Submit、表示は『チェックしたものを完了にする』）
-説明文は不要です。JSON だけ返してください。</pre>
+<pre id="cp2">Adaptive Card 1.4 の JSON だけをください。Power Automate の「アダプティブ カードを Teams ユーザーに投稿して応答を待機する」のメッセージ欄にそのまま貼ります。
+要素は次のとおりです。
+・見出し「今日のやること」（太字・大きめ）
+・その下に小さい説明「終わったものにチェックを入れて、まとめて送ってください。」（うすい色）
+・チェックを3つ（Input.Toggle）。id は t1 / t2 / t3、値は文字列の "true" / "false"（valueOn / valueOff）
+・3つのチェックの title には、次の式をそのまま入れる
+　t1：@{body('項目の取得')?['value'][0]?['Title']}
+　t2：@{body('項目の取得')?['value'][1]?['Title']}
+　t3：@{body('項目の取得')?['value'][2]?['Title']}
+・送信ボタンを1つ（Action.Submit、表示は「チェックしたものを完了にする」）
+説明は不要です。JSON だけ返してください。</pre>
     </div>
 
     <h3 style="font-size:16px;color:var(--pa-dark);margin:22px 0 6px;">③ 答えを取り出す式を作らせる（材料を先に見せる）</h3>

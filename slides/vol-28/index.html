@@ -289,7 +289,7 @@
   #s20 .callout.pa{margin-top:10px !important;padding:13px 20px;font-size:19px;}
   #s8 .slide-body > div{flex:1;}
   #s8 .blist li{font-size:23px !important;margin-bottom:12px;}
-  #s11 .slide-body,#s14 .slide-body,#s15 .slide-body,#s18 .slide-body{justify-content:center;}
+  #s11 .slide-body,#s15 .slide-body,#s18 .slide-body{justify-content:center;}
   #s11 .blist li,#s18 .blist li{font-size:22px !important;}
   #s16 .slide-body{justify-content:center;}
   #s19 .slide-body{padding-top:14px;}
@@ -316,6 +316,13 @@
   #s14c .shotimg{width:auto;max-width:100%;max-height:360px;margin:0 auto;}
   #s14b .steplist li,#s14c .steplist li{font-size:21px !important;padding:10px 0 10px 50px !important;line-height:1.5;}
   #s14b .callout,#s14c .callout{font-size:19px;padding:12px 20px;margin-top:12px !important;line-height:1.65;}
+  #s14 .slide-body{padding-top:12px;justify-content:center;}
+  #s14 .g14{display:grid;grid-template-columns:1.12fr .88fr;gap:20px;align-items:start;}
+  #s14 .lbl14{font-size:18px;font-weight:800;color:var(--muted);margin-bottom:7px;} #s14 .lbl14 span{font-size:14px;color:#b45309;}
+  #s14 .lbl14 .tag14{display:inline-block;background:#eef2f9;color:var(--blue-text);border-radius:6px;padding:1px 9px;font-size:13px;}
+  #s14 .p14{font-size:15px;line-height:1.62;padding:14px 16px;}
+  #s14 .shotimg{width:100%;}
+  #s14 .note14{font-size:18px;line-height:1.6;background:#eaf2fc;border-left:6px solid #2a7dd4;border-radius:6px;padding:10px 14px;margin-top:12px;color:#14528f;}
   #s17c .slide-body{padding-top:14px;justify-content:center;}
   #s17c .g{display:grid;grid-template-columns:1.02fr .98fr;gap:22px;align-items:start;}
   #s17c .lbl{font-size:18px;font-weight:800;color:var(--muted);margin-bottom:8px;}
@@ -670,27 +677,27 @@ Power Automateから指定できません。
   <div class="slide-head"><div class="slide-eyebrow">PA45｜第28回 ／ 詰まったら聞く ②</div><h1 class="slide-title">カードのJSONは、手で書かない</h1><div class="concept-dot">Copilot</div></div>
   <div class="slide-body">
 
-    <div class="tiprow"><span class="tipno">2</span><h3>形を指定して、<span class="cop">Copilot</span>に出してもらう</h3></div>
-    <div class="tipgrid">
+    <div class="g14">
       <div>
-        <div style="font-size:19px;font-weight:800;color:var(--muted);margin-bottom:7px;">そのまま貼るプロンプト</div>
-        <div class="prompt">Adaptive Card のJSONだけをください。
-・チェックを3つ（id は <span class="fill">t1 / t2 / t3</span>）
-・送信ボタンを1つ
-・<span class="em">チェックの値は文字列の true / false</span>
-・説明は要りません。JSONだけ</div>
+        <div class="lbl14">そのまま貼る指示 <span>（手順書 STEP 3 にコピーボタンあり）</span></div>
+        <div class="prompt p14">Adaptive Card 1.4 の JSON だけをください。Power Automate の「アダプティブ カードを Teams ユーザーに投稿して応答を待機する」のメッセージ欄にそのまま貼ります。
+要素は次のとおりです。
+・見出し「今日のやること」（太字・大きめ）
+・その下に小さい説明「終わったものにチェックを入れて、まとめて送ってください。」（うすい色）
+・チェックを3つ（Input.Toggle）。id は t1 / t2 / t3、値は文字列の "true" / "false"（valueOn / valueOff）
+・3つのチェックの title には、次の式をそのまま入れる
+　t1：<span class="fill">@{body('項目の取得')?['value'][0]?['Title']}</span>
+　t2：<span class="fill">@{body('項目の取得')?['value'][1]?['Title']}</span>
+　t3：<span class="fill">@{body('項目の取得')?['value'][2]?['Title']}</span>
+・送信ボタンを1つ（Action.Submit、表示は「チェックしたものを完了にする」）
+説明は不要です。JSON だけ返してください。</div>
       </div>
       <div>
-        <div style="font-size:19px;font-weight:800;color:var(--muted);margin-bottom:7px;">返ってくるJSONの要点</div>
-        <div class="jsonbox">{ <span class="k">"type"</span>: <span class="v">"Input.Toggle"</span>,
-  <span class="k">"id"</span>: <span class="v">"t1"</span>,
-  <span class="k">"title"</span>: <span class="v">"見積書を送る"</span>,
-  <span class="k">"valueOn"</span>: <span class="v">"true"</span>,
-  <span class="k">"valueOff"</span>: <span class="v">"false"</span> }</div>
+        <div class="lbl14">このカードになるJSONが返ってくる <span class="tag14">実画面</span></div>
+        <img class="shotimg" src="assets/card-target.png" alt="今日のやることカード。チェック3つと送信ボタン">
+        <div class="note14"><b>title に式まで指定する</b>と、返ってきたJSONを<b>そのまま貼れます</b>。項目名は、実行したときにリストから入ります。</div>
       </div>
     </div>
-    <div class="callout blue" style="margin-top:12px;"><strong>第20回でいちばん多かった詰まりが、このJSONのコピーでした。</strong>
-      いまは<b>手で書く必要がありません</b>。「説明は要りません。JSONだけ」と形を指定するのがコツです。放っておくと長い解説が付いてきて、どこを貼ればよいか分からなくなります。</div>
 
   </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
@@ -705,15 +712,15 @@ Power Automateから指定できません。
       <div><div class="shotlbl"><span class="tag">実画面</span>メッセージ欄に貼った状態</div><img class="shotimg" src="assets/shot-card.png" alt="メッセージ欄にカードのJSONを貼った状態。title が紫の fx body(...) になっている"></div>
       <div>
         <ol class="steplist">
-          <li>手順書の<b>カードJSON</b>をコピーする</li>
+          <li>Copilotが返した<b>JSON</b>（または手順書のJSON）をコピー</li>
           <li><b>メッセージ</b>欄に貼る</li>
           <li class="key">title が紫の <b>fx body(...)</b> に変わればOK＝リストの項目名が入る式</li>
           <li>右上の<b>保存</b></li>
         </ol>
       </div>
     </div>
-    <div class="callout blue"><strong>なぜ手順書のJSONを使うのか。</strong>
-      Copilotが出すJSONは形のお手本です。<b>項目名を入れる式（body(...)）までは入っていない</b>ので、今日は式まで入った手順書のJSONを貼ります。</div>
+    <div class="callout blue"><strong>title が紫の fx body(...) にならないときは。</strong>
+      Copilotが式を別の形に書き換えています。<b>手順書のカードJSON</b>を貼れば確実です（同じカードになります）。</div>
 
   </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
