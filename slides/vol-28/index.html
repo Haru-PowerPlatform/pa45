@@ -730,13 +730,13 @@ Power Automateから指定できません。
           <li>右上の<b>テスト</b> → <b>手動</b> → <b>フローの実行</b></li>
           <li class="key">Teamsに届いたカードで、<b>2件だけチェック</b>して送信</li>
           <li>フローの実行結果で、<b>カードのアクション</b>をクリック</li>
-          <li class="key"><b>出力</b>の中身をコピーする</li>
+          <li class="key"><b>出力</b>をコピーし、<b>headers と responder を消す</b></li>
         </ol>
       </div>
       <div><div class="shotlbl"><span class="tag">実画面</span>2件にチェックして送信したカード</div><img class="shotimg" src="assets/card-real.png" alt="Teamsに届いたカード。3件のうち2件にチェック"></div>
     </div>
     <div class="callout pa"><strong>ここでコピーした出力が、次のページでCopilotに貼る「材料」です。</strong>
-      条件がまだ無いので、リストは変わりません。<b>答えがどんな形で返ってくるか</b>を見るための実行です。</div>
+      出力には<b>名前・メールアドレス・署名つきのURL</b>も入っているので、貼るのは <b>body の中の data</b> の形だけにします。</div>
 
   </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
@@ -750,20 +750,22 @@ Power Automateから指定できません。
     <div class="tiprow"><span class="tipno">3</span><h3>先にテスト実行の出力を貼る。それから聞く</h3></div>
     <div class="tipgrid">
       <div>
-        <div style="font-size:19px;font-weight:800;color:var(--muted);margin-bottom:7px;">1. 前のページでコピーした出力（答えの部分）</div>
-        <div class="jsonbox">{ <span class="k">"data"</span>: {
-    <span class="k">"t1"</span>: <span class="v">"true"</span>,
-    <span class="k">"t2"</span>: <span class="v">"false"</span>,
-    <span class="k">"t3"</span>: <span class="v">"true"</span>
-} }</div>
+        <div style="font-size:19px;font-weight:800;color:var(--muted);margin-bottom:7px;">1. 出力から <b>body と data の形だけ</b>残して貼る</div>
+        <div class="jsonbox">{ <span class="k">"body"</span>: {
+    <span class="k">"data"</span>: {
+      <span class="k">"t1"</span>: <span class="v">"true"</span>,
+      <span class="k">"t2"</span>: <span class="v">"false"</span>,
+      <span class="k">"t3"</span>: <span class="v">"true"</span>
+} } }</div>
+        <div style="font-size:16px;color:#b45309;font-weight:700;margin-top:8px;line-height:1.5;">headers と responder（名前・メールアドレス）は消してから貼る</div>
       </div>
       <div>
-        <div style="font-size:19px;font-weight:800;color:var(--muted);margin-bottom:7px;">2. 貼ってから聞く</div>
-        <div class="prompt">これはPower Automateの
-「応答を待機する」の出力です。
-<span class="fill">（上のJSONを貼る）</span>
-
-<span class="em">t1 の値を取り出す式を教えてください。</span></div>
+        <div style="font-size:19px;font-weight:800;color:var(--muted);margin-bottom:7px;">2. この指示と一緒に貼る <span style="font-size:15px;color:#b45309;">（手順書 STEP 4 にコピーボタンあり）</span></div>
+        <div class="prompt" style="font-size:16px;line-height:1.6;padding:14px 16px;">Power Automate で「<span class="fill">アダプティブ カードを Teams ユーザーに投稿して応答を待機する</span>」アクションを使っています。
+テスト実行したときの出力は次のとおりです（関係ない部分は消しています）。
+<span class="fill">（左の JSON）</span>
+<span class="em">t1 の値を取り出す式を、Power Automate の式の書き方で1行だけ教えてください。</span>
+アクション名は「<span class="fill">アダプティブ カードを Teams ユーザーに投稿して応答を待機する</span>」です。説明は不要です。</div>
       </div>
     </div>
     <div class="callout blue" style="margin-top:12px;"><strong>材料を先に見せると、返ってくる式が正確になります。</strong>

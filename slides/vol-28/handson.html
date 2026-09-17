@@ -240,11 +240,36 @@
     <ol class="steps">
       <li>右上の <b>「保存」</b> → <b>「テスト」→「手動」→「フローの実行」</b>。</li>
       <li>Teams に届いたカードで、<b>3件のうち2件だけ</b>チェックを入れて送信します。</li>
-      <li>フローの実行結果の画面で、<b>カードのアクション</b>をクリックし、<b>出力</b>の中身をコピーします。</li>
-      <li>M365 Copilot チャットに、下の「Copilotに聞く4か所」の <a href="#pc">③</a> のプロンプトと一緒に貼り、<b>t1 の値を取り出す式</b>を聞きます。</li>
+      <li>フローの実行結果の画面で、<b>カードのアクション</b>をクリックし、<b>出力</b>をコピーします。</li>
+      <li><b>headers と responder を消して</b>、<b>body と data の形だけ</b>を残します（下のような形になればOK）。</li>
+      <li>M365 Copilot チャットに、<b>下の指示をそのまま貼って</b>、t1 の値を取り出す式を聞きます。</li>
     </ol>
     <figure class="shot narrow"><img src="assets/card-real.png" alt="Teamsに届いたカード。3件のうち2件にチェック"><figcaption>実際の画面。2件にチェックして送信したところ。</figcaption></figure>
-    <div class="callout warn"><b>⚠️ 貼る前に：</b> 出力には、送信した人の名前やメールアドレスが入っていることがあります。Copilot に貼るのは <b>答えの部分（data の中身）だけ</b>にするか、サンプルの文字に置き換えてから貼ってください。</div>
+    <div class="codewrap">
+      <span class="lbl">Copilot にそのまま貼る指示（t1 の式を聞く）</span>
+      <button class="copybtn" data-code="ask3">コピー</button>
+<pre id="ask3">Power Automate で「アダプティブ カードを Teams ユーザーに投稿して応答を待機する」アクションを使っています。
+テスト実行したときの出力は次のとおりです（関係ない部分は消しています）。
+
+{
+  "body": {
+    "data": {
+      "t1": "true",
+      "t2": "false",
+      "t3": "true"
+    }
+  }
+}
+
+t1 の値を取り出す式を、Power Automate の式の書き方で1行だけ教えてください。
+アクション名は「アダプティブ カードを Teams ユーザーに投稿して応答を待機する」です。説明は不要です。</pre>
+    </div>
+    <ul class="sub" style="font-size:14px;">
+      <li>JSON の部分は、<b>自分の出力から headers と responder を消した形</b>に置き換えても構いません（t1〜t3 の true / false が違うだけです）。</li>
+      <li>アクションの名前を変えた人は、2か所の「アダプティブ カードを…待機する」を<b>自分のアクション名</b>に書き換えます。</li>
+      <li>返ってきた式は、<b>次の STEP の条件の左辺</b>に貼ります。</li>
+    </ul>
+    <div class="callout warn"><b>⚠️ 出力をそのまま貼らない：</b> 出力には <b>送信した人の名前・メールアドレス・テナントID</b>や、<b>署名（sig=）つきのURL</b>が入っています。Copilot に貼るのは <b>body と data の形だけ</b>にしてください。<b>body を消すと</b>、Copilot が返す式から <span class="k">body</span> が抜けてしまうので、body は残します。</div>
   </section>
 
   <!-- ===== 4. 更新 ===== -->
@@ -331,13 +356,21 @@ Power Automateのフィルタークエリから指定できません。
     <p class="part-note"><b>先にテスト実行の出力を貼る</b>のがコツです。貼らずに聞くと、項目名を推測した式が返ってきて、そのままでは動きません。</p>
     <div class="codewrap">
       <button class="copybtn" data-code="cp3">コピー</button>
-<pre id="cp3">Power Automateの「アダプティブ カードを投稿して応答を待機する」の
-出力です。
+<pre id="cp3">Power Automate で「アダプティブ カードを Teams ユーザーに投稿して応答を待機する」アクションを使っています。
+テスト実行したときの出力は次のとおりです（関係ない部分は消しています）。
 
-（ここにテスト実行の出力JSONを貼る）
+{
+  "body": {
+    "data": {
+      "t1": "true",
+      "t2": "false",
+      "t3": "true"
+    }
+  }
+}
 
-t1 の値を取り出す式を、Power Automateの書き方で教えてください。
-式だけで構いません。</pre>
+t1 の値を取り出す式を、Power Automate の式の書き方で1行だけ教えてください。
+アクション名は「アダプティブ カードを Teams ユーザーに投稿して応答を待機する」です。説明は不要です。</pre>
     </div>
 
     <h3 style="font-size:16px;color:var(--pa-dark);margin:22px 0 6px;">④ エラー文は、訳さずそのまま貼る</h3>
