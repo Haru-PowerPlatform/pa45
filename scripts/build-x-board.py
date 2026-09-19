@@ -779,6 +779,11 @@ def main():
         uv = int(up["vol"])
         manual = next((e for e in ann_manual if int(e.get("vol", -1)) == uv), None)
         ann = [manual] if manual else [derive_announce_from_upcoming(up)]
+        # 前回の開催後処理が済む前に次の回を告知したいとき（upcomingはまだ進められない）は、
+        # announce-events.json にある「upcomingより先の回」を優先して出す。
+        ahead = sorted((e for e in ann_manual if int(e.get("vol", -1)) > uv), key=lambda e: e["vol"])
+        if ahead:
+            ann = ahead
     else:
         ann = sorted(ann_manual, key=lambda e: e["vol"])[-1:]
     n_ann = len(ann) * 4
