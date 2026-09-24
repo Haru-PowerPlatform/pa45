@@ -107,6 +107,7 @@ PA45 の外で、Power Platform／Copilot のコミュニティに関わった�
 | 2026/08/29 | PLUG MeetUp Vol.3「対話からはじまる現場の変革」（広島・ハイブリッド）を運営 | 運営メンバー（PLUG 発起人） | 参加51名（現地14 / オンライン33 / 運営4） | [connpass](https://plug.connpass.com/event/401829/) |
 | 2026/09/02 | Microsoft へ製品フィードバックを提出：Copilot Studio Evaluate で「Error（採点不能）」と「Fail（0点）」が区別できない問題の改善要望 | 報告者 | Copilot Studio Ideas（公開・投票可） | [公開ページ](https://ideas.powervirtualagents.com/d365community/idea/81439407-99a6-f111-85cd-7c1e52b98ad4) |
 | 2026/09/02 | Power Platform Community で回答（2本）：SharePointの別リストから承認先を引く／Apply to each のネストを外す | 回答者 | Power Platform Community（公開・英語） | [スレッド](https://community.powerplatform.com/forums/thread/details/?threadid=71e16edd-35a6-f111-b8de-6045bdff2fc0) |
+| 2026/09/24 | ビジュアルプログラミングIoTLT vol.24 でLT登壇：作らせる前に、使ってもらう ── 社内で非エンジニアにビジュアルプログラミングを教えた話 | 登壇 | オンラインLTイベント（YouTube配信） | [connpass](https://iotlt.connpass.com/event/400538/) |
 
 すべての記録は [`data/activities/`](data/activities/) に1件1ファイルで置いています。サイト上では [活動の記録](https://haru-powerplatform.github.io/pa45/achievements/) で見られます。
 
