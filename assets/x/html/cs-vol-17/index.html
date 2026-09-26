@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>コパスタ Vol.17-1 新しいCopilotは3つのタブ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/cs-base.css">
+<style>
+  .body{padding:10px 18px 0;}
+  /* 主役モック：新しいCopilotアプリの窓 */
+  .app{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:1.5px solid var(--segline);
+    border-radius:12px;overflow:hidden;box-shadow:0 8px 18px rgba(0,0,0,.16);}
+  .app .ah{flex:0 0 auto;display:flex;align-items:center;gap:12px;padding:0 14px;height:46px;background:#F3F2F1;
+    border-bottom:1px solid #E1DFDD;}
+  .app .ah .nm{font-size:16px;font-weight:700;color:#424242;margin-right:14px;}
+  .tab{display:flex;align-items:center;gap:8px;height:34px;padding:0 16px;border-radius:8px;font-size:17px;font-weight:700;
+    color:#424242;background:#fff;border:1.5px solid #E1DFDD;}
+  .tab .tn{width:22px;height:22px;border-radius:50%;background:var(--cs);color:#fff;font-size:13px;font-weight:900;
+    display:flex;align-items:center;justify-content:center;font-family:"Noto Sans JP",sans-serif;}
+  .app .ah .new{margin-left:auto;font-size:13.5px;font-weight:900;color:#fff;background:#DC2626;border-radius:999px;
+    padding:4px 12px;font-family:"Noto Sans JP",sans-serif;}
+  .panes{flex:1;min-height:0;display:flex;}
+  .pane{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px;padding:10px 13px 11px;border-right:1px solid #E1DFDD;}
+  .pane:last-child{border-right:none;}
+  .ph{display:flex;align-items:baseline;gap:9px;font-family:"Noto Sans JP",sans-serif;}
+  .ph .en{font-family:"Segoe UI",sans-serif;font-size:23px;font-weight:800;color:var(--cs-dark);}
+  .ph .ja{font-size:19px;font-weight:900;color:var(--navy);}
+  .ph .ja b{background:linear-gradient(transparent 58%,#FDE68A 58%);}
+  .ask{display:flex;align-items:center;gap:8px;background:#fff;border:2px solid var(--cs-line);border-radius:12px;
+    padding:7px 11px;font-size:15.5px;font-weight:700;color:#242424;}
+  .ask .cur{width:2px;height:18px;background:var(--cs);}
+  .modes{display:flex;gap:6px;}
+  .mode{font-size:14.5px;font-weight:700;padding:3px 12px;border-radius:999px;border:1.5px solid #D1D1D1;color:#616161;}
+  .mode.on{background:var(--cs);border-color:var(--cs);color:#fff;}
+  .card{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:space-around;gap:6px;background:#FAFAFA;border:1.5px solid #E1DFDD;
+    border-radius:10px;padding:9px 11px;}
+  .file{display:flex;align-items:center;gap:10px;background:#fff;border:1px solid #E1DFDD;border-radius:8px;padding:6px 9px;}
+  .fi{flex:0 0 30px;height:30px;border-radius:6px;color:#fff;font-size:16px;font-weight:800;display:flex;
+    align-items:center;justify-content:center;font-family:"Segoe UI",sans-serif;box-shadow:inset 0 -3px 0 rgba(0,0,0,.18);}
+  .fi.p{background:#C43E1C;} .fi.w{background:#185ABD;} .fi.x{background:#107C41;}
+  .file .fn{flex:1;min-width:0;font-size:15.5px;font-weight:700;}
+  .file .fs{font-size:13.5px;font-weight:700;color:#616161;}
+  .ok{font-size:14px;font-weight:900;color:var(--green);font-family:"Noto Sans JP",sans-serif;white-space:nowrap;}
+  .cap{flex:0 0 auto;font-family:"Noto Sans JP",sans-serif;font-size:15px;font-weight:700;color:#374151;line-height:1.4;
+    border-top:1.5px dashed #D1D5DB;padding-top:7px;}
+  .cap b{color:var(--cs-dark);}
+  /* Code：できあがったアプリ */
+  .mini{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:1.5px solid #C9B4F4;border-radius:9px;overflow:hidden;}
+  .mini .mh{display:flex;align-items:center;justify-content:space-between;padding:5px 10px;background:var(--cs);color:#fff;
+    font-size:15.5px;font-weight:700;}
+  .mini .mh .add{font-size:13.5px;background:#fff;color:var(--cs);border-radius:6px;padding:2px 8px;font-weight:800;}
+  .mr{flex:1;display:flex;align-items:center;gap:6px;padding:0 10px;border-bottom:1px solid #EEE;font-size:15px;font-weight:600;}
+  .mr:last-child{border-bottom:none;}
+  .mr .it{flex:1.2;} .mr .who{flex:1;color:#424242;}
+  .st{font-size:13.5px;font-weight:800;border-radius:5px;padding:2px 7px;font-family:"Noto Sans JP",sans-serif;}
+  .st.out{background:#FEF3C7;color:#92400E;} .st.back{background:#DCFCE7;color:#166534;}
+  .host{display:flex;align-items:center;gap:7px;font-family:"Noto Sans JP",sans-serif;font-size:14px;font-weight:800;
+    color:var(--green-dark);background:var(--green-bg);border:1.5px solid var(--green-line);border-radius:8px;padding:4px 9px;}
+  /* Autopilot：エージェント名札＋夜の通知 */
+  .tagc{display:flex;align-items:center;gap:10px;background:#fff;border:1.5px solid #C9B4F4;border-radius:10px;padding:7px 10px;}
+  .av{flex:0 0 40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#7C3AED,#EC4899);color:#fff;
+    font-size:19px;font-weight:900;display:flex;align-items:center;justify-content:center;font-family:"Noto Sans JP",sans-serif;}
+  .tagc .t1{font-size:16px;font-weight:800;color:#242424;font-family:"Noto Sans JP",sans-serif;}
+  .tagc .t2{font-size:13.5px;font-weight:700;color:#616161;font-family:"Noto Sans JP",sans-serif;line-height:1.35;}
+  .night{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;gap:10px;background:#1E1B4B;border-radius:10px;padding:8px 10px;}
+  .night .clk{display:flex;align-items:center;gap:8px;color:#C4B5FD;font-size:14px;font-weight:800;font-family:"Noto Sans JP",sans-serif;}
+  .night .clk b{font-family:'Roboto Mono',monospace;font-size:19px;color:#FDE68A;}
+  .msg{background:#fff;border-radius:10px 10px 10px 3px;padding:7px 10px;font-size:15px;font-weight:600;line-height:1.42;
+    color:#242424;font-family:"Noto Sans JP",sans-serif;}
+  .msg .fr{font-size:13px;font-weight:800;color:var(--cs-dark);display:block;margin-bottom:2px;}
+  .msg b{color:#B91C1C;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">コパスタ Vol.17</div>
+    <div class="part-pill">速報 <b>(1/2)</b></div>
+    <div class="title-text">Copilotが<span class="q">聞く・作る・任せる</span>の<br>3つのタブに作り直された</div>
+    <img class="title-chara" src="${A}chara/chara_surprise_g.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">結論</div>
+    <div class="txt">9/25 発表の新しいCopilotは、<b>Home・Code・Autopilot</b> の3本立て。<br>
+      質問は今の月額のまま、<em>任せる・作る・動かし続ける</em>は使った分だけ。</div>
+  </div>
+
+  <div class="body">
+    <div class="app seg">
+      <div class="ah">
+        <span class="nm">Microsoft Copilot</span>
+        <span class="tab"><span class="tn">1</span>Home</span>
+        <span class="tab"><span class="tn">2</span>Code</span>
+        <span class="tab"><span class="tn">3</span>Autopilot</span>
+        <span class="new">2026/9/25 発表</span>
+      </div>
+      <div class="panes">
+
+        <div class="pane">
+          <div class="ph"><span class="en">Home</span><span class="ja"><b>聞く・丸ごと任せる</b></span></div>
+          <div class="ask">来週の役員報告の資料を作って<span class="cur"></span></div>
+          <div class="modes"><span class="mode">Chat</span><span class="mode on">Cowork</span></div>
+          <div class="card">
+            <div class="file"><span class="fi p">P</span><span class="fn">役員報告_10月.pptx<br><span class="fs">12枚・この画面で編集</span></span><span class="ok">✓ 完成</span></div>
+            <div class="file"><span class="fi x">X</span><span class="fn">売上集計_9月.xlsx<br><span class="fs">グラフ3つ</span></span><span class="ok">✓ 完成</span></div>
+          </div>
+          <div class="cap">チャットとCoworkが<b>1つの画面</b>に。<br>Word・Excel・PowerPointも<b>この中で開く</b>。</div>
+        </div>
+
+        <div class="pane">
+          <div class="ph"><span class="en">Code</span><span class="ja"><b>説明を書くとアプリ</b></span></div>
+          <div class="ask">備品の貸し出しを管理するアプリを作って<span class="cur"></span></div>
+          <div class="mini">
+            <div class="mh">備品貸出 <span class="add">＋ 貸出を登録</span></div>
+            <div class="mr"><span class="it">ノートPC-03</span><span class="who">山田太郎</span><span class="st out">貸出中</span></div>
+            <div class="mr"><span class="it">プロジェクター</span><span class="who">佐藤花子</span><span class="st back">返却済</span></div>
+            <div class="mr"><span class="it">会議用マイク</span><span class="who">鈴木一郎</span><span class="st out">貸出中</span></div>
+          </div>
+          <div class="host">✓ 自社のMicrosoft 365の中で公開</div>
+          <div class="cap">GitHub Copilotと<b>同じ技術</b>。<br>コードを書かずに社内ツールが作れる。</div>
+        </div>
+
+        <div class="pane">
+          <div class="ph"><span class="en">Autopilot</span><span class="ja"><b>動き続ける担当者</b></span></div>
+          <div class="tagc"><span class="av">出</span>
+            <span><span class="t1">出荷チェック係</span><br><span class="t2">役割：出荷の遅れを見張る<br>目標：全店に期限内で届ける</span></span></div>
+          <div class="night">
+            <div class="clk">🌙 誰も見ていない時間 <b>23:40</b></div>
+            <div class="msg"><span class="fr">出荷チェック係 → 佐藤花子（Teams）</span>
+              <b>18店舗分</b>の出荷が遅れそうです。<br>代わりの便の案を3つ用意しました。</div>
+          </div>
+          <div class="cap">名前・役割・目標を持ち、<br><b>寝ている間も動く</b>。旧名は Scout。</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="darkband">
+    <div class="nf">
+      <div class="label">料金の分かれ目（公式ブログより）</div>
+      <div class="grid">
+        <div class="fc"><div class="ft">今の月額に含む</div><div class="fd">Chat と、Word・Excel・PowerPoint・<br>Outlook・Teams の中の Copilot</div></div>
+        <div class="fc"><div class="ft">使った分だけ（Copilot クレジット）</div><div class="fd">Cowork・Code・Autopilot と、<br>最上位モデル（Astra・Fable）</div></div>
+      </div>
+    </div>
+    <div class="note">
+      <div class="label">⚠ 使う前に確認</div>
+      <div class="txt">まずは先行プログラム <b>Frontier</b> から。<br>日本での提供時期は<b>未発表</b>。</div>
+    </div>
+    <div class="src">出典：Microsoft 公式ブログ（2026/9/25）／画面と人名は説明用の再現です</div>
+  </div>
+  <img class="band-chara" src="${A}chara/chara_point_g.png" alt="">
+`;
+</script>
+</body>
+</html>
