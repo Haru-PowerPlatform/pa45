@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PA45 第29回 ハンズオン手順｜Copilotと読み解き、動的コンテンツに無い値を取り出す</title>
+<meta name="description" content="PA45 第29回のハンズオン手順書。毎朝8時に受信トレイから5件とってきて、1件目の件名・件数・最後の1件・全件の件名を式で取り出し、Teamsに1通でまとめて届けるフローを作ります。動的コンテンツの一覧に出てこない値を、自分で取り出せるようになります。">
+<style>
+  :root{
+    --pa:#3a4fb8;--pa-dark:#2c3a94;--pa-bg:#eef1fc;
+    --sp:#0f6cbd;--sp-bg:#e6f0fb;
+    --teams:#5b5fc7;--teams-dark:#4347a8;--teams-bg:#eef0fb;
+    --blue-text:#14528f;--blue-mid:#2a7dd4;--blue-bg:#eaf2fc;
+    --ink:#1f2937;--muted:#475569;--border:#e2e8f0;--amber:#b45309;--code-bg:#0f172a;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:linear-gradient(160deg,#eef1fc 0%,#f5f8fc 42%,#fff 100%);
+    font-family:"Meiryo UI","Yu Gothic UI","Segoe UI",sans-serif;color:var(--ink);
+    min-height:100vh;padding:0 16px 70px;line-height:1.7;}
+  .wrap{max-width:860px;margin:0 auto;}
+
+  .topbar{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.93);
+    -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+    border:1px solid var(--border);border-top:none;border-radius:0 0 14px 14px;
+    box-shadow:0 2px 10px rgba(20,82,143,.08);margin-bottom:18px;}
+  .topbar-in{display:flex;align-items:center;gap:10px;padding:9px 14px;flex-wrap:wrap;}
+  .brand{display:flex;flex-direction:column;text-decoration:none;color:var(--blue-text);font-weight:800;font-size:18px;line-height:1;}
+  .brand span{font-size:9px;font-weight:600;color:var(--muted);letter-spacing:.04em;margin-top:3px;}
+  .tnav{display:flex;gap:3px;flex-wrap:wrap;margin-left:auto;}
+  .tnav a{text-decoration:none;color:var(--blue-text);font-size:12.5px;font-weight:700;padding:6px 10px;border-radius:8px;white-space:nowrap;}
+  .tnav a:hover{background:var(--blue-bg);}
+  .tnav a.cur{background:var(--pa);color:#fff;}
+
+  header{text-align:center;margin-bottom:6px;}
+  .eyebrow{display:inline-block;background:var(--pa);color:#fff;font-weight:700;font-size:13px;letter-spacing:.06em;padding:5px 16px;border-radius:20px;}
+  h1{font-size:29px;font-weight:800;color:var(--pa-dark);margin:14px 0 6px;line-height:1.28;}
+  h1 small{display:block;font-size:15.5px;color:var(--muted);font-weight:600;margin-top:6px;}
+  .crumbs{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:12.5px;color:var(--muted);margin-bottom:14px;justify-content:center;}
+  .crumbs a{color:var(--blue-mid);text-decoration:none;font-weight:700;}
+  .crumbs .sep{color:#cbd5e1;}
+
+  .goal{background:#fff;border:1px solid var(--border);border-left:5px solid var(--pa);border-radius:12px;padding:14px 20px;margin-bottom:16px;box-shadow:0 2px 8px rgba(20,82,143,.05);}
+  .goal b{color:var(--pa-dark);}
+  .flowpath{display:flex;flex-wrap:wrap;align-items:center;gap:8px;justify-content:center;margin:14px 0 0;font-weight:800;color:var(--pa-dark);font-size:14.5px;}
+  .flowpath .st{background:var(--sp-bg);border:1px solid #a9cdec;border-radius:22px;padding:7px 15px;}
+  .flowpath .st.hot{background:var(--teams-bg);border-color:#c3c5ef;color:var(--teams-dark);}
+  .flowpath .st.end{background:#fff7ed;border-color:#fdba74;color:#9a3412;}
+  .flowpath .ar{color:var(--pa);font-size:18px;}
+
+  .toc{display:flex;flex-wrap:wrap;gap:8px;background:#fff;border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:22px;box-shadow:0 2px 8px rgba(20,82,143,.05);}
+  .toc-lbl{font-size:12px;font-weight:800;color:var(--pa-dark);background:var(--pa-bg);padding:4px 11px;border-radius:8px;}
+  .toc a{text-decoration:none;color:var(--blue-text);font-size:13px;font-weight:700;padding:6px 12px;border-radius:8px;border:1px solid var(--border);}
+  .toc a:hover{background:var(--blue-bg);border-color:var(--blue-mid);}
+
+  .part{scroll-margin-top:70px;margin:26px 0 0;}
+  .part-h{display:flex;align-items:center;gap:12px;margin-bottom:6px;}
+  .part-badge{flex:0 0 auto;background:var(--pa);color:#fff;font-weight:800;font-size:14px;padding:6px 14px;border-radius:20px;}
+  .part-badge.sp{background:var(--sp);}
+  .part-badge.tm{background:var(--teams);}
+  .part-h h2{font-size:20px;font-weight:800;color:var(--pa-dark);margin:0;}
+  .part-note{font-size:14px;color:var(--muted);margin:0 0 12px;}
+
+  ol.steps{list-style:none;counter-reset:st;padding:0;margin:0;}
+  ol.steps>li{position:relative;padding:14px 16px 14px 54px;background:#fff;border:1px solid var(--border);border-radius:12px;margin-bottom:10px;box-shadow:0 2px 6px rgba(20,82,143,.05);font-size:15px;}
+  ol.steps>li::before{counter-increment:st;content:counter(st);position:absolute;left:14px;top:13px;width:28px;height:28px;border-radius:50%;background:var(--pa);color:#fff;font-weight:800;font-size:15px;display:flex;align-items:center;justify-content:center;}
+  ol.steps.sp>li::before{background:var(--sp);}
+  ol.steps.tm>li::before{background:var(--teams);}
+  ol.steps>li b{color:var(--pa-dark);}
+  .k{display:inline-block;background:#f1f5f9;border:1px solid #d7dee7;border-radius:6px;padding:1px 8px;font-weight:700;font-size:13.5px;color:#334155;white-space:nowrap;}
+  .pick{display:inline-block;background:#fff7ed;border:1px solid #fdba74;border-radius:6px;padding:1px 8px;font-weight:800;font-size:13.5px;color:#c2410c;}
+  ul.sub{margin:8px 0 0;padding-left:20px;font-size:14px;color:var(--muted);}
+  ul.sub li{margin:3px 0;}
+
+  .setrow{display:flex;flex-wrap:wrap;gap:6px 10px;margin:8px 0 0;padding:10px 12px;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:10px;font-size:13.5px;}
+  .setrow .kv{display:flex;gap:6px;align-items:center;}
+  .setrow .kv .kk{font-weight:800;color:var(--pa-dark);}
+  .setrow .kv .vv{background:#fff;border:1px solid #d7dee7;border-radius:6px;padding:1px 9px;font-weight:700;color:#334155;}
+
+  .callout{border-radius:10px;padding:12px 18px;font-size:14px;margin:12px 0;line-height:1.7;}
+  .callout.tip{background:var(--sp-bg);border-left:5px solid var(--sp);color:#0b4a7a;}
+  .callout.warn{background:#fffbeb;border-left:5px solid #f59e0b;color:#78350f;}
+  .callout.info{background:var(--blue-bg);border-left:5px solid var(--blue-mid);color:#14528f;}
+  .callout.pa{background:var(--pa-bg);border-left:5px solid var(--pa);color:var(--pa-dark);}
+  .callout.tm{background:var(--teams-bg);border-left:5px solid var(--teams);color:var(--teams-dark);}
+
+  .codewrap{position:relative;margin:10px 0;}
+  .codewrap .lbl{font-size:12px;font-weight:800;color:#cbd5e1;background:#1e293b;display:inline-block;padding:4px 12px;border-radius:8px 8px 0 0;}
+  pre{margin:0;background:var(--code-bg);color:#e2e8f0;border-radius:0 10px 10px 10px;padding:16px 18px;overflow-x:auto;font-size:12.5px;line-height:1.65;
+    font-family:"Cascadia Code","Consolas","SFMono-Regular",monospace;white-space:pre-wrap;word-break:break-word;}
+  .copybtn{position:absolute;top:6px;right:8px;background:#334155;color:#e2e8f0;border:none;border-radius:7px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer;}
+  .copybtn:hover{background:#475569;}
+
+  table.fx{width:100%;border-collapse:collapse;margin:12px 0;font-size:13.5px;}
+  table.fx th{background:var(--pa-bg);color:var(--pa-dark);font-weight:800;border:1px solid #cbd5e1;padding:8px 10px;text-align:left;}
+  table.fx td{border:1px solid #cbd5e1;padding:8px 10px;vertical-align:top;}
+  table.fx code{background:#0f172a;color:#fbbf24;border-radius:5px;padding:2px 7px;font-family:"Consolas",monospace;font-size:12px;}
+  table.fx td.v{font-weight:800;color:#0b5e37;white-space:nowrap;}
+
+  .backrow{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:30px;}
+  .btn.sec{display:inline-flex;align-items:center;gap:6px;background:#fff;color:var(--blue-text);border:1px solid var(--blue-mid);text-decoration:none;font-size:14px;font-weight:700;padding:10px 20px;border-radius:9px;}
+  .btn.sec:hover{background:var(--blue-bg);}
+  figure.shot{margin:14px 0 6px;}
+  figure.shot img{display:block;width:100%;border:1px solid #cbd5e1;border-radius:10px;box-shadow:0 6px 18px rgba(20,82,143,.14);}
+  figure.shot.narrow img{max-width:420px;margin:0 auto;}
+  figure.shot figcaption{font-size:12.5px;color:var(--muted);margin-top:7px;text-align:center;}
+  footer{margin-top:26px;text-align:center;color:#94a3b8;font-size:12px;line-height:1.8;}
+</style>
+<style>.shot img{max-width:640px;margin:0 auto;}</style>
+</head>
+<body>
+<div class="wrap">
+
+  <nav class="topbar" aria-label="サイト内メニュー">
+    <div class="topbar-in">
+      <a class="brand" href="../../">PA45<span>Power Automate 45</span></a>
+      <div class="tnav">
+        <a href="../../">🏠 ホーム</a>
+        <a href="links.html">🗂️ 第29回の資料</a>
+        <a href="./" class="cur">🛠️ ハンズオン手順</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="crumbs">
+    <a href="../../">🏠 PA45トップ</a><span class="sep">›</span>
+    <a href="links.html">第29回 資料</a><span class="sep">›</span>
+    <span>ハンズオン手順</span>
+  </div>
+
+  <header>
+    <span class="eyebrow">PA45 第29回｜ハンズオン手順</span>
+    <h1>Copilotと読み解き、動的コンテンツに無い値を取り出す<small>毎朝の受信トレイから5件とってきて、1件目の件名・件数・最後の1件・全件の件名を取り出し、Teamsに1通でまとめて届けます。動的コンテンツの一覧に出てこない値を、自分の手で取り出せるようになります。</small></h1>
+  </header>
+
+  <div class="goal">
+    <b>今日つくるもの：</b> 毎朝8時に動いて、受信トレイから<b>新しい順に5件</b>とってきて、<b>件数・1件目・2件目・最後・全件の件名</b>を並べた<b>1通のメッセージ</b>を自分あてのTeamsに届けるフロー。
+    <div class="flowpath">
+      <span class="st">⏰ 繰り返し（毎朝8時）</span><span class="ar">→</span>
+      <span class="st">📥 メールの取得 (V3)</span><span class="ar">→</span>
+      <span class="st hot">🔍 出力を読んで式にする</span><span class="ar">→</span>
+      <span class="st end">📨 Teamsに1通</span>
+    </div>
+  </div>
+
+  <div class="callout info" style="margin-bottom:4px;"><b>🔰 初参加の方へ：</b> ここから始めて大丈夫です。<b>用意するものはありません</b>（自分の受信トレイを読むだけ。リストもフォームも作りません）。第14回「JSONの読み方」に出ていなくても、STEP 3 で復習します。</div>
+
+  <nav class="toc" aria-label="手順の目次">
+    <span class="toc-lbl">目次</span>
+    <a href="#p1">1. 繰り返しで始める</a>
+    <a href="#p2">2. メールを5件とってくる</a>
+    <a href="#p3">3. 1回動かして出力を見る</a>
+    <a href="#p4">4. 1件目・件数・最後を取り出す</a>
+    <a href="#p5">5. 全件の件名を1行にする</a>
+    <a href="#p6">6. Teamsに1通で届ける</a>
+    <a href="#pt">7. もう一度テスト</a>
+    <a href="#pc">＋ Copilotに聞く3か所</a>
+  </nav>
+
+  <!-- ===== 1 ===== -->
+  <section class="part" id="p1">
+    <div class="part-h"><span class="part-badge">STEP 1</span><h2>繰り返し（毎朝8時）で始める</h2></div>
+    <p class="part-note">Power Automate で <b>「作成」→「スケジュール済みクラウド フロー」</b>を選びます。時刻で自動的に始まるフローです。作っている途中は <b>テスト → 手動</b> でいつでも動かせます。</p>
+    <ol class="steps">
+      <li>フロー名は <span class="k">毎朝のメールをまとめて知らせる</span> など、分かる名前にします。</li>
+      <li>開始日時は今日、繰り返し間隔は <b>1 日</b>。作成を押します。</li>
+      <li>トリガー「繰り返し」を開いて、<b>タイム ゾーン</b>を <span class="k">(UTC+09:00) 大阪、札幌、東京</span>、<b>設定時刻 (時間)</b> を <span class="k">8</span> にします。</li>
+      <li>アクション名を <span class="k">繰り返し（毎朝8時に動かす）</span> に変えます。<ul class="sub"><li><b>元の名前「繰り返し」は消さずに、かっこで説明を足すだけ</b>にします。あとで見たときに、何のアクションか分かるようにするためです。</li></ul></li>
+    </ol>
+    <div class="callout tip"><b>💡 タイム ゾーンを忘れると9時間ずれます。</b> 既定は協定世界時（UTC）なので、日本時間の朝8時にしたいときは必ず東京に変えます。</div>
+  </section>
+
+  <!-- ===== 2 ===== -->
+  <section class="part" id="p2">
+    <div class="part-h"><span class="part-badge sp">STEP 2</span><h2>受信トレイから、新しい順に5件とってくる</h2></div>
+    <p class="part-note">Office 365 Outlook の <b>「メールの取得 (V3)」</b>を追加します。「メールが届いたとき」ではありません。<b>まとめて何件も返ってくる</b>アクションです。</p>
+    <ol class="steps sp">
+      <li><b>＋新しいステップ</b>→ <b>Office 365 Outlook</b> → <b>「メールの取得 (V3)」</b>を追加します。</li>
+      <li>欄を埋めます。<b>詳細オプション</b>を開くと下の2つが出てきます。<div class="setrow"><span class="kv"><span class="kk">フォルダー</span><span class="vv">Inbox</span></span><span class="kv"><span class="kk">未読のみを取得しますか?</span><span class="vv">いいえ</span></span><span class="kv"><span class="kk">添付ファイルを含める</span><span class="vv">いいえ</span></span><span class="kv"><span class="kk">上位</span><span class="vv">5</span></span></div></li>
+      <li>アクション名を <span class="k">メールの取得 (V3)（受信トレイから5件）</span> に変えます。<ul class="sub"><li><b>「メールの取得 (V3)」の部分は1文字も変えません。</b>（V3）も半角のまま残します。あとで式の中にこの名前をそのまま書きます。</li></ul></li>
+    </ol>
+    <div class="callout warn"><b>⚠️ 「上位」を大きくしすぎない。</b> 100件にすると、返ってくる出力も100件分になります（本文のHTMLも全部入るため、とても大きくなります）。<b>まずは5件</b>で作り、動いてから増やします。</div>
+  </section>
+
+  <!-- ===== 3 ===== -->
+  <section class="part" id="p3">
+    <div class="part-h"><span class="part-badge">STEP 3</span><h2>式を書く前に、1回動かして出力を見る</h2></div>
+    <p class="part-note">ここが今日のいちばん大事な手順です。<b>出力を見てから式を書きます。</b>逆にすると、名前を当てずっぽうで書くことになり、ほぼ外します。</p>
+    <ol class="steps">
+      <li>右上の <b>「保存」</b>→ <b>「テスト」</b>→ <b>「手動」</b>→ <b>「テスト」</b>で動かします。</li>
+      <li>緑の✓が付いたら、<b>「メールの取得 (V3)（受信トレイから5件）」をクリックして開きます</b>。</li>
+      <li><b>出力</b>の欄を見ます。ここに、とってきた5件がすべて入っています。</li>
+    </ol>
+    <div class="callout info"><b>■ 出力の形（実際に動かして確かめたもの）：</b>
+      <ul style="margin:6px 0 0;padding-left:20px;">
+        <li>いちばん外は <span class="k">body</span>。その中に <span class="k">value</span> という名前の<b>配列（[ ]）</b>があり、<b>5件が並んでいます</b>。</li>
+        <li>1件の中に <span class="k">subject</span>（件名）、<span class="k">from</span>（差出人）、<span class="k">receivedDateTime</span>（受信日時）などが入っています。</li>
+        <li><b>差出人はアドレスの文字がそのまま</b>入っています（このコネクタは中身を平らにして返します）。</li>
+      </ul>
+    </div>
+    <div class="codewrap">
+      <span class="lbl">出力の形（要らないところを消したもの）</span>
+      <button class="copybtn" data-code="ex0">コピー</button>
+<pre id="ex0">{
+  "value": [
+    { "subject": "【見積】9月分のご請求について",
+      "from": "yamada.taro@contoso.com",
+      "receivedDateTime": "2026-09-25T09:02:53+00:00" },
+    { "subject": "アンケートに新しい回答が届きました" },
+    { "subject": "来週の打ち合わせ資料です" }
+  ]
+}</pre>
+    </div>
+    <div class="callout warn"><b>⚠️ 出力は、そのままコピーしないでください。</b>
+      <ul style="margin:6px 0 0;padding-left:20px;">
+        <li>実際の出力は<b>5件で約29万文字</b>あります。大半は配送の記録（internetMessageHeaders）と<b>本文のHTML</b>です。</li>
+        <li>中には<b>差出人・宛先・本文</b>が入っています。Copilotに貼るときは、<b>1件だけ・要る名前だけ</b>に削ってから貼ります（上のコピー用がその形です）。</li>
+      </ul>
+    </div>
+    <div class="callout tip"><b>💡 かっこの読み方（第14回の復習）：</b> <b>{ } は名前で取る</b>（お弁当箱）、<b>[ ] は番号で取る</b>（棚）。<b>棚の1件目は [0]</b> で、人の数え方と1つずれます。</div>
+  </section>
+
+  <!-- ===== 4 ===== -->
+  <section class="part" id="p4">
+    <div class="part-h"><span class="part-badge">STEP 4</span><h2>1件目・件数・最後を取り出す</h2></div>
+    <p class="part-note">ここで書く式は4つだけです。<b>動的コンテンツの一覧には、どれも出てきません。</b>式のタブ（fx）に自分で書きます。</p>
+    <div class="codewrap">
+      <span class="lbl">① 1件目の件名</span>
+      <button class="copybtn" data-code="ex1">コピー</button>
+<pre id="ex1">first(body('メールの取得 (V3)（受信トレイから5件）')?['value'])?['subject']</pre>
+    </div>
+    <div class="codewrap">
+      <span class="lbl">② 2件目の件名（番号で取る）</span>
+      <button class="copybtn" data-code="ex2">コピー</button>
+<pre id="ex2">body('メールの取得 (V3)（受信トレイから5件）')?['value']?[1]?['subject']</pre>
+    </div>
+    <div class="codewrap">
+      <span class="lbl">③ 最後の1件の件名</span>
+      <button class="copybtn" data-code="ex3">コピー</button>
+<pre id="ex3">last(body('メールの取得 (V3)（受信トレイから5件）')?['value'])?['subject']</pre>
+    </div>
+    <div class="codewrap">
+      <span class="lbl">④ 件数</span>
+      <button class="copybtn" data-code="ex4">コピー</button>
+<pre id="ex4">length(body('メールの取得 (V3)（受信トレイから5件）')?['value'])</pre>
+    </div>
+    <div class="callout info"><b>■ 式の読み方（左から順に）：</b> <span class="k">body(アクション名)</span>＝そのアクションの結果の箱 → <span class="k">?['value']</span>＝その中の value という箱 → <span class="k">?[1]</span>＝その中の2件目 → <span class="k">?['subject']</span>＝その中の件名。<b>? は「無かったら空で止める」印</b>です。</div>
+    <div class="callout warn"><b>⚠️ 式の中のアクション名は、自分の画面と一字一句同じに。</b> 空白もかっこもそのままです。アクション名を変えたら、式の中も直します。分からないときは、アクションの「…」→<b>「コードの表示」</b>で中の名前を確かめます。</div>
+    <div class="callout tip"><b>💡 first() と ?[0] は同じ意味です。</b> 0件のときに赤く止まりにくいのは first() のほうです。</div>
+  </section>
+
+  <!-- ===== 5 ===== -->
+  <section class="part" id="p5">
+    <div class="part-h"><span class="part-badge sp">STEP 5</span><h2>全件の件名を、1行にまとめる</h2></div>
+    <p class="part-note">5件ぜんぶの件名を並べたいときは、<b>繰り返し（Apply to each）を使いません</b>。<b>「選択」</b>で1列だけ抜いて、<b>join()</b> でつなぎます。</p>
+    <ol class="steps sp">
+      <li><b>＋新しいステップ</b>→ <b>データ操作</b> → <b>「選択」</b>を追加します。</li>
+      <li>2つの欄を埋めます。<b>どちらも式（fx）で入れます</b>。<div class="setrow"><span class="kv"><span class="kk">開始</span><span class="vv">body('…')?['value']</span></span><span class="kv"><span class="kk">マップ</span><span class="vv">item()?['subject']</span></span></div></li>
+      <li>アクション名を <span class="k">選択（件名だけを取り出す）</span> に変えます。</li>
+    </ol>
+    <div class="codewrap">
+      <span class="lbl">「開始」に入れる式</span>
+      <button class="copybtn" data-code="ex5">コピー</button>
+<pre id="ex5">body('メールの取得 (V3)（受信トレイから5件）')?['value']</pre>
+    </div>
+    <div class="codewrap">
+      <span class="lbl">「マップ」に入れる式</span>
+      <button class="copybtn" data-code="ex6">コピー</button>
+<pre id="ex6">item()?['subject']</pre>
+    </div>
+    <div class="callout info"><b>■ item() とは：</b> 「いま見ている1件」を指す言葉です。選択は、棚に並んだ1件ずつに対して「この名前のところだけ取り出して」と伝えるアクションです。結果は<b>件名だけが並んだ配列</b>になります。</div>
+  </section>
+
+  <!-- ===== 6 ===== -->
+  <section class="part" id="p6">
+    <div class="part-h"><span class="part-badge tm">STEP 6</span><h2>Teamsに1通で届ける</h2></div>
+    <p class="part-note">最後に、取り出した値を並べて自分あてに送ります。<b>まずは自分あて</b>で確かめてください。</p>
+    <ol class="steps tm">
+      <li><b>＋新しいステップ</b>→ <b>Microsoft Teams</b> → <b>「チャットまたはチャネルでメッセージを投稿する」</b>を追加します。</li>
+      <li>欄を埋めます。<div class="setrow"><span class="kv"><span class="kk">投稿者</span><span class="vv">フロー ボット</span></span><span class="kv"><span class="kk">投稿先</span><span class="vv">チャット（フロー ボットと）</span></span><span class="kv"><span class="kk">Recipient</span><span class="vv">自分のアドレス</span></span></div></li>
+      <li><b>メッセージ</b>欄に、下の文をそのまま貼ります。<b>@{ } の中が式</b>です。</li>
+      <li>アクション名を <span class="k">チャットまたはチャネルでメッセージを投稿する（5件をまとめて知らせる）</span> に変えます。</li>
+    </ol>
+    <div class="codewrap">
+      <span class="lbl">メッセージ欄に貼る本文（アクション名はご自分のものに合わせてください）</span>
+      <button class="copybtn" data-code="ex7">コピー</button>
+<pre id="ex7">今朝の受信トレイ：@{length(body('メールの取得 (V3)（受信トレイから5件）')?['value'])} 件
+1件目の件名：@{first(body('メールの取得 (V3)（受信トレイから5件）')?['value'])?['subject']}
+1件目の差出人：@{first(body('メールの取得 (V3)（受信トレイから5件）')?['value'])?['from']}
+2件目の件名：@{body('メールの取得 (V3)（受信トレイから5件）')?['value']?[1]?['subject']}
+最後の1件：@{last(body('メールの取得 (V3)（受信トレイから5件）')?['value'])?['subject']}
+全件の件名：@{join(body('選択（件名だけを取り出す）'), ' / ')}</pre>
+    </div>
+    <div class="callout tip"><b>💡 貼ってもうまく出ないときは、1行に減らして確かめます。</b> まず「件数」だけにして動かす。出たら次の行を足す。この順で進めると、どの式が悪いかがすぐ分かります。</div>
+  </section>
+
+  <!-- ===== 7 ===== -->
+  <section class="part" id="pt">
+    <div class="part-h"><span class="part-badge">STEP 7</span><h2>もう一度テストする（完成）</h2></div>
+    <ol class="steps">
+      <li><b>「保存」</b>→ <b>「テスト」→「手動」</b>で実行します。</li>
+      <li>Teams のフロー ボットから、<b>1通だけ</b>届きます。件数と件名が入っていれば完成です。</li>
+      <li>各アクションを開いて、<b>入力と出力</b>も見てみてください。式が何を返したかが残っています。</li>
+      <li>試し終わったら、<b>フローをオフに戻します</b>（毎朝8時に動き続けるため）。</li>
+    </ol>
+    <div class="callout warn"><b>うまくいかないとき：</b>
+      <ul style="margin:6px 0 0;padding-left:20px;">
+        <li>式が赤い → アクション名が画面と違います。「コードの表示」で中の名前を確かめます。</li>
+        <li>値が空になる → <b>[ ] の番号がずれています</b>。1件目は [0]、2件目は [1] です。</li>
+        <li>件数が 0 → 「上位」が空になっていないか、フォルダーが Inbox になっているかを確認します。</li>
+        <li>メッセージが届かない → Recipient が自分のアドレスになっているか確認します。</li>
+        <li><b>英語のエラーが出た</b> → 読まずに、そのままコピーしてCopilotに貼ります（下の③）。</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===== Copilot ===== -->
+  <section class="part" id="pc">
+    <div class="part-h"><span class="part-badge tm">＋</span><h2>Copilotに聞く3か所（そのまま貼れます）</h2></div>
+    <p class="part-note">手を動かすのは自分、分からないところだけ聞く、という使い方です。Power Automate内蔵のCopilotではなく、<b>M365 Copilot チャット</b>に貼ってください。</p>
+
+    <h3 style="font-size:16px;color:var(--pa-dark);margin:22px 0 6px;">① 出力を先に見せて、式を作ってもらう（いちばん効きます）</h3>
+    <p class="part-note"><b>出力を貼らずに聞くと、名前を推測した式</b>が返ってきて、そのままでは動きません。貼るのは<b>1件だけ・要る名前だけ</b>に削ったものです。</p>
+    <div class="codewrap">
+      <button class="copybtn" data-code="cp1">コピー</button>
+<pre id="cp1">Power Automate の式を1行だけ教えてください。説明は不要です。
+アクション名は「メールの取得 (V3)（受信トレイから5件）」です。
+このアクションの出力は次の形です（関係ない部分は消しています）。
+
+{
+  "value": [
+    { "subject": "【見積】9月分のご請求について",
+      "from": "yamada.taro@contoso.com" }
+  ]
+}
+
+1件目の件名を取り出す式を書いてください。</pre>
+    </div>
+
+    <h3 style="font-size:16px;color:var(--pa-dark);margin:22px 0 6px;">② 返ってきた式の意味を、日本語で説明してもらう</h3>
+    <div class="codewrap">
+      <button class="copybtn" data-code="cp2">コピー</button>
+<pre id="cp2">Power Automate のこの式を、プログラミングを知らない人向けに説明してください。
+
+first(body('メールの取得 (V3)')?['value'])?['subject']
+
+とくに、? と [ ] と ' ' がそれぞれ何をしているのかを教えてください。</pre>
+    </div>
+
+    <h3 style="font-size:16px;color:var(--pa-dark);margin:22px 0 6px;">③ エラー文は、訳さずそのまま貼る</h3>
+    <div class="codewrap">
+      <button class="copybtn" data-code="cp3">コピー</button>
+<pre id="cp3">Power Automateでこのエラーが出ました。
+
+（エラー文を全文そのまま貼る）
+
+意味と、どこを直せばよいかを教えてください。</pre>
+    </div>
+    <div class="callout warn"><b>⚠️ 貼る前に一度だけ確認：</b> 社名・氏名・取引先・メールアドレスが混ざっていないか見てください。混ざっていたら、架空の名前に置き換えてから貼ります。</div>
+    <div class="callout tip"><b>💡 一発で終わらなくて普通です。</b> 返ってきた式を試して、違ったらその結果をまた貼る。<b>会話を続けるのが正しい使い方</b>です。</div>
+  </section>
+
+  <div class="backrow">
+    <a class="btn sec" href="links.html">← 第29回の資料にもどる</a>
+    <a class="btn sec" href="../../">🏠 サイトのトップへ</a>
+  </div>
+
+  <footer>
+    PA45 第29回 ハンズオン手順 ／ メールの取得 (V3) × 式 × Copilot<br>
+    人名・件名・アドレスはすべて架空のサンプルです。画面や手順は公開日時点のもので、今後変わる可能性があります。
+  </footer>
+</div>
+
+<script>
+  document.querySelectorAll('.copybtn').forEach(function(b){
+    b.addEventListener('click', function(){
+      var el = document.getElementById(b.dataset.code);
+      var text = el.innerText;
+      navigator.clipboard.writeText(text).then(function(){
+        var o = b.textContent; b.textContent = 'コピーしました'; setTimeout(function(){ b.textContent = o; }, 1400);
+      });
+    });
+  });
+</script>
+</body>
+</html>
