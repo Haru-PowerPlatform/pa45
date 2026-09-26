@@ -6,7 +6,20 @@
 「資料リンク集」ボタンを差し込む。
 既存カードのURL(スライド/ZIP/ブログ/YouTube)を再利用するので壊れリンクは出ない。
 """
-import re, os, html, json
+import re, os, html, json, sys
+
+# このスクリプトが生成したページの目印。
+# 目印が無い links.html は「手で作り込んだページ」とみなして上書きしない（--force で強制）。
+GEN_MARK = "<!-- generated: scripts/build-session-links.py -->"
+
+
+def upcoming_date(up):
+    """upcoming-event.json から表示用の日付文字列を作る。
+    キーは回によって date / date_label / date_iso とばらつきがあるので、あるものを使う。"""
+    if up.get("date"):
+        return up["date"]
+    parts = [up.get("date_label") or up.get("date_iso") or "", up.get("time_range") or up.get("time") or ""]
+    return " ".join(p for p in parts if p).strip()
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SESS = os.path.join(ROOT, "sessions", "index.html")
@@ -103,7 +116,7 @@ def build_page(vol, title, date, links, upcoming=False):
     grid = "\n".join(cards)
     sub = html.escape(title)
     kind = "HANDS-ON" if upcoming else "ARCHIVE"
-    return (f'<!doctype html>\n<html lang="ja">\n<head>\n<meta charset="utf-8">\n'
+    return (f'<!doctype html>\n{GEN_MARK}\n<html lang="ja">\n<head>\n<meta charset="utf-8">\n'
         f'<meta name="viewport" content="width=device-width, initial-scale=1">\n'
         f'<title>PA45 第{vol}回 資料リンク集</title>\n<style>{CARD_CSS}</style>\n</head>\n<body>\n'
         f'<div class="wrap">\n  <a class="back" href="{SITE}sessions/">&#8592; PA45 資料アーカイブへ戻る</a>\n'
@@ -134,9 +147,10 @@ def main():
         up_links["handson"]=f"{SITE}slides/vol-{uv:02d}/handson.html"
     if os.path.exists(os.path.join(_vd,"index.html")):
         up_links["slide"]=f"{SITE}slides/vol-{uv:02d}/"
-    voldata[uv]={"title":f"第{uv}回：{up['theme']}","date":up["date"],
+    voldata[uv]={"title":f"第{uv}回：{up.get('theme') or up.get('title') or ''}","date":upcoming_date(up),
                  "links":up_links,"upcoming":True}
 
+    force = "--force" in sys.argv
     made=[]
     for v,dd in sorted(voldata.items()):
         outdir=os.path.join(ROOT,"slides",f"vol-{v:02d}")
@@ -144,6 +158,10 @@ def main():
         target=os.path.join(outdir,"links.html")
         if v==17 and os.path.exists(target):
             made.append((v,"skip(既存)")); continue
+        if os.path.exists(target) and not force:
+            cur=open(target,encoding="utf-8").read()
+            if GEN_MARK not in cur:
+                made.append((v,"skip(手組みを保護)")); continue
         pg=build_page(v,dd["title"],dd["date"],dd["links"],dd.get("upcoming",False))
         open(target,"w",encoding="utf-8").write(pg)
         made.append((v,"生成"))
