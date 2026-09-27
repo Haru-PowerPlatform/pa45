@@ -6,7 +6,8 @@ PA45 の各回で使ったスライドです。\
 
 | 回 | 開催日 | テーマ | スライド |
 |---:|---|---|:---:|
-| 28 | 2026/09/17（予定） | Copilotと通知カード1枚でまとめて完了にする | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-28/) |
+| 29 | 2026/10/01（予定） | Copilotと読み解き、動的コンテンツに無い値を取り出す | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-29/) |
+| 28 | 2026/09/17 | Copilotと通知カード1枚でまとめて完了にする | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-28/) |
 | 27 | 2026/09/10 | いま動いているフローをCopilotに相談する5つの渡し方 | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-27/) |
 | 26 | 2026/09/03 | 毎日のカードで報連相をワンタップ | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-26/) |
 | 25 | 2026/08/27 | メールの添付を自動でSharePointへ保存 | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-25/) |
