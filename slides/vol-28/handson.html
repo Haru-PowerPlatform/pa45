@@ -192,12 +192,12 @@
   <!-- ===== 2. 取得 ===== -->
   <section class="part" id="p2">
     <div class="part-h"><span class="part-badge sp">STEP 2</span><h2>まだ終わっていないものを、3件とってくる</h2></div>
-    <p class="part-note">SharePoint の <b>「項目の取得」</b>を追加します。全部とってくるのではなく、<b>まだ終わっていないものだけ</b>に絞るのがポイントです。</p>
+    <p class="part-note">SharePoint の <b>「複数の項目の取得」</b>を追加します。全部とってくるのではなく、<b>まだ終わっていないものだけ</b>に絞るのがポイントです。</p>
     <ol class="steps sp">
-      <li><b>＋新しいステップ</b>→ <b>SharePoint</b> → <b>「項目の取得」</b>を追加します。</li>
+      <li><b>＋新しいステップ</b>→ <b>SharePoint</b> → <b>「複数の項目の取得」</b>を追加します。</li>
       <li>4つの欄を埋めます。<b>詳細オプション</b>を開くと、下2つが出てきます。<div class="setrow"><span class="kv"><span class="kk">サイトのアドレス</span><span class="vv">リストを作ったサイト</span></span><span class="kv"><span class="kk">リスト名</span><span class="vv">今日のやること</span></span><span class="kv"><span class="kk">フィルター クエリ</span><span class="vv">Done eq 0</span></span><span class="kv"><span class="kk">上から順に取得</span><span class="vv">3</span></span></div></li>
     </ol>
-    <figure class="shot"><img src="assets/shot-getitems.png" alt="項目の取得の設定。リスト名、フィルター クエリ Done eq 0、上から順に取得 3"><figcaption>実際の画面（サイトのアドレスはぼかしています）。詳細パラメーターを開くと、フィルター クエリと上から順に取得が出てきます。</figcaption></figure>
+    <figure class="shot"><img src="assets/shot-getitems.png" alt="複数の項目の取得の設定。リスト名、フィルター クエリ Done eq 0、上から順に取得 3"><figcaption>実際の画面（サイトのアドレスはぼかしています）。詳細パラメーターを開くと、フィルター クエリと上から順に取得が出てきます。</figcaption></figure>
     <div class="callout sp"><b>■ フィルター クエリの読み方：</b>
       <ul style="margin:6px 0 0;padding-left:20px;">
         <li><span class="k">Done</span>＝STEP 0 で半角で作った<b>内部名</b>。ここが日本語だと通りません。</li>
@@ -226,9 +226,9 @@
 ・その下に小さい説明「終わったものにチェックを入れて、まとめて送ってください。」（うすい色）
 ・チェックを3つ（Input.Toggle）。id は t1 / t2 / t3、値は文字列の "true" / "false"（valueOn / valueOff）
 ・3つのチェックの title には、次の式をそのまま入れる
-　t1：@{body('項目の取得')?['value'][0]?['Title']}
-　t2：@{body('項目の取得')?['value'][1]?['Title']}
-　t3：@{body('項目の取得')?['value'][2]?['Title']}
+　t1：@{body('複数の項目の取得')?['value'][0]?['Title']}
+　t2：@{body('複数の項目の取得')?['value'][1]?['Title']}
+　t3：@{body('複数の項目の取得')?['value'][2]?['Title']}
 ・送信ボタンを1つ（Action.Submit、表示は「チェックしたものを完了にする」）
 説明は不要です。JSON だけ返してください。</pre>
     </div>
@@ -236,7 +236,7 @@
     <div class="codewrap">
       <span class="lbl">用意済みのカードJSON（Copilot の返事がうまく貼れないとき）</span>
       <button class="copybtn" data-code="cardjson">コピー</button>
-<pre id="cardjson">{"$schema":"http://adaptivecards.io/schemas/adaptive-card.json","type":"AdaptiveCard","version":"1.4","body":[{"type":"TextBlock","text":"今日のやること","weight":"Bolder","size":"Large","wrap":true},{"type":"TextBlock","text":"終わったものにチェックを入れて、まとめて送ってください。","isSubtle":true,"wrap":true,"spacing":"None"},{"type":"Input.Toggle","id":"t1","title":"@{body('項目の取得')?['value'][0]?['Title']}","valueOn":"true","valueOff":"false"},{"type":"Input.Toggle","id":"t2","title":"@{body('項目の取得')?['value'][1]?['Title']}","valueOn":"true","valueOff":"false"},{"type":"Input.Toggle","id":"t3","title":"@{body('項目の取得')?['value'][2]?['Title']}","valueOn":"true","valueOff":"false"}],"actions":[{"type":"Action.Submit","title":"チェックしたものを完了にする"}]}</pre>
+<pre id="cardjson">{"$schema":"http://adaptivecards.io/schemas/adaptive-card.json","type":"AdaptiveCard","version":"1.4","body":[{"type":"TextBlock","text":"今日のやること","weight":"Bolder","size":"Large","wrap":true},{"type":"TextBlock","text":"終わったものにチェックを入れて、まとめて送ってください。","isSubtle":true,"wrap":true,"spacing":"None"},{"type":"Input.Toggle","id":"t1","title":"@{body('複数の項目の取得')?['value'][0]?['Title']}","valueOn":"true","valueOff":"false"},{"type":"Input.Toggle","id":"t2","title":"@{body('複数の項目の取得')?['value'][1]?['Title']}","valueOn":"true","valueOff":"false"},{"type":"Input.Toggle","id":"t3","title":"@{body('複数の項目の取得')?['value'][2]?['Title']}","valueOn":"true","valueOff":"false"}],"actions":[{"type":"Action.Submit","title":"チェックしたものを完了にする"}]}</pre>
     </div>
     <figure class="shot"><img src="assets/shot-card.png" alt="メッセージ欄にカードのJSONを貼った状態"><figcaption>実際の画面。貼ると、title の式が紫の fx body(...) の部品に変わります。これがリストの項目名です。</figcaption></figure>
     <div class="callout tm"><b>★このJSONで押さえるところは3つだけです：</b>
@@ -246,7 +246,7 @@
         <li><span class="k">valueOn</span> / <span class="k">valueOff</span> ＝チェックしたとき／しないときに送られる値。ここでは <b>"true" / "false" という文字</b>を送るようにしています。</li>
       </ul>
     </div>
-    <div class="callout warn"><b>⚠️ title の中の式について：</b> 3つの title には <span class="k">body('項目の取得')?['value'][0]?['Title']</span> のような式が入っています。<b>[0] が1件目、[1] が2件目、[2] が3件目</b>です。STEP 2 のアクション名を<b>「項目の取得」のまま</b>にしておくと、この式がそのまま通ります。名前を変えた場合は、式の中の名前も同じに直してください。</div>
+    <div class="callout warn"><b>⚠️ title の中の式について：</b> 3つの title には <span class="k">body('複数の項目の取得')?['value'][0]?['Title']</span> のような式が入っています。<b>[0] が1件目、[1] が2件目、[2] が3件目</b>です。STEP 2 のアクション名を<b>「複数の項目の取得」のまま</b>にしておくと、この式がそのまま通ります。名前を変えた場合は、式の中の名前も同じに直してください。</div>
   </section>
 
   <!-- ===== 3b. 条件の前に1回動かす ===== -->
@@ -310,12 +310,12 @@ t1 の値を取り出す式を、Power Automate の式の書き方で1行だけ�
     <div class="codewrap">
       <span class="lbl">「項目の更新」のID欄に入れる式（1件目）</span>
       <button class="copybtn" data-code="ex2">コピー</button>
-<pre id="ex2">body('項目の取得')?['value'][0]?['ID']</pre>
+<pre id="ex2">body('複数の項目の取得')?['value'][0]?['ID']</pre>
     </div>
     <div class="callout warn"><b>⚠️ 式の中のアクション名は、自分の画面に合わせてください。</b>
       <ul style="margin:6px 0 0;padding-left:20px;">
         <li>式の中のアクション名は、<b>フローの中で使われている名前と一字一句同じ</b>にします。画面では空白に見えても、中では <span class="k">_</span>（アンダースコア）になっていることがあります。</li>
-        <li><b>確かめ方</b>：アクションの「…」→<b>「コードの表示」</b>を開くと、中で使われている名前が見えます。カードJSONの中の <span class="k">body('項目の取得')</span> も同じです。</li>
+        <li><b>確かめ方</b>：アクションの「…」→<b>「コードの表示」</b>を開くと、中で使われている名前が見えます。カードJSONの中の <span class="k">body('複数の項目の取得')</span> も同じです。</li>
         <li>アクション名の表示は環境によって変わることがあります。<b>うまく参照できないときは、動的コンテンツの一覧から選ぶ</b>のが確実です。</li>
         <li>それでも分からないときは、<b>1回テスト実行して出力をコピーし、Copilotに貼って式を作ってもらいます</b>（下の「Copilotに聞く4か所」③）。</li>
       </ul>
@@ -365,9 +365,9 @@ Power Automateのフィルタークエリから指定できません。
 ・その下に小さい説明「終わったものにチェックを入れて、まとめて送ってください。」（うすい色）
 ・チェックを3つ（Input.Toggle）。id は t1 / t2 / t3、値は文字列の "true" / "false"（valueOn / valueOff）
 ・3つのチェックの title には、次の式をそのまま入れる
-　t1：@{body('項目の取得')?['value'][0]?['Title']}
-　t2：@{body('項目の取得')?['value'][1]?['Title']}
-　t3：@{body('項目の取得')?['value'][2]?['Title']}
+　t1：@{body('複数の項目の取得')?['value'][0]?['Title']}
+　t2：@{body('複数の項目の取得')?['value'][1]?['Title']}
+　t3：@{body('複数の項目の取得')?['value'][2]?['Title']}
 ・送信ボタンを1つ（Action.Submit、表示は「チェックしたものを完了にする」）
 説明は不要です。JSON だけ返してください。</pre>
     </div>
