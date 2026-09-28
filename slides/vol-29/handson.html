@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>PA45 第29回 ハンズオン手順｜Copilotと読み解き、動的コンテンツに無い値を取り出す</title>
-<meta name="description" content="PA45 第29回のハンズオン手順書。毎朝8時に受信トレイから5件とってきて、1件目の件名・件数・最後の1件・全件の件名を式で取り出し、Teamsに1通でまとめて届けるフローを作ります。動的コンテンツの一覧に出てこない値を、自分で取り出せるようになります。">
+<meta name="description" content="PA45 第29回のハンズオン手順書。毎朝8時に、件名にPA45が入ったメールをとってきて、1件目の件名・件数・最後の1件・全件の件名を式で取り出し、Teamsに1通でまとめて届けるフローを作ります。動的コンテンツの一覧に出てこない値を、自分で取り出せるようになります。">
 <style>
   :root{
     --pa:#3a4fb8;--pa-dark:#2c3a94;--pa-bg:#eef1fc;
@@ -129,23 +129,24 @@
 
   <header>
     <span class="eyebrow">PA45 第29回｜ハンズオン手順</span>
-    <h1>Copilotと読み解き、動的コンテンツに無い値を取り出す<small>毎朝の受信トレイから5件とってきて、1件目の件名・件数・最後の1件・全件の件名を取り出し、Teamsに1通でまとめて届けます。動的コンテンツの一覧に出てこない値を、自分の手で取り出せるようになります。</small></h1>
+    <h1>Copilotと読み解き、動的コンテンツに無い値を取り出す<small>毎朝、練習用に送った3通をとってきて、1件目の件名・件数・最後の1件・全件の件名を取り出し、Teamsに1通でまとめて届けます。動的コンテンツの一覧に出てこない値を、自分の手で取り出せるようになります。</small></h1>
   </header>
 
   <div class="goal">
-    <b>今日つくるもの：</b> 毎朝8時に動いて、受信トレイから<b>新しい順に5件</b>とってきて、<b>件数・1件目・2件目・最後・全件の件名</b>を並べた<b>1通のメッセージ</b>を自分あてのTeamsに届けるフロー。
+    <b>今日つくるもの：</b> 毎朝8時に動いて、件名に <b>PA45</b> が入ったメールを<b>新しい順に</b>とってきて、<b>件数・1件目・2件目・最後・全件の件名</b>を並べた<b>1通のメッセージ</b>を自分あてのTeamsに届けるフロー。
     <div class="flowpath">
       <span class="st">⏰ 繰り返し（毎朝8時）</span><span class="ar">→</span>
-      <span class="st">📥 メールの取得 (V3)</span><span class="ar">→</span>
+      <span class="st">📥 PA45のメールを取得</span><span class="ar">→</span>
       <span class="st hot">🔍 出力を読んで式にする</span><span class="ar">→</span>
       <span class="st end">📨 Teamsに1通</span>
     </div>
   </div>
 
-  <div class="callout info" style="margin-bottom:4px;"><b>🔰 初参加の方へ：</b> ここから始めて大丈夫です。<b>用意するものはありません</b>（自分の受信トレイを読むだけ。リストもフォームも作りません）。第14回「JSONの読み方」に出ていなくても、STEP 3 で復習します。</div>
+  <div class="callout info" style="margin-bottom:4px;"><b>🔰 初参加の方へ：</b> ここから始めて大丈夫です。<b>用意するものはありません</b>（リストもフォームも作りません）。最初に<b>自分あてに練習用のメールを3通送る</b>ところから始めます。第14回「JSONの読み方」に出ていなくても、STEP 3 で復習します。</div>
 
   <nav class="toc" aria-label="手順の目次">
     <span class="toc-lbl">目次</span>
+    <a href="#p0">0. 自分あてに3通送る</a>
     <a href="#p1">1. 繰り返しで始める</a>
     <a href="#p2">2. メールを5件とってくる</a>
     <a href="#p3">3. 1回動かして出力を見る</a>
@@ -155,6 +156,19 @@
     <a href="#pt">7. もう一度テスト</a>
     <a href="#pc">＋ Copilotに聞く3か所</a>
   </nav>
+
+  <!-- ===== 0 ===== -->
+  <section class="part" id="p0">
+    <div class="part-h"><span class="part-badge sp">STEP 0</span><h2>自分あてに、練習用のメールを3通送る（3分）</h2></div>
+    <p class="part-note">いきなり受信トレイを読むと、<b>人によって件数も中身もばらばら</b>になります。画面共有をしていると<b>本物のメール</b>も映ります。そこで、<b>自分で送った3通だけ</b>を読む形にします。</p>
+    <ol class="steps sp">
+      <li>Outlook で <b>自分あて</b>に3通送ります。<b>件名の先頭に <span class="k">PA45</span></b> を付けます。</li>
+      <li>件名の例：<span class="k">PA45 見積の件</span> ／ <span class="k">PA45 議事録の共有</span> ／ <span class="k">PA45 来週の打ち合わせ</span></li>
+      <li>本文は空でかまいません。3通で30秒ほどです。</li>
+    </ol>
+    <div class="callout tip"><b>💡 こうしておくと、あとが楽です。</b> 全員の結果がそろうので、<b>式の答え合わせができます</b>。件数も件名も、手元と画面で同じものが出ます。</div>
+    <div class="callout warn"><b>⚠️ 会社のメールを画面共有するとき：</b> 受信トレイをそのまま開くと、取引先名や件名が映ります。今日は<b>件名フィルター</b>で自分の3通だけに絞るので、実行結果にも他のメールは出てきません。</div>
+  </section>
 
   <!-- ===== 1 ===== -->
   <section class="part" id="p1">
@@ -171,12 +185,12 @@
 
   <!-- ===== 2 ===== -->
   <section class="part" id="p2">
-    <div class="part-h"><span class="part-badge sp">STEP 2</span><h2>受信トレイから、新しい順に5件とってくる</h2></div>
+    <div class="part-h"><span class="part-badge sp">STEP 2</span><h2>PA45のメールだけ、新しい順にとってくる</h2></div>
     <p class="part-note">Office 365 Outlook の <b>「メールの取得 (V3)」</b>を追加します。「メールが届いたとき」ではありません。<b>まとめて何件も返ってくる</b>アクションです。</p>
     <ol class="steps sp">
       <li><b>＋新しいステップ</b>→ <b>Office 365 Outlook</b> → <b>「メールの取得 (V3)」</b>を追加します。</li>
-      <li>欄を埋めます。<b>詳細オプション</b>を開くと下の2つが出てきます。<div class="setrow"><span class="kv"><span class="kk">フォルダー</span><span class="vv">Inbox</span></span><span class="kv"><span class="kk">未読のみを取得しますか?</span><span class="vv">いいえ</span></span><span class="kv"><span class="kk">添付ファイルを含める</span><span class="vv">いいえ</span></span><span class="kv"><span class="kk">上位</span><span class="vv">5</span></span></div></li>
-      <li>アクション名を <span class="k">メールの取得 (V3)（受信トレイから5件）</span> に変えます。<ul class="sub"><li><b>「メールの取得 (V3)」の部分は1文字も変えません。</b>（V3）も半角のまま残します。あとで式の中にこの名前をそのまま書きます。</li></ul></li>
+      <li>欄を埋めます。<b>詳細オプション</b>を開くと下の欄が出てきます。<div class="setrow"><span class="kv"><span class="kk">フォルダー</span><span class="vv">Inbox</span></span><span class="kv"><span class="kk">件名フィルター</span><span class="vv">PA45</span></span><span class="kv"><span class="kk">未読のみを取得しますか?</span><span class="vv">いいえ</span></span><span class="kv"><span class="kk">添付ファイルを含める</span><span class="vv">いいえ</span></span><span class="kv"><span class="kk">上位</span><span class="vv">5</span></span></div></li>
+      <li>アクション名を <span class="k">メールの取得 (V3)（PA45のメールを5件）</span> に変えます。<ul class="sub"><li><b>「メールの取得 (V3)」の部分は1文字も変えません。</b>（V3）も半角のまま残します。あとで式の中にこの名前をそのまま書きます。</li></ul></li>
     </ol>
     <div class="callout warn"><b>⚠️ 「上位」を大きくしすぎない。</b> 100件にすると、返ってくる出力も100件分になります（本文のHTMLも全部入るため、とても大きくなります）。<b>まずは5件</b>で作り、動いてから増やします。</div>
   </section>
@@ -187,7 +201,7 @@
     <p class="part-note">ここが今日のいちばん大事な手順です。<b>出力を見てから式を書きます。</b>逆にすると、名前を当てずっぽうで書くことになり、ほぼ外します。</p>
     <ol class="steps">
       <li>右上の <b>「保存」</b>→ <b>「テスト」</b>→ <b>「手動」</b>→ <b>「テスト」</b>で動かします。</li>
-      <li>緑の✓が付いたら、<b>「メールの取得 (V3)（受信トレイから5件）」をクリックして開きます</b>。</li>
+      <li>緑の✓が付いたら、<b>「メールの取得 (V3)（PA45のメールを5件）」をクリックして開きます</b>。</li>
       <li><b>出力</b>の欄を見ます。ここに、とってきた5件がすべて入っています。</li>
     </ol>
     <div class="callout info"><b>■ 出力の形（実際に動かして確かめたもの）：</b>
@@ -226,22 +240,22 @@
     <div class="codewrap">
       <span class="lbl">① 1件目の件名</span>
       <button class="copybtn" data-code="ex1">コピー</button>
-<pre id="ex1">first(body('メールの取得 (V3)（受信トレイから5件）')?['value'])?['subject']</pre>
+<pre id="ex1">first(body('メールの取得 (V3)（PA45のメールを5件）')?['value'])?['subject']</pre>
     </div>
     <div class="codewrap">
       <span class="lbl">② 2件目の件名（番号で取る）</span>
       <button class="copybtn" data-code="ex2">コピー</button>
-<pre id="ex2">body('メールの取得 (V3)（受信トレイから5件）')?['value']?[1]?['subject']</pre>
+<pre id="ex2">body('メールの取得 (V3)（PA45のメールを5件）')?['value']?[1]?['subject']</pre>
     </div>
     <div class="codewrap">
       <span class="lbl">③ 最後の1件の件名</span>
       <button class="copybtn" data-code="ex3">コピー</button>
-<pre id="ex3">last(body('メールの取得 (V3)（受信トレイから5件）')?['value'])?['subject']</pre>
+<pre id="ex3">last(body('メールの取得 (V3)（PA45のメールを5件）')?['value'])?['subject']</pre>
     </div>
     <div class="codewrap">
       <span class="lbl">④ 件数</span>
       <button class="copybtn" data-code="ex4">コピー</button>
-<pre id="ex4">length(body('メールの取得 (V3)（受信トレイから5件）')?['value'])</pre>
+<pre id="ex4">length(body('メールの取得 (V3)（PA45のメールを5件）')?['value'])</pre>
     </div>
     <div class="callout info"><b>■ 式の読み方（左から順に）：</b> <span class="k">body(アクション名)</span>＝そのアクションの結果の箱 → <span class="k">?['value']</span>＝その中の value という箱 → <span class="k">?[1]</span>＝その中の2件目 → <span class="k">?['subject']</span>＝その中の件名。<b>? は「無かったら空で止める」印</b>です。</div>
     <div class="callout warn"><b>⚠️ 式の中のアクション名は、自分の画面と一字一句同じに。</b> 空白もかっこもそのままです。アクション名を変えたら、式の中も直します。分からないときは、アクションの「…」→<b>「コードの表示」</b>で中の名前を確かめます。</div>
@@ -260,7 +274,7 @@
     <div class="codewrap">
       <span class="lbl">「開始」に入れる式</span>
       <button class="copybtn" data-code="ex5">コピー</button>
-<pre id="ex5">body('メールの取得 (V3)（受信トレイから5件）')?['value']</pre>
+<pre id="ex5">body('メールの取得 (V3)（PA45のメールを5件）')?['value']</pre>
     </div>
     <div class="codewrap">
       <span class="lbl">「マップ」に入れる式</span>
@@ -283,11 +297,11 @@
     <div class="codewrap">
       <span class="lbl">メッセージ欄に貼る本文（アクション名はご自分のものに合わせてください）</span>
       <button class="copybtn" data-code="ex7">コピー</button>
-<pre id="ex7">今朝の受信トレイ：@{length(body('メールの取得 (V3)（受信トレイから5件）')?['value'])} 件
-1件目の件名：@{first(body('メールの取得 (V3)（受信トレイから5件）')?['value'])?['subject']}
-1件目の差出人：@{first(body('メールの取得 (V3)（受信トレイから5件）')?['value'])?['from']}
-2件目の件名：@{body('メールの取得 (V3)（受信トレイから5件）')?['value']?[1]?['subject']}
-最後の1件：@{last(body('メールの取得 (V3)（受信トレイから5件）')?['value'])?['subject']}
+<pre id="ex7">今朝の受信トレイ：@{length(body('メールの取得 (V3)（PA45のメールを5件）')?['value'])} 件
+1件目の件名：@{first(body('メールの取得 (V3)（PA45のメールを5件）')?['value'])?['subject']}
+1件目の差出人：@{first(body('メールの取得 (V3)（PA45のメールを5件）')?['value'])?['from']}
+2件目の件名：@{body('メールの取得 (V3)（PA45のメールを5件）')?['value']?[1]?['subject']}
+最後の1件：@{last(body('メールの取得 (V3)（PA45のメールを5件）')?['value'])?['subject']}
 全件の件名：@{join(body('選択（件名だけを取り出す）'), ' / ')}</pre>
     </div>
     <div class="callout tip"><b>💡 貼ってもうまく出ないときは、1行に減らして確かめます。</b> まず「件数」だけにして動かす。出たら次の行を足す。この順で進めると、どの式が悪いかがすぐ分かります。</div>
@@ -323,7 +337,7 @@
     <div class="codewrap">
       <button class="copybtn" data-code="cp1">コピー</button>
 <pre id="cp1">Power Automate の式を1行だけ教えてください。説明は不要です。
-アクション名は「メールの取得 (V3)（受信トレイから5件）」です。
+アクション名は「メールの取得 (V3)（PA45のメールを5件）」です。
 このアクションの出力は次の形です（関係ない部分は消しています）。
 
 {
