@@ -37,7 +37,7 @@ Power Automate を初めて触る人が、45分で1本のフローを作り終�
 | 役立ち度スコア（全回平均） | 92.2% |
 | 録画を公開した回 | 24回 |
 | 公開しているフローZIP | 19本 |
-| 技術Tipsスライド | 119本 |
+| 技術Tipsスライド | 120本 |
 
 - 参加者数は connpass の参加者数、スコアは各回のアンケートから集計しています（`data/insights.json`）。
 - 理解度スコア＝5択（とても理解できた100／理解できた75／普通50／少し難しかった25／難しかった0）の回答数による加重平均。
@@ -121,7 +121,7 @@ PA45 の外で、Power Platform／Copilot のコミュニティに関わった�
 | 2026/09/19 | 第57回 Microsoft 365 勉強会（Japan Microsoft 365 Users Group）で登壇：エージェントに渡す前に ── Power Automate で終わる仕事の見つけ方 | 登壇者 | オンライン勉強会 414名申込（connpass）・セッション50分 | [connpass](https://jpo365ug.connpass.com/event/405603/) |
 | 2026/09/19 | Power Platform Community で回答：ファイル名の変更で拡張子がおかしくなる（substring とピリオド） | 回答者 | Power Platform Community（公開・英語） | [スレッド](https://community.powerplatform.com/forums/thread/details/?threadid=9c3e4e6a-12b3-f111-aaac-3833c5e85f91) |
 | 2026/09/23 | Power Platform Community で回答：pac CLI で環境内の PCF コントロールを一覧したい | 回答者 | Power Platform Community（公開・英語） | [スレッド](https://community.powerplatform.com/forums/thread/details/?threadid=aaa166a8-aeb6-f111-aaac-000d3a54bc5d) |
-| 2026/09/24 | ビジュアルプログラミングIoTLT vol.24 でLT登壇：作らせる前に、使ってもらう ── 社内で非エンジニアにビジュアルプログラミングを教えた話 | 登壇 | オンラインLTイベント（YouTube配信） | [connpass](https://iotlt.connpass.com/event/400538/) |
+| 2026/09/24 | ビジュアルプログラミングIoTLT vol.24 でLT登壇：作らせる前に、使ってもらう ── 社内で非エンジニアにビジュアルプログラミングを教えた話 | 登壇 | オンラインLTイベント（YouTube配信） | [connpass](https://iotlt.connpass.com/event/400538/) ／ [レポート](https://www.automate136.com/iotlt-24-power-automate-node-red/) |
 | 2026/09/25 | Power Platform Community で回答：Copilot Studio のテストパネルの会話は課金されるか | 回答者 | Power Platform Community（公開・英語） | [スレッド](https://community.powerplatform.com/forums/thread/details/?threadid=dee58f7a-b1b8-f111-aaac-3833c5e8602a) |
 | 2026/09/26 | Power Platform Community で回答：pac CLI でソリューション外のアプリ・フローを移行したい | 回答者 | Power Platform Community（公開・英語） | [スレッド](https://community.powerplatform.com/forums/thread/details/?threadid=ff112885-8bb8-f111-aaac-3833c5e85ffd) |
 

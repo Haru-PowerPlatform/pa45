@@ -25,7 +25,7 @@ PA45 の各回で使ったスライドです。\
 | 13 | 2026/06/04 | Try-Catch でフロー運用を安心化 | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-13/) |
 | 12 | 2026/05/28 | 「式」アレルギー、今日で卒業 | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-12/) |
 
-- `index.html` は技術Tipsスライド（119本）の一覧です。元HTMLは `assets/x/html/` にあります。
+- `index.html` は技術Tipsスライド（120本）の一覧です。元HTMLは `assets/x/html/` にあります。
 - `links.html` は全回の目次です。どちらも `scripts/` のスクリプトで生成しています。
 - スライドは [CC BY-NC 4.0](../LICENSE-CONTENT.md) です。出典を書けば、社内勉強会や研修で使えます。販売は不可です。
 
