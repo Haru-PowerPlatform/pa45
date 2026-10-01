@@ -194,7 +194,6 @@
       <li>フロー名は <span class="k">毎朝のメールをまとめて知らせる</span> など、分かる名前にします。</li>
       <li>開始日時は今日、繰り返し間隔は <b>1 日</b>。作成を押します。</li>
       <li>トリガー「繰り返し」を開いて、<b>タイム ゾーン</b>を <span class="k">(UTC+09:00) 大阪、札幌、東京</span>、<b>設定時刻 (時間)</b> を <span class="k">8</span> にします。</li>
-      <li>アクション名を <span class="k">繰り返し（毎朝8時に動かす）</span> に変えます。<ul class="sub"><li><b>元の名前「繰り返し」は消さずに、かっこで説明を足すだけ</b>にします。あとで見たときに、何のアクションか分かるようにするためです。</li></ul></li>
     </ol>
     <div class="callout tip"><b>💡 タイム ゾーンを忘れると9時間ずれます。</b> 既定は協定世界時（UTC）なので、日本時間の朝8時にしたいときは必ず東京に変えます。</div>
   </section>
@@ -207,7 +206,6 @@
     <ol class="steps sp">
       <li><b>＋新しいステップ</b>→ <b>Office 365 Outlook</b> → <b>「メールを取得する (V3)」</b>を追加します。</li>
       <li>欄を埋めます。<b>詳細パラメーター</b>を開くと下の欄が出てきます。<div class="setrow"><span class="kv"><span class="kk">フォルダー</span><span class="vv">Inbox</span></span><span class="kv"><span class="kk">件名フィルター</span><span class="vv">PA45</span></span><span class="kv"><span class="kk">未読のみを取得しますか?</span><span class="vv">いいえ</span></span><span class="kv"><span class="kk">添付ファイルを含める</span><span class="vv">いいえ</span></span><span class="kv"><span class="kk">上位</span><span class="vv">5</span></span></div></li>
-      <li>アクション名を <span class="k">メールを取得する (V3)（PA45のメールを5件）</span> に変えます。<ul class="sub"><li><b>「メールを取得する (V3)」の部分は1文字も変えません。</b>（V3）も半角のまま残します。あとで式の中にこの名前をそのまま書きます。</li></ul></li>
     </ol>
     <div class="callout warn"><b>⚠️ 「上位」を大きくしすぎない。</b> 100件にすると、返ってくる出力も100件分になります（本文のHTMLも全部入るため、とても大きくなります）。<b>まずは5件</b>で作り、動いてから増やします。</div>
   </section>
@@ -271,7 +269,7 @@
     <p class="whyline">🧑‍💼 オートさん「なぜ」：一覧に無い値を取るには、まず何が返ってきているかを見る必要があるから</p>
     <p class="part-note">ここが今日のいちばん大事な手順です。<b>出力を見てから式を書きます。</b>逆にすると、名前を当てずっぽうで書くことになり、ほぼ外します。</p>
     <ol class="steps">
-      <li>STEP 4 のテスト結果の画面で、<b>「メールを取得する (V3)（PA45のメールを5件）」をクリックして開きます</b>。</li>
+      <li>STEP 4 のテスト結果の画面で、<b>「メールを取得する (V3)」をクリックして開きます</b>。</li>
       <li><b>出力</b>の欄を見ます。<span class="k">value</span> の <span class="k">[ ]</span> の中に、件名が<b>3件並んで</b>います。<b>だから「件名」を選ぶと、1件ずつの繰り返しになりました。</b></li>
     </ol>
     <div class="callout info"><b>■ 出力の形（実際に動かして確かめたもの）：</b>
@@ -310,14 +308,13 @@
     <ol class="steps tm">
       <li><b>「For each」</b>を選んで、右上の <b>「⋮」→「削除」</b>。中の Teams も一緒に消えます。</li>
       <li>「メールを取得する (V3)」の下に、Teams <b>「チャットまたはチャネルでメッセージを投稿する」</b>を<b>もう一度</b>足します（欄は STEP 4 と同じ）。</li>
-      <li>アクション名を <span class="k">チャットまたはチャネルでメッセージを投稿する（5件をまとめて知らせる）</span> に変えます。</li>
       <li>メッセージ欄に <span class="k">PA45のメール：</span> と打ち、続けて <span class="k">/</span> →<b>「式を挿入する」</b>で下の「件数」を入れ、<span class="k">件</span> と打ちます。</li>
       <li><b>テスト</b>。<b>1通だけ</b>、「PA45のメール：3 件」と届けば成功です。</li>
     </ol>
     <div class="codewrap">
       <span class="lbl">件数</span>
       <button class="copybtn" data-code="ex4">コピー</button>
-<pre id="ex4">length(body('メールを取得する (V3)（PA45のメールを5件）')?['value'])</pre>
+<pre id="ex4">length(body('メールを取得する_(V3)')?['value'])</pre>
     </div>
   </section>
 
@@ -329,25 +326,25 @@
     <div class="codewrap">
       <span class="lbl">① 1件目の件名</span>
       <button class="copybtn" data-code="ex1">コピー</button>
-<pre id="ex1">first(body('メールを取得する (V3)（PA45のメールを5件）')?['value'])?['subject']</pre>
+<pre id="ex1">first(body('メールを取得する_(V3)')?['value'])?['subject']</pre>
     </div>
     <div class="codewrap">
       <span class="lbl">② 2件目の件名（番号で取る）</span>
       <button class="copybtn" data-code="ex2">コピー</button>
-<pre id="ex2">body('メールを取得する (V3)（PA45のメールを5件）')?['value']?[1]?['subject']</pre>
+<pre id="ex2">body('メールを取得する_(V3)')?['value']?[1]?['subject']</pre>
     </div>
     <div class="codewrap">
       <span class="lbl">③ 最後の1件の件名</span>
       <button class="copybtn" data-code="ex3">コピー</button>
-<pre id="ex3">last(body('メールを取得する (V3)（PA45のメールを5件）')?['value'])?['subject']</pre>
+<pre id="ex3">last(body('メールを取得する_(V3)')?['value'])?['subject']</pre>
     </div>
     <div class="codewrap">
       <span class="lbl">④ 1件目の差出人</span>
       <button class="copybtn" data-code="ex4b">コピー</button>
-<pre id="ex4b">first(body('メールを取得する (V3)（PA45のメールを5件）')?['value'])?['from']</pre>
+<pre id="ex4b">first(body('メールを取得する_(V3)')?['value'])?['from']</pre>
     </div>
     <div class="callout info"><b>■ 式の読み方（左から順に）：</b> <span class="k">body(アクション名)</span>＝そのアクションの結果の箱 → <span class="k">?['value']</span>＝その中の value という箱 → <span class="k">?[1]</span>＝その中の2件目 → <span class="k">?['subject']</span>＝その中の件名。<b>? は「無かったら空で止める」印</b>です。</div>
-    <div class="callout warn"><b>⚠️ 式の中のアクション名は、自分の画面と一字一句同じに。</b> 空白もかっこもそのままです。アクション名を変えたら、式の中も直します。分からないときは、アクションの「…」→<b>「コードの表示」</b>で中の名前を確かめます。</div>
+    <div class="callout warn"><b>⚠️ 式の中では、アクション名の空白が「_」（アンダーバー）になります。</b> 画面の名前が「メールを取得する (V3)」なら、式では <span class="k">メールを取得する_(V3)</span> と書きます。アクション名は変えずに、そのまま使ってください。分からないときは、アクションの<b>「コード ビュー」</b>タブで中の名前を確かめます。</div>
     <div class="callout tip"><b>💡 赤くなったら、直前に足した1行が原因です。</b> 一度に全部貼らないのはそのためです。</div>
     <div class="callout tip"><b>💡 first() と ?[0] は同じ意味です。</b> 0件のときに赤く止まりにくいのは first() のほうです。</div>
   </section>
@@ -360,13 +357,12 @@
     <ol class="steps sp">
       <li><b>「メールを取得する」と Teams のあいだの ＋</b> → <b>データ操作</b> → <b>「選択」</b>を追加します（Teams より上に置きます）。</li>
       <li>2つの欄を埋めます。<b>どちらも式（fx）で入れます</b>。<div class="setrow"><span class="kv"><span class="kk">開始</span><span class="vv">body('…')?['value']</span></span><span class="kv"><span class="kk">マップ</span><span class="vv">item()?['subject']</span></span></div></li>
-      <li>アクション名を <span class="k">選択（件名だけを取り出す）</span> に変えます。</li>
       <li>Teams のメッセージ欄に <span class="k">全件の件名：</span> と打ち、<span class="k">/</span> →<b>「式を挿入する」</b>で下の join を入れて<b>テスト</b>。</li>
     </ol>
     <div class="codewrap">
       <span class="lbl">「開始」に入れる式</span>
       <button class="copybtn" data-code="ex5">コピー</button>
-<pre id="ex5">body('メールを取得する (V3)（PA45のメールを5件）')?['value']</pre>
+<pre id="ex5">body('メールを取得する_(V3)')?['value']</pre>
     </div>
     <div class="codewrap">
       <span class="lbl">「マップ」に入れる式</span>
@@ -376,7 +372,7 @@
     <div class="codewrap">
       <span class="lbl">Teams の本文に足す式</span>
       <button class="copybtn" data-code="ex6b">コピー</button>
-<pre id="ex6b">join(body('選択（件名だけを取り出す）'), ' / ')</pre>
+<pre id="ex6b">join(body('選択'), ' / ')</pre>
     </div>
     <div class="callout info"><b>■ item() とは：</b> 「いま見ている1件」を指す言葉です。選択は、棚に並んだ1件ずつに対して「この名前のところだけ取り出して」と伝えるアクションです。結果は<b>件名だけが並んだ配列</b>になります。</div>
   </section>
@@ -386,14 +382,14 @@
     <div class="part-h"><span class="part-badge">STEP 10</span><span class="chap">第5章 届ける</span><h2>本文を整えて、もう一度テスト（完成）</h2></div>
     <p class="whyline">🧑‍💼 オートさん「なぜ」：全部そろったので、課長が読みやすい1通に仕上げて、最後にもう一度確かめる</p>
     <div class="codewrap">
-      <span class="lbl">完成した本文の見本（足りない行があれば足す・アクション名はご自分のものに）</span>
+      <span class="lbl">完成した本文の見本（足りない行があれば足す）</span>
       <button class="copybtn" data-code="ex7">コピー</button>
-<pre id="ex7">PA45のメール：@{length(body('メールを取得する (V3)（PA45のメールを5件）')?['value'])} 件
-1件目の件名：@{first(body('メールを取得する (V3)（PA45のメールを5件）')?['value'])?['subject']}
-1件目の差出人：@{first(body('メールを取得する (V3)（PA45のメールを5件）')?['value'])?['from']}
-2件目の件名：@{body('メールを取得する (V3)（PA45のメールを5件）')?['value']?[1]?['subject']}
-最後の1件：@{last(body('メールを取得する (V3)（PA45のメールを5件）')?['value'])?['subject']}
-全件の件名：@{join(body('選択（件名だけを取り出す）'), ' / ')}</pre>
+<pre id="ex7">PA45のメール：@{length(body('メールを取得する_(V3)')?['value'])} 件
+1件目の件名：@{first(body('メールを取得する_(V3)')?['value'])?['subject']}
+1件目の差出人：@{first(body('メールを取得する_(V3)')?['value'])?['from']}
+2件目の件名：@{body('メールを取得する_(V3)')?['value']?[1]?['subject']}
+最後の1件：@{last(body('メールを取得する_(V3)')?['value'])?['subject']}
+全件の件名：@{join(body('選択'), ' / ')}</pre>
     </div>
     <ol class="steps">
       <li><b>「保存」</b>→ <b>「テスト」→「手動」→「テスト」→「フローの実行」→「完了」</b>で実行します。</li>
@@ -422,7 +418,7 @@
     <div class="codewrap">
       <button class="copybtn" data-code="cp1">コピー</button>
 <pre id="cp1">Power Automate の式を1行だけ教えてください。説明は不要です。
-アクション名は「メールを取得する (V3)（PA45のメールを5件）」です。
+アクション名は「メールを取得する_(V3)」です（式の中の名前）。
 このアクションの出力は次の形です（関係ない部分は消しています）。
 
 {
@@ -440,7 +436,7 @@
       <button class="copybtn" data-code="cp2">コピー</button>
 <pre id="cp2">Power Automate のこの式を、プログラミングを知らない人向けに説明してください。
 
-first(body('メールを取得する (V3)')?['value'])?['subject']
+first(body('メールを取得する_(V3)')?['value'])?['subject']
 
 とくに、? と [ ] と ' ' がそれぞれ何をしているのかを教えてください。</pre>
     </div>
