@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <title>PA45 第29回 スライド｜動的コンテンツに出てこない値も、Copilotと一緒に式で取り出せるようになる</title>
 <style>
+  #st1 .lbl-s,#st3 .lbl-s{font-size:18px;}
   :root{
     --blue-bg:#eaf2fc;--blue-mid:#2a7dd4;--blue-text:#14528f;--blue-light:#b8d3ef;
     --orange:#e06030;--red:#c03520;--surface:#fff;--bg:#f3f6fa;--text:#1f2937;
@@ -464,6 +465,58 @@
   #s15 .callout{font-size:20px;padding:13px 20px;margin-top:10px !important;}
   /* 登場人物まわりの詰め */
   #s6b .slide-body{padding-top:14px;justify-content:center;}
+  /* ---- 物語の帯（10/1） ---- */
+  .slide-eyebrow .chapno{display:inline-block;background:#fbbf24;color:#1e293b;font-weight:900;border-radius:6px;padding:1px 10px;margin-right:10px;text-transform:none;}
+  .slide-eyebrow .mono{color:#fff;font-weight:800;text-transform:none;font-size:16px;}
+  .slide-eyebrow .mono img{height:24px;vertical-align:-6px;margin-right:4px;background:#fff;border-radius:50%;}
+  .chapbar{position:absolute;top:24px;right:120px;display:flex;gap:4px;}
+  .chapbar span{font-size:12px;font-weight:800;padding:3px 9px;border-radius:999px;background:rgba(255,255,255,.12);color:rgba(255,255,255,.55);}
+  .chapbar span.done{background:rgba(255,255,255,.3);color:#fff;}
+  .chapbar span.on{background:#fbbf24;color:#1e293b;}
+  .mapro{display:grid;grid-template-columns:1fr 30px 1fr 30px 1fr 30px 1fr 30px 1fr;align-items:stretch;margin-top:6px;}
+  .mapro .ma{display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;color:#94a3b8;}
+  .mapro .mc{border-radius:16px;padding:14px 10px;text-align:center;border:3px solid;background:#fff;display:flex;flex-direction:column;gap:6px;align-items:center;}
+  .mapro .c1{border-color:#4358c8}.mapro .c2{border-color:#dc2626}.mapro .c3{border-color:#0f7b8a}.mapro .c4{border-color:#7a3fd1}.mapro .c5{border-color:#16a34a}
+  .mapro .mn{font-size:16px;font-weight:900;color:#fff;background:#334155;border-radius:50%;width:30px;height:30px;line-height:30px;}
+  .mapro .mi{font-size:48px;line-height:1.1;}
+  .mapro .mt{font-size:27px;font-weight:900;color:#1e293b;}
+  .mapro .md{font-size:20px;color:var(--muted);line-height:1.45;font-weight:700;}
+  .mapro .ms{margin-top:auto;font-size:18px;font-weight:900;border-radius:999px;padding:2px 14px;color:#fff;}
+  .ms.ok{background:#16a34a}.ms.ng{background:#dc2626}.ms.hi{background:#0f7b8a}
+  .maprow2{display:grid;grid-template-columns:110px 1fr;gap:16px;align-items:center;margin-top:16px;}
+  .maprow2 img{max-height:110px;width:100%;object-fit:contain;}
+  .maprow2 .sp{font-size:23px;line-height:1.55;background:#eef1fc;border-radius:12px;padding:12px 18px;}
+  .st1{display:grid;grid-template-columns:1fr 80px 1fr;gap:12px;align-items:center;}
+  .fm{display:flex;flex-direction:column;align-items:stretch;gap:2px;}
+  .fm .fb{border:2px solid #c7d2fe;background:#f7f9ff;border-radius:10px;padding:13px 16px;font-size:24px;font-weight:800;color:#1e293b;}
+  .fm .fv{text-align:center;color:#94a3b8;font-size:16px;line-height:1;}
+  .fm .floop{border:3px dashed #ea580c;border-radius:12px;padding:8px 10px 10px;background:#fff7ed;}
+  .fm .fl{font-size:19px;font-weight:900;color:#c2410c;margin-bottom:6px;}
+  .fm .fb.tm{border-color:#c3c5ef;background:#fff;}
+  .bigar{text-align:center;font-size:24px;font-weight:900;color:#4358c8;line-height:1.3;}
+  .ph{border:3px solid #334155;border-radius:22px;padding:14px 14px;background:#f8fafc;display:flex;flex-direction:column;gap:8px;}
+  .ph .pm{background:#eef0fb;border-left:5px solid #5b5fc7;border-radius:8px;padding:11px 14px;font-size:24px;font-weight:800;}
+  .boss{display:grid;grid-template-columns:90px 1fr;gap:10px;align-items:center;margin-top:10px;}
+  .boss img{width:100%;max-height:90px;object-fit:contain;}
+  .boss .sp{font-size:24px;background:#fff1f2;border-radius:10px;padding:8px 12px;color:#9f1239;}
+  .st3{display:grid;grid-template-columns:1fr 60px 1fr;gap:12px;align-items:center;}
+  .st3 .cq{border:2px solid #ddd6fe;border-radius:14px;padding:18px 20px;background:#faf5ff;}
+  .st3 .qq{font-size:25px;font-weight:800;}
+  .st3 .code{font-family:Consolas,monospace;font-size:22px;background:#1e1b2e;color:#e2e8f0;border-radius:8px;padding:10px 12px;word-break:break-all;line-height:1.5;}
+  .st3 .code .bad{color:#fca5a5;background:rgba(220,38,38,.3);border-radius:4px;padding:0 3px;}
+  .st3 .code .good{color:#86efac;}
+  .st3 .neq{text-align:center;font-size:56px;font-weight:900;color:#dc2626;}
+  .st3 .err{margin-top:14px;font-size:26px;font-weight:900;color:#dc2626;background:#fef2f2;border:2px solid #fecaca;border-radius:10px;padding:8px 12px;text-align:center;}
+  .you{display:inline-block;font-size:17px;font-weight:900;color:#fff;background:#e8590c;border-radius:999px;padding:2px 14px;margin:4px 0 2px;}
+  #s9b .who{padding:12px 18px;gap:16px;grid-template-columns:130px 1fr;}
+  #s9b .who img{max-height:130px;} #s9b .who .nm{font-size:26px;} #s9b .who .sp{font-size:23px;margin-top:6px;}
+  .tries{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:20px;}
+  .tryc{border:3px solid;border-radius:14px;padding:12px 14px 12px;background:#fff;position:relative;display:flex;flex-direction:column;gap:8px;}
+  .tryc .tn{position:absolute;top:-14px;left:12px;color:#fff;font-weight:900;font-size:18px;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+  .tryc .td{font-size:22px;line-height:1.45;color:var(--text);margin-top:6px;}
+  .tryc .tg{font-size:23px;line-height:1.45;color:var(--text);background:#fff4f4;border-radius:8px;padding:6px 10px;}
+  .tryc .tl{display:block;font-size:16px;font-weight:900;color:var(--muted);letter-spacing:.05em;}
+  .tryc .tb{margin-top:auto;font-size:22px;font-weight:900;color:#c62828;text-align:center;}
   #s6b .who{padding:12px 18px;gap:14px;grid-template-columns:130px 1fr;}
   #s6b .who img{max-height:120px;} #s6b .who .nm{font-size:25px;}
   #s6b .who .ro{font-size:17px;margin:3px 0 6px;} #s6b .who .sp{font-size:19px;padding:9px 13px;}
@@ -521,29 +574,31 @@
     <li><a href="#s4"><span class="n">04</span>講師自己紹介（Haru）</a></li>
     <li><a href="#s5"><span class="n">05</span>ご参加にあたって</a></li>
     <li><a href="#s6"><span class="n">06</span>第29回タイトル</a></li>
-    <li><a href="#s6b"><span class="n">07</span>登場人物（この回の舞台）</a></li>
-    <li><a href="#s6c"><span class="n">08</span>何が変わるのか（Before/After）</a></li>
-    <li><a href="#s7"><span class="n">09</span>一覧に出てこない値がある</a></li>
-    <li><a href="#s8"><span class="n">10</span>完成イメージ（Teamsに1通）</a></li>
-    <li><a href="#s9"><span class="n">11</span>今日の全体像（4ブロック）</a></li>
-    <li><a href="#s10"><span class="n">12</span>復習：{ } は名前、[ ] は番号</a></li>
-    <li><a href="#s11"><span class="n">13</span>復習：/ は「の中の」</a></li>
-    <li><a href="#s12"><span class="n">14</span>①繰り返しを置く</a></li>
-    <li><a href="#s12b"><span class="n">15</span>下ごしらえ：自分あてに3通送る</a></li>
-    <li><a href="#s13"><span class="n">16</span>②メールを取得する (V3)</a></li>
-    <li><a href="#s14"><span class="n">17</span>③まず1回動かして出力を見る</a></li>
-    <li><a href="#s15"><span class="n">18</span>出力は巨大。丸ごと貼らない</a></li>
-    <li><a href="#s16"><span class="n">19</span>★山場：value は配列</a></li>
-    <li><a href="#s17"><span class="n">20</span>1件目・件数・最後</a></li>
-    <li><a href="#s18"><span class="n">21</span>from は文字列だった</a></li>
-    <li><a href="#s19"><span class="n">22</span>全件の件名を1行に</a></li>
-    <li><a href="#s20"><span class="n">23</span>Copilotに聞く：出力を先に見せる</a></li>
-    <li><a href="#s21"><span class="n">24</span>Teamsに1通にまとめる</a></li>
-    <li><a href="#s22"><span class="n">25</span>動きました</a></li>
-    <li><a href="#s23"><span class="n">26</span>ほかの人の仕事にも効く</a></li>
-    <li><a href="#s24"><span class="n">27</span>まとめ</a></li>
-    <li><a href="#s25"><span class="n">28</span>PA45のご案内</a></li>
-    <li><a href="#s26"><span class="n">29</span>クロージング＆アンケート</a></li>
+    <li><a href="#s6b"><span class="n">07</span>登場人物</a></li>
+    <li><a href="#smap"><span class="n">08</span>5つの章の地図</a></li>
+    <li><a href="#s12b"><span class="n">09</span>①-1 自分あてに3通送る</a></li>
+    <li><a href="#s12"><span class="n">10</span>①-2 繰り返しを置く</a></li>
+    <li><a href="#s13"><span class="n">11</span>①-3 メールを取得する</a></li>
+    <li><a href="#s14"><span class="n">12</span>①-4 1回動かす</a></li>
+    <li><a href="#st1"><span class="n">13</span>②-1 件名が3通に分かれた</a></li>
+    <li><a href="#s7"><span class="n">14</span>②-2 件数が一覧に無い</a></li>
+    <li><a href="#st3"><span class="n">15</span>②-3 Copilotの式がエラー</a></li>
+    <li><a href="#s15"><span class="n">16</span>③-1 出力は巨大</a></li>
+    <li><a href="#s16"><span class="n">17</span>③-2 ★value は棚</a></li>
+    <li><a href="#s10"><span class="n">18</span>③-3 { } と [ ]</a></li>
+    <li><a href="#s11"><span class="n">19</span>③-4 / は「の中の」</a></li>
+    <li><a href="#s17"><span class="n">20</span>④-1 1件目・件数・最後</a></li>
+    <li><a href="#s18"><span class="n">21</span>④-2 from は文字列</a></li>
+    <li><a href="#s19"><span class="n">22</span>④-3 全件の件名を1行に</a></li>
+    <li><a href="#s20"><span class="n">23</span>④-4 Copilotに聞き直す</a></li>
+    <li><a href="#s21"><span class="n">24</span>⑤-1 Teamsに1通</a></li>
+    <li><a href="#s22"><span class="n">25</span>⑤-2 動きました</a></li>
+    <li><a href="#s8"><span class="n">26</span>⑤-3 課長のスマホに届く</a></li>
+    <li><a href="#s6c"><span class="n">27</span>⑤-4 朝10分→0分</a></li>
+    <li><a href="#s23"><span class="n">28</span>ほかの仕事にも効く</a></li>
+    <li><a href="#s24"><span class="n">29</span>まとめ</a></li>
+    <li><a href="#s25"><span class="n">30</span>PA45のご案内</a></li>
+    <li><a href="#s26"><span class="n">31</span>クロージング＆アンケート</a></li>
   </ol>
 </nav>
 <button class="toc-toggle" id="tocToggle" type="button">≡ 目次</button>
@@ -554,7 +609,7 @@
 </div>
 
 <section class="slide title-slide" id="s1">
-  <span class="slide-num">1 / 29</span>
+  <span class="slide-num">1 / 31</span>
 
   <div class="opening-bar"><span>PA45 — Power Automate 45 ｜ 第29回 / Vol.29</span><span>Online Hands-on</span></div>
   <div class="slide-body" style="justify-content:center;align-items:center;text-align:center;">
@@ -566,7 +621,7 @@
 </div><div class="slide-footer"><span>Power Automate for Beginners</span><span style="color:var(--hint);">Copyright © PA45</span></div>
 </section>
 <section class="slide" id="s2">
-  <span class="slide-num">2 / 29</span>
+  <span class="slide-num">2 / 31</span>
 <div class="slide-head"><div class="slide-eyebrow">PA45｜第29回</div><h1 class="slide-title">事前準備 <small>（サインインできればOK・見るだけ参加も歓迎）</small></h1></div>
 <div class="slide-body">
 
@@ -591,7 +646,7 @@
 </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide" id="s3">
-  <span class="slide-num">3 / 29</span>
+  <span class="slide-num">3 / 31</span>
 <div class="slide-head"><div class="slide-eyebrow">INTRODUCTION</div><h1 class="slide-title">PA45 とは？</h1><div class="concept-dot">Concept</div></div>
 <div class="slide-body">
 
@@ -605,7 +660,7 @@
 </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide" id="s4">
-  <span class="slide-num">4 / 29</span>
+  <span class="slide-num">4 / 31</span>
 <div class="slide-head"><div class="slide-eyebrow">SPEAKER</div><h1 class="slide-title">Power Automate 45 (PA45)</h1><div class="concept-dot">Speaker</div></div>
 <div class="slide-body">
 
@@ -626,7 +681,7 @@
 </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide" id="s5">
-  <span class="slide-num">5 / 29</span>
+  <span class="slide-num">5 / 31</span>
 <div class="slide-head"><div class="slide-eyebrow">PA45 Online Course</div><h1 class="slide-title">ご参加にあたってのお願い <small>（ルール）</small></h1><div class="concept-dot">Guidelines</div></div>
 <div class="slide-body">
 
@@ -642,7 +697,7 @@
 </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide title-slide" id="s6">
-  <span class="slide-num">6 / 29</span>
+  <span class="slide-num">6 / 31</span>
 <div class="slide-head"><div class="slide-eyebrow">Power Automate × <span style="color:#7C3AED;">Copilot</span></div><h1 class="slide-title">Vol.29</h1></div>
 <div class="slide-body">
 
@@ -657,15 +712,15 @@
 </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide pa" id="s6b">
-  <span class="slide-num">7 / 29</span>
-<div class="slide-head"><div class="slide-eyebrow">PA45｜第29回 ／ 登場人物</div><h1 class="slide-title">今日の主役は、この2人です</h1><div class="concept-dot">Cast</div></div>
+  <span class="slide-num">7 / 31</span>
+<div class="slide-head"><div class="slide-eyebrow"><span class="chapno">プロローグ</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「毎朝10分、件名を書き写しています」</span></div><h1 class="slide-title">今日の主役は、この2人です</h1><div class="chapbar"><span class="">1 まず動かす</span><span class="">2 つまずく</span><span class="">3 出力を読む</span><span class="">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
     <div style="display:grid;gap:16px;margin-top:2px;">
       <div class="who main">
         <img src="assets/irasutoya_businessman.png" alt="">
         <div>
-          <div class="nm">オート はじめ さん<span style="font-size:18px;color:var(--muted);font-weight:700;">（27）営業事務・これから自動化する人</span></div>
+          <div class="nm">オート はじめ さん<span style="font-size:18px;color:var(--muted);font-weight:700;">（27）営業事務・これから自動化する人</span></div><div class="you">主役（あなた）</div>
           <div class="ro">毎朝いちばんに出社して、部の共有メールを見る担当</div>
           <div class="sp">「朝いちで受信トレイを開いて、<b>件名をチャットに写して</b>課長に送っています。毎朝10分。<b>写し間違い</b>も出ます」</div>
         </div>
@@ -684,201 +739,53 @@
       ※人名はすべて架空です。</div>
 </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
-<section class="slide pa" id="s6c">
-  <span class="slide-num">8 / 29</span>
-<div class="slide-head"><div class="slide-eyebrow">PA45｜第29回 ／ ねらい</div><h1 class="slide-title">オートさんの朝が、10分から0分になります</h1><div class="concept-dot">Why</div></div>
+<section class="slide pa" id="smap">
+  <span class="slide-num">8 / 31</span>
+<div class="slide-head"><div class="slide-eyebrow"><span class="chapno">プロローグ</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「今日は5つの章で進みます」</span></div><h1 class="slide-title">オートさんが、5つの章で1歩ずつ進みます</h1><div class="chapbar"><span class="">1 まず動かす</span><span class="">2 つまずく</span><span class="">3 出力を読む</span><span class="">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
-    <div class="col bf" style="border-radius:16px;padding:14px 22px 16px;border:2px solid #fdba74;background:#fff7ed;">
-      <div style="display:flex;align-items:center;gap:12px;font-size:22px;font-weight:900;color:#9a3412;">
-        <img src="assets/irasutoya_businessman.png" alt="" style="height:54px;">Before：オートさんの手作業 ── 毎朝10分</div>
-      <div class="tl bf" style="margin-top:6px;">
-        <div class="line hot"></div>
-        <div class="pts">
-          <div class="pt"><div class="tm">7:55</div><div class="dot"></div><div class="lb">受信トレイを<br>開く</div></div>
-          <div class="pt"><div class="tm">7:58</div><div class="dot"></div><div class="lb">件名を1つずつ<br>コピー</div></div>
-          <div class="pt"><div class="tm">8:03</div><div class="dot"></div><div class="lb">何件あるか<br>数える</div></div>
-          <div class="pt"><div class="tm">8:06</div><div class="dot"></div><div class="lb">チャットに<br>貼る</div></div>
-          <div class="pt"><div class="tm">8:10</div><div class="dot"></div><div class="lb">送信<br><span style="color:#b91c1c;">写し間違いも</span></div></div>
-        </div>
-      </div>
+    <div class="mapro">
+      <div class="mc c1"><div class="mn">1</div><div class="mi">▶️</div><div class="mt">まず動かす</div><div class="md">メールを取ってくる<br>ところまで</div><div class="ms ok">順調</div></div>
+      <div class="ma">→</div>
+      <div class="mc c2"><div class="mn">2</div><div class="mi">😣</div><div class="mt">つまずく</div><div class="md">3通に分かれる・<br>件数が無い・式がエラー</div><div class="ms ng">困る</div></div>
+      <div class="ma">→</div>
+      <div class="mc c3"><div class="mn">3</div><div class="mi">🔍</div><div class="mt">出力を読む</div><div class="md">{ } と [ ] で<br>中身を読む</div><div class="ms hi">気づく</div></div>
+      <div class="ma">→</div>
+      <div class="mc c4"><div class="mn">4</div><div class="mi">🔧</div><div class="mt">取り出す</div><div class="md">件数・1件目・<br>全件を1行に</div><div class="ms ok">解決</div></div>
+      <div class="ma">→</div>
+      <div class="mc c5"><div class="mn">5</div><div class="mi">📨</div><div class="mt">届ける</div><div class="md">課長に1通。<br>朝10分→0分</div><div class="ms ok">完成</div></div>
     </div>
-    <div style="text-align:center;font-size:32px;color:var(--pa);font-weight:900;line-height:1;margin:6px 0;">▼</div>
-    <div class="col af" style="border-radius:16px;padding:14px 22px 16px;border:2px solid #86efac;background:var(--green-bg);">
-      <div style="display:flex;align-items:center;gap:12px;font-size:22px;font-weight:900;color:#065f46;">
-        <img src="assets/irasutoya_teams_man.png" alt="" style="height:54px;">After：フローが動く ── オートさんの手は0分</div>
-      <div class="tl af" style="margin-top:6px;">
-        <div class="line cool"></div>
-        <div class="pts">
-          <div class="pt"><div class="tm">8:00</div><div class="dot"></div><div class="lb">フローが<br>自動で起動</div></div>
-          <div class="pt"><div class="tm">8:00</div><div class="dot"></div><div class="lb">メールを<br>まとめて取得</div></div>
-          <div class="pt"><div class="tm">8:00</div><div class="dot"></div><div class="lb">件数・件名を<br>取り出す</div></div>
-          <div class="pt"><div class="tm">8:00</div><div class="dot"></div><div class="lb">Teamsに<br>1通</div></div>
-          <div class="pt"><div class="tm">8:01</div><div class="dot"></div><div class="lb">課長が<br>移動中に読む</div></div>
-        </div>
-      </div>
+    <div class="maprow2">
+      <img src="assets/irasutoya_businessman.png" alt="">
+      <div class="sp">「最初から全部わかっている必要はない。<b>つまずいてから、読み方を覚えればいい</b>」</div>
     </div>
-    <div class="gain">
-      <div class="g"><div class="num">10分</div><div class="lb">1日に浮く時間</div></div>
-      <div class="g"><div class="num">約200分</div><div class="lb">月20日ぶん（3時間半）</div></div>
-      <div class="g"><div class="num">0件</div><div class="lb">写し間違い</div></div>
-      <div class="g"><div class="num">4つ</div><div class="lb">使うアクションの数</div></div>
-    </div>
+    <div class="callout pa" style="margin-top:12px;"><strong>右上に、いま何章かが出ます。</strong> ページをめくるたびに、オートさんが1歩ずつ進みます。</div>
 </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
-<section class="slide pa" id="s7">
-  <span class="slide-num">9 / 29</span>
-<div class="slide-head"><div class="slide-eyebrow">PA45｜第29回 ／ 今日やること</div><h1 class="slide-title">動的コンテンツに、ほしい値が無い</h1><div class="concept-dot">Intro</div></div>
+<section class="slide" id="s12b">
+  <span class="slide-num">9 / 31</span>
+<div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第1章 まず動かす</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「まずは練習用のメールを3通送る」</span></div><h1 class="slide-title">まず、自分あてに練習用のメールを3通送る</h1><div class="chapbar"><span class="on">1 まず動かす</span><span class="">2 つまずく</span><span class="">3 出力を読む</span><span class="">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
-    <div class="introrow" style="grid-template-columns:130px 1fr;margin:0 0 8px;">
-      <img class="illus" src="assets/irasutoya_search.png" alt="" style="max-height:120px;">
-      <p style="font-size:21px;color:var(--muted);margin:0;line-height:1.55;">オートさんの仕事をフローにしようとすると、<b>最初の10分で行き止まり</b>になります。ほしい値が、一覧のどこにも出てこないからです。</p>
-    </div>
-    <div style="display:grid;grid-template-columns:.92fr 56px 1.08fr;gap:10px;align-items:center;">
+    <div class="g2c">
       <div>
-        <div class="lbl-s">画面に出てくる「動的コンテンツ」の一覧</div>
-        <div class="dyn">
-          <div class="dh">動的コンテンツ</div>
-          <div class="di"><span class="ic">件</span>件名</div>
-          <div class="di"><span class="ic">差</span>差出人</div>
-          <div class="di"><span class="ic">本</span>本文プレビュー</div>
-          <div class="di"><span class="ic">日</span>受信日時</div>
-        </div>
+        <ol class="steplist">
+          <li>Outlook で<b>自分あて</b>に3通送ります。<b>件名の先頭に <span class="code">PA45</span></b> を付けます</li>
+          <li>例）<b>PA45 見積の件</b>／<b>PA45 議事録の共有</b>／<b>PA45 来週の打ち合わせ</b></li>
+          <li>本文は空でOK。<b>3通届いたのを見てから</b>次へ（届くまで数十秒かかることも）</li>
+        </ol>
+        <div class="callout pa" style="margin-top:12px;font-size:19px;"><strong>なぜ、わざわざ送るのか。</strong>
+          受信トレイをそのまま読むと、<b>人によって件数も中身もばらばら</b>になり、画面共有に<b>本物のメール</b>が映ります。
+          自分で送った3通だけを読む形にすれば、<b>全員同じ結果</b>で、映って困るものもありません。</div>
+        <div class="callout small" style="margin-top:8px;">自分あてに送れない環境のときは、<b>いま受信トレイにある言葉</b>で絞ってもOK（例：件名フィルターに「お知らせ」）。件数は人それぞれになりますが、<b>式はまったく同じ</b>です。</div>
       </div>
-      <div style="text-align:center;font-size:34px;color:var(--pa);font-weight:900;">→</div>
-      <div>
-        <div class="lbl-s">ほしいのは、この3つ</div>
-        <div class="wants">
-          <div class="want"><span class="x">✕</span>1件目の件名<span style="font-size:16px;font-weight:700;">（選ぶと繰り返しに入る）</span></div>
-          <div class="want"><span class="x">✕</span>何件あるか<span style="font-size:16px;font-weight:700;">（一覧に無い）</span></div>
-          <div class="want"><span class="x">✕</span>全件の件名を1行に<span style="font-size:16px;font-weight:700;">（一覧に無い）</span></div>
-          <div class="want ok"><span class="x">✓</span>式で書けば、3つとも取れる</div>
-        </div>
-      </div>
-    </div>
-    <div class="callout pa" style="margin-top:12px;"><strong>第28回のアンケートに、こんな声がありました。</strong>
-      「<b>自分でも式を組めるようになりたいです。動的アクションが表示されない時など。</b>」── 今日はここをやります。</div>
-</div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
-</section>
-<section class="slide teams" id="s8">
-  <span class="slide-num">10 / 29</span>
-<div class="slide-head"><div class="slide-eyebrow">PA45｜第29回 ／ 完成イメージ</div><h1 class="slide-title">ツウチ課長のスマホに、この1通が届きます</h1><div class="concept-dot">Goal</div></div>
-<div class="slide-body">
-
-    <div class="g2c" style="margin-top:6px;">
-      <div class="tcard">
-        <div class="botrow"><span class="av">W</span><span>Workflows</span><span class="bp">BOT</span></div>
-        <div class="q">PA45のメール：3 件</div>
-        <div class="sub" style="font-size:19px;line-height:1.9;color:#242424;">
-          1件目の件名：<b>PA45 見積の件</b><br>
-          1件目の差出人：<b>jido.hajime@contoso.com</b><br>
-          2件目の件名：<b>PA45 議事録の共有</b><br>
-          最後の1件：<b>PA45 来週の打ち合わせ</b><br>
-          全件の件名：<b>見積の件 / 議事録の共有 / 来週の打ち合わせ</b>
-        </div>
-      </div>
-      <div>
-        <div class="who boss" style="padding:12px 16px;">
-          <img src="assets/irasutoya_teams_man.png" alt="">
-          <div><div class="nm" style="font-size:22px;">ツウチ課長</div>
-            <div class="sp" style="font-size:19px;">「移動中に<b>これ1通</b>見れば分かる。オートさんに聞き直さなくていい」</div></div>
-        </div>
-        <div class="lbl-s" style="margin-top:12px;">この1通に入っている値と、その出どころ</div>
-        <div class="maprow"><span class="v1">件数</span><span class="ar2">←</span><span class="fx">length()</span></div>
-        <div class="maprow"><span class="v1">1件目の件名</span><span class="ar2">←</span><span class="fx">first()?['subject']</span></div>
-        <div class="maprow"><span class="v1">最後の1件</span><span class="ar2">←</span><span class="fx">last()?['subject']</span></div>
-        <div class="maprow"><span class="v1">全件の件名</span><span class="ar2">←</span><span class="fx">選択 → join()</span></div>
-      </div>
-    </div>
-</div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
-</section>
-<section class="slide" id="s9">
-  <span class="slide-num">11 / 29</span>
-<div class="slide-head"><div class="slide-eyebrow">PA45｜第29回 ／ 全体像</div><h1 class="slide-title">今日つくるフロー（4ブロック）</h1><div class="concept-dot">Overview</div></div>
-<div class="slide-body">
-
-    <div class="flowline">
-      <span class="step">繰り返し（毎朝8時）</span><span class="ar">▶</span>
-      <span class="step">① PA45のメールを取得</span><span class="ar">▶</span>
-      <span class="step hot">② 出力を読む</span><span class="ar">▶</span>
-      <span class="step">③ 選択で件名だけ</span><span class="ar">▶</span>
-      <span class="step">④ Teamsに1通</span>
-    </div>
-    <div class="roles">
-      <div class="r" style="background:linear-gradient(135deg,#4358c8,#2c3a94);"><div class="ic">📥</div><div class="nm">① 取得</div><div class="role">件名フィルターで自分の3通だけ</div></div>
-      <div class="r" style="background:linear-gradient(135deg,#0ea5a4,#0f7b8a);"><div class="ic">🔍</div><div class="nm">② 読む</div><div class="role">出力のどこに件名が入っているか</div></div>
-      <div class="r" style="background:linear-gradient(135deg,#7a7ede,#5b5fc7);"><div class="ic">🗂️</div><div class="nm">③ 選択</div><div class="role">5件から件名の列だけ抜く</div></div>
-      <div class="r" style="background:linear-gradient(135deg,#16a34a,#065f46);"><div class="ic">📨</div><div class="nm">④ 通知</div><div class="role">まとめて1通で届ける</div></div>
-    </div>
-    <div class="callout pa" style="margin-top:14px;"><strong>山場は②です。</strong>
-      アクションは3つしかありません。時間の大半は<b>「出力のどこに、ほしい値が入っているか」を読むこと</b>に使います。詰まったところは <span class="cop">Copilot</span> に聞きます。</div>
-</div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
-</section>
-<section class="slide" id="s10">
-  <span class="slide-num">12 / 29</span>
-<div class="slide-head"><div class="slide-eyebrow">PA45｜第29回 ／ 5分で復習</div><h1 class="slide-title">{ } は名前で取る。[ ] は番号で取る</h1><div class="concept-dot">Review</div></div>
-<div class="slide-body">
-
-    <div class="g2" style="margin-top:4px;">
-      <div class="nest obj"><div class="h">{ } ＝ 名前のついた箱（お弁当箱）</div>
-        <img src="assets/irasutoya_obentou.png" alt="" style="display:block;height:120px;margin:0 auto 8px;">
-        <div class="kv">
-          <div class="kk">subject</div><div class="vv">【見積】9月分のご請求について</div>
-          <div class="kk">from</div><div class="vv">jido.hajime@contoso.com</div>
-          <div class="kk">isRead</div><div class="vv">false</div>
-        </div>
-        <div style="margin-top:10px;font-size:19px;color:#0369a1;font-weight:800;">取り方＝<span style="font-family:Consolas,monospace;">?['subject']</span>　名前で指名する</div>
-      </div>
-      <div class="nest arr"><div class="h">[ ] ＝ 番号で並んだ棚（前から0番）</div>
-        <img src="assets/irasutoya_tana.png" alt="" style="display:block;height:120px;margin:0 auto 8px;">
-        <div class="slots">
-          <div class="slot hit"><div class="idx">[0]</div><div class="nm">1件目</div></div>
-          <div class="slot"><div class="idx">[1]</div><div class="nm">2件目</div></div>
-          <div class="slot"><div class="idx">[2]</div><div class="nm">3件目</div></div>
-        </div>
-        <div style="margin-top:10px;font-size:19px;color:#b45309;font-weight:800;">取り方＝<span style="font-family:Consolas,monospace;">?[0]</span>　番号で指名する</div>
-        <div style="margin-top:6px;font-size:18px;color:#7c2d12;">⚠ <b>1件目は [0]</b>。人の数え方と1つずれます</div>
-      </div>
-    </div>
-    <div class="callout blue" style="margin-top:14px;"><strong>第14回「JSONの読み方」の復習です。</strong>
-      今日の新しいところは、<b>[ ] を実際に使うところ</b>。第14回は { } が中心で、[ ] は紹介だけでした。</div>
-</div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
-</section>
-<section class="slide" id="s11">
-  <span class="slide-num">13 / 29</span>
-<div class="slide-head"><div class="slide-eyebrow">PA45｜第29回 ／ 5分で復習</div><h1 class="slide-title">スラッシュは「の中の」と読む</h1><div class="concept-dot">Review</div></div>
-<div class="slide-body">
-
-    <div class="expr" style="font-size:24px;text-align:center;padding:16px;">
-      <span class="o">body(</span><span class="b">'メールを取得する (V3)…'</span><span class="o">)</span>?['<span class="d">value</span>']?[<span class="t">0</span>]?['<span class="d">subject</span>']
-    </div>
-    <div class="g2" style="margin-top:14px;">
-      <div class="card blue" style="padding:16px 18px;"><h3 style="margin-bottom:10px;">左から順に、箱を開けていくだけ</h3>
-        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:18px;font-weight:800;">
-          <span style="background:#fff;border:2px solid #94a3b8;border-radius:10px;padding:8px 12px;">
-            body(アクション名)<br><span style="font-size:15px;color:var(--muted);font-weight:700;">結果ぜんぶの箱</span></span>
-          <span style="color:var(--pa);font-size:24px;">▸</span>
-          <span style="background:#f0f9ff;border:2px solid #38bdf8;border-radius:10px;padding:8px 12px;">
-            ?['value']<br><span style="font-size:15px;color:#0369a1;font-weight:700;">並んでいる棚</span></span>
-          <span style="color:var(--pa);font-size:24px;">▸</span>
-          <span style="background:#fffbeb;border:2px solid #f59e0b;border-radius:10px;padding:8px 12px;">
-            ?[0]<br><span style="font-size:15px;color:#b45309;font-weight:700;">その1件目</span></span>
-          <span style="color:var(--pa);font-size:24px;">▸</span>
-          <span style="background:#fdf4ff;border:2px solid #a21caf;border-radius:10px;padding:8px 12px;">
-            ?['subject']<br><span style="font-size:15px;color:#a21caf;font-weight:700;">件名</span></span>
-        </div>
-      </div>
-      <div class="card yellow"><h3>クエスチョンマークの意味</h3>
-        <p style="font-size:21px;">?（はてな）は「<b>無かったら、そこで止めて空にする</b>」という印です。付けないと、値が無いときにフローが赤く止まります。</p>
-        <div class="callout small" style="margin-top:10px;">迷ったら全部の [ の前に ? を付けておく、で構いません。付けすぎても動きます。</div>
-      </div>
+      <img class="illus" src="assets/irasutoya_email.png" alt="" style="max-height:290px;margin:0 auto;">
     </div>
 </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide pa" id="s12">
-  <span class="slide-num">14 / 29</span>
-<div class="slide-head"><div class="slide-eyebrow">PA45｜第29回 ／ ハンズオン①</div><h1 class="slide-title">繰り返し（毎朝8時）から始める</h1><div class="concept-dot">Step 1</div></div>
+  <span class="slide-num">10 / 31</span>
+<div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第1章 まず動かす</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「毎朝8時に、勝手に動くようにする」</span></div><h1 class="slide-title">繰り返し（毎朝8時）から始める</h1><div class="chapbar"><span class="on">1 まず動かす</span><span class="">2 つまずく</span><span class="">3 出力を読む</span><span class="">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
     <div class="g2c">
@@ -904,30 +811,9 @@
     </div>
 </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
-<section class="slide" id="s12b">
-  <span class="slide-num">15 / 29</span>
-<div class="slide-head"><div class="slide-eyebrow">PA45｜第29回 ／ 下ごしらえ（3分）</div><h1 class="slide-title">まず、自分あてに練習用のメールを3通送る</h1><div class="concept-dot">Step 0</div></div>
-<div class="slide-body">
-
-    <div class="g2c">
-      <div>
-        <ol class="steplist">
-          <li>Outlook で<b>自分あて</b>に3通送ります。<b>件名の先頭に <span class="code">PA45</span></b> を付けます</li>
-          <li>例）<b>PA45 見積の件</b>／<b>PA45 議事録の共有</b>／<b>PA45 来週の打ち合わせ</b></li>
-          <li>本文は空でOK。<b>3通届いたのを見てから</b>次へ（届くまで数十秒かかることも）</li>
-        </ol>
-        <div class="callout pa" style="margin-top:12px;font-size:19px;"><strong>なぜ、わざわざ送るのか。</strong>
-          受信トレイをそのまま読むと、<b>人によって件数も中身もばらばら</b>になり、画面共有に<b>本物のメール</b>が映ります。
-          自分で送った3通だけを読む形にすれば、<b>全員同じ結果</b>で、映って困るものもありません。</div>
-        <div class="callout small" style="margin-top:8px;">自分あてに送れない環境のときは、<b>いま受信トレイにある言葉</b>で絞ってもOK（例：件名フィルターに「お知らせ」）。件数は人それぞれになりますが、<b>式はまったく同じ</b>です。</div>
-      </div>
-      <img class="illus" src="assets/irasutoya_email.png" alt="" style="max-height:290px;margin:0 auto;">
-    </div>
-</div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
-</section>
 <section class="slide pa" id="s13">
-  <span class="slide-num">16 / 29</span>
-<div class="slide-head"><div class="slide-eyebrow">PA45｜第29回 ／ ハンズオン②</div><h1 class="slide-title">PA45のメールだけ、新しい順に5件</h1><div class="concept-dot">Step 2</div></div>
+  <span class="slide-num">11 / 31</span>
+<div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第1章 まず動かす</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「PA45のメールだけ取ってくる」</span></div><h1 class="slide-title">PA45のメールだけ、新しい順に5件</h1><div class="chapbar"><span class="on">1 まず動かす</span><span class="">2 つまずく</span><span class="">3 出力を読む</span><span class="">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
     <div class="g2c">
@@ -966,8 +852,8 @@
 </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide" id="s14">
-  <span class="slide-num">17 / 29</span>
-<div class="slide-head"><div class="slide-eyebrow">PA45｜第29回 ／ ハンズオン③</div><h1 class="slide-title">式を書く前に、1回動かして出力を見る</h1><div class="concept-dot">Step 3</div></div>
+  <span class="slide-num">12 / 31</span>
+<div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第1章 まず動かす</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「動いた！ 全部緑になった」</span></div><h1 class="slide-title">式を書く前に、1回動かして出力を見る</h1><div class="chapbar"><span class="on">1 まず動かす</span><span class="">2 つまずく</span><span class="">3 出力を読む</span><span class="">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
     <div class="g2c">
@@ -985,9 +871,101 @@
     </div>
 </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
+<section class="slide pa" id="st1">
+  <span class="slide-num">13 / 31</span>
+<div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第2章 つまずく</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「件名を選んだだけなのに…」</span></div><h1 class="slide-title">件名を選んだだけなのに、3通に分かれた</h1><div class="chapbar"><span class="done">1 まず動かす</span><span class="on">2 つまずく</span><span class="">3 出力を読む</span><span class="">4 取り出す</span><span class="">5 届ける</span></div></div>
+<div class="slide-body">
+
+    <div class="st1">
+      <div>
+        <div class="lbl-s">オートさんが作ったフロー</div>
+        <div class="fm">
+          <div class="fb">⏰ 繰り返し（毎朝8時）</div><div class="fv">▼</div>
+          <div class="fb">✉️ メールを取得する (V3)</div><div class="fv">▼</div>
+          <div class="floop"><div class="fl">繰り返しの枠（勝手に追加された）</div>
+            <div class="fb tm">💬 Teamsに投稿：<b>件名</b></div></div>
+        </div>
+      </div>
+      <div class="bigar">実行<br>→</div>
+      <div>
+        <div class="lbl-s">ツウチ課長のスマホ</div>
+        <div class="ph">
+          <div class="pm">PA45 見積の件</div>
+          <div class="pm">PA45 議事録の共有</div>
+          <div class="pm">PA45 来週の打ち合わせ</div>
+        </div>
+        <div class="boss"><img src="assets/irasutoya_teams_man.png" alt=""><div class="sp">「3通バラバラ。<b>何件？ どれが最新？</b>」</div></div>
+      </div>
+    </div>
+    <div class="callout pa" style="margin-top:12px;"><strong>動的コンテンツで「件名」を1つ選んだだけです。</strong>
+      それでも枠が勝手に足されて、1件ずつ別の通知になりました。<b>なぜそうなるのかは、第3章で分かります。</b></div>
+</div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
+</section>
+<section class="slide pa" id="s7">
+  <span class="slide-num">14 / 31</span>
+<div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第2章 つまずく</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「件数がどこにも無い…」</span></div><h1 class="slide-title">何件あるか、一覧のどこにも出てこない</h1><div class="chapbar"><span class="done">1 まず動かす</span><span class="on">2 つまずく</span><span class="">3 出力を読む</span><span class="">4 取り出す</span><span class="">5 届ける</span></div></div>
+<div class="slide-body">
+
+    <div class="introrow" style="grid-template-columns:130px 1fr;margin:0 0 8px;">
+      <img class="illus" src="assets/irasutoya_search.png" alt="" style="max-height:120px;">
+      <p style="font-size:21px;color:var(--muted);margin:0;line-height:1.55;">次に「件数」を入れようとしました。ところが、<b>ほしい値が一覧のどこにも出てきません</b>。</p>
+    </div>
+    <div style="display:grid;grid-template-columns:.92fr 56px 1.08fr;gap:10px;align-items:center;">
+      <div>
+        <div class="lbl-s">画面に出てくる「動的コンテンツ」の一覧</div>
+        <div class="dyn">
+          <div class="dh">動的コンテンツ</div>
+          <div class="di"><span class="ic">件</span>件名</div>
+          <div class="di"><span class="ic">差</span>差出人</div>
+          <div class="di"><span class="ic">本</span>本文プレビュー</div>
+          <div class="di"><span class="ic">日</span>受信日時</div>
+        </div>
+      </div>
+      <div style="text-align:center;font-size:34px;color:var(--pa);font-weight:900;">→</div>
+      <div>
+        <div class="lbl-s">ほしいのは、この3つ</div>
+        <div class="wants">
+          <div class="want"><span class="x">✕</span>1件目の件名<span style="font-size:16px;font-weight:700;">（選ぶと繰り返しに入る）</span></div>
+          <div class="want"><span class="x">✕</span>何件あるか<span style="font-size:16px;font-weight:700;">（一覧に無い）</span></div>
+          <div class="want"><span class="x">✕</span>全件の件名を1行に<span style="font-size:16px;font-weight:700;">（一覧に無い）</span></div>
+          <div class="want ok"><span class="x">✓</span>式で書けば、3つとも取れる</div>
+        </div>
+      </div>
+    </div>
+    <div class="callout pa" style="margin-top:12px;"><strong>第28回のアンケートに、こんな声がありました。</strong>
+      「<b>自分でも式を組めるようになりたいです。動的アクションが表示されない時など。</b>」── 今日はここをやります。</div>
+</div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
+</section>
+<section class="slide pa" id="st3">
+  <span class="slide-num">15 / 31</span>
+<div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第2章 つまずく</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「Copilotの式を貼ったら、エラー…」</span></div><h1 class="slide-title">Copilotに聞いた式を貼ったら、エラーになった</h1><div class="chapbar"><span class="done">1 まず動かす</span><span class="on">2 つまずく</span><span class="">3 出力を読む</span><span class="">4 取り出す</span><span class="">5 届ける</span></div></div>
+<div class="slide-body">
+
+    <div class="st3">
+      <div class="cq">
+        <div class="lbl-s">Copilot に聞いた</div>
+        <div class="qq">「1件目の件名を取り出す式を教えて」</div>
+        <div class="lbl-s" style="margin-top:10px;">返ってきた式（例）</div>
+        <div class="code">first(outputs('<span class="bad">Get_emails_(V3)</span>')?['body/value'])?['subject']</div>
+      </div>
+      <div class="neq">≠</div>
+      <div class="cq">
+        <div class="lbl-s">オートさんのフローのアクション名</div>
+        <div class="code">'<span class="good">メールを取得する (V3)（PA45のメールを5件）</span>'</div>
+        <div class="err">✕ 式が通らない（エラー）</div>
+      </div>
+    </div>
+    <div class="maprow2" style="margin-top:14px;">
+      <img src="assets/irasutoya_businessman.png" alt="">
+      <div class="sp">「どこが違うのか、<b>式が読めないので分からない</b>。言われたまま貼るしかない…」</div>
+    </div>
+    <div class="callout pa" style="margin-top:12px;"><strong>Copilotは、こちらの出力を見ていません。</strong>
+      だから一般的な名前で答えることがあります。読み方をそろえれば、どこを直せばいいか分かります（第4章）。</div>
+</div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
+</section>
 <section class="slide" id="s15">
-  <span class="slide-num">18 / 29</span>
-<div class="slide-head"><div class="slide-eyebrow">PA45｜第29回 ／ ⚠ 落とし穴</div><h1 class="slide-title">出力は巨大。そのままCopilotに貼らない</h1><div class="concept-dot">Caution</div></div>
+  <span class="slide-num">16 / 31</span>
+<div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第3章 出力を読む</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「出力を開いてみた。長い…」</span></div><h1 class="slide-title">出力は巨大。そのままCopilotに貼らない</h1><div class="chapbar"><span class="done">1 まず動かす</span><span class="done">2 つまずく</span><span class="on">3 出力を読む</span><span class="">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
     <div class="sizebar"><span class="lbl">出力ぜんぶ（5件）</span>
@@ -1016,17 +994,17 @@
 </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide pa" id="s16">
-  <span class="slide-num">19 / 29</span>
-<div class="slide-head"><div class="slide-eyebrow">PA45｜第29回 ／ ★今日の山場</div><h1 class="slide-title">返ってきたのは、value という名前の「棚」</h1><div class="concept-dot">Key</div></div>
+  <span class="slide-num">17 / 31</span>
+<div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第3章 出力を読む</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「件名は棚に並んでいた。だから3通に！」</span></div><h1 class="slide-title">返ってきたのは、value という名前の「棚」</h1><div class="chapbar"><span class="done">1 まず動かす</span><span class="done">2 つまずく</span><span class="on">3 出力を読む</span><span class="">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
     <div class="jsonbox" style="font-size:18px;">{
   <span class="k">"body"</span>: {
     <span class="k">"value"</span>: [                      <span class="c">← ここが [ ]。5件ならんでいる</span>
-      { <span class="k">"subject"</span>: <span class="v">"【見積】9月分のご請求について"</span>,   <span class="c">← [0] 1件目</span>
+      { <span class="k">"subject"</span>: <span class="v">"PA45 見積の件"</span>,   <span class="c">← [0] 1件目</span>
         <span class="k">"from"</span>: <span class="v">"jido.hajime@contoso.com"</span> },
-      { <span class="k">"subject"</span>: <span class="v">"アンケートに新しい回答が届きました"</span> },  <span class="c">← [1] 2件目</span>
-      { <span class="k">"subject"</span>: <span class="v">"来週の打ち合わせ資料です"</span> }          <span class="c">← [2] 3件目</span>
+      { <span class="k">"subject"</span>: <span class="v">"PA45 議事録の共有"</span> },  <span class="c">← [1] 2件目</span>
+      { <span class="k">"subject"</span>: <span class="v">"PA45 来週の打ち合わせ"</span> }          <span class="c">← [2] 3件目</span>
     ]
   }
 }</div>
@@ -1038,9 +1016,70 @@
     </div>
 </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
+<section class="slide" id="s10">
+  <span class="slide-num">18 / 31</span>
+<div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第3章 出力を読む</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「{ } と [ ] の見分け方を思い出す」</span></div><h1 class="slide-title">{ } は名前で取る。[ ] は番号で取る</h1><div class="chapbar"><span class="done">1 まず動かす</span><span class="done">2 つまずく</span><span class="on">3 出力を読む</span><span class="">4 取り出す</span><span class="">5 届ける</span></div></div>
+<div class="slide-body">
+
+    <div class="g2" style="margin-top:4px;">
+      <div class="nest obj"><div class="h">{ } ＝ 名前のついた箱（お弁当箱）</div>
+        <img src="assets/irasutoya_obentou.png" alt="" style="display:block;height:120px;margin:0 auto 8px;">
+        <div class="kv">
+          <div class="kk">subject</div><div class="vv">PA45 見積の件</div>
+          <div class="kk">from</div><div class="vv">jido.hajime@contoso.com</div>
+          <div class="kk">isRead</div><div class="vv">false</div>
+        </div>
+        <div style="margin-top:10px;font-size:19px;color:#0369a1;font-weight:800;">取り方＝<span style="font-family:Consolas,monospace;">?['subject']</span>　名前で指名する</div>
+      </div>
+      <div class="nest arr"><div class="h">[ ] ＝ 番号で並んだ棚（前から0番）</div>
+        <img src="assets/irasutoya_tana.png" alt="" style="display:block;height:120px;margin:0 auto 8px;">
+        <div class="slots">
+          <div class="slot hit"><div class="idx">[0]</div><div class="nm">1件目</div></div>
+          <div class="slot"><div class="idx">[1]</div><div class="nm">2件目</div></div>
+          <div class="slot"><div class="idx">[2]</div><div class="nm">3件目</div></div>
+        </div>
+        <div style="margin-top:10px;font-size:19px;color:#b45309;font-weight:800;">取り方＝<span style="font-family:Consolas,monospace;">?[0]</span>　番号で指名する</div>
+        <div style="margin-top:6px;font-size:18px;color:#7c2d12;">⚠ <b>1件目は [0]</b>。人の数え方と1つずれます</div>
+      </div>
+    </div>
+    <div class="callout blue" style="margin-top:14px;"><strong>第14回「JSONの読み方」の復習です。</strong>
+      今日の新しいところは、<b>[ ] を実際に使うところ</b>。第14回は { } が中心で、[ ] は紹介だけでした。</div>
+</div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
+</section>
+<section class="slide" id="s11">
+  <span class="slide-num">19 / 31</span>
+<div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第3章 出力を読む</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「左から箱を開けていけばいい」</span></div><h1 class="slide-title">スラッシュは「の中の」と読む</h1><div class="chapbar"><span class="done">1 まず動かす</span><span class="done">2 つまずく</span><span class="on">3 出力を読む</span><span class="">4 取り出す</span><span class="">5 届ける</span></div></div>
+<div class="slide-body">
+
+    <div class="expr" style="font-size:24px;text-align:center;padding:16px;">
+      <span class="o">body(</span><span class="b">'メールを取得する (V3)…'</span><span class="o">)</span>?['<span class="d">value</span>']?[<span class="t">0</span>]?['<span class="d">subject</span>']
+    </div>
+    <div class="g2" style="margin-top:14px;">
+      <div class="card blue" style="padding:16px 18px;"><h3 style="margin-bottom:10px;">左から順に、箱を開けていくだけ</h3>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:18px;font-weight:800;">
+          <span style="background:#fff;border:2px solid #94a3b8;border-radius:10px;padding:8px 12px;">
+            body(アクション名)<br><span style="font-size:15px;color:var(--muted);font-weight:700;">結果ぜんぶの箱</span></span>
+          <span style="color:var(--pa);font-size:24px;">▸</span>
+          <span style="background:#f0f9ff;border:2px solid #38bdf8;border-radius:10px;padding:8px 12px;">
+            ?['value']<br><span style="font-size:15px;color:#0369a1;font-weight:700;">並んでいる棚</span></span>
+          <span style="color:var(--pa);font-size:24px;">▸</span>
+          <span style="background:#fffbeb;border:2px solid #f59e0b;border-radius:10px;padding:8px 12px;">
+            ?[0]<br><span style="font-size:15px;color:#b45309;font-weight:700;">その1件目</span></span>
+          <span style="color:var(--pa);font-size:24px;">▸</span>
+          <span style="background:#fdf4ff;border:2px solid #a21caf;border-radius:10px;padding:8px 12px;">
+            ?['subject']<br><span style="font-size:15px;color:#a21caf;font-weight:700;">件名</span></span>
+        </div>
+      </div>
+      <div class="card yellow"><h3>クエスチョンマークの意味</h3>
+        <p style="font-size:21px;">?（はてな）は「<b>無かったら、そこで止めて空にする</b>」という印です。付けないと、値が無いときにフローが赤く止まります。</p>
+        <div class="callout small" style="margin-top:10px;">迷ったら全部の [ の前に ? を付けておく、で構いません。付けすぎても動きます。</div>
+      </div>
+    </div>
+</div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
+</section>
 <section class="slide pa" id="s17">
-  <span class="slide-num">20 / 29</span>
-<div class="slide-head"><div class="slide-eyebrow">PA45｜第29回 ／ 取り出す</div><h1 class="slide-title">1件目・件数・最後は、この3つ</h1><div class="concept-dot">Expressions</div></div>
+  <span class="slide-num">20 / 31</span>
+<div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第4章 取り出す</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「件数も1件目も、式なら取れた」</span></div><h1 class="slide-title">1件目・件数・最後は、この3つ</h1><div class="chapbar"><span class="done">1 まず動かす</span><span class="done">2 つまずく</span><span class="done">3 出力を読む</span><span class="on">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
     <table class="fxtable">
@@ -1057,8 +1096,8 @@
 </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide" id="s18">
-  <span class="slide-num">21 / 29</span>
-<div class="slide-head"><div class="slide-eyebrow">PA45｜第29回 ／ 実機で確かめる</div><h1 class="slide-title">差出人は、これ以上ほどけない</h1><div class="concept-dot">Check</div></div>
+  <span class="slide-num">21 / 31</span>
+<div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第4章 取り出す</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「差出人は、文字がそのまま入っていた」</span></div><h1 class="slide-title">差出人は、これ以上ほどけない</h1><div class="chapbar"><span class="done">1 まず動かす</span><span class="done">2 つまずく</span><span class="done">3 出力を読む</span><span class="on">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
     <div class="g2">
@@ -1077,8 +1116,8 @@
 </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide pa" id="s19">
-  <span class="slide-num">22 / 29</span>
-<div class="slide-head"><div class="slide-eyebrow">PA45｜第29回 ／ ハンズオン④</div><h1 class="slide-title">件名の列だけ抜いて、1本につなぐ</h1><div class="concept-dot">Step 4</div></div>
+  <span class="slide-num">22 / 31</span>
+<div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第4章 取り出す</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「3通バラバラが、1行にまとまった」</span></div><h1 class="slide-title">件名の列だけ抜いて、1本につなぐ</h1><div class="chapbar"><span class="done">1 まず動かす</span><span class="done">2 つまずく</span><span class="done">3 出力を読む</span><span class="on">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
     <div class="pick">
@@ -1121,8 +1160,8 @@
 </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide" id="s20">
-  <span class="slide-num">23 / 29</span>
-<div class="slide-head"><div class="slide-eyebrow">PA45｜第29回 ／ 手が止まったら</div><h1 class="slide-title">出力を先に見せてから、式を聞く</h1><div class="concept-dot">Copilot</div></div>
+  <span class="slide-num">23 / 31</span>
+<div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第4章 取り出す</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「出力を見せて聞いたら、名前が合った」</span></div><h1 class="slide-title">出力を先に見せてから、式を聞く</h1><div class="chapbar"><span class="done">1 まず動かす</span><span class="done">2 つまずく</span><span class="done">3 出力を読む</span><span class="on">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
     <div class="tiprow"><span class="tipno">1</span><h3>そのまま貼れる聞き方</h3></div>
@@ -1138,8 +1177,8 @@
 </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide teams" id="s21">
-  <span class="slide-num">24 / 29</span>
-<div class="slide-head"><div class="slide-eyebrow">PA45｜第29回 ／ ハンズオン⑤</div><h1 class="slide-title">取り出した値を、1通に並べる</h1><div class="concept-dot">Step 5</div></div>
+  <span class="slide-num">24 / 31</span>
+<div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第5章 届ける</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「取り出した値を、1通に並べる」</span></div><h1 class="slide-title">取り出した値を、1通に並べる</h1><div class="chapbar"><span class="done">1 まず動かす</span><span class="done">2 つまずく</span><span class="done">3 出力を読む</span><span class="done">4 取り出す</span><span class="on">5 届ける</span></div></div>
 <div class="slide-body">
 
     <div class="g2c">
@@ -1165,8 +1204,8 @@
 </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide" id="s22">
-  <span class="slide-num">25 / 29</span>
-<div class="slide-head"><div class="slide-eyebrow">PA45｜第29回 ／ 結果</div><h1 class="slide-title">4つとも緑。1通にまとまりました</h1><div class="concept-dot">Done</div></div>
+  <span class="slide-num">25 / 31</span>
+<div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第5章 届ける</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「4つとも緑。1通で届いた」</span></div><h1 class="slide-title">4つとも緑。1通にまとまりました</h1><div class="chapbar"><span class="done">1 まず動かす</span><span class="done">2 つまずく</span><span class="done">3 出力を読む</span><span class="done">4 取り出す</span><span class="on">5 届ける</span></div></div>
 <div class="slide-body">
 
     <div style="display:grid;grid-template-columns:400px 1fr;gap:30px;align-items:center;">
@@ -1187,9 +1226,83 @@
     </div>
 </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
+<section class="slide teams" id="s8">
+  <span class="slide-num">26 / 31</span>
+<div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第5章 届ける</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「課長のスマホに、この1通」</span></div><h1 class="slide-title">ツウチ課長のスマホに、この1通が届きます</h1><div class="chapbar"><span class="done">1 まず動かす</span><span class="done">2 つまずく</span><span class="done">3 出力を読む</span><span class="done">4 取り出す</span><span class="on">5 届ける</span></div></div>
+<div class="slide-body">
+
+    <div class="g2c" style="margin-top:6px;">
+      <div class="tcard">
+        <div class="botrow"><span class="av">W</span><span>Workflows</span><span class="bp">BOT</span></div>
+        <div class="q">PA45のメール：3 件</div>
+        <div class="sub" style="font-size:19px;line-height:1.9;color:#242424;">
+          1件目の件名：<b>PA45 見積の件</b><br>
+          1件目の差出人：<b>jido.hajime@contoso.com</b><br>
+          2件目の件名：<b>PA45 議事録の共有</b><br>
+          最後の1件：<b>PA45 来週の打ち合わせ</b><br>
+          全件の件名：<b>見積の件 / 議事録の共有 / 来週の打ち合わせ</b>
+        </div>
+      </div>
+      <div>
+        <div class="who boss" style="padding:12px 16px;">
+          <img src="assets/irasutoya_teams_man.png" alt="">
+          <div><div class="nm" style="font-size:22px;">ツウチ課長</div>
+            <div class="sp" style="font-size:19px;">「移動中に<b>これ1通</b>見れば分かる。オートさんに聞き直さなくていい」</div></div>
+        </div>
+        <div class="lbl-s" style="margin-top:12px;">この1通に入っている値と、その出どころ</div>
+        <div class="maprow"><span class="v1">件数</span><span class="ar2">←</span><span class="fx">length()</span></div>
+        <div class="maprow"><span class="v1">1件目の件名</span><span class="ar2">←</span><span class="fx">first()?['subject']</span></div>
+        <div class="maprow"><span class="v1">最後の1件</span><span class="ar2">←</span><span class="fx">last()?['subject']</span></div>
+        <div class="maprow"><span class="v1">全件の件名</span><span class="ar2">←</span><span class="fx">選択 → join()</span></div>
+      </div>
+    </div>
+</div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
+</section>
+<section class="slide pa" id="s6c">
+  <span class="slide-num">27 / 31</span>
+<div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第5章 届ける</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「毎朝10分が、0分になった」</span></div><h1 class="slide-title">オートさんの朝が、10分から0分になります</h1><div class="chapbar"><span class="done">1 まず動かす</span><span class="done">2 つまずく</span><span class="done">3 出力を読む</span><span class="done">4 取り出す</span><span class="on">5 届ける</span></div></div>
+<div class="slide-body">
+
+    <div class="col bf" style="border-radius:16px;padding:14px 22px 16px;border:2px solid #fdba74;background:#fff7ed;">
+      <div style="display:flex;align-items:center;gap:12px;font-size:22px;font-weight:900;color:#9a3412;">
+        <img src="assets/irasutoya_businessman.png" alt="" style="height:54px;">Before：オートさんの手作業 ── 毎朝10分<span class="you" style="font-size:15px;margin:0 0 0 4px;">主役（あなた）</span></div>
+      <div class="tl bf" style="margin-top:6px;">
+        <div class="line hot"></div>
+        <div class="pts">
+          <div class="pt"><div class="tm">7:55</div><div class="dot"></div><div class="lb">受信トレイを<br>開く</div></div>
+          <div class="pt"><div class="tm">7:58</div><div class="dot"></div><div class="lb">件名を1つずつ<br>コピー</div></div>
+          <div class="pt"><div class="tm">8:03</div><div class="dot"></div><div class="lb">何件あるか<br>数える</div></div>
+          <div class="pt"><div class="tm">8:06</div><div class="dot"></div><div class="lb">チャットに<br>貼る</div></div>
+          <div class="pt"><div class="tm">8:10</div><div class="dot"></div><div class="lb">送信<br><span style="color:#b91c1c;">写し間違いも</span></div></div>
+        </div>
+      </div>
+    </div>
+    <div style="text-align:center;font-size:32px;color:var(--pa);font-weight:900;line-height:1;margin:6px 0;">▼</div>
+    <div class="col af" style="border-radius:16px;padding:14px 22px 16px;border:2px solid #86efac;background:var(--green-bg);">
+      <div style="display:flex;align-items:center;gap:12px;font-size:22px;font-weight:900;color:#065f46;">
+        <img src="assets/irasutoya_teams_man.png" alt="" style="height:54px;">After：フローが動く ── オートさんの手は0分</div>
+      <div class="tl af" style="margin-top:6px;">
+        <div class="line cool"></div>
+        <div class="pts">
+          <div class="pt"><div class="tm">8:00</div><div class="dot"></div><div class="lb">フローが<br>自動で起動</div></div>
+          <div class="pt"><div class="tm">8:00</div><div class="dot"></div><div class="lb">メールを<br>まとめて取得</div></div>
+          <div class="pt"><div class="tm">8:00</div><div class="dot"></div><div class="lb">件数・件名を<br>取り出す</div></div>
+          <div class="pt"><div class="tm">8:00</div><div class="dot"></div><div class="lb">Teamsに<br>1通</div></div>
+          <div class="pt"><div class="tm">8:01</div><div class="dot"></div><div class="lb">課長が<br>移動中に読む</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="gain">
+      <div class="g"><div class="num">10分</div><div class="lb">1日に浮く時間</div></div>
+      <div class="g"><div class="num">約200分</div><div class="lb">月20日ぶん（3時間半）</div></div>
+      <div class="g"><div class="num">0件</div><div class="lb">写し間違い</div></div>
+      <div class="g"><div class="num">4つ</div><div class="lb">使うアクションの数</div></div>
+    </div>
+</div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
+</section>
 <section class="slide" id="s23">
-  <span class="slide-num">26 / 29</span>
-<div class="slide-head"><div class="slide-eyebrow">PA45｜第29回 ／ 使える場面</div><h1 class="slide-title">同じ4つの式が、この3人の朝にも効きます</h1><div class="concept-dot">More</div></div>
+  <span class="slide-num">28 / 31</span>
+<div class="slide-head"><div class="slide-eyebrow"><span class="chapno">エピローグ</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「同じ式は、ほかの仕事にも使える」</span></div><h1 class="slide-title">同じ4つの式が、この3人の朝にも効きます</h1><div class="chapbar"><span class="done">1 まず動かす</span><span class="done">2 つまずく</span><span class="done">3 出力を読む</span><span class="done">4 取り出す</span><span class="done">5 届ける</span></div></div>
 <div class="slide-body">
 
     <div class="useq">
@@ -1211,8 +1324,8 @@
 </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide" id="s24">
-  <span class="slide-num">27 / 29</span>
-<div class="slide-head"><div class="slide-eyebrow">PA45｜第29回 ／ まとめ</div><h1 class="slide-title">今日そろえたもの</h1><div class="concept-dot">Wrap</div></div>
+  <span class="slide-num">29 / 31</span>
+<div class="slide-head"><div class="slide-eyebrow"><span class="chapno">エピローグ</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「今日そろえたのは、この4つ」</span></div><h1 class="slide-title">今日そろえたもの</h1><div class="chapbar"><span class="done">1 まず動かす</span><span class="done">2 つまずく</span><span class="done">3 出力を読む</span><span class="done">4 取り出す</span><span class="done">5 届ける</span></div></div>
 <div class="slide-body">
 
     <div class="steps4">
@@ -1232,7 +1345,7 @@
 </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide" id="s25">
-  <span class="slide-num">28 / 29</span>
+  <span class="slide-num">30 / 31</span>
 <div class="slide-head"><div class="slide-eyebrow">PA45 のご案内</div><h1 class="slide-title">PA45 は、こんな場です</h1><div class="concept-dot">About</div></div>
 <div class="slide-body">
 
@@ -1249,7 +1362,7 @@
 </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide title-slide" id="s26">
-  <span class="slide-num">29 / 29</span>
+  <span class="slide-num">31 / 31</span>
 <div class="slide-head"><div class="slide-eyebrow">Thank you!</div><h1 class="slide-title">お疲れさまでした 🎉</h1></div>
 <div class="slide-body">
 
