@@ -655,6 +655,7 @@
   #slink .realshot{max-height:none !important;width:100% !important;height:auto !important;object-fit:contain;}
   #slink .linkrow{grid-template-columns:1.25fr 1fr;}
   #slink .xp{font-size:20px;} #slink .xp code{font-size:20px;} #slink .xp .xd{font-size:18px;} #slink .xall code{font-size:19px;} #slink .xres{font-size:26px;}
+  .xwhy{font-size:17px;line-height:1.5;background:#fff1f2;border:2px solid #fecdd3;border-radius:10px;padding:6px 10px;color:#9f1239;}
   .mk.sm{width:24px;height:24px;font-size:14px;}
   .dimnote{font-size:15px;color:#64748b;margin-top:4px;}
   .lexpr{display:flex;flex-direction:column;gap:7px;}
@@ -682,6 +683,16 @@
   .lmbar{display:flex;gap:3px;height:62px;}
   .lmbar span{display:flex;align-items:center;justify-content:center;text-align:center;font-size:14px;font-weight:800;line-height:1.3;border-radius:6px;padding:0 4px;overflow:hidden;}
   .lmbar .sk{background:#e2e8f0;color:#64748b;} .lmbar .hit{background:#4358c8;color:#fff;} .lmbar .hit.g{background:#16a34a;} .lmbar .rep{background:#f1f5f9;color:#475569;border:2px dashed #cbd5e1;}
+  /* ---- Copilot の式を出力と見比べる（sq） ---- */
+  .sqrow{display:flex;flex-direction:column;gap:16px;}
+  .sqexpr{border:2px solid #ddd6fe;border-radius:16px;background:#faf5ff;padding:16px 18px;}
+  .sqparts{display:flex;align-items:flex-start;gap:8px;flex-wrap:wrap;margin-top:8px;}
+  .sqparts .pt{display:flex;flex-direction:column;align-items:center;gap:8px;}
+  .sqparts code{font-family:Consolas,monospace;font-size:26px;font-weight:800;background:#1e1b2e;color:#e2e8f0;border-radius:8px;padding:8px 12px;}
+  .sqparts .q code{color:#fde68a;outline:3px dashed #f59e0b;outline-offset:2px;}
+  .sqparts em{font-style:normal;font-size:19px;font-weight:900;color:#b45309;}
+  .sqnext{margin-top:18px;text-align:center;font-size:24px;font-weight:800;color:#2c3a94;background:#eef1fc;border-radius:12px;padding:12px;}
+  #sq .who3.top .sp{font-size:24px;}
   .you{display:inline-block;font-size:17px;font-weight:900;color:#fff;background:#e8590c;border-radius:999px;padding:2px 14px;margin:4px 0 2px;}
   #s9b .who{padding:12px 18px;gap:16px;grid-template-columns:130px 1fr;}
   #s9b .who img{max-height:130px;} #s9b .who .nm{font-size:26px;} #s9b .who .sp{font-size:23px;margin-top:6px;}
@@ -767,15 +778,16 @@
     <li><a href="#s16"><span class="n">22</span>③-4 ★value は棚</a></li>
     <li><a href="#s10"><span class="n">23</span>③-5 { } と [ ]</a></li>
     <li><a href="#s11"><span class="n">24</span>③-6 / は「の中の」</a></li>
-    <li><a href="#slink"><span class="n">25</span>③-7 ★出力をたどると式になる</a></li>
-    <li><a href="#st4w"><span class="n">26</span>④-1 なぜ For each を消すのか</a></li>
-    <li><a href="#s4a"><span class="n">27</span>④-2 For each を外して件数を出す</a></li>
-    <li><a href="#s17"><span class="n">28</span>④-3 使う式は4つ</a></li>
-    <li><a href="#s4b"><span class="n">29</span>④-4 1行ずつ足してテスト</a></li>
-    <li><a href="#s20"><span class="n">30</span>④-7 Copilotに聞き直す</a></li>
-    <li><a href="#snext"><span class="n">31</span>今日できたこと</a></li>
-    <li><a href="#s25"><span class="n">32</span>PA45のご案内</a></li>
-    <li><a href="#s26"><span class="n">33</span>クロージング＆アンケート</a></li>
+    <li><a href="#sq"><span class="n">25</span>③-7 Copilot の式を出力と見比べる</a></li>
+    <li><a href="#slink"><span class="n">26</span>③-8 ★出力をたどると式になる</a></li>
+    <li><a href="#st4w"><span class="n">27</span>④-1 なぜ For each を消すのか</a></li>
+    <li><a href="#s4a"><span class="n">28</span>④-2 For each を外して件数を出す</a></li>
+    <li><a href="#s17"><span class="n">29</span>④-3 使う式は4つ</a></li>
+    <li><a href="#s4b"><span class="n">30</span>④-4 1行ずつ足してテスト</a></li>
+    <li><a href="#s20"><span class="n">31</span>④-7 Copilotに聞き直す</a></li>
+    <li><a href="#snext"><span class="n">32</span>今日できたこと</a></li>
+    <li><a href="#s25"><span class="n">33</span>PA45のご案内</a></li>
+    <li><a href="#s26"><span class="n">34</span>クロージング＆アンケート</a></li>
   </ol>
 </nav>
 <button class="toc-toggle" id="tocToggle" type="button">≡ 目次</button>
@@ -786,7 +798,7 @@
 </div>
 
 <section class="slide title-slide" id="s1">
-  <span class="slide-num">1 / 33</span>
+  <span class="slide-num">1 / 34</span>
 
   <div class="opening-bar"><span>PA45 — Power Automate 45 ｜ 第29回 / Vol.29</span><span>Online Hands-on</span></div>
   <div class="slide-body" style="justify-content:center;align-items:center;text-align:center;">
@@ -798,7 +810,7 @@
 </div><div class="slide-footer"><span>Power Automate for Beginners</span><span style="color:var(--hint);">Copyright © PA45</span></div>
 </section>
 <section class="slide" id="s2">
-  <span class="slide-num">2 / 33</span>
+  <span class="slide-num">2 / 34</span>
 <div class="slide-head"><div class="slide-eyebrow">PA45｜第29回</div><h1 class="slide-title">事前準備 <small>（サインインできればOK・見るだけ参加も歓迎）</small></h1></div>
 <div class="slide-body">
 
@@ -823,7 +835,7 @@
 </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide" id="s3">
-  <span class="slide-num">3 / 33</span>
+  <span class="slide-num">3 / 34</span>
 <div class="slide-head"><div class="slide-eyebrow">INTRODUCTION</div><h1 class="slide-title">PA45 とは？</h1><div class="concept-dot">Concept</div></div>
 <div class="slide-body">
 
@@ -837,7 +849,7 @@
 </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide" id="s4">
-  <span class="slide-num">4 / 33</span>
+  <span class="slide-num">4 / 34</span>
 <div class="slide-head"><div class="slide-eyebrow">SPEAKER</div><h1 class="slide-title">Power Automate 45 (PA45)</h1><div class="concept-dot">Speaker</div></div>
 <div class="slide-body">
 
@@ -858,7 +870,7 @@
 </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide" id="s5">
-  <span class="slide-num">5 / 33</span>
+  <span class="slide-num">5 / 34</span>
 <div class="slide-head"><div class="slide-eyebrow">PA45 Online Course</div><h1 class="slide-title">ご参加にあたってのお願い <small>（ルール）</small></h1><div class="concept-dot">Guidelines</div></div>
 <div class="slide-body">
 
@@ -874,7 +886,7 @@
 </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide title-slide" id="s6">
-  <span class="slide-num">6 / 33</span>
+  <span class="slide-num">6 / 34</span>
 <div class="slide-head"><div class="slide-eyebrow">Power Automate × <span style="color:#7C3AED;">Copilot</span></div><h1 class="slide-title">Vol.29</h1></div>
 <div class="slide-body">
 
@@ -889,7 +901,7 @@
 </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide pa" id="s6b">
-  <span class="slide-num">7 / 33</span>
+  <span class="slide-num">7 / 34</span>
 <div class="slide-head"><div class="slide-eyebrow"><span class="chapno">プロローグ</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「毎朝10分、件名を書き写しています」</span></div><h1 class="slide-title">今日の主役は、この2人です</h1><div class="chapbar"><span class="">1 まず動かす</span><span class="">2 つまずく</span><span class="">3 出力を読む</span><span class="">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
@@ -915,7 +927,7 @@
 </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide pa" id="smap">
-  <span class="slide-num">8 / 33</span>
+  <span class="slide-num">8 / 34</span>
 <div class="slide-head"><div class="slide-eyebrow"><span class="chapno">プロローグ</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「今日は5つの章で進みます」</span></div><h1 class="slide-title">オートさんが、5つの章で1歩ずつ進みます</h1><div class="chapbar"><span class="">1 まず動かす</span><span class="">2 つまずく</span><span class="">3 出力を読む</span><span class="">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
@@ -937,7 +949,7 @@
 </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide" id="s12b">
-  <span class="slide-num">9 / 33</span>
+  <span class="slide-num">9 / 34</span>
 <div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第1章 まず動かす</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「まずは練習用のメールを3通送る」</span></div><h1 class="slide-title">まず、自分あてに練習用のメールを3通送る</h1><div class="why">なぜ：全員が同じ3通で試せば、結果をそろえて確かめられる</div><div class="chapbar"><span class="on">1 まず動かす</span><span class="">2 つまずく</span><span class="">3 出力を読む</span><span class="">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
@@ -959,7 +971,7 @@
 </div><div class="slide-footer"><span class="dobadge do"><b>🖐 いま手を動かす</b>Outlook：自分あてに「PA45 …」を3通送る</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide pa" id="s12">
-  <span class="slide-num">10 / 33</span>
+  <span class="slide-num">10 / 34</span>
 <div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第1章 まず動かす</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「毎朝8時に、勝手に動くようにする」</span></div><h1 class="slide-title">繰り返しから始める</h1><div class="why">なぜ：課長は毎朝8時に知りたい。人が押さなくても時刻で動くのは「繰り返し」</div><div class="chapbar"><span class="on">1 まず動かす</span><span class="">2 つまずく</span><span class="">3 出力を読む</span><span class="">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
@@ -987,7 +999,7 @@
 </div><div class="slide-footer"><span class="dobadge do"><b>🖐 いま手を動かす</b>作成 →「スケジュール済みクラウド フロー」→ 名前 → 作成 → 東京・8時</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide pa" id="s13">
-  <span class="slide-num">11 / 33</span>
+  <span class="slide-num">11 / 34</span>
 <div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第1章 まず動かす</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「PA45のメールだけ取ってくる」</span></div><h1 class="slide-title">PA45のメールだけ、新しい順に5件</h1><div class="why">なぜ：何通もまとめて取れるのが「メールを取得する」。件名フィルターで3通だけに絞る</div><div class="chapbar"><span class="on">1 まず動かす</span><span class="">2 つまずく</span><span class="">3 出力を読む</span><span class="">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
@@ -1027,7 +1039,7 @@
 </div><div class="slide-footer"><span class="dobadge do"><b>🖐 いま手を動かす</b>＋ →「メールを取得する (V3)」→ 詳細パラメーターで 件名フィルター・上位</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide" id="s14">
-  <span class="slide-num">12 / 33</span>
+  <span class="slide-num">12 / 34</span>
 <div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第1章 まず動かす</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「動いた！ 全部緑になった」</span></div><h1 class="slide-title">2つだけ置いたら、1回動かして緑を見る</h1><div class="why">なぜ：式を書く前に、まずメールが取れているかを確かめたい</div><div class="chapbar"><span class="on">1 まず動かす</span><span class="">2 つまずく</span><span class="">3 出力を読む</span><span class="">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
@@ -1059,7 +1071,7 @@
 </div><div class="slide-footer"><span class="dobadge do"><b>🖐 いま手を動かす</b>デザイナー：保存 → テスト → 手動 → フローの実行 → 完了</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide pa" id="st1">
-  <span class="slide-num">13 / 33</span>
+  <span class="slide-num">13 / 34</span>
 <div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第2章 つまずく</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「件名を選んだだけなのに…」</span></div><h1 class="slide-title">件名を選んだだけなのに、3通に分かれた</h1><div class="why">なぜ：課長は移動中にスマホの Teams を見る。だから届け先は Teams</div><div class="chapbar"><span class="done">1 まず動かす</span><span class="on">2 つまずく</span><span class="">3 出力を読む</span><span class="">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
@@ -1079,7 +1091,7 @@
 </div><div class="slide-footer"><span class="dobadge do"><b>🖐 いま手を動かす</b>＋ → Teams「チャットまたはチャネルで…」→ 本文で ⚡「件名」→ テスト</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide pa" id="st2a">
-  <span class="slide-num">14 / 33</span>
+  <span class="slide-num">14 / 34</span>
 <div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第2章 つまずく</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「課長がほしいのは、まず件数だ」</span></div><h1 class="slide-title">課長「バラバラだと、何件来たのか分からない」</h1><div class="why">なぜ：課長が最初に知りたいのは「何件来たか」。件名より先に件数がほしい</div><div class="chapbar"><span class="done">1 まず動かす</span><span class="on">2 つまずく</span><span class="">3 出力を読む</span><span class="">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
@@ -1104,7 +1116,7 @@
 </div><div class="slide-footer"><span class="dobadge see"><b>📖 説明</b>スライドで説明（手は止めてOK）</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide pa" id="s7">
-  <span class="slide-num">15 / 33</span>
+  <span class="slide-num">15 / 34</span>
 <div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第2章 つまずく</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「件数がどこにも無い…」</span></div><h1 class="slide-title">何件あるか、一覧のどこにも出てこない</h1><div class="why">なぜ：件数を本文の1行目に入れたい。まず動的コンテンツの一覧から探す</div><div class="chapbar"><span class="done">1 まず動かす</span><span class="on">2 つまずく</span><span class="">3 出力を読む</span><span class="">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
@@ -1128,7 +1140,7 @@
 </div><div class="slide-footer"><span class="dobadge do"><b>🖐 いま手を動かす</b>デザイナー：メッセージ欄の動的コンテンツで「件数」を探す</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide pa" id="st3a">
-  <span class="slide-num">16 / 33</span>
+  <span class="slide-num">16 / 34</span>
 <div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第2章 つまずく</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「そうだ、Copilot に聞こう」</span></div><h1 class="slide-title">Copilot を開いて、件数の式を聞いてみる</h1><div class="why">なぜ：一覧に無い値は式で書くしかない。でも書き方が分からないので Copilot に聞く</div><div class="chapbar"><span class="done">1 まず動かす</span><span class="on">2 つまずく</span><span class="">3 出力を読む</span><span class="">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
@@ -1146,7 +1158,7 @@
 </div><div class="slide-footer"><span class="dobadge do"><b>🖐 いま手を動かす</b>Copilot：別タブで1行聞く → 返ってきた式をコピー</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide pa" id="st3b">
-  <span class="slide-num">17 / 33</span>
+  <span class="slide-num">17 / 34</span>
 <div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第2章 つまずく</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「コピーした式を、Teams の本文に入れる」</span></div><h1 class="slide-title">式の入れ方：本文で「/」を打って「式を挿入する」</h1><div class="why">なぜ：式は、動的コンテンツの一覧ではなく「式」として入れないと動かない</div><div class="chapbar"><span class="done">1 まず動かす</span><span class="on">2 つまずく</span><span class="">3 出力を読む</span><span class="">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
@@ -1169,7 +1181,7 @@
 </div><div class="slide-footer"><span class="dobadge do"><b>🖐 いま手を動かす</b>デザイナー：本文で「/」→「式を挿入する」→ 貼る → 追加 → 保存</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide pa" id="st3">
-  <span class="slide-num">18 / 33</span>
+  <span class="slide-num">18 / 34</span>
 <div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第2章 つまずく</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「Copilotの式を貼ったら、エラー…」</span></div><h1 class="slide-title">保存したら「無効な参照」のエラーになった</h1><div class="why">なぜ：Copilot の答えなら正しいはず、とそのまま貼ってみた</div><div class="chapbar"><span class="done">1 まず動かす</span><span class="on">2 つまずく</span><span class="">3 出力を読む</span><span class="">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
@@ -1198,7 +1210,7 @@
 </div><div class="slide-footer"><span class="dobadge do"><b>🖐 いま手を動かす</b>デザイナー：エラーを見たら、本文の length(…) を × で消して保存しておく</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide pa" id="sopen">
-  <span class="slide-num">19 / 33</span>
+  <span class="slide-num">19 / 34</span>
 <div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第3章 出力を読む</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「何が返ってきているのか、見てみよう」</span></div><h1 class="slide-title">出力の開き方：テスト結果から「未加工の出力」</h1><div class="why">なぜ：Copilot はフローを見ていない。なら出力を見せればいい。まず自分で出力を開く</div><div class="chapbar"><span class="done">1 まず動かす</span><span class="done">2 つまずく</span><span class="on">3 出力を読む</span><span class="">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
@@ -1214,7 +1226,7 @@
 </div><div class="slide-footer"><span class="dobadge do"><b>🖐 いま手を動かす</b>デザイナー：保存 → テスト → 完了 →「メールを取得する」→ 未加工の出力を表示する</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide" id="s15">
-  <span class="slide-num">20 / 33</span>
+  <span class="slide-num">20 / 34</span>
 <div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第3章 出力を読む</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「出力を開いてみた。長い…」</span></div><h1 class="slide-title">出力は巨大。そのままCopilotに貼らない</h1><div class="why">なぜ：開いてみたら、とにかく長い。全部は読めないし、全部は貼れない</div><div class="chapbar"><span class="done">1 まず動かす</span><span class="done">2 つまずく</span><span class="on">3 出力を読む</span><span class="">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
@@ -1243,7 +1255,7 @@
 </div><div class="slide-footer"><span class="dobadge do"><b>🖐 いま手を動かす</b>デザイナー：未加工の出力を開いたまま、下までスクロールして長さを見る</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide pa" id="s15b">
-  <span class="slide-num">21 / 33</span>
+  <span class="slide-num">21 / 34</span>
 <div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第3章 出力を読む</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「見るところは3か所だけだった」</span></div><h1 class="slide-title">実際の出力：見るのは3か所だけ</h1><div class="why">なぜ：長すぎて読めない。見るところを3か所に絞る</div><div class="chapbar"><span class="done">1 まず動かす</span><span class="done">2 つまずく</span><span class="on">3 出力を読む</span><span class="">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
@@ -1269,7 +1281,7 @@
 </div><div class="slide-footer"><span class="dobadge do"><b>🖐 いま手を動かす</b>デザイナー：出力を開いたまま、①②③を探す</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide pa" id="s16">
-  <span class="slide-num">22 / 33</span>
+  <span class="slide-num">22 / 34</span>
 <div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第3章 出力を読む</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「件名は棚に並んでいた。だから3通に！」</span></div><h1 class="slide-title">返ってきたのは、value という名前の「棚」</h1><div class="why">なぜ：3通に分かれた理由が、ここで分かる</div><div class="chapbar"><span class="done">1 まず動かす</span><span class="done">2 つまずく</span><span class="on">3 出力を読む</span><span class="">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
@@ -1290,7 +1302,7 @@
 </div><div class="slide-footer"><span class="dobadge see"><b>📖 説明</b>出力を見ながら説明</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide" id="s10">
-  <span class="slide-num">23 / 33</span>
+  <span class="slide-num">23 / 34</span>
 <div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第3章 出力を読む</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「{ } と [ ] の見分け方を思い出す」</span></div><h1 class="slide-title">{ } は名前で取る。[ ] は番号で取る</h1><div class="why">なぜ：棚から1通を取り出す書き方を思い出す</div><div class="chapbar"><span class="done">1 まず動かす</span><span class="done">2 つまずく</span><span class="on">3 出力を読む</span><span class="">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
@@ -1318,7 +1330,7 @@
 </div><div class="slide-footer"><span class="dobadge see"><b>📖 説明</b>スライドで説明</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide" id="s11">
-  <span class="slide-num">24 / 33</span>
+  <span class="slide-num">24 / 34</span>
 <div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第3章 出力を読む</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「左から箱を開けていけばいい」</span></div><h1 class="slide-title">スラッシュは「の中の」と読む</h1><div class="why">なぜ：式を左から読めれば、Copilotの式も直せる</div><div class="chapbar"><span class="done">1 まず動かす</span><span class="done">2 つまずく</span><span class="on">3 出力を読む</span><span class="">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
@@ -1348,8 +1360,28 @@
     </div>
 </div><div class="slide-footer"><span class="dobadge see"><b>📖 説明</b>スライドで説明</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
+<section class="slide pa" id="sq">
+  <span class="slide-num">25 / 34</span>
+<div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第3章 出力を読む</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「エラーになった式、出力のどこを指してるんだろう」</span></div><h1 class="slide-title">Copilot の式を、出力と見比べてみる</h1><div class="why">なぜ：式が出力のどこを指しているか分かれば、どこが違ったのかも分かる</div><div class="chapbar"><span class="done">1 まず動かす</span><span class="done">2 つまずく</span><span class="on">3 出力を読む</span><span class="">4 取り出す</span><span class="">5 届ける</span></div></div>
+<div class="slide-body">
+
+    <div class="sqrow">
+      <div class="who3 top"><img src="assets/irasutoya_businessman.png" alt=""><div class="sp">「出力の読み方は分かってきた。じゃあ、さっきエラーになった Copilot の式は、<b>出力のどこ</b>を指していたんだろう？」</div></div>
+      <div class="sqexpr">
+        <div class="lbl-s" style="text-align:left;">18枚目でエラーになった式（Copilot の答え）</div>
+        <div class="sqparts">
+          <span class="pt"><code>length(</code></span>
+          <span class="pt q"><code>body('メールの取得_(V3)')</code><em>？ この名前は出力のどこ</em></span>
+          <span class="pt q"><code>?['value']</code><em>？ value は出力のどこ</em></span>
+          <span class="pt"><code>)</code></span>
+        </div>
+      </div>
+    </div>
+    <div class="sqnext">→ 次のページで、<b>出力を上から順に、式と並べて</b>みます</div>
+</div><div class="slide-footer"><span class="dobadge see"><b>📖 説明</b>出力を開いたまま、次のページへ</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
+</section>
 <section class="slide pa" id="slink">
-  <span class="slide-num">25 / 33</span>
+  <span class="slide-num">26 / 34</span>
 <div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第3章 出力を読む</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「出力を上からたどると、そのまま式になる」</span></div><h1 class="slide-title">出力に書いてある名前を、上から順に式へ写す</h1><div class="why">なぜ：動的コンテンツに無くても、出力に書いてあれば取れる。式は出力の「住所」</div><div class="chapbar"><span class="done">1 まず動かす</span><span class="done">2 つまずく</span><span class="on">3 出力を読む</span><span class="">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
@@ -1374,13 +1406,14 @@
         <div class="xp"><span class="mk m4">④</span><code class="c4">?['subject']</code><span class="xd">"subject" の箱</span></div>
         <div class="xall"><code><span class="c1">body('メールを取得する_(V3)')</span><span class="c2">?['value']</span><span class="c3">?[0]</span><span class="c4">?['subject']</span></code></div>
         <div class="xres">→ <b>PA45 来週の打ち合わせ</b></div>
+        <div class="xwhy">前のページの Copilot の式は ① が <b>メールの取得</b>_(V3)。出力の見出しは <b>メールを取得する</b>_(V3) → <b>ここが違った</b></div>
       </div>
     </div>
     <div class="callout pa" style="margin-top:8px;font-size:19px;padding-top:8px;padding-bottom:8px;"><strong>出力にある名前なら、動的コンテンツに無くても取れる。</strong>④を <b>?['from']</b> にすれば差出人。</div>
 </div><div class="slide-footer"><span class="dobadge see"><b>📖 説明</b>出力を開いたまま、①〜④を一緒に指さす</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide pa" id="st4w">
-  <span class="slide-num">26 / 33</span>
+  <span class="slide-num">27 / 34</span>
 <div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第4章 取り出す</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「3通になった原因は、For each だ」</span></div><h1 class="slide-title">なぜ、For each を消すのか</h1><div class="why">なぜ：For each は1通ずつ Teams を送る枠。1通にまとめるには外す</div><div class="chapbar"><span class="done">1 まず動かす</span><span class="done">2 つまずく</span><span class="done">3 出力を読む</span><span class="on">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
@@ -1413,7 +1446,7 @@
 </div><div class="slide-footer"><span class="dobadge see"><b>📖 説明</b>スライドで説明（次のページで消します）</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide pa" id="s4a">
-  <span class="slide-num">27 / 33</span>
+  <span class="slide-num">28 / 34</span>
 <div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第4章 取り出す</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「1通になった。しかも「3件」と出た！」</span></div><h1 class="slide-title">まず、3通に分かれる For each を外して、件数を出す</h1><div class="why">なぜ：Teams を For each の外に置けば1回＝1通。件数は length() で数える</div><div class="chapbar"><span class="done">1 まず動かす</span><span class="done">2 つまずく</span><span class="done">3 出力を読む</span><span class="on">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
@@ -1449,7 +1482,7 @@
 </div><div class="slide-footer"><span class="dobadge do"><b>🖐 いま手を動かす</b>デザイナー：枠を削除 → Teamsを外に足す → 件数の式 → テスト</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide pa" id="s17">
-  <span class="slide-num">28 / 33</span>
+  <span class="slide-num">29 / 34</span>
 <div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第4章 取り出す</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「件数も1件目も、式なら取れた」</span></div><h1 class="slide-title">件数は length、1件目は first</h1><div class="why">なぜ：課長がほしいのは「いちばん新しい件名」。新しい順なので first()＝最新</div><div class="chapbar"><span class="done">1 まず動かす</span><span class="done">2 つまずく</span><span class="done">3 出力を読む</span><span class="on">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
@@ -1467,7 +1500,7 @@
 </div><div class="slide-footer"><span class="dobadge see"><b>📖 説明</b>スライドで説明：件数は length、1件目は first</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide pa" id="s4b">
-  <span class="slide-num">29 / 33</span>
+  <span class="slide-num">30 / 34</span>
 <div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第4章 取り出す</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「1行足すたびに、ちゃんと出るか確かめる」</span></div><h1 class="slide-title">1行ずつ足して、そのたびにテストする</h1><div class="why">なぜ：1行ずつ確かめれば、間違えた場所がすぐ分かる</div><div class="chapbar"><span class="done">1 まず動かす</span><span class="done">2 つまずく</span><span class="done">3 出力を読む</span><span class="on">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
@@ -1484,7 +1517,7 @@
 </div><div class="slide-footer"><span class="dobadge do"><b>🖐 いま手を動かす</b>デザイナー：本文に「1件目の件名：」を1行 → テスト</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide" id="s20">
-  <span class="slide-num">30 / 33</span>
+  <span class="slide-num">31 / 34</span>
 <div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第4章 取り出す</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「出力を見せて聞いたら、名前が合った」</span></div><h1 class="slide-title">出力を先に見せてから、式を聞く</h1><div class="why">なぜ：最初にエラーだったCopilotの式も、今なら直せる</div><div class="chapbar"><span class="done">1 まず動かす</span><span class="done">2 つまずく</span><span class="done">3 出力を読む</span><span class="on">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
@@ -1501,7 +1534,7 @@
 </div><div class="slide-footer"><span class="dobadge do"><b>🖐 いま手を動かす</b>Copilot：コピー欄の文を貼る → 返ってきた名前を確かめる</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide pa" id="snext">
-  <span class="slide-num">31 / 33</span>
+  <span class="slide-num">32 / 34</span>
 <div class="slide-head"><div class="slide-eyebrow"><span class="chapno">今日のまとめ</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「課長がほしい2つが、1通で届いた」</span></div><h1 class="slide-title">今日できたこと</h1><div class="why">なぜ：出力を読めば、動的コンテンツに無い値も式で取れる</div><div class="chapbar"><span class="done">1 まず動かす</span><span class="done">2 つまずく</span><span class="done">3 出力を読む</span><span class="on">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
@@ -1519,7 +1552,7 @@
 </div><div class="slide-footer"><span class="dobadge see"><b>📖 説明</b>今日のふりかえり（試したフローはオフに）</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide" id="s25">
-  <span class="slide-num">32 / 33</span>
+  <span class="slide-num">33 / 34</span>
 <div class="slide-head"><div class="slide-eyebrow">PA45 のご案内</div><h1 class="slide-title">PA45 は、こんな場です</h1><div class="concept-dot">About</div></div>
 <div class="slide-body">
 
@@ -1536,7 +1569,7 @@
 </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide title-slide" id="s26">
-  <span class="slide-num">33 / 33</span>
+  <span class="slide-num">34 / 34</span>
 <div class="slide-head"><div class="slide-eyebrow">Thank you!</div><h1 class="slide-title">お疲れさまでした 🎉</h1></div>
 <div class="slide-body">
 
