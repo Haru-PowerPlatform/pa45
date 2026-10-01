@@ -188,7 +188,7 @@
   <!-- ===== 1 ===== -->
   <section class="part" id="p1">
     <div class="part-h"><span class="part-badge">STEP 1</span><h2>繰り返し（毎朝8時）で始める</h2></div>
-    <p class="whyline">🧑‍💼 オートさん「なぜ」：課長は毎朝8時に知りたい。だから8時に勝手に動かす</p>
+    <p class="whyline">🧑‍💼 オートさん「なぜ」：課長は毎朝8時に知りたい。人が押さなくても時刻で動くのが「繰り返し」だから</p>
     <p class="part-note">Power Automate で <b>「作成」→「スケジュール済みクラウド フロー」</b>を選びます。時刻で自動的に始まるフローです。作っている途中は <b>テスト → 手動</b> でいつでも動かせます。</p>
     <ol class="steps">
       <li>フロー名は <span class="k">毎朝のメールをまとめて知らせる</span> など、分かる名前にします。</li>
@@ -202,7 +202,7 @@
   <!-- ===== 2 ===== -->
   <section class="part" id="p2">
     <div class="part-h"><span class="part-badge sp">STEP 2</span><h2>PA45のメールだけ、新しい順にとってくる</h2></div>
-    <p class="whyline">🧑‍💼 オートさん「なぜ」：受信トレイ全部ではなく、PA45の3通だけを相手にしたいから</p>
+    <p class="whyline">🧑‍💼 オートさん「なぜ」：何通もまとめて取れるのが「メールを取得する (V3)」。件名フィルターで PA45 の3通だけに絞る</p>
     <p class="part-note">Office 365 Outlook の <b>「メールを取得する (V3)」</b>を追加します。<b>まとめて何件も返ってくる</b>アクションです。</p>
     <ol class="steps sp">
       <li><b>＋新しいステップ</b>→ <b>Office 365 Outlook</b> → <b>「メールを取得する (V3)」</b>を追加します。</li>
@@ -225,7 +225,7 @@
   <!-- ===== 4 ===== -->
   <section class="part" id="p4">
     <div class="part-h"><span class="part-badge tm">STEP 4</span><span class="chap">第2章 つまずく</span><h2>取ってきた件名を、Teamsに送ってみる</h2></div>
-    <p class="whyline">🧑‍💼 オートさん「なぜ」：取れたので、まずは件名を課長に送ってみる（ここでつまずきます）</p>
+    <p class="whyline">🧑‍💼 オートさん「なぜ」：課長は移動中にスマホの Teams を見るので、届け先は Teams。まずは件名を送ってみる（ここでつまずきます）</p>
     <p class="part-note">オートさんと同じことをやってみます。<b>うまくいかないのが正解</b>のステップです。</p>
     <ol class="steps tm">
       <li>「メールを取得する (V3)」の下の <b>＋</b> → <b>Microsoft Teams</b> → <b>「チャットまたはチャネルでメッセージを投稿する」</b>を追加します。</li>
@@ -240,7 +240,7 @@
   <!-- ===== 5 ===== -->
   <section class="part" id="p5">
     <div class="part-h"><span class="part-badge tm">STEP 5</span><span class="chap">第2章 つまずく</span><h2>「件数」を、動的コンテンツの一覧で探してみる</h2></div>
-    <p class="whyline">🧑‍💼 オートさん「なぜ」：3通バラバラでは課長は件数が分からない。本文の最初に件数を入れたい</p>
+    <p class="whyline">🧑‍💼 オートさん「なぜ」：課長が最初に知りたいのは「何件来たか」。件数を本文の1行目に入れたいので、一覧から探してみる</p>
     <ol class="steps tm">
       <li>Teams のメッセージ欄で、動的コンテンツの一覧を開きます。</li>
       <li><b>「件数」</b>や<b>「全件の件名」</b>を探します。<b>どこにもありません。</b></li>
@@ -289,7 +289,7 @@
   <!-- ===== 7 ===== -->
   <section class="part" id="p7">
     <div class="part-h"><span class="part-badge tm">STEP 7</span><span class="chap">第4章 取り出す</span><h2>3通に分かれる For each を外して、件数を出す</h2></div>
-    <p class="whyline">🧑‍💼 オートさん「なぜ」：3通に分かれた原因は For each。Teamsを For each の外に置けば1回＝1通になる。値は式で棚から取り出す</p>
+    <p class="whyline">🧑‍💼 オートさん「なぜ」：3通に分かれた原因は For each（1通ずつ Teams を送る枠）。Teams を外に置けば1回＝1通。件数は length() で数える</p>
     <ol class="steps tm">
       <li><b>「For each」</b>を選んで、右上の <b>「⋮」→「削除」</b>。中の Teams も一緒に消えます。</li>
       <li>「メールを取得する (V3)」の下に、Teams <b>「チャットまたはチャネルでメッセージを投稿する」</b>を<b>もう一度</b>足します（欄は STEP 4 と同じ）。</li>
@@ -307,7 +307,7 @@
   <!-- ===== 8 ===== -->
   <section class="part" id="p8">
     <div class="part-h"><span class="part-badge">STEP 8</span><span class="chap">第4章 取り出す</span><h2>1件目・2件目・最後・差出人を、1行ずつ足す</h2></div>
-    <p class="whyline">🧑‍💼 オートさん「なぜ」：件数が出たら、次は1件目・2件目・最後・差出人。1行ずつ確かめれば間違えた場所がすぐ分かる</p>
+    <p class="whyline">🧑‍💼 オートさん「なぜ」：1件目・最後は first()・last()、2件目は [1]。どれも一覧に無いので式で取る。1行ずつ確かめれば間違えた場所がすぐ分かる</p>
     <p class="part-note">Teams のメッセージ欄に、<b>1行足すたびにテスト</b>します。行の頭に「1件目の件名：」などの言葉を打ち、続けて<b>式（fx）</b>で入れます。<b>動的コンテンツの一覧には、どれも出てきません。</b></p>
     <div class="codewrap">
       <span class="lbl">① 1件目の件名</span>
@@ -338,7 +338,7 @@
   <!-- ===== 9 ===== -->
   <section class="part" id="p9">
     <div class="part-h"><span class="part-badge sp">STEP 9</span><span class="chap">第4章 取り出す</span><h2>全件の件名を、1行にまとめる</h2></div>
-    <p class="whyline">🧑‍💼 オートさん「なぜ」：課長は全件の件名も1行で見たいから</p>
+    <p class="whyline">🧑‍💼 オートさん「なぜ」：課長は全件の件名も1行で見たい。For each を使わずに件名の列だけ抜くのが「選択」、つなぐのが join()</p>
     <p class="part-note">全件の件名を並べたいときは、<b>繰り返し（Apply to each）を使いません</b>。<b>「選択」</b>で1列だけ抜いて、<b>join()</b> でつなぎます。</p>
     <ol class="steps sp">
       <li><b>「メールを取得する」と Teams のあいだの ＋</b> → <b>データ操作</b> → <b>「選択」</b>を追加します（Teams より上に置きます）。</li>
