@@ -206,7 +206,7 @@
     <p class="part-note">Office 365 Outlook の <b>「メールを取得する (V3)」</b>を追加します。<b>まとめて何件も返ってくる</b>アクションです。</p>
     <ol class="steps sp">
       <li><b>＋新しいステップ</b>→ <b>Office 365 Outlook</b> → <b>「メールを取得する (V3)」</b>を追加します。</li>
-      <li>欄を埋めます。<b>詳細オプション</b>を開くと下の欄が出てきます。<div class="setrow"><span class="kv"><span class="kk">フォルダー</span><span class="vv">Inbox</span></span><span class="kv"><span class="kk">件名フィルター</span><span class="vv">PA45</span></span><span class="kv"><span class="kk">未読のみを取得しますか?</span><span class="vv">いいえ</span></span><span class="kv"><span class="kk">添付ファイルを含める</span><span class="vv">いいえ</span></span><span class="kv"><span class="kk">上位</span><span class="vv">5</span></span></div></li>
+      <li>欄を埋めます。<b>詳細パラメーター</b>を開くと下の欄が出てきます。<div class="setrow"><span class="kv"><span class="kk">フォルダー</span><span class="vv">Inbox</span></span><span class="kv"><span class="kk">件名フィルター</span><span class="vv">PA45</span></span><span class="kv"><span class="kk">未読のみを取得しますか?</span><span class="vv">いいえ</span></span><span class="kv"><span class="kk">添付ファイルを含める</span><span class="vv">いいえ</span></span><span class="kv"><span class="kk">上位</span><span class="vv">5</span></span></div></li>
       <li>アクション名を <span class="k">メールを取得する (V3)（PA45のメールを5件）</span> に変えます。<ul class="sub"><li><b>「メールを取得する (V3)」の部分は1文字も変えません。</b>（V3）も半角のまま残します。あとで式の中にこの名前をそのまま書きます。</li></ul></li>
     </ol>
     <div class="callout warn"><b>⚠️ 「上位」を大きくしすぎない。</b> 100件にすると、返ってくる出力も100件分になります（本文のHTMLも全部入るため、とても大きくなります）。<b>まずは5件</b>で作り、動いてから増やします。</div>
@@ -252,7 +252,8 @@
       <li>ブラウザの<b>別のタブ</b>で Microsoft 365 Copilot チャットを開きます（<span class="k">m365.cloud.microsoft/chat</span>）。</li>
       <li>下の1行をそのまま貼って送ります。</li>
       <li>返ってきた式の部分だけをコピーします。</li>
-      <li>Power Automate のタブに戻り、Teams のメッセージ欄で <b>fx</b> を押して式を貼り、<b>追加</b>します。</li>
+      <li>Power Automate のタブに戻り、Teams のアクションを開いて、メッセージ欄の「subject」の後ろをクリックします。</li>
+      <li>半角の <span class="k">/</span> を打ち、<b>「式を挿入する」</b>を選んで、コピーした式を貼り、<b>追加</b>します。</li>
       <li><b>保存</b>して、どうなるかを見ます。エラーになることが多いです（Copilot はこちらのフローを見ていないため、アクション名が合いません）。</li>
     </ol>
     <div class="codewrap">
@@ -260,6 +261,7 @@
       <button class="copybtn" data-code="ex5p">コピー</button>
 <pre id="ex5p">Power Automate で、メールの件数を数える式を教えて</pre>
     </div>
+    <div class="callout tip"><b>💡 式は「/」で入れるのが確実です。</b> メッセージ欄の右の ⚡（動的コンテンツ）や fx（式）のボタンでも入れられますが、本文のような欄では<b>カーソルの位置を見失って式が入らないことがあります</b>。この先の式も全部、<span class="k">/</span> →「式を挿入する」で入れます。</div>
     <div class="callout info"><b>■ 次の STEP 6 でやること：</b> 何が返ってきているのか（出力）を自分の目で見ます。出力を見せて聞き直す方法は STEP 10 の下「Copilot に聞く3か所」にあります。</div>
   </section>
 
@@ -309,7 +311,7 @@
       <li><b>「For each」</b>を選んで、右上の <b>「⋮」→「削除」</b>。中の Teams も一緒に消えます。</li>
       <li>「メールを取得する (V3)」の下に、Teams <b>「チャットまたはチャネルでメッセージを投稿する」</b>を<b>もう一度</b>足します（欄は STEP 4 と同じ）。</li>
       <li>アクション名を <span class="k">チャットまたはチャネルでメッセージを投稿する（5件をまとめて知らせる）</span> に変えます。</li>
-      <li>メッセージ欄に <span class="k">PA45のメール：</span> と打ち、続けて<b>式（fx）</b>で下の「件数」を入れ、<span class="k">件</span> と打ちます。</li>
+      <li>メッセージ欄に <span class="k">PA45のメール：</span> と打ち、続けて <span class="k">/</span> →<b>「式を挿入する」</b>で下の「件数」を入れ、<span class="k">件</span> と打ちます。</li>
       <li><b>テスト</b>。<b>1通だけ</b>、「PA45のメール：3 件」と届けば成功です。</li>
     </ol>
     <div class="codewrap">
@@ -323,7 +325,7 @@
   <section class="part" id="p8">
     <div class="part-h"><span class="part-badge">STEP 8</span><span class="chap">第4章 取り出す</span><h2>1件目・2件目・最後・差出人を、1行ずつ足す</h2></div>
     <p class="whyline">🧑‍💼 オートさん「なぜ」：1件目・最後は first()・last()、2件目は [1]。どれも一覧に無いので式で取る。1行ずつ確かめれば間違えた場所がすぐ分かる</p>
-    <p class="part-note">Teams のメッセージ欄に、<b>1行足すたびにテスト</b>します。行の頭に「1件目の件名：」などの言葉を打ち、続けて<b>式（fx）</b>で入れます。<b>動的コンテンツの一覧には、どれも出てきません。</b></p>
+    <p class="part-note">Teams のメッセージ欄に、<b>1行足すたびにテスト</b>します。行の頭に「1件目の件名：」などの言葉を打ち、続けて <span class="k">/</span> →<b>「式を挿入する」</b>で入れます。<b>動的コンテンツの一覧には、どれも出てきません。</b></p>
     <div class="codewrap">
       <span class="lbl">① 1件目の件名</span>
       <button class="copybtn" data-code="ex1">コピー</button>
@@ -359,7 +361,7 @@
       <li><b>「メールを取得する」と Teams のあいだの ＋</b> → <b>データ操作</b> → <b>「選択」</b>を追加します（Teams より上に置きます）。</li>
       <li>2つの欄を埋めます。<b>どちらも式（fx）で入れます</b>。<div class="setrow"><span class="kv"><span class="kk">開始</span><span class="vv">body('…')?['value']</span></span><span class="kv"><span class="kk">マップ</span><span class="vv">item()?['subject']</span></span></div></li>
       <li>アクション名を <span class="k">選択（件名だけを取り出す）</span> に変えます。</li>
-      <li>Teams のメッセージ欄に <span class="k">全件の件名：</span> と打ち、式（fx）で下の join を入れて<b>テスト</b>。</li>
+      <li>Teams のメッセージ欄に <span class="k">全件の件名：</span> と打ち、<span class="k">/</span> →<b>「式を挿入する」</b>で下の join を入れて<b>テスト</b>。</li>
     </ol>
     <div class="codewrap">
       <span class="lbl">「開始」に入れる式</span>
