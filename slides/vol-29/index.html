@@ -664,6 +664,20 @@
   .c1{color:#fdba74;} .c2{color:#a5b4fc;} .c3{color:#d8b4fe;} .c4{color:#86efac;}
   .xall code{display:block;font-family:Consolas,monospace;font-size:17px;font-weight:800;background:#0f172a;border-radius:8px;padding:8px 10px;word-break:break-all;line-height:1.5;margin-top:4px;}
   .xres{font-size:22px;color:#15803d;font-weight:800;}
+  /* ---- 今日のまとめと次回（snext） ---- */
+  .donegrid{display:grid;grid-template-columns:1fr 34px 1fr 34px 1.2fr;align-items:stretch;}
+  .dg{border:3px solid #c7d2fe;border-radius:16px;background:#f7f9ff;padding:14px 10px;text-align:center;display:flex;flex-direction:column;gap:8px;align-items:center;}
+  .dg.ok{border-color:#16a34a;background:#f0fdf4;}
+  .dg .dn{width:36px;height:36px;border-radius:50%;background:#4358c8;color:#fff;font-weight:900;font-size:20px;display:flex;align-items:center;justify-content:center;}
+  .dg.ok .dn{background:#16a34a;}
+  .dg .dt{font-size:24px;font-weight:900;color:#1e293b;line-height:1.3;}
+  .dg .dd{font-size:18px;color:#475569;font-weight:700;line-height:1.45;}
+  .dg .dd code{font-family:Consolas,monospace;font-size:17px;background:#0f172a;color:#fbbf24;border-radius:6px;padding:2px 6px;}
+  .da{display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:900;color:#94a3b8;}
+  .nextbox{margin-top:18px;border:3px dashed #ea580c;border-radius:16px;background:#fff7ed;padding:14px 18px;}
+  .nextbox .nt{font-size:24px;font-weight:900;color:#9a3412;margin-bottom:10px;}
+  .nextbox .nl{display:flex;gap:10px;flex-wrap:wrap;} .nextbox .nl span{font-size:20px;font-weight:800;background:#fff;border:2px solid #fdba74;border-radius:999px;padding:6px 16px;}
+  .todaycut{margin-top:10px;text-align:center;font-size:21px;font-weight:800;color:#9a3412;background:#fff7ed;border:2px dashed #ea580c;border-radius:12px;padding:6px 10px;}
   .you{display:inline-block;font-size:17px;font-weight:900;color:#fff;background:#e8590c;border-radius:999px;padding:2px 14px;margin:4px 0 2px;}
   #s9b .who{padding:12px 18px;gap:16px;grid-template-columns:130px 1fr;}
   #s9b .who img{max-height:130px;} #s9b .who .nm{font-size:26px;} #s9b .who .sp{font-size:23px;margin-top:6px;}
@@ -754,41 +768,33 @@
     <li><a href="#s4a"><span class="n">27</span>④-2 For each を外して件数を出す</a></li>
     <li><a href="#s17"><span class="n">28</span>④-3 使う式は4つ</a></li>
     <li><a href="#s4b"><span class="n">29</span>④-4 1行ずつ足してテスト</a></li>
-    <li><a href="#s18"><span class="n">30</span>④-5 from は文字列</a></li>
-    <li><a href="#s19"><span class="n">31</span>④-6 選択→全件を1行に</a></li>
-    <li><a href="#s20"><span class="n">32</span>④-7 Copilotに聞き直す</a></li>
-    <li><a href="#s21"><span class="n">33</span>⑤-1 本文を整えて仕上げ</a></li>
-    <li><a href="#s22"><span class="n">34</span>⑤-2 動きました</a></li>
-    <li><a href="#s8"><span class="n">35</span>⑤-3 課長のスマホに届く</a></li>
-    <li><a href="#s6c"><span class="n">36</span>⑤-4 朝10分→0分</a></li>
-    <li><a href="#sbasis"><span class="n">37</span>⑤-5 なぜこのアクションと式なのか</a></li>
-    <li><a href="#s23"><span class="n">38</span>ほかの仕事にも効く</a></li>
-    <li><a href="#s24"><span class="n">39</span>まとめ</a></li>
-    <li><a href="#s25"><span class="n">40</span>PA45のご案内</a></li>
-    <li><a href="#s26"><span class="n">41</span>クロージング＆アンケート</a></li>
+    <li><a href="#s20"><span class="n">30</span>④-7 Copilotに聞き直す</a></li>
+    <li><a href="#snext"><span class="n">31</span>今日できたこと</a></li>
+    <li><a href="#s25"><span class="n">32</span>PA45のご案内</a></li>
+    <li><a href="#s26"><span class="n">33</span>クロージング＆アンケート</a></li>
   </ol>
 </nav>
 <button class="toc-toggle" id="tocToggle" type="button">≡ 目次</button>
 
 <div class="deck-header">
   <h1>PA45 第29回 スライド</h1>
-  <div>動的コンテンツに出てこない値も、Copilotと一緒に式で取り出せるようになる ── 毎朝のメール一覧から、1件目・件数・全件の件名を式1行で取り出してTeamsへ（非IT初心者歓迎）</div>
+  <div>動的コンテンツに出てこない値も、Copilotと一緒に式で取り出せるようになる ── 毎朝のメール一覧から、件数といちばん新しい件名を式で取り出してTeamsへ（非IT初心者歓迎）</div>
 </div>
 
 <section class="slide title-slide" id="s1">
-  <span class="slide-num">1 / 41</span>
+  <span class="slide-num">1 / 33</span>
 
   <div class="opening-bar"><span>PA45 — Power Automate 45 ｜ 第29回 / Vol.29</span><span>Online Hands-on</span></div>
   <div class="slide-body" style="justify-content:center;align-items:center;text-align:center;">
     <div style="font-size:30px;color:var(--pa);font-weight:800;margin-bottom:4px;">まもなく開始します</div>
     <div style="font-size:128px;color:#2c3a94;font-weight:900;line-height:1;margin:8px 0 4px;letter-spacing:.02em;">20:15 <span style="font-size:56px;">START</span></div>
     <h1 style="font-size:34px;color:var(--text);font-weight:800;line-height:1.3;margin:20px 0 12px;">第29回｜動的コンテンツに出てこない値も、Copilotと一緒に式で取り出せるようになる</h1>
-    <p style="font-size:24px;color:var(--muted);margin:0;">1件目・件数・全件の件名。一覧に出てこない値を、式1行で取り出します ☕</p>
+    <p style="font-size:24px;color:var(--muted);margin:0;">件数といちばん新しい件名。一覧に出てこない値を、出力を読んで式で取り出します ☕</p>
     <div style="margin-top:24px;background:#eef1fc;border:2px solid #aab6f0;border-radius:12px;padding:12px 24px;font-size:21px;color:#2c3a94;font-weight:800;">📅 10/1（木）20:15〜21:00 ── オンライン（Teams）・参加無料</div>
 </div><div class="slide-footer"><span>Power Automate for Beginners</span><span style="color:var(--hint);">Copyright © PA45</span></div>
 </section>
 <section class="slide" id="s2">
-  <span class="slide-num">2 / 41</span>
+  <span class="slide-num">2 / 33</span>
 <div class="slide-head"><div class="slide-eyebrow">PA45｜第29回</div><h1 class="slide-title">事前準備 <small>（サインインできればOK・見るだけ参加も歓迎）</small></h1></div>
 <div class="slide-body">
 
@@ -807,13 +813,13 @@
       <div class="card green"><div class="num" style="background:#16a34a;">2</div><h3>手を動かす回</h3><p><strong>毎朝のメール一覧を1通にまとめるフローを作ります</strong>。見るだけ参加もOK。</p></div>
     </div>
     <div class="callout pa" style="margin-top:14px;"><strong>📥 今日のゴール</strong>
-      <div class="chips"><span>① PA45のメールを取る</span><span>② 出力を読む</span><span>③ 件数・1件目を取り出す</span><span>④ 全件の件名を1行に</span></div>
+      <div class="chips"><span>① PA45のメールを取る</span><span>② 出力を読む</span><span>③ 件数と最新の件名を取り出す</span><span>④ Teams に1通</span></div>
       <div class="linkrow" style="margin-top:8px;"><span class="lbl" style="font-size:15px;">用意するもの：</span><span class="pathpill" style="font-size:14px;">なし。当日その場で、自分あてに練習用メールを3通送るところから始めます</span></div>
     </div>
 </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide" id="s3">
-  <span class="slide-num">3 / 41</span>
+  <span class="slide-num">3 / 33</span>
 <div class="slide-head"><div class="slide-eyebrow">INTRODUCTION</div><h1 class="slide-title">PA45 とは？</h1><div class="concept-dot">Concept</div></div>
 <div class="slide-body">
 
@@ -827,7 +833,7 @@
 </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide" id="s4">
-  <span class="slide-num">4 / 41</span>
+  <span class="slide-num">4 / 33</span>
 <div class="slide-head"><div class="slide-eyebrow">SPEAKER</div><h1 class="slide-title">Power Automate 45 (PA45)</h1><div class="concept-dot">Speaker</div></div>
 <div class="slide-body">
 
@@ -848,7 +854,7 @@
 </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide" id="s5">
-  <span class="slide-num">5 / 41</span>
+  <span class="slide-num">5 / 33</span>
 <div class="slide-head"><div class="slide-eyebrow">PA45 Online Course</div><h1 class="slide-title">ご参加にあたってのお願い <small>（ルール）</small></h1><div class="concept-dot">Guidelines</div></div>
 <div class="slide-body">
 
@@ -864,14 +870,14 @@
 </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide title-slide" id="s6">
-  <span class="slide-num">6 / 41</span>
+  <span class="slide-num">6 / 33</span>
 <div class="slide-head"><div class="slide-eyebrow">Power Automate × <span style="color:#7C3AED;">Copilot</span></div><h1 class="slide-title">Vol.29</h1></div>
 <div class="slide-body">
 
-    <div class="badge-row"><span class="pill">JSON×Copilot編</span><span class="pill alt">配列</span><span class="pill alt">first / length / join</span><span class="pill alt">選択アクション</span><span class="pill alt">ノーコード</span></div>
+    <div class="badge-row"><span class="pill">JSON×Copilot編</span><span class="pill alt">配列</span><span class="pill alt">length / first</span><span class="pill alt">出力を読む</span><span class="pill alt">ノーコード</span></div>
     <h1>第29回：動的コンテンツに出てこない値も、<br>Copilotと一緒に式で取り出せるようになる</h1>
     <div class="meta-table">
-      <dl><dt>Theme</dt><dd>メール一覧から、1件目・件数・全件の件名を式で取り出して、Teamsに1通で届ける</dd></dl>
+      <dl><dt>Theme</dt><dd>メール一覧から、件数といちばん新しい件名を式で取り出して、Teamsに1通で届ける</dd></dl>
       <dl><dt>Target</dt><dd>JSONが苦手な方・Copilotが出した式をそのまま貼っている方（知識ゼロOK・見るだけ参加も歓迎）</dd></dl>
       <dl><dt>Time</dt><dd>実際の画面で作り方を確認 約45分</dd></dl>
     </div>
@@ -879,7 +885,7 @@
 </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide pa" id="s6b">
-  <span class="slide-num">7 / 41</span>
+  <span class="slide-num">7 / 33</span>
 <div class="slide-head"><div class="slide-eyebrow"><span class="chapno">プロローグ</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「毎朝10分、件名を書き写しています」</span></div><h1 class="slide-title">今日の主役は、この2人です</h1><div class="chapbar"><span class="">1 まず動かす</span><span class="">2 つまずく</span><span class="">3 出力を読む</span><span class="">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
@@ -905,7 +911,7 @@
 </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide pa" id="smap">
-  <span class="slide-num">8 / 41</span>
+  <span class="slide-num">8 / 33</span>
 <div class="slide-head"><div class="slide-eyebrow"><span class="chapno">プロローグ</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「今日は5つの章で進みます」</span></div><h1 class="slide-title">オートさんが、5つの章で1歩ずつ進みます</h1><div class="chapbar"><span class="">1 まず動かす</span><span class="">2 つまずく</span><span class="">3 出力を読む</span><span class="">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
@@ -916,7 +922,7 @@
       <div class="ma">→</div>
       <div class="mc c3"><div class="mn">3</div><div class="mi">🔍</div><div class="mt">出力を読む</div><div class="md">{ } と [ ] で<br>中身を読む</div><div class="ms hi">気づく</div></div>
       <div class="ma">→</div>
-      <div class="mc c4"><div class="mn">4</div><div class="mi">🔧</div><div class="mt">取り出す</div><div class="md">件数・1件目・<br>全件を1行に</div><div class="ms ok">解決</div></div>
+      <div class="mc c4"><div class="mn">4</div><div class="mi">🔧</div><div class="mt">取り出す</div><div class="md">件数・<br>いちばん新しい件名</div><div class="ms ok">解決</div></div>
       <div class="ma">→</div>
       <div class="mc c5"><div class="mn">5</div><div class="mi">📨</div><div class="mt">届ける</div><div class="md">課長に1通。<br>朝10分→0分</div><div class="ms ok">完成</div></div>
     </div>
@@ -927,7 +933,7 @@
 </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide" id="s12b">
-  <span class="slide-num">9 / 41</span>
+  <span class="slide-num">9 / 33</span>
 <div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第1章 まず動かす</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「まずは練習用のメールを3通送る」</span></div><h1 class="slide-title">まず、自分あてに練習用のメールを3通送る</h1><div class="why">なぜ：全員が同じ3通で試せば、結果をそろえて確かめられる</div><div class="chapbar"><span class="on">1 まず動かす</span><span class="">2 つまずく</span><span class="">3 出力を読む</span><span class="">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
@@ -949,7 +955,7 @@
 </div><div class="slide-footer"><span class="dobadge do"><b>🖐 いま手を動かす</b>Outlook：自分あてに「PA45 …」を3通送る</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide pa" id="s12">
-  <span class="slide-num">10 / 41</span>
+  <span class="slide-num">10 / 33</span>
 <div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第1章 まず動かす</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「毎朝8時に、勝手に動くようにする」</span></div><h1 class="slide-title">繰り返しから始める</h1><div class="why">なぜ：課長は毎朝8時に知りたい。人が押さなくても時刻で動くのは「繰り返し」</div><div class="chapbar"><span class="on">1 まず動かす</span><span class="">2 つまずく</span><span class="">3 出力を読む</span><span class="">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
@@ -977,7 +983,7 @@
 </div><div class="slide-footer"><span class="dobadge do"><b>🖐 いま手を動かす</b>Power Automate：スケジュール済みクラウド フローを作る</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide pa" id="s13">
-  <span class="slide-num">11 / 41</span>
+  <span class="slide-num">11 / 33</span>
 <div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第1章 まず動かす</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「PA45のメールだけ取ってくる」</span></div><h1 class="slide-title">PA45のメールだけ、新しい順に5件</h1><div class="why">なぜ：何通もまとめて取れるのが「メールを取得する」。件名フィルターで3通だけに絞る</div><div class="chapbar"><span class="on">1 まず動かす</span><span class="">2 つまずく</span><span class="">3 出力を読む</span><span class="">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
@@ -1017,7 +1023,7 @@
 </div><div class="slide-footer"><span class="dobadge do"><b>🖐 いま手を動かす</b>デザイナー：メールを取得する (V3) を足す</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide" id="s14">
-  <span class="slide-num">12 / 41</span>
+  <span class="slide-num">12 / 33</span>
 <div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第1章 まず動かす</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「動いた！ 全部緑になった」</span></div><h1 class="slide-title">2つだけ置いたら、1回動かして緑を見る</h1><div class="why">なぜ：式を書く前に、まずメールが取れているかを確かめたい</div><div class="chapbar"><span class="on">1 まず動かす</span><span class="">2 つまずく</span><span class="">3 出力を読む</span><span class="">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
@@ -1049,7 +1055,7 @@
 </div><div class="slide-footer"><span class="dobadge do"><b>🖐 いま手を動かす</b>デザイナー：保存 → テスト → 手動 → フローの実行 → 完了</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide pa" id="st1">
-  <span class="slide-num">13 / 41</span>
+  <span class="slide-num">13 / 33</span>
 <div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第2章 つまずく</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「件名を選んだだけなのに…」</span></div><h1 class="slide-title">件名を選んだだけなのに、3通に分かれた</h1><div class="why">なぜ：課長は移動中にスマホの Teams を見る。だから届け先は Teams</div><div class="chapbar"><span class="done">1 まず動かす</span><span class="on">2 つまずく</span><span class="">3 出力を読む</span><span class="">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
@@ -1069,7 +1075,7 @@
 </div><div class="slide-footer"><span class="dobadge do"><b>🖐 いま手を動かす</b>デザイナー：Teamsを足して「件名」を選ぶ → テスト</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide pa" id="st2a">
-  <span class="slide-num">14 / 41</span>
+  <span class="slide-num">14 / 33</span>
 <div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第2章 つまずく</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「課長がほしいのは、まず件数だ」</span></div><h1 class="slide-title">課長「バラバラだと、何件来たのか分からない」</h1><div class="why">なぜ：課長が最初に知りたいのは「何件来たか」。件名より先に件数がほしい</div><div class="chapbar"><span class="done">1 まず動かす</span><span class="on">2 つまずく</span><span class="">3 出力を読む</span><span class="">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
@@ -1094,7 +1100,7 @@
 </div><div class="slide-footer"><span class="dobadge see"><b>📖 説明</b>スライドで説明（手は止めてOK）</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide pa" id="s7">
-  <span class="slide-num">15 / 41</span>
+  <span class="slide-num">15 / 33</span>
 <div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第2章 つまずく</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「件数がどこにも無い…」</span></div><h1 class="slide-title">何件あるか、一覧のどこにも出てこない</h1><div class="why">なぜ：件数を本文の1行目に入れたい。まず動的コンテンツの一覧から探す</div><div class="chapbar"><span class="done">1 まず動かす</span><span class="on">2 つまずく</span><span class="">3 出力を読む</span><span class="">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
@@ -1111,15 +1117,14 @@
         <div class="wants">
           <div class="want"><span class="x">✕</span>1件目の件名<span style="font-size:16px;font-weight:700;">（選ぶと繰り返しに入る）</span></div>
           <div class="want"><span class="x">✕</span>何件あるか<span style="font-size:16px;font-weight:700;">（一覧に無い）</span></div>
-          <div class="want"><span class="x">✕</span>全件の件名を1行に<span style="font-size:16px;font-weight:700;">（一覧に無い）</span></div>
-          <div class="want ok"><span class="x">✓</span>式で書けば、3つとも取れる</div>
+          <div class="want ok"><span class="x">✓</span>式で書けば、2つとも取れる</div>
         </div>
       </div>
     </div>
 </div><div class="slide-footer"><span class="dobadge do"><b>🖐 いま手を動かす</b>デザイナー：メッセージ欄の動的コンテンツで「件数」を探す</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide pa" id="st3a">
-  <span class="slide-num">16 / 41</span>
+  <span class="slide-num">16 / 33</span>
 <div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第2章 つまずく</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「そうだ、Copilot に聞こう」</span></div><h1 class="slide-title">Copilot を開いて、件数の式を聞いてみる</h1><div class="why">なぜ：一覧に無い値は式で書くしかない。でも書き方が分からないので Copilot に聞く</div><div class="chapbar"><span class="done">1 まず動かす</span><span class="on">2 つまずく</span><span class="">3 出力を読む</span><span class="">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
@@ -1137,7 +1142,7 @@
 </div><div class="slide-footer"><span class="dobadge do"><b>🖐 いま手を動かす</b>Copilot：別タブで1行聞く → 返ってきた式をコピー</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide pa" id="st3b">
-  <span class="slide-num">17 / 41</span>
+  <span class="slide-num">17 / 33</span>
 <div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第2章 つまずく</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「コピーした式を、Teams の本文に入れる」</span></div><h1 class="slide-title">式の入れ方：本文で「/」を打って「式を挿入する」</h1><div class="why">なぜ：式は、動的コンテンツの一覧ではなく「式」として入れないと動かない</div><div class="chapbar"><span class="done">1 まず動かす</span><span class="on">2 つまずく</span><span class="">3 出力を読む</span><span class="">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
@@ -1160,7 +1165,7 @@
 </div><div class="slide-footer"><span class="dobadge do"><b>🖐 いま手を動かす</b>デザイナー：本文で「/」→「式を挿入する」→ 貼る → 追加 → 保存</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide pa" id="st3">
-  <span class="slide-num">18 / 41</span>
+  <span class="slide-num">18 / 33</span>
 <div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第2章 つまずく</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「Copilotの式を貼ったら、エラー…」</span></div><h1 class="slide-title">保存したら「無効な参照」のエラーになった</h1><div class="why">なぜ：Copilot の答えなら正しいはず、とそのまま貼ってみた</div><div class="chapbar"><span class="done">1 まず動かす</span><span class="on">2 つまずく</span><span class="">3 出力を読む</span><span class="">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
@@ -1189,7 +1194,7 @@
 </div><div class="slide-footer"><span class="dobadge do"><b>🖐 いま手を動かす</b>デザイナー：エラーを見たら、本文の length(…) を × で消して保存しておく</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide pa" id="sopen">
-  <span class="slide-num">19 / 41</span>
+  <span class="slide-num">19 / 33</span>
 <div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第3章 出力を読む</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「何が返ってきているのか、見てみよう」</span></div><h1 class="slide-title">出力の開き方：テスト結果から「未加工の出力」</h1><div class="why">なぜ：Copilot はフローを見ていない。なら出力を見せればいい。まず自分で出力を開く</div><div class="chapbar"><span class="done">1 まず動かす</span><span class="done">2 つまずく</span><span class="on">3 出力を読む</span><span class="">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
@@ -1205,7 +1210,7 @@
 </div><div class="slide-footer"><span class="dobadge do"><b>🖐 いま手を動かす</b>デザイナー：保存 → テスト → 完了 →「メールを取得する」→ 未加工の出力を表示する</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide" id="s15">
-  <span class="slide-num">20 / 41</span>
+  <span class="slide-num">20 / 33</span>
 <div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第3章 出力を読む</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「出力を開いてみた。長い…」</span></div><h1 class="slide-title">出力は巨大。そのままCopilotに貼らない</h1><div class="why">なぜ：開いてみたら、とにかく長い。全部は読めないし、全部は貼れない</div><div class="chapbar"><span class="done">1 まず動かす</span><span class="done">2 つまずく</span><span class="on">3 出力を読む</span><span class="">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
@@ -1234,7 +1239,7 @@
 </div><div class="slide-footer"><span class="dobadge do"><b>🖐 いま手を動かす</b>デザイナー：未加工の出力を開いたまま、下までスクロールして長さを見る</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide pa" id="s15b">
-  <span class="slide-num">21 / 41</span>
+  <span class="slide-num">21 / 33</span>
 <div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第3章 出力を読む</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「見るところは3か所だけだった」</span></div><h1 class="slide-title">実際の出力：見るのは3か所だけ</h1><div class="why">なぜ：長すぎて読めない。見るところを3か所に絞る</div><div class="chapbar"><span class="done">1 まず動かす</span><span class="done">2 つまずく</span><span class="on">3 出力を読む</span><span class="">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
@@ -1251,7 +1256,7 @@
 </div><div class="slide-footer"><span class="dobadge do"><b>🖐 いま手を動かす</b>デザイナー：出力を開いたまま、①②③を探す</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide pa" id="s16">
-  <span class="slide-num">22 / 41</span>
+  <span class="slide-num">22 / 33</span>
 <div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第3章 出力を読む</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「件名は棚に並んでいた。だから3通に！」</span></div><h1 class="slide-title">返ってきたのは、value という名前の「棚」</h1><div class="why">なぜ：3通に分かれた理由が、ここで分かる</div><div class="chapbar"><span class="done">1 まず動かす</span><span class="done">2 つまずく</span><span class="on">3 出力を読む</span><span class="">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
@@ -1272,7 +1277,7 @@
 </div><div class="slide-footer"><span class="dobadge see"><b>📖 説明</b>出力を見ながら説明</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide" id="s10">
-  <span class="slide-num">23 / 41</span>
+  <span class="slide-num">23 / 33</span>
 <div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第3章 出力を読む</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「{ } と [ ] の見分け方を思い出す」</span></div><h1 class="slide-title">{ } は名前で取る。[ ] は番号で取る</h1><div class="why">なぜ：棚から1通を取り出す書き方を思い出す</div><div class="chapbar"><span class="done">1 まず動かす</span><span class="done">2 つまずく</span><span class="on">3 出力を読む</span><span class="">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
@@ -1300,7 +1305,7 @@
 </div><div class="slide-footer"><span class="dobadge see"><b>📖 説明</b>スライドで説明</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide" id="s11">
-  <span class="slide-num">24 / 41</span>
+  <span class="slide-num">24 / 33</span>
 <div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第3章 出力を読む</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「左から箱を開けていけばいい」</span></div><h1 class="slide-title">スラッシュは「の中の」と読む</h1><div class="why">なぜ：式を左から読めれば、Copilotの式も直せる</div><div class="chapbar"><span class="done">1 まず動かす</span><span class="done">2 つまずく</span><span class="on">3 出力を読む</span><span class="">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
@@ -1331,7 +1336,7 @@
 </div><div class="slide-footer"><span class="dobadge see"><b>📖 説明</b>スライドで説明</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide pa" id="slink">
-  <span class="slide-num">25 / 41</span>
+  <span class="slide-num">25 / 33</span>
 <div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第3章 出力を読む</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「出力を上からたどると、そのまま式になる」</span></div><h1 class="slide-title">出力に書いてある名前を、上から順に式へ写す</h1><div class="why">なぜ：動的コンテンツに無くても、出力に書いてあれば取れる。式は出力の「住所」</div><div class="chapbar"><span class="done">1 まず動かす</span><span class="done">2 つまずく</span><span class="on">3 出力を読む</span><span class="">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
@@ -1362,7 +1367,7 @@
 </div><div class="slide-footer"><span class="dobadge see"><b>📖 説明</b>出力を開いたまま、①〜④を一緒に指さす</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide pa" id="st4w">
-  <span class="slide-num">26 / 41</span>
+  <span class="slide-num">26 / 33</span>
 <div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第4章 取り出す</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「3通になった原因は、For each だ」</span></div><h1 class="slide-title">なぜ、For each を消すのか</h1><div class="why">なぜ：For each は1通ずつ Teams を送る枠。1通にまとめるには外す</div><div class="chapbar"><span class="done">1 まず動かす</span><span class="done">2 つまずく</span><span class="done">3 出力を読む</span><span class="on">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
@@ -1395,7 +1400,7 @@
 </div><div class="slide-footer"><span class="dobadge see"><b>📖 説明</b>スライドで説明（次のページで消します）</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide pa" id="s4a">
-  <span class="slide-num">27 / 41</span>
+  <span class="slide-num">27 / 33</span>
 <div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第4章 取り出す</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「1通になった。しかも「3件」と出た！」</span></div><h1 class="slide-title">まず、3通に分かれる For each を外して、件数を出す</h1><div class="why">なぜ：Teams を For each の外に置けば1回＝1通。件数は length() で数える</div><div class="chapbar"><span class="done">1 まず動かす</span><span class="done">2 つまずく</span><span class="done">3 出力を読む</span><span class="on">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
@@ -1431,7 +1436,7 @@
 </div><div class="slide-footer"><span class="dobadge do"><b>🖐 いま手を動かす</b>デザイナー：枠を削除 → Teamsを外に足す → 件数の式 → テスト</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide pa" id="s17">
-  <span class="slide-num">28 / 41</span>
+  <span class="slide-num">28 / 33</span>
 <div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第4章 取り出す</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「件数も1件目も、式なら取れた」</span></div><h1 class="slide-title">件数は length、1件目は first</h1><div class="why">なぜ：課長がほしいのは「いちばん新しい件名」。新しい順なので first()＝最新</div><div class="chapbar"><span class="done">1 まず動かす</span><span class="done">2 つまずく</span><span class="done">3 出力を読む</span><span class="on">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
@@ -1449,7 +1454,7 @@
 </div><div class="slide-footer"><span class="dobadge see"><b>📖 説明</b>スライドで説明：件数は length、1件目は first</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide pa" id="s4b">
-  <span class="slide-num">29 / 41</span>
+  <span class="slide-num">29 / 33</span>
 <div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第4章 取り出す</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「1行足すたびに、ちゃんと出るか確かめる」</span></div><h1 class="slide-title">1行ずつ足して、そのたびにテストする</h1><div class="why">なぜ：1行ずつ確かめれば、間違えた場所がすぐ分かる</div><div class="chapbar"><span class="done">1 まず動かす</span><span class="done">2 つまずく</span><span class="done">3 出力を読む</span><span class="on">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
@@ -1461,76 +1466,12 @@
         <div class="pm">PA45のメール：3 件</div>
         <div class="pm nw">1件目の件名：PA45 来週の打ち合わせ</div>
 </div></div>
-      <div class="ga">＋選択<br>→ テスト</div>
-      <div class="gs"><div class="gl">3回目（第4章の終わり）</div><div class="ph">
-        <div class="pm">PA45のメール：3 件</div>
-        <div class="pm">1件目の件名：PA45 来週の打ち合わせ</div>
-        <div class="pm nw">全件の件名：PA45 来週の打ち合わせ / PA45 議事録の共有 / PA45 見積の件</div></div></div>
     </div>
     <div class="callout pa" style="margin-top:14px;"><strong>1行足す → テスト。</strong>赤くなったら、直前の1行が原因。</div>
 </div><div class="slide-footer"><span class="dobadge do"><b>🖐 いま手を動かす</b>デザイナー：本文に「1件目の件名：」を1行 → テスト</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
-<section class="slide" id="s18">
-  <span class="slide-num">30 / 41</span>
-<div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第4章 取り出す</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「差出人は、文字がそのまま入っていた」</span></div><h1 class="slide-title">差出人は、これ以上ほどけない</h1><div class="why">なぜ：出力の from は文字のまま。差出人がほしくなったら ?['from'] で取れる</div><div class="chapbar"><span class="done">1 まず動かす</span><span class="done">2 つまずく</span><span class="done">3 出力を読む</span><span class="on">4 取り出す</span><span class="">5 届ける</span></div></div>
-<div class="slide-body">
-
-    <div class="g2">
-      <div class="card green"><h3>このコネクタの from</h3>
-        <div class="jsonbox" style="font-size:18px;"><span class="k">"from"</span>: <span class="v">"（自分のアドレス）"</span></div>
-        <p style="font-size:20px;margin-top:10px;">アドレスの<b>文字がそのまま</b>入っています。だから <span style="font-family:Consolas,monospace;">?['from']</span> で終わり。</p></div>
-      <div class="card yellow"><h3>他のサービスだと、こうなる</h3>
-        <div class="jsonbox" style="font-size:17px;"><span class="k">"from"</span>: {
-  <span class="k">"emailAddress"</span>: {
-    <span class="k">"address"</span>: <span class="v">"（自分のアドレス）"</span> } }</div>
-        <p style="font-size:20px;margin-top:10px;">同じ「差出人」でも<b>3階層</b>。<span style="font-family:Consolas,monospace;">?['from']?['emailAddress']?['address']</span> と続きます。</p></div>
-    </div>
-    <div class="callout pa" style="margin-top:12px;"><strong>暗記しない。毎回その場で出力を見る。</strong></div>
-</div><div class="slide-footer"><span class="dobadge see"><b>📖 説明</b>スライドで説明（手は止めてOK）</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
-</section>
-<section class="slide pa" id="s19">
-  <span class="slide-num">31 / 41</span>
-<div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第4章 取り出す</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「3通バラバラが、1行にまとまった」</span></div><h1 class="slide-title">件名の列だけ抜いて、1本につなぐ</h1><div class="why">なぜ：全件の件名を1行にしたい。For each を使わず、件名の列だけ抜くのが「選択」、つなぐのが join()</div><div class="chapbar"><span class="done">1 まず動かす</span><span class="done">2 つまずく</span><span class="done">3 出力を読む</span><span class="on">4 取り出す</span><span class="">5 届ける</span></div></div>
-<div class="slide-body">
-
-    <div class="pick">
-      <div>
-        <div class="lbl-s">取ってきた3件（1件に4つの箱）</div>
-        <div class="rowbox"><span class="tagx hit">件名</span>来週の打ち合わせ<span class="tagx">差出人</span><span class="tagx">日時</span></div>
-        <div class="rowbox"><span class="tagx hit">件名</span>議事録の共有<span class="tagx">差出人</span><span class="tagx">日時</span></div>
-        <div class="rowbox"><span class="tagx hit">件名</span>見積の件<span class="tagx">差出人</span><span class="tagx">日時</span></div>
-      </div>
-      <div class="ar">→</div>
-      <div>
-        <div class="lbl-s">選択（件名だけ抜く）</div>
-        <div class="col1">
-          <div class="c">来週の打ち合わせ</div>
-          <div class="c">議事録の共有</div>
-          <div class="c">見積の件</div>
-        </div>
-      </div>
-      <div class="ar">→</div>
-      <div>
-        <div class="lbl-s">join（1本につなぐ）</div>
-        <div class="band">PA45 来週の打ち合わせ / PA45 議事録の共有 / PA45 見積の件</div>
-      </div>
-    </div>
-    <div class="g2" style="margin-top:14px;">
-      <div>
-        <div class="lbl-s" style="text-align:left;">「選択」の入れ方（実際の画面）</div>
-        <img class="realshot" src="assets/real-ch4-select.png" alt="選択の画面。元に body(...) の式、マップに 動的コンテンツの 件名">
-        <div class="selnote"><b>元</b>：「/」→「式を挿入する」で <code>body('メールを取得する_(V3)')?['value']</code><br>
-          <b>マップ</b>：右はしのアイコンで1つの欄にして、<b>⚡ から「件名」を選ぶだけ</b></div>
-      </div>
-      <div>
-        <div class="expr">join(body('選択'), ' / ')</div>
-        <div class="callout pa" style="margin-top:10px;font-size:19px;"><strong>For each は使わない。</strong>何件でも同じ。</div>
-      </div>
-    </div>
-</div><div class="slide-footer"><span class="dobadge do"><b>🖐 いま手を動かす</b>デザイナー：取得とTeamsのあいだに「選択」→ 本文に全件の行 → テスト</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
-</section>
 <section class="slide" id="s20">
-  <span class="slide-num">32 / 41</span>
+  <span class="slide-num">30 / 33</span>
 <div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第4章 取り出す</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「出力を見せて聞いたら、名前が合った」</span></div><h1 class="slide-title">出力を先に見せてから、式を聞く</h1><div class="why">なぜ：最初にエラーだったCopilotの式も、今なら直せる</div><div class="chapbar"><span class="done">1 まず動かす</span><span class="done">2 つまずく</span><span class="done">3 出力を読む</span><span class="on">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
@@ -1546,178 +1487,26 @@
     </div>
 </div><div class="slide-footer"><span class="dobadge see"><b>📖 説明</b>スライドで説明（困ったときの聞き方）</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
-<section class="slide teams" id="s21">
-  <span class="slide-num">33 / 41</span>
-<div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第5章 届ける</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「取り出した値を、1通に並べる」</span></div><h1 class="slide-title">本文を整えて、1通に仕上げる</h1><div class="why">なぜ：課長が読みやすい1通に仕上げる</div><div class="chapbar"><span class="done">1 まず動かす</span><span class="done">2 つまずく</span><span class="done">3 出力を読む</span><span class="done">4 取り出す</span><span class="on">5 届ける</span></div></div>
+<section class="slide pa" id="snext">
+  <span class="slide-num">31 / 33</span>
+<div class="slide-head"><div class="slide-eyebrow"><span class="chapno">今日のまとめ</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「課長がほしい2つが、1通で届いた」</span></div><h1 class="slide-title">今日できたこと</h1><div class="why">なぜ：出力を読めば、動的コンテンツに無い値も式で取れる</div><div class="chapbar"><span class="done">1 まず動かす</span><span class="done">2 つまずく</span><span class="done">3 出力を読む</span><span class="on">4 取り出す</span><span class="">5 届ける</span></div></div>
 <div class="slide-body">
 
-    <div class="g2c">
-      <div class="pacard">
-        <div class="pahead"><span class="paic" style="background:#5b5fc7;">T</span>
-          <div><div class="patitle">チャットまたはチャネルでメッセージを投稿する</div><div class="pasub">Microsoft Teams</div></div></div>
-        <div class="pafields">
-          <div class="pafld"><span class="l">投稿者 *</span><span class="v">フロー ボット<span class="cr">▾</span></span></div>
-          <div class="pafld"><span class="l">投稿先 *</span><span class="v">フロー ボットとチャットをする<span class="cr">▾</span></span></div>
-          <div class="pafld"><span class="l">Recipient *</span><span class="v">自分のアドレス</span></div>
-          <div class="pafld"><span class="l">メッセージ *</span><span class="v hi" style="font-family:Consolas,monospace;font-size:12px;">PA45のメール：{length(…)} 件 …</span></div>
-        </div>
-      </div>
-      <div>
-        <div class="facts c3">
-          <div class="f purple"><div class="i">🧩</div><div class="t">文と式は混ぜられる</div><div class="d">「PA45のメール：」＋式<br>いくつでもOK</div></div>
-          <div class="f green"><div class="i">🙋</div><div class="t">まず自分あて</div><div class="d">人に送るのは<br>動いてから</div></div>
-          <div class="f yellow"><div class="i">✂️</div><div class="t">出ないときは減らす</div><div class="d">1行だけにして<br>どの式か突き止める</div></div>
-        </div>
-        <div class="callout teams" style="margin-top:12px;font-size:20px;"><strong>完成。</strong>アクション4つ・式4つ。どれも一覧に無かった値。</div>
-      </div>
+    <div class="donegrid">
+      <div class="dg"><div class="dn">1</div><div class="dt">出力を開く</div><div class="dd">テスト結果 →<br>未加工の出力</div></div>
+      <div class="da">→</div>
+      <div class="dg"><div class="dn">2</div><div class="dt">名前を上から<br>式へ写す</div><div class="dd"><code>body(…)?['value']</code></div></div>
+      <div class="da">→</div>
+      <div class="dg ok"><div class="dn">3</div><div class="dt">件数と最新の件名が<br>1通で届く</div><img class="realshot" src="assets/real-ch4-teams-two-lines.png" alt="PA45のメール：3件、1件目の件名：PA45 来週の打ち合わせ"></div>
     </div>
-</div><div class="slide-footer"><span class="dobadge see"><b>📖 説明</b>完成した本文を、見本と見比べる（足すものはもう無い）</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
-</section>
-<section class="slide" id="s22">
-  <span class="slide-num">34 / 41</span>
-<div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第5章 届ける</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「4つとも緑。1通で届いた」</span></div><h1 class="slide-title">4つとも緑。1通にまとまりました</h1><div class="why">なぜ：全部そろったので、最後にもう一度確かめる</div><div class="chapbar"><span class="done">1 まず動かす</span><span class="done">2 つまずく</span><span class="done">3 出力を読む</span><span class="done">4 取り出す</span><span class="on">5 届ける</span></div></div>
-<div class="slide-body">
-
-    <div style="display:grid;grid-template-columns:400px 1fr;gap:30px;align-items:center;">
-      <img class="shotimg" src="assets/run-canvas.png" alt="4ステップすべて成功した実行結果">
-      <div>
-        <div class="facts c4">
-          <div class="f blue"><div class="t">繰り返し</div><div class="i" style="font-size:26px;color:#2c3a94;font-weight:900;">0秒</div></div>
-          <div class="f blue"><div class="t">メールを取得する</div><div class="i" style="font-size:26px;color:#2c3a94;font-weight:900;">0.6秒</div></div>
-          <div class="f blue"><div class="t">選択</div><div class="i" style="font-size:26px;color:#2c3a94;font-weight:900;">0秒</div></div>
-          <div class="f teams"><div class="t">Teams</div><div class="i" style="font-size:26px;color:#4347a8;font-weight:900;">2秒</div></div>
-        </div>
-        <div class="resbox" style="margin-top:12px;text-align:center;">合計 2.6秒 ／ アクションは4つだけ</div>
-        <div class="callout green" style="margin-top:14px;font-size:21px;">緑になったら、各アクションを開いて<b>入力と出力</b>を確認。</div>
-        <div class="callout" style="margin-top:12px;font-size:20px;"><strong>試したらオフに。</strong>毎朝8時に動き続けるため。</div>
-      </div>
+    <div class="nextbox">
+      <div class="nt">持ち帰り：出力にある名前なら、何でも同じたどり方で取れる</div>
+      <div class="nl"><span>差出人 ?['from']</span><span>受信日時 ?['receivedDateTime']</span><span>2件目 ?[1]</span><span>最後 last()</span></div>
     </div>
-</div><div class="slide-footer"><span class="dobadge do"><b>🖐 いま手を動かす</b>デザイナー：テスト → Teamsで1通を確かめる → オフ</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
-</section>
-<section class="slide teams" id="s8">
-  <span class="slide-num">35 / 41</span>
-<div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第5章 届ける</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「課長のスマホに、この1通」</span></div><h1 class="slide-title">ツウチ課長のスマホに、この1通が届きます</h1><div class="why">なぜ：課長のスマホに届く1通を見てみる</div><div class="chapbar"><span class="done">1 まず動かす</span><span class="done">2 つまずく</span><span class="done">3 出力を読む</span><span class="done">4 取り出す</span><span class="on">5 届ける</span></div></div>
-<div class="slide-body">
-
-    <div class="g2c" style="margin-top:6px;">
-      <div>
-        <div class="lbl-s" style="text-align:left;">実際に届いた1通</div>
-        <img class="realshot" src="assets/real-ch5-teams-final.png" alt="Teams に PA45のメール：3件、1件目の件名、全件の件名 の3行が1通で届いた画面">
-      </div>
-      <div>
-        <div class="who boss" style="padding:12px 16px;">
-          <img src="assets/irasutoya_teams_man.png" alt="">
-          <div><div class="nm" style="font-size:22px;">ツウチ課長</div>
-            <div class="sp" style="font-size:19px;">「移動中に<b>これ1通</b>見れば分かる。オートさんに聞き直さなくていい」</div></div>
-        </div>
-        <div class="lbl-s" style="margin-top:12px;">この1通に入っている値と、その出どころ</div>
-        <div class="maprow"><span class="v1">件数</span><span class="ar2">←</span><span class="fx">length()</span></div>
-        <div class="maprow"><span class="v1">1件目の件名</span><span class="ar2">←</span><span class="fx">first()?['subject']</span></div>
-        <div class="maprow"><span class="v1">全件の件名</span><span class="ar2">←</span><span class="fx">選択 → join()</span></div>
-      </div>
-    </div>
-</div><div class="slide-footer"><span class="dobadge see"><b>📖 説明</b>スライドで説明</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
-</section>
-<section class="slide pa" id="s6c">
-  <span class="slide-num">36 / 41</span>
-<div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第5章 届ける</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「毎朝10分が、0分になった」</span></div><h1 class="slide-title">オートさんの朝が、10分から0分になります</h1><div class="why">なぜ：オートさんの朝がどう変わったかを数字で見る</div><div class="chapbar"><span class="done">1 まず動かす</span><span class="done">2 つまずく</span><span class="done">3 出力を読む</span><span class="done">4 取り出す</span><span class="on">5 届ける</span></div></div>
-<div class="slide-body">
-
-    <div class="col bf" style="border-radius:16px;padding:14px 22px 16px;border:2px solid #fdba74;background:#fff7ed;">
-      <div style="display:flex;align-items:center;gap:12px;font-size:22px;font-weight:900;color:#9a3412;">
-        <img src="assets/irasutoya_businessman.png" alt="" style="height:54px;">Before：オートさんの手作業 ── 毎朝10分<span class="you" style="font-size:15px;margin:0 0 0 4px;">主役（あなた）</span></div>
-      <div class="tl bf" style="margin-top:6px;">
-        <div class="line hot"></div>
-        <div class="pts">
-          <div class="pt"><div class="tm">7:55</div><div class="dot"></div><div class="lb">受信トレイを<br>開く</div></div>
-          <div class="pt"><div class="tm">7:58</div><div class="dot"></div><div class="lb">件名を1つずつ<br>コピー</div></div>
-          <div class="pt"><div class="tm">8:03</div><div class="dot"></div><div class="lb">何件あるか<br>数える</div></div>
-          <div class="pt"><div class="tm">8:06</div><div class="dot"></div><div class="lb">チャットに<br>貼る</div></div>
-          <div class="pt"><div class="tm">8:10</div><div class="dot"></div><div class="lb">送信<br><span style="color:#b91c1c;">写し間違いも</span></div></div>
-        </div>
-      </div>
-    </div>
-    <div style="text-align:center;font-size:32px;color:var(--pa);font-weight:900;line-height:1;margin:6px 0;">▼</div>
-    <div class="col af" style="border-radius:16px;padding:14px 22px 16px;border:2px solid #86efac;background:var(--green-bg);">
-      <div style="display:flex;align-items:center;gap:12px;font-size:22px;font-weight:900;color:#065f46;">
-        <img src="assets/irasutoya_teams_man.png" alt="" style="height:54px;">After：フローが動く ── オートさんの手は0分</div>
-      <div class="tl af" style="margin-top:6px;">
-        <div class="line cool"></div>
-        <div class="pts">
-          <div class="pt"><div class="tm">8:00</div><div class="dot"></div><div class="lb">フローが<br>自動で起動</div></div>
-          <div class="pt"><div class="tm">8:00</div><div class="dot"></div><div class="lb">メールを<br>まとめて取得</div></div>
-          <div class="pt"><div class="tm">8:00</div><div class="dot"></div><div class="lb">件数・件名を<br>取り出す</div></div>
-          <div class="pt"><div class="tm">8:00</div><div class="dot"></div><div class="lb">Teamsに<br>1通</div></div>
-          <div class="pt"><div class="tm">8:01</div><div class="dot"></div><div class="lb">課長が<br>移動中に読む</div></div>
-        </div>
-      </div>
-    </div>
-    <div class="gain">
-      <div class="g"><div class="num">10分</div><div class="lb">1日に浮く時間</div></div>
-      <div class="g"><div class="num">約200分</div><div class="lb">月20日ぶん（3時間半）</div></div>
-      <div class="g"><div class="num">0件</div><div class="lb">写し間違い</div></div>
-      <div class="g"><div class="num">4つ</div><div class="lb">使うアクションの数</div></div>
-    </div>
-</div><div class="slide-footer"><span class="dobadge see"><b>📖 説明</b>スライドで説明</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
-</section>
-<section class="slide pa" id="sbasis">
-  <span class="slide-num">37 / 41</span>
-<div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第5章 届ける</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「どれも、課長の困りごとから選んだ」</span></div><h1 class="slide-title">ふりかえり：なぜ、このアクションと式なのか</h1><div class="why">なぜ：どのアクションも「誰の、何の困りごと」から選んだかを確かめる</div><div class="chapbar"><span class="done">1 まず動かす</span><span class="done">2 つまずく</span><span class="done">3 出力を読む</span><span class="done">4 取り出す</span><span class="on">5 届ける</span></div></div>
-<div class="slide-body">
-
-    <table class="basis">
-      <tr><th></th><th>使ったもの</th><th>だれの・何のため</th><th>これを選んだ理由</th></tr>
-      <tr><td class="ic">⏰</td><td class="an">繰り返し</td><td class="nd">課長は毎朝8時に知りたい</td><td class="bs">人が押さなくても、時刻で勝手に動く</td></tr><tr><td class="ic">✉️</td><td class="an">メールを取得する (V3)</td><td class="nd">PA45のメールを何通もまとめて見たい</td><td class="bs">1回で何通も取れる。件名フィルターで3通に絞れる</td></tr><tr><td class="ic">💬</td><td class="an">Teams に投稿（For each の外）</td><td class="nd">課長は移動中にスマホの Teams を見る</td><td class="bs">外に置くと1回だけ動く＝1通にまとまる</td></tr><tr><td class="ic">🔢</td><td class="an">length()</td><td class="nd">課長が最初に知りたいのは件数</td><td class="bs">件数は動的コンテンツに無い。棚の数を数える式</td></tr><tr><td class="ic">1️⃣</td><td class="an">first()</td><td class="nd">いちばん新しい件名を知りたい</td><td class="bs">新しい順に並ぶので、いちばん前（[0]）＝最新</td></tr><tr><td class="ic">🗂️</td><td class="an">選択 → join()</td><td class="nd">全件の件名を1行で見たい</td><td class="bs">For each を使わずに件名の列だけ抜いて、1本につなぐ</td></tr>
-    </table>
-    <div class="callout pa" style="margin-top:6px;font-size:18px;padding-top:8px;padding-bottom:8px;"><strong>「誰が・いつ・何を知りたいか」から逆にたどれば、アクションは決まる。</strong></div>
-</div><div class="slide-footer"><span class="dobadge see"><b>📖 説明</b>スライドで説明（完成したフローと見比べる）</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
-</section>
-<section class="slide" id="s23">
-  <span class="slide-num">38 / 41</span>
-<div class="slide-head"><div class="slide-eyebrow"><span class="chapno">エピローグ</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「同じ式は、ほかの仕事にも使える」</span></div><h1 class="slide-title">同じ4つの式が、この3人の朝にも効きます</h1><div class="why">なぜ：同じ式は、ほかの人の仕事にも使える</div><div class="chapbar"><span class="done">1 まず動かす</span><span class="done">2 つまずく</span><span class="done">3 出力を読む</span><span class="done">4 取り出す</span><span class="done">5 届ける</span></div></div>
-<div class="slide-body">
-
-    <div class="useq">
-      <div class="u"><img src="assets/irasutoya_order_man.png" alt="">
-        <div class="nm">シュウケイ かぞえ さん<br><span style="font-size:16px;color:var(--muted);">現場リーダー</span></div>
-        <div class="tx">SharePointの作業一覧から<b>今日の自分の担当だけ</b>を数えて、朝礼前にTeamsへ。<br><b>length()</b> と <b>選択→join()</b></div></div>
-      <div class="u"><img src="assets/irasutoya_survey.png" alt="">
-        <div class="nm">チュウシュツ えらむ さん<br><span style="font-size:16px;color:var(--muted);">研修担当</span></div>
-        <div class="tx">Formsの回答から<b>いちばん新しい1件</b>だけ取り出して、その場で共有。<br><b>first()</b> と <b>?['…']</b></div></div>
-      <div class="u"><img src="assets/irasutoya_programming.png" alt="">
-        <div class="nm">レンケイ つなぐ さん<br><span style="font-size:16px;color:var(--muted);">情シス</span></div>
-        <div class="tx">問い合わせメールの<b>件数だけ</b>を毎朝集計して、増えた日に気づけるようにする。<br><b>length()</b></div></div>
-    </div>
-    <div class="facts c3" style="margin-top:12px;">
-      <div class="f yellow"><div class="i">0️⃣</div><div class="t">1件目は [0]</div><div class="d">1ではありません</div></div>
-      <div class="f yellow"><div class="i">❓</div><div class="t">? は外さない</div><div class="d">0件のとき、外すと<br>フローが止まります</div></div>
-      <div class="f yellow"><div class="i">🔤</div><div class="t">名前はコネクタ次第</div><div class="d">同じ「差出人」でも<br>形が違います</div></div>
-    </div>
-</div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
-</section>
-<section class="slide" id="s24">
-  <span class="slide-num">39 / 41</span>
-<div class="slide-head"><div class="slide-eyebrow"><span class="chapno">エピローグ</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「今日そろえたのは、この4つ」</span></div><h1 class="slide-title">今日そろえたもの</h1><div class="why">なぜ：今日やったことを4つにまとめる</div><div class="chapbar"><span class="done">1 まず動かす</span><span class="done">2 つまずく</span><span class="done">3 出力を読む</span><span class="done">4 取り出す</span><span class="done">5 届ける</span></div></div>
-<div class="slide-body">
-
-    <div class="steps4">
-      <div class="s"><div class="n">1</div><div class="t">出力を開いて<br>住所を読む</div><div class="c">value → [0] → subject</div></div>
-      <div class="s"><div class="n">2</div><div class="t">いちばん新しい<br>1件を取る</div><div class="c">first()</div></div>
-      <div class="s"><div class="n">3</div><div class="t">件数を<br>数える</div><div class="c">length()</div></div>
-      <div class="s"><div class="n">4</div><div class="t">1列抜いて<br>1行にする</div><div class="c">選択 → join()</div></div>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 44px 1fr 44px 1fr;gap:8px;align-items:center;margin-top:16px;">
-      <div class="card purple" style="padding:14px 18px;"><h3 style="font-size:21px;margin-bottom:6px;">① 出力を削る</h3><p style="font-size:18px;">1件だけ・要る箱だけ。PIIは消す</p></div>
-      <div style="text-align:center;font-size:30px;color:var(--purple);font-weight:900;">→</div>
-      <div class="card purple" style="padding:14px 18px;"><h3 style="font-size:21px;margin-bottom:6px;">② <span class="cop">Copilot</span>に貼る</h3><p style="font-size:18px;">アクション名を書き添えて、式を1行だけ頼む</p></div>
-      <div style="text-align:center;font-size:30px;color:var(--purple);font-weight:900;">→</div>
-      <div class="card purple" style="padding:14px 18px;"><h3 style="font-size:21px;margin-bottom:6px;">③ 自分で確かめる</h3><p style="font-size:18px;">アクション名と [ ] の番号を見てから貼る</p></div>
-    </div>
-    <div class="pull-quote" style="margin-top:auto;margin-bottom:8px;font-size:25px;padding:18px;">式は暗記するものではなく、出力を見ながら組み立てるもの。</div>
-</div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
+</div><div class="slide-footer"><span class="dobadge see"><b>📖 説明</b>今日のふりかえり（試したフローはオフに）</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide" id="s25">
-  <span class="slide-num">40 / 41</span>
+  <span class="slide-num">32 / 33</span>
 <div class="slide-head"><div class="slide-eyebrow">PA45 のご案内</div><h1 class="slide-title">PA45 は、こんな場です</h1><div class="concept-dot">About</div></div>
 <div class="slide-body">
 
@@ -1734,7 +1523,7 @@
 </div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
 <section class="slide title-slide" id="s26">
-  <span class="slide-num">41 / 41</span>
+  <span class="slide-num">33 / 33</span>
 <div class="slide-head"><div class="slide-eyebrow">Thank you!</div><h1 class="slide-title">お疲れさまでした 🎉</h1></div>
 <div class="slide-body">
 

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>PA45 第29回 ハンズオン手順｜動的コンテンツに出てこない値も、Copilotと一緒に式で取り出せるようになる</title>
-<meta name="description" content="PA45 第29回のハンズオン手順書。毎朝8時に、件名にPA45が入ったメールをとってきて、1件目の件名・件数・最後の1件・全件の件名を式で取り出し、Teamsに1通でまとめて届けるフローを作ります。動的コンテンツの一覧に出てこない値を、自分で取り出せるようになります。">
+<meta name="description" content="PA45 第29回のハンズオン手順書。毎朝8時に、件名にPA45が入ったメールをとってきて、件数といちばん新しい件名を式で取り出し、Teamsに1通で届けるフローを作ります。動的コンテンツの一覧に出てこない値を、自分で取り出せるようになります。">
 <style>
   :root{
     --pa:#3a4fb8;--pa-dark:#2c3a94;--pa-bg:#eef1fc;
@@ -131,11 +131,11 @@
 
   <header>
     <span class="eyebrow">PA45 第29回｜ハンズオン手順</span>
-    <h1>動的コンテンツに出てこない値も、Copilotと一緒に式で取り出せるようになる<small>毎朝、練習用に送った3通をとってきて、1件目の件名・件数・最後の1件・全件の件名を取り出し、Teamsに1通でまとめて届けます。動的コンテンツの一覧に出てこない値を、自分の手で取り出せるようになります。</small></h1>
+    <h1>動的コンテンツに出てこない値も、Copilotと一緒に式で取り出せるようになる<small>毎朝、練習用に送った3通をとってきて、件数といちばん新しい件名を取り出し、Teamsに1通で届けます。動的コンテンツの一覧に出てこない値を、自分の手で取り出せるようになります。</small></h1>
   </header>
 
   <div class="goal">
-    <b>今日つくるもの：</b> 毎朝8時に動いて、件名に <b>PA45</b> が入ったメールを<b>新しい順に</b>とってきて、<b>件数・1件目・2件目・最後・全件の件名</b>を並べた<b>1通のメッセージ</b>を自分あてのTeamsに届けるフロー。
+    <b>今日つくるもの：</b> 毎朝8時に動いて、件名に <b>PA45</b> が入ったメールを<b>新しい順に</b>とってきて、<b>件数といちばん新しい件名</b>を並べた<b>1通のメッセージ</b>を自分あての Teams に届けるフロー。
     <div class="flowpath">
       <span class="st">⏰ 繰り返し（毎朝8時）</span><span class="ar">→</span>
       <span class="st">📥 PA45のメールを取得</span><span class="ar">→</span>
@@ -157,8 +157,7 @@
     <a href="#p6">6. 出力を読む</a>
     <a href="#p7">7. 枠を外して件数</a>
     <a href="#p8">8. 1件目の件名を足す</a>
-    <a href="#p9">9. 全件を1行に</a>
-    <a href="#pt">10. 仕上げてテスト</a>
+        <a href="#pt">9. 仕上げてテスト</a>
     <a href="#pc">＋ Copilotに聞く3か所</a>
   </nav>
 
@@ -241,7 +240,7 @@
     <p class="whyline">🧑‍💼 オートさん「なぜ」：課長が最初に知りたいのは「何件来たか」。件数を本文の1行目に入れたいので、一覧から探してみる</p>
     <ol class="steps tm">
       <li>Teams のメッセージ欄で、動的コンテンツの一覧を開きます。</li>
-      <li><b>「件数」</b>や<b>「全件の件名」</b>を探します。<b>どこにもありません。</b></li>
+      <li><b>「件数」</b>を探します。<b>どこにもありません。</b></li>
     </ol>
     <div class="callout tip"><b>💡 ここからが今日の本題です。</b> 一覧に無い値は、出力を読んで<b>式で取り出します</b>。</div>
     <h3 style="font-size:16px;color:var(--pa-dark);margin:20px 0 6px;">続けて：Copilot に件数の式を聞いて、貼ってみる</h3>
@@ -260,7 +259,7 @@
 <pre id="ex5p">Power Automate で、メールの件数を数える式を教えて</pre>
     </div>
     <div class="callout tip"><b>💡 式は「/」で入れるのが確実です。</b> メッセージ欄の右の ⚡（動的コンテンツ）や fx（式）のボタンでも入れられますが、本文のような欄では<b>カーソルの位置を見失って式が入らないことがあります</b>。この先の式も全部、<span class="k">/</span> →「式を挿入する」で入れます。</div>
-    <div class="callout info"><b>■ 次の STEP 6 でやること：</b> 何が返ってきているのか（出力）を自分の目で見ます。出力を見せて聞き直す方法は STEP 10 の下「Copilot に聞く3か所」にあります。</div>
+    <div class="callout info"><b>■ 次の STEP 6 でやること：</b> 何が返ってきているのか（出力）を自分の目で見ます。出力を見せて聞き直す方法は STEP 9 の下「Copilot に聞く3か所」にあります。</div>
   </section>
 
   <!-- ===== 6 ===== -->
@@ -356,44 +355,16 @@
     <div class="callout tip"><b>💡 first() と ?[0] は同じ意味です。</b> 0件のときに赤く止まりにくいのは first() のほうです。</div>
   </section>
 
-  <!-- ===== 9 ===== -->
-  <section class="part" id="p9">
-    <div class="part-h"><span class="part-badge sp">STEP 9</span><span class="chap">第4章 取り出す</span><h2>全件の件名を、1行にまとめる</h2></div>
-    <p class="whyline">🧑‍💼 オートさん「なぜ」：課長は全件の件名も1行で見たい。For each を使わずに件名の列だけ抜くのが「選択」、つなぐのが join()</p>
-    <p class="part-note">全件の件名を並べたいときは、<b>繰り返し（Apply to each）を使いません</b>。<b>「選択」</b>で1列だけ抜いて、<b>join()</b> でつなぎます。</p>
-    <ol class="steps sp">
-      <li><b>「メールを取得する」と Teams のあいだの ＋</b> → <b>データ操作</b> → <b>「選択」</b>を追加します（Teams より上に置きます）。</li>
-      <li>2つの欄を埋めます。<b>「元」</b>は「/」→「式を挿入する」で下の式を入れます。<b>「マップ」</b>は最初「キー」と「値」の2つに分かれているので、<b>右はしのアイコン</b>を押して1つの欄にし、<b>⚡（動的コンテンツ）から「件名」を選ぶだけ</b>です。<div class="setrow"><span class="kv"><span class="kk">元</span><span class="vv">body('…')?['value']</span></span><span class="kv"><span class="kk">マップ</span><span class="vv">item()?['subject']</span></span></div></li>
-      <li>Teams のメッセージ欄に <span class="k">全件の件名：</span> と打ち、<span class="k">/</span> →<b>「式を挿入する」</b>で下の join を入れて<b>テスト</b>。</li>
-    </ol>
-    <div class="codewrap">
-      <span class="lbl">「元」に入れる式</span>
-      <button class="copybtn" data-code="ex5">コピー</button>
-<pre id="ex5">body('メールを取得する_(V3)')?['value']</pre>
-    </div>
-    <div class="codewrap">
-      <span class="lbl">（参考）「マップ」を式で入れる場合</span>
-      <button class="copybtn" data-code="ex6">コピー</button>
-<pre id="ex6">item()?['subject']</pre>
-    </div>
-    <div class="codewrap">
-      <span class="lbl">Teams の本文に足す式</span>
-      <button class="copybtn" data-code="ex6b">コピー</button>
-<pre id="ex6b">join(body('選択'), ' / ')</pre>
-    </div>
-    <div class="callout info"><b>■ item() とは：</b> 「いま見ている1件」を指す言葉です。選択は、棚に並んだ1件ずつに対して「この名前のところだけ取り出して」と伝えるアクションです。結果は<b>件名だけが並んだ配列</b>になります。</div>
-  </section>
 
   <!-- ===== 7 ===== -->
   <section class="part" id="pt">
-    <div class="part-h"><span class="part-badge">STEP 10</span><span class="chap">第5章 届ける</span><h2>本文を整えて、もう一度テスト（完成）</h2></div>
-    <p class="whyline">🧑‍💼 オートさん「なぜ」：全部そろったので、課長が読みやすい1通に仕上げて、最後にもう一度確かめる</p>
+    <div class="part-h"><span class="part-badge">STEP 9</span><span class="chap">第5章 届ける</span><h2>本文を整えて、もう一度テスト（完成）</h2></div>
+    <p class="whyline">🧑‍💼 オートさん「なぜ」：課長がほしい2つ（件数と最新の件名）がそろった。最後にもう一度確かめる</p>
     <div class="codewrap">
       <span class="lbl">完成した本文の見本（足りない行があれば足す）</span>
       <button class="copybtn" data-code="ex7">コピー</button>
 <pre id="ex7">PA45のメール：@{length(body('メールを取得する_(V3)')?['value'])} 件
-1件目の件名：@{first(body('メールを取得する_(V3)')?['value'])?['subject']}
-全件の件名：@{join(body('選択'), ' / ')}</pre>
+1件目の件名：@{first(body('メールを取得する_(V3)')?['value'])?['subject']}</pre>
     </div>
     <ol class="steps">
       <li><b>「保存」</b>→ <b>「テスト」→「手動」→「テスト」→「フローの実行」→「完了」</b>で実行します。</li>
