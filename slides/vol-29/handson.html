@@ -156,7 +156,7 @@
     <a href="#p5">5. 件数を探す→Copilotに聞く</a>
     <a href="#p6">6. 出力を読む</a>
     <a href="#p7">7. 枠を外して件数</a>
-    <a href="#p8">8. 1行ずつ足す</a>
+    <a href="#p8">8. 1件目の件名を足す</a>
     <a href="#p9">9. 全件を1行に</a>
     <a href="#pt">10. 仕上げてテスト</a>
     <a href="#pc">＋ Copilotに聞く3か所</a>
@@ -322,26 +322,31 @@
 
   <!-- ===== 8 ===== -->
   <section class="part" id="p8">
-    <div class="part-h"><span class="part-badge">STEP 8</span><span class="chap">第4章 取り出す</span><h2>1件目・2件目・最後・差出人を、1行ずつ足す</h2></div>
-    <p class="whyline">🧑‍💼 オートさん「なぜ」：1件目・最後は first()・last()、2件目は [1]。どれも一覧に無いので式で取る。1行ずつ確かめれば間違えた場所がすぐ分かる</p>
-    <p class="part-note">Teams のメッセージ欄に、<b>1行足すたびにテスト</b>します。行の頭に「1件目の件名：」などの言葉を打ち、続けて <span class="k">/</span> →<b>「式を挿入する」</b>で入れます。<b>動的コンテンツの一覧には、どれも出てきません。</b></p>
+    <div class="part-h"><span class="part-badge">STEP 8</span><span class="chap">第4章 取り出す</span><h2>いちばん新しい件名（1件目）を1行足す</h2></div>
+    <p class="whyline">🧑‍💼 オートさん「なぜ」：課長がほしいのは「いちばん新しい件名」。新しい順に並ぶので、いちばん前＝first()。一覧に無いので式で取る</p>
+    <ol class="steps">
+      <li>メッセージ欄のいちばん最後（「件」の後ろ）をクリックして、<b>Enter</b> で改行します。</li>
+      <li>「<span class="k">1件目の件名：</span>」と打ちます。</li>
+      <li>半角の <span class="k">/</span> →<b>「式を挿入する」</b>→ 下の①を貼る → 左下の青い<b>「追加」</b>。</li>
+      <li><b>保存 → テスト → 手動 → テスト → フローの実行 → 完了</b>。Teams に「1件目の件名：PA45 来週の打ち合わせ」の行が増えていれば成功です。</li>
+    </ol>
     <div class="codewrap">
-      <span class="lbl">① 1件目の件名</span>
+      <span class="lbl">① 1件目の件名（これだけ入れればOK）</span>
       <button class="copybtn" data-code="ex1">コピー</button>
 <pre id="ex1">first(body('メールを取得する_(V3)')?['value'])?['subject']</pre>
     </div>
     <div class="codewrap">
-      <span class="lbl">② 2件目の件名（番号で取る）</span>
+      <span class="lbl">（時間があれば）2件目の件名：番号で取る</span>
       <button class="copybtn" data-code="ex2">コピー</button>
 <pre id="ex2">body('メールを取得する_(V3)')?['value']?[1]?['subject']</pre>
     </div>
     <div class="codewrap">
-      <span class="lbl">③ 最後の1件の件名</span>
+      <span class="lbl">（時間があれば）最後の1件の件名</span>
       <button class="copybtn" data-code="ex3">コピー</button>
 <pre id="ex3">last(body('メールを取得する_(V3)')?['value'])?['subject']</pre>
     </div>
     <div class="codewrap">
-      <span class="lbl">④ 1件目の差出人</span>
+      <span class="lbl">（時間があれば）1件目の差出人</span>
       <button class="copybtn" data-code="ex4b">コピー</button>
 <pre id="ex4b">first(body('メールを取得する_(V3)')?['value'])?['from']</pre>
     </div>
@@ -388,9 +393,6 @@
       <button class="copybtn" data-code="ex7">コピー</button>
 <pre id="ex7">PA45のメール：@{length(body('メールを取得する_(V3)')?['value'])} 件
 1件目の件名：@{first(body('メールを取得する_(V3)')?['value'])?['subject']}
-1件目の差出人：@{first(body('メールを取得する_(V3)')?['value'])?['from']}
-2件目の件名：@{body('メールを取得する_(V3)')?['value']?[1]?['subject']}
-最後の1件：@{last(body('メールを取得する_(V3)')?['value'])?['subject']}
 全件の件名：@{join(body('選択'), ' / ')}</pre>
     </div>
     <ol class="steps">
