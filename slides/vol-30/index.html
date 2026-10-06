@@ -1,0 +1,1401 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<title>PA45 第30回 スライド｜Teamsの頼まれごとを1クリックでTo Doに入れる</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<!-- generated: pac-flows/vol30-teamstodo/build_vol30_deck.py（直接編集しない） -->
+<style>
+  :root{
+    --blue-bg:#eaf2fc;--blue-mid:#2a7dd4;--blue-text:#14528f;--blue-light:#b8d3ef;
+    --orange:#e06030;--red:#c03520;--surface:#fff;--bg:#f3f6fa;--text:#1f2937;
+    --muted:#475569;--hint:#94a3b8;--border:#e2e8f0;--green-bg:#ecfdf5;--green-text:#065f46;
+    --yellow-bg:#fffbeb;--yellow-text:#92400e;--teal:#0f7b8a;--purple:#7c3aed;
+    --xl:#217346;--xl-dark:#1a5c38;--xl-bg:#e7f4ec;--pa:#3a4fb8;--teams:#5b5fc7;--teams-dark:#4347a8;
+  }
+  body{margin:0;padding:24px 24px 24px 280px;background:#1a2233;
+    font-family:"Meiryo UI","Yu Gothic UI","Segoe UI",sans-serif;color:var(--text);font-size:16px;}
+  .deck-header{color:#fff;max-width:1280px;margin:0 auto 24px;font-size:16px;opacity:.85;}
+  .deck-header h1{margin:0 0 4px;font-size:24px;}
+  .toc{position:fixed;top:0;left:0;bottom:0;width:260px;background:#0f172a;color:#cbd5e1;
+    padding:22px 0;overflow-y:auto;z-index:100;border-right:1px solid #1e293b;box-shadow:4px 0 16px rgba(0,0,0,.3);}
+  .toc-header{padding:0 22px 14px;border-bottom:1px solid #1e293b;margin-bottom:10px;}
+  .toc-header .title{font-size:14px;font-weight:800;color:#fff;}
+  .toc-header .sub{font-size:11px;color:#64748b;margin-top:4px;}
+  .toc ol{list-style:none;padding:0;margin:0;}
+  .toc li a{display:block;padding:9px 22px 9px 18px;color:#cbd5e1;text-decoration:none;font-size:13px;
+    line-height:1.45;border-left:3px solid transparent;transition:background .15s,border-color .15s,color .15s;}
+  .toc li a:hover{background:#1e293b;color:#fff;}
+  .toc li a.active{background:#1e293b;color:#fff;border-left-color:var(--pa);}
+  .toc li a .n{display:inline-block;width:22px;color:#64748b;font-weight:700;font-size:12px;}
+  .toc li a.active .n{color:#7f8ff0;}
+  .toc-toggle{position:fixed;top:10px;left:270px;z-index:101;background:#1e293b;color:#fff;border:none;
+    padding:8px 14px;border-radius:6px;cursor:pointer;font-size:13px;font-weight:600;}
+  body.toc-collapsed{padding-left:24px;}
+  body.toc-collapsed .toc{transform:translateX(-100%);}
+  body.toc-collapsed .toc-toggle{left:10px;}
+  .toc,.toc-toggle{transition:transform .2s,left .2s;}
+  .slide{width:1280px;height:720px;margin:0 auto 28px;background:#fff;box-shadow:0 12px 40px rgba(0,0,0,.35);
+    border-radius:6px;overflow:hidden;position:relative;display:flex;flex-direction:column;}
+  .slide-num{position:absolute;top:10px;right:14px;font-size:14px;color:var(--hint);
+    background:rgba(255,255,255,.9);padding:3px 10px;border-radius:12px;z-index:10;}
+  .slide-head{padding:24px 48px 22px;background:linear-gradient(135deg,#14528f 0%,#2a7dd4 100%);
+    color:#fff;border-bottom:4px solid #fbbf24;}
+  .slide-eyebrow{font-size:15px;color:#93c5fd;font-weight:700;letter-spacing:.04em;text-transform:uppercase;}
+  .slide-title{font-size:38px;font-weight:800;line-height:1.2;margin:4px 0 0;color:#fff;letter-spacing:-.01em;}
+  .slide-title small{font-size:23px;color:rgba(255,255,255,.85);font-weight:600;}
+  .concept-dot{position:absolute;top:30px;right:60px;display:flex;align-items:center;gap:8px;font-size:15px;color:#fbbf24;font-weight:700;}
+  .concept-dot::before{content:'';width:10px;height:10px;border-radius:50%;background:#fbbf24;}
+  /* Teams/報連相が主役のスライドは Teams パープル帯 */
+  .slide.teams .slide-head{background:linear-gradient(135deg,#4347a8 0%,#5b5fc7 100%);border-bottom-color:#c3c5ef;}
+  .slide.teams .slide-eyebrow{color:#d5d6f6;}
+  .slide.teams .concept-dot{color:#d5d6f6;}
+  .slide.teams .concept-dot::before{background:#d5d6f6;}
+  /* 分岐が主役のスライドはPAブルー帯 */
+  .slide.pa .slide-head{background:linear-gradient(135deg,#2c3a94 0%,#4358c8 100%);border-bottom-color:#a9b6f5;}
+  .slide.pa .slide-eyebrow{color:#c7d0fb;}
+  .slide.pa .concept-dot{color:#c7d0fb;}
+  .slide.pa .concept-dot::before{background:#c7d0fb;}
+  .title-slide .slide-head{background:transparent;color:inherit;border-bottom:none;}
+  .title-slide .slide-eyebrow{color:var(--blue-mid);text-transform:none;letter-spacing:0;}
+  .title-slide .slide-title{color:var(--text);}
+  .title-slide .slide-title small{color:var(--muted);}
+  .slide-body{flex:1;padding:24px 48px 0;display:flex;flex-direction:column;font-size:22px;}
+  .slide-footer{margin-top:auto;padding:14px 48px 18px;display:flex;justify-content:space-between;
+    align-items:center;font-size:14px;color:var(--hint);background:#fff;}
+  .slide-footer .chat-reminder{background:var(--blue-bg);color:var(--blue-text);padding:7px 16px;border-radius:20px;font-weight:600;font-size:14px;}
+  .slide-footer .src{color:#b6becb;font-size:12px;}
+  .cards-3{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-top:20px;}
+  .cards-2{display:grid;grid-template-columns:repeat(2,1fr);gap:26px;margin-top:20px;}
+  .card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:24px 28px;box-shadow:0 2px 6px rgba(0,0,0,.04);}
+  .card.blue{background:var(--blue-bg);border-color:rgba(42,125,212,.25);}
+  .card.green{background:var(--green-bg);border-color:rgba(6,95,70,.25);}
+  .card.teams{background:#eef0fb;border-color:rgba(91,95,199,.28);}
+  .card.pa{background:#eef1fc;border-color:rgba(58,79,184,.25);}
+  .card.yellow{background:var(--yellow-bg);border-color:rgba(146,64,14,.25);}
+  .card.purple{background:#f5f3ff;border-color:rgba(124,58,237,.25);}
+  .card .num{display:inline-flex;align-items:center;justify-content:center;width:50px;height:50px;
+    border-radius:50%;background:var(--pa);color:#fff;font-weight:800;font-size:26px;margin-bottom:12px;}
+  .card .ico{font-size:46px;margin-bottom:10px;display:block;}
+  .card h3{margin:0 0 12px;font-size:26px;font-weight:700;color:var(--text);line-height:1.35;}
+  .card p,.card ul{font-size:21px;line-height:1.8;color:var(--muted);margin:0;}
+  .card ul{padding-left:22px;}.card li{margin-bottom:9px;}
+  code,.code{font-family:"DM Mono","Consolas",monospace;background:#f1f5f9;padding:3px 9px;border-radius:5px;font-size:.94em;color:#0f172a;}
+  .title-slide{background:linear-gradient(135deg,#e9edfb 0%,#d4ddf6 100%);}
+  .title-slide .badge-row{display:flex;gap:14px;margin-bottom:20px;flex-wrap:wrap;}
+  .title-slide .pill{background:rgba(255,255,255,.9);color:#2c3a94;padding:8px 20px;border-radius:22px;font-size:16px;font-weight:700;}
+  .title-slide .pill.alt{background:#fff;color:var(--pa);border:2px solid var(--pa);}
+  .title-slide h1{font-size:42px;font-weight:800;line-height:1.18;color:#2c3a94;margin:0 0 20px;letter-spacing:-.02em;}
+  .title-slide .lead{font-size:21px;color:var(--muted);margin:0 0 22px;line-height:1.6;}
+  .meta-table{background:rgba(255,255,255,.72);border-left:5px solid var(--pa);padding:16px 26px;border-radius:8px;max-width:1040px;}
+  .meta-table dt{display:inline-block;width:110px;color:#2c3a94;font-weight:700;font-size:18px;}
+  .meta-table dd{display:inline;margin:0;font-size:20px;color:var(--text);}
+  .meta-table dl{margin:11px 0;}
+  ul.check{padding:0;list-style:none;}
+  ul.check li{padding-left:34px;position:relative;font-size:22px;line-height:1.8;margin-bottom:12px;color:var(--text);}
+  ul.check li::before{content:'✓';position:absolute;left:4px;top:0;color:var(--blue-mid);font-weight:800;font-size:22px;}
+  .callout{background:var(--yellow-bg);border-left:6px solid #f59e0b;padding:18px 26px;border-radius:6px;font-size:22px;line-height:1.75;color:#78350f;margin:12px 0;}
+  .callout strong{color:#78350f;}
+  .callout.blue{background:var(--blue-bg);border-left-color:#2a7dd4;color:#14528f;}
+  .callout.blue strong{color:#14528f;}
+  .callout.green{background:var(--green-bg);border-left-color:#059669;color:#065f46;}
+  .callout.green strong{color:#065f46;}
+  .callout.teams{background:#eef0fb;border-left-color:var(--teams);color:#3a3c7a;}
+  .callout.teams strong{color:#3a3c7a;}
+  .callout.pa{background:#eef1fc;border-left-color:var(--pa);color:#28308a;}
+  .callout.pa strong{color:#28308a;}
+  .callout.small{font-size:15px;padding:10px 18px;line-height:1.55;color:#64748b;background:#f8fafc;border-left-color:#cbd5e1;}
+  .opening-bar{background:var(--pa);color:#fff;padding:12px 48px;display:flex;justify-content:space-between;font-size:16px;font-weight:700;}
+  .haru-img{width:230px;height:230px;border-radius:50%;object-fit:cover;box-shadow:0 8px 24px rgba(42,125,212,.3);}
+  .pull-quote{font-size:22px;font-weight:700;color:#2c3a94;text-align:center;background:#eef1fc;padding:14px;border-radius:12px;margin:12px 0;}
+  .linkrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;align-items:center;}
+  .linkrow .lbl{font-size:16px;font-weight:700;color:var(--blue-text);}
+  .pathpill{display:inline-block;background:#0f172a;color:#fbbf24;font-family:"DM Mono","Consolas",monospace;font-weight:700;padding:4px 12px;border-radius:8px;font-size:16px;text-decoration:none;}
+  a.pathpill:hover{background:#1e293b;}
+  .deco{position:absolute;pointer-events:none;z-index:1;}
+  .illus{display:block;width:auto;}
+  .introrow{display:grid;grid-template-columns:150px 1fr;gap:24px;align-items:center;margin:6px 0 12px;}
+  .introrow .illus{max-height:140px;margin:0 auto;}
+  .steplist{counter-reset:s;list-style:none;padding:0;margin:8px 0 0;}
+  .steplist li{counter-increment:s;position:relative;padding:11px 0 11px 50px;font-size:21px;line-height:1.5;border-bottom:1px dashed var(--border);}
+  .steplist li::before{content:counter(s);position:absolute;left:0;top:9px;width:32px;height:32px;border-radius:50%;
+    background:var(--pa);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:16px;}
+  .steplist li:last-child{border-bottom:none;}
+  .steplist li.key::before{background:#c2410c;}
+  .steplist b{color:var(--text);}
+  .blist{list-style:none;padding:0;margin:8px 0 0;}
+  .blist li{position:relative;padding-left:28px;line-height:1.5;margin-bottom:8px;font-size:20px;color:var(--text);}
+  .blist li::before{content:'';position:absolute;left:8px;top:.55em;width:9px;height:9px;border-radius:2px;background:var(--pa);}
+  .blist li b,.blist li strong{color:#2c3a94;}
+  .chips{display:flex;flex-wrap:wrap;gap:9px;margin-top:10px;}
+  .chips span{background:#fff;border:1px solid #aab6f0;color:#2c3a94;
+    border-radius:18px;padding:6px 15px;font-size:17px;font-weight:700;}
+
+  /* 全体像フロー */
+  .flowline{display:flex;align-items:center;justify-content:center;gap:11px;margin-top:16px;font-size:20px;font-weight:800;color:#2c3a94;flex-wrap:wrap;}
+  .flowline .step{background:#eef1fc;border:1px solid #aab6f0;border-radius:24px;padding:9px 18px;}
+  .flowline .step.hot{background:#eef0fb;border-color:#c3c5ef;color:var(--teams-dark);}
+  .flowline .ar{color:var(--pa);font-size:24px;}
+  .roles{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:12px;}
+  .roles .r{border-radius:16px;padding:18px 12px;text-align:center;color:#fff;}
+  .roles .r .ic{font-size:42px;line-height:1;}
+  .roles .r .nm{font-size:20px;font-weight:800;margin-top:6px;}
+  .roles .r .role{font-size:15px;margin-top:6px;line-height:1.45;opacity:.97;}
+
+  /* ==== Teams 報連相カード モック ==== */
+  .tcard{font-family:"Segoe UI","Noto Sans JP",sans-serif;background:#fbfbfd;border:1.5px solid #E1E1EA;border-left:5px solid var(--teams);border-radius:12px;padding:15px 18px;box-shadow:0 10px 26px rgba(91,95,199,.20);}
+  .tcard .botrow{display:flex;align-items:center;gap:9px;margin-bottom:9px;font-size:14px;color:var(--teams);font-weight:800;}
+  .tcard .botrow .av{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#7377d8,#5b5fc7);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:15px;flex:0 0 auto;}
+  .tcard .botrow .bp{font-weight:800;font-size:11px;color:var(--teams);background:#eef0fb;border:1px solid #d6d8f2;border-radius:5px;padding:1px 7px;}
+  .tcard .q{font-weight:900;font-size:23px;color:#242424;line-height:1.25;}
+  .tcard .sub{font-size:14px;color:#6b7280;margin:3px 0 12px;}
+  .tcard .tbtns{display:flex;gap:9px;flex-wrap:wrap;}
+  .tcard .tbtn{flex:1;min-width:118px;display:flex;align-items:center;justify-content:center;gap:8px;border-radius:9px;padding:11px 6px;font-weight:900;font-size:18px;box-shadow:0 2px 5px rgba(0,0,0,.08);}
+  .tcard .tbtn .dot{width:16px;height:16px;border-radius:50%;box-shadow:inset 0 0 0 3px rgba(255,255,255,.65);flex:0 0 auto;}
+  .tbtn.g{background:#eaf7ef;border:2px solid #86d8a5;color:#0b5e37;} .tbtn.g .dot{background:#16a34a;}
+  .tbtn.a{background:#fef6e7;border:2px solid #f3d08f;color:#8a5a12;} .tbtn.a .dot{background:#f0c020;}
+  .tbtn.r{background:#fdecec;border:2px solid #f0b6b6;color:#8a1c1c;} .tbtn.r .dot{background:#dc2626;}
+
+  /* 報連相 3-role strip */
+  .hrs{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:14px;}
+  .hrs .r{border-radius:14px;padding:15px 18px;color:#fff;box-shadow:0 6px 16px rgba(0,0,0,.12);}
+  .hrs .r .cmd{font-size:23px;font-weight:900;}
+  .hrs .r .dsc{font-size:18px;margin-top:6px;line-height:1.4;font-weight:700;opacity:.98;}
+  .hrs .r.rep{background:linear-gradient(135deg,#22c55e,#16a34a);}
+  .hrs .r.con{background:linear-gradient(135deg,#7a7ede,#5b5fc7);}
+  .hrs .r.sou{background:linear-gradient(135deg,#f6a935,#ea580c);}
+
+  /* Power Automate アクションカード風（繰り返しトリガー モック） */
+  .pacard{font-family:"Segoe UI","Noto Sans JP",sans-serif;background:#fff;border:1px solid #e1dfdd;border-radius:10px;
+    overflow:hidden;box-shadow:0 8px 26px rgba(0,0,0,.14);}
+  .pacard .pahead{display:flex;align-items:center;gap:10px;background:#eef1fc;border-bottom:1px solid #e1dfdd;padding:11px 16px;}
+  .pacard .paic{width:32px;height:32px;border-radius:7px;background:var(--blue-mid);color:#fff;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:800;flex:0 0 auto;}
+  .pacard .patitle{font-size:15px;font-weight:800;color:#242424;}
+  .pacard .pasub{font-size:12px;color:#605e5c;}
+  .pacard .pafields{padding:12px 16px;display:flex;flex-direction:column;gap:11px;}
+  .pafld{display:flex;flex-direction:column;gap:4px;}
+  .pafld .l{font-size:13px;color:#605e5c;font-weight:800;}
+  .pafld .v{border:1px solid #d1d1d1;border-radius:6px;padding:8px 11px;font-size:15px;color:#242424;background:#fff;display:flex;align-items:center;justify-content:space-between;font-weight:700;}
+  .pafld .v .cr{color:#605e5c;font-weight:900;font-size:11px;}
+  .pafld .v.hi{border-color:var(--pa);box-shadow:0 0 0 3px rgba(58,79,184,.12);}
+
+  /* ==== Y字フォーク（分岐の主役ビジュアル）==== */
+  .fork{margin-top:12px;}
+  .fork .qbox{background:linear-gradient(135deg,#4358c8,#2c3a94);color:#fff;border-radius:16px;
+    padding:15px 24px;text-align:center;box-shadow:0 10px 26px rgba(44,58,148,.28);max-width:820px;margin:0 auto;}
+  .fork .qbox .qt{font-size:24px;font-weight:900;line-height:1.3;}
+  .fork .qbox .qm{font-family:"DM Mono","Consolas",monospace;font-size:16px;margin-top:6px;
+    background:rgba(255,255,255,.16);display:inline-block;padding:4px 14px;border-radius:20px;font-weight:700;}
+  .fork .yesno{display:flex;justify-content:center;gap:150px;margin:2px 0 0;}
+  .fork .yesno span{font-size:20px;font-weight:900;padding:4px 20px;border-radius:0 0 12px 12px;}
+  .fork .yesno .y{background:#fdba74;color:#7c2d12;}
+  .fork .yesno .n{background:#86efac;color:#14532d;}
+  .fork .arms{display:grid;grid-template-columns:1fr 1fr;gap:26px;margin-top:10px;}
+  .fork .arm{border-radius:16px;padding:16px 22px;position:relative;}
+  .fork .arm.yes{background:#fff7ed;border:2px solid #fdba74;}
+  .fork .arm.no{background:var(--green-bg);border:2px solid #86efac;}
+  .fork .arm .armh{display:flex;align-items:center;gap:12px;margin-bottom:8px;}
+  .fork .arm .armh .ei{font-size:38px;line-height:1;}
+  .fork .arm .armh .et{font-size:22px;font-weight:900;line-height:1.25;}
+  .fork .arm.yes .armh .et{color:#9a3412;}
+  .fork .arm.no .armh .et{color:#065f46;}
+  .fork .arm p{margin:0;font-size:18px;line-height:1.55;}
+  .fork .arm.yes p{color:#9a3412;}
+  .fork .arm.no p{color:#065f46;}
+  .fork .arm .cond-lbl{position:absolute;top:-15px;left:22px;font-size:14px;font-weight:900;padding:3px 14px;border-radius:20px;}
+  .fork .arm.yes .cond-lbl{background:#fdba74;color:#7c2d12;}
+  .fork .arm.no .cond-lbl{background:#86efac;color:#14532d;}
+
+  /* ==== 関数の分解（S14）==== */
+  .fxtable{width:100%;border-collapse:collapse;margin-top:10px;font-size:19px;}
+  .fxtable th{background:#eef1fc;color:#2c3a94;font-weight:800;border:1px solid #cbd5e1;padding:9px 12px;text-align:left;}
+  .fxtable td{border:1px solid #cbd5e1;padding:10px 12px;vertical-align:middle;}
+  .fxtable td.c1{width:340px;}
+  .fxtable code{font-family:"DM Mono","Consolas",monospace;background:#0f172a;color:#fbbf24;padding:4px 9px;border-radius:6px;font-size:15px;font-weight:700;display:inline-block;line-height:1.4;word-break:break-all;}
+  .fxtable td.mean{color:var(--muted);font-size:18px;}
+  .fxtable td.mean b{color:#2c3a94;}
+  .fxtable td.val{font-weight:900;color:#0b5e37;text-align:center;font-size:19px;white-space:nowrap;}
+  .fxjoin{display:flex;align-items:center;justify-content:center;gap:14px;margin-top:12px;font-weight:900;color:#2c3a94;font-size:20px;flex-wrap:wrap;}
+  .fxjoin .pipe{font-family:"DM Mono","Consolas",monospace;background:#0f172a;color:#fbbf24;border-radius:8px;padding:4px 14px;font-size:22px;}
+  .fxjoin .res{background:linear-gradient(135deg,#1a5c38,#217346);color:#fff;border-radius:12px;padding:10px 22px;font-size:22px;box-shadow:0 8px 20px rgba(33,115,70,.26);}
+
+  /* 特殊アクションの一時停止ビジュアル */
+  .pausebox{background:linear-gradient(135deg,#4347a8,#5b5fc7);color:#fff;border-radius:16px;padding:18px 22px;box-shadow:0 10px 26px rgba(67,71,168,.3);}
+  .pausebox .pt{font-size:24px;font-weight:900;line-height:1.3;display:flex;align-items:center;gap:12px;}
+  .pausebox .pt .ic{font-size:40px;}
+  .pausebox .pd{font-size:18px;margin-top:10px;line-height:1.55;opacity:.98;}
+  .prereq{background:#fff7ed;border:2px solid #fdba74;border-radius:12px;padding:14px 18px;margin-top:14px;font-size:18px;color:#9a3412;font-weight:700;line-height:1.55;}
+  .prereq b{color:#c2410c;}
+
+  /* 3カラム実画面レイアウト（vol-25踏襲） */
+  .shotgrid{display:grid;grid-template-columns:1fr 298px 104px;gap:14px;align-items:center;}
+  .shotgrid .shot{display:flex;flex-direction:column;gap:5px;align-items:center;min-width:0;}
+  .shotgrid .shot img{width:100%;border:1px solid #cbd5e1;border-radius:9px;box-shadow:0 6px 18px rgba(0,0,0,.16);display:block;}
+  .shotgrid .shot span{font-size:12px;color:#8fa0b5;line-height:1.3;text-align:center;}
+  .shotgrid .here{width:104px;border:1px solid #e2e8f0;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,.14);}
+
+
+  /* ==== Vol.28 追加 ==== */
+  .prompt{background:#0f1b2d;color:#e8eefc;border-radius:12px;padding:18px 22px;
+    font-family:Consolas,"Courier New",monospace;font-size:20px;line-height:1.85;
+    white-space:pre-wrap;word-break:break-word;box-shadow:0 6px 18px rgba(15,27,45,.25);}
+  .prompt .fill{color:#ffd479;}
+  .prompt .em{color:#7dd3fc;font-weight:700;}
+  .cop{color:#7C3AED;font-weight:900;}
+  .tipno{display:inline-flex;align-items:center;justify-content:center;width:50px;height:50px;
+    border-radius:50%;background:radial-gradient(circle at 32% 28%,#a78bfa,#6d28d9);color:#fff;
+    font-weight:900;font-size:26px;box-shadow:0 3px 8px rgba(109,40,217,.4);margin-right:12px;flex:0 0 auto;}
+  .tiprow{display:flex;align-items:center;gap:4px;margin-bottom:8px;}
+  .tiprow h3{margin:0;font-size:29px;color:var(--text);font-weight:800;line-height:1.25;}
+  .enname{font-family:Consolas,"Courier New",monospace;background:#fff3cd;border:1px solid #ffe08a;
+    border-radius:6px;padding:1px 8px;font-weight:700;color:#7a5200;}
+  .jpname{font-weight:800;color:var(--blue-text);}
+  .badpill{display:inline-block;background:#fee2e2;color:#991b1b;border:1px solid #fca5a5;
+    border-radius:999px;padding:2px 14px;font-weight:800;font-size:17px;}
+  .goodpill{display:inline-block;background:#d1fae5;color:#065f46;border:1px solid #6ee7b7;
+    border-radius:999px;padding:2px 14px;font-weight:800;font-size:17px;}
+  .tipgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;}
+  .jsonbox{background:#0f172a;color:#e2e8f0;border-radius:10px;padding:17px 21px;
+    font-family:Consolas,"Courier New",monospace;font-size:19px;line-height:1.75;
+    white-space:pre;overflow:hidden;box-shadow:0 6px 18px rgba(15,23,42,.25);}
+  .jsonbox .k{color:#7dd3fc;} .jsonbox .v{color:#ffd479;} .jsonbox .c{color:#94a3b8;}
+  .errbox{background:#450a0a;color:#fecaca;border-left:6px solid #dc2626;border-radius:8px;
+    padding:17px 21px;font-family:Consolas,"Courier New",monospace;font-size:19px;line-height:1.8;
+    white-space:pre-wrap;word-break:break-word;}
+  .tcard .tgl{display:flex;align-items:center;gap:13px;padding:12px 2px;border-bottom:1px solid #ececf2;font-size:22px;color:#242424;font-weight:700;}
+  .tcard .tgl:last-of-type{border-bottom:none;}
+  .tcard .tgl .sw{width:44px;height:24px;border-radius:14px;background:#c8c6c4;position:relative;flex:0 0 auto;}
+  .tcard .tgl .sw::after{content:'';position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);}
+  .tcard .tgl.on .sw{background:var(--teams);}
+  .tcard .tgl.on .sw::after{left:23px;}
+  .tcard .submit{margin-top:14px;background:var(--teams);color:#fff;border-radius:8px;padding:13px 0;
+    text-align:center;font-weight:900;font-size:22px;box-shadow:0 3px 8px rgba(91,95,199,.35);}
+  
+  /* ==== Vol.29 追加 ==== */
+  .jsonbox{background:#0f172a;color:#e2e8f0;border-radius:10px;padding:16px 20px;
+    font-family:Consolas,"Courier New",monospace;font-size:19px;line-height:1.7;
+    white-space:pre;overflow:hidden;box-shadow:0 6px 18px rgba(15,23,42,.25);}
+  .jsonbox .k{color:#7dd3fc;} .jsonbox .v{color:#ffd479;} .jsonbox .c{color:#94a3b8;}
+  .jsonbox .hit{background:rgba(251,191,36,.22);border-radius:4px;}
+  .prompt{background:#0f1b2d;color:#e8eefc;border-radius:12px;padding:18px 22px;
+    font-family:Consolas,"Courier New",monospace;font-size:20px;line-height:1.85;
+    white-space:pre-wrap;word-break:break-word;box-shadow:0 6px 18px rgba(15,27,45,.25);}
+  .prompt .fill{color:#ffd479;} .prompt .em{color:#7dd3fc;font-weight:700;}
+  .cop{color:#7C3AED;font-weight:900;}
+  .tipno{display:inline-flex;align-items:center;justify-content:center;width:50px;height:50px;
+    border-radius:50%;background:radial-gradient(circle at 32% 28%,#a78bfa,#6d28d9);color:#fff;
+    font-weight:900;font-size:26px;box-shadow:0 3px 8px rgba(109,40,217,.4);margin-right:12px;flex:0 0 auto;}
+  .tiprow{display:flex;align-items:center;gap:4px;margin-bottom:8px;}
+  .tiprow h3{margin:0;font-size:29px;color:var(--text);font-weight:800;line-height:1.25;}
+  .expr{font-family:Consolas,monospace;background:#0f172a;color:#e2e8f0;border-radius:10px;
+    padding:12px 16px;font-size:20px;line-height:1.55;word-break:break-all;}
+  .expr .o{color:#94a3b8;} .expr .b{color:#7dd3fc;font-weight:700;}
+  .expr .d{color:#fbbf24;font-weight:700;} .expr .t{color:#f0abfc;font-weight:900;}
+  .resbox{background:linear-gradient(135deg,#1a5c38,#217346);color:#fff;border-radius:12px;
+    padding:12px 20px;font-size:22px;font-weight:800;box-shadow:0 8px 20px rgba(33,115,70,.26);}
+  /* 箱の入れ子（{ } と [ ] の復習） */
+  .nest{border-radius:14px;padding:12px 14px 14px;border:3px solid;}
+  .nest > .h{font-size:17px;font-weight:900;margin-bottom:8px;font-family:Consolas,monospace;}
+  .nest.obj{border-color:#38bdf8;background:#f0f9ff;} .nest.obj > .h{color:#0369a1;}
+  .nest.arr{border-color:#f59e0b;background:#fffbeb;} .nest.arr > .h{color:#b45309;}
+  .slots{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+  .slot{background:#fff;border:2px solid #e2e8f0;border-radius:10px;padding:9px 8px;text-align:center;}
+  .slot .idx{font-family:Consolas,monospace;font-size:20px;font-weight:900;color:#c2410c;}
+  .slot .nm{font-size:17px;color:#334155;margin-top:3px;font-weight:700;}
+  .slot.hit{border-color:#c2410c;box-shadow:0 0 0 3px rgba(194,65,12,.15);background:#fff7ed;}
+  .kv{display:grid;grid-template-columns:150px 1fr;gap:6px 12px;font-size:19px;}
+  .kv .kk{font-family:Consolas,monospace;color:#0369a1;font-weight:800;}
+  .kv .vv{color:#334155;}
+  /* 大きさ比較バー（出力は巨大） */
+  .sizebar{display:flex;align-items:center;gap:12px;margin:8px 0;}
+  .sizebar .lbl{width:230px;font-size:19px;font-weight:800;color:var(--muted);}
+  .sizebar .bar{height:30px;border-radius:6px;}
+  .sizebar .num{font-size:19px;font-weight:900;color:#2c3a94;}
+  .fxtable{width:100%;border-collapse:collapse;margin-top:10px;font-size:19px;}
+  .fxtable th{background:#eef1fc;color:#2c3a94;font-weight:800;border:1px solid #cbd5e1;padding:8px 12px;text-align:left;}
+  .fxtable td{border:1px solid #cbd5e1;padding:9px 12px;vertical-align:middle;}
+  .fxtable code{font-family:Consolas,monospace;background:#0f172a;color:#fbbf24;padding:3px 8px;
+    border-radius:6px;font-size:17px;font-weight:700;display:inline-block;line-height:1.4;word-break:break-all;}
+  .fxtable td.val{font-weight:900;color:#0b5e37;font-size:19px;}
+  .shotimg{width:auto;max-width:100%;height:auto;display:block;object-fit:contain;object-position:top left;
+    border:1px solid #cbd5e1;border-radius:10px;box-shadow:0 5px 14px rgba(0,0,0,.13);background:#fff;}
+  .g2{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start;}
+  .g2c{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:center;}
+  /* 登場人物カード */
+  .who{display:grid;grid-template-columns:150px 1fr;gap:18px;align-items:center;
+    background:#fff;border:2px solid var(--border);border-radius:16px;padding:16px 20px;
+    box-shadow:0 4px 14px rgba(0,0,0,.06);}
+  .who.main{border-color:#aab6f0;background:#f7f9ff;}
+  .who.boss{border-color:#c3c5ef;background:#f8f8fd;}
+  .who img{width:100%;height:auto;max-height:150px;object-fit:contain;}
+  .who .nm{font-size:27px;font-weight:900;color:#2c3a94;line-height:1.2;}
+  .who .ro{font-size:18px;color:var(--muted);font-weight:800;margin:4px 0 8px;}
+  .who .sp{font-size:20px;color:var(--text);line-height:1.55;background:#eef1fc;
+    border-radius:12px;padding:10px 14px;position:relative;}
+  .who.boss .sp{background:#eef0fb;}
+  /* Before / After */
+  .ba{display:grid;grid-template-columns:1fr 64px 1fr;gap:14px;align-items:center;margin-top:10px;}
+  .ba .col{border-radius:16px;padding:16px 20px;border:2px solid;}
+  .ba .col.bf{background:#fff7ed;border-color:#fdba74;}
+  .ba .col.af{background:var(--green-bg);border-color:#86efac;}
+  .ba .col .h{font-size:22px;font-weight:900;margin-bottom:8px;display:flex;align-items:center;gap:10px;}
+  .ba .col.bf .h{color:#9a3412;} .ba .col.af .h{color:#065f46;}
+  .ba .col .h img{height:52px;width:auto;}
+  .ba .arrow{font-size:40px;color:var(--pa);text-align:center;font-weight:900;}
+  .ba ul{margin:0;padding-left:22px;font-size:19px;line-height:1.65;}
+  .ba .col.bf li{color:#9a3412;} .ba .col.af li{color:#065f46;}
+  .gain{display:flex;gap:14px;margin-top:12px;}
+  .gain .g{flex:1;background:#fff;border:2px solid #aab6f0;border-radius:14px;padding:12px 16px;text-align:center;}
+  .gain .g .num{font-size:34px;font-weight:900;color:#2c3a94;line-height:1.1;}
+  .gain .g .lb{font-size:17px;color:var(--muted);font-weight:800;margin-top:4px;}
+  .useq{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:10px;}
+  .useq .u{background:#fff;border:2px solid var(--border);border-radius:14px;padding:14px 16px;text-align:center;}
+  .useq .u img{height:110px;width:auto;object-fit:contain;}
+  .useq .u .nm{font-size:19px;font-weight:900;color:#2c3a94;margin-top:6px;}
+  .useq .u .tx{font-size:18px;color:var(--muted);line-height:1.5;margin-top:6px;text-align:left;}
+  /* ==== 図解パーツ（箇条書きの置き換え） ==== */
+  /* 朝のタイムライン */
+  .tl{position:relative;padding:8px 0 0;}
+  .tl .line{position:absolute;left:0;right:0;top:46px;height:6px;background:#e2e8f0;border-radius:3px;}
+  .tl .line.hot{background:linear-gradient(90deg,#fdba74,#f97316);}
+  .tl .line.cool{background:linear-gradient(90deg,#86efac,#16a34a);}
+  .tl .pts{display:flex;justify-content:space-between;position:relative;}
+  .tl .pt{text-align:center;width:118px;}
+  .tl .pt .tm{font-size:17px;font-weight:900;color:var(--muted);}
+  .tl .pt .dot{width:26px;height:26px;border-radius:50%;margin:6px auto;border:5px solid #fff;
+    box-shadow:0 2px 6px rgba(0,0,0,.18);}
+  .tl .pt .lb{font-size:17px;line-height:1.35;font-weight:700;color:var(--text);}
+  .tl.bf .pt .dot{background:#f97316;} .tl.af .pt .dot{background:#16a34a;}
+  /* 動的コンテンツ一覧のモック */
+  .dyn{background:#fff;border:1px solid #d1d1d1;border-radius:10px;box-shadow:0 8px 22px rgba(0,0,0,.12);overflow:hidden;}
+  .dyn .dh{background:#f3f2f1;border-bottom:1px solid #e1dfdd;padding:9px 14px;font-size:15px;font-weight:800;color:#242424;}
+  .dyn .di{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid #f0f0f4;font-size:17px;color:#242424;}
+  .dyn .di:last-child{border-bottom:none;}
+  .dyn .di .ic{width:26px;height:26px;border-radius:6px;background:#eef1fc;color:var(--pa);
+    display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;flex:0 0 auto;}
+  .wants{display:flex;flex-direction:column;gap:10px;}
+  .want{display:flex;align-items:center;gap:12px;background:#fff7ed;border:2px solid #fdba74;
+    border-radius:12px;padding:11px 16px;font-size:20px;font-weight:800;color:#9a3412;}
+  .want .x{width:30px;height:30px;border-radius:50%;background:#dc2626;color:#fff;font-weight:900;
+    display:flex;align-items:center;justify-content:center;flex:0 0 auto;font-size:18px;}
+  .want.ok{background:var(--green-bg);border-color:#86efac;color:#065f46;}
+  .want.ok .x{background:#16a34a;}
+  /* 選択→join の図 */
+  .pick{display:grid;grid-template-columns:1fr 48px .72fr 48px 1fr;gap:8px;align-items:center;}
+  .pick .rowbox{background:#fff;border:2px solid #cbd5e1;border-radius:10px;padding:8px 10px;margin-bottom:8px;
+    display:flex;gap:8px;font-size:15px;align-items:center;}
+  .pick .rowbox:last-child{margin-bottom:0;}
+  .pick .tagx{background:#eef1fc;color:#2c3a94;border-radius:6px;padding:2px 8px;font-weight:800;font-size:14px;}
+  .pick .tagx.hit{background:#fde68a;color:#7c2d12;}
+  .pick .ar{font-size:34px;color:var(--pa);text-align:center;font-weight:900;}
+  .pick .col1{background:#fffbeb;border:2px solid #f59e0b;border-radius:12px;padding:10px;}
+  .pick .col1 .c{background:#fff;border:1px solid #fcd34d;border-radius:8px;padding:8px 10px;
+    font-size:16px;margin-bottom:7px;font-weight:700;color:#7c2d12;}
+  .pick .col1 .c:last-child{margin-bottom:0;}
+  .pick .band{background:linear-gradient(135deg,#1a5c38,#217346);color:#fff;border-radius:12px;
+    padding:14px 12px;font-size:17px;font-weight:800;line-height:1.5;box-shadow:0 8px 20px rgba(33,115,70,.26);}
+  .lbl-s{font-size:15px;font-weight:800;color:var(--muted);margin-bottom:6px;text-align:center;}
+  /* まとめの4ステップ */
+  .steps4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;}
+  .steps4 .s{background:#fff;border:2px solid #aab6f0;border-radius:14px;padding:12px 10px;text-align:center;}
+  .steps4 .s .n{width:38px;height:38px;border-radius:50%;background:var(--pa);color:#fff;font-weight:900;
+    font-size:19px;display:flex;align-items:center;justify-content:center;margin:0 auto 6px;}
+  .steps4 .s .t{font-size:18px;font-weight:800;color:#2c3a94;line-height:1.35;}
+  .steps4 .s .c{font-family:Consolas,monospace;font-size:15px;color:#7c2d12;background:#fffbeb;
+    border-radius:6px;padding:3px 6px;margin-top:6px;display:inline-block;}
+  /* アイコンタイル（箇条書きの置き換え・その2） */
+  .facts{display:grid;gap:12px;}
+  .facts.c2{grid-template-columns:repeat(2,1fr);} .facts.c3{grid-template-columns:repeat(3,1fr);}
+  .facts.c4{grid-template-columns:repeat(4,1fr);} .facts.c5{grid-template-columns:repeat(5,1fr);}
+  .facts .f{background:#fff;border:2px solid var(--border);border-radius:14px;padding:12px 14px;text-align:center;}
+  .facts .f .i{font-size:36px;line-height:1.1;}
+  .facts .f .t{font-size:19px;font-weight:800;color:#2c3a94;margin-top:5px;line-height:1.3;}
+  .facts .f .d{font-size:16px;color:var(--muted);margin-top:4px;line-height:1.45;}
+  .facts .f.blue{background:var(--blue-bg);border-color:rgba(42,125,212,.3);}
+  .facts .f.green{background:var(--green-bg);border-color:#86efac;}
+  .facts .f.yellow{background:var(--yellow-bg);border-color:#fcd34d;}
+  .facts .f.purple{background:#f5f3ff;border-color:#c4b5fd;}
+  .facts .f.teams{background:#eef0fb;border-color:#c3c5ef;}
+  /* 値と式の対応チップ */
+  .maprow{display:flex;align-items:center;gap:10px;background:#fff;border:2px solid #e2e8f0;
+    border-radius:12px;padding:9px 14px;margin-bottom:8px;}
+  .maprow:last-child{margin-bottom:0;}
+  .maprow .v1{font-size:19px;font-weight:800;color:#2c3a94;min-width:112px;}
+  .maprow .ar2{color:var(--pa);font-weight:900;font-size:19px;}
+  .maprow .fx{font-family:Consolas,monospace;font-size:17px;color:#7c2d12;background:#fffbeb;
+    border-radius:6px;padding:3px 9px;font-weight:700;}
+  /* 積み上げバー（出力の内訳） */
+  .stack{display:flex;height:58px;border-radius:10px;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,.12);}
+  .stack div{display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:17px;text-align:center;line-height:1.25;}
+  /* 見切れ微調整（Vol.29） */
+  #s2 .slide-body{padding-top:12px;}
+  #s2 .introrow{margin:0 0 6px;} #s2 .introrow .illus{max-height:104px;}
+  #s2 .cards-2{margin-top:10px;gap:20px;} #s2 .card{padding:15px 24px;}
+  #s2 .card h3{font-size:23px;margin-bottom:6px;} #s2 .card p{font-size:19px;line-height:1.5;}
+  #s2 .facts .f{padding:9px 12px;} #s2 .facts .f .i{font-size:30px;}
+  #s2 .facts .f .t{font-size:18px;margin-top:3px;} #s2 .facts .f .d{font-size:15px;}
+  #s2 .callout.pa{margin-top:10px !important;padding:11px 18px;}
+  #s2 .chips span{font-size:15px;padding:4px 11px;}
+  #s2 .slide-body{padding-top:8px;}
+  #s2 .introrow{grid-template-columns:110px 1fr !important;} #s2 .introrow .illus{max-height:88px !important;}
+  #s2 .introrow p{font-size:18px !important;}
+  #s2 .facts{gap:10px;} #s2 .facts .f .d{line-height:1.35;}
+  #s2 .cards-2{margin-top:8px !important;} #s2 .card{padding:12px 20px !important;}
+  #s2 .card .num{width:40px;height:40px;font-size:21px;margin-bottom:8px;}
+  /* 登場人物まわりの詰め */
+  /* ---- 物語の帯（10/1） ---- */
+  .slide-eyebrow .chapno{display:inline-block;background:#fbbf24;color:#1e293b;font-weight:900;border-radius:6px;padding:1px 10px;margin-right:10px;text-transform:none;}
+  .slide-eyebrow .mono{color:#fff;font-weight:800;text-transform:none;font-size:16px;}
+  .slide-eyebrow .mono img{height:24px;vertical-align:-6px;margin-right:4px;background:#fff;border-radius:50%;}
+  .chapbar{position:absolute;top:24px;right:120px;display:flex;gap:4px;}
+  .chapbar span{font-size:12px;font-weight:800;padding:3px 9px;border-radius:999px;background:rgba(255,255,255,.12);color:rgba(255,255,255,.55);}
+  .chapbar span.done{background:rgba(255,255,255,.3);color:#fff;}
+  .chapbar span.on{background:#fbbf24;color:#1e293b;}
+  .mapro{display:grid;grid-template-columns:1fr 30px 1fr 30px 1fr 30px 1fr 30px 1fr;align-items:stretch;margin-top:6px;}
+  .mapro .ma{display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;color:#94a3b8;}
+  .mapro .mc{border-radius:16px;padding:14px 10px;text-align:center;border:3px solid;background:#fff;display:flex;flex-direction:column;gap:6px;align-items:center;}
+  .mapro .c1{border-color:#4358c8}.mapro .c2{border-color:#dc2626}.mapro .c3{border-color:#0f7b8a}.mapro .c4{border-color:#7a3fd1}.mapro .c5{border-color:#16a34a}
+  .mapro .mn{font-size:16px;font-weight:900;color:#fff;background:#334155;border-radius:50%;width:30px;height:30px;line-height:30px;}
+  .mapro .mi{font-size:48px;line-height:1.1;}
+  .mapro .mt{font-size:27px;font-weight:900;color:#1e293b;}
+  .mapro .md{font-size:20px;color:var(--muted);line-height:1.45;font-weight:700;}
+  .mapro .ms{margin-top:auto;font-size:18px;font-weight:900;border-radius:999px;padding:2px 14px;color:#fff;}
+  .ms.ok{background:#16a34a}.ms.ng{background:#dc2626}.ms.hi{background:#0f7b8a}
+  .maprow2{display:grid;grid-template-columns:110px 1fr;gap:16px;align-items:center;margin-top:16px;}
+  .maprow2 img{max-height:110px;width:100%;object-fit:contain;}
+  .maprow2 .sp{font-size:23px;line-height:1.55;background:#eef1fc;border-radius:12px;padding:12px 18px;}
+  .st1{display:grid;grid-template-columns:1.45fr 70px .85fr;gap:12px;align-items:center;}
+  .realshot{width:100%;border:2px solid #cbd5e1;border-radius:10px;box-shadow:0 2px 8px rgba(0,0,0,.08);}
+  .fm{display:flex;flex-direction:column;align-items:stretch;gap:2px;}
+  .fm .fb{border:2px solid #c7d2fe;background:#f7f9ff;border-radius:10px;padding:13px 16px;font-size:24px;font-weight:800;color:#1e293b;}
+  .fm .fv{text-align:center;color:#94a3b8;font-size:16px;line-height:1;}
+  .fm .floop{border:3px dashed #ea580c;border-radius:12px;padding:8px 10px 10px;background:#fff7ed;}
+  .fm .fl{font-size:19px;font-weight:900;color:#c2410c;margin-bottom:6px;}
+  .fm .fb.tm{border-color:#c3c5ef;background:#fff;}
+  .bigar{text-align:center;font-size:24px;font-weight:900;color:#4358c8;line-height:1.3;}
+  .ph{border:3px solid #334155;border-radius:22px;padding:14px 14px;background:#f8fafc;display:flex;flex-direction:column;gap:8px;}
+  .ph .pm{background:#eef0fb;border-left:5px solid #5b5fc7;border-radius:8px;padding:11px 14px;font-size:24px;font-weight:800;}
+  .boss{display:grid;grid-template-columns:90px 1fr;gap:10px;align-items:center;margin-top:10px;}
+  .boss img{width:100%;max-height:90px;object-fit:contain;}
+  .boss .sp{font-size:24px;background:#fff1f2;border-radius:10px;padding:8px 12px;color:#9f1239;}
+  .st3{display:grid;grid-template-columns:1fr 60px 1fr;gap:12px;align-items:center;}
+  .st3 .cq{border:2px solid #ddd6fe;border-radius:14px;padding:18px 20px;background:#faf5ff;}
+  .st3 .qq{font-size:25px;font-weight:800;}
+  .st3 .code{font-family:Consolas,monospace;font-size:22px;background:#1e1b2e;color:#e2e8f0;border-radius:8px;padding:10px 12px;word-break:break-all;line-height:1.5;}
+  .st3 .code .bad{color:#fca5a5;background:rgba(220,38,38,.3);border-radius:4px;padding:0 3px;}
+  .st3 .code .good{color:#86efac;}
+  .st3 .neq{text-align:center;font-size:56px;font-weight:900;color:#dc2626;}
+  .st3 .err{margin-top:14px;font-size:26px;font-weight:900;color:#dc2626;background:#fef2f2;border:2px solid #fecaca;border-radius:10px;padding:8px 12px;text-align:center;}
+  /* ---- 手を動かす札・第4章の図（10/1） ---- */
+  .dobadge{display:inline-flex;align-items:center;gap:10px;font-size:16px;font-weight:800;border-radius:999px;padding:4px 14px 4px 4px;}
+  .dobadge b{border-radius:999px;padding:3px 12px;color:#fff;}
+  .dobadge.do{background:#fff7ed;color:#9a3412;border:2px solid #fdba74;} .dobadge.do b{background:#ea580c;}
+  .dobadge.see{background:#f1f5f9;color:#475569;border:2px solid #cbd5e1;} .dobadge.see b{background:#64748b;}
+  .fixrow{display:grid;grid-template-columns:1fr 70px 1fr .8fr;gap:12px;align-items:center;}
+  .fixrow .fb{font-size:22px;padding:13px 14px;}
+  .fm .fb.ok2{border-color:#16a34a;background:#f0fdf4;}
+  .one{margin-top:8px;text-align:center;font-size:22px;font-weight:900;color:#16a34a;}
+  .do3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:22px;}
+  .do3 div{background:#fff7ed;border:2px solid #fdba74;border-radius:12px;padding:14px 16px;font-size:23px;line-height:1.45;}
+  .do3 b{color:#c2410c;} .do3 span{font-size:17px;color:var(--muted);}
+  .grow{display:grid;grid-template-columns:.8fr 80px 1.25fr 80px 1.25fr;gap:8px;align-items:center;}
+  .grow .gl{font-size:22px;font-weight:900;color:#4358c8;margin-bottom:6px;text-align:center;}
+  .grow .ga{text-align:center;font-size:22px;font-weight:900;color:#ea580c;line-height:1.35;}
+  .grow .ph{padding:12px;gap:8px;}
+  .grow .ph .pm{font-size:23px;padding:14px 14px;}
+  .grow .ph .pm.nw{background:#fff7ed;border-left-color:#ea580c;}
+  /* ---- 実際の出力の地図（s15b） ---- */
+  .outmap{display:grid;grid-template-columns:1.55fr 1fr;gap:16px;align-items:start;}
+  .ocode{background:#0f172a;border-radius:12px;padding:8px 10px;font-family:Consolas,monospace;font-size:15.5px;line-height:1.5;}
+  .ol{display:flex;justify-content:space-between;gap:8px;white-space:pre;color:#e2e8f0;border-radius:4px;padding:0 6px;}
+  .ol .an{font-family:"Meiryo UI",sans-serif;font-size:14px;font-weight:800;white-space:nowrap;}
+  .ol.sk{color:#64748b;} .ol.sk .an{color:#94a3b8;}
+  .ol.k1{background:rgba(234,88,12,.25);} .ol.k1 .an{color:#fdba74;}
+  .ol.k2{background:rgba(67,88,200,.35);} .ol.k2 .an{color:#c7d2fe;}
+  .ol.k3{background:rgba(22,163,74,.28);} .ol.k3 .an{color:#86efac;}
+  .ol.old{color:#94a3b8;background:rgba(148,163,184,.12);} .ol.old .an{color:#cbd5e1;}
+  .olegend{display:flex;flex-direction:column;gap:8px;}
+  .lg{border-radius:12px;padding:10px 14px;font-size:19px;line-height:1.45;border-left:8px solid;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.06);}
+  .lg .t{display:block;font-size:21px;font-weight:900;margin-bottom:2px;}
+  .lg.k1{border-color:#ea580c;} .lg.k1 .t{color:#c2410c;}
+  .lg.k2{border-color:#4358c8;} .lg.k2 .t{color:#2c3a94;}
+  .lg.k3{border-color:#16a34a;} .lg.k3 .t{color:#15803d;}
+  .lg.sk{border-color:#94a3b8;background:#f8fafc;} .lg.sk .t{color:#475569;}
+  /* ---- 課長とオートさんの気持ち（st2a） ---- */
+  .feel{display:grid;grid-template-columns:1fr 50px 1fr;gap:10px;align-items:stretch;}
+  .feel .fc{border-radius:16px;padding:12px 16px;display:flex;flex-direction:column;gap:10px;}
+  .feel .boss2{background:#fff1f2;border:2px solid #fecdd3;} .feel .auto2{background:#f7f9ff;border:2px solid #aab6f0;}
+  .who2{display:grid;grid-template-columns:104px 1fr;gap:12px;align-items:center;}
+  .who2 img{width:100%;max-height:104px;object-fit:contain;}
+  .nm2{font-size:28px;font-weight:900;color:#1e293b;} .nm2 .you{font-size:14px;margin-left:8px;vertical-align:3px;}
+  .sit{font-size:19px;color:var(--muted);font-weight:700;}
+  .bub{font-size:24px;line-height:1.5;border-radius:12px;padding:12px 16px;background:#fff;}
+  .bub.r{border-left:6px solid #e11d48;} .bub.b{border-left:6px solid #4358c8;}
+  .farrow{display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:900;color:#94a3b8;}
+  .goal2{margin-top:18px;display:flex;align-items:center;gap:16px;background:#f0fdf4;border:2px solid #86efac;border-radius:14px;padding:10px 18px;}
+  .gl2{font-size:20px;font-weight:900;color:#15803d;} .gm2{font-size:30px;font-weight:900;background:#fff;border-left:6px solid #5b5fc7;border-radius:8px;padding:6px 14px;}
+  .gn2{font-size:20px;font-weight:800;color:#475569;margin-left:auto;}
+  /* ---- なぜ（オートさん視点）・For each を消す理由（st4w） ---- */
+  .slide-head .why{font-size:17px;font-weight:800;color:#fde68a;margin-top:2px;letter-spacing:.01em;line-height:1.3;}
+  .slide-head:has(.why){padding-top:10px;padding-bottom:8px;}
+  .slide-head:has(.why) .chapbar{top:12px;}
+  .whyfe{display:grid;grid-template-columns:1fr 46px 1fr;gap:10px;align-items:stretch;}
+  .wcol{border-radius:16px;padding:12px 16px;display:flex;flex-direction:column;gap:8px;}
+  .wcol.ng{background:#fff1f2;border:2px solid #fecdd3;} .wcol.ok{background:#f0fdf4;border:2px solid #86efac;}
+  .wt{font-size:22px;font-weight:900;color:#1e293b;}
+  .wflow{display:flex;flex-direction:column;gap:2px;}
+  .wb{border:2px solid #c7d2fe;background:#fff;border-radius:10px;padding:8px 12px;font-size:20px;font-weight:800;}
+  .wb span{font-size:16px;font-weight:700;color:#475569;} .wb.tm{border-color:#c3c5ef;} .wb.ok{border-color:#16a34a;}
+  .wv{text-align:center;color:#94a3b8;font-size:14px;line-height:1;}
+  .wloop{border:3px dashed #ea580c;border-radius:12px;padding:6px 10px 10px;background:#fff7ed;}
+  .wl{font-size:17px;font-weight:900;color:#c2410c;margin-bottom:6px;}
+  .wres{font-size:21px;font-weight:800;margin-top:auto;} .wres.ng{color:#be123c;} .wres.ok{color:#15803d;}
+  .warrow{display:flex;align-items:center;justify-content:center;font-size:34px;font-weight:900;color:#94a3b8;}
+  /* ---- 依拠のふりかえり（sbasis） ---- */
+  .basis{width:100%;border-collapse:separate;border-spacing:0 4px;font-size:19px;}
+  .basis th{font-size:16px;color:#475569;text-align:left;padding:0 10px;}
+  .basis td{background:#f7f9ff;padding:7px 12px;line-height:1.35;border-top:1px solid #e2e8f0;border-bottom:1px solid #e2e8f0;}
+  .basis td.ic{font-size:24px;text-align:center;width:44px;border-left:1px solid #e2e8f0;border-radius:10px 0 0 10px;}
+  .basis td.an{font-weight:900;color:#2c3a94;width:27%;}
+  .basis td.nd{color:#9f1239;font-weight:800;width:30%;}
+  .basis td.bs{border-right:1px solid #e2e8f0;border-radius:0 10px 10px 0;}
+  /* ---- Copilot に聞こうと思った流れ（st3a） ---- */
+  .who3.top{grid-template-columns:90px 1fr;margin:0 0 12px;} .who3.top img{max-height:90px;}
+  .cpsteps{display:grid;grid-template-columns:1fr 34px 1.25fr 34px 1fr 34px 1.1fr;align-items:stretch;}
+  .cs{border:3px solid #a78bfa;border-radius:16px;background:#faf5ff;padding:12px 10px;text-align:center;display:flex;flex-direction:column;gap:6px;align-items:center;}
+  .cs .cn{width:34px;height:34px;border-radius:50%;background:#7c3aed;color:#fff;font-weight:900;font-size:19px;display:flex;align-items:center;justify-content:center;}
+  .cs .ci{font-size:38px;line-height:1.1;} .cs .ct{font-size:23px;font-weight:900;color:#1e293b;line-height:1.3;}
+  .cs .cd{font-size:18px;color:#475569;font-weight:700;line-height:1.45;}
+  .cs .url{font-family:Consolas,monospace;font-size:16px;background:#fff;border:1px solid #ddd6fe;border-radius:6px;padding:2px 6px;color:#6d28d9;}
+  .cs .pr{display:inline-block;background:#7c3aed;color:#fff;border-radius:12px 12px 4px 12px;padding:8px 10px;font-size:18px;text-align:left;}
+  .ca{display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:900;color:#a78bfa;}
+  .askrow{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start;}
+  .think{display:flex;flex-direction:column;gap:11px;}
+  .tk{display:flex;gap:10px;align-items:center;font-size:23px;line-height:1.45;background:#f7f9ff;border:2px solid #c7d2fe;border-radius:12px;padding:11px 14px;}
+  .tk .n{flex:none;width:30px;height:30px;border-radius:50%;background:#4358c8;color:#fff;font-weight:900;display:flex;align-items:center;justify-content:center;font-size:17px;}
+  .who3{display:grid;grid-template-columns:80px 1fr;gap:10px;align-items:center;margin-top:4px;}
+  .who3 img{width:100%;max-height:80px;object-fit:contain;} .who3 .sp{font-size:23px;background:#eef1fc;border-radius:12px;padding:10px 14px;line-height:1.45;}
+  .chatmock{border:2px solid #ddd6fe;border-radius:16px;background:#faf5ff;padding:16px 18px;display:flex;flex-direction:column;gap:16px;}
+  .chatmock .ch{font-size:17px;font-weight:900;color:#6d28d9;}
+  .chatmock .me{align-self:flex-end;max-width:92%;background:#7c3aed;color:#fff;font-size:25px;font-weight:700;border-radius:16px 16px 4px 16px;padding:12px 16px;line-height:1.45;}
+  .chatmock .memo{font-size:21px;line-height:1.55;background:#fff7ed;border:2px dashed #fdba74;border-radius:10px;padding:10px 14px;color:#7c2d12;}
+  /* ---- 式の入れ方（st3b） ---- */
+  .insteps{display:grid;grid-template-columns:1fr 26px 1fr 26px 1fr 26px 1fr 26px .8fr;align-items:stretch;margin-top:4px;}
+  .is{border:3px solid #c7d2fe;border-radius:16px;background:#f7f9ff;padding:8px 6px;text-align:center;display:flex;flex-direction:column;gap:10px;align-items:center;}
+  .is.hot{border-color:#ea580c;background:#fff7ed;}
+  .is .in{width:36px;height:36px;border-radius:50%;background:#4358c8;color:#fff;font-weight:900;font-size:20px;display:flex;align-items:center;justify-content:center;}
+  .is.hot .in{background:#ea580c;}
+  .is .it{font-size:19px;font-weight:800;color:#1e293b;line-height:1.4;}
+  .is .idd{font-size:14px;color:#64748b;font-weight:700;margin-top:auto;}
+  .is .key{display:inline-block;font-family:Consolas,monospace;font-size:28px;font-weight:900;background:#1e293b;color:#fff;border-radius:8px;padding:0 12px;line-height:1.3;}
+  .shots2{display:grid;grid-template-columns:1.15fr 1fr;gap:16px;margin-top:10px;align-items:start;}
+  .shots2 .realshot{max-height:226px;object-fit:contain;object-position:left top;}
+  .ia{display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:900;color:#94a3b8;}
+  .st3.real{grid-template-columns:1.25fr 50px 1fr;}
+  .cmp{display:flex;align-items:center;gap:10px;margin:8px 0;font-size:22px;}
+  .cmp .tg{flex:none;font-size:15px;font-weight:900;color:#fff;background:#7c3aed;border-radius:999px;padding:3px 10px;} .cmp .tg.ok{background:#16a34a;}
+  .cmp code{font-family:Consolas,monospace;font-size:22px;background:#1e1b2e;color:#e2e8f0;border-radius:8px;padding:6px 10px;}
+  .cmp .bad2{color:#fca5a5;background:rgba(220,38,38,.35);border-radius:4px;padding:0 3px;} .cmp .good2{color:#86efac;background:rgba(22,163,74,.3);border-radius:4px;padding:0 3px;}
+  .st3.real .realshot{max-height:150px;object-fit:contain;object-position:left top;}
+  .errrow{margin-top:8px;} .errrow .realshot{border-color:#fecaca;}
+  /* ---- 出力の開き方（sopen） ---- */
+  .open3{display:grid;grid-template-columns:.62fr 28px 1fr 28px 1.2fr;gap:6px;align-items:start;}
+  .open3 .oc{display:flex;flex-direction:column;gap:6px;}
+  .open3 .on{font-size:18px;font-weight:800;line-height:1.4;min-height:52px;}
+  .open3 .on b:first-child{display:inline-flex;width:28px;height:28px;border-radius:50%;background:#4358c8;color:#fff;align-items:center;justify-content:center;margin-right:4px;}
+  .open3 .realshot{max-height:330px;object-fit:contain;object-position:left top;}
+  .open3 .oa{align-self:center;font-size:26px;font-weight:900;color:#94a3b8;text-align:center;}
+  .open3 .onote{font-size:17px;background:#fff7ed;border:2px solid #fdba74;border-radius:10px;padding:6px 10px;line-height:1.45;}
+  .do3 .d1{display:grid;grid-template-columns:1fr 110px;gap:8px;align-items:center;} .do3 .d1 .realshot{max-height:96px;object-fit:contain;padding:0;border-width:1px;}
+  .selnote{margin-top:8px;font-size:17px;line-height:1.55;background:#f7f9ff;border:2px solid #c7d2fe;border-radius:10px;padding:8px 12px;}
+  .selnote code{font-family:Consolas,monospace;font-size:15px;background:#0f172a;color:#fbbf24;border-radius:5px;padding:1px 6px;}
+  /* ---- 出力→式のつながり（slink） ---- */
+  .linkrow{display:grid;grid-template-columns:1.1fr 1fr;gap:18px;align-items:start;}
+  .shotwrap{position:relative;}
+  .shotwrap .realshot{display:block;width:100%;}
+  .mk{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;color:#fff;font-weight:900;font-size:18px;box-shadow:0 0 0 3px #fff;}
+  .shotwrap .mk{position:absolute;transform:translate(-50%,-50%);}
+  .mk.m1{background:#ea580c;} .mk.m2{background:#4358c8;} .mk.m3{background:#7c3aed;} .mk.m4{background:#16a34a;}
+  .xwhy{font-size:17px;line-height:1.5;background:#fff1f2;border:2px solid #fecdd3;border-radius:10px;padding:6px 10px;color:#9f1239;}
+  .mk.sm{width:24px;height:24px;font-size:14px;}
+  .dimnote{font-size:15px;color:#64748b;margin-top:4px;}
+  .lexpr{display:flex;flex-direction:column;gap:7px;}
+  .xp{display:grid;grid-template-columns:34px auto 1fr;gap:8px;align-items:center;font-size:18px;}
+  .xp code{font-family:Consolas,monospace;font-size:18px;font-weight:800;background:#0f172a;border-radius:6px;padding:4px 8px;white-space:nowrap;}
+  .xp .xd{color:#475569;font-weight:700;font-size:16px;}
+  .c1{color:#fdba74;} .c2{color:#a5b4fc;} .c3{color:#d8b4fe;} .c4{color:#86efac;}
+  .xall code{display:block;font-family:Consolas,monospace;font-size:17px;font-weight:800;background:#0f172a;border-radius:8px;padding:8px 10px;word-break:break-all;line-height:1.5;margin-top:4px;}
+  .xres{font-size:22px;color:#15803d;font-weight:800;}
+  /* ---- 今日のまとめと次回（snext） ---- */
+  .donegrid{display:grid;grid-template-columns:1fr 34px 1fr 34px 1.2fr;align-items:stretch;}
+  .dg{border:3px solid #c7d2fe;border-radius:16px;background:#f7f9ff;padding:14px 10px;text-align:center;display:flex;flex-direction:column;gap:8px;align-items:center;}
+  .dg.ok{border-color:#16a34a;background:#f0fdf4;}
+  .dg .dn{width:36px;height:36px;border-radius:50%;background:#4358c8;color:#fff;font-weight:900;font-size:20px;display:flex;align-items:center;justify-content:center;}
+  .dg.ok .dn{background:#16a34a;}
+  .dg .dt{font-size:24px;font-weight:900;color:#1e293b;line-height:1.3;}
+  .dg .dd{font-size:18px;color:#475569;font-weight:700;line-height:1.45;}
+  .dg .dd code{font-family:Consolas,monospace;font-size:17px;background:#0f172a;color:#fbbf24;border-radius:6px;padding:2px 6px;}
+  .da{display:flex;align-items:center;justify-content:center;font-size:30px;font-weight:900;color:#94a3b8;}
+  .nextbox{margin-top:18px;border:3px dashed #ea580c;border-radius:16px;background:#fff7ed;padding:14px 18px;}
+  .nextbox .nt{font-size:24px;font-weight:900;color:#9a3412;margin-bottom:10px;}
+  .nextbox .nl{display:flex;gap:10px;flex-wrap:wrap;} .nextbox .nl span{font-size:20px;font-weight:800;background:#fff;border:2px solid #fdba74;border-radius:999px;padding:6px 16px;}
+  .todaycut{margin-top:10px;text-align:center;font-size:21px;font-weight:800;color:#9a3412;background:#fff7ed;border:2px dashed #ea580c;border-radius:12px;padding:6px 10px;}
+  .linemap{margin-top:10px;} .lmt{font-size:17px;font-weight:800;color:#334155;margin-bottom:4px;}
+  .lmbar{display:flex;gap:3px;height:62px;}
+  .lmbar span{display:flex;align-items:center;justify-content:center;text-align:center;font-size:14px;font-weight:800;line-height:1.3;border-radius:6px;padding:0 4px;overflow:hidden;}
+  .lmbar .sk{background:#e2e8f0;color:#64748b;} .lmbar .hit{background:#4358c8;color:#fff;} .lmbar .hit.g{background:#16a34a;} .lmbar .rep{background:#f1f5f9;color:#475569;border:2px dashed #cbd5e1;}
+  /* ---- Copilot の式を出力と見比べる（sq） ---- */
+  .sqrow{display:flex;flex-direction:column;gap:16px;}
+  .sqexpr{border:2px solid #ddd6fe;border-radius:16px;background:#faf5ff;padding:16px 18px;}
+  .sqparts{display:flex;align-items:flex-start;gap:8px;flex-wrap:wrap;margin-top:8px;}
+  .sqparts .pt{display:flex;flex-direction:column;align-items:center;gap:8px;}
+  .sqparts code{font-family:Consolas,monospace;font-size:26px;font-weight:800;background:#1e1b2e;color:#e2e8f0;border-radius:8px;padding:8px 12px;}
+  .sqparts .q code{color:#fde68a;outline:3px dashed #f59e0b;outline-offset:2px;}
+  .sqparts em{font-style:normal;font-size:19px;font-weight:900;color:#b45309;}
+  .sqnext{margin-top:18px;text-align:center;font-size:24px;font-weight:800;color:#2c3a94;background:#eef1fc;border-radius:12px;padding:12px;}
+  /* ---- 課長がほしい2つ（sneed） ---- */
+  .needrow{display:grid;grid-template-columns:.75fr 1.6fr;gap:22px;align-items:start;}
+  .needboss{background:#fff1f2;border:2px solid #fecdd3;border-radius:16px;padding:14px;display:flex;flex-direction:column;align-items:center;gap:10px;}
+  .needboss img{max-height:150px;}
+  .needboss .nb{font-size:27px;background:#fff;border-left:6px solid #e11d48;border-radius:10px;padding:10px 14px;width:100%;}
+  .needmap{display:flex;flex-direction:column;gap:12px;}
+  .nm1{display:grid;grid-template-columns:auto 34px 1fr;align-items:center;gap:8px;font-size:25px;}
+  .nm1 .q{font-weight:900;color:#9f1239;background:#fff1f2;border-radius:999px;padding:6px 16px;white-space:nowrap;}
+  .nm1 .ar{font-size:26px;font-weight:900;color:#94a3b8;text-align:center;}
+  .nm1 .a{background:#eef1fc;border-radius:10px;padding:8px 14px;}
+  .newest{border:2px dashed #94a3b8;border-radius:14px;padding:10px 14px;background:#f8fafc;}
+  .newest .nlbl{font-size:21px;font-weight:800;color:#334155;margin-bottom:6px;}
+  .newest .realshot{max-height:150px;object-fit:contain;object-position:left top;}
+  .newest .nnote{font-size:20px;font-weight:800;color:#2c3a94;margin-top:4px;}
+  .you{display:inline-block;font-size:17px;font-weight:900;color:#fff;background:#e8590c;border-radius:999px;padding:2px 14px;margin:4px 0 2px;}
+  .tries{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:20px;}
+  .tryc{border:3px solid;border-radius:14px;padding:12px 14px 12px;background:#fff;position:relative;display:flex;flex-direction:column;gap:8px;}
+  .tryc .tn{position:absolute;top:-14px;left:12px;color:#fff;font-weight:900;font-size:18px;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+  .tryc .td{font-size:22px;line-height:1.45;color:var(--text);margin-top:6px;}
+  .tryc .tg{font-size:23px;line-height:1.45;color:var(--text);background:#fff4f4;border-radius:8px;padding:6px 10px;}
+  .tryc .tl{display:block;font-size:16px;font-weight:900;color:var(--muted);letter-spacing:.05em;}
+  .tryc .tb{margin-top:auto;font-size:22px;font-weight:900;color:#c62828;text-align:center;}
+  /* 余白を埋める（大きくする） */
+
+  /* ===== 第30回で足したもの ===== */
+  /* 文字を一段大きく（空白を残さない） */
+  .pacard .patitle{font-size:19px;} .pacard .pasub{font-size:14px;}
+  .pafld .l{font-size:15px;} .pafld .v{font-size:19px;padding:10px 12px;}
+  .tmsg .tx{font-size:22px;} .tmsg .nm{font-size:17px;} .tmenu div{font-size:19px;padding:10px 16px;}
+  .todo .tt{font-size:21px;} .todo .tm2{font-size:17px;} .todo .th{font-size:19px;}
+  .flow2 .fb{font-size:21px;padding:13px 16px;} .flow2 .fb .sub{font-size:15px;}
+  .acard .ah{font-size:24px;} .acard .al{font-size:17px;} .acard .ai{font-size:19px;padding:10px 12px;} .acard .ab{font-size:19px;}
+  .jsonbox{font-size:17px;line-height:1.55;}
+  .facts .f .t{font-size:21px;} .facts .f .d{font-size:17px;}
+  .mini3{display:grid;grid-template-columns:1fr 30px 1fr 30px 1fr;gap:6px;align-items:stretch;margin-top:14px;}
+  .mini3 .m{background:#fff7ed;border:2px solid #fdba74;border-radius:12px;padding:10px 14px;font-size:19px;font-weight:800;color:#7c2d12;line-height:1.45;display:flex;gap:10px;align-items:center;}
+  .mini3 .m b.n{flex:0 0 auto;width:30px;height:30px;border-radius:50%;background:#ea580c;color:#fff;display:flex;align-items:center;justify-content:center;font-size:17px;}
+  .mini3 .a{display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:900;color:#94a3b8;}
+  #c4b .cpsteps{grid-template-columns:0.9fr 30px 2.5fr 30px 0.9fr;}
+  #c4b .cs .pr{font-size:21px;line-height:1.6;text-align:left;display:block;padding:10px 14px;}
+  #c4b .g2 .callout{font-size:20px !important;}
+  .fxline{font-size:21px;} .fxsplit .p .c{font-size:18px;} .fxsplit .p .m{font-size:19px;}
+  .res2 .r .rh{font-size:20px;}
+  #c4a .bub{font-size:20px;padding:8px 14px;} #c4a .feel .fc{gap:6px;padding:10px 14px;} #c4a .goal2{margin-top:8px;}
+  #snext .donegrid{grid-template-columns:1fr 30px 1fr 30px 1.15fr 30px 1fr;}
+  #snext .dg .dt{font-size:22px;} #snext .dg .dd code{font-size:14px;}
+  .nowflow{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start;}
+  .nofx{margin-top:12px;font-size:20px;background:#fff7ed;border:2px solid #fdba74;border-radius:10px;padding:10px 14px;}
+  .nowflow .steplist li{font-size:22px;padding:13px 0 13px 52px;}
+  .tmsg{font-family:"Segoe UI","Noto Sans JP",sans-serif;background:#fff;border:1px solid #e1dfdd;border-radius:12px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+  .tmsg .tbar{background:#5b5fc7;color:#fff;font-size:15px;font-weight:800;padding:8px 14px;display:flex;align-items:center;gap:8px;}
+  .tmsg .tbar img{width:22px;height:22px;background:#fff;border-radius:5px;padding:2px;}
+  .tmsg .tbody{padding:14px 16px;display:flex;gap:12px;align-items:flex-start;position:relative;}
+  .tmsg .av{width:42px;height:42px;border-radius:50%;background:#e8ebfa;flex:0 0 auto;overflow:hidden;}
+  .tmsg .av img{width:100%;height:100%;object-fit:cover;}
+  .tmsg .nm{font-size:15px;font-weight:800;color:#242424;} .tmsg .tm{font-size:13px;color:#605e5c;font-weight:600;margin-left:6px;}
+  .tmsg .tx{font-size:19px;line-height:1.55;color:#242424;margin-top:4px;}
+  .tmsg .dots{position:absolute;right:12px;top:8px;background:#fff;border:1px solid #d1d1d1;border-radius:6px;padding:2px 10px;font-weight:900;font-size:18px;color:#5b5fc7;}
+  .tmenu{font-family:"Segoe UI","Noto Sans JP",sans-serif;background:#fff;border:1px solid #d1d1d1;border-radius:8px;box-shadow:0 6px 18px rgba(0,0,0,.12);overflow:hidden;}
+  .tmenu div{padding:9px 16px;font-size:17px;color:#242424;border-bottom:1px solid #f0f0f0;}
+  .tmenu div.hi{background:#eef0fb;font-weight:800;color:#3a3c7a;}
+  .tmenu div.sub{padding-left:34px;}
+  .todo{font-family:"Segoe UI","Noto Sans JP",sans-serif;background:#fff;border:1px solid #d1d1d1;border-radius:12px;overflow:hidden;}
+  .todo .th{background:#2564cf;color:#fff;padding:9px 16px;font-size:17px;font-weight:800;display:flex;gap:8px;align-items:center;}
+  .todo .ti{display:flex;gap:12px;align-items:flex-start;padding:12px 16px;border-bottom:1px solid #eee;}
+  .todo .ck{width:22px;height:22px;border:2px solid #2564cf;border-radius:50%;flex:0 0 auto;margin-top:3px;}
+  .todo .tt{font-size:19px;color:#242424;font-weight:700;line-height:1.45;}
+  .todo .tm2{font-size:15px;color:#605e5c;margin-top:3px;font-weight:700;}
+  .todo .tm2.due{color:#c50f1f;} .todo .tm2.none{color:#a19f9d;}
+  .todo .tt.long{font-size:17px;font-weight:600;}
+  .acard{font-family:"Segoe UI","Noto Sans JP",sans-serif;background:#fff;border:1px solid #d1d1d1;border-left:5px solid #5b5fc7;border-radius:10px;padding:14px 18px;}
+  .acard .ah{font-size:20px;font-weight:800;color:#242424;}
+  .acard .al{font-size:15px;color:#605e5c;font-weight:700;margin-top:10px;}
+  .acard .ai{border:1px solid #d1d1d1;border-radius:6px;padding:8px 12px;font-size:17px;color:#a19f9d;margin-top:4px;display:flex;justify-content:space-between;}
+  .acard .ab{display:inline-block;margin-top:12px;background:#5b5fc7;color:#fff;font-weight:800;border-radius:6px;padding:7px 22px;font-size:17px;}
+  .jsonbox{background:#0f172a;color:#e2e8f0;font-family:Consolas,monospace;font-size:15px;line-height:1.5;border-radius:10px;padding:12px 16px;white-space:pre;overflow:hidden;}
+  .jsonbox .k{color:#93c5fd;} .jsonbox .s{color:#fbbf24;} .jsonbox .hl{background:#7c3aed;color:#fff;border-radius:4px;padding:0 4px;}
+  .fxsplit{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:10px;}
+  .fxsplit .p{border-radius:12px;padding:12px 12px;border:2px solid;}
+  .fxsplit .p .c{font-family:Consolas,monospace;font-size:17px;font-weight:800;}
+  .fxsplit .p .m{font-size:17px;color:#334155;margin-top:6px;line-height:1.45;font-weight:700;}
+  .fxsplit .p1{background:#eff6ff;border-color:#93c5fd;} .fxsplit .p1 .c{color:#1d4ed8;}
+  .fxsplit .p2{background:#fef3c7;border-color:#fcd34d;} .fxsplit .p2 .c{color:#b45309;}
+  .fxsplit .p3{background:#ecfdf5;border-color:#86efac;} .fxsplit .p3 .c{color:#047857;}
+  .fxsplit .p4{background:#f5f3ff;border-color:#c4b5fd;} .fxsplit .p4 .c{color:#6d28d9;}
+  .fxline{background:#0f172a;border-radius:12px;padding:14px 18px;font-family:Consolas,monospace;font-size:18px;line-height:1.7;color:#e2e8f0;word-break:break-all;}
+  .fxline .c1{color:#93c5fd;font-weight:800;} .fxline .c2{color:#fcd34d;font-weight:800;} .fxline .c3{color:#6ee7b7;font-weight:800;} .fxline .c4{color:#c4b5fd;font-weight:800;}
+  .flow2{display:flex;flex-direction:column;align-items:stretch;gap:0;}
+  .flow2 .fb{background:#fff;border:1px solid #d1d1d1;border-radius:10px;padding:11px 14px;font-size:18px;font-weight:800;color:#242424;display:flex;align-items:center;gap:10px;}
+  .flow2 .fb img{width:28px;height:28px;}
+  .flow2 .fb .ic{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:17px;color:#fff;}
+  .flow2 .fb .sub{display:block;font-size:14px;color:#605e5c;font-weight:700;}
+  .flow2 .fv{text-align:center;color:#94a3b8;font-size:16px;line-height:1.1;padding:3px 0;}
+  .flow2 .fb.ny{border:2px dashed #cbd5e1;color:#94a3b8;background:#f8fafc;}
+  .flow2 .fb.new{border:2px solid var(--pa);box-shadow:0 0 0 3px rgba(58,79,184,.12);}
+  .res2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .res2 .r{border-radius:12px;border:2px solid #cbd5e1;padding:12px 14px;background:#fff;}
+  .res2 .r .rh{font-size:18px;font-weight:900;color:#2c3a94;margin-bottom:8px;}
+  .ba{display:grid;grid-template-columns:1fr 60px 1fr;gap:10px;align-items:stretch;}
+  .ba .bx{border-radius:14px;padding:14px 16px;border:2px solid;}
+  .ba .bx.b{background:#fff7ed;border-color:#fdba74;} .ba .bx.a{background:#ecfdf5;border-color:#86efac;}
+  .ba .bt{font-size:21px;font-weight:900;margin-bottom:8px;} .ba .b .bt{color:#c2410c;} .ba .a .bt{color:#047857;}
+  .ba .row{display:flex;align-items:center;gap:10px;font-size:18px;font-weight:700;color:#334155;padding:6px 0;border-bottom:1px dashed #e2e8f0;}
+  .ba .row:last-child{border-bottom:none;}
+  .ba .row .n{margin-left:auto;font-size:24px;font-weight:900;}
+  .ba .b .n{color:#c2410c;} .ba .a .n{color:#047857;}
+  .ba .mid{display:flex;align-items:center;justify-content:center;font-size:40px;color:var(--pa);font-weight:900;}
+  .why3{width:100%;border-collapse:collapse;font-size:18px;margin-top:12px;}
+  .why3 th{background:#eef1fc;color:#2c3a94;border:1px solid #cbd5e1;padding:8px 10px;text-align:left;font-weight:800;}
+  .why3 td{border:1px solid #cbd5e1;padding:8px 10px;vertical-align:middle;line-height:1.45;}
+  .why3 td:first-child{font-weight:900;color:#242424;white-space:nowrap;}
+  .ctx3{display:grid;grid-template-columns:1.05fr 40px 1fr 40px 1fr;gap:8px;align-items:center;}
+  .ctx3 .ar{text-align:center;font-size:30px;color:var(--pa);font-weight:900;}
+  .ctx3 .lbl-s{margin-bottom:6px;}
+
+</style>
+</head>
+<body>
+<nav class="toc" id="toc">
+  <div class="toc-header">
+    <div class="title">📑 目次 — PA45 第30回</div>
+    <div class="sub">クリックでジャンプ</div>
+  </div>
+  <ol>
+    <li><a href="#s1"><span class="n">01</span>20:15 START</a></li>
+    <li><a href="#s2"><span class="n">02</span>事前準備</a></li>
+    <li><a href="#s3"><span class="n">03</span>PA45とは？</a></li>
+    <li><a href="#s4"><span class="n">04</span>講師自己紹介（Haru）</a></li>
+    <li><a href="#s5"><span class="n">05</span>ご参加にあたって</a></li>
+    <li><a href="#s6"><span class="n">06</span>第30回タイトル</a></li>
+    <li><a href="#sp1"><span class="n">07</span>登場人物</a></li>
+    <li><a href="#smap"><span class="n">08</span>5つの章の地図</a></li>
+    <li><a href="#c1a"><span class="n">09</span>①-1 選択したメッセージから始める</a></li>
+    <li><a href="#c1b"><span class="n">10</span>①-2 To Do に1件足す</a></li>
+    <li><a href="#c1c"><span class="n">11</span>①-3 Teams から押してみる</a></li>
+    <li><a href="#c2a"><span class="n">12</span>②-1 To Do を見ると期限が空</a></li>
+    <li><a href="#c2b"><span class="n">13</span>②-2 課長「金曜までって書いたよね」</a></li>
+    <li><a href="#c3a"><span class="n">14</span>③-1 押したときにカードを出す</a></li>
+    <li><a href="#c3b"><span class="n">15</span>③-2 期限に dueDate を入れて試す</a></li>
+    <li><a href="#c4a"><span class="n">16</span>④-1 日付を選ばずに押すと？</a></li>
+    <li><a href="#c4b"><span class="n">17</span>④-2 Copilot に式を聞く</a></li>
+    <li><a href="#c4c"><span class="n">18</span>④-3 ★式を4つに分けて読む</a></li>
+    <li><a href="#c4d"><span class="n">19</span>④-4 期限を式に差し替えて2回試す</a></li>
+    <li><a href="#c5a"><span class="n">20</span>⑤-1 「追加しました」と返す</a></li>
+    <li><a href="#c5b"><span class="n">21</span>⑤-2 Before / After となぜこの形か</a></li>
+    <li><a href="#snext"><span class="n">22</span>今日できたこと</a></li>
+    <li><a href="#s25"><span class="n">23</span>PA45のご案内</a></li>
+    <li><a href="#s26"><span class="n">24</span>クロージング＆アンケート</a></li>
+  </ol>
+</nav>
+<button class="toc-toggle" id="tocToggle" type="button">≡ 目次</button>
+
+<div class="deck-header">
+  <h1>PA45 第30回 スライド</h1>
+  <div>Teamsの頼まれごとを1クリックでTo Doに入れる ── メッセージの「…」から押して、期限はカードで選ぶ。空なら3日後（非IT初心者歓迎）</div>
+</div>
+
+<section class="slide title-slide" id="s1">
+  <span class="slide-num">1 / 24</span>
+  <div class="opening-bar"><span>PA45 — Power Automate 45 ｜ 第30回 / Vol.30</span><span>Online Hands-on</span></div>
+  <div class="slide-body" style="justify-content:center;align-items:center;text-align:center;">
+    <div style="font-size:30px;color:var(--pa);font-weight:800;margin-bottom:4px;">まもなく開始します</div>
+    <div style="font-size:128px;color:#2c3a94;font-weight:900;line-height:1;margin:8px 0 4px;letter-spacing:.02em;">20:15 <span style="font-size:56px;">START</span></div>
+    <h1 style="font-size:38px;color:var(--text);font-weight:800;line-height:1.3;margin:20px 0 12px;">第30回｜Teamsの頼まれごとを1クリックでTo Doに入れる</h1>
+    <p style="font-size:24px;color:var(--muted);margin:0;">メッセージの「…」から1クリック。期限の式は Copilot と一緒に ☕</p>
+    <div style="margin-top:24px;background:#eef1fc;border:2px solid #aab6f0;border-radius:12px;padding:12px 24px;font-size:21px;color:#2c3a94;font-weight:800;">📅 10/8（木）20:15〜21:00 ── オンライン（Teams）・参加無料</div>
+</div><div class="slide-footer"><span>Power Automate for Beginners</span><span style="color:var(--hint);">Copyright © PA45</span></div>
+</section>
+<section class="slide" id="s2">
+  <span class="slide-num">2 / 24</span>
+<div class="slide-head"><div class="slide-eyebrow">PA45｜第30回</div><h1 class="slide-title">事前準備 <small>（サインインできればOK・見るだけ参加も歓迎）</small></h1></div>
+<div class="slide-body">
+    <div class="introrow">
+      <img class="illus" src="assets/irasutoya_door.png" alt="">
+      <div>
+        <p style="font-size:21px;color:var(--muted);margin:0;line-height:1.5;">今日の主役は、<b style="color:#2c3a94;">Teams のメッセージの「…」</b>。そこから自分のフローを1クリックで動かします。</p>
+        <div class="facts c3" style="margin-top:8px;">
+          <div class="f teams"><div class="i">💬</div><div class="t">Teams</div><div class="d">頼まれごとの<br>メッセージを選ぶ</div></div>
+          <div class="f blue"><div class="i">✅</div><div class="t">To Do</div><div class="d">タスクを1件<br>追加する</div></div>
+          <div class="f purple"><div class="i">✨</div><div class="t">Copilot</div><div class="d">期限の式を<br>一緒に考える</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cards-2">
+      <div class="card blue"><div class="num" style="background:var(--blue-mid);">1</div><h3>会社・学校の Microsoft 365</h3><p><span class="pathpill">office.com</span> にサインイン。<b>Teams と To Do</b> が使えればOK。</p></div>
+      <div class="card green"><div class="num" style="background:#16a34a;">2</div><h3>既定の環境で作る</h3><p>Teams の「…」に出るのは<b>既定の環境</b>のフローだけ。</p></div>
+    </div>
+    <div class="callout pa" style="margin-top:14px;"><strong>✅ 今日のゴール</strong>
+      <div class="chips"><span>① メッセージを選んで動かす</span><span>② To Do に入れる</span><span>③ 期限をカードで選ぶ</span><span>④ 空なら3日後</span></div>
+    </div>
+</div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
+</section>
+<section class="slide" id="s3">
+  <span class="slide-num">3 / 24</span>
+<div class="slide-head"><div class="slide-eyebrow">INTRODUCTION</div><h1 class="slide-title">PA45 とは？</h1><div class="concept-dot">Concept</div></div>
+<div class="slide-body">
+    <div style="text-align:center;color:var(--blue-text);font-weight:800;font-size:28px;">忙しい人のための 45分ハンズオン</div>
+    <div class="cards-3">
+      <div class="card blue"><div class="ico">⏱️</div><h3>45分完結</h3><p><strong>要点だけ</strong>を凝縮。その日から一歩。</p></div>
+      <div class="card green"><div class="ico">💻</div><h3>ハンズオン</h3><p><strong>自分の手で作ります</strong>。見るだけもOK。</p></div>
+      <div class="card yellow"><div class="ico">👥</div><h3>一緒に学ぶ</h3><p><strong>ゼロから順番に</strong>。だから腑に落ちる。</p></div>
+    </div>
+    <div style="text-align:center;color:var(--green-text);font-weight:700;margin-top:auto;padding:18px;background:var(--green-bg);border-radius:10px;font-size:23px;">✓ 知識ゼロでOK。「頼まれごとを、その場で1クリックでタスクにする」を持ち帰りましょう。</div>
+</div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
+</section>
+<section class="slide" id="s4">
+  <span class="slide-num">4 / 24</span>
+<div class="slide-head"><div class="slide-eyebrow">SPEAKER</div><h1 class="slide-title">Power Automate 45 (PA45)</h1><div class="concept-dot">Speaker</div></div>
+<div class="slide-body">
+    <div style="display:grid;grid-template-columns:280px 1fr;gap:36px;align-items:center;margin-top:8px;">
+      <img class="haru-img" src="https://www.automate136.com/wp-content/uploads/2026/04/haru-profile.png" alt="Haru" style="width:280px;height:280px;">
+      <div>
+        <div style="font-size:40px;font-weight:800;color:var(--blue-text);line-height:1.1;">Haru</div>
+        <div style="font-size:23px;color:var(--muted);margin:6px 0 18px;">💻 Power Platform / DX 推進</div>
+        <ul class="check" style="font-size:24px;">
+          <li style="margin-bottom:16px;">🏢 社内で PA／Copilot ハンズオン講座を開催し、DXを推進</li>
+          <li style="margin-bottom:16px;">🎤 広島コミュニティ「PLUG」運営・外部コミュニティ登壇</li>
+          <li style="margin-bottom:16px;">📱 X で初心者向け Power Automate チップスを継続発信</li>
+          <li>🕐 PA45（45分の "1粒ハンズオン"）を毎週開催・運営</li>
+        </ul>
+      </div>
+    </div>
+    <div class="pull-quote" style="margin-top:auto;font-size:26px;padding:18px;">今日も一緒に「できた！」を作っていきましょう 😊</div>
+</div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
+</section>
+<section class="slide" id="s5">
+  <span class="slide-num">5 / 24</span>
+<div class="slide-head"><div class="slide-eyebrow">PA45 Online Course</div><h1 class="slide-title">ご参加にあたってのお願い <small>（ルール）</small></h1><div class="concept-dot">Guidelines</div></div>
+<div class="slide-body">
+    <div class="facts c3" style="margin-top:4px;">
+      <div class="f blue"><div class="i" style="font-size:52px;">🤝</div><div class="t" style="font-size:23px;">気持ちよく学ぶ</div><div class="d" style="font-size:18px;">誹謗中傷・不適切な発言は禁止<br>お互いを尊重して</div></div>
+      <div class="f green"><div class="i" style="font-size:52px;">🎥</div><div class="t" style="font-size:23px;">録画について</div><div class="d" style="font-size:18px;">後日 YouTube 公開予定<br>匿名参加で表示名を隠せます</div></div>
+      <div class="f yellow"><div class="i" style="font-size:52px;">💬</div><div class="t" style="font-size:23px;">チャットは気軽に</div><div class="d" style="font-size:18px;">「できました！」大歓迎<br>小さな質問でもOK</div></div>
+    </div>
+    <div class="cards-2" style="margin-top:14px;">
+      <div class="card"><h3 style="color:var(--blue-text);">🖌️ アウトプットで定着</h3><p><strong>#PA45</strong> をつけて投稿しよう！「気づき」「これ便利！」何でもOK。</p></div>
+      <div class="card"><h3 style="color:var(--green-text);">🎓 初心者大歓迎</h3><p>🚫 難しい専門用語は使いません／🚶 置いてけぼりにしないようゆっくり進行。</p></div>
+    </div>
+</div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
+</section>
+<section class="slide title-slide" id="s6">
+  <span class="slide-num">6 / 24</span>
+<div class="slide-head"><div class="slide-eyebrow">Power Automate × <span style="color:#7C3AED;">Copilot</span></div><h1 class="slide-title">Vol.30</h1></div>
+<div class="slide-body">
+    <div class="badge-row"><span class="pill">Teams×Copilot編</span><span class="pill alt">選択したメッセージ</span><span class="pill alt">To Do</span><span class="pill alt">アダプティブ カード</span><span class="pill alt">if / addDays</span></div>
+    <h1>第30回：Teamsの頼まれごとを<br>1クリックでTo Doに入れる</h1>
+    <div class="meta-table">
+      <dl><dt>Theme</dt><dd>メッセージの「…」から1クリックで To Do にタスクを追加。期限はカードで選び、空なら3日後</dd></dl>
+      <dl><dt>Target</dt><dd>Teams で頼まれごとが流れて困っている方（知識ゼロOK・見るだけ参加も歓迎）</dd></dl>
+      <dl><dt>Time</dt><dd>実際の画面で作り方を確認 約45分</dd></dl>
+    </div>
+    <img class="deco" src="assets/irasutoya_robot.png" alt="" style="right:46px;bottom:20px;height:160px;">
+</div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
+</section>
+<section class="slide pa" id="sp1">
+  <span class="slide-num">7 / 24</span>
+<div class="slide-head"><div class="slide-eyebrow"><span class="chapno">プロローグ</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「チャットの頼まれごとを、よく忘れます」</span></div><h1 class="slide-title">今日の主役は、この2人です</h1><div class="chapbar"><span class="">1 まず動かす</span><span class="">2 つまずく</span><span class="">3 カードで聞く</span><span class="">4 Copilotと式</span><span class="">5 届ける</span></div></div>
+<div class="slide-body">
+    <div style="display:grid;gap:16px;margin-top:2px;">
+      <div class="who main">
+        <img src="assets/irasutoya_businessman.png" alt="">
+        <div>
+          <div class="nm">オート はじめ さん<span style="font-size:18px;color:var(--muted);font-weight:700;">（27）営業事務・これから自動化する人</span></div><div class="you">主役（あなた）</div>
+          <div class="ro">一日中、課長や営業から Teams で頼まれごとが届く</div>
+          <div class="sp">「頼まれたら <b>To Do に手で書き写して</b>います。会議中に来た分は<b>写し忘れ</b>て、流れていきます」</div>
+        </div>
+      </div>
+      <div class="who boss">
+        <img src="assets/irasutoya_teams_man.png" alt="">
+        <div>
+          <div class="nm">ツウチ まもる さん<span style="font-size:18px;color:var(--muted);font-weight:700;">（41）営業課長・頼む人</span></div>
+          <div class="ro">移動中にスマホの Teams で、ひとことで頼む</div>
+          <div class="sp">「<b>金曜までに</b>って書いたよね？ チャットで頼んだ件、<b>忘れられると困る</b>」</div>
+        </div>
+      </div>
+    </div>
+    <div class="callout pa" style="margin-top:14px;"><strong>やりたいことは1つ。</strong>頼まれたメッセージを、その場で1クリックで To Do に入れる。<span style="font-size:15px;color:#64748b;">※人名は架空</span></div>
+</div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
+</section>
+<section class="slide pa" id="smap">
+  <span class="slide-num">8 / 24</span>
+<div class="slide-head"><div class="slide-eyebrow"><span class="chapno">プロローグ</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「今日は5つの章で進みます」</span></div><h1 class="slide-title">オートさんが、5つの章で1歩ずつ進みます</h1><div class="chapbar"><span class="">1 まず動かす</span><span class="">2 つまずく</span><span class="">3 カードで聞く</span><span class="">4 Copilotと式</span><span class="">5 届ける</span></div></div>
+<div class="slide-body">
+    <div class="mapro">
+      <div class="mc c1"><div class="mn">1</div><div class="mi">▶️</div><div class="mt">まず動かす</div><div class="md">「…」から押して<br>To Do に入る</div><div class="ms ok">順調</div></div>
+      <div class="ma">→</div>
+      <div class="mc c2"><div class="mn">2</div><div class="mi">😣</div><div class="mt">つまずく</div><div class="md">期限が<br>空っぽ</div><div class="ms ng">困る</div></div>
+      <div class="ma">→</div>
+      <div class="mc c3"><div class="mn">3</div><div class="mi">🗓️</div><div class="mt">カードで聞く</div><div class="md">押したときに<br>期限を選ぶ</div><div class="ms hi">気づく</div></div>
+      <div class="ma">→</div>
+      <div class="mc c4"><div class="mn">4</div><div class="mi">✨</div><div class="mt">Copilotと式</div><div class="md">選ばなければ<br>3日後</div><div class="ms ok">解決</div></div>
+      <div class="ma">→</div>
+      <div class="mc c5"><div class="mn">5</div><div class="mi">📨</div><div class="mt">届ける</div><div class="md">「追加しました」<br>と返ってくる</div><div class="ms ok">完成</div></div>
+    </div>
+    <div class="maprow2">
+      <img src="assets/irasutoya_businessman.png" alt="">
+      <div class="sp">「最初は<b>タイトルだけ</b>入れば十分。<b>困ってから、1つずつ足していけばいい</b>」</div>
+    </div>
+</div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
+</section>
+<section class="slide pa" id="c1a">
+  <span class="slide-num">9 / 24</span>
+<div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第1章 まず動かす</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「メッセージの「…」から動かしたい」</span></div><h1 class="slide-title">「選択したメッセージ」から始める</h1><div class="why">なぜ：頼まれたメッセージを、自分で選んで押したい。それができるトリガーは「選択したメッセージ」だけ</div><div class="chapbar"><span class="on">1 まず動かす</span><span class="">2 つまずく</span><span class="">3 カードで聞く</span><span class="">4 Copilotと式</span><span class="">5 届ける</span></div></div>
+<div class="slide-body">
+    <div class="g2c" style="align-items:start;">
+      <div>
+        <div class="lbl-s">Teams で押すと、こうなる</div>
+        <div class="tmsg">
+          <div class="tbar"><img src="assets/icon_teams.png" alt="">チャット：ツウチ まもる</div>
+          <div class="tbody"><div class="av"><img src="assets/irasutoya_teams_man.png" alt=""></div>
+            <div><span class="nm">ツウチ まもる</span><span class="tm">10:12</span>
+            <div class="tx">見積書、金曜までにお願いします</div></div>
+            <span class="dots">…</span></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px;">
+          <div class="tmenu"><div>返信</div><div>リンクをコピー</div><div class="hi">その他のアクション ›</div></div>
+          <div class="tmenu"><div class="hi">✅ To Do に入れる</div><div class="sub" style="color:#605e5c;font-size:15px;">↑ フローの名前が出る</div></div>
+        </div>
+      </div>
+      <div>
+        <div class="facts c1" style="grid-template-columns:1fr;gap:10px;">
+          <div class="f blue" style="text-align:left;display:flex;gap:14px;align-items:center;"><div class="i">🏠</div><div><div class="t">既定の環境で作る</div><div class="d">ほかの環境のフローは Teams に出ない</div></div></div>
+          <div class="f yellow" style="text-align:left;display:flex;gap:14px;align-items:center;"><div class="i">🏷️</div><div><div class="t">フロー名＝メニューの文字</div><div class="d">「To Do に入れる」など短く分かる名前に</div></div></div>
+          <div class="f green" style="text-align:left;display:flex;gap:14px;align-items:center;"><div class="i">👤</div><div><div class="t">押せるのは作った本人</div><div class="d">共有しない限り、ほかの人には出ない</div></div></div>
+        </div>
+        <div class="callout small" style="margin-top:10px;">出典：Microsoft Learn「Microsoft Teams のメッセージからクラウド フローをトリガーする」</div>
+      </div>
+    </div>
+    <div class="mini3"><div class="m"><b class="n">1</b>作成 →「インスタント クラウド フロー」</div><div class="a">→</div><div class="m"><b class="n">2</b>名前「To Do に入れる」</div><div class="a">→</div><div class="m"><b class="n">3</b>「選択したメッセージ」を選んで作成</div></div>
+</div><div class="slide-footer"><span class="dobadge do"><b>🖐 いま手を動かす</b>作成 → インスタント → 名前 →「選択したメッセージ」</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
+</section>
+<section class="slide pa" id="c1b">
+  <span class="slide-num">10 / 24</span>
+<div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第1章 まず動かす</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「To Do に1件足すだけ」</span></div><h1 class="slide-title">To Do に1件足す。タイトルはメッセージの文</h1><div class="why">なぜ：To Do にタスクを作るのが「to-do の追加 (V3)」。タイトルに、選んだメッセージの文を入れる</div><div class="chapbar"><span class="on">1 まず動かす</span><span class="">2 つまずく</span><span class="">3 カードで聞く</span><span class="">4 Copilotと式</span><span class="">5 届ける</span></div></div>
+<div class="slide-body">
+    <div class="g2c">
+      <div class="pacard">
+        <div class="pahead"><span class="paic" style="background:#2564cf;">✅</span>
+          <div><div class="patitle">to-do の追加 (V3)</div><div class="pasub">Microsoft To-Do (Business)</div></div></div>
+        <div class="pafields">
+          <div class="pafld"><span class="l">To-do リスト *</span><span class="v">タスク<span class="cr">▾</span></span></div>
+          <div class="pafld"><span class="l">タイトル *</span><span class="v hi"><span style="background:#ede9fe;color:#6b21a8;border-radius:5px;padding:2px 8px;">⚡ プレーン テキスト メッセージ</span></span></div>
+          <div class="pafld"><span class="l">期限</span><span class="v" style="color:#a19f9d;">（まだ空のまま）</span></div>
+        </div>
+      </div>
+      <div>
+        <div class="lbl-s">⚡ 動的コンテンツに並ぶもの（選択したメッセージ）</div>
+        <div class="facts c2">
+          <div class="f purple"><div class="i">📝</div><div class="t">プレーン テキスト</div><div class="d">メッセージの文だけ<br>← <b>タイトルに使う</b></div></div>
+          <div class="f"><div class="i">🧾</div><div class="t">メッセージ コンテンツ</div><div class="d">HTML 込みの全文<br>（タグが混ざる）</div></div>
+          <div class="f teams"><div class="i">🔗</div><div class="t">メッセージへのリンク</div><div class="d">元のメッセージに<br>戻れる URL</div></div>
+          <div class="f"><div class="i">🙋</div><div class="t">送信者の表示名</div><div class="d">だれが頼んだか</div></div>
+        </div>
+        <div class="callout pa" style="margin-top:10px;font-size:19px;"><strong>タイトルは「プレーン テキスト」。</strong>HTML のタグが入らない。</div>
+      </div>
+    </div>
+    <div class="mini3"><div class="m"><b class="n">1</b>＋ →「to-do」で検索</div><div class="a">→</div><div class="m"><b class="n">2</b>To-do リスト＝「タスク」</div><div class="a">→</div><div class="m"><b class="n">3</b>タイトル欄で ⚡ → プレーン テキスト</div></div>
+</div><div class="slide-footer"><span class="dobadge do"><b>🖐 いま手を動かす</b>＋ →「to-do の追加 (V3)」→ タスク → ⚡ プレーン テキスト</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
+</section>
+<section class="slide pa" id="c1c">
+  <span class="slide-num">11 / 24</span>
+<div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第1章 まず動かす</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「押したら、To Do に入った！」</span></div><h1 class="slide-title">保存して、Teams のメッセージから押してみる</h1><div class="why">なぜ：このフローの入口は Teams の「…」。だから試すのも Teams から</div><div class="chapbar"><span class="on">1 まず動かす</span><span class="">2 つまずく</span><span class="">3 カードで聞く</span><span class="">4 Copilotと式</span><span class="">5 届ける</span></div></div>
+<div class="slide-body">
+    <div class="nowflow" style="grid-template-columns:0.9fr 1.1fr;">
+      <div>
+        <div class="lbl-s">押す時点のフロー（この2つだけ）</div>
+        <div class="flow2">
+          <div class="fb"><img src="assets/icon_teams.png" alt=""><div>選択したメッセージ<span class="sub">Teams・カードはまだ付けない</span></div></div>
+          <div class="fv">▼</div>
+          <div class="fb"><span class="ic" style="background:#2564cf;">✅</span><div>to-do の追加 (V3)<span class="sub">タスク・タイトル＝プレーン テキスト</span></div></div>
+          <div class="fv">▼</div>
+          <div class="fb ny">💬 返事のメッセージは まだ足さない<span class="sub" style="margin-left:6px;">第5章で</span></div>
+        </div>
+        <div class="nofx">式は<b>まだ1つも書きません</b>。</div>
+      </div>
+      <div>
+        <div class="lbl-s">押す順番</div>
+        <ol class="steplist">
+          <li>右上の<b>「保存」</b></li>
+          <li>Teams で<b>自分あてのメッセージ</b>にカーソル →<b>「…」</b></li>
+          <li><b>「その他のアクション」</b>→<b>「To Do に入れる」</b></li>
+          <li>To Do アプリの<b>「タスク」</b>に1件増えていれば成功</li>
+        </ol>
+        <div class="todo" style="margin-top:10px;"><div class="th">✅ タスク ＋1件</div>
+          <div class="ti"><span class="ck"></span><div><div class="tt">見積書、金曜までにお願いします</div><div class="tm2 none">期限：なし</div></div></div></div>
+        <div class="callout pa" style="margin-top:10px;font-size:19px;"><strong>練習は自分あてのチャットで。</strong>課長のメッセージで試さない。</div>
+      </div>
+    </div>
+</div><div class="slide-footer"><span class="dobadge do"><b>🖐 いま手を動かす</b>保存 → Teams の「…」→ その他のアクション → To Do に入れる</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
+</section>
+<section class="slide pa" id="c2a">
+  <span class="slide-num">12 / 24</span>
+<div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第2章 つまずく</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「入った。でも、いつまで？」</span></div><h1 class="slide-title">To Do に入った。でも期限が空っぽ</h1><div class="why">なぜ：To Do は期限が近いものから片づける道具。期限が無いと、いつやるか決まらない</div><div class="chapbar"><span class="done">1 まず動かす</span><span class="on">2 つまずく</span><span class="">3 カードで聞く</span><span class="">4 Copilotと式</span><span class="">5 届ける</span></div></div>
+<div class="slide-body">
+    <div class="ctx3">
+      <div>
+        <div class="lbl-s">課長から来たメッセージ</div>
+        <div class="tmsg"><div class="tbar"><img src="assets/icon_teams.png" alt="">チャット</div>
+          <div class="tbody"><div class="av"><img src="assets/irasutoya_teams_man.png" alt=""></div>
+          <div><span class="nm">ツウチ まもる</span><span class="tm">10:12</span><div class="tx">見積書、<b>金曜までに</b>お願いします</div></div></div></div>
+      </div>
+      <div class="ar">→</div>
+      <div>
+        <div class="lbl-s">To Do に入ったもの</div>
+        <div class="todo"><div class="th">✅ タスク</div>
+          <div class="ti"><span class="ck"></span><div><div class="tt">見積書、金曜までにお願いします</div><div class="tm2 none">期限：なし</div></div></div></div>
+      </div>
+      <div class="ar">→</div>
+      <div>
+        <div class="lbl-s">1週間たつと</div>
+        <div class="todo"><div class="th">✅ タスク（期限なし 12件）</div>
+          <div class="ti"><span class="ck"></span><div><div class="tt" style="font-size:16px;">見積書、金曜までに…</div><div class="tm2 none">期限：なし</div></div></div>
+          <div class="ti"><span class="ck"></span><div><div class="tt" style="font-size:16px;">議事録の共有お願い…</div><div class="tm2 none">期限：なし</div></div></div>
+          <div class="ti"><span class="ck"></span><div><div class="tt" style="font-size:16px;">来週の会議室を…</div><div class="tm2 none">期限：なし</div></div></div></div>
+      </div>
+    </div>
+    <div class="callout pa" style="margin-top:14px;"><strong>文の中に「金曜まで」と書いてあっても、</strong>To Do の期限には入らない。</div>
+    <div class="maprow2" style="margin-top:6px;grid-template-columns:80px 1fr;"><img src="assets/irasutoya_businessman.png" alt="" style="max-height:80px;"><div class="sp">「期限なしが12件。<b>どれから手をつければいいか、分からない</b>」</div></div>
+</div><div class="slide-footer"><span class="dobadge see"><b>📖 説明</b>To Do アプリで、いま入ったタスクの期限を見る</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
+</section>
+<section class="slide pa" id="c2b">
+  <span class="slide-num">13 / 24</span>
+<div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第2章 つまずく</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「押すときに、期限も決めたい」</span></div><h1 class="slide-title">課長「金曜までって書いたよね？」</h1><div class="why">なぜ：期限は頼まれるたびに違う。決められるのは、押した瞬間の自分だけ</div><div class="chapbar"><span class="done">1 まず動かす</span><span class="on">2 つまずく</span><span class="">3 カードで聞く</span><span class="">4 Copilotと式</span><span class="">5 届ける</span></div></div>
+<div class="slide-body">
+    <div class="feel">
+      <div class="fc boss2">
+        <div class="who2"><img src="assets/irasutoya_teams_man.png" alt=""><div><div class="nm2">ツウチ課長</div><div class="sit">金曜の夕方、見積書がまだ来ない</div></div></div>
+        <div class="bub r">「見積書、<b>金曜までって書いたよね？</b>」</div>
+        <div class="bub r">「チャットで頼んだ件、<b>忘れられると困る</b>」</div>
+      </div>
+      <div class="farrow">→</div>
+      <div class="fc auto2">
+        <div class="who2"><img src="assets/irasutoya_businessman.png" alt=""><div><div class="nm2">オートさん<span class="you">主役（あなた）</span></div><div class="sit">To Do を見て考える</div></div></div>
+        <div class="bub b">「To Do には入っていた。でも<b>期限が空</b>で、後回しにしていた」</div>
+        <div class="bub b">「期限は毎回ちがう。<b>押すときに日付を選べれば</b>いいんだ」</div>
+      </div>
+    </div>
+    <div class="goal2">
+      <span class="gl2">オートさんが作りたいもの</span>
+      <span class="gm2">押す → <b>日付を選ぶ</b> → 期限つきで To Do へ</span>
+      <span class="gn2">→ 次の章で「カード」を付けます</span>
+    </div>
+</div><div class="slide-footer"><span class="dobadge see"><b>📖 説明</b>スライドで説明（手は止めてOK）</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
+</section>
+<section class="slide pa" id="c3a">
+  <span class="slide-num">14 / 24</span>
+<div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第3章 カードで聞く</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「押したら日付を聞いてほしい」</span></div><h1 class="slide-title">押したときに、日付を選ぶカードを出す</h1><div class="why">なぜ：「選択したメッセージ」には、押した人に入力してもらうカードを付けられる</div><div class="chapbar"><span class="done">1 まず動かす</span><span class="done">2 つまずく</span><span class="on">3 カードで聞く</span><span class="">4 Copilotと式</span><span class="">5 届ける</span></div></div>
+<div class="slide-body">
+    <div class="g2c" style="grid-template-columns:1.15fr 0.85fr;align-items:start;">
+      <div>
+        <div class="lbl-s">トリガーの「アダプティブ カードの入力」に貼る（手順書からコピー）</div>
+<div class="jsonbox">{ <span class="k">"type"</span>: <span class="s">"AdaptiveCard"</span>, <span class="k">"version"</span>: <span class="s">"1.4"</span>,
+  <span class="k">"body"</span>: [
+    { <span class="k">"type"</span>: <span class="s">"TextBlock"</span>, <span class="k">"text"</span>: <span class="s">"To Do に追加します"</span> },
+    { <span class="k">"type"</span>: <span class="s">"Input.Date"</span>, <span class="k">"id"</span>: <span class="hl">"dueDate"</span>,
+      <span class="k">"label"</span>: <span class="s">"期限（空なら3日後）"</span> }
+  ],
+  <span class="k">"actions"</span>: [
+    { <span class="k">"type"</span>: <span class="s">"Action.Submit"</span>, <span class="k">"title"</span>: <span class="s">"追加する"</span> }
+  ] }</div>
+        <div class="callout small" style="margin-top:8px;font-size:16px;"><b>アダプティブ カード</b>＝Teams に出せる入力つきの小さな画面。JSON で書く</div>
+      </div>
+      <div>
+        <div class="lbl-s">押すと Teams に出る画面</div>
+        <div class="acard">
+          <div class="ah">To Do に追加します</div>
+          <div class="al">期限（空なら3日後）</div>
+          <div class="ai"><span>日付を選ぶ</span><span>📅</span></div>
+          <div class="ab">追加する</div>
+        </div>
+        <div class="callout pa" style="margin-top:12px;font-size:19px;"><strong>id の "dueDate" が名前になる。</strong>あとで ⚡ に dueDate と出る。</div>
+      </div>
+    </div>
+    <div class="mini3"><div class="m"><b class="n">1</b>トリガー「選択したメッセージ」を開く</div><div class="a">→</div><div class="m"><b class="n">2</b>カードの入力欄に JSON を貼る</div><div class="a">→</div><div class="m"><b class="n">3</b>右上の「保存」</div></div>
+</div><div class="slide-footer"><span class="dobadge do"><b>🖐 いま手を動かす</b>トリガーを開く → アダプティブ カードの入力にJSONを貼る → 保存</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
+</section>
+<section class="slide pa" id="c3b">
+  <span class="slide-num">15 / 24</span>
+<div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第3章 カードで聞く</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「日付を選んだら、期限に入った！」</span></div><h1 class="slide-title">To Do の期限に ⚡ dueDate を入れて、もう一度押す</h1><div class="why">なぜ：カードで選んだ日付は、トリガーの出力 dueDate として後ろのアクションに渡る</div><div class="chapbar"><span class="done">1 まず動かす</span><span class="done">2 つまずく</span><span class="on">3 カードで聞く</span><span class="">4 Copilotと式</span><span class="">5 届ける</span></div></div>
+<div class="slide-body">
+    <div class="nowflow" style="grid-template-columns:0.9fr 1.1fr;">
+      <div>
+        <div class="lbl-s">押す時点のフロー</div>
+        <div class="flow2">
+          <div class="fb new"><img src="assets/icon_teams.png" alt=""><div>選択したメッセージ<span class="sub">カード：期限（dueDate）</span></div></div>
+          <div class="fv">▼</div>
+          <div class="fb new"><span class="ic" style="background:#2564cf;">✅</span><div>to-do の追加 (V3)<span class="sub">期限＝⚡ dueDate</span></div></div>
+        </div>
+        <div class="lbl-s" style="margin-top:14px;">To Do に入ったもの</div>
+        <div class="todo"><div class="th">✅ タスク</div>
+          <div class="ti"><span class="ck"></span><div><div class="tt">見積書、金曜までにお願いします</div><div class="tm2 due">期限：10月9日（金）</div></div></div></div>
+      </div>
+      <div>
+        <div class="lbl-s">押す順番</div>
+        <ol class="steplist">
+          <li>To Do の<b>「期限」</b>欄 → ⚡ から<b>「dueDate」</b></li>
+          <li><b>「保存」</b></li>
+          <li>Teams のメッセージ →「…」→ その他のアクション →<b>「To Do に入れる」</b></li>
+          <li>カードで<b>日付を選ぶ</b> →<b>「追加する」</b></li>
+        </ol>
+        <div class="callout pa" style="margin-top:10px;font-size:19px;"><strong>期限が入れば第3章は完成。</strong>To Do で日付を確かめる。</div>
+      </div>
+    </div>
+    <div class="maprow2" style="margin-top:10px;grid-template-columns:80px 1fr;"><img src="assets/irasutoya_businessman.png" alt="" style="max-height:80px;"><div class="sp">「選んだ日が期限に入った。<b>でも、日付を選ばずに押したら？</b>」→ 第4章へ</div></div>
+</div><div class="slide-footer"><span class="dobadge do"><b>🖐 いま手を動かす</b>期限に ⚡ dueDate → 保存 → Teams で押して日付を選ぶ</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
+</section>
+<section class="slide pa" id="c4a">
+  <span class="slide-num">16 / 24</span>
+<div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第4章 Copilotと式</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「急ぎじゃない頼みは、日付を選ばない」</span></div><h1 class="slide-title">日付を選ばずに押したら、また期限が空</h1><div class="why">なぜ：全部の頼みに日付を選ぶのは手間。選ばなかったときの決まりを作りたい</div><div class="chapbar"><span class="done">1 まず動かす</span><span class="done">2 つまずく</span><span class="done">3 カードで聞く</span><span class="on">4 Copilotと式</span><span class="">5 届ける</span></div></div>
+<div class="slide-body">
+    <div class="feel">
+      <div class="fc boss2">
+        <div class="who2"><img src="assets/irasutoya_teams_man.png" alt=""><div><div class="nm2">ツウチ課長</div><div class="sit">期限を書かずに頼むこともある</div></div></div>
+        <div class="bub r">「議事録の共有、<b>手が空いたらでいいよ</b>」</div>
+        <div class="bub r">「でも、<b>今週中には</b>見たいかな」</div>
+      </div>
+      <div class="farrow">→</div>
+      <div class="fc auto2">
+        <div class="who2"><img src="assets/irasutoya_businessman.png" alt=""><div><div class="nm2">オートさん<span class="you">主役（あなた）</span></div><div class="sit">日付を選ばずに「追加する」</div></div></div>
+        <div class="bub b">「選ばずに押したら、<b>期限が空</b>のまま入った」</div>
+        <div class="bub b">「<b>空なら3日後</b>、選んだらその日。この『もし』は式で書くらしい」</div>
+      </div>
+    </div>
+    <div class="goal2">
+      <span class="gl2">決まり</span>
+      <span class="gm2">選んだ → <b>その日</b>／選ばない → <b>3日後</b></span>
+      <span class="gn2">→ 書き方は Copilot に聞く</span>
+    </div>
+    <div class="res2" style="margin-top:12px;">
+      <div class="r"><div class="rh">10/9 を選んで押した</div><div class="todo"><div class="ti"><span class="ck"></span><div><div class="tt">見積書、金曜までにお願いします</div><div class="tm2 due">期限：10月9日（金） ✓</div></div></div></div></div>
+      <div class="r" style="border-color:#fca5a5;"><div class="rh" style="color:#b91c1c;">日付を選ばずに押した</div><div class="todo"><div class="ti"><span class="ck"></span><div><div class="tt">議事録の共有、手が空いたらでいいよ</div><div class="tm2 none">期限：なし ✕</div></div></div></div></div>
+    </div>
+</div><div class="slide-footer"><span class="dobadge see"><b>📖 説明</b>スライドで説明（日付を選ばずに押すと期限が空）</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
+</section>
+<section class="slide pa" id="c4b">
+  <span class="slide-num">17 / 24</span>
+<div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第4章 Copilotと式</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「そうだ、Copilot に聞こう」</span></div><h1 class="slide-title">Copilot に「もし空なら3日後」の式を聞く</h1><div class="why">なぜ：「もし〜なら」は式で書く。書き方を知らなくても、決まりを日本語で伝えれば Copilot が式にする</div><div class="chapbar"><span class="done">1 まず動かす</span><span class="done">2 つまずく</span><span class="done">3 カードで聞く</span><span class="on">4 Copilotと式</span><span class="">5 届ける</span></div></div>
+<div class="slide-body">
+    <div class="cpsteps">
+      <div class="cs"><div class="cn">1</div><div class="ci">🌐</div><div class="ct">Copilot を開く</div><div class="cd">ブラウザの<b>別タブ</b>で<br><span class="url">m365.cloud.microsoft/chat</span></div></div>
+      <div class="ca">→</div>
+      <div class="cs" style="flex:2.2;"><div class="cn">2</div><div class="ci">💬</div><div class="ct">決まりと名前を、そのまま送る</div><div class="cd" style="text-align:left;"><span class="pr">Power Automate の式を1行で教えて。<br>triggerBody()?['cardOutputs']?['dueDate'] が空なら今日から3日後、入っていればその日を、yyyy-MM-ddT00:00:00 の形で返したい</span></div></div>
+      <div class="ca">→</div>
+      <div class="cs"><div class="cn">3</div><div class="ci">📋</div><div class="ct">返ってきた式を<br>コピー</div><div class="cd">式の部分だけ<br>（手順書にも見本）</div></div>
+    </div>
+    <div class="g2" style="margin-top:12px;">
+      <div class="callout pa" style="margin:0;font-size:19px;"><strong>名前（dueDate の住所）も一緒に送る。</strong>Copilot はフローを見ていない。</div>
+      <div class="callout" style="margin:0;font-size:19px;"><strong>To Do の期限の形</strong>＝ yyyy-MM-ddT00:00:00（Microsoft Learn）</div>
+    </div>
+</div><div class="slide-footer"><span class="dobadge do"><b>🖐 いま手を動かす</b>Copilot：別タブで聞く → 返ってきた式をコピー</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
+</section>
+<section class="slide pa" id="c4c">
+  <span class="slide-num">18 / 24</span>
+<div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第4章 Copilotと式</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「長いけど、4つの部品だった」</span></div><h1 class="slide-title">式は4つの部品。色ごとに読む</h1><div class="why">なぜ：貼る前に中身を読めば、違ったときに直せる</div><div class="chapbar"><span class="done">1 まず動かす</span><span class="done">2 つまずく</span><span class="done">3 カードで聞く</span><span class="on">4 Copilotと式</span><span class="">5 届ける</span></div></div>
+<div class="slide-body">
+    <div class="fxline"><span class="c1">if(</span><span class="c2">empty(triggerBody()?['cardOutputs']?['dueDate'])</span>,<br>&nbsp;&nbsp;&nbsp;<span class="c3">addDays(utcNow(), 3, 'yyyy-MM-ddT00:00:00')</span>,<br>&nbsp;&nbsp;&nbsp;<span class="c4">concat(triggerBody()?['cardOutputs']?['dueDate'], 'T00:00:00')</span><span class="c1">)</span></div>
+    <div class="fxsplit">
+      <div class="p p1"><div class="c">if( 条件, A, B )</div><div class="m">条件が正しければ A、<br>ちがえば B</div></div>
+      <div class="p p2"><div class="c">empty( dueDate )</div><div class="m">カードの日付が<br><b>空か？</b>（条件）</div></div>
+      <div class="p p3"><div class="c">addDays(utcNow(), 3, …)</div><div class="m">空のとき（A）<br>今日＋<b>3日</b></div></div>
+      <div class="p p4"><div class="c">concat(dueDate, 'T00:00:00')</div><div class="m">選んだとき（B）<br>日付に<b>時刻を足す</b></div></div>
+    </div>
+    <div class="res2" style="margin-top:12px;">
+      <div class="r"><div class="rh">日付を選ばない（10/8 に押す）</div><div class="todo"><div class="ti"><span class="ck"></span><div><div class="tt" style="font-size:17px;">議事録の共有、手が空いたらでいいよ</div><div class="tm2 due">期限：10月11日（土）＝3日後</div></div></div></div></div>
+      <div class="r"><div class="rh">10/9 を選ぶ</div><div class="todo"><div class="ti"><span class="ck"></span><div><div class="tt" style="font-size:17px;">見積書、金曜までにお願いします</div><div class="tm2 due">期限：10月9日（金）＝選んだ日</div></div></div></div></div>
+    </div>
+</div><div class="slide-footer"><span class="dobadge see"><b>📖 説明</b>スライドで説明：if・empty・addDays・concat</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
+</section>
+<section class="slide pa" id="c4d">
+  <span class="slide-num">19 / 24</span>
+<div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第4章 Copilotと式</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「選んでも、選ばなくても、期限が入った」</span></div><h1 class="slide-title">期限の欄を式に差し替えて、2通りで試す</h1><div class="why">なぜ：式は「選んだとき」と「選ばないとき」の両方を通る。だから2回試す</div><div class="chapbar"><span class="done">1 まず動かす</span><span class="done">2 つまずく</span><span class="done">3 カードで聞く</span><span class="on">4 Copilotと式</span><span class="">5 届ける</span></div></div>
+<div class="slide-body">
+    <div class="insteps">
+      <div class="is"><div class="in">1</div><div class="it">To Do の<b>期限</b>の<br>⚡ dueDate を消す</div><div class="idd">欄を空にする</div></div>
+      <div class="ia">→</div>
+      <div class="is hot"><div class="in">2</div><div class="it">欄で <span class="key">/</span> →<br><b>「式を挿入する」</b></div><div class="idd">半角のスラッシュ</div></div>
+      <div class="ia">→</div>
+      <div class="is"><div class="in">3</div><div class="it">コピーした式を貼る<br>→ 左下の<b>「追加」</b></div><div class="idd">欄に fx のかたまり</div></div>
+      <div class="ia">→</div>
+      <div class="is"><div class="in">4</div><div class="it">右上の<br><b>「保存」</b></div><div class="idd">保存できればOK</div></div>
+    </div>
+    <div class="res2" style="margin-top:14px;">
+      <div class="r"><div class="rh">テスト①：日付を選ばずに「追加する」</div><div class="todo"><div class="ti"><span class="ck"></span><div><div class="tt">議事録の共有、手が空いたらでいいよ</div><div class="tm2 due">期限：押した日の3日後 ✓</div></div></div></div></div>
+      <div class="r"><div class="rh">テスト②：日付を選んで「追加する」</div><div class="todo"><div class="ti"><span class="ck"></span><div><div class="tt">見積書、金曜までにお願いします</div><div class="tm2 due">期限：選んだ日 ✓</div></div></div></div></div>
+    </div>
+    <div class="callout pa" style="margin-top:12px;font-size:19px;"><strong>赤くなったら、名前を見比べる。</strong>⚡ dueDate を一度入れて、式の名前と同じか確かめる。</div>
+    <div class="callout small" style="margin-top:8px;font-size:17px;">※ utcNow() は世界標準時。日本の朝9時より前に押すと、1日前から数えます</div>
+</div><div class="slide-footer"><span class="dobadge do"><b>🖐 いま手を動かす</b>期限の欄：/ → 式を挿入する → 貼る → 追加 → 保存 → 2回押す</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
+</section>
+<section class="slide pa" id="c5a">
+  <span class="slide-num">20 / 24</span>
+<div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第5章 届ける</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「押したあと、入ったか不安」</span></div><h1 class="slide-title">最後に、フローボットから「追加しました」</h1><div class="why">なぜ：押した後、Teams は何も言わない。入ったかどうかを、その場で知りたい</div><div class="chapbar"><span class="done">1 まず動かす</span><span class="done">2 つまずく</span><span class="done">3 カードで聞く</span><span class="done">4 Copilotと式</span><span class="on">5 届ける</span></div></div>
+<div class="slide-body">
+    <div class="g2c">
+      <div class="pacard">
+        <div class="pahead"><span class="paic" style="background:#5b5fc7;">💬</span>
+          <div><div class="patitle">チャットまたはチャネルでメッセージを投稿する</div><div class="pasub">Microsoft Teams</div></div></div>
+        <div class="pafields">
+          <div class="pafld"><span class="l">投稿者 *</span><span class="v">フロー ボット<span class="cr">▾</span></span></div>
+          <div class="pafld"><span class="l">投稿先 *</span><span class="v">フロー ボットとチャットをする<span class="cr">▾</span></span></div>
+          <div class="pafld"><span class="l">Recipient *</span><span class="v">（自分のアドレス）</span></div>
+          <div class="pafld"><span class="l">メッセージ *</span><span class="v hi">To Do に追加しました：<span style="background:#ede9fe;color:#6b21a8;border-radius:5px;padding:1px 6px;">⚡ タイトル</span></span></div>
+        </div>
+      </div>
+      <div>
+        <div class="lbl-s">押した直後に届く</div>
+        <div class="tmsg"><div class="tbar"><img src="assets/icon_teams.png" alt="">チャット：Workflows</div>
+          <div class="tbody"><div class="av" style="background:#fff;"><img src="assets/pa_logo.png" alt="" style="object-fit:contain;"></div>
+          <div><span class="nm">フロー ボット</span><span class="tm">10:13</span><div class="tx">To Do に追加しました：<b>見積書、金曜までにお願いします</b></div></div></div></div>
+        <div class="callout pa" style="margin-top:12px;font-size:19px;"><strong>Learn のおすすめ：</strong>終わったら、押した人に確認を返す。</div>
+        <div class="lbl-s" style="margin-top:10px;">完成したフロー（3つ）</div>
+        <div class="flow2" style="flex-direction:row;gap:8px;align-items:center;">
+          <div class="fb" style="flex:1;font-size:17px;"><img src="assets/icon_teams.png" alt="">選択したメッセージ</div><div class="fv">▶</div>
+          <div class="fb" style="flex:1;font-size:17px;"><span class="ic" style="background:#2564cf;">✅</span>to-do の追加</div><div class="fv">▶</div>
+          <div class="fb new" style="flex:1;font-size:17px;"><span class="ic" style="background:#5b5fc7;">💬</span>投稿する</div>
+        </div>
+      </div>
+    </div>
+</div><div class="slide-footer"><span class="dobadge do"><b>🖐 いま手を動かす</b>＋ → Teams の投稿 → フロー ボット → 保存 → 押す</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
+</section>
+<section class="slide pa" id="c5b">
+  <span class="slide-num">21 / 24</span>
+<div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第5章 届ける</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「頼まれたら、その場で1クリック」</span></div><h1 class="slide-title">頼まれごとが、その場でタスクになった</h1><div class="why">なぜ：やりたいことから逆にたどると、使うものが決まる</div><div class="chapbar"><span class="done">1 まず動かす</span><span class="done">2 つまずく</span><span class="done">3 カードで聞く</span><span class="done">4 Copilotと式</span><span class="on">5 届ける</span></div></div>
+<div class="slide-body">
+    <div class="ba">
+      <div class="bx b"><div class="bt">Before：手で書き写す</div>
+        <div class="row">1件ごとに To Do を開いて写す<span class="n">1分</span></div>
+        <div class="row">1日の頼まれごと<span class="n">5件</span></div>
+        <div class="row">会議中の分は写し忘れ<span class="n">週1件</span></div></div>
+      <div class="mid">→</div>
+      <div class="bx a"><div class="bt">After：「…」から1クリック</div>
+        <div class="row">メッセージから押して日付を選ぶ<span class="n">10秒</span></div>
+        <div class="row">期限は空でも3日後に入る<span class="n">空0件</span></div>
+        <div class="row">入ったかはフローボットが返す<span class="n">その場</span></div></div>
+    </div>
+    <table class="why3">
+      <tr><th>使ったもの</th><th>だれの何のため</th><th>選んだ理由</th></tr>
+      <tr><td>選択したメッセージ</td><td>オートさんが、頼まれた1通を選ぶ</td><td>メッセージの「…」から押せる唯一のトリガー</td></tr>
+      <tr><td>カード（Input.Date）</td><td>押した瞬間に期限を決める</td><td>期限は毎回ちがう。決められるのは押した人</td></tr>
+      <tr><td>if ＋ addDays</td><td>選ばなかったときも期限を入れる</td><td>「もし空なら」は式でしか書けない</td></tr>
+      <tr><td>フローボットの返事</td><td>入ったかをその場で知る</td><td>押しても Teams は何も言わない</td></tr>
+    </table>
+</div><div class="slide-footer"><span class="dobadge see"><b>📖 説明</b>ふりかえり（数字は架空の例）</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
+</section>
+<section class="slide pa" id="snext">
+  <span class="slide-num">22 / 24</span>
+<div class="slide-head"><div class="slide-eyebrow"><span class="chapno">今日のまとめ</span><span class="mono"><img src="assets/irasutoya_businessman.png" alt="">オートさん「頼まれたら、その場でタスクにできる」</span></div><h1 class="slide-title">今日できたこと</h1><div class="why">なぜ：メッセージから押す入口と、もしもの式があれば、頼まれごとは流れない</div><div class="chapbar"><span class="done">1 まず動かす</span><span class="done">2 つまずく</span><span class="done">3 カードで聞く</span><span class="done">4 Copilotと式</span><span class="on">5 届ける</span></div></div>
+<div class="slide-body">
+    <div class="donegrid">
+      <div class="dg"><div class="dn">1</div><div class="dt">「…」から押す</div><div class="dd">選択したメッセージ<br>（既定の環境）</div></div>
+      <div class="da">→</div>
+      <div class="dg"><div class="dn">2</div><div class="dt">カードで<br>期限を選ぶ</div><div class="dd">Input.Date の id<br>＝ dueDate</div></div>
+      <div class="da">→</div>
+      <div class="dg"><div class="dn">3</div><div class="dt">空なら3日後</div><div class="dd"><code>if(empty(…), addDays(…), …)</code></div></div>
+      <div class="da">→</div>
+      <div class="dg ok"><div class="dn">4</div><div class="dt">To Do に入って<br>返事が来る</div><div class="dd">フロー ボット</div></div>
+    </div>
+    <div class="nextbox">
+      <div class="nt">持ち帰り：「…」から押すフローは、To Do 以外にも使える</div>
+      <div class="nl"><span>Planner にタスク</span><span>Excel に1行</span><span>SharePoint リストに登録</span><span>メールで転送</span></div>
+    </div>
+    <div class="goal2" style="margin-top:14px;">
+      <span class="gl2">次回 10/15</span>
+      <span class="gm2">第31回：ファイルを選んで<b>1クリックでPDF</b>にして送る</span>
+      <span class="gn2">→ 今日と同じ「選んで押す」入口</span>
+    </div>
+</div><div class="slide-footer"><span class="dobadge see"><b>📖 説明</b>今日のふりかえり（押さなければ動かないフローです）</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
+</section>
+<section class="slide" id="s25">
+  <span class="slide-num">23 / 24</span>
+<div class="slide-head"><div class="slide-eyebrow">PA45 のご案内</div><h1 class="slide-title">PA45 は、こんな場です</h1><div class="concept-dot">About</div></div>
+<div class="slide-body">
+    <div class="facts c5" style="margin-top:4px;">
+      <div class="f blue"><div class="i">📅</div><div class="t">毎週 木曜</div><div class="d">20:15〜21:00<br>45分ぴったり</div></div>
+      <div class="f green"><div class="i">💴</div><div class="t">無料・オンライン</div><div class="d">カメラもマイクも<br>要りません</div></div>
+      <div class="f yellow"><div class="i">🤫</div><div class="t">見るだけOK</div><div class="d">質問しなくても<br>大丈夫</div></div>
+      <div class="f purple"><div class="i">1️⃣</div><div class="t">1回で完結</div><div class="d">その回だけ見ても<br>分かる形</div></div>
+      <div class="f teams"><div class="i">🗂️</div><div class="t">資料は全部のこる</div><div class="d">スライド・手順書<br>配布フロー</div></div>
+    </div>
+    <img class="deco" src="assets/irasutoya_search.png" alt="" style="right:40px;bottom:16px;height:120px;">
+    <div class="linkrow" style="margin-top:12px;"><span class="lbl">サイト：</span><a class="pathpill" href="https://haru-powerplatform.github.io/pa45/" target="_blank" rel="noopener">haru-powerplatform.github.io/pa45/</a><span class="lbl">今回のconnpass：</span><a class="pathpill" href="https://powerautomate-create.connpass.com/event/408166/" target="_blank" rel="noopener">connpass.com/event/408166/</a></div>
+    <div class="linkrow" style="margin-top:8px;"><span class="lbl">次回 第31回 10/15：</span><a class="pathpill" href="https://powerautomate-create.connpass.com/event/408176/" target="_blank" rel="noopener">ファイルを選んで1クリックでPDFにして送る</a></div>
+    <div class="callout green" style="margin-top:auto;font-size:20px;">小さく学んで、確実に使えるところまで。<b>毎週1粒。</b></div>
+</div><div class="slide-footer"><span>Power Automate for Beginners</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
+</section>
+<section class="slide title-slide" id="s26">
+  <span class="slide-num">24 / 24</span>
+<div class="slide-head"><div class="slide-eyebrow">Thank you!</div><h1 class="slide-title">お疲れさまでした 🎉</h1></div>
+<div class="slide-body">
+    <div style="text-align:center;">
+    <h1 style="font-size:38px;">アンケートのご協力をお願いします 🙏</h1>
+    <p class="lead" style="font-size:23px;">気づいたことは <strong>#PA45</strong> で投稿を。<br>次に頼まれごとが来たら、「…」から1クリックで入れてみてください。</p>
+    <div class="linkrow" style="justify-content:center;margin:0 auto 6px;max-width:1000px;">
+      <span class="lbl">connpass：</span><a class="pathpill" href="https://powerautomate-create.connpass.com/" target="_blank" rel="noopener">powerautomate-create.connpass.com</a>
+      <span class="lbl">サイト：</span><a class="pathpill" href="https://haru-powerplatform.github.io/pa45/" target="_blank" rel="noopener">haru-powerplatform.github.io/pa45/</a>
+    </div>
+    <div class="pull-quote" style="font-size:26px;padding:18px;max-width:900px;margin:8px auto 0;">分からないところは、次回に持ち越しでOKです 😊</div>
+    </div>
+    <img class="deco" src="assets/irasutoya_robot.png" alt="" style="right:56px;bottom:24px;height:150px;">
+</div><div class="slide-footer"><span>Power Automate for Beginners</span><span style="color:var(--hint);">Copyright © PA45</span></div>
+</section>
+
+<script>
+(function(){
+  var toggle=document.getElementById('tocToggle');
+  toggle&&toggle.addEventListener('click',function(){document.body.classList.toggle('toc-collapsed');});
+  var links=[].slice.call(document.querySelectorAll('.toc a'));
+  var secs=links.map(function(a){return document.querySelector(a.getAttribute('href'));});
+  function onScroll(){
+    var y=window.scrollY+140,idx=0;
+    secs.forEach(function(s,i){if(s&&s.offsetTop<=y)idx=i;});
+    links.forEach(function(a,i){a.classList.toggle('active',i===idx);});
+  }
+  window.addEventListener('scroll',onScroll);onScroll();
+  document.addEventListener('keydown',function(e){
+    if(['ArrowRight','PageDown',' '].indexOf(e.key)>=0){move(1);e.preventDefault();}
+    if(['ArrowLeft','PageUp'].indexOf(e.key)>=0){move(-1);e.preventDefault();}
+  });
+  function move(d){
+    var y=window.scrollY+140,idx=0;
+    secs.forEach(function(s,i){if(s&&s.offsetTop<=y)idx=i;});
+    var t=secs[Math.min(secs.length-1,Math.max(0,idx+d))];
+    t&&window.scrollTo({top:t.offsetTop-20,behavior:'smooth'});
+  }
+})();
+</script>
+<!--fit-slides-->
+<script>
+(function(){
+  function fitSlides(){
+    var cs=getComputedStyle(document.body);
+    var padL=parseFloat(cs.paddingLeft)||0, padR=parseFloat(cs.paddingRight)||0;
+    var avail=document.documentElement.clientWidth-padL-padR;
+    // 横幅だけでなく画面の高さにも収める（1枚が画面からはみ出さないように）
+    var availH=window.innerHeight-24;
+    var scale=Math.min(1, avail/1280, availH/720);
+    var s=document.querySelectorAll('.slide');
+    for(var i=0;i<s.length;i++){ s[i].style.zoom=scale; }
+  }
+  window.addEventListener('resize',fitSlides);
+  window.addEventListener('load',fitSlides);
+  fitSlides();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<!-- generated: pac-flows/vol30-teamstodo/build_vol30_handson.py（直接編集しない） -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PA45 第30回 ハンズオン手順｜Teamsの頼まれごとを1クリックでTo Doに入れる</title>
+<meta name="description" content="PA45 第29回のハンズオン手順書。毎朝8時に、件名にPA45が入ったメールをとってきて、件数といちばん新しい件名を式で取り出し、Teamsに1通で届けるフローを作ります。動的コンテンツの一覧に出てこない値を、自分で取り出せるようになります。">
+<style>
+  :root{
+    --pa:#3a4fb8;--pa-dark:#2c3a94;--pa-bg:#eef1fc;
+    --sp:#0f6cbd;--sp-bg:#e6f0fb;
+    --teams:#5b5fc7;--teams-dark:#4347a8;--teams-bg:#eef0fb;
+    --blue-text:#14528f;--blue-mid:#2a7dd4;--blue-bg:#eaf2fc;
+    --ink:#1f2937;--muted:#475569;--border:#e2e8f0;--amber:#b45309;--code-bg:#0f172a;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:linear-gradient(160deg,#eef1fc 0%,#f5f8fc 42%,#fff 100%);
+    font-family:"Meiryo UI","Yu Gothic UI","Segoe UI",sans-serif;color:var(--ink);
+    min-height:100vh;padding:0 16px 70px;line-height:1.7;}
+  .wrap{max-width:860px;margin:0 auto;}
+
+  .topbar{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.93);
+    -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+    border:1px solid var(--border);border-top:none;border-radius:0 0 14px 14px;
+    box-shadow:0 2px 10px rgba(20,82,143,.08);margin-bottom:18px;}
+  .topbar-in{display:flex;align-items:center;gap:10px;padding:9px 14px;flex-wrap:wrap;}
+  .brand{display:flex;flex-direction:column;text-decoration:none;color:var(--blue-text);font-weight:800;font-size:18px;line-height:1;}
+  .brand span{font-size:9px;font-weight:600;color:var(--muted);letter-spacing:.04em;margin-top:3px;}
+  .tnav{display:flex;gap:3px;flex-wrap:wrap;margin-left:auto;}
+  .tnav a{text-decoration:none;color:var(--blue-text);font-size:12.5px;font-weight:700;padding:6px 10px;border-radius:8px;white-space:nowrap;}
+  .tnav a:hover{background:var(--blue-bg);}
+  .tnav a.cur{background:var(--pa);color:#fff;}
+
+  header{text-align:center;margin-bottom:6px;}
+  .eyebrow{display:inline-block;background:var(--pa);color:#fff;font-weight:700;font-size:13px;letter-spacing:.06em;padding:5px 16px;border-radius:20px;}
+  h1{font-size:29px;font-weight:800;color:var(--pa-dark);margin:14px 0 6px;line-height:1.28;}
+  h1 small{display:block;font-size:15.5px;color:var(--muted);font-weight:600;margin-top:6px;}
+  .crumbs{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:12.5px;color:var(--muted);margin-bottom:14px;justify-content:center;}
+  .crumbs a{color:var(--blue-mid);text-decoration:none;font-weight:700;}
+  .crumbs .sep{color:#cbd5e1;}
+
+  .goal{background:#fff;border:1px solid var(--border);border-left:5px solid var(--pa);border-radius:12px;padding:14px 20px;margin-bottom:16px;box-shadow:0 2px 8px rgba(20,82,143,.05);}
+  .goal b{color:var(--pa-dark);}
+  .flowpath{display:flex;flex-wrap:wrap;align-items:center;gap:8px;justify-content:center;margin:14px 0 0;font-weight:800;color:var(--pa-dark);font-size:14.5px;}
+  .flowpath .st{background:var(--sp-bg);border:1px solid #a9cdec;border-radius:22px;padding:7px 15px;}
+  .flowpath .st.hot{background:var(--teams-bg);border-color:#c3c5ef;color:var(--teams-dark);}
+  .flowpath .st.end{background:#fff7ed;border-color:#fdba74;color:#9a3412;}
+  .flowpath .ar{color:var(--pa);font-size:18px;}
+
+  .toc{display:flex;flex-wrap:wrap;gap:8px;background:#fff;border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:22px;box-shadow:0 2px 8px rgba(20,82,143,.05);}
+  .toc-lbl{font-size:12px;font-weight:800;color:var(--pa-dark);background:var(--pa-bg);padding:4px 11px;border-radius:8px;}
+  .toc a{text-decoration:none;color:var(--blue-text);font-size:13px;font-weight:700;padding:6px 12px;border-radius:8px;border:1px solid var(--border);}
+  .toc a:hover{background:var(--blue-bg);border-color:var(--blue-mid);}
+
+  .part{scroll-margin-top:70px;margin:26px 0 0;}
+  .part-h{display:flex;align-items:center;gap:12px;margin-bottom:6px;}
+  .part-badge{flex:0 0 auto;background:var(--pa);color:#fff;font-weight:800;font-size:14px;padding:6px 14px;border-radius:20px;}
+  .part-badge.sp{background:var(--sp);}
+  .part-badge.tm{background:var(--teams);}
+  .part-h h2{font-size:20px;font-weight:800;color:var(--pa-dark);margin:0;}
+  .part-note{font-size:14px;color:var(--muted);margin:0 0 12px;}
+
+  ol.steps{list-style:none;counter-reset:st;padding:0;margin:0;}
+  ol.steps>li{position:relative;padding:14px 16px 14px 54px;background:#fff;border:1px solid var(--border);border-radius:12px;margin-bottom:10px;box-shadow:0 2px 6px rgba(20,82,143,.05);font-size:15px;}
+  ol.steps>li::before{counter-increment:st;content:counter(st);position:absolute;left:14px;top:13px;width:28px;height:28px;border-radius:50%;background:var(--pa);color:#fff;font-weight:800;font-size:15px;display:flex;align-items:center;justify-content:center;}
+  ol.steps.sp>li::before{background:var(--sp);}
+  ol.steps.tm>li::before{background:var(--teams);}
+  ol.steps>li b{color:var(--pa-dark);}
+  .k{display:inline-block;background:#f1f5f9;border:1px solid #d7dee7;border-radius:6px;padding:1px 8px;font-weight:700;font-size:13.5px;color:#334155;white-space:nowrap;}
+  .pick{display:inline-block;background:#fff7ed;border:1px solid #fdba74;border-radius:6px;padding:1px 8px;font-weight:800;font-size:13.5px;color:#c2410c;}
+  ul.sub{margin:8px 0 0;padding-left:20px;font-size:14px;color:var(--muted);}
+  ul.sub li{margin:3px 0;}
+
+  .setrow{display:flex;flex-wrap:wrap;gap:6px 10px;margin:8px 0 0;padding:10px 12px;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:10px;font-size:13.5px;}
+  .setrow .kv{display:flex;gap:6px;align-items:center;}
+  .setrow .kv .kk{font-weight:800;color:var(--pa-dark);}
+  .setrow .kv .vv{background:#fff;border:1px solid #d7dee7;border-radius:6px;padding:1px 9px;font-weight:700;color:#334155;}
+
+  .callout{border-radius:10px;padding:12px 18px;font-size:14px;margin:12px 0;line-height:1.7;}
+  .callout.tip{background:var(--sp-bg);border-left:5px solid var(--sp);color:#0b4a7a;}
+  .callout.warn{background:#fffbeb;border-left:5px solid #f59e0b;color:#78350f;}
+  .callout.info{background:var(--blue-bg);border-left:5px solid var(--blue-mid);color:#14528f;}
+  .callout.pa{background:var(--pa-bg);border-left:5px solid var(--pa);color:var(--pa-dark);}
+  .callout.tm{background:var(--teams-bg);border-left:5px solid var(--teams);color:var(--teams-dark);}
+
+  .codewrap{position:relative;margin:10px 0;}
+  .codewrap .lbl{font-size:12px;font-weight:800;color:#cbd5e1;background:#1e293b;display:inline-block;padding:4px 12px;border-radius:8px 8px 0 0;}
+  pre{margin:0;background:var(--code-bg);color:#e2e8f0;border-radius:0 10px 10px 10px;padding:16px 18px;overflow-x:auto;font-size:12.5px;line-height:1.65;
+    font-family:"Cascadia Code","Consolas","SFMono-Regular",monospace;white-space:pre-wrap;word-break:break-word;}
+  .copybtn{position:absolute;top:6px;right:8px;background:#334155;color:#e2e8f0;border:none;border-radius:7px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer;}
+  .copybtn:hover{background:#475569;}
+
+  table.fx{width:100%;border-collapse:collapse;margin:12px 0;font-size:13.5px;}
+  table.fx th{background:var(--pa-bg);color:var(--pa-dark);font-weight:800;border:1px solid #cbd5e1;padding:8px 10px;text-align:left;}
+  table.fx td{border:1px solid #cbd5e1;padding:8px 10px;vertical-align:top;}
+  table.fx code{background:#0f172a;color:#fbbf24;border-radius:5px;padding:2px 7px;font-family:"Consolas",monospace;font-size:12px;}
+  table.fx td.v{font-weight:800;color:#0b5e37;white-space:nowrap;}
+
+  .backrow{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:30px;}
+  .btn.sec{display:inline-flex;align-items:center;gap:6px;background:#fff;color:var(--blue-text);border:1px solid var(--blue-mid);text-decoration:none;font-size:14px;font-weight:700;padding:10px 20px;border-radius:9px;}
+  .btn.sec:hover{background:var(--blue-bg);}
+  figure.shot{margin:14px 0 6px;}
+  figure.shot img{display:block;width:100%;border:1px solid #cbd5e1;border-radius:10px;box-shadow:0 6px 18px rgba(20,82,143,.14);}
+  figure.shot.narrow img{max-width:420px;margin:0 auto;}
+  figure.shot figcaption{font-size:12.5px;color:var(--muted);margin-top:7px;text-align:center;}
+  footer{margin-top:26px;text-align:center;color:#94a3b8;font-size:12px;line-height:1.8;}
+  .chap{display:inline-block;font-size:12px;font-weight:900;background:#fbbf24;color:#1e293b;border-radius:6px;padding:2px 8px;margin-right:8px;white-space:nowrap;}
+  .whyline{margin:4px 0 10px;font-size:15px;font-weight:800;color:#9a3412;background:#fff7ed;border-left:5px solid #ea580c;border-radius:6px;padding:6px 12px;}
+</style>
+<style>.shot img{max-width:640px;margin:0 auto;}</style>
+</head>
+<body>
+<div class="wrap">
+
+  <nav class="topbar" aria-label="サイト内メニュー">
+    <div class="topbar-in">
+      <a class="brand" href="../../">PA45<span>Power Automate 45</span></a>
+      <div class="tnav">
+        <a href="../../">🏠 ホーム</a>
+        <a href="links.html">🗂️ 第30回の資料</a>
+        <a href="./" class="cur">🛠️ ハンズオン手順</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="crumbs">
+    <a href="../../">🏠 PA45トップ</a><span class="sep">›</span>
+    <a href="links.html">第30回 資料</a><span class="sep">›</span>
+    <span>ハンズオン手順</span>
+  </div>
+
+  <header>
+    <span class="eyebrow">PA45 第30回｜ハンズオン手順</span>
+    <h1>Teamsの頼まれごとを1クリックでTo Doに入れる<small>Teams のメッセージの「…」から押すと、その文が To Do のタスクになります。期限は押したときにカードで選び、選ばなければ3日後。最後にフロー ボットが「追加しました」と返します。</small></h1>
+  </header>
+
+  <div class="goal">
+    <b>今日つくるもの：</b> Teams のメッセージの<b>「…」→「その他のアクション」</b>から押すと、<b>期限を選ぶカード</b>が出て、メッセージの文を<b>タイトル</b>にした To Do のタスクができ、<b>フロー ボットから確認</b>が届くフロー。
+    <div class="flowpath">
+      <span class="st">💬 選択したメッセージ（カードで期限）</span><span class="ar">→</span>
+      <span class="st hot">✅ to-do の追加 (V3)（空なら3日後）</span><span class="ar">→</span>
+      <span class="st end">📨 フロー ボットで「追加しました」</span>
+    </div>
+  </div>
+
+  <div class="callout info" style="margin-bottom:4px;"><b>🔰 初参加の方へ：</b> ここから始めて大丈夫です。<b>用意するものはありません</b>。Teams と To Do が使える会社・学校のアカウントがあれば作れます。</div>
+
+  <nav class="toc" aria-label="手順の目次">
+    <span class="toc-lbl">目次</span>
+    <a href="#p0">0. 練習用のチャット</a>
+    <a href="#p1">1. 選択したメッセージ</a>
+    <a href="#p2">2. To Do に1件</a>
+    <a href="#p3">3. Teams から押す</a>
+    <a href="#p4">4. 期限が空</a>
+    <a href="#p5">5. カードを付ける</a>
+    <a href="#p6">6. 期限に dueDate</a>
+    <a href="#p7">7. 選ばずに押す</a>
+    <a href="#p8">8. Copilot に式を聞く</a>
+    <a href="#p9">9. 式に差し替えて2回</a>
+    <a href="#p10">10. 「追加しました」</a>
+    <a href="#pc">＋ Copilotに聞く型</a>
+  </nav>
+
+  <section class="part" id="p0">
+    <div class="part-h"><span class="part-badge sp">STEP 0</span><span class="chap">第1章 まず動かす</span><h2>練習用に、自分あてのチャットを1つ用意する（2分）</h2></div>
+    <p class="whyline">🧑‍💼 オートさん「なぜ」：課長のメッセージで試すと、課長に通知が飛ぶかもしれない。自分あてなら気兼ねなく何度でも押せるから</p>
+    <p class="part-note">Teams の左の「チャット」で、自分の名前を検索すると<b>自分とのチャット</b>が開けます。そこに練習用の頼まれごとを2つ書いておきます。</p>
+    <ol class="steps sp">
+      <li>Teams で自分とのチャットを開きます。</li>
+      <li>次の2つを送ります（1つずつ）：<span class="k">見積書、金曜までにお願いします</span> ／ <span class="k">議事録の共有、手が空いたらでいいよ</span></li>
+      <li>2つ表示されたら次へ進みます。</li>
+    </ol>
+    <div class="callout warn"><b>⚠️ 自分とのチャットの「…」にフローが出ない場合：</b> 同僚との1対1チャットや、練習用のチャネルで試してください（Microsoft Q&A に、自分とのチャットでは出なかったという報告があります）。</div>
+  </section>
+
+  <section class="part" id="p1">
+    <div class="part-h"><span class="part-badge">STEP 1</span><span class="chap">第1章 まず動かす</span><h2>「選択したメッセージ」でフローを作る</h2></div>
+    <p class="whyline">🧑‍💼 オートさん「なぜ」：頼まれたメッセージを、自分で選んで押したい。メッセージの「…」から押せるのは「選択したメッセージ」のトリガーだけだから</p>
+    <p class="part-note">Power Automate で <b>「作成」→「インスタント クラウド フロー」</b>を選びます。<b>フロー名がそのまま Teams のメニューに出る</b>ので、短く分かる名前にします。</p>
+    <ol class="steps">
+      <li>フロー名は <span class="k">To Do に入れる</span> にします。</li>
+      <li>トリガーの一覧から Teams の<b>「選択したメッセージ」</b>を選んで「作成」。</li>
+      <li>画面左上の環境が<b>既定の環境</b>（会社名などの付いた最初の環境）になっているか確かめます。</li>
+    </ol>
+    <div class="callout info"><b>■ 既定の環境で作る理由：</b> Teams のメッセージのメニューに出るのは、<b>既定の環境</b>で作ったフローだけです（Microsoft Learn）。押せるのは作った本人だけで、共有すればほかの人も使えます。</div>
+  </section>
+
+  <section class="part" id="p2">
+    <div class="part-h"><span class="part-badge">STEP 2</span><span class="chap">第1章 まず動かす</span><h2>To Do に1件足す（タイトル＝メッセージの文）</h2></div>
+    <p class="whyline">🧑‍💼 オートさん「なぜ」：To Do にタスクを作るのが「to-do の追加 (V3)」。タイトルに選んだメッセージの文を入れれば、書き写す手間がなくなるから</p>
+    
+    <ol class="steps">
+      <li>トリガーの下の <b>＋</b> → 検索に <span class="k">to-do</span> → Microsoft To-Do (Business) の <b>「to-do の追加 (V3)」</b>。</li>
+      <li><b>To-do リスト</b>：<span class="k">タスク</span>（To Do アプリの既定のリスト）。</li>
+      <li><b>タイトル</b>：欄をクリック → ⚡ →<b>「プレーン テキスト メッセージ」</b>。</li>
+      <li>期限はまだ空のままにします。右上の<b>「保存」</b>。</li>
+    </ol>
+    <div class="callout tip"><b>💡 「メッセージ コンテンツ」ではなく「プレーン テキスト」：</b> メッセージ コンテンツは HTML のタグ（&lt;p&gt; など）が混ざります。タイトルにはタグの無いプレーン テキストを使います。</div>
+  </section>
+
+  <section class="part" id="p3">
+    <div class="part-h"><span class="part-badge">STEP 3</span><span class="chap">第1章 まず動かす</span><h2>Teams のメッセージから押してみる</h2></div>
+    <p class="whyline">🧑‍💼 オートさん「なぜ」：このフローの入口は Teams の「…」。だから試すのも Teams から</p>
+    
+    <ol class="steps">
+      <li>Teams の自分とのチャットで、<span class="k">見積書、金曜までにお願いします</span> にカーソルを合わせ、<b>「…」</b>。</li>
+      <li><b>「その他のアクション」</b>→<b>「To Do に入れる」</b>。</li>
+      <li>To Do アプリ（または Outlook のタスク）の<b>「タスク」</b>に1件増えていれば成功です。</li>
+      <li>Power Automate の<b>実行履歴</b>にも1件残ります。</li>
+    </ol>
+    <div class="callout warn"><b>⚠️ メニューに出ないとき：</b> ①保存したか ②既定の環境か ③Teams を再読み込みしたか、の順に確かめます。それでも出ない場合、管理者が「Power Automate Actions」アプリを止めている可能性があります。</div>
+  </section>
+
+  <section class="part" id="p4">
+    <div class="part-h"><span class="part-badge tm">STEP 4</span><span class="chap">第2章 つまずく</span><h2>To Do を見ると、期限が空っぽ</h2></div>
+    <p class="whyline">🧑‍💼 オートさん「なぜ」：To Do は期限が近いものから片づける道具。期限が無いと、いつやるか決まらないから</p>
+    
+    <ol class="steps tm">
+      <li>To Do で、いま入ったタスクを開きます。</li>
+      <li>メッセージには「金曜まで」と書いてあるのに、<b>期限は空</b>です。</li>
+      <li>期限は頼まれるたびに違います。決められるのは<b>押した瞬間の自分</b>。→ 押したときに日付を選べるようにします。</li>
+    </ol>
+
+  </section>
+
+  <section class="part" id="p5">
+    <div class="part-h"><span class="part-badge">STEP 5</span><span class="chap">第3章 カードで聞く</span><h2>押したときに、日付を選ぶカードを出す</h2></div>
+    <p class="whyline">🧑‍💼 オートさん「なぜ」：「選択したメッセージ」には、押した人に入力してもらうカード（アダプティブ カード）を付けられるから</p>
+    <p class="part-note"><b>アダプティブ カード</b>＝Teams に出せる、入力欄やボタンの付いた小さな画面。JSON という書き方で作ります。今日は下の JSON をそのまま貼ります。</p>
+    <ol class="steps">
+      <li>トリガー<b>「選択したメッセージ」</b>をクリックして開きます。</li>
+      <li><b>アダプティブ カードの入力</b>の欄に、下の JSON を貼ります（コピーボタン）。</li>
+      <li>右上の<b>「保存」</b>。</li>
+    </ol>
+<div class="codewrap"><button class="copybtn" data-code="cardjson">コピー</button>
+<pre id="cardjson">{
+  &quot;type&quot;: &quot;AdaptiveCard&quot;,
+  &quot;$schema&quot;: &quot;http://adaptivecards.io/schemas/adaptive-card.json&quot;,
+  &quot;version&quot;: &quot;1.4&quot;,
+  &quot;body&quot;: [
+    { &quot;type&quot;: &quot;TextBlock&quot;, &quot;text&quot;: &quot;To Do に追加します&quot;, &quot;weight&quot;: &quot;Bolder&quot;, &quot;size&quot;: &quot;Medium&quot; },
+    { &quot;type&quot;: &quot;Input.Date&quot;, &quot;id&quot;: &quot;dueDate&quot;, &quot;label&quot;: &quot;期限（空なら3日後）&quot; }
+  ],
+  &quot;actions&quot;: [
+    { &quot;type&quot;: &quot;Action.Submit&quot;, &quot;title&quot;: &quot;追加する&quot; }
+  ]
+}</pre></div>
+    <div class="callout tip"><b>💡 "id": "dueDate" が名前になります。</b> カードで選んだ日付は、このあと ⚡ 動的コンテンツに <b>dueDate</b> として出てきます。</div>
+  </section>
+
+  <section class="part" id="p6">
+    <div class="part-h"><span class="part-badge">STEP 6</span><span class="chap">第3章 カードで聞く</span><h2>To Do の期限に dueDate を入れて、もう一度押す</h2></div>
+    <p class="whyline">🧑‍💼 オートさん「なぜ」：カードで選んだ日付は、トリガーの出力 dueDate として後ろのアクションに渡るから</p>
+    
+    <ol class="steps">
+      <li>To Do のアクションを開き、<b>期限</b>の欄 → ⚡ →<b>「dueDate」</b>。（期限の欄が見えないときは「詳細パラメーター」から出します）</li>
+      <li>右上の<b>「保存」</b>。</li>
+      <li>Teams で <span class="k">見積書、金曜までにお願いします</span> の「…」→ その他のアクション →「To Do に入れる」。</li>
+      <li>カードが出たら<b>日付を選んで「追加する」</b>。To Do で期限が入っていれば成功です。</li>
+    </ol>
+
+  </section>
+
+  <section class="part" id="p7">
+    <div class="part-h"><span class="part-badge tm">STEP 7</span><span class="chap">第4章 Copilotと式</span><h2>日付を選ばずに押すと、また期限が空</h2></div>
+    <p class="whyline">🧑‍💼 オートさん「なぜ」：全部の頼みに日付を選ぶのは手間。選ばなかったときの決まり（空なら3日後）を作りたいから</p>
+    
+    <ol class="steps tm">
+      <li>Teams で <span class="k">議事録の共有、手が空いたらでいいよ</span> の「…」→「To Do に入れる」。</li>
+      <li>今度は<b>日付を選ばずに</b>「追加する」。</li>
+      <li>To Do を見ると期限が空です。→「選んだらその日、選ばなければ3日後」を式で書きます。</li>
+    </ol>
+
+  </section>
+
+  <section class="part" id="p8">
+    <div class="part-h"><span class="part-badge tm">STEP 8</span><span class="chap">第4章 Copilotと式</span><h2>Copilot に「もし空なら3日後」の式を聞く</h2></div>
+    <p class="whyline">🧑‍💼 オートさん「なぜ」：「もし〜なら」は式で書く。書き方を知らなくても、決まりを日本語で伝えれば Copilot が式にしてくれるから</p>
+    <p class="part-note">Power Automate 内蔵の Copilot ではなく、ブラウザの別タブで <b>M365 Copilot チャット</b>（<span class="k">m365.cloud.microsoft/chat</span>）を開きます。</p>
+    <ol class="steps tm">
+      <li>下の文をコピーして Copilot に送ります。<b>dueDate の住所（triggerBody()…）も一緒に送る</b>のがコツです。Copilot はフローを見ていないためです。</li>
+      <li>返ってきた式をコピーします。返ってきた式が下の見本と違っても、まずは試してかまいません。</li>
+    </ol>
+<div class="codewrap"><button class="copybtn" data-code="cp1">コピー</button>
+<pre id="cp1">Power Automate の式を1行で教えて。説明は不要です。
+triggerBody()?[&#x27;cardOutputs&#x27;]?[&#x27;dueDate&#x27;] が空なら今日から3日後、入っていればその日を、
+yyyy-MM-ddT00:00:00 の形で返したい。</pre></div>
+    <p class="part-note" style="margin-top:12px;">見本（このまま使っても動く形）：</p>
+<div class="codewrap"><button class="copybtn" data-code="fx1">コピー</button>
+<pre id="fx1">if(empty(triggerBody()?[&#x27;cardOutputs&#x27;]?[&#x27;dueDate&#x27;]), addDays(utcNow(), 3, &#x27;yyyy-MM-ddT00:00:00&#x27;), concat(triggerBody()?[&#x27;cardOutputs&#x27;]?[&#x27;dueDate&#x27;], &#x27;T00:00:00&#x27;))</pre></div>
+    <table class="tbl" style="width:100%;border-collapse:collapse;margin-top:10px;font-size:14px;">
+      <tr><th style="text-align:left;border:1px solid #cbd5e1;padding:6px;">部品</th><th style="text-align:left;border:1px solid #cbd5e1;padding:6px;">意味</th></tr>
+      <tr><td style="border:1px solid #cbd5e1;padding:6px;"><span class="k">if(条件, A, B)</span></td><td style="border:1px solid #cbd5e1;padding:6px;">条件が正しければ A、ちがえば B</td></tr>
+      <tr><td style="border:1px solid #cbd5e1;padding:6px;"><span class="k">empty(…dueDate)</span></td><td style="border:1px solid #cbd5e1;padding:6px;">カードの日付が空か（条件）</td></tr>
+      <tr><td style="border:1px solid #cbd5e1;padding:6px;"><span class="k">addDays(utcNow(), 3, 'yyyy-MM-ddT00:00:00')</span></td><td style="border:1px solid #cbd5e1;padding:6px;">空のとき：今日＋3日</td></tr>
+      <tr><td style="border:1px solid #cbd5e1;padding:6px;"><span class="k">concat(…dueDate, 'T00:00:00')</span></td><td style="border:1px solid #cbd5e1;padding:6px;">選んだとき：日付に時刻を足す（To Do の期限の形）</td></tr>
+    </table>
+    <div class="callout info"><b>■ 期限の形：</b> To Do の期限は <span class="k">yyyy-MM-ddThh:mm:ss</span> の形で渡します（Microsoft Learn「Microsoft To-Do (Business)」）。<br>※ utcNow() は世界標準時です。日本の朝9時より前に押すと、前の日から3日を数えます。</div>
+  </section>
+
+  <section class="part" id="p9">
+    <div class="part-h"><span class="part-badge">STEP 9</span><span class="chap">第4章 Copilotと式</span><h2>期限の欄を式に差し替えて、2通りで試す</h2></div>
+    <p class="whyline">🧑‍💼 オートさん「なぜ」：式は「選んだとき」と「選ばないとき」の両方を通る。だから2回試すと全部確かめられるから</p>
+    
+    <ol class="steps">
+      <li>To Do のアクションの<b>期限</b>の欄にある ⚡ dueDate を消して、空にします。</li>
+      <li>欄の中で半角の <span class="k">/</span> を打ち、<b>「式を挿入する」</b>。</li>
+      <li>コピーした式を貼り、入力欄の左下の<b>「追加」</b>。欄に fx のかたまりが入ります。</li>
+      <li>右上の<b>「保存」</b>。</li>
+      <li>テスト①：日付を<b>選ばずに</b>押す → 期限が3日後。テスト②：日付を<b>選んで</b>押す → 期限が選んだ日。</li>
+    </ol>
+    <div class="callout warn"><b>⚠️ 保存で赤くなったら：</b> 式の中の名前を確かめます。期限の欄に一度 ⚡ dueDate を入れて、fx の中身と見比べると違いが分かります。</div>
+  </section>
+
+  <section class="part" id="p10">
+    <div class="part-h"><span class="part-badge">STEP 10</span><span class="chap">第5章 届ける</span><h2>最後に、フローボットから「追加しました」</h2></div>
+    <p class="whyline">🧑‍💼 オートさん「なぜ」：押した後、Teams は何も言わない。入ったかどうかを、その場で知りたいから（Learn もこの形をすすめています）</p>
+    
+    <ol class="steps">
+      <li>To Do のアクションの下の <b>＋</b> → Teams の<b>「チャットまたはチャネルでメッセージを投稿する」</b>。</li>
+      <li><b>投稿者</b>：フロー ボット ／ <b>投稿先</b>：フロー ボットとチャットをする ／ <b>Recipient</b>：自分のアドレス。</li>
+      <li><b>メッセージ</b>：<span class="k">To Do に追加しました：</span> と打ち、⚡ から To Do の<b>「タイトル」</b>。</li>
+      <li>保存して、Teams でもう一度押します。フロー ボットから「To Do に追加しました：…」が届けば完成です。</li>
+    </ol>
+    <div class="callout tip"><b>💡 これで完成：</b> 選択したメッセージ → to-do の追加 (V3) → フロー ボットで返事、の3つです。押さなければ動かないので、オフにしなくてかまいません。</div>
+  </section>
+
+  <section class="part" id="pc">
+    <div class="part-h"><span class="part-badge tm">＋</span><h2>Copilotに聞くときの型（そのまま貼れます）</h2></div>
+    <p class="part-note">手を動かすのは自分、分からないところだけ聞く、という使い方です。<b>M365 Copilot チャット</b>に貼ってください。</p>
+    <h3 style="font-size:16px;color:var(--pa-dark);margin:22px 0 6px;">① 返ってきた式の意味を、日本語で説明してもらう</h3>
+<div class="codewrap"><button class="copybtn" data-code="cp2">コピー</button>
+<pre id="cp2">Power Automate のこの式を、プログラミングを知らない人向けに説明してください。
+
+if(empty(triggerBody()?[&#x27;cardOutputs&#x27;]?[&#x27;dueDate&#x27;]), addDays(utcNow(), 3, &#x27;yyyy-MM-ddT00:00:00&#x27;), concat(triggerBody()?[&#x27;cardOutputs&#x27;]?[&#x27;dueDate&#x27;], &#x27;T00:00:00&#x27;))</pre></div>
+    <h3 style="font-size:16px;color:var(--pa-dark);margin:22px 0 6px;">② 決まりを変えたいとき（例：3日後ではなく次の金曜）</h3>
+<div class="codewrap"><button class="copybtn" data-code="cp3">コピー</button>
+<pre id="cp3">Power Automate の式を1行で教えて。
+triggerBody()?[&#x27;cardOutputs&#x27;]?[&#x27;dueDate&#x27;] が空なら、次の金曜日を yyyy-MM-ddT00:00:00 の形で返したい。</pre></div>
+    <h3 style="font-size:16px;color:var(--pa-dark);margin:22px 0 6px;">③ エラー文は、訳さずそのまま貼る</h3>
+<div class="codewrap"><button class="copybtn" data-code="cp4">コピー</button>
+<pre id="cp4">Power Automateでこのエラーが出ました。
+
+（エラー文を全文そのまま貼る）
+
+意味と、どこを直せばよいかを教えてください。</pre></div>
+    <div class="callout warn"><b>⚠️ 貼る前に一度だけ確認：</b> 社名・氏名・取引先が混ざっていないか見てください。混ざっていたら、架空の名前に置き換えてから貼ります。</div>
+  </section>
+
+  <div class="backrow">
+    <a class="btn sec" href="links.html">← 第30回の資料にもどる</a>
+    <a class="btn sec" href="../../">🏠 サイトのトップへ</a>
+  </div>
+
+  <footer>
+    PA45 第30回 ハンズオン手順 ／ 選択したメッセージ × To Do × 式 × Copilot<br>
+    人名・メッセージはすべて架空のサンプルです。画面や手順は公開日時点のもので、今後変わる可能性があります。
+  </footer>
+</div>
+
+<script>
+  document.querySelectorAll('.copybtn').forEach(function(b){
+    b.addEventListener('click', function(){
+      var el = document.getElementById(b.dataset.code);
+      var text = el.innerText;
+      navigator.clipboard.writeText(text).then(function(){
+        var o = b.textContent; b.textContent = 'コピーしました'; setTimeout(function(){ b.textContent = o; }, 1400);
+      });
+    });
+  });
+</script>
+</body>
+</html>
