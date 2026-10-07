@@ -24,14 +24,14 @@ Power Automate を初めて触る人が、45分で1本のフローを作り終�
 
 ## 数字で見る PA45
 
-第1回（2026/03/06）〜第28回（2026/09/17）の集計です。
+第1回（2026/03/06）〜第29回（2026/10/01）の集計です。
 
 | 項目 | 値 |
 |---|---|
-| 開催回数 | 28回 |
-| 延べ参加者 | 1,226名 |
-| 1回あたりの参加者 | 平均 43.8名／最多 76名 |
-| 参加者の推移 | 第1〜5回の平均 31.0名 → 直近5回の平均 57.4名 |
+| 開催回数 | 29回 |
+| 延べ参加者 | 1,298名 |
+| 1回あたりの参加者 | 平均 44.8名／最多 76名 |
+| 参加者の推移 | 第1〜5回の平均 31.0名 → 直近5回の平均 57.6名 |
 | アンケート回答 | 348件 |
 | 理解度スコア（全回平均） | 89.4% |
 | 役立ち度スコア（全回平均） | 92.2% |
@@ -59,10 +59,11 @@ Power Automate を初めて触る人が、45分で1本のフローを作り終�
 
 ## 全回の一覧
 
-次回は **第29回 動的コンテンツに出てこない値も、Copilotと一緒に式で取り出せるようになる**（10月1日（木） 20:15〜21:00）です。申込は [connpass](https://powerautomate-create.connpass.com/event/407450/) から。
+次回は **第30回 Teamsの頼まれごとを1クリックでTo Doに入れる**（10月8日（木） 20:15〜21:00）です。申込は [connpass](https://powerautomate-create.connpass.com/event/408166/) から。
 
 | 回 | 開催日 | テーマ | 参加 | スライド・資料 | フロー | 録画 | アンケート | レポート |
 |---:|---|---|---:|:---:|:---:|:---:|:---:|:---:|
+| 29 | 2026/10/01 | 動的コンテンツに出てこない値も、Copilotと一緒に式で取り出せるようになる | 72名 | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-29/) | ― | ― | ― | ― |
 | 28 | 2026/09/17 | Copilotと通知カード1枚でまとめて完了にする | 61名 | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-28/) | [ZIP](https://haru-powerplatform.github.io/pa45/flows/vol-28/PA45-Vol28-CardBulk.zip) | ― | [結果](https://haru-powerplatform.github.io/pa45/achievements/insights/vol-28.html) | ― |
 | 27 | 2026/09/10 | いま動いているフローをCopilotに相談する5つの渡し方 | 52名 | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-27/) | [ZIP](https://haru-powerplatform.github.io/pa45/flows/vol-27/PA45-Vol27-Demo.zip) | [見る](https://www.youtube.com/watch?v=h3L75SsbRXE) | [結果](https://haru-powerplatform.github.io/pa45/achievements/insights/vol-27.html) | ― |
 | 26 | 2026/09/03 | 毎日のカードで報連相をワンタップ | 52名 | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-26/) | [ZIP](https://haru-powerplatform.github.io/pa45/flows/vol-26/PA45-Vol26-HourenCard.zip) | [見る](https://www.youtube.com/watch?v=VVGw6AUsAbk) | [結果](https://haru-powerplatform.github.io/pa45/achievements/insights/vol-26.html) | ― |
