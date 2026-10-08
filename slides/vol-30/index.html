@@ -800,6 +800,7 @@
   .map3 .f{font-size:24px;font-weight:900;color:#1e293b;} .map3 .a{font-size:28px;font-weight:900;color:#4358c8;text-align:center;}
   .map3 .v{font-size:22px;font-weight:800;color:#6d28d9;line-height:1.35;} .map3 .v small{font-size:16px;color:#475569;font-weight:700;}
   #c3p .cpp{font-size:15.5px;line-height:1.42;padding:10px 16px;margin-top:8px;} #c3p .cpbox{padding:10px 16px;} #c3p .cph{font-size:20px;} #c3p .talk{margin-bottom:8px;} #c3p .talk .tlb{font-size:20px;padding:8px 14px;} #c3p .talk .tlk img{width:60px;height:60px;}
+  .radio3{display:flex;gap:18px;font-size:17px;font-weight:700;color:#242424;margin-top:4px;}
   #snext .donegrid{grid-template-columns:1fr 30px 1fr 30px 1.15fr 30px 1fr;}
   #snext .dg .dt{font-size:22px;} #snext .dg .dd code{font-size:14px;}
   .nowflow{display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:start;}
@@ -1159,7 +1160,7 @@
 </section>
 <section class="slide pa" id="c3a">
   <span class="slide-num">14 / 21</span>
-<div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第2章 カードで選ぶ</span></div><h1 class="slide-title">返ってきた JSON をトリガーに貼る</h1><div class="chapbar"><span class="done">1 まず動かす</span><span class="on">2 カードで選ぶ</span><span class="">3 届ける</span></div></div>
+<div class="slide-head"><div class="slide-eyebrow"><span class="chapno">第2章 カードで選ぶ</span></div><h1 class="slide-title">Copilot が返した ① の JSON をトリガーに貼る</h1><div class="chapbar"><span class="done">1 まず動かす</span><span class="on">2 カードで選ぶ</span><span class="">3 届ける</span></div></div>
 <div class="slide-body">
 <div class="talk"><div class="tlk auto"><img src="assets/irasutoya_businessman.png" alt=""><div class="tlb"><span class="tlw">オートさん</span>返ってきた①の JSON を、<b>トリガーに貼るだけ</b></div></div></div>
 
@@ -1173,48 +1174,48 @@
   "version": "1.4",
   "body": [
     { "type": "TextBlock", "text": "To Do に追加します", "weight": "Bolder", "size": "Medium" },
-    { "type": "Input.Date", "id": <span class="hl">"dueDate"</span>, "label": "期限（空なら3日後）" },
-    { "type": "Input.ChoiceSet", "id": <span class="hl">"importance"</span>, "label": "重要度", "value": "normal",
+    { "type": "Input.Date", "id": <span class="hl">"dueDate"</span>, "label": "期限（空なら3日後）", "isRequired": false },
+    { "type": "Input.ChoiceSet", "id": <span class="hl">"importance"</span>, "label": "重要度", "style": "expanded", "value": "normal",
       "choices": [
         { "title": "高", "value": "high" },
         { "title": "標準", "value": "normal" },
         { "title": "低", "value": "low" }
       ] },
-    { "type": "Input.Text", "id": <span class="hl">"memo"</span>, "label": "メモ（任意）", "isMultiline": true,
-      "placeholder": "例）先月の見積をもとに作る" }
+    { "type": "Input.Text", "id": <span class="hl">"memo"</span>, "label": "メモ", "isMultiline": true, "isRequired": false }
   ],
   "actions": [
     { "type": "Action.Submit", "title": "追加する" }
   ]
-}</pre>
+}
+</pre>
         <textarea id="txt-card" style="display:none;">{
   "type": "AdaptiveCard",
   "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
   "version": "1.4",
   "body": [
     { "type": "TextBlock", "text": "To Do に追加します", "weight": "Bolder", "size": "Medium" },
-    { "type": "Input.Date", "id": "dueDate", "label": "期限（空なら3日後）" },
-    { "type": "Input.ChoiceSet", "id": "importance", "label": "重要度", "value": "normal",
+    { "type": "Input.Date", "id": "dueDate", "label": "期限（空なら3日後）", "isRequired": false },
+    { "type": "Input.ChoiceSet", "id": "importance", "label": "重要度", "style": "expanded", "value": "normal",
       "choices": [
         { "title": "高", "value": "high" },
         { "title": "標準", "value": "normal" },
         { "title": "低", "value": "low" }
       ] },
-    { "type": "Input.Text", "id": "memo", "label": "メモ（任意）", "isMultiline": true,
-      "placeholder": "例）先月の見積をもとに作る" }
+    { "type": "Input.Text", "id": "memo", "label": "メモ", "isMultiline": true, "isRequired": false }
   ],
   "actions": [
     { "type": "Action.Submit", "title": "追加する" }
   ]
-}</textarea>
+}
+</textarea>
       </div>
       <div>
         <div class="lbl-s">Teams で押すと出るカード</div>
         <div class="acard">
           <div class="ah">To Do に追加します</div>
           <div class="al">期限（空なら3日後）</div><div class="ai"><span>日付を選択...</span><span>📅</span></div>
-          <div class="al">重要度</div><div class="ai" style="color:#242424;"><span>標準</span><span>▾</span></div>
-          <div class="al">メモ（任意）</div><div class="ai" style="height:54px;align-items:flex-start;"><span>例）先月の見積をもとに作る</span></div>
+          <div class="al">重要度</div><div class="radio3"><span>○ 高</span><span>● 標準</span><span>○ 低</span></div>
+          <div class="al">メモ</div><div class="ai" style="height:54px;"></div>
           <div class="ab">追加する</div>
         </div>
       </div>
