@@ -42,7 +42,7 @@
 | 33 | 全部無料・登録なし | slides/ | og-slides.png |
 | 34 | どこで知って来たのか | sessions/ | og-sessions.png |
 | 35 | {{N}}回の積み上げ方（3段階） | videos/ | og-videos.png |
-| 36 | 第26回アンケート結果 | achievements/insights/vol-26.html | pa45-vol26-survey-ogp.png |
+| 36 | 第30回アンケート結果 | achievements/insights/vol-30.html | pa45-vol30-survey-ogp.png |
 
 ---
 
@@ -471,11 +471,11 @@ https://haru-powerplatform.github.io/pa45/videos/
 ```
 【#PowerAutomate 45分ハンズオン講座＝PA45】
 
-第27回のアンケート結果です。いま動いているフローについて、Copilotに何を渡すかで答えがどう変わるかを見た回。
+第30回のアンケート結果です。Teamsのメッセージの「…」から、期限と重要度を選んでTo Doにタスクを入れた回。
 
-10名回答で、理解できた93%、役立ちそう100%。コメントはそのまま載せています。
+19名回答で、理解できた87%、役立ちそう90%。コメントも全件載せています。
 
-https://haru-powerplatform.github.io/pa45/achievements/insights/vol-27.html
+https://haru-powerplatform.github.io/pa45/achievements/insights/vol-30.html
 ```
 ※開催直後に出す用。回ごとの単発なので、次の回が終わったら差し替えていく。
 

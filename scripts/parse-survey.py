@@ -70,11 +70,20 @@ def count_choices(series):
     return dict(sorted(counts.items(), key=lambda x: -x[1]))
 
 
+# 自由記述の名乗り（「Haruさん、◯◯でーす！」）は公開ページに出すので伏せる。
+# 名前そのものはここに書かない（PUBLICリポジトリ）。
+_SELF_INTRO = re.compile(r"(^|[、,，\s　!！])[^、,，。\s　!！]{1,10}(でーす|です～|でーす～)")
+
+
+def anonymize(text):
+    return _SELF_INTRO.sub(lambda m: f"{m.group(1)}○○{m.group(2)}", text)
+
+
 def analyze_session(df_session, vol_num, session_date):
     total    = len(df_session)
     can_do   = count_choices(df_session[Q_CAN])
     comments = [
-        str(c).strip() for c in df_session[Q_COMMENT].dropna()
+        anonymize(str(c).strip()) for c in df_session[Q_COMMENT].dropna()
         if len(str(c).strip()) > 5 and str(c).strip().lower() != "nan"
         and "テスト" not in str(c)
     ]
