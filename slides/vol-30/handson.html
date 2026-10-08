@@ -160,11 +160,9 @@
     <a href="#p1">1. 選択されたメッセージに対して</a>
     <a href="#p2">2. To Do に1件</a>
     <a href="#p3">3. Teams から押す</a>
-    <a href="#p4">4. カードを付ける</a>
-    <a href="#p5">5. 期限に dueDate</a>
-    <a href="#p6">6. Copilot に式を聞く</a>
-    <a href="#p7">7. 式に差し替えて2回</a>
-    <a href="#p8">8. 「追加しました」</a>
+    <a href="#p4">4. Copilot に1回で頼む・カードを貼る</a>
+    <a href="#p5">5. 3つの欄に入れて2回押す</a>
+    <a href="#p6">6. 「追加しました」</a>
     <a href="#pc">＋ Copilotに聞く型</a>
   </nav>
 
@@ -220,11 +218,11 @@
   </section>
 
   <section class="part" id="p4">
-    <div class="part-h"><span class="part-badge">STEP 4</span><span class="chap">第2章 期限を選ぶ</span><h2>カードの JSON を Copilot に作ってもらい、トリガーに貼る</h2></div>
+    <div class="part-h"><span class="part-badge">STEP 4</span><span class="chap">第2章 カードで選ぶ</span><h2>Copilot に1回でカードと期日の式を作ってもらい、カードを貼る</h2></div>
     <p class="whyline">🧑‍💼 オートさん「なぜ」：期限・重要度・メモは頼まれるたびに違う。決められるのは押した瞬間の自分。「選択されたメッセージに対して」には、押した人に入力してもらうカード（アダプティブ カード）を付けられるから</p>
     <p class="part-note"><b>アダプティブ カード</b>＝Teams に出せる、入力欄やボタンの付いた小さな画面。JSON という書き方で作ります。形を日本語で伝えれば、Copilot が JSON にします。</p>
     <ol class="steps">
-      <li>ブラウザの別タブで <b>M365 Copilot チャット</b>（<span class="k">m365.cloud.microsoft/chat</span>）を開き、下の指示を送ります（コピーボタン）。返ってきた JSON をコピーします。</li>
+      <li>ブラウザの別タブで <b>M365 Copilot チャット</b>（<span class="k">m365.cloud.microsoft/chat</span>）を開き、下の指示を1回送ります（コピーボタン）。①カードの JSON と ②期日の式 が返ってきます。①をコピーします。</li>
       <li>トリガー（<b>manual</b>）をクリックして開き、<b>アダプティブ カードの入力</b>の青いボタン<b>「アダプティブ カード の作成」</b>を押します（最初は見本の「アンケートのお願い」が出ています）。</li>
       <li>画面を下へスクロールし、<b>CARD PAYLOAD EDITOR</b> の右の <b>⊞</b> で欄を開きます。中をクリック → Ctrl+A で全部選んで消し、JSON を貼ります。プレビューに期限・重要度・メモのカードが出れば OK。</li>
       <li>上の<b>「カードの保存」</b>を押してから、フローの右上の<b>「保存」</b>。</li>
@@ -232,14 +230,19 @@
 
     <p class="part-note" style="margin-top:12px;">Copilot への指示：</p>
 <div class="codewrap"><button class="copybtn" data-code="cardprompt">コピー</button>
-<pre id="cardprompt">Teams のアダプティブ カードの JSON を作ってください。説明は不要で、JSON だけ返してください。
-・バージョンは 1.4
+<pre id="cardprompt">Power Automate で使うものを2つ作ってください。説明は不要で、2つだけ返してください。
+
+① Teams のアダプティブ カードの JSON（バージョン 1.4）
 ・見出し：To Do に追加します
 ・入力1：期限（日付を選ぶ）。id は dueDate。ラベルは「期限（空なら3日後）」
-・入力2：重要度（高・標準・低から1つ選ぶ）。id は importance。値は high / normal / low。初期値は normal
-・入力3：メモ（自由入力・複数行・空でもよい）。id は memo
-・ボタンは「追加する」1つ</pre></div>
-    <p class="part-note" style="margin-top:12px;">返ってくる JSON の見本（Copilot の答えが違ったとき・時間がないときはこちらを貼る）：</p>
+・入力2：重要度（高・標準・低から1つ）。id は importance。値は high / normal / low。初期値は normal
+・入力3：メモ（複数行・空でもよい）。id は memo
+・ボタンは「追加する」1つ
+
+② To Do の「期日」に入れる式を1行で
+・triggerBody()?[&#x27;cardOutputs&#x27;]?[&#x27;dueDate&#x27;] が空なら今日から3日後、入っていればその日
+・形は yyyy-MM-ddT00:00:00</pre></div>
+    <p class="part-note" style="margin-top:12px;">①カードの JSON の見本（Copilot の答えが違ったとき・時間がないときはこちらを貼る）：</p>
 <div class="codewrap"><button class="copybtn" data-code="cardjson">コピー</button>
 <pre id="cardjson">{
   &quot;type&quot;: &quot;AdaptiveCard&quot;,
@@ -265,32 +268,17 @@
   </section>
 
   <section class="part" id="p5">
-    <div class="part-h"><span class="part-badge">STEP 5</span><span class="chap">第2章 期限を選ぶ</span><h2>カードの値を To Do の3つの欄に入れて、もう一度押す</h2></div>
-    <p class="whyline">🧑‍💼 オートさん「なぜ」：カードで入れた値は、id の名前でトリガーの出力に入る。⚡ から名前で選んで、To Do の欄に入れるだけ</p>
+    <div class="part-h"><span class="part-badge">STEP 5</span><span class="chap">第2章 カードで選ぶ</span><h2>To Do の3つの欄に入れて、2回押して確かめる</h2></div>
+    <p class="whyline">🧑‍💼 オートさん「なぜ」：カードで入れた値は、id の名前でトリガーの出力に入る。期日だけは、空なら3日後にするため Copilot の②の式を使う</p>
     
     <ol class="steps">
-      <li>To Do のアクションを開き、⚡ → manual の<b>「表示数を増やす」</b>で、いちばん下に cardOutputs の3つが出ます。</li>
-      <li><b>期日</b> ← <b>body/cardOutputs/dueDate</b></li>
-      <li><b>重要度</b> ← <b>body/cardOutputs/importance</b>（high / normal / low がそのまま To Do の重要度になります）</li>
-      <li><b>本文 コンテンツ</b> ← <b>body/cardOutputs/memo</b>（最初から入っている「項目のコンテンツです。」は消します）</li>
-      <li>右上の<b>「保存」</b>→ Teams で <span class="k">見積書、金曜までにお願いします</span> の「…」→「To Do に入れる」→ 期限・重要度・メモを入れて<b>「追加する」</b>。To Do で3つとも入っていれば成功です。</li>
+      <li><b>期日</b>：欄で半角の <span class="k">/</span> →<b>「式を挿入する」</b>→ Copilot の②の式を貼って、左下の<b>「追加」</b>。</li>
+      <li><b>重要度</b>：⚡ → manual の<b>「表示数を増やす」</b>→ いちばん下の <b>body/cardOutputs/importance</b>（high / normal / low がそのまま重要度になります）。</li>
+      <li><b>本文 コンテンツ</b>：最初の「項目のコンテンツです。」を消して、⚡ <b>body/cardOutputs/memo</b>。</li>
+      <li>右上の<b>「保存」</b>。Teams で1回目は<b>日付を選んで</b>、2回目は<b>日付を選ばずに</b>「追加する」。To Do の期限が「選んだ日」「3日後」になっていれば成功です。</li>
     </ol>
 
-  </section>
-
-  <section class="part" id="p6">
-    <div class="part-h"><span class="part-badge">STEP 6</span><span class="chap">第3章 空なら3日後</span><h2>Copilot に「もし空なら3日後」の式を聞く</h2></div>
-    <p class="whyline">🧑‍💼 オートさん「なぜ」：急ぎでない頼みは日付を選ばない。そのときは3日後にしたい。「もし〜なら」は式で書くが、決まりを日本語で伝えれば Copilot が式にしてくれるから</p>
-    <p class="part-note">Power Automate 内蔵の Copilot ではなく、ブラウザの別タブで <b>M365 Copilot チャット</b>（<span class="k">m365.cloud.microsoft/chat</span>）を開きます。</p>
-    <ol class="steps">
-      <li>下の文をコピーして Copilot に送ります。<b>dueDate の住所（triggerBody()…）も一緒に送る</b>のがコツです。Copilot はフローを見ていないためです。</li>
-      <li>返ってきた式をコピーします。返ってきた式が下の見本と違っても、まずは試してかまいません。</li>
-    </ol>
-<div class="codewrap"><button class="copybtn" data-code="cp1">コピー</button>
-<pre id="cp1">Power Automate の式を1行で教えて。説明は不要です。
-triggerBody()?[&#x27;cardOutputs&#x27;]?[&#x27;dueDate&#x27;] が空なら今日から3日後、入っていればその日を、
-yyyy-MM-ddT00:00:00 の形で返したい。</pre></div>
-    <p class="part-note" style="margin-top:12px;">見本（このまま使っても動く形）：</p>
+    <p class="part-note" style="margin-top:12px;">②期日の式の見本：</p>
 <div class="codewrap"><button class="copybtn" data-code="fx1">コピー</button>
 <pre id="fx1">if(empty(triggerBody()?[&#x27;cardOutputs&#x27;]?[&#x27;dueDate&#x27;]), addDays(utcNow(), 3, &#x27;yyyy-MM-ddT00:00:00&#x27;), concat(triggerBody()?[&#x27;cardOutputs&#x27;]?[&#x27;dueDate&#x27;], &#x27;T00:00:00&#x27;))</pre></div>
     <table class="tbl" style="width:100%;border-collapse:collapse;margin-top:10px;font-size:14px;">
@@ -300,25 +288,10 @@ yyyy-MM-ddT00:00:00 の形で返したい。</pre></div>
       <tr><td style="border:1px solid #cbd5e1;padding:6px;"><span class="k">addDays(utcNow(), 3, 'yyyy-MM-ddT00:00:00')</span></td><td style="border:1px solid #cbd5e1;padding:6px;">空のとき：今日＋3日</td></tr>
       <tr><td style="border:1px solid #cbd5e1;padding:6px;"><span class="k">concat(…dueDate, 'T00:00:00')</span></td><td style="border:1px solid #cbd5e1;padding:6px;">選んだとき：日付に時刻を足す（To Do の期限の形）</td></tr>
     </table>
-    <div class="callout info"><b>■ 期限の形：</b> To Do の期限は <span class="k">yyyy-MM-ddThh:mm:ss</span> の形で渡します（Microsoft Learn「Microsoft To-Do (仕事)」）。<br>※ utcNow() は世界標準時です。日本の朝9時より前に押すと、前の日から3日を数えます。</div>
   </section>
 
-  <section class="part" id="p7">
-    <div class="part-h"><span class="part-badge">STEP 7</span><span class="chap">第3章 空なら3日後</span><h2>期日の欄を式に差し替えて、2通りで試す</h2></div>
-    <p class="whyline">🧑‍💼 オートさん「なぜ」：式は「選んだとき」と「選ばないとき」の両方を通る。だから2回試すと全部確かめられるから</p>
-    
-    <ol class="steps">
-      <li>To Do のアクションの<b>期日</b>の欄にある ⚡ dueDate を消して、空にします。</li>
-      <li>欄の中で半角の <span class="k">/</span> を打ち、<b>「式を挿入する」</b>。</li>
-      <li>コピーした式を貼り、入力欄の左下の<b>「追加」</b>。欄に fx のかたまりが入ります。</li>
-      <li>右上の<b>「保存」</b>。</li>
-      <li>テスト①：日付を<b>選ばずに</b>押す → 期限が3日後。テスト②：日付を<b>選んで</b>押す → 期限が選んだ日。</li>
-    </ol>
-    <div class="callout warn"><b>⚠️ 保存で赤くなったら：</b> 式の中の名前を確かめます。期日の欄に一度 ⚡ dueDate を入れて、fx の中身と見比べると違いが分かります。</div>
-  </section>
-
-  <section class="part" id="p8">
-    <div class="part-h"><span class="part-badge">STEP 8</span><span class="chap">第4章 届ける</span><h2>最後に、フローボットから「追加しました」</h2></div>
+  <section class="part" id="p6">
+    <div class="part-h"><span class="part-badge">STEP 6</span><span class="chap">第3章 届ける</span><h2>最後に、フローボットから「追加しました」</h2></div>
     <p class="whyline">🧑‍💼 オートさん「なぜ」：押した後、Teams は何も言わない。入ったかどうかを、その場で知りたいから（Learn もこの形をすすめています）</p>
     
     <ol class="steps">
