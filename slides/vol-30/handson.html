@@ -220,15 +220,26 @@
   </section>
 
   <section class="part" id="p4">
-    <div class="part-h"><span class="part-badge">STEP 4</span><span class="chap">第2章 期限を選ぶ</span><h2>押したときに、日付を選ぶカードを出す</h2></div>
-    <p class="whyline">🧑‍💼 オートさん「なぜ」：期限は頼まれるたびに違う。決められるのは押した瞬間の自分。「選択されたメッセージに対して」には、押した人に入力してもらうカード（アダプティブ カード）を付けられるから</p>
-    <p class="part-note"><b>アダプティブ カード</b>＝Teams に出せる、入力欄やボタンの付いた小さな画面。JSON という書き方で作ります。今日は下の JSON をそのまま貼ります。</p>
+    <div class="part-h"><span class="part-badge">STEP 4</span><span class="chap">第2章 期限を選ぶ</span><h2>カードの JSON を Copilot に作ってもらい、トリガーに貼る</h2></div>
+    <p class="whyline">🧑‍💼 オートさん「なぜ」：期限・重要度・メモは頼まれるたびに違う。決められるのは押した瞬間の自分。「選択されたメッセージに対して」には、押した人に入力してもらうカード（アダプティブ カード）を付けられるから</p>
+    <p class="part-note"><b>アダプティブ カード</b>＝Teams に出せる、入力欄やボタンの付いた小さな画面。JSON という書き方で作ります。形を日本語で伝えれば、Copilot が JSON にします。</p>
     <ol class="steps">
-      <li>トリガー（<b>manual</b>）をクリックして開きます。</li>
-      <li><b>アダプティブ カードの入力</b>の青いボタン<b>「アダプティブ カード の作成」</b>（カードが入っていると「の編集」）を押します。カードを作る画面が開き、最初は見本の「アンケートのお願い」が出ています。</li>
-      <li>画面を下へスクロールし、いちばん下の <b>CARD PAYLOAD EDITOR</b> の右の <b>⊞</b> を押して欄を開きます（最初はたたまれています）。欄の中をクリック → Ctrl+A で全部選んで消して、下の JSON を貼ります（コピーボタン）。真ん中のプレビューに「To Do に追加します」のカードが出れば OK。</li>
+      <li>ブラウザの別タブで <b>M365 Copilot チャット</b>（<span class="k">m365.cloud.microsoft/chat</span>）を開き、下の指示を送ります（コピーボタン）。返ってきた JSON をコピーします。</li>
+      <li>トリガー（<b>manual</b>）をクリックして開き、<b>アダプティブ カードの入力</b>の青いボタン<b>「アダプティブ カード の作成」</b>を押します（最初は見本の「アンケートのお願い」が出ています）。</li>
+      <li>画面を下へスクロールし、<b>CARD PAYLOAD EDITOR</b> の右の <b>⊞</b> で欄を開きます。中をクリック → Ctrl+A で全部選んで消し、JSON を貼ります。プレビューに期限・重要度・メモのカードが出れば OK。</li>
       <li>上の<b>「カードの保存」</b>を押してから、フローの右上の<b>「保存」</b>。</li>
     </ol>
+
+    <p class="part-note" style="margin-top:12px;">Copilot への指示：</p>
+<div class="codewrap"><button class="copybtn" data-code="cardprompt">コピー</button>
+<pre id="cardprompt">Teams のアダプティブ カードの JSON を作ってください。説明は不要で、JSON だけ返してください。
+・バージョンは 1.4
+・見出し：To Do に追加します
+・入力1：期限（日付を選ぶ）。id は dueDate。ラベルは「期限（空なら3日後）」
+・入力2：重要度（高・標準・低から1つ選ぶ）。id は importance。値は high / normal / low。初期値は normal
+・入力3：メモ（自由入力・複数行・空でもよい）。id は memo
+・ボタンは「追加する」1つ</pre></div>
+    <p class="part-note" style="margin-top:12px;">返ってくる JSON の見本（Copilot の答えが違ったとき・時間がないときはこちらを貼る）：</p>
 <div class="codewrap"><button class="copybtn" data-code="cardjson">コピー</button>
 <pre id="cardjson">{
   &quot;type&quot;: &quot;AdaptiveCard&quot;,
@@ -236,24 +247,33 @@
   &quot;version&quot;: &quot;1.4&quot;,
   &quot;body&quot;: [
     { &quot;type&quot;: &quot;TextBlock&quot;, &quot;text&quot;: &quot;To Do に追加します&quot;, &quot;weight&quot;: &quot;Bolder&quot;, &quot;size&quot;: &quot;Medium&quot; },
-    { &quot;type&quot;: &quot;Input.Date&quot;, &quot;id&quot;: &quot;dueDate&quot;, &quot;label&quot;: &quot;期限（空なら3日後）&quot; }
+    { &quot;type&quot;: &quot;Input.Date&quot;, &quot;id&quot;: &quot;dueDate&quot;, &quot;label&quot;: &quot;期限（空なら3日後）&quot; },
+    { &quot;type&quot;: &quot;Input.ChoiceSet&quot;, &quot;id&quot;: &quot;importance&quot;, &quot;label&quot;: &quot;重要度&quot;, &quot;value&quot;: &quot;normal&quot;,
+      &quot;choices&quot;: [
+        { &quot;title&quot;: &quot;高&quot;, &quot;value&quot;: &quot;high&quot; },
+        { &quot;title&quot;: &quot;標準&quot;, &quot;value&quot;: &quot;normal&quot; },
+        { &quot;title&quot;: &quot;低&quot;, &quot;value&quot;: &quot;low&quot; }
+      ] },
+    { &quot;type&quot;: &quot;Input.Text&quot;, &quot;id&quot;: &quot;memo&quot;, &quot;label&quot;: &quot;メモ（任意）&quot;, &quot;isMultiline&quot;: true,
+      &quot;placeholder&quot;: &quot;例）先月の見積をもとに作る&quot; }
   ],
   &quot;actions&quot;: [
     { &quot;type&quot;: &quot;Action.Submit&quot;, &quot;title&quot;: &quot;追加する&quot; }
   ]
 }</pre></div>
-    <div class="callout tip"><b>💡 "id": "dueDate" が名前になります。</b> カードで選んだ日付は、このあと ⚡ 動的コンテンツのいちばん下に <b>body/cardOutputs/dueDate</b> として出てきます（日本語の名前は付きません）。</div>
+    <div class="callout tip"><b>💡 id が、そのまま動的コンテンツの名前になります。</b> 入力欄に付けた <b>dueDate</b>・<b>importance</b>・<b>memo</b> は、押した人が入れた値と一緒にトリガーの出力（cardOutputs）に入ります。後ろのアクションでは ⚡ のいちばん下に <b>body/cardOutputs/dueDate</b> のように名前で出てきます。名前を決めたのは自分なので、迷わず選べます。</div>
   </section>
 
   <section class="part" id="p5">
-    <div class="part-h"><span class="part-badge">STEP 5</span><span class="chap">第2章 期限を選ぶ</span><h2>To Do の期限に dueDate を入れて、もう一度押す</h2></div>
-    <p class="whyline">🧑‍💼 オートさん「なぜ」：カードで選んだ日付は、トリガーの出力 dueDate として後ろのアクションに渡るから</p>
+    <div class="part-h"><span class="part-badge">STEP 5</span><span class="chap">第2章 期限を選ぶ</span><h2>カードの値を To Do の3つの欄に入れて、もう一度押す</h2></div>
+    <p class="whyline">🧑‍💼 オートさん「なぜ」：カードで入れた値は、id の名前でトリガーの出力に入る。⚡ から名前で選んで、To Do の欄に入れるだけ</p>
     
     <ol class="steps">
-      <li>To Do のアクションを開き、<b>期日</b>の欄 → ⚡ → manual の<b>「表示数を増やす」</b>→ いちばん下の<b>body/cardOutputs/dueDate</b>。</li>
-      <li>右上の<b>「保存」</b>。</li>
-      <li>Teams で <span class="k">見積書、金曜までにお願いします</span> の「…」→「To Do に入れる」。</li>
-      <li>カードが出たら<b>日付を選んで「追加する」</b>。To Do で期限が入っていれば成功です。</li>
+      <li>To Do のアクションを開き、⚡ → manual の<b>「表示数を増やす」</b>で、いちばん下に cardOutputs の3つが出ます。</li>
+      <li><b>期日</b> ← <b>body/cardOutputs/dueDate</b></li>
+      <li><b>重要度</b> ← <b>body/cardOutputs/importance</b>（high / normal / low がそのまま To Do の重要度になります）</li>
+      <li><b>本文 コンテンツ</b> ← <b>body/cardOutputs/memo</b>（最初から入っている「項目のコンテンツです。」は消します）</li>
+      <li>右上の<b>「保存」</b>→ Teams で <span class="k">見積書、金曜までにお願いします</span> の「…」→「To Do に入れる」→ 期限・重要度・メモを入れて<b>「追加する」</b>。To Do で3つとも入っていれば成功です。</li>
     </ol>
 
   </section>
