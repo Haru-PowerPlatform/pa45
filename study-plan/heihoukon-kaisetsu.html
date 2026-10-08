@@ -1,0 +1,1800 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>平方根の計算 解き方解説（問題集 p.24〜31）| はるき</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", sans-serif;
+    background: linear-gradient(180deg, #eff6ff 0%, #f8fafc 100%);
+    color: #1a202c; line-height: 1.9; padding: 16px; min-height: 100vh;
+  }
+  .container { max-width: 760px; margin: 0 auto; }
+  header {
+    background: linear-gradient(135deg, #4f46e5, #0891b2);
+    color: #fff; border-radius: 18px; padding: 22px 18px; text-align: center;
+    box-shadow: 0 6px 20px rgba(79,70,229,.3);
+  }
+  header h1 { font-size: 20px; line-height: 1.5; }
+  header .sub { font-size: 13px; opacity: .92; margin-top: 6px; }
+  .back-link { display: inline-block; margin: 13px 0; font-size: 13px; color: #4f46e5; text-decoration: none; font-weight: 700; }
+  .card { background: #fff; border-radius: 14px; padding: 14px 16px; margin: 14px 0; box-shadow: 0 2px 8px rgba(0,0,0,.07); }
+  .card .label { font-size: 13px; color: #475569; font-weight: 700; margin-bottom: 6px; }
+  .howto ol { margin-left: 20px; font-size: 14px; }
+  .toc a { display: flex; justify-content: space-between; padding: 8px; color: #4338ca; text-decoration: none; font-weight: 700; font-size: 14.5px; border-bottom: 1px dashed #e2e8f0; }
+  .toc a:last-child { border-bottom: none; }
+  .toc a span { font-weight: 400; color: #64748b; font-size: 12.5px; }
+  .naoshi { border: 2px solid #fecaca; background: #fff7f7; }
+  .naoshi .label { color: #b91c1c; }
+  .nl { display: inline-block; margin: 3px 4px 3px 0; padding: 3px 10px; border-radius: 999px; font-size: 13px; font-weight: 700; text-decoration: none; }
+  .nl.star { background: #fee2e2; color: #b91c1c; }
+  .nl.circle { background: #ffedd5; color: #c2410c; }
+  .nl.done { opacity: .45; text-decoration: line-through; }
+  .bar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .bar button { border: 2px solid #c7d2fe; background: #fff; color: #4338ca; border-radius: 999px; padding: 7px 14px; font-weight: 700; font-size: 13.5px; cursor: pointer; }
+  .bar button.on { background: #4f46e5; color: #fff; border-color: #4f46e5; }
+  .prog { font-size: 13px; color: #334155; margin-top: 8px; }
+  .prog b { font-size: 15px; }
+
+  h2.sec { margin: 30px 0 6px; font-size: 19px; color: #1e3a8a; padding: 8px 12px; border-left: 6px solid #4f46e5; background: #e0e7ff; border-radius: 8px; }
+  h2.sec small { display: block; font-size: 12px; color: #475569; font-weight: 400; }
+  .prob { background: #fff; border-radius: 16px; padding: 16px 16px 10px; margin: 18px 0; box-shadow: 0 3px 12px rgba(0,0,0,.07); border-left: 6px solid #4f46e5; }
+  .prob.flagged { border-left-color: #ef4444; }
+  .phead { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .pno { font-size: 22px; font-weight: 900; color: #4338ca; }
+  .prob.flagged .pno { color: #dc2626; }
+  .ptitle { font-size: 16px; font-weight: 800; }
+  .badge { font-size: 12px; font-weight: 800; padding: 2px 10px; border-radius: 999px; }
+  .badge.star { background: #fee2e2; color: #b91c1c; }
+  .badge.circle { background: #ffedd5; color: #c2410c; }
+  .ref { display: block; font-size: 12px; color: #64748b; margin-top: 2px; }
+  .point { background: #fefce8; border-left: 4px solid #eab308; border-radius: 10px; padding: 10px 12px; margin: 10px 0 6px; font-size: 14px; }
+  .point .plabel { font-weight: 800; color: #a16207; font-size: 13.5px; }
+  .point ul { margin-left: 18px; }
+  .point li { margin: 4px 0; }
+  .ppre, .spre { font-size: 14px; margin: 6px 0; }
+  .q { border-top: 1px dashed #e2e8f0; padding: 12px 2px 10px; }
+  .q.marked { background: linear-gradient(90deg, #fff1f2 0, #fff 60%); margin: 0 -8px; padding-left: 10px; padding-right: 8px; border-radius: 8px; }
+  .qhead { display: flex; align-items: center; gap: 8px; }
+  .qlabel { font-weight: 800; color: #4338ca; }
+  .mk { font-weight: 900; font-size: 16px; }
+  .mk.star { color: #dc2626; } .mk.circle { color: #ea580c; }
+  .qstat { margin-left: auto; font-size: 12px; font-weight: 700; }
+  .qbody { font-size: 16px; margin: 4px 0 6px; overflow-x: auto; overflow-y: hidden; padding: 2px 0; }
+  .remind { font-size: 12px; color: #64748b; }
+  .reveal { margin-top: 6px; border: none; background: #4f46e5; color: #fff; font-weight: 800; border-radius: 10px; padding: 9px 16px; font-size: 14px; cursor: pointer; }
+  .q.revealed .reveal, .q.revealed .remind { display: none; }
+  .q:not(.revealed) > .hide { display: none; }
+  .steps { background: #f8fafc; border-left: 4px solid #06b6d4; border-radius: 10px; padding: 8px 12px; margin: 8px 0; }
+  .st { font-size: 14.5px; margin: 6px 0; }
+  .eq { font-size: 15.5px; margin: 4px 0 4px 10px; overflow-x: auto; overflow-y: hidden; padding: 2px 0; }
+  .ans { display: inline-block; background: #d1fae5; color: #047857; font-weight: 800; padding: 6px 14px; border-radius: 12px; font-size: 15px; margin: 4px 0; max-width: 100%; overflow-x: auto; }
+  .note { background: #fff1f2; border-left: 4px solid #f43f5e; border-radius: 10px; padding: 10px 12px; margin: 8px 0; font-size: 14px; }
+  .note b { color: #be123c; }
+  .check { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+  .check button { flex: 1 1 30%; min-width: 110px; border: 2px solid #e2e8f0; background: #fff; border-radius: 10px; padding: 8px 4px; font-weight: 800; font-size: 13px; cursor: pointer; }
+  .check button[data-v="ok"].on { background: #dcfce7; border-color: #16a34a; color: #15803d; }
+  .check button[data-v="mid"].on { background: #fef9c3; border-color: #ca8a04; color: #a16207; }
+  .check button[data-v="ng"].on { background: #fee2e2; border-color: #dc2626; color: #b91c1c; }
+  body.only-marked .q:not(.marked) { display: none; }
+  body.only-marked .prob:not(.flagged) { display: none; }
+  body.only-ng .q:not([data-st="ng"]):not([data-st="none"]) { display: none; }
+  footer { text-align: center; font-size: 12px; color: #94a3b8; margin: 24px 0 8px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <h1>📐 平方根の計算 解き方解説</h1>
+  <div class="sub">体系問題集 第2章 p.24〜31（問題80〜111・Level A）</div>
+</header>
+
+<a class="back-link" href="index.html">← 学習計画ページにもどる</a>
+
+<div class="card howto">
+  <div class="label">📝 使い方</div>
+  <ol>
+    <li>問題を<b>ノートに自分で解く</b></li>
+    <li>「👀 答えと解説を見る」を押して答え合わせ</li>
+    <li>⚡すぐ解けた／🤔悩んで解けた／🔁直し問題にする のどれかを押す</li>
+    <li>🔁 の問題は、次の日にもう一度ノートに解く</li>
+  </ol>
+</div>
+
+<div class="card naoshi">
+  <div class="label">🔴 問題集に赤ペンがついていた問題（56問）— ここから先にやる</div>
+  <div><a href="#q84-2" class="nl star">★ 84(2)</a><a href="#q84-5" class="nl star">★ 84(5)</a><a href="#q85-2" class="nl star">★ 85(2)</a><a href="#q85-5" class="nl star">★ 85(5)</a><a href="#q86-3" class="nl star">★ 86(3)</a><a href="#q86-8" class="nl star">★ 86(8)</a><a href="#q87-3" class="nl circle">○ 87(3)</a><a href="#q87-4" class="nl circle">○ 87(4)</a><a href="#q87-5" class="nl circle">○ 87(5)</a><a href="#q88-1" class="nl circle">○ 88(1)①</a><a href="#q88-2" class="nl circle">○ 88(1)②</a><a href="#q88-3" class="nl circle">○ 88(2)①</a><a href="#q88-4" class="nl circle">○ 88(2)②</a><a href="#q89-1" class="nl circle">○ 89(1)</a><a href="#q89-2" class="nl circle">○ 89(2)</a><a href="#q89-3" class="nl star">★ 89(3)</a><a href="#q90-1" class="nl star">★ 90(1)</a><a href="#q90-2" class="nl star">★ 90(2)</a><a href="#q90-3" class="nl star">★ 90(3)</a><a href="#q90-4" class="nl circle">○ 90(4)</a><a href="#q91-1" class="nl star">★ 91(1)</a><a href="#q91-2" class="nl star">★ 91(2)</a><a href="#q91-3" class="nl star">★ 91(3)</a><a href="#q91-4" class="nl star">★ 91(4)</a><a href="#q92-1" class="nl star">★ 92(1)</a><a href="#q92-2" class="nl star">★ 92(2)</a><a href="#q92-3" class="nl star">★ 92(3)</a><a href="#q92-4" class="nl star">★ 92(4)</a><a href="#q92-5" class="nl circle">○ 92(5)</a><a href="#q92-6" class="nl star">★ 92(6)</a><a href="#q93-1" class="nl star">★ 93(1)</a><a href="#q93-2" class="nl star">★ 93(2)</a><a href="#q93-3" class="nl star">★ 93(3)</a><a href="#q93-4" class="nl star">★ 93(4)</a><a href="#q102-1" class="nl star">★ 102(1)</a><a href="#q102-2" class="nl star">★ 102(2)</a><a href="#q102-3" class="nl star">★ 102(3)</a><a href="#q102-4" class="nl star">★ 102(4)</a><a href="#q102-5" class="nl star">★ 102(5)</a><a href="#q102-6" class="nl star">★ 102(6)</a><a href="#q104-1" class="nl star">★ 104(1)</a><a href="#q104-2" class="nl star">★ 104(2)</a><a href="#q104-3" class="nl star">★ 104(3)</a><a href="#q104-4" class="nl star">★ 104(4)</a><a href="#q107-1" class="nl star">★ 107(1)</a><a href="#q107-3" class="nl star">★ 107(3)</a><a href="#q107-5" class="nl star">★ 107(5)</a><a href="#q107-8" class="nl star">★ 107(8)</a><a href="#q108-1" class="nl star">★ 108(1)</a><a href="#q108-2" class="nl star">★ 108(2)</a><a href="#q109-1" class="nl star">★ 109(1)</a><a href="#q109-2" class="nl star">★ 109(2)</a><a href="#q110-1" class="nl star">★ 110(1)</a><a href="#q110-2" class="nl star">★ 110(2)</a><a href="#q110-3" class="nl star">★ 110(3)</a><a href="#q110-4" class="nl star">★ 110(4)</a></div>
+  <div style="font-size:12px;color:#64748b;margin-top:6px">★＝まちがえた／○＝あやしい。大問番号に★がついていた問題は、その大問の全部を入れています。⚡を押した問題には線が引かれます。</div>
+</div>
+
+<div class="card">
+  <div class="label">🔍 しぼりこみ</div>
+  <div class="bar">
+    <button type="button" data-f="all" class="on">全部（126問）</button>
+    <button type="button" data-f="marked">★○の問題だけ</button>
+    <button type="button" data-f="ng">まだ⚡じゃない問題</button>
+  </div>
+  <div class="prog" id="prog"></div>
+</div>
+
+<div class="card toc">
+  <div class="label">📖 目次</div>
+  <a href="#s2">2 根号を含む式の計算<span>問題集 p.24〜27</span></a>
+<a href="#s3">3 有理数と無理数<span>問題集 p.28〜30</span></a>
+<a href="#s4">4 近似値と有効数字<span>問題集 p.31</span></a>
+</div>
+
+<h2 class="sec" id="s2">2 根号を含む式の計算<small>問題集 p.24〜27</small></h2>
+<section class="prob" id="q80">
+<div class="phead"><span class="pno">80</span><span class="ptitle">同じ√どうしのたし算・ひき算</span></div><span class="ref">▶ 体系数学 p.46 例11</span>
+<div class="point"><div class="plabel">💡 やり方</div><ul><li>$\sqrt{2}$ を1つの「文字」みたいに考える。$6\sqrt{2}+5\sqrt{2}$ は $6a+5a=11a$ と同じ。</li><li>√の中の数がちがうもの（$\sqrt{2}$ と $\sqrt{3}$）はまとめられない。</li></ul></div>
+<div class="q" id="q80-1" data-key="80-(1)">
+  <div class="qhead"><span class="qlabel">(1)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle 6\sqrt{2}+5\sqrt{2}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$\sqrt{2}$ が 6こ と 5こ → 合わせて 11こ</div><div class="eq">\(\displaystyle =(6+5)\sqrt{2}\)</div><div class="eq">\(\displaystyle =11\sqrt{2}\)</div></div>
+    <div class="ans">答え：\(\displaystyle 11\sqrt{2}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q" id="q80-2" data-key="80-(2)">
+  <div class="qhead"><span class="qlabel">(2)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle 7\sqrt{5}-2\sqrt{5}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="eq">\(\displaystyle =(7-2)\sqrt{5}\)</div><div class="eq">\(\displaystyle =5\sqrt{5}\)</div></div>
+    <div class="ans">答え：\(\displaystyle 5\sqrt{5}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q" id="q80-3" data-key="80-(3)">
+  <div class="qhead"><span class="qlabel">(3)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle 2\sqrt{7}+5\sqrt{7}-\sqrt{7}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$-\sqrt{7}$ は「$-1\sqrt{7}$」のこと</div><div class="eq">\(\displaystyle =(2+5-1)\sqrt{7}\)</div><div class="eq">\(\displaystyle =6\sqrt{7}\)</div></div>
+    <div class="ans">答え：\(\displaystyle 6\sqrt{7}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q" id="q80-4" data-key="80-(4)">
+  <div class="qhead"><span class="qlabel">(4)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle 4\sqrt{3}-8\sqrt{3}+9\sqrt{3}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="eq">\(\displaystyle =(4-8+9)\sqrt{3}\)</div><div class="eq">\(\displaystyle =5\sqrt{3}\)</div></div>
+    <div class="ans">答え：\(\displaystyle 5\sqrt{3}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q" id="q80-5" data-key="80-(5)">
+  <div class="qhead"><span class="qlabel">(5)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle -5\sqrt{6}+14\sqrt{6}-9\sqrt{6}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="eq">\(\displaystyle =(-5+14-9)\sqrt{6}\)</div><div class="eq">\(\displaystyle =0\sqrt{6}\)</div><div class="st">$0\times\sqrt{6}$ は 0</div></div>
+    <div class="ans">答え：\(\displaystyle 0\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q" id="q80-6" data-key="80-(6)">
+  <div class="qhead"><span class="qlabel">(6)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle \dfrac{\sqrt{2}}{3}+\dfrac{5\sqrt{2}}{6}-\dfrac{\sqrt{2}}{2}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">分母を 6 にそろえる（通分）</div><div class="eq">\(\displaystyle =\dfrac{2\sqrt{2}}{6}+\dfrac{5\sqrt{2}}{6}-\dfrac{3\sqrt{2}}{6}\)</div><div class="eq">\(\displaystyle =\dfrac{(2+5-3)\sqrt{2}}{6}\)</div><div class="eq">\(\displaystyle =\dfrac{4\sqrt{2}}{6}\)</div><div class="st">6 と 4 を 2 でわって約分</div><div class="eq">\(\displaystyle =\dfrac{2\sqrt{2}}{3}\)</div></div>
+    <div class="ans">答え：\(\displaystyle \dfrac{2\sqrt{2}}{3}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+</section>
+<section class="prob" id="q81">
+<div class="phead"><span class="pno">81</span><span class="ptitle">ちがう√がまざったたし算・ひき算</span></div><span class="ref">▶ 体系数学 p.46 例12</span>
+<div class="point"><div class="plabel">💡 やり方</div><ul><li>同じ√どうし、ふつうの数どうしを<b>なかま分け</b>してから計算する。文字式の「同類項をまとめる」と同じ。</li><li>$-(-\sqrt{5})=+\sqrt{5}$ のように、かっこの前のマイナスで符号が変わるのに注意。</li></ul></div>
+<div class="q" id="q81-1" data-key="81-(1)">
+  <div class="qhead"><span class="qlabel">(1)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle 6\sqrt{2}+3\sqrt{3}-\sqrt{2}+4\sqrt{3}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$\sqrt{2}$ のなかま：$6\sqrt{2}-\sqrt{2}=5\sqrt{2}$</div><div class="st">$\sqrt{3}$ のなかま：$3\sqrt{3}+4\sqrt{3}=7\sqrt{3}$</div><div class="eq">\(\displaystyle =5\sqrt{2}+7\sqrt{3}\)</div></div>
+    <div class="ans">答え：\(\displaystyle 5\sqrt{2}+7\sqrt{3}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q" id="q81-2" data-key="81-(2)">
+  <div class="qhead"><span class="qlabel">(2)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle -3\sqrt{6}+7\sqrt{5}+4\sqrt{6}-11\sqrt{5}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$\sqrt{6}$：$-3+4=1$ → $\sqrt{6}$</div><div class="st">$\sqrt{5}$：$7-11=-4$ → $-4\sqrt{5}$</div><div class="eq">\(\displaystyle =\sqrt{6}-4\sqrt{5}\)</div></div>
+    <div class="ans">答え：\(\displaystyle \sqrt{6}-4\sqrt{5}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q" id="q81-3" data-key="81-(3)">
+  <div class="qhead"><span class="qlabel">(3)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle 3\sqrt{7}-2\sqrt{2}-4\sqrt{7}+4\sqrt{2}+5\sqrt{7}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$\sqrt{7}$：$3-4+5=4$ → $4\sqrt{7}$</div><div class="st">$\sqrt{2}$：$-2+4=2$ → $2\sqrt{2}$</div><div class="eq">\(\displaystyle =4\sqrt{7}+2\sqrt{2}\)</div></div>
+    <div class="ans">答え：\(\displaystyle 4\sqrt{7}+2\sqrt{2}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q" id="q81-4" data-key="81-(4)">
+  <div class="qhead"><span class="qlabel">(4)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle -4\sqrt{2}+3+7\sqrt{2}-8-5\sqrt{7}-1\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$\sqrt{2}$：$-4+7=3$ → $3\sqrt{2}$</div><div class="st">$\sqrt{7}$：$-5\sqrt{7}$（なかまは1つだけ）</div><div class="st">ふつうの数：$3-8-1=-6$</div><div class="eq">\(\displaystyle =3\sqrt{2}-5\sqrt{7}-6\)</div></div>
+    <div class="ans">答え：\(\displaystyle 3\sqrt{2}-5\sqrt{7}-6\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q" id="q81-5" data-key="81-(5)">
+  <div class="qhead"><span class="qlabel">(5)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle 5\sqrt{6}-(-\sqrt{5})+(-4\sqrt{6})-\sqrt{6}+2\sqrt{5}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">まずかっこをはずす：$-(-\sqrt{5})=+\sqrt{5}$、$+(-4\sqrt{6})=-4\sqrt{6}$</div><div class="eq">\(\displaystyle =5\sqrt{6}+\sqrt{5}-4\sqrt{6}-\sqrt{6}+2\sqrt{5}\)</div><div class="st">$\sqrt{6}$：$5-4-1=0$ → 消える</div><div class="st">$\sqrt{5}$：$1+2=3$ → $3\sqrt{5}$</div><div class="eq">\(\displaystyle =3\sqrt{5}\)</div></div>
+    <div class="ans">答え：\(\displaystyle 3\sqrt{5}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q" id="q81-6" data-key="81-(6)">
+  <div class="qhead"><span class="qlabel">(6)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle 8\sqrt{3}-4+(-2\sqrt{3})-(-6)-(-4\sqrt{3})\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">かっこをはずす</div><div class="eq">\(\displaystyle =8\sqrt{3}-4-2\sqrt{3}+6+4\sqrt{3}\)</div><div class="st">$\sqrt{3}$：$8-2+4=10$ → $10\sqrt{3}$</div><div class="st">ふつうの数：$-4+6=2$</div><div class="eq">\(\displaystyle =10\sqrt{3}+2\)</div></div>
+    <div class="ans">答え：\(\displaystyle 10\sqrt{3}+2\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+</section>
+<section class="prob" id="q82">
+<div class="phead"><span class="pno">82</span><span class="ptitle">√を小さくしてからたし算・ひき算</span></div><span class="ref">▶ 体系数学 p.47 例13</span>
+<div class="point"><div class="plabel">💡 やり方</div><ul><li>まず√の中を「<b>○の2乗 × △</b>」に分けて、○を√の外に出す。例：$\sqrt{18}=\sqrt{3^2\times2}=3\sqrt{2}$</li><li>見つけ方：4, 9, 16, 25, 36, 49, 64, 81, 100 … でわり切れないか、大きい方から試す。</li><li>全部を小さくすると、同じ√がそろってまとめられるようになる。</li></ul></div>
+<div class="q" id="q82-1" data-key="82-(1)">
+  <div class="qhead"><span class="qlabel">(1)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle \sqrt{18}+\sqrt{50}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$\sqrt{18}=\sqrt{9\times2}=3\sqrt{2}$</div><div class="st">$\sqrt{50}=\sqrt{25\times2}=5\sqrt{2}$</div><div class="eq">\(\displaystyle =3\sqrt{2}+5\sqrt{2}\)</div><div class="eq">\(\displaystyle =8\sqrt{2}\)</div></div>
+    <div class="ans">答え：\(\displaystyle 8\sqrt{2}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q" id="q82-2" data-key="82-(2)">
+  <div class="qhead"><span class="qlabel">(2)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle \sqrt{96}-\sqrt{54}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$\sqrt{96}=\sqrt{16\times6}=4\sqrt{6}$</div><div class="st">$\sqrt{54}=\sqrt{9\times6}=3\sqrt{6}$</div><div class="eq">\(\displaystyle =4\sqrt{6}-3\sqrt{6}\)</div><div class="eq">\(\displaystyle =\sqrt{6}\)</div></div>
+    <div class="ans">答え：\(\displaystyle \sqrt{6}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q" id="q82-3" data-key="82-(3)">
+  <div class="qhead"><span class="qlabel">(3)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle \sqrt{80}-\sqrt{180}+\sqrt{45}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$\sqrt{80}=\sqrt{16\times5}=4\sqrt{5}$</div><div class="st">$\sqrt{180}=\sqrt{36\times5}=6\sqrt{5}$</div><div class="st">$\sqrt{45}=\sqrt{9\times5}=3\sqrt{5}$</div><div class="eq">\(\displaystyle =4\sqrt{5}-6\sqrt{5}+3\sqrt{5}\)</div><div class="eq">\(\displaystyle =\sqrt{5}\)</div></div>
+    <div class="ans">答え：\(\displaystyle \sqrt{5}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q" id="q82-4" data-key="82-(4)">
+  <div class="qhead"><span class="qlabel">(4)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle \sqrt{162}-\sqrt{200}+\sqrt{32}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$\sqrt{162}=\sqrt{81\times2}=9\sqrt{2}$</div><div class="st">$\sqrt{200}=\sqrt{100\times2}=10\sqrt{2}$</div><div class="st">$\sqrt{32}=\sqrt{16\times2}=4\sqrt{2}$</div><div class="eq">\(\displaystyle =9\sqrt{2}-10\sqrt{2}+4\sqrt{2}\)</div><div class="eq">\(\displaystyle =3\sqrt{2}\)</div></div>
+    <div class="ans">答え：\(\displaystyle 3\sqrt{2}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q" id="q82-5" data-key="82-(5)">
+  <div class="qhead"><span class="qlabel">(5)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle -\sqrt{63}-(-\sqrt{175})-\sqrt{28}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">かっこをはずす：$-(-\sqrt{175})=+\sqrt{175}$</div><div class="st">$\sqrt{63}=\sqrt{9\times7}=3\sqrt{7}$</div><div class="st">$\sqrt{175}=\sqrt{25\times7}=5\sqrt{7}$</div><div class="st">$\sqrt{28}=\sqrt{4\times7}=2\sqrt{7}$</div><div class="eq">\(\displaystyle =-3\sqrt{7}+5\sqrt{7}-2\sqrt{7}\)</div><div class="eq">\(\displaystyle =0\)</div></div>
+    <div class="ans">答え：\(\displaystyle 0\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q" id="q82-6" data-key="82-(6)">
+  <div class="qhead"><span class="qlabel">(6)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle \sqrt{24}-\sqrt{6}-(-\sqrt{150})+(-\sqrt{54})\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">かっこをはずす</div><div class="eq">\(\displaystyle =\sqrt{24}-\sqrt{6}+\sqrt{150}-\sqrt{54}\)</div><div class="st">$\sqrt{24}=2\sqrt{6}$、$\sqrt{150}=\sqrt{25\times6}=5\sqrt{6}$、$\sqrt{54}=3\sqrt{6}$</div><div class="eq">\(\displaystyle =2\sqrt{6}-\sqrt{6}+5\sqrt{6}-3\sqrt{6}\)</div><div class="eq">\(\displaystyle =3\sqrt{6}\)</div></div>
+    <div class="ans">答え：\(\displaystyle 3\sqrt{6}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+</section>
+<section class="prob" id="q83">
+<div class="phead"><span class="pno">83</span><span class="ptitle">分母に√がある式・かけ算わり算がまざった式</span></div><span class="ref">▶ 体系数学 p.47 例14</span>
+<div class="point"><div class="plabel">💡 やり方</div><ul><li>分母の√は、分母と分子に<b>同じ√をかけて</b>消す（有理化）。$\dfrac{6}{\sqrt{2}}=\dfrac{6\times\sqrt{2}}{\sqrt{2}\times\sqrt{2}}=\dfrac{6\sqrt{2}}{2}=3\sqrt{2}$</li><li>×・÷ は +・− より先に計算する（ふつうの計算と同じ順番）。</li><li>$\sqrt{a}\times\sqrt{b}=\sqrt{ab}$、$\sqrt{a}\div\sqrt{b}=\sqrt{\dfrac{a}{b}}$</li></ul></div>
+<div class="q" id="q83-1" data-key="83-(1)">
+  <div class="qhead"><span class="qlabel">(1)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle \dfrac{6}{\sqrt{2}}-3\sqrt{8}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$\dfrac{6}{\sqrt{2}}=\dfrac{6\sqrt{2}}{2}=3\sqrt{2}$</div><div class="st">$3\sqrt{8}=3\times2\sqrt{2}=6\sqrt{2}$</div><div class="eq">\(\displaystyle =3\sqrt{2}-6\sqrt{2}\)</div><div class="eq">\(\displaystyle =-3\sqrt{2}\)</div></div>
+    <div class="ans">答え：\(\displaystyle -3\sqrt{2}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q" id="q83-2" data-key="83-(2)">
+  <div class="qhead"><span class="qlabel">(2)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle \sqrt{75}+\dfrac{12}{\sqrt{3}}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$\sqrt{75}=\sqrt{25\times3}=5\sqrt{3}$</div><div class="st">$\dfrac{12}{\sqrt{3}}=\dfrac{12\sqrt{3}}{3}=4\sqrt{3}$</div><div class="eq">\(\displaystyle =5\sqrt{3}+4\sqrt{3}\)</div><div class="eq">\(\displaystyle =9\sqrt{3}\)</div></div>
+    <div class="ans">答え：\(\displaystyle 9\sqrt{3}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q" id="q83-3" data-key="83-(3)">
+  <div class="qhead"><span class="qlabel">(3)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle \sqrt{54}\div\sqrt{2}-\sqrt{2}\times\sqrt{6}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">÷・× を先に計算</div><div class="st">$\sqrt{54}\div\sqrt{2}=\sqrt{27}=3\sqrt{3}$</div><div class="st">$\sqrt{2}\times\sqrt{6}=\sqrt{12}=2\sqrt{3}$</div><div class="eq">\(\displaystyle =3\sqrt{3}-2\sqrt{3}\)</div><div class="eq">\(\displaystyle =\sqrt{3}\)</div></div>
+    <div class="ans">答え：\(\displaystyle \sqrt{3}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q" id="q83-4" data-key="83-(4)">
+  <div class="qhead"><span class="qlabel">(4)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle \sqrt{18}\times\sqrt{12}-\sqrt{27}\div\sqrt{2}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$\sqrt{18}\times\sqrt{12}=3\sqrt{2}\times2\sqrt{3}=6\sqrt{6}$</div><div class="st">$\sqrt{27}\div\sqrt{2}=\dfrac{3\sqrt{3}}{\sqrt{2}}=\dfrac{3\sqrt{3}\times\sqrt{2}}{\sqrt{2}\times\sqrt{2}}=\dfrac{3\sqrt{6}}{2}$</div><div class="eq">\(\displaystyle =6\sqrt{6}-\dfrac{3\sqrt{6}}{2}\)</div><div class="st">$6\sqrt{6}=\dfrac{12\sqrt{6}}{2}$ にして通分</div><div class="eq">\(\displaystyle =\dfrac{12\sqrt{6}-3\sqrt{6}}{2}\)</div><div class="eq">\(\displaystyle =\dfrac{9\sqrt{6}}{2}\)</div></div>
+    <div class="ans">答え：\(\displaystyle \dfrac{9\sqrt{6}}{2}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q" id="q83-5" data-key="83-(5)">
+  <div class="qhead"><span class="qlabel">(5)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle \sqrt{45}-\dfrac{5}{\sqrt{5}}+3\sqrt{20}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$\sqrt{45}=3\sqrt{5}$</div><div class="st">$\dfrac{5}{\sqrt{5}}=\dfrac{5\sqrt{5}}{5}=\sqrt{5}$</div><div class="st">$3\sqrt{20}=3\times2\sqrt{5}=6\sqrt{5}$</div><div class="eq">\(\displaystyle =3\sqrt{5}-\sqrt{5}+6\sqrt{5}\)</div><div class="eq">\(\displaystyle =8\sqrt{5}\)</div></div>
+    <div class="ans">答え：\(\displaystyle 8\sqrt{5}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q" id="q83-6" data-key="83-(6)">
+  <div class="qhead"><span class="qlabel">(6)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle \dfrac{6}{\sqrt{2}}-\dfrac{5}{2\sqrt{2}}-\dfrac{\sqrt{50}}{3}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$\dfrac{6}{\sqrt{2}}=3\sqrt{2}$</div><div class="st">$\dfrac{5}{2\sqrt{2}}=\dfrac{5\times\sqrt{2}}{2\sqrt{2}\times\sqrt{2}}=\dfrac{5\sqrt{2}}{4}$</div><div class="st">$\dfrac{\sqrt{50}}{3}=\dfrac{5\sqrt{2}}{3}$</div><div class="eq">\(\displaystyle =3\sqrt{2}-\dfrac{5\sqrt{2}}{4}-\dfrac{5\sqrt{2}}{3}\)</div><div class="st">分母を 12 にそろえる</div><div class="eq">\(\displaystyle =\dfrac{36\sqrt{2}}{12}-\dfrac{15\sqrt{2}}{12}-\dfrac{20\sqrt{2}}{12}\)</div><div class="eq">\(\displaystyle =\dfrac{(36-15-20)\sqrt{2}}{12}\)</div><div class="eq">\(\displaystyle =\dfrac{\sqrt{2}}{12}\)</div></div>
+    <div class="ans">答え：\(\displaystyle \dfrac{\sqrt{2}}{12}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+</section>
+<section class="prob flagged" id="q84">
+<div class="phead"><span class="pno">84</span><span class="ptitle">かっこをふくむ式（分配法則・展開）</span><span class="badge circle">★○ あり</span></div><span class="ref">▶ 体系数学 p.48 例15</span>
+<div class="point"><div class="plabel">💡 やり方</div><ul><li>$\sqrt{a}(\sqrt{b}+\sqrt{c})=\sqrt{ab}+\sqrt{ac}$：かっこの中の<b>1つ1つ</b>にかける（分配法則）。</li><li>$(a+b)(c+d)=ac+ad+bc+bd$：4回かけ算して、最後に√を小さくしてまとめる。</li><li>かけたあと $\sqrt{48}$ や $\sqrt{147}$ のような大きな√が出てきたら、必ず小さくする。</li></ul></div>
+<div class="q" id="q84-1" data-key="84-(1)">
+  <div class="qhead"><span class="qlabel">(1)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle \sqrt{2}(\sqrt{24}-\sqrt{2})\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="eq">\(\displaystyle =\sqrt{2}\times\sqrt{24}-\sqrt{2}\times\sqrt{2}\)</div><div class="eq">\(\displaystyle =\sqrt{48}-2\)</div><div class="st">$\sqrt{48}=\sqrt{16\times3}=4\sqrt{3}$</div><div class="eq">\(\displaystyle =4\sqrt{3}-2\)</div></div>
+    <div class="ans">答え：\(\displaystyle 4\sqrt{3}-2\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q marked" id="q84-2" data-key="84-(2)">
+  <div class="qhead"><span class="qlabel">(2)</span><span class="mk star">★</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle (\sqrt{6}-\sqrt{3})\times\sqrt{12}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$\sqrt{12}$ を両方にかける</div><div class="eq">\(\displaystyle =\sqrt{6}\times\sqrt{12}-\sqrt{3}\times\sqrt{12}\)</div><div class="eq">\(\displaystyle =\sqrt{72}-\sqrt{36}\)</div><div class="st">$\sqrt{72}=\sqrt{36\times2}=6\sqrt{2}$、$\sqrt{36}=6$</div><div class="eq">\(\displaystyle =6\sqrt{2}-6\)</div></div>
+    <div class="ans">答え：\(\displaystyle 6\sqrt{2}-6\)</div>
+    <div class="note"><b>⚠ つまずきポイント</b><br>よくあるミス：$\sqrt{3}\times\sqrt{12}$ を $\sqrt{36}$ のままにしたり、$6\sqrt{2}$ と $6$ を「まとめて」$0$ や $6\sqrt{2}-6=0$ にしてしまうこと。$6\sqrt{2}$ と $6$ はなかまではないので、これ以上まとめられない。</div>
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q" id="q84-3" data-key="84-(3)">
+  <div class="qhead"><span class="qlabel">(3)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle (\sqrt{54}-\sqrt{18})\div\sqrt{2}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">÷ $\sqrt{2}$ を両方にする</div><div class="eq">\(\displaystyle =\sqrt{54}\div\sqrt{2}-\sqrt{18}\div\sqrt{2}\)</div><div class="eq">\(\displaystyle =\sqrt{27}-\sqrt{9}\)</div><div class="eq">\(\displaystyle =3\sqrt{3}-3\)</div></div>
+    <div class="ans">答え：\(\displaystyle 3\sqrt{3}-3\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q" id="q84-4" data-key="84-(4)">
+  <div class="qhead"><span class="qlabel">(4)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle (\sqrt{30}-\sqrt{5})\div\sqrt{5}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="eq">\(\displaystyle =\sqrt{30}\div\sqrt{5}-\sqrt{5}\div\sqrt{5}\)</div><div class="eq">\(\displaystyle =\sqrt{6}-1\)</div></div>
+    <div class="ans">答え：\(\displaystyle \sqrt{6}-1\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q marked" id="q84-5" data-key="84-(5)">
+  <div class="qhead"><span class="qlabel">(5)</span><span class="mk star">★</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle (\sqrt{3}+\sqrt{5})(8+\sqrt{15})\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">4回かける：$\sqrt{3}\times8$、$\sqrt{3}\times\sqrt{15}$、$\sqrt{5}\times8$、$\sqrt{5}\times\sqrt{15}$</div><div class="eq">\(\displaystyle =8\sqrt{3}+\sqrt{45}+8\sqrt{5}+\sqrt{75}\)</div><div class="st">$\sqrt{45}=3\sqrt{5}$、$\sqrt{75}=5\sqrt{3}$</div><div class="eq">\(\displaystyle =8\sqrt{3}+3\sqrt{5}+8\sqrt{5}+5\sqrt{3}\)</div><div class="st">$\sqrt{3}$：$8+5=13$、$\sqrt{5}$：$3+8=11$</div><div class="eq">\(\displaystyle =13\sqrt{3}+11\sqrt{5}\)</div></div>
+    <div class="ans">答え：\(\displaystyle 13\sqrt{3}+11\sqrt{5}\)</div>
+    <div class="note"><b>⚠ つまずきポイント</b><br>ポイント：4つかけ算したあと、<b>$\sqrt{45}$ と $\sqrt{75}$ を小さくしてから</b>なかま分けする。小さくしないと $\sqrt{3}$ と $\sqrt{5}$ のなかまが見つからない。</div>
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q" id="q84-6" data-key="84-(6)">
+  <div class="qhead"><span class="qlabel">(6)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle (\sqrt{10}-3)(\sqrt{5}+\sqrt{2})\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="eq">\(\displaystyle =\sqrt{50}+\sqrt{20}-3\sqrt{5}-3\sqrt{2}\)</div><div class="st">$\sqrt{50}=5\sqrt{2}$、$\sqrt{20}=2\sqrt{5}$</div><div class="eq">\(\displaystyle =5\sqrt{2}+2\sqrt{5}-3\sqrt{5}-3\sqrt{2}\)</div><div class="eq">\(\displaystyle =2\sqrt{2}-\sqrt{5}\)</div></div>
+    <div class="ans">答え：\(\displaystyle 2\sqrt{2}-\sqrt{5}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q" id="q84-7" data-key="84-(7)">
+  <div class="qhead"><span class="qlabel">(7)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle (-5+\sqrt{21})(\sqrt{7}+\sqrt{3})\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="eq">\(\displaystyle =-5\sqrt{7}-5\sqrt{3}+\sqrt{147}+\sqrt{63}\)</div><div class="st">$\sqrt{147}=\sqrt{49\times3}=7\sqrt{3}$、$\sqrt{63}=3\sqrt{7}$</div><div class="eq">\(\displaystyle =-5\sqrt{7}-5\sqrt{3}+7\sqrt{3}+3\sqrt{7}\)</div><div class="eq">\(\displaystyle =-2\sqrt{7}+2\sqrt{3}\)</div></div>
+    <div class="ans">答え：\(\displaystyle -2\sqrt{7}+2\sqrt{3}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q" id="q84-8" data-key="84-(8)">
+  <div class="qhead"><span class="qlabel">(8)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle (\sqrt{7}-\sqrt{6})(-\sqrt{42}+8)\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="eq">\(\displaystyle =-\sqrt{294}+8\sqrt{7}+\sqrt{252}-8\sqrt{6}\)</div><div class="st">$\sqrt{294}=\sqrt{49\times6}=7\sqrt{6}$、$\sqrt{252}=\sqrt{36\times7}=6\sqrt{7}$</div><div class="eq">\(\displaystyle =-7\sqrt{6}+8\sqrt{7}+6\sqrt{7}-8\sqrt{6}\)</div><div class="eq">\(\displaystyle =14\sqrt{7}-15\sqrt{6}\)</div></div>
+    <div class="ans">答え：\(\displaystyle 14\sqrt{7}-15\sqrt{6}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+</section>
+<section class="prob flagged" id="q85">
+<div class="phead"><span class="pno">85</span><span class="ptitle">分配法則を2回使う式</span><span class="badge circle">★○ あり</span></div><span class="ref">▶ 体系数学 p.48 例15</span>
+<div class="point"><div class="plabel">💡 やり方</div><ul><li>前半・後半それぞれ分配法則でかっこをはずす → √を小さくする → なかま分け、の3段階。</li><li>後ろのかっこの前が「$-$」のときは、かっこの中の符号が<b>全部</b>入れかわる。</li></ul></div>
+<div class="q" id="q85-1" data-key="85-(1)">
+  <div class="qhead"><span class="qlabel">(1)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle \sqrt{2}(\sqrt{3}+\sqrt{2})-\sqrt{6}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="eq">\(\displaystyle =\sqrt{6}+2-\sqrt{6}\)</div><div class="eq">\(\displaystyle =2\)</div></div>
+    <div class="ans">答え：\(\displaystyle 2\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q marked" id="q85-2" data-key="85-(2)">
+  <div class="qhead"><span class="qlabel">(2)</span><span class="mk star">★</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle \sqrt{5}(\sqrt{3}-1)+\sqrt{3}(\sqrt{60}-\sqrt{5})\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">前半：$\sqrt{5}\times\sqrt{3}-\sqrt{5}\times1=\sqrt{15}-\sqrt{5}$</div><div class="st">後半：$\sqrt{3}\times\sqrt{60}-\sqrt{3}\times\sqrt{5}=\sqrt{180}-\sqrt{15}$</div><div class="eq">\(\displaystyle =\sqrt{15}-\sqrt{5}+\sqrt{180}-\sqrt{15}\)</div><div class="st">$\sqrt{15}$ どうしは消える。$\sqrt{180}=\sqrt{36\times5}=6\sqrt{5}$</div><div class="eq">\(\displaystyle =-\sqrt{5}+6\sqrt{5}\)</div><div class="eq">\(\displaystyle =5\sqrt{5}\)</div></div>
+    <div class="ans">答え：\(\displaystyle 5\sqrt{5}\)</div>
+    <div class="note"><b>⚠ つまずきポイント</b><br>$\sqrt{3}\times\sqrt{60}=\sqrt{180}$ を小さくし忘れると答えが合わない。$180=36\times5$ に気づけるかがカギ。</div>
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q" id="q85-3" data-key="85-(3)">
+  <div class="qhead"><span class="qlabel">(3)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle \sqrt{5}(2+\sqrt{10})-\sqrt{2}(5-\sqrt{10})\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">前半：$2\sqrt{5}+\sqrt{50}=2\sqrt{5}+5\sqrt{2}$</div><div class="st">後半：$-\sqrt{2}\times5+\sqrt{2}\times\sqrt{10}=-5\sqrt{2}+\sqrt{20}=-5\sqrt{2}+2\sqrt{5}$</div><div class="eq">\(\displaystyle =2\sqrt{5}+5\sqrt{2}-5\sqrt{2}+2\sqrt{5}\)</div><div class="eq">\(\displaystyle =4\sqrt{5}\)</div></div>
+    <div class="ans">答え：\(\displaystyle 4\sqrt{5}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q" id="q85-4" data-key="85-(4)">
+  <div class="qhead"><span class="qlabel">(4)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle \sqrt{18}+\sqrt{8}(4-\sqrt{3})+\sqrt{216}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$\sqrt{18}=3\sqrt{2}$、$\sqrt{8}=2\sqrt{2}$、$\sqrt{216}=\sqrt{36\times6}=6\sqrt{6}$</div><div class="st">$2\sqrt{2}(4-\sqrt{3})=8\sqrt{2}-2\sqrt{6}$</div><div class="eq">\(\displaystyle =3\sqrt{2}+8\sqrt{2}-2\sqrt{6}+6\sqrt{6}\)</div><div class="eq">\(\displaystyle =11\sqrt{2}+4\sqrt{6}\)</div></div>
+    <div class="ans">答え：\(\displaystyle 11\sqrt{2}+4\sqrt{6}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q marked" id="q85-5" data-key="85-(5)">
+  <div class="qhead"><span class="qlabel">(5)</span><span class="mk star">★</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle \sqrt{3}(\sqrt{6}-2)-\sqrt{2}(\sqrt{6}+3)\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">前半：$\sqrt{18}-2\sqrt{3}=3\sqrt{2}-2\sqrt{3}$</div><div class="st">後半：かっこの前が $-\sqrt{2}$ なので、両方に $-\sqrt{2}$ をかける</div><div class="st">$-\sqrt{2}\times\sqrt{6}=-\sqrt{12}=-2\sqrt{3}$、$-\sqrt{2}\times3=-3\sqrt{2}$</div><div class="eq">\(\displaystyle =3\sqrt{2}-2\sqrt{3}-2\sqrt{3}-3\sqrt{2}\)</div><div class="eq">\(\displaystyle =-4\sqrt{3}\)</div></div>
+    <div class="ans">答え：\(\displaystyle -4\sqrt{3}\)</div>
+    <div class="note"><b>⚠ つまずきポイント</b><br>よくあるミス：後半の $+3$ に $-\sqrt{2}$ をかけ忘れて $+3\sqrt{2}$ にしてしまう。<b>マイナスはかっこの中の全部にかかる</b>。</div>
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q" id="q85-6" data-key="85-(6)">
+  <div class="qhead"><span class="qlabel">(6)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle \sqrt{6}(5\sqrt{2}-\sqrt{18})-\dfrac{24}{\sqrt{3}}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$\sqrt{6}\times5\sqrt{2}=5\sqrt{12}=10\sqrt{3}$</div><div class="st">$\sqrt{6}\times\sqrt{18}=\sqrt{108}=\sqrt{36\times3}=6\sqrt{3}$</div><div class="st">$\dfrac{24}{\sqrt{3}}=\dfrac{24\sqrt{3}}{3}=8\sqrt{3}$</div><div class="eq">\(\displaystyle =10\sqrt{3}-6\sqrt{3}-8\sqrt{3}\)</div><div class="eq">\(\displaystyle =-4\sqrt{3}\)</div></div>
+    <div class="ans">答え：\(\displaystyle -4\sqrt{3}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+</section>
+<section class="prob flagged" id="q86">
+<div class="phead"><span class="pno">86</span><span class="ptitle">乗法公式を使う展開</span><span class="badge circle">★○ あり</span></div><span class="ref">▶ 体系数学 p.48 例16</span>
+<div class="point"><div class="plabel">💡 やり方</div><ul><li>$(a+b)^2=a^2+2ab+b^2$ ／ $(a-b)^2=a^2-2ab+b^2$</li><li>$(a+b)(a-b)=a^2-b^2$（和と差の積）</li><li>$(x+a)(x+b)=x^2+(a+b)x+ab$</li><li>$(\sqrt{7})^2=7$ のように、√の2乗は中の数にもどる。</li></ul></div>
+<div class="q" id="q86-1" data-key="86-(1)">
+  <div class="qhead"><span class="qlabel">(1)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle (\sqrt{2}+\sqrt{7})^2\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$a=\sqrt{2}$、$b=\sqrt{7}$ で $(a+b)^2=a^2+2ab+b^2$</div><div class="eq">\(\displaystyle =(\sqrt{2})^2+2\times\sqrt{2}\times\sqrt{7}+(\sqrt{7})^2\)</div><div class="eq">\(\displaystyle =2+2\sqrt{14}+7\)</div><div class="eq">\(\displaystyle =9+2\sqrt{14}\)</div></div>
+    <div class="ans">答え：\(\displaystyle 9+2\sqrt{14}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q" id="q86-2" data-key="86-(2)">
+  <div class="qhead"><span class="qlabel">(2)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle (\sqrt{5}+\sqrt{10})^2\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="eq">\(\displaystyle =5+2\sqrt{50}+10\)</div><div class="st">$2\sqrt{50}=2\times5\sqrt{2}=10\sqrt{2}$</div><div class="eq">\(\displaystyle =15+10\sqrt{2}\)</div></div>
+    <div class="ans">答え：\(\displaystyle 15+10\sqrt{2}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q marked" id="q86-3" data-key="86-(3)">
+  <div class="qhead"><span class="qlabel">(3)</span><span class="mk star">★</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle (\sqrt{10}-\sqrt{2})^2\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$a=\sqrt{10}$、$b=\sqrt{2}$ で $(a-b)^2=a^2-2ab+b^2$</div><div class="eq">\(\displaystyle =(\sqrt{10})^2-2\times\sqrt{10}\times\sqrt{2}+(\sqrt{2})^2\)</div><div class="eq">\(\displaystyle =10-2\sqrt{20}+2\)</div><div class="st">$\sqrt{20}=2\sqrt{5}$ なので $2\sqrt{20}=4\sqrt{5}$</div><div class="eq">\(\displaystyle =12-4\sqrt{5}\)</div></div>
+    <div class="ans">答え：\(\displaystyle 12-4\sqrt{5}\)</div>
+    <div class="note"><b>⚠ つまずきポイント</b><br>よくあるミス：$(\sqrt{10}-\sqrt{2})^2=10-2=8$ としてしまう（まん中の $-2ab$ を忘れる）。2乗の公式は<b>3つの項</b>が出てくる。</div>
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q" id="q86-4" data-key="86-(4)">
+  <div class="qhead"><span class="qlabel">(4)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle (\sqrt{7}+\sqrt{2})(\sqrt{7}-\sqrt{2})\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">和と差の積 $(a+b)(a-b)=a^2-b^2$</div><div class="eq">\(\displaystyle =(\sqrt{7})^2-(\sqrt{2})^2\)</div><div class="eq">\(\displaystyle =7-2\)</div><div class="eq">\(\displaystyle =5\)</div></div>
+    <div class="ans">答え：\(\displaystyle 5\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q" id="q86-5" data-key="86-(5)">
+  <div class="qhead"><span class="qlabel">(5)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle (\sqrt{14}-\sqrt{5})(\sqrt{14}+\sqrt{5})\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="eq">\(\displaystyle =(\sqrt{14})^2-(\sqrt{5})^2\)</div><div class="eq">\(\displaystyle =14-5\)</div><div class="eq">\(\displaystyle =9\)</div></div>
+    <div class="ans">答え：\(\displaystyle 9\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q" id="q86-6" data-key="86-(6)">
+  <div class="qhead"><span class="qlabel">(6)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle (4+\sqrt{3})(4-\sqrt{3})\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="eq">\(\displaystyle =4^2-(\sqrt{3})^2\)</div><div class="eq">\(\displaystyle =16-3\)</div><div class="eq">\(\displaystyle =13\)</div></div>
+    <div class="ans">答え：\(\displaystyle 13\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q" id="q86-7" data-key="86-(7)">
+  <div class="qhead"><span class="qlabel">(7)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle (\sqrt{5}-2)(\sqrt{5}+3)\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$x=\sqrt{5}$、$a=-2$、$b=3$ で $(x+a)(x+b)=x^2+(a+b)x+ab$</div><div class="eq">\(\displaystyle =(\sqrt{5})^2+(-2+3)\sqrt{5}+(-2)\times3\)</div><div class="eq">\(\displaystyle =5+\sqrt{5}-6\)</div><div class="eq">\(\displaystyle =\sqrt{5}-1\)</div></div>
+    <div class="ans">答え：\(\displaystyle \sqrt{5}-1\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q marked" id="q86-8" data-key="86-(8)">
+  <div class="qhead"><span class="qlabel">(8)</span><span class="mk star">★</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle (3\sqrt{3}-2)(3\sqrt{3}-4)\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$x=3\sqrt{3}$、$a=-2$、$b=-4$ と見る</div><div class="eq">\(\displaystyle =(3\sqrt{3})^2+(-2-4)\times3\sqrt{3}+(-2)\times(-4)\)</div><div class="st">$(3\sqrt{3})^2=3^2\times(\sqrt{3})^2=9\times3=27$</div><div class="st">$(-6)\times3\sqrt{3}=-18\sqrt{3}$</div><div class="eq">\(\displaystyle =27-18\sqrt{3}+8\)</div><div class="eq">\(\displaystyle =35-18\sqrt{3}\)</div></div>
+    <div class="ans">答え：\(\displaystyle 35-18\sqrt{3}\)</div>
+    <div class="note"><b>⚠ つまずきポイント</b><br>よくあるミス：$(3\sqrt{3})^2$ を $9$ や $3\times3=9$ にしてしまう。$3$ も $\sqrt{3}$ も<b>両方2乗</b>して $9\times3=27$。</div>
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+</section>
+<section class="prob flagged" id="q87">
+<div class="phead"><span class="pno">87</span><span class="ptitle">分母の有理化（分母が2つの項のとき）</span><span class="badge circle">★○ あり</span></div><span class="ref">▶ 体系数学 p.49 例17</span>
+<div class="point"><div class="plabel">💡 やり方</div><ul><li>分母が $\sqrt{a}+\sqrt{b}$ なら、分母・分子に $\sqrt{a}-\sqrt{b}$ をかける（符号だけ反対のものをかける）。</li><li>すると分母が $(\sqrt{a}+\sqrt{b})(\sqrt{a}-\sqrt{b})=a-b$ になって√が消える。</li><li><b>分子にも同じものをかける</b>のを忘れない。分子は分配法則や乗法公式で展開する。</li></ul></div>
+<div class="q" id="q87-1" data-key="87-(1)">
+  <div class="qhead"><span class="qlabel">(1)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle \dfrac{1}{\sqrt{7}+\sqrt{3}}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">分母・分子に $\sqrt{7}-\sqrt{3}$ をかける</div><div class="eq">\(\displaystyle =\dfrac{\sqrt{7}-\sqrt{3}}{(\sqrt{7}+\sqrt{3})(\sqrt{7}-\sqrt{3})}\)</div><div class="st">分母 $=7-3=4$</div><div class="eq">\(\displaystyle =\dfrac{\sqrt{7}-\sqrt{3}}{4}\)</div></div>
+    <div class="ans">答え：\(\displaystyle \dfrac{\sqrt{7}-\sqrt{3}}{4}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q" id="q87-2" data-key="87-(2)">
+  <div class="qhead"><span class="qlabel">(2)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle \dfrac{4}{\sqrt{5}+1}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">分母・分子に $\sqrt{5}-1$ をかける</div><div class="eq">\(\displaystyle =\dfrac{4(\sqrt{5}-1)}{(\sqrt{5}+1)(\sqrt{5}-1)}\)</div><div class="st">分母 $=5-1=4$</div><div class="eq">\(\displaystyle =\dfrac{4(\sqrt{5}-1)}{4}\)</div><div class="eq">\(\displaystyle =\sqrt{5}-1\)</div></div>
+    <div class="ans">答え：\(\displaystyle \sqrt{5}-1\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q marked" id="q87-3" data-key="87-(3)">
+  <div class="qhead"><span class="qlabel">(3)</span><span class="mk circle">○</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle \dfrac{12}{\sqrt{7}-\sqrt{3}}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">分母が「$-$」なので、分母・分子に<b>$\sqrt{7}+\sqrt{3}$</b> をかける</div><div class="eq">\(\displaystyle =\dfrac{12(\sqrt{7}+\sqrt{3})}{(\sqrt{7}-\sqrt{3})(\sqrt{7}+\sqrt{3})}\)</div><div class="st">分母 $=7-3=4$</div><div class="eq">\(\displaystyle =\dfrac{12(\sqrt{7}+\sqrt{3})}{4}\)</div><div class="st">$12\div4=3$</div><div class="eq">\(\displaystyle =3(\sqrt{7}+\sqrt{3})=3\sqrt{7}+3\sqrt{3}\)</div></div>
+    <div class="ans">答え：\(\displaystyle 3\sqrt{7}+3\sqrt{3}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q marked" id="q87-4" data-key="87-(4)">
+  <div class="qhead"><span class="qlabel">(4)</span><span class="mk circle">○</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle \dfrac{\sqrt{5}-\sqrt{2}}{\sqrt{5}+\sqrt{2}}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">分母・分子に $\sqrt{5}-\sqrt{2}$ をかける</div><div class="eq">\(\displaystyle =\dfrac{(\sqrt{5}-\sqrt{2})^2}{(\sqrt{5}+\sqrt{2})(\sqrt{5}-\sqrt{2})}\)</div><div class="st">分子：$(\sqrt{5}-\sqrt{2})^2=5-2\sqrt{10}+2=7-2\sqrt{10}$</div><div class="st">分母：$5-2=3$</div><div class="eq">\(\displaystyle =\dfrac{7-2\sqrt{10}}{3}\)</div></div>
+    <div class="ans">答え：\(\displaystyle \dfrac{7-2\sqrt{10}}{3}\)</div>
+    <div class="note"><b>⚠ つまずきポイント</b><br>分子は $(\sqrt{5}-\sqrt{2})\times(\sqrt{5}-\sqrt{2})$ ＝ 2乗になる。$5-2=3$ としてしまわないこと（それは和と差の積のとき）。</div>
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q marked" id="q87-5" data-key="87-(5)">
+  <div class="qhead"><span class="qlabel">(5)</span><span class="mk circle">○</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle \dfrac{\sqrt{2}-1}{6-3\sqrt{2}}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">分母 $6-3\sqrt{2}$ の符号を変えた $6+3\sqrt{2}$ を、分母・分子にかける</div><div class="eq">\(\displaystyle =\dfrac{(\sqrt{2}-1)(6+3\sqrt{2})}{(6-3\sqrt{2})(6+3\sqrt{2})}\)</div><div class="st">分子：$6\sqrt{2}+3\times2-6-3\sqrt{2}=6\sqrt{2}+6-6-3\sqrt{2}=3\sqrt{2}$</div><div class="st">分母：$6^2-(3\sqrt{2})^2=36-18=18$</div><div class="eq">\(\displaystyle =\dfrac{3\sqrt{2}}{18}\)</div><div class="eq">\(\displaystyle =\dfrac{\sqrt{2}}{6}\)</div></div>
+    <div class="ans">答え：\(\displaystyle \dfrac{\sqrt{2}}{6}\)</div>
+    <div class="note"><b>⚠ つまずきポイント</b><br>別のやり方：分母を $3(2-\sqrt{2})$ とくくってから $2+\sqrt{2}$ をかけてもよい。$(3\sqrt{2})^2=9\times2=18$ に注意。</div>
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q" id="q87-6" data-key="87-(6)">
+  <div class="qhead"><span class="qlabel">(6)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle \dfrac{2\sqrt{2}-\sqrt{3}}{\sqrt{3}+\sqrt{2}}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">分母・分子に $\sqrt{3}-\sqrt{2}$ をかける</div><div class="eq">\(\displaystyle =\dfrac{(2\sqrt{2}-\sqrt{3})(\sqrt{3}-\sqrt{2})}{(\sqrt{3}+\sqrt{2})(\sqrt{3}-\sqrt{2})}\)</div><div class="st">分子：$2\sqrt{6}-2\times2-3+\sqrt{6}=3\sqrt{6}-7$</div><div class="st">分母：$3-2=1$</div><div class="eq">\(\displaystyle =3\sqrt{6}-7\)</div></div>
+    <div class="ans">答え：\(\displaystyle 3\sqrt{6}-7\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+</section>
+<section class="prob flagged" id="q88">
+<div class="phead"><span class="pno">88</span><span class="ptitle">式の値（くふうして代入）</span><span class="badge star">★ 大問ごと直し</span></div><span class="ref">▶ 体系数学 p.50 例題2</span>
+<div class="point"><div class="plabel">💡 やり方</div><ul><li>$x$, $y$ をそのまま代入すると計算が大変。まず<b>式を因数分解</b>して $(x+y)$ や $(x-y)$ の形にする。</li><li>$x^2+2xy+y^2=(x+y)^2$ ／ $x^2-2xy+y^2=(x-y)^2$ ／ $x^2-y^2=(x+y)(x-y)$</li><li>先に $x+y$ と $x-y$ を計算しておくと、√が消えてかんたんになる。</li></ul></div>
+<div class="q marked" id="q88-1" data-key="88-(1)①">
+  <div class="qhead"><span class="qlabel">(1)①</span><span class="mk circle">○</span><span class="qstat"></span></div>
+  <div class="spre">$x=\sqrt{5}+\sqrt{2}$、$y=\sqrt{5}-\sqrt{2}$ のとき</div><div class="qbody">\(\displaystyle x^2+2xy+y^2\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">因数分解：$x^2+2xy+y^2=(x+y)^2$</div><div class="st">$x+y=(\sqrt{5}+\sqrt{2})+(\sqrt{5}-\sqrt{2})=2\sqrt{5}$（$\sqrt{2}$ が消える）</div><div class="st">(x+y)^2=(2\sqrt{5})^2</div><div class="eq">\(\displaystyle =4\times5=20\)</div></div>
+    <div class="ans">答え：\(\displaystyle 20\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q marked" id="q88-2" data-key="88-(1)②">
+  <div class="qhead"><span class="qlabel">(1)②</span><span class="mk circle">○</span><span class="qstat"></span></div>
+  <div class="spre">$x=\sqrt{5}+\sqrt{2}$、$y=\sqrt{5}-\sqrt{2}$ のとき</div><div class="qbody">\(\displaystyle 2x^2-4xy+2y^2\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">まず 2 でくくる：$2(x^2-2xy+y^2)$</div><div class="st">かっこの中を因数分解：$2(x-y)^2$</div><div class="st">$x-y=(\sqrt{5}+\sqrt{2})-(\sqrt{5}-\sqrt{2})=2\sqrt{2}$（$\sqrt{5}$ が消える）</div><div class="st">2(x-y)^2=2\times(2\sqrt{2})^2</div><div class="eq">\(\displaystyle =2\times8=16\)</div></div>
+    <div class="ans">答え：\(\displaystyle 16\)</div>
+    <div class="note"><b>⚠ つまずきポイント</b><br>$x-y$ の計算で、$-(\sqrt{5}-\sqrt{2})=-\sqrt{5}+\sqrt{2}$ と符号が変わるのに注意。$(2\sqrt{2})^2=4\times2=8$。</div>
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q marked" id="q88-3" data-key="88-(2)①">
+  <div class="qhead"><span class="qlabel">(2)①</span><span class="mk circle">○</span><span class="qstat"></span></div>
+  <div class="spre">$x=3-2\sqrt{5}$、$y=3+2\sqrt{5}$ のとき</div><div class="qbody">\(\displaystyle 5x^2+10xy+5y^2\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">5 でくくる：$5(x^2+2xy+y^2)=5(x+y)^2$</div><div class="st">$x+y=(3-2\sqrt{5})+(3+2\sqrt{5})=6$</div><div class="st">5(x+y)^2=5\times6^2</div><div class="eq">\(\displaystyle =5\times36=180\)</div></div>
+    <div class="ans">答え：\(\displaystyle 180\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q marked" id="q88-4" data-key="88-(2)②">
+  <div class="qhead"><span class="qlabel">(2)②</span><span class="mk circle">○</span><span class="qstat"></span></div>
+  <div class="spre">$x=3-2\sqrt{5}$、$y=3+2\sqrt{5}$ のとき</div><div class="qbody">\(\displaystyle 6x^2-6y^2\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">6 でくくる：$6(x^2-y^2)$</div><div class="st">$x^2-y^2=(x+y)(x-y)$ なので $6(x+y)(x-y)$</div><div class="st">$x+y=6$</div><div class="st">$x-y=(3-2\sqrt{5})-(3+2\sqrt{5})=3-2\sqrt{5}-3-2\sqrt{5}=-4\sqrt{5}$</div><div class="st">6(x+y)(x-y)=6\times6\times(-4\sqrt{5})</div><div class="eq">\(\displaystyle =-144\sqrt{5}\)</div></div>
+    <div class="ans">答え：\(\displaystyle -144\sqrt{5}\)</div>
+    <div class="note"><b>⚠ つまずきポイント</b><br>$x-y$ がマイナスになる（$x$ の方が小さい）ので、答えもマイナス。</div>
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+</section>
+<section class="prob flagged" id="q89">
+<div class="phead"><span class="pno">89</span><span class="ptitle">式の値（x²+y² の形）</span><span class="badge star">★ 大問ごと直し</span></div><span class="ref">▶ 体系数学 p.50 例題3</span>
+<div class="point"><div class="plabel">💡 やり方</div><ul><li>$x^2+y^2$ はそのままでは因数分解できない。そこで <b>$x^2+y^2=(x+y)^2-2xy$</b> と変形する。</li><li>（理由：$(x+y)^2=x^2+2xy+y^2$ だから、そこから $2xy$ をひけば $x^2+y^2$ が残る）</li><li>$x+y$ と $xy$ を先に計算しておく。$xy$ は和と差の積で√が消える。</li></ul></div>
+<div class="q marked" id="q89-1" data-key="89-(1)">
+  <div class="qhead"><span class="qlabel">(1)</span><span class="mk circle">○</span><span class="qstat"></span></div>
+  <div class="spre">$x=\sqrt{7}+\sqrt{3}$、$y=\sqrt{7}-\sqrt{3}$ のとき</div><div class="qbody">\(\displaystyle x^2+y^2\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$x+y=2\sqrt{7}$</div><div class="st">$xy=(\sqrt{7}+\sqrt{3})(\sqrt{7}-\sqrt{3})=7-3=4$</div><div class="st">x^2+y^2=(x+y)^2-2xy</div><div class="eq">\(\displaystyle =(2\sqrt{7})^2-2\times4\)</div><div class="eq">\(\displaystyle =28-8=20\)</div></div>
+    <div class="ans">答え：\(\displaystyle 20\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q marked" id="q89-2" data-key="89-(2)">
+  <div class="qhead"><span class="qlabel">(2)</span><span class="mk circle">○</span><span class="qstat"></span></div>
+  <div class="spre">$x=2-\sqrt{5}$、$y=2+\sqrt{5}$ のとき</div><div class="qbody">\(\displaystyle 5x^2+5y^2\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">5 でくくる：$5(x^2+y^2)=5\{(x+y)^2-2xy\}$</div><div class="st">$x+y=(2-\sqrt{5})+(2+\sqrt{5})=4$</div><div class="st">$xy=(2-\sqrt{5})(2+\sqrt{5})=4-5=-1$</div><div class="st">5\{(x+y)^2-2xy\}=5\{4^2-2\times(-1)\}</div><div class="eq">\(\displaystyle =5\times(16+2)=5\times18=90\)</div></div>
+    <div class="ans">答え：\(\displaystyle 90\)</div>
+    <div class="note"><b>⚠ つまずきポイント</b><br>$xy=-1$ とマイナスなので、$-2xy=-2\times(-1)=+2$ になる。ここで符号をまちがえやすい。</div>
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q marked" id="q89-3" data-key="89-(3)">
+  <div class="qhead"><span class="qlabel">(3)</span><span class="mk star">★</span><span class="qstat"></span></div>
+  <div class="spre">$x=\sqrt{6}+\sqrt{5}$、$y=\sqrt{6}-\sqrt{5}$ のとき</div><div class="qbody">\(\displaystyle \dfrac{y}{x}+\dfrac{x}{y}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">通分すると $\dfrac{y^2+x^2}{xy}$</div><div class="st">分子を $(x+y)^2-2xy$ に変える</div><div class="st">$x+y=2\sqrt{6}$、$xy=6-5=1$</div><div class="st">\dfrac{(x+y)^2-2xy}{xy}=\dfrac{(2\sqrt{6})^2-2\times1}{1}</div><div class="eq">\(\displaystyle =24-2=22\)</div></div>
+    <div class="ans">答え：\(\displaystyle 22\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+</section>
+<section class="prob flagged" id="q90">
+<div class="phead"><span class="pno">90</span><span class="ptitle">√の大きさと不等式</span><span class="badge star">★ 大問ごと直し</span></div><span class="ref">▶ 体系数学 p.51 例題4</span>
+<div class="point"><div class="plabel">💡 やり方</div><ul><li>ふつうの数も√の形にそろえる：$3=\sqrt{9}$、$4=\sqrt{16}$</li><li>√どうしなら、<b>中の数が大きいほど大きい</b>。だから √をはずして中の数で不等式を作れる。</li><li>「<」は等号なし → 両はしの数はふくまない。</li></ul></div>
+<div class="q marked" id="q90-1" data-key="90-(1)">
+  <div class="qhead"><span class="qlabel">(1)</span><span class="mk star">★</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle 3<\sqrt{a}<4\)  を満たす自然数  \(\displaystyle a\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$3=\sqrt{9}$、$4=\sqrt{16}$ なので $\sqrt{9}<\sqrt{a}<\sqrt{16}$</div><div class="st">中の数で比べる：$9<a<16$</div><div class="st">9 と 16 はふくまないので $a=10,11,12,13,14,15$</div></div>
+    <div class="ans">答え：\(a=10\)、\(11\)、\(12\)、\(13\)、\(14\)、\(15\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q marked" id="q90-2" data-key="90-(2)">
+  <div class="qhead"><span class="qlabel">(2)</span><span class="mk star">★</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle 4.5<\sqrt{x}<5.5\)  を満たす自然数  \(\displaystyle x\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$4.5^2=20.25$、$5.5^2=30.25$ なので $\sqrt{20.25}<\sqrt{x}<\sqrt{30.25}$</div><div class="st">$20.25<x<30.25$</div><div class="st">この間の自然数は 21 から 30 まで</div></div>
+    <div class="ans">答え：\(x=21\)、\(22\)、\(23\)、\(24\)、\(25\)、\(26\)、\(27\)、\(28\)、\(29\)、\(30\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q marked" id="q90-3" data-key="90-(3)">
+  <div class="qhead"><span class="qlabel">(3)</span><span class="mk star">★</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle 1<\sqrt{2n}<3\)  を満たす自然数  \(\displaystyle n\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$1=\sqrt{1}$、$3=\sqrt{9}$ なので $1<2n<9$</div><div class="st">全体を 2 でわる：$\dfrac{1}{2}<n<\dfrac{9}{2}$、つまり $0.5<n<4.5$</div><div class="st">この間の自然数は 1, 2, 3, 4</div></div>
+    <div class="ans">答え：\(n=1\)、\(2\)、\(3\)、\(4\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q marked" id="q90-4" data-key="90-(4)">
+  <div class="qhead"><span class="qlabel">(4)</span><span class="mk circle">○</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle -2<-\sqrt{\dfrac{k}{3}}<-\dfrac{3}{2}\)  を満たす自然数  \(\displaystyle k\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">マイナスがついているので、まず全体に $-1$ をかける。<b>不等号の向きが逆になる</b></div><div class="st">$2>\sqrt{\dfrac{k}{3}}>\dfrac{3}{2}$、つまり $\dfrac{3}{2}<\sqrt{\dfrac{k}{3}}<2$</div><div class="st">√の形にそろえる：$\dfrac{3}{2}=\sqrt{\dfrac{9}{4}}$、$2=\sqrt{4}$</div><div class="st">中の数で比べる：$\dfrac{9}{4}<\dfrac{k}{3}<4$</div><div class="st">全体に 3 をかける：$\dfrac{27}{4}<k<12$、つまり $6.75<k<12$</div><div class="st">この間の自然数は 7, 8, 9, 10, 11</div></div>
+    <div class="ans">答え：\(k=7\)、\(8\)、\(9\)、\(10\)、\(11\)</div>
+    <div class="note"><b>⚠ つまずきポイント</b><br>負の数どうしは「数字が大きい方が小さい」（$-2<-1.5$）。だから $-1$ をかけてプラスにすると、不等号の向きがひっくり返る。</div>
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+</section>
+<section class="prob flagged" id="q91">
+<div class="phead"><span class="pno">91</span><span class="ptitle">√が自然数になる条件</span><span class="badge star">★ 大問ごと直し</span></div><span class="ref">▶ 体系数学 p.51 例題5</span>
+<div class="point"><div class="plabel">💡 やり方</div><ul><li>√がはずれて自然数になる ＝ √の中が「<b>自然数の2乗</b>」（1, 4, 9, 16, 25 …）になること。</li><li>√の中を<b>素因数分解</b>して、どの素数も<b>2こずつペア</b>になるようにする。</li><li>例：$84=2^2\times3\times7$ → 3 と 7 があまっている → $a=3\times7=21$ をかけるとペアがそろう。</li></ul></div>
+<div class="q marked" id="q91-1" data-key="91-(1)">
+  <div class="qhead"><span class="qlabel">(1)</span><span class="mk star">★</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle \sqrt{84a}\)  が自然数となる最小の自然数  \(\displaystyle a\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$84=2\times2\times3\times7=2^2\times3\times7$</div><div class="st">2 はペアになっている。3 と 7 が1こずつあまる</div><div class="st">$a=3\times7=21$ のとき $84a=2^2\times3^2\times7^2=(2\times3\times7)^2=42^2$</div><div class="st">$\sqrt{84\times21}=42$ で自然数になる</div></div>
+    <div class="ans">答え：\(\displaystyle a=21\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q marked" id="q91-2" data-key="91-(2)">
+  <div class="qhead"><span class="qlabel">(2)</span><span class="mk star">★</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle \sqrt{250x}\)  が自然数となる最小の自然数  \(\displaystyle x\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$250=2\times5\times5\times5=2\times5^3$</div><div class="st">$5^3=5^2\times5$ なので、あまりは 2 と 5</div><div class="st">$x=2\times5=10$ のとき $250x=2^2\times5^4=(2\times5^2)^2=50^2$</div></div>
+    <div class="ans">答え：\(\displaystyle x=10\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q marked" id="q91-3" data-key="91-(3)">
+  <div class="qhead"><span class="qlabel">(3)</span><span class="mk star">★</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle \sqrt{\dfrac{1008}{n}}\)  が自然数となる最小の自然数  \(\displaystyle n\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$1008=2^4\times3^2\times7$</div><div class="st">こんどは<b>わり算</b>なので、あまっている 7 を<b>わって取りのぞく</b></div><div class="st">$n=7$ のとき $\dfrac{1008}{7}=144=12^2$</div><div class="st">$\sqrt{144}=12$ で自然数になる</div></div>
+    <div class="ans">答え：\(\displaystyle n=7\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q marked" id="q91-4" data-key="91-(4)">
+  <div class="qhead"><span class="qlabel">(4)</span><span class="mk star">★</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle \sqrt{\dfrac{6125}{k}}\)  が 2 以上の自然数となる最大の自然数  \(\displaystyle k\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$6125=5\times5\times5\times7\times7=5^3\times7^2$</div><div class="st">$k$ が<b>大きいほど</b> $\dfrac{6125}{k}$ は小さくなる。答えが「2以上」でいちばん小さい2乗の数になるときが、$k$ が最大のとき</div><div class="st">$\dfrac{6125}{k}$ は「$6125$ の約数で2乗の数」。$5^3\times7^2$ からできる2乗の数は $1,\ 5^2,\ 7^2,\ 5^2\times7^2$</div><div class="st">1 は「2以上」にならないので使えない。残りでいちばん小さいのは $5^2=25$（$\sqrt{25}=5$）</div><div class="st">$\dfrac{6125}{k}=25$ より $k=6125\div25=245$</div></div>
+    <div class="ans">答え：\(\displaystyle k=245\)</div>
+    <div class="note"><b>⚠ つまずきポイント</b><br>「2以上」がないと、$\dfrac{6125}{6125}=1$（$\sqrt{1}=1$）で $k=6125$ になってしまう。この条件をよく読むのがポイント。</div>
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+</section>
+<section class="prob flagged" id="q92">
+<div class="phead"><span class="pno">92</span><span class="ptitle">整数部分と小数部分</span><span class="badge star">★ 大問ごと直し</span></div><span class="ref">▶ 体系数学 p.52 練習25</span>
+<div class="point"><div class="plabel">💡 やり方</div><ul><li>整数部分＝その数をこえない最大の整数。小数部分＝<b>(もとの数)−(整数部分)</b>。</li><li>√の整数部分は、はさみうちで見つける：$\sqrt{9}<\sqrt{13}<\sqrt{16}$ → $3<\sqrt{13}<4$ → 整数部分は 3</li><li>√の小数部分は小数で書けないので、<b>$\sqrt{13}-3$</b> のように式のまま答える。</li></ul></div>
+<div class="q marked" id="q92-1" data-key="92-(1)">
+  <div class="qhead"><span class="qlabel">(1)</span><span class="mk star">★</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle 7.35\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">整数部分は 7</div><div class="st">小数部分は $7.35-7=0.35$</div></div>
+    <div class="ans">答え：整数部分  \(\displaystyle 7\)、 小数部分  \(\displaystyle 0.35\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q marked" id="q92-2" data-key="92-(2)">
+  <div class="qhead"><span class="qlabel">(2)</span><span class="mk star">★</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle 8.3+7.8\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">まず計算：$8.3+7.8=16.1$</div><div class="st">整数部分 16、小数部分 $16.1-16=0.1$</div></div>
+    <div class="ans">答え：整数部分  \(\displaystyle 16\)、 小数部分  \(\displaystyle 0.1\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q marked" id="q92-3" data-key="92-(3)">
+  <div class="qhead"><span class="qlabel">(3)</span><span class="mk star">★</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle 12.06-5.68\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">まず計算：$12.06-5.68=6.38$</div><div class="st">整数部分 6、小数部分 0.38</div></div>
+    <div class="ans">答え：整数部分  \(\displaystyle 6\)、 小数部分  \(\displaystyle 0.38\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q marked" id="q92-4" data-key="92-(4)">
+  <div class="qhead"><span class="qlabel">(4)</span><span class="mk star">★</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle \dfrac{7}{3}+\dfrac{3}{5}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">通分して計算：$\dfrac{35}{15}+\dfrac{9}{15}=\dfrac{44}{15}$</div><div class="st">$44\div15=2$ あまり $14$ なので $\dfrac{44}{15}=2+\dfrac{14}{15}$</div><div class="st">整数部分 2、小数部分 $\dfrac{14}{15}$</div></div>
+    <div class="ans">答え：整数部分  \(\displaystyle 2\)、 小数部分  \(\displaystyle \dfrac{14}{15}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q marked" id="q92-5" data-key="92-(5)">
+  <div class="qhead"><span class="qlabel">(5)</span><span class="mk circle">○</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle \sqrt{13}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$\sqrt{13}$ を2乗の数ではさむ：$9<13<16$</div><div class="st">$\sqrt{9}<\sqrt{13}<\sqrt{16}$、つまり $3<\sqrt{13}<4$</div><div class="st">整数部分は 3</div><div class="st">小数部分 ＝ もとの数 − 整数部分 ＝ $\sqrt{13}-3$</div></div>
+    <div class="ans">答え：整数部分  \(\displaystyle 3\)、 小数部分  \(\displaystyle \sqrt{13}-3\)</div>
+    <div class="note"><b>⚠ つまずきポイント</b><br>小数部分を「0.6」などと近い小数で答えるのはまちがい。$\sqrt{13}-3$ のように<b>式のまま</b>が正しい答え。</div>
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q marked" id="q92-6" data-key="92-(6)">
+  <div class="qhead"><span class="qlabel">(6)</span><span class="mk star">★</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle 2+\sqrt{3}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">まず $\sqrt{3}$ をはさむ：$1<\sqrt{3}<2$</div><div class="st">全体に 2 をたす：$3<2+\sqrt{3}<4$</div><div class="st">整数部分は 3</div><div class="st">小数部分 $=(2+\sqrt{3})-3=\sqrt{3}-1$</div></div>
+    <div class="ans">答え：整数部分  \(\displaystyle 3\)、 小数部分  \(\displaystyle \sqrt{3}-1\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+</section>
+<section class="prob flagged" id="q93">
+<div class="phead"><span class="pno">93</span><span class="ptitle">整数部分・小数部分を使った式の値</span><span class="badge star">★ 大問ごと直し</span></div><span class="ref">▶ 体系数学 p.52 例題6</span>
+<div class="point"><div class="plabel">💡 やり方</div><ul><li>手順：①はさみうちで整数部分 $a$ を出す → ②小数部分 $b=\sqrt{\ }-a$ → ③式に代入。</li><li>$a^2-b^2=(a+b)(a-b)$ のように因数分解すると楽になるものもある。$a+b$ は<b>もとの数そのもの</b>になる。</li></ul></div>
+<div class="q marked" id="q93-1" data-key="93-(1)">
+  <div class="qhead"><span class="qlabel">(1)</span><span class="mk star">★</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle \sqrt{6}\)  の整数部分  \(\displaystyle a\)、 小数部分  \(\displaystyle b\)  のとき  \(\displaystyle a^2+b^2\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$\sqrt{4}<\sqrt{6}<\sqrt{9}$ より $2<\sqrt{6}<3$ → $a=2$</div><div class="st">$b=\sqrt{6}-2$</div><div class="st">a^2+b^2=2^2+(\sqrt{6}-2)^2</div><div class="eq">\(\displaystyle =4+(6-4\sqrt{6}+4)\)</div><div class="eq">\(\displaystyle =14-4\sqrt{6}\)</div></div>
+    <div class="ans">答え：\(\displaystyle 14-4\sqrt{6}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q marked" id="q93-2" data-key="93-(2)">
+  <div class="qhead"><span class="qlabel">(2)</span><span class="mk star">★</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle \sqrt{15}\)  の整数部分  \(\displaystyle a\)、 小数部分  \(\displaystyle b\)  のとき  \(\displaystyle a^2+b^2\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$\sqrt{9}<\sqrt{15}<\sqrt{16}$ より $3<\sqrt{15}<4$ → $a=3$</div><div class="st">$b=\sqrt{15}-3$</div><div class="st">a^2+b^2=3^2+(\sqrt{15}-3)^2</div><div class="eq">\(\displaystyle =9+(15-6\sqrt{15}+9)\)</div><div class="eq">\(\displaystyle =33-6\sqrt{15}\)</div></div>
+    <div class="ans">答え：\(\displaystyle 33-6\sqrt{15}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q marked" id="q93-3" data-key="93-(3)">
+  <div class="qhead"><span class="qlabel">(3)</span><span class="mk star">★</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle \sqrt{12}\)  の整数部分  \(\displaystyle a\)、 小数部分  \(\displaystyle b\)  のとき  \(\displaystyle a^2-b^2\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$\sqrt{9}<\sqrt{12}<\sqrt{16}$ より $3<\sqrt{12}<4$ → $a=3$</div><div class="st">$b=\sqrt{12}-3$（$\sqrt{12}=2\sqrt{3}$ なので $b=2\sqrt{3}-3$）</div><div class="st">a^2-b^2=9-(2\sqrt{3}-3)^2</div><div class="st">$(2\sqrt{3}-3)^2=12-12\sqrt{3}+9=21-12\sqrt{3}$</div><div class="eq">\(\displaystyle =9-(21-12\sqrt{3})\)</div><div class="eq">\(\displaystyle =-12+12\sqrt{3}\)</div></div>
+    <div class="ans">答え：\(\displaystyle -12+12\sqrt{3}\)</div>
+    <div class="note"><b>⚠ つまずきポイント</b><br>別のやり方：$a^2-b^2=(a+b)(a-b)$。$a+b=\sqrt{12}=2\sqrt{3}$、$a-b=3-(2\sqrt{3}-3)=6-2\sqrt{3}$ なので $2\sqrt{3}(6-2\sqrt{3})=12\sqrt{3}-12$。</div>
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q marked" id="q93-4" data-key="93-(4)">
+  <div class="qhead"><span class="qlabel">(4)</span><span class="mk star">★</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle \sqrt{3}\)  の整数部分  \(\displaystyle a\)、 小数部分  \(\displaystyle b\)  のとき  \(\displaystyle a^4-b^4\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$1<\sqrt{3}<2$ → $a=1$、$b=\sqrt{3}-1$</div><div class="st">$a^4-b^4=(a^2+b^2)(a^2-b^2)=(a^2+b^2)(a+b)(a-b)$ と因数分解する</div><div class="st">$a+b=\sqrt{3}$</div><div class="st">$a-b=1-(\sqrt{3}-1)=2-\sqrt{3}$</div><div class="st">$b^2=(\sqrt{3}-1)^2=4-2\sqrt{3}$ なので $a^2+b^2=1+4-2\sqrt{3}=5-2\sqrt{3}$</div><div class="st">a^4-b^4=(5-2\sqrt{3})\times\sqrt{3}\times(2-\sqrt{3})</div><div class="st">$\sqrt{3}(2-\sqrt{3})=2\sqrt{3}-3$</div><div class="eq">\(\displaystyle =(5-2\sqrt{3})(2\sqrt{3}-3)\)</div><div class="eq">\(\displaystyle =10\sqrt{3}-15-12+6\sqrt{3}\)</div><div class="eq">\(\displaystyle =-27+16\sqrt{3}\)</div></div>
+    <div class="ans">答え：\(\displaystyle -27+16\sqrt{3}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+</section>
+<h2 class="sec" id="s3">3 有理数と無理数<small>問題集 p.28〜30</small></h2>
+<section class="prob" id="q100">
+<div class="phead"><span class="pno">100</span><span class="ptitle">循環小数の書き方</span></div>
+<div class="point"><div class="plabel">💡 やり方</div><ul><li>くり返す部分の<b>最初と最後の数字の上</b>に点をつける。1けただけくり返すなら、その1つに点。</li><li>例：$0.666\cdots=0.\dot{6}$、$0.31818\cdots=0.3\dot{1}\dot{8}$、$1.234234\cdots=1.\dot{2}3\dot{4}$</li><li>くり返しが始まる位置をよく見る（$3.1333\cdots$ は 1 はくり返さない）。</li></ul></div>
+<div class="q" id="q100-1" data-key="100-(1)">
+  <div class="qhead"><span class="qlabel">(1)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle 0.22222\cdots\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">2 だけがくり返す</div></div>
+    <div class="ans">答え：\(\displaystyle 0.\dot{2}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q" id="q100-2" data-key="100-(2)">
+  <div class="qhead"><span class="qlabel">(2)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle 3.133333\cdots\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">小数第1位の 1 はくり返さない。くり返すのは 3 だけ</div></div>
+    <div class="ans">答え：\(\displaystyle 3.1\dot{3}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q" id="q100-3" data-key="100-(3)">
+  <div class="qhead"><span class="qlabel">(3)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle 0.414141\cdots\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">「41」がくり返す → 4 と 1 の上に点</div></div>
+    <div class="ans">答え：\(\displaystyle 0.\dot{4}\dot{1}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q" id="q100-4" data-key="100-(4)">
+  <div class="qhead"><span class="qlabel">(4)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle 3.707070\cdots\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">「70」がくり返す → 7 と 0 の上に点</div></div>
+    <div class="ans">答え：\(\displaystyle 3.\dot{7}\dot{0}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q" id="q100-5" data-key="100-(5)">
+  <div class="qhead"><span class="qlabel">(5)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle 5.512512512\cdots\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">「512」がくり返す → 最初の 5 と最後の 2 の上に点（まん中の 1 には点をつけない）</div></div>
+    <div class="ans">答え：\(\displaystyle 5.\dot{5}1\dot{2}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q" id="q100-6" data-key="100-(6)">
+  <div class="qhead"><span class="qlabel">(6)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle 0.00295295295\cdots\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">0.00 のあと「295」がくり返す → 2 と 5 の上に点</div></div>
+    <div class="ans">答え：\(\displaystyle 0.00\dot{2}9\dot{5}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+</section>
+<section class="prob" id="q101">
+<div class="phead"><span class="pno">101</span><span class="ptitle">分数を循環小数に直す</span></div><span class="ref">▶ 体系数学 p.54 練習27</span>
+<div class="point"><div class="plabel">💡 やり方</div><ul><li>分子 ÷ 分母 をわり算して、同じ数字の並びが出てきたら、そこがくり返し。</li><li>わり算の「あまり」が前と同じになったら、そこから先はくり返しになる。</li></ul></div>
+<div class="q" id="q101-1" data-key="101-(1)">
+  <div class="qhead"><span class="qlabel">(1)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle \dfrac{4}{3}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$4\div3=1.333\cdots$</div></div>
+    <div class="ans">答え：\(\displaystyle 1.\dot{3}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q" id="q101-2" data-key="101-(2)">
+  <div class="qhead"><span class="qlabel">(2)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle \dfrac{2}{9}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$2\div9=0.222\cdots$</div></div>
+    <div class="ans">答え：\(\displaystyle 0.\dot{2}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q" id="q101-3" data-key="101-(3)">
+  <div class="qhead"><span class="qlabel">(3)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle \dfrac{7}{6}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$7\div6=1.1666\cdots$（1 はくり返さない）</div></div>
+    <div class="ans">答え：\(\displaystyle 1.1\dot{6}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q" id="q101-4" data-key="101-(4)">
+  <div class="qhead"><span class="qlabel">(4)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle \dfrac{3}{11}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$3\div11=0.272727\cdots$</div></div>
+    <div class="ans">答え：\(\displaystyle 0.\dot{2}\dot{7}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q" id="q101-5" data-key="101-(5)">
+  <div class="qhead"><span class="qlabel">(5)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle \dfrac{25}{22}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$25\div22=1.1363636\cdots$（小数第1位の 1 はくり返さない、「36」がくり返す）</div></div>
+    <div class="ans">答え：\(\displaystyle 1.1\dot{3}\dot{6}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q" id="q101-6" data-key="101-(6)">
+  <div class="qhead"><span class="qlabel">(6)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle \dfrac{22}{7}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$22\div7=3.142857142857\cdots$</div><div class="st">「142857」の6けたがくり返す → 1 と 7 の上に点</div></div>
+    <div class="ans">答え：\(\displaystyle 3.\dot{1}4285\dot{7}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+</section>
+<section class="prob flagged" id="q102">
+<div class="phead"><span class="pno">102</span><span class="ptitle">循環小数を分数に直す</span><span class="badge star">★ 大問ごと直し</span></div><span class="ref">▶ 体系数学 p.54 練習28</span>
+<div class="point"><div class="plabel">💡 やり方</div><ul><li>手順：①その数を $x$ とおく ②くり返す<b>けた数</b>だけ 10倍・100倍・1000倍 する ③大きい方から $x$ をひくと、くり返し部分がピッタリ消える ④わり算で $x$ を出す。</li><li>くり返しが1けた → 10倍、2けた → 100倍、3けた → 1000倍。</li><li>$2.1\dot{6}$ のようにくり返さない数字があるときは、10倍と100倍の2つを作ってひく。</li></ul></div>
+<div class="q marked" id="q102-1" data-key="102-(1)">
+  <div class="qhead"><span class="qlabel">(1)</span><span class="mk star">★</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle 0.\dot{4}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$x=0.444\cdots$ とおく（①）</div><div class="st">くり返しは1けた → 10倍：$10x=4.444\cdots$（②）</div><div class="st">②−①：小数部分が消えて $9x=4$</div><div class="st">$x=\dfrac{4}{9}$</div></div>
+    <div class="ans">答え：\(\displaystyle \dfrac{4}{9}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q marked" id="q102-2" data-key="102-(2)">
+  <div class="qhead"><span class="qlabel">(2)</span><span class="mk star">★</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle 2.\dot{3}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$x=2.333\cdots$ とおく</div><div class="st">$10x=23.333\cdots$</div><div class="st">ひく：$9x=21$</div><div class="st">$x=\dfrac{21}{9}=\dfrac{7}{3}$（3 で約分）</div></div>
+    <div class="ans">答え：\(\displaystyle \dfrac{7}{3}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q marked" id="q102-3" data-key="102-(3)">
+  <div class="qhead"><span class="qlabel">(3)</span><span class="mk star">★</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle 0.\dot{7}\dot{9}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$x=0.7979\cdots$ とおく</div><div class="st">くり返しは2けた → 100倍：$100x=79.7979\cdots$</div><div class="st">ひく：$99x=79$</div><div class="st">$x=\dfrac{79}{99}$</div></div>
+    <div class="ans">答え：\(\displaystyle \dfrac{79}{99}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q marked" id="q102-4" data-key="102-(4)">
+  <div class="qhead"><span class="qlabel">(4)</span><span class="mk star">★</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle 0.\dot{4}5\dot{6}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$x=0.456456\cdots$ とおく</div><div class="st">くり返しは3けた → 1000倍：$1000x=456.456456\cdots$</div><div class="st">ひく：$999x=456$</div><div class="st">$x=\dfrac{456}{999}=\dfrac{152}{333}$（3 で約分）</div></div>
+    <div class="ans">答え：\(\displaystyle \dfrac{152}{333}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q marked" id="q102-5" data-key="102-(5)">
+  <div class="qhead"><span class="qlabel">(5)</span><span class="mk star">★</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle 2.1\dot{6}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$x=2.1666\cdots$ とおく</div><div class="st">6 だけがくり返す。まず10倍：$10x=21.666\cdots$（①）</div><div class="st">さらに10倍：$100x=216.666\cdots$（②）</div><div class="st">②−①：$90x=195$</div><div class="st">$x=\dfrac{195}{90}=\dfrac{13}{6}$（15 で約分）</div></div>
+    <div class="ans">答え：\(\displaystyle \dfrac{13}{6}\)</div>
+    <div class="note"><b>⚠ つまずきポイント</b><br>$x$ と $10x$ をひくと $9x=19.5$ になって小数が残る。<b>小数点のすぐ後ろがくり返し部分になる2つ</b>（$10x$ と $100x$）を選んでひくのがコツ。</div>
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q marked" id="q102-6" data-key="102-(6)">
+  <div class="qhead"><span class="qlabel">(6)</span><span class="mk star">★</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle 3.9\dot{7}\dot{2}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$x=3.97272\cdots$ とおく</div><div class="st">「72」がくり返す。$10x=39.7272\cdots$（①）</div><div class="st">$1000x=3972.7272\cdots$（②）</div><div class="st">②−①：$990x=3933$</div><div class="st">$x=\dfrac{3933}{990}=\dfrac{437}{110}$（9 で約分）</div></div>
+    <div class="ans">答え：\(\displaystyle \dfrac{437}{110}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+</section>
+<section class="prob" id="q103">
+<div class="phead"><span class="pno">103</span><span class="ptitle">循環小数の計算</span></div><span class="ref">▶ 体系数学 p.54 練習29</span>
+<div class="point"><div class="plabel">💡 やり方</div><ul><li>循環小数のままでは計算できないので、<b>全部分数に直してから</b>計算し、最後に循環小数にもどす。</li><li>よく使う形：$0.\dot{a}=\dfrac{a}{9}$、$0.\dot{a}\dot{b}=\dfrac{ab}{99}$、$0.a\dot{b}=\dfrac{ab-a}{90}$（102 のやり方で毎回確かめてもよい）</li></ul></div>
+<div class="q" id="q103-1" data-key="103-(1)">
+  <div class="qhead"><span class="qlabel">(1)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle 1.\dot{3}+2.\dot{7}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$1.\dot{3}=\dfrac{12}{9}$、$2.\dot{7}=\dfrac{25}{9}$</div><div class="eq">\(\displaystyle =\dfrac{12}{9}+\dfrac{25}{9}=\dfrac{37}{9}\)</div><div class="st">$37\div9=4.111\cdots$</div></div>
+    <div class="ans">答え：\(\displaystyle 4.\dot{1}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q" id="q103-2" data-key="103-(2)">
+  <div class="qhead"><span class="qlabel">(2)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle 0.5\dot{1}+0.3\dot{4}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$0.5\dot{1}=\dfrac{51-5}{90}=\dfrac{46}{90}$、$0.3\dot{4}=\dfrac{34-3}{90}=\dfrac{31}{90}$</div><div class="eq">\(\displaystyle =\dfrac{46}{90}+\dfrac{31}{90}=\dfrac{77}{90}\)</div><div class="st">$77\div90=0.8555\cdots$</div></div>
+    <div class="ans">答え：\(\displaystyle 0.8\dot{5}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q" id="q103-3" data-key="103-(3)">
+  <div class="qhead"><span class="qlabel">(3)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle 0.\dot{1}\dot{8}\times2.\dot{7}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$0.\dot{1}\dot{8}=\dfrac{18}{99}$、$2.\dot{7}=\dfrac{25}{9}$</div><div class="eq">\(\displaystyle =\dfrac{18}{99}\times\dfrac{25}{9}=\dfrac{50}{99}\)</div><div class="st">$50\div99=0.5050\cdots$</div></div>
+    <div class="ans">答え：\(\displaystyle 0.\dot{5}\dot{0}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q" id="q103-4" data-key="103-(4)">
+  <div class="qhead"><span class="qlabel">(4)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle 0.1\dot{2}\times0.\dot{3}\dot{0}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$0.1\dot{2}=\dfrac{12-1}{90}=\dfrac{11}{90}$、$0.\dot{3}\dot{0}=\dfrac{30}{99}$</div><div class="eq">\(\displaystyle =\dfrac{11}{90}\times\dfrac{30}{99}=\dfrac{1}{27}\)</div><div class="st">$1\div27=0.037037\cdots$</div></div>
+    <div class="ans">答え：\(\displaystyle 0.\dot{0}3\dot{7}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q" id="q103-5" data-key="103-(5)">
+  <div class="qhead"><span class="qlabel">(5)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle 1.\dot{9}\dot{3}\div3.\dot{3}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$1.\dot{9}\dot{3}=\dfrac{193-1}{99}=\dfrac{192}{99}$、$3.\dot{3}=\dfrac{30}{9}$</div><div class="eq">\(\displaystyle =\dfrac{192}{99}\div\dfrac{30}{9}=\dfrac{192}{99}\times\dfrac{9}{30}=\dfrac{32}{55}\)</div><div class="st">$32\div55=0.58181\cdots$</div></div>
+    <div class="ans">答え：\(\displaystyle 0.5\dot{8}\dot{1}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q" id="q103-6" data-key="103-(6)">
+  <div class="qhead"><span class="qlabel">(6)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle 1.\dot{4}\dot{5}\div0.0\dot{5}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$1.\dot{4}\dot{5}=\dfrac{145-1}{99}=\dfrac{144}{99}$、$0.0\dot{5}=\dfrac{5}{90}$</div><div class="eq">\(\displaystyle =\dfrac{144}{99}\times\dfrac{90}{5}=\dfrac{288}{11}\)</div><div class="st">$288\div11=26.1818\cdots$</div></div>
+    <div class="ans">答え：\(\displaystyle 26.\dot{1}\dot{8}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+</section>
+<section class="prob flagged" id="q104">
+<div class="phead"><span class="pno">104</span><span class="ptitle">数の分類（自然数・整数・有理数・無理数）</span><span class="badge star">★ 大問ごと直し</span></div><span class="ref">▶ 体系数学 p.54 練習29</span>
+<div class="point"><div class="plabel">💡 やり方</div><ul><li><b>まず全部の数をかんたんにしてから</b>分類する。見た目にだまされない。</li><li>$\dfrac{35}{5}=7$、$\sqrt{\left(-\dfrac{3}{4}\right)^2}=\dfrac{3}{4}$、$\sqrt{9}=3$、$\dfrac{6}{\sqrt{6}}=\sqrt{6}$、$(\sqrt{8})^2=8$</li><li>自然数＝1, 2, 3 …（正の整数）／整数＝0 と負の数もふくむ／有理数＝分数で表せる数（整数もふくむ）／無理数＝分数で表せない数（$\sqrt{3}$, $\pi$ など）</li></ul></div>
+<div class="q marked" id="q104-1" data-key="104-(1)">
+  <div class="qhead"><span class="qlabel">(1)</span><span class="mk star">★</span><span class="qstat"></span></div>
+  <div class="spre">$-7$、 $0$、 $\dfrac{35}{5}$、 $\dfrac{15}{8}$、 $\sqrt{\left(-\dfrac{3}{4}\right)^2}$、 $-\sqrt{3}$、 $\sqrt{9}$、 $\dfrac{6}{\sqrt{6}}$、 $(\sqrt{8})^2$、 $\pi$</div><div class="qbody">自然数を選びなさい</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">かんたんにすると $\dfrac{35}{5}=7$、$\sqrt{9}=3$、$(\sqrt{8})^2=8$ が正の整数</div><div class="st">0 と $-7$ は自然数ではない</div></div>
+    <div class="ans">答え：\(\displaystyle \dfrac{35}{5},\ \sqrt{9},\ (\sqrt{8})^2\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q marked" id="q104-2" data-key="104-(2)">
+  <div class="qhead"><span class="qlabel">(2)</span><span class="mk star">★</span><span class="qstat"></span></div>
+  <div class="spre">（同じ10個の数）</div><div class="qbody">整数を選びなさい</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">自然数3つに、0 と負の整数 $-7$ を加える</div></div>
+    <div class="ans">答え：\(-7\)、\(0\)、\(\dfrac{35}{5}\)、\(\sqrt{9}\)、\((\sqrt{8})^2\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q marked" id="q104-3" data-key="104-(3)">
+  <div class="qhead"><span class="qlabel">(3)</span><span class="mk star">★</span><span class="qstat"></span></div>
+  <div class="spre">（同じ10個の数）</div><div class="qbody">有理数を選びなさい</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">整数5つ＋分数で表せる $\dfrac{15}{8}$ と $\sqrt{\left(-\dfrac{3}{4}\right)^2}=\dfrac{3}{4}$</div></div>
+    <div class="ans">答え：\(-7\)、\(0\)、\(\dfrac{35}{5}\)、\(\dfrac{15}{8}\)、\(\sqrt{\left(-\dfrac{3}{4}\right)^2}\)、\(\sqrt{9}\)、\((\sqrt{8})^2\)</div>
+    <div class="note"><b>⚠ つまずきポイント</b><br>$\sqrt{\left(-\dfrac{3}{4}\right)^2}$ は √がついているけど、中が2乗なので $\dfrac{3}{4}$（プラス）になる → 有理数。</div>
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q marked" id="q104-4" data-key="104-(4)">
+  <div class="qhead"><span class="qlabel">(4)</span><span class="mk star">★</span><span class="qstat"></span></div>
+  <div class="spre">（同じ10個の数）</div><div class="qbody">無理数を選びなさい</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">残りの $-\sqrt{3}$、$\dfrac{6}{\sqrt{6}}=\sqrt{6}$、$\pi$ は分数で表せない</div></div>
+    <div class="ans">答え：\(\displaystyle -\sqrt{3},\ \dfrac{6}{\sqrt{6}},\ \pi\)</div>
+    <div class="note"><b>⚠ つまずきポイント</b><br>$\dfrac{6}{\sqrt{6}}$ は分数の形だけど、有理化すると $\sqrt{6}$ → 無理数。</div>
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+</section>
+<h2 class="sec" id="s4">4 近似値と有効数字<small>問題集 p.31</small></h2>
+<section class="prob flagged" id="q107">
+<div class="phead"><span class="pno">107</span><span class="ptitle">√の近似値を求める</span><span class="badge circle">★○ あり</span></div><span class="ref">▶ 体系数学 p.57 例18</span>
+<div class="point"><div class="plabel">💡 やり方</div><ul><li>使ってよいのは $\sqrt{5}=2.236$ と $\sqrt{50}=7.071$ の2つだけ。<b>どちらかの形に変形</b>してから数を入れる。</li><li>$\sqrt{0.05}$ のような小数は、分数に直して $\sqrt{\dfrac{5}{100}}=\dfrac{\sqrt{5}}{10}$ にする。</li><li>分母に√があれば有理化してから代入する（√でわり算するより楽で正確）。</li></ul></div>
+<div class="q marked" id="q107-1" data-key="107-(1)">
+  <div class="qhead"><span class="qlabel">(1)</span><span class="mk star">★</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle \sqrt{125}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$125=25\times5$ なので $\sqrt{125}=5\sqrt{5}$</div><div class="eq">\(\displaystyle =5\times2.236\)</div><div class="eq">\(\displaystyle =11.18\)</div></div>
+    <div class="ans">答え：\(\displaystyle 11.18\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q" id="q107-2" data-key="107-(2)">
+  <div class="qhead"><span class="qlabel">(2)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle \sqrt{500}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$500=100\times5$ なので $\sqrt{500}=10\sqrt{5}$</div><div class="eq">\(\displaystyle =10\times2.236=22.36\)</div></div>
+    <div class="ans">答え：\(\displaystyle 22.36\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q marked" id="q107-3" data-key="107-(3)">
+  <div class="qhead"><span class="qlabel">(3)</span><span class="mk star">★</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle \sqrt{200}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$200=4\times50$ なので $\sqrt{200}=2\sqrt{50}$</div><div class="eq">\(\displaystyle =2\times7.071=14.142\)</div></div>
+    <div class="ans">答え：\(\displaystyle 14.142\)</div>
+    <div class="note"><b>⚠ つまずきポイント</b><br>$\sqrt{200}=10\sqrt{2}$ にしても、$\sqrt{2}$ の値はもらっていないので使えない。<b>使える $\sqrt{50}$ が出てくる形</b>（$4\times50$）に分けるのがコツ。</div>
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q" id="q107-4" data-key="107-(4)">
+  <div class="qhead"><span class="qlabel">(4)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle \sqrt{0.05}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$0.05=\dfrac{5}{100}$</div><div class="st">\sqrt{0.05}=\sqrt{\dfrac{5}{100}}=\dfrac{\sqrt{5}}{10}</div><div class="eq">\(\displaystyle =\dfrac{2.236}{10}=0.2236\)</div></div>
+    <div class="ans">答え：\(\displaystyle 0.2236\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q marked" id="q107-5" data-key="107-(5)">
+  <div class="qhead"><span class="qlabel">(5)</span><span class="mk star">★</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle \sqrt{0.5}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$0.5=\dfrac{50}{100}$ と考える（$\dfrac{5}{10}$ だと分母の $\sqrt{10}$ が残ってしまう）</div><div class="st">\sqrt{0.5}=\sqrt{\dfrac{50}{100}}=\dfrac{\sqrt{50}}{10}</div><div class="eq">\(\displaystyle =\dfrac{7.071}{10}=0.7071\)</div></div>
+    <div class="ans">答え：\(\displaystyle 0.7071\)</div>
+    <div class="note"><b>⚠ つまずきポイント</b><br>分母を<b>2乗の数（100）</b>にするのがコツ。$\sqrt{100}=10$ ときれいにはずれる。</div>
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q" id="q107-6" data-key="107-(6)">
+  <div class="qhead"><span class="qlabel">(6)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle \dfrac{1}{4\sqrt{5}}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">分母・分子に $\sqrt{5}$ をかけて有理化</div><div class="eq">\(\displaystyle =\dfrac{\sqrt{5}}{4\times5}=\dfrac{\sqrt{5}}{20}\)</div><div class="eq">\(\displaystyle =\dfrac{2.236}{20}=0.1118\)</div></div>
+    <div class="ans">答え：\(\displaystyle 0.1118\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q" id="q107-7" data-key="107-(7)">
+  <div class="qhead"><span class="qlabel">(7)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle \dfrac{10}{\sqrt{5}}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="eq">\(\displaystyle =\dfrac{10\sqrt{5}}{5}=2\sqrt{5}\)</div><div class="eq">\(\displaystyle =2\times2.236=4.472\)</div></div>
+    <div class="ans">答え：\(\displaystyle 4.472\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q marked" id="q107-8" data-key="107-(8)">
+  <div class="qhead"><span class="qlabel">(8)</span><span class="mk star">★</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle \dfrac{5\sqrt{2}}{2\sqrt{10}}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">分母・分子に $\sqrt{10}$ をかける</div><div class="eq">\(\displaystyle =\dfrac{5\sqrt{20}}{2\times10}=\dfrac{5\times2\sqrt{5}}{20}=\dfrac{10\sqrt{5}}{20}\)</div><div class="eq">\(\displaystyle =\dfrac{\sqrt{5}}{2}\)</div><div class="eq">\(\displaystyle =\dfrac{2.236}{2}=1.118\)</div></div>
+    <div class="ans">答え：\(\displaystyle 1.118\)</div>
+    <div class="note"><b>⚠ つまずきポイント</b><br>先に $\dfrac{\sqrt{2}}{\sqrt{10}}=\dfrac{1}{\sqrt{5}}$ と約分してもよい：$\dfrac{5}{2\sqrt{5}}=\dfrac{\sqrt{5}}{2}$。</div>
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+</section>
+<section class="prob flagged" id="q108">
+<div class="phead"><span class="pno">108</span><span class="ptitle">近似値と誤差</span><span class="badge circle">★○ あり</span></div><span class="ref">▶ 体系数学 p.57 練習32</span>
+<div class="point"><div class="plabel">💡 やり方</div><ul><li><b>誤差 ＝ 近似値 − 真の値</b>（ひく順番に注意。マイナスになることもある）</li><li>真の値は分数のままにしておき、近似値も分数に直して通分して計算する。</li></ul></div>
+<div class="q marked" id="q108-1" data-key="108-(1)">
+  <div class="qhead"><span class="qlabel">(1)</span><span class="mk star">★</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle \dfrac{4}{3}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$\dfrac{4}{3}=1.333\cdots$ → 小数第3位を四捨五入して 1.33</div><div class="st">誤差 $=1.33-\dfrac{4}{3}=\dfrac{133}{100}-\dfrac{4}{3}$</div><div class="eq">\(\displaystyle =\dfrac{399}{300}-\dfrac{400}{300}=-\dfrac{1}{300}\)</div></div>
+    <div class="ans">答え：近似値  \(\displaystyle 1.33\)、 誤差  \(\displaystyle -\dfrac{1}{300}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q marked" id="q108-2" data-key="108-(2)">
+  <div class="qhead"><span class="qlabel">(2)</span><span class="mk star">★</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle \dfrac{2}{7}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$\dfrac{2}{7}=0.2857\cdots$ → 小数第3位の 5 を四捨五入して<b>切り上げ</b> → 0.29</div><div class="st">誤差 $=0.29-\dfrac{2}{7}=\dfrac{29}{100}-\dfrac{2}{7}$</div><div class="eq">\(\displaystyle =\dfrac{203}{700}-\dfrac{200}{700}=\dfrac{3}{700}\)</div></div>
+    <div class="ans">答え：近似値  \(\displaystyle 0.29\)、 誤差  \(\displaystyle \dfrac{3}{700}\)</div>
+    <div class="note"><b>⚠ つまずきポイント</b><br>切り上げたので近似値の方が大きい → 誤差はプラス。切り捨てた (1) はマイナス。</div>
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q" id="q108-3" data-key="108-(3)">
+  <div class="qhead"><span class="qlabel">(3)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle \dfrac{5}{9}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$\dfrac{5}{9}=0.555\cdots$ → 0.56</div><div class="st">誤差 $=0.56-\dfrac{5}{9}=\dfrac{56}{100}-\dfrac{5}{9}=\dfrac{504}{900}-\dfrac{500}{900}$</div><div class="eq">\(\displaystyle =\dfrac{4}{900}=\dfrac{1}{225}\)</div></div>
+    <div class="ans">答え：近似値  \(\displaystyle 0.56\)、 誤差  \(\displaystyle \dfrac{1}{225}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q" id="q108-4" data-key="108-(4)">
+  <div class="qhead"><span class="qlabel">(4)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle \dfrac{3}{11}\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$\dfrac{3}{11}=0.2727\cdots$ → 0.27</div><div class="st">誤差 $=0.27-\dfrac{3}{11}=\dfrac{27}{100}-\dfrac{3}{11}=\dfrac{297}{1100}-\dfrac{300}{1100}$</div><div class="eq">\(\displaystyle =-\dfrac{3}{1100}\)</div></div>
+    <div class="ans">答え：近似値  \(\displaystyle 0.27\)、 誤差  \(\displaystyle -\dfrac{3}{1100}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+</section>
+<section class="prob flagged" id="q109">
+<div class="phead"><span class="pno">109</span><span class="ptitle">真の値の範囲・誤差の範囲</span><span class="badge star">★ 大問ごと直し</span></div>
+<div class="point"><div class="plabel">💡 やり方</div><ul><li>小数第2位を四捨五入して 5.8 になる数は、<b>5.75 以上 5.85 未満</b>。</li><li>5.75 は四捨五入で 5.8 になる（ふくむ → ≦）。5.85 は 5.9 になってしまう（ふくまない → ＜）。</li></ul></div>
+<div class="q marked" id="q109-1" data-key="109-(1)">
+  <div class="qhead"><span class="qlabel">(1)</span><span class="mk star">★</span><span class="qstat"></span></div>
+  <div class="qbody">真の値  \(\displaystyle a\)  の範囲</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">5.75 → 5.8（なる）、5.84999… → 5.8（なる）、5.85 → 5.9（ならない）</div><div class="st">だから $5.75\leqq a<5.85$</div></div>
+    <div class="ans">答え：\(\displaystyle 5.75\leqq a<5.85\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q marked" id="q109-2" data-key="109-(2)">
+  <div class="qhead"><span class="qlabel">(2)</span><span class="mk star">★</span><span class="qstat"></span></div>
+  <div class="qbody">誤差  \(\displaystyle e\)  の範囲</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$e=5.8-a$（近似値−真の値）</div><div class="st">(1) の各辺に $-1$ をかける（不等号の向きが逆になる）：$-5.75\geqq-a>-5.85$</div><div class="st">各辺に 5.8 をたす：$0.05\geqq5.8-a>-0.05$</div><div class="st">左右を入れかえて書くと $-0.05<e\leqq0.05$</div></div>
+    <div class="ans">答え：\(\displaystyle -0.05<e\leqq0.05\)</div>
+    <div class="note"><b>⚠ つまずきポイント</b><br>$a$ が 5.75 のとき $e=+0.05$（ふくむ）、$a$ が 5.85 に近づくと $e$ は $-0.05$ に近づくがならない。だから $-0.05$ 側が「＜」、$0.05$ 側が「≦」。</div>
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+</section>
+<section class="prob flagged" id="q110">
+<div class="phead"><span class="pno">110</span><span class="ptitle">a×10ⁿ の形で表す</span><span class="badge star">★ 大問ごと直し</span></div><span class="ref">▶ 体系数学 p.58 練習33</span>
+<div class="point"><div class="plabel">💡 やり方</div><ul><li>有効数字を<b>全部</b>使って、$a$ を「1以上10未満」にする（整数部分が1けた）。</li><li>有効数字に 0 がふくまれるとき（67000 の「6, 7, 0」）は、$6.70$ のように<b>0 も書く</b>。</li><li>1 より小さい数は $a\times\dfrac{1}{10^n}$ の形にする。</li></ul></div>
+<div class="q marked" id="q110-1" data-key="110-(1)">
+  <div class="qhead"><span class="qlabel">(1)</span><span class="mk star">★</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle 9500\ (\) 有効数字は  \(\displaystyle 9,\,5)\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">有効数字 9, 5 → $a=9.5$</div><div class="st">$9500=9.5\times1000$</div></div>
+    <div class="ans">答え：\(\displaystyle 9.5\times10^3\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q marked" id="q110-2" data-key="110-(2)">
+  <div class="qhead"><span class="qlabel">(2)</span><span class="mk star">★</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle 67000\ (\) 有効数字は  \(\displaystyle 6,\,7,\,0)\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">有効数字 6, 7, 0 → $a=6.70$（最後の 0 も書く）</div><div class="st">$67000=6.70\times10000$</div></div>
+    <div class="ans">答え：\(\displaystyle 6.70\times10^4\)</div>
+    <div class="note"><b>⚠ つまずきポイント</b><br>$6.7\times10^4$ と書くと、有効数字が 6, 7 の2つだけという意味になってしまう。</div>
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q marked" id="q110-3" data-key="110-(3)">
+  <div class="qhead"><span class="qlabel">(3)</span><span class="mk star">★</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle 0.481\ (\) 有効数字は  \(\displaystyle 4,\,8,\,1)\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$a=4.81$</div><div class="st">$0.481=4.81\div10$</div></div>
+    <div class="ans">答え：\(\displaystyle 4.81\times\dfrac{1}{10}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q marked" id="q110-4" data-key="110-(4)">
+  <div class="qhead"><span class="qlabel">(4)</span><span class="mk star">★</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle 0.00264\ (\) 有効数字は  \(\displaystyle 2,\,6,\,4)\)</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$a=2.64$</div><div class="st">$0.00264=2.64\div1000$</div></div>
+    <div class="ans">答え：\(\displaystyle 2.64\times\dfrac{1}{10^3}\)</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+</section>
+<section class="prob" id="q111">
+<div class="phead"><span class="pno">111</span><span class="ptitle">近似値の文章題</span></div>
+<div class="point"><div class="plabel">💡 やり方</div><ul><li>「1万人を単位とした近似値」＝ 万の位までの数にする。そのために千の位を四捨五入する。</li><li>誤差 ＝ 近似値 − 真の値。</li></ul></div>
+<div class="ppre">ある年度の全国の中学1年生の生徒は 1160537 人であった。</div>
+<div class="q" id="q111-1" data-key="111-(1)">
+  <div class="qhead"><span class="qlabel">(1)</span><span class="qstat"></span></div>
+  <div class="qbody">千の位を四捨五入して、1万人を単位とした近似値</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">1160537 の千の位は 0 → 切り捨て</div><div class="st">1160000 人 ＝ 116万人</div></div>
+    <div class="ans">答え：\(\displaystyle 116\) 万人</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q" id="q111-2" data-key="111-(2)">
+  <div class="qhead"><span class="qlabel">(2)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle (1)\)  の近似値と真の値との誤差</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">$1160000-1160537=-537$</div></div>
+    <div class="ans">答え：\(\displaystyle -537\) 人</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+<div class="q" id="q111-3" data-key="111-(3)">
+  <div class="qhead"><span class="qlabel">(3)</span><span class="qstat"></span></div>
+  <div class="qbody">\(\displaystyle (1)\)  の近似値を  \(\displaystyle a\times10^n\)  で表す</div>
+  <div class="remind">✏️ まずノートに自分で解いてから ↓</div>
+  <button class="reveal" type="button">👀 答えと解説を見る</button>
+  <div class="hide">
+    <div class="steps"><div class="st">1万人単位なので有効数字は 1, 1, 6</div><div class="st">$1160000=1.16\times1000000$</div></div>
+    <div class="ans">答え：\(\displaystyle 1.16\times10^6\) 人</div>
+    
+    <div class="check"><button data-v="ok">⚡すぐ解けた</button><button data-v="mid">🤔悩んで解けた</button><button data-v="ng">🔁直し問題にする</button></div>
+  </div>
+</div>
+</section>
+
+<footer>答えは問題集の解答編（p.20〜25）と照らし合わせ済み。80〜87 は解答編がスキャンになかったため、計算で確かめた答えです。</footer>
+</div>
+
+<script>
+(function(){
+  var KEY = 'haruki-heihoukon-2026-10';
+  var st = {};
+  try { st = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch(e) { st = {}; }
+  function save(){ try { localStorage.setItem(KEY, JSON.stringify(st)); } catch(e) {} }
+  var LBL = { ok: ['⚡すぐ解けた', '#15803d'], mid: ['🤔悩んで解けた', '#a16207'], ng: ['🔁直し', '#b91c1c'] };
+  var qs = document.querySelectorAll('.q');
+  function paint(q){
+    var k = q.getAttribute('data-key'), v = st[k];
+    q.setAttribute('data-st', v || 'none');
+    q.querySelectorAll('.check button').forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-v') === v); });
+    var s = q.querySelector('.qstat');
+    if (v) { s.textContent = LBL[v][0]; s.style.color = LBL[v][1]; } else { s.textContent = ''; }
+    var a = document.querySelector('.nl[href="#' + q.id + '"]');
+    if (a) a.classList.toggle('done', v === 'ok');
+  }
+  function prog(){
+    var c = { ok: 0, mid: 0, ng: 0 };
+    qs.forEach(function(q){ var v = st[q.getAttribute('data-key')]; if (v) c[v]++; });
+    document.getElementById('prog').innerHTML = '⚡ <b>' + c.ok + '</b>　🤔 <b>' + c.mid + '</b>　🔁 <b>' + c.ng + '</b>　／ 全' + qs.length + '問';
+  }
+  qs.forEach(function(q){
+    q.querySelector('.reveal').addEventListener('click', function(){ q.classList.add('revealed'); });
+    q.querySelectorAll('.check button').forEach(function(b){
+      b.addEventListener('click', function(){
+        var k = q.getAttribute('data-key'), v = b.getAttribute('data-v');
+        if (st[k] === v) delete st[k]; else st[k] = v;
+        save(); paint(q); prog();
+      });
+    });
+    if (st[q.getAttribute('data-key')]) q.classList.add('revealed');
+    paint(q);
+  });
+  prog();
+  document.querySelectorAll('.bar button').forEach(function(b){
+    b.addEventListener('click', function(){
+      document.querySelectorAll('.bar button').forEach(function(x){ x.classList.remove('on'); });
+      b.classList.add('on');
+      var f = b.getAttribute('data-f');
+      document.body.classList.toggle('only-marked', f === 'marked');
+      document.body.classList.toggle('only-ng', f === 'ng');
+    });
+  });
+  document.addEventListener('DOMContentLoaded', function(){
+    if (window.renderMathInElement) renderMathInElement(document.body, { delimiters: [ {left: '\\(', right: '\\)', display: false}, {left: '$', right: '$', display: false} ], throwOnError: false });
+  });
+})();
+</script>
+</body>
+</html>

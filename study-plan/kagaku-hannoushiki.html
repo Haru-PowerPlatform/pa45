@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>化学反応式の作り方 | はるき</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", sans-serif;
+    background: linear-gradient(180deg, #ecfeff 0%, #f8fafc 100%); color: #1a202c; line-height: 1.85; padding: 16px; min-height: 100vh; }
+  .container { max-width: 760px; margin: 0 auto; }
+  header { background: linear-gradient(135deg, #0891b2, #1e3a8a); color: #fff; border-radius: 18px; padding: 22px 18px; text-align: center; box-shadow: 0 6px 20px rgba(8,145,178,.3); }
+  header h1 { font-size: 20px; line-height: 1.5; }
+  header .sub { font-size: 13px; opacity: .92; margin-top: 6px; }
+  .back-link { display: inline-block; margin: 13px 0 0; font-size: 13px; color: #0e7490; text-decoration: none; font-weight: 700; margin-right: 14px; }
+  .card { background: #fff; border-radius: 16px; padding: 16px; margin: 16px 0; box-shadow: 0 3px 12px rgba(0,0,0,.07); }
+  h2 { font-size: 18px; color: #0e7490; padding-left: 10px; border-left: 5px solid #06b6d4; margin-bottom: 10px; }
+  h3 { font-size: 15.5px; color: #1e3a8a; margin: 14px 0 6px; }
+  p, li { font-size: 14.5px; }
+  ul, ol { margin-left: 20px; }
+  .big3 { display: grid; gap: 8px; }
+  .big3 div { background: #f0f9ff; border: 2px solid #bae6fd; border-radius: 12px; padding: 10px 12px; font-size: 14.5px; }
+  .big3 b.n { display: inline-block; background: #0891b2; color: #fff; border-radius: 999px; padding: 0 10px; margin-right: 6px; font-size: 13px; }
+  .rule { background: #fff1f2; border: 2px solid #fda4af; border-radius: 12px; padding: 12px; margin: 12px 0; font-size: 14.5px; }
+  .rule b { color: #be123c; }
+  table { border-collapse: collapse; width: 100%; margin: 8px 0; font-size: 14px; }
+  th, td { border: 1px solid #e2e8f0; padding: 6px 8px; text-align: center; vertical-align: middle; }
+  th { background: #f1f5f9; font-size: 13px; }
+  td.l { text-align: left; }
+  .tw { overflow-x: auto; }
+  .hand { font-weight: 900; color: #0e7490; }
+  table.cnt { width: auto; min-width: 240px; font-size: 14px; }
+  table.cnt td { padding: 3px 10px; }
+  table.cnt td small { display: inline; margin-left: 4px; }
+  table.cnt td small { font-size: 10.5px; color: #64748b; }
+  table.cnt tr.ok td:last-child { color: #15803d; font-weight: 800; }
+  table.cnt tr.ng td:last-child { color: #dc2626; font-weight: 800; }
+  table.cnt tr.ng { background: #fff1f2; }
+  .eqn { font-family: "Segoe UI", "Hiragino Sans", sans-serif; font-size: 19px; font-weight: 700; margin: 6px 0; letter-spacing: .5px; }
+  .eqn.big { font-size: 23px; color: #1e3a8a; }
+  .eqn sub { font-size: .65em; }
+  .cf { color: #dc2626; font-size: 1.15em; margin-right: 1px; }
+  .arr { margin: 0 8px; color: #0e7490; }
+  .balls { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; margin: 8px 0; }
+  .grp { display: inline-flex; gap: 6px; flex-wrap: wrap; }
+  .mol { display: inline-flex; border: 1.5px dashed #94a3b8; border-radius: 12px; padding: 3px; gap: 1px; background: #fff; }
+  .mol i, .lg i { font-style: normal; display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 50%; font-size: 10.5px; font-weight: 800; border: 1px solid rgba(0,0,0,.25); }
+  .plus { color: #64748b; font-weight: 800; margin: 0 2px; }
+  .lg { display: inline-flex; align-items: center; gap: 4px; margin: 3px 10px 3px 0; font-size: 12.5px; }
+  .eq .ehead { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .eno { font-size: 22px; font-weight: 900; color: #0891b2; }
+  .etitle { font-size: 16px; font-weight: 800; }
+  .cat { font-size: 11.5px; background: #e0f2fe; color: #0369a1; border-radius: 999px; padding: 1px 9px; font-weight: 700; }
+  .qstat { margin-left: auto; font-size: 12px; font-weight: 700; }
+  .what { font-size: 13.5px; color: #475569; }
+  .remind { font-size: 12px; color: #64748b; margin-top: 6px; }
+  .reveal { margin-top: 6px; border: none; background: #0891b2; color: #fff; font-weight: 800; border-radius: 10px; padding: 9px 16px; font-size: 14px; cursor: pointer; }
+  .eq.revealed .reveal, .eq.revealed .remind { display: none; }
+  .eq:not(.revealed) > .hide { display: none; }
+  .sh { margin: 14px 0 4px; font-weight: 800; color: #fff; background: #0e7490; display: inline-block; border-radius: 8px; padding: 1px 10px; font-size: 13px; }
+  .wd { font-size: 15px; font-weight: 700; }
+  .mini { font-size: 13.5px; color: #334155; }
+  .mini sub, .stp sub, .tip sub, p sub, td sub, li sub { font-size: .7em; }
+  .stp { background: #f8fafc; border-left: 4px solid #f59e0b; border-radius: 8px; padding: 6px 10px; margin: 10px 0 4px; font-size: 14px; }
+  .ok1 { color: #15803d; font-weight: 800; margin: 6px 0; }
+  .final { background: #eff6ff; border: 2px solid #93c5fd; border-radius: 12px; padding: 10px 12px; margin: 12px 0 8px; }
+  .flabel { font-size: 12.5px; font-weight: 800; color: #1d4ed8; }
+  .tip { background: #fefce8; border-left: 4px solid #eab308; border-radius: 10px; padding: 8px 12px; font-size: 14px; margin: 8px 0; }
+  .check { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+  .check button { flex: 1 1 30%; min-width: 110px; border: 2px solid #e2e8f0; background: #fff; border-radius: 10px; padding: 8px 4px; font-weight: 800; font-size: 13px; cursor: pointer; }
+  .check button[data-v="ok"].on { background: #dcfce7; border-color: #16a34a; color: #15803d; }
+  .check button[data-v="mid"].on { background: #fef9c3; border-color: #ca8a04; color: #a16207; }
+  .check button[data-v="ng"].on { background: #fee2e2; border-color: #dc2626; color: #b91c1c; }
+  .prog { font-size: 13.5px; margin-top: 6px; }
+  .note { font-size: 12.5px; color: #64748b; margin-top: 6px; }
+  footer { text-align: center; font-size: 12px; color: #94a3b8; margin: 24px 0 8px; }
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+  <h1>⚗️ 化学反応式の作り方</h1>
+  <div class="sub">教科書に出てくる14本を、3つのステップで1本ずつ</div>
+</header>
+<a class="back-link" href="index.html">← 学習計画ページ</a><a class="back-link" href="rika-kagaku.html">⚗️ 化学のまとめページ</a>
+
+<div class="card">
+  <h2>化学反応式は「3ステップ」で作る</h2>
+  <div class="big3">
+    <div><b class="n">STEP1</b><b>ことば → 化学式</b>：物質の名前を化学式に変える（例：水 → H<sub>2</sub>O）</div>
+    <div><b class="n">STEP2</b><b>矢印の左右にならべる</b>：反応する前の物質を左、できた物質を右に書いて「＋」と「→」でつなぐ</div>
+    <div><b class="n">STEP3</b><b>原子の数をそろえる</b>：左と右で、原子の種類ごとの数が同じになるように、化学式の<b>前に</b>数字（係数）をつける</div>
+  </div>
+  <div class="rule">⛔ <b>ぜったいのルール</b><br>
+    数をそろえるときに、<b>化学式の中の小さい数字を変えてはいけない</b>。前に大きい数字（係数）をつけるだけ。<br>
+    H<sub>2</sub>O を H<sub>2</sub>O<sub>2</sub> に変えると、水ではなく別の物質（過酸化水素）になってしまう。
+    <div class="balls"><span class="grp"><span class="mol"><i style="background:#f8fafc;color:#334155">H</i><i style="background:#f8fafc;color:#334155">H</i><i style="background:#ef4444;color:#fff">O</i></span></span><span style="font-size:13px;margin:0 6px">水 ／ 別の物質 →</span><span class="grp"><span class="mol"><i style="background:#f8fafc;color:#334155">H</i><i style="background:#f8fafc;color:#334155">H</i><i style="background:#ef4444;color:#fff">O</i><i style="background:#ef4444;color:#fff">O</i></span></span></div>
+  </div>
+  <p>つまずくのは、たいてい <b>STEP1（化学式が出てこない）</b> か <b>STEP3（係数の合わせ方）</b>。下で1つずつやる。</p>
+</div>
+
+<div class="card">
+  <h2>STEP1　ことば → 化学式</h2>
+  <h3>① 1文字で書く物質（原子がたくさん集まっているだけ）</h3>
+  <p>金属と、炭素・硫黄は<b>記号1つ</b>で書く。</p>
+  <div class="tw"><table><tr><th>鉄</th><th>銅</th><th>銀</th><th>マグネシウム</th><th>炭素</th><th>硫黄</th></tr>
+  <tr><td>Fe</td><td>Cu</td><td>Ag</td><td>Mg</td><td>C</td><td>S</td></tr></table></div>
+  <h3>② 2こセットで書く気体</h3>
+  <p>水素・酸素・塩素は、原子が<b>2こくっついた形</b>でいるので、いつも小さい 2 をつける。</p>
+  <div class="tw"><table><tr><th>水素</th><th>酸素</th><th>塩素</th></tr>
+  <tr><td>H<sub>2</sub><br><span class="grp"><span class="mol"><i style="background:#f8fafc;color:#334155">H</i><i style="background:#f8fafc;color:#334155">H</i></span></span></td><td>O<sub>2</sub><br><span class="grp"><span class="mol"><i style="background:#ef4444;color:#fff">O</i><i style="background:#ef4444;color:#fff">O</i></span></span></td><td>Cl<sub>2</sub><br><span class="grp"><span class="mol"><i style="background:#22c55e;color:#fff">Cl</i><i style="background:#22c55e;color:#fff">Cl</i></span></span></td></tr></table></div>
+  <p>覚え方：<b>「すい・さん・えん」はペアで出てくる</b>（水素・酸素・塩素）。反応式で「O」だけ、「H」だけ、とは書かない。</p>
+
+  <h3>③ くっついた物質は「名前を後ろから読む」</h3>
+  <p>日本語の名前は、<b>後ろの方の物質を先に</b>書く。</p>
+  <ul>
+    <li>酸化<b>銅</b> → 銅(Cu)と酸素(O) → <b>CuO</b></li>
+    <li>硫化<b>鉄</b> → 鉄(Fe)と硫黄(S) → <b>FeS</b></li>
+    <li>塩化<b>銅</b> → 銅(Cu)と塩素(Cl) → <b>CuCl<sub>2</sub></b></li>
+  </ul>
+  <div class="tw"><table><tr><th>名前の頭</th><th>意味</th><th>くっつくもの</th></tr>
+  <tr><td>酸化○○</td><td>酸素がくっついた</td><td>O</td></tr>
+  <tr><td>硫化○○</td><td>硫黄がくっついた</td><td>S</td></tr>
+  <tr><td>塩化○○</td><td>塩素がくっついた</td><td>Cl</td></tr>
+  <tr><td>水酸化○○</td><td>OH のセットがくっついた</td><td>OH</td></tr>
+  <tr><td>炭酸○○</td><td>CO<sub>3</sub> のセットがくっついた</td><td>CO<sub>3</sub></td></tr>
+  <tr><td>炭酸水素○○</td><td>HCO<sub>3</sub> のセットがくっついた</td><td>HCO<sub>3</sub></td></tr>
+  <tr><td>硫酸○○</td><td>SO<sub>4</sub> のセットがくっついた</td><td>SO<sub>4</sub></td></tr></table></div>
+
+  <h3>④ 小さい数字は「手の数」で決まる</h3>
+  <p>原子にはそれぞれ、ほかの原子とつなぐ<b>「手」</b>があると考える。<b>手があまらないように全部つなぐ</b>と、小さい数字が決まる。</p>
+  <div class="tw"><table><tr><th>手の数</th><th>原子・セット</th></tr>
+  <tr><td class="hand">1本</td><td class="l">H（水素）、Cl（塩素）、Na（ナトリウム）、Ag（銀）、OH、HCO<sub>3</sub></td></tr>
+  <tr><td class="hand">2本</td><td class="l">O（酸素）、S（硫黄）、Cu（銅）、Fe（鉄）、Mg（マグネシウム）、Ba（バリウム）、CO<sub>3</sub>、SO<sub>4</sub></td></tr>
+  <tr><td class="hand">4本</td><td class="l">C（炭素）</td></tr></table></div>
+  <div class="tw"><table><tr><th>物質</th><th>考え方</th><th>化学式</th></tr>
+  <tr><td>水</td><td class="l">O(手2) に H(手1) が <b>2こ</b>必要</td><td>H<sub>2</sub>O<br><span class="grp"><span class="mol"><i style="background:#f8fafc;color:#334155">H</i><i style="background:#f8fafc;color:#334155">H</i><i style="background:#ef4444;color:#fff">O</i></span></span></td></tr>
+  <tr><td>二酸化炭素</td><td class="l">C(手4) に O(手2) が <b>2こ</b>必要</td><td>CO<sub>2</sub><br><span class="grp"><span class="mol"><i style="background:#1f2937;color:#fff">C</i><i style="background:#ef4444;color:#fff">O</i><i style="background:#ef4444;color:#fff">O</i></span></span></td></tr>
+  <tr><td>酸化銅</td><td class="l">Cu(手2) と O(手2) で <b>1こずつ</b></td><td>CuO</td></tr>
+  <tr><td>酸化マグネシウム</td><td class="l">Mg(手2) と O(手2) で 1こずつ</td><td>MgO</td></tr>
+  <tr><td>酸化銀</td><td class="l">O(手2) に Ag(手1) が <b>2こ</b>必要</td><td>Ag<sub>2</sub>O<br><span class="grp"><span class="mol"><i style="background:#cbd5e1;color:#1e293b">Ag</i><i style="background:#cbd5e1;color:#1e293b">Ag</i><i style="background:#ef4444;color:#fff">O</i></span></span></td></tr>
+  <tr><td>硫化鉄・硫化銅</td><td class="l">手2 と 手2 で 1こずつ</td><td>FeS ・ CuS</td></tr>
+  <tr><td>塩化銅</td><td class="l">Cu(手2) に Cl(手1) が <b>2こ</b>必要</td><td>CuCl<sub>2</sub><br><span class="grp"><span class="mol"><i style="background:#c2410c;color:#fff">Cu</i><i style="background:#22c55e;color:#fff">Cl</i><i style="background:#22c55e;color:#fff">Cl</i></span></span></td></tr>
+  <tr><td>塩化鉄</td><td class="l">Fe(手2) に Cl(手1) が 2こ</td><td>FeCl<sub>2</sub></td></tr>
+  <tr><td>塩化水素（塩酸）</td><td class="l">H(手1) と Cl(手1) で 1こずつ</td><td>HCl</td></tr>
+  <tr><td>硫化水素</td><td class="l">S(手2) に H(手1) が 2こ</td><td>H<sub>2</sub>S</td></tr>
+  <tr><td>炭酸水素ナトリウム</td><td class="l">Na(手1) と HCO<sub>3</sub>(手1) で 1こずつ</td><td>NaHCO<sub>3</sub><br><span class="grp"><span class="mol"><i style="background:#8b5cf6;color:#fff">Na</i><i style="background:#f8fafc;color:#334155">H</i><i style="background:#1f2937;color:#fff">C</i><i style="background:#ef4444;color:#fff">O</i><i style="background:#ef4444;color:#fff">O</i><i style="background:#ef4444;color:#fff">O</i></span></span></td></tr>
+  <tr><td>炭酸ナトリウム</td><td class="l">CO<sub>3</sub>(手2) に Na(手1) が <b>2こ</b></td><td>Na<sub>2</sub>CO<sub>3</sub><br><span class="grp"><span class="mol"><i style="background:#8b5cf6;color:#fff">Na</i><i style="background:#8b5cf6;color:#fff">Na</i><i style="background:#1f2937;color:#fff">C</i><i style="background:#ef4444;color:#fff">O</i><i style="background:#ef4444;color:#fff">O</i><i style="background:#ef4444;color:#fff">O</i></span></span></td></tr>
+  <tr><td>硫酸</td><td class="l">SO<sub>4</sub>(手2) に H(手1) が 2こ</td><td>H<sub>2</sub>SO<sub>4</sub><br><span class="grp"><span class="mol"><i style="background:#f8fafc;color:#334155">H</i><i style="background:#f8fafc;color:#334155">H</i><i style="background:#facc15;color:#422006">S</i><i style="background:#ef4444;color:#fff">O</i><i style="background:#ef4444;color:#fff">O</i><i style="background:#ef4444;color:#fff">O</i><i style="background:#ef4444;color:#fff">O</i></span></span></td></tr>
+  <tr><td>水酸化バリウム</td><td class="l">Ba(手2) に OH(手1) が <b>2セット</b>。セットが2つなので<b>カッコでくくって</b>2をつける</td><td>Ba(OH)<sub>2</sub><br><span class="grp"><span class="mol"><i style="background:#0d9488;color:#fff">Ba</i><i style="background:#ef4444;color:#fff">O</i><i style="background:#f8fafc;color:#334155">H</i><i style="background:#ef4444;color:#fff">O</i><i style="background:#f8fafc;color:#334155">H</i></span></span></td></tr>
+  <tr><td>硫酸バリウム</td><td class="l">Ba(手2) と SO<sub>4</sub>(手2) で 1こずつ</td><td>BaSO<sub>4</sub><br><span class="grp"><span class="mol"><i style="background:#0d9488;color:#fff">Ba</i><i style="background:#facc15;color:#422006">S</i><i style="background:#ef4444;color:#fff">O</i><i style="background:#ef4444;color:#fff">O</i><i style="background:#ef4444;color:#fff">O</i><i style="background:#ef4444;color:#fff">O</i></span></span></td></tr></table></div>
+  <div class="note">※「手」の考え方は、化学式を作るための覚え方です。中3で習う「イオン」の考え方につながります。</div>
+  <div style="margin-top:8px"><span class="lg"><i style="background:#f8fafc;color:#334155">H</i>水素</span><span class="lg"><i style="background:#ef4444;color:#fff">O</i>酸素</span><span class="lg"><i style="background:#1f2937;color:#fff">C</i>炭素</span><span class="lg"><i style="background:#c2410c;color:#fff">Cu</i>銅</span><span class="lg"><i style="background:#64748b;color:#fff">Fe</i>鉄</span><span class="lg"><i style="background:#facc15;color:#422006">S</i>硫黄</span><span class="lg"><i style="background:#22c55e;color:#fff">Cl</i>塩素</span><span class="lg"><i style="background:#8b5cf6;color:#fff">Na</i>ナトリウム</span><span class="lg"><i style="background:#cbd5e1;color:#1e293b">Ag</i>銀</span><span class="lg"><i style="background:#e2e8f0;color:#334155">Mg</i>マグネシウム</span><span class="lg"><i style="background:#0d9488;color:#fff">Ba</i>バリウム</span></div>
+</div>
+
+<div class="card">
+  <h2>STEP3　係数のつけ方（水の電気分解で練習）</h2>
+  <ol>
+    <li>左と右で、原子の数を<b>表にして数える</b></li>
+    <li>× の原子を1つ選び、<b>少ない方</b>の物質の前に係数をつける（O<sub>2</sub> がある式は O から）</li>
+    <li>係数をつけると、その物質の<b>中の原子が全部</b>その倍になる。ほかの原子がずれたら、また直す</li>
+    <li>全部 ○ になったら完成。係数の 1 は書かない</li>
+  </ol>
+  <div class="eqn">H<sub>2</sub>O <span class="arr">→</span> H<sub>2</sub> ＋ O<sub>2</sub></div><table class="cnt"><tr><th>原子</th><th>左</th><th>右</th><th></th></tr><tr class="ok"><td>H<small>水素</small></td><td><b>2</b></td><td><b>2</b></td><td>○</td></tr><tr class="ng"><td>O<small>酸素</small></td><td><b>1</b></td><td><b>2</b></td><td>×</td></tr></table><div class="stp">O が左1・右2。<b>少ない左</b>の H<sub>2</sub>O の前に 2 をつける</div><div class="eqn"><span class="cf">2</span>H<sub>2</sub>O <span class="arr">→</span> H<sub>2</sub> ＋ O<sub>2</sub></div><table class="cnt"><tr><th>原子</th><th>左</th><th>右</th><th></th></tr><tr class="ng"><td>H<small>水素</small></td><td><b>4</b></td><td><b>2</b></td><td>×</td></tr><tr class="ok"><td>O<small>酸素</small></td><td><b>2</b></td><td><b>2</b></td><td>○</td></tr></table><div class="stp">こんどは H が左4・右2 にずれた。右の H<sub>2</sub> の前に 2 をつける</div><div class="eqn"><span class="cf">2</span>H<sub>2</sub>O <span class="arr">→</span> <span class="cf">2</span>H<sub>2</sub> ＋ O<sub>2</sub></div><table class="cnt"><tr><th>原子</th><th>左</th><th>右</th><th></th></tr><tr class="ok"><td>H<small>水素</small></td><td><b>4</b></td><td><b>4</b></td><td>○</td></tr><tr class="ok"><td>O<small>酸素</small></td><td><b>2</b></td><td><b>2</b></td><td>○</td></tr></table><div class="ok1">全部 ○ → 完成！</div><div class="balls"><span class="grp"><span class="mol"><i style="background:#f8fafc;color:#334155">H</i><i style="background:#f8fafc;color:#334155">H</i><i style="background:#ef4444;color:#fff">O</i></span><span class="mol"><i style="background:#f8fafc;color:#334155">H</i><i style="background:#f8fafc;color:#334155">H</i><i style="background:#ef4444;color:#fff">O</i></span></span><span class="arr">→</span><span class="grp"><span class="mol"><i style="background:#f8fafc;color:#334155">H</i><i style="background:#f8fafc;color:#334155">H</i></span><span class="mol"><i style="background:#f8fafc;color:#334155">H</i><i style="background:#f8fafc;color:#334155">H</i></span></span><span class="plus">＋</span><span class="grp"><span class="mol"><i style="background:#ef4444;color:#fff">O</i><i style="background:#ef4444;color:#fff">O</i></span></span></div>
+</div>
+
+<div class="card">
+  <h2>14本の練習</h2>
+  <p>名前だけを見て、<b>何も見ずにノートに書く</b> → 「作り方を見る」で答え合わせ → 3つのボタンのどれかを押す。全部 ⚡ になるまでくり返す。</p>
+  <div class="prog" id="prog"></div>
+</div>
+
+<section class="card eq" id="e1" data-key="chem-1">
+<div class="ehead"><span class="eno">①</span><span class="etitle">炭酸水素ナトリウムの熱分解</span><span class="cat">分解</span><span class="qstat"></span></div>
+<div class="what">加熱すると3つに分かれる</div>
+<div class="remind">✏️ まず何も見ずにノートに書いてみる → 押して答え合わせ</div>
+<button class="reveal" type="button">👀 作り方を見る</button>
+<div class="hide">
+<div class="sh">STEP1　ことばの式 → 化学式</div><div class="wd">炭酸水素ナトリウム → 炭酸ナトリウム ＋ 水 ＋ 二酸化炭素</div><div class="mini">炭酸水素ナトリウム＝<b>NaHCO<sub>3</sub></b>　炭酸ナトリウム＝<b>Na<sub>2</sub>CO<sub>3</sub></b>　水＝<b>H<sub>2</sub>O</b>　二酸化炭素＝<b>CO<sub>2</sub></b></div><div class="sh">STEP2　矢印の左右にならべる（係数はまだ全部1）</div><div class="eqn">NaHCO<sub>3</sub> <span class="arr">→</span> Na<sub>2</sub>CO<sub>3</sub> ＋ H<sub>2</sub>O ＋ CO<sub>2</sub></div><div class="sh">STEP3　原子の数を数えて、そろえる</div><table class="cnt"><tr><th>原子</th><th>左</th><th>右</th><th></th></tr><tr class="ng"><td>Na<small>ナトリウム</small></td><td><b>1</b></td><td><b>2</b></td><td>×</td></tr><tr class="ng"><td>H<small>水素</small></td><td><b>1</b></td><td><b>2</b></td><td>×</td></tr><tr class="ng"><td>C<small>炭素</small></td><td><b>1</b></td><td>1+1=<b>2</b></td><td>×</td></tr><tr class="ng"><td>O<small>酸素</small></td><td><b>3</b></td><td>3+1+2=<b>6</b></td><td>×</td></tr></table><div class="stp"><b>係数1回目：</b>Na が左1・右2。左の NaHCO<sub>3</sub> を<b>2こ</b>にする。→ H・C・O も全部いっしょにそろう！</div><div class="eqn"><span class="cf">2</span>NaHCO<sub>3</sub> <span class="arr">→</span> Na<sub>2</sub>CO<sub>3</sub> ＋ H<sub>2</sub>O ＋ CO<sub>2</sub></div><table class="cnt"><tr><th>原子</th><th>左</th><th>右</th><th></th></tr><tr class="ok"><td>Na<small>ナトリウム</small></td><td><b>2</b></td><td><b>2</b></td><td>○</td></tr><tr class="ok"><td>H<small>水素</small></td><td><b>2</b></td><td><b>2</b></td><td>○</td></tr><tr class="ok"><td>C<small>炭素</small></td><td><b>2</b></td><td>1+1=<b>2</b></td><td>○</td></tr><tr class="ok"><td>O<small>酸素</small></td><td><b>6</b></td><td>3+1+2=<b>6</b></td><td>○</td></tr></table><div class="ok1">全部 ○ → 完成！</div>
+<div class="final"><div class="flabel">完成した化学反応式</div><div class="eqn big"><span class="cf">2</span>NaHCO<sub>3</sub> <span class="arr">→</span> Na<sub>2</sub>CO<sub>3</sub> ＋ H<sub>2</sub>O ＋ CO<sub>2</sub></div>
+<div class="balls"><span class="grp"><span class="mol"><i style="background:#8b5cf6;color:#fff">Na</i><i style="background:#f8fafc;color:#334155">H</i><i style="background:#1f2937;color:#fff">C</i><i style="background:#ef4444;color:#fff">O</i><i style="background:#ef4444;color:#fff">O</i><i style="background:#ef4444;color:#fff">O</i></span><span class="mol"><i style="background:#8b5cf6;color:#fff">Na</i><i style="background:#f8fafc;color:#334155">H</i><i style="background:#1f2937;color:#fff">C</i><i style="background:#ef4444;color:#fff">O</i><i style="background:#ef4444;color:#fff">O</i><i style="background:#ef4444;color:#fff">O</i></span></span><span class="arr">→</span><span class="grp"><span class="mol"><i style="background:#8b5cf6;color:#fff">Na</i><i style="background:#8b5cf6;color:#fff">Na</i><i style="background:#1f2937;color:#fff">C</i><i style="background:#ef4444;color:#fff">O</i><i style="background:#ef4444;color:#fff">O</i><i style="background:#ef4444;color:#fff">O</i></span></span><span class="plus">＋</span><span class="grp"><span class="mol"><i style="background:#f8fafc;color:#334155">H</i><i style="background:#f8fafc;color:#334155">H</i><i style="background:#ef4444;color:#fff">O</i></span></span><span class="plus">＋</span><span class="grp"><span class="mol"><i style="background:#1f2937;color:#fff">C</i><i style="background:#ef4444;color:#fff">O</i><i style="background:#ef4444;color:#fff">O</i></span></span></div></div>
+<div class="tip">💡 右に Na が2こある（Na<sub>2</sub>CO<sub>3</sub>）のがヒント。左を2倍にすると全部合う。</div>
+<div class="check"><button data-v="ok">⚡何も見ずに書けた</button><button data-v="mid">🤔少し見て書けた</button><button data-v="ng">🔁書けなかった</button></div>
+</div></section>
+<section class="card eq" id="e2" data-key="chem-2">
+<div class="ehead"><span class="eno">②</span><span class="etitle">酸化銀の熱分解</span><span class="cat">分解</span><span class="qstat"></span></div>
+<div class="what">加熱すると銀と酸素に分かれる</div>
+<div class="remind">✏️ まず何も見ずにノートに書いてみる → 押して答え合わせ</div>
+<button class="reveal" type="button">👀 作り方を見る</button>
+<div class="hide">
+<div class="sh">STEP1　ことばの式 → 化学式</div><div class="wd">酸化銀 → 銀 ＋ 酸素</div><div class="mini">酸化銀＝<b>Ag<sub>2</sub>O</b>　銀＝<b>Ag</b>　酸素＝<b>O<sub>2</sub></b></div><div class="sh">STEP2　矢印の左右にならべる（係数はまだ全部1）</div><div class="eqn">Ag<sub>2</sub>O <span class="arr">→</span> Ag ＋ O<sub>2</sub></div><div class="sh">STEP3　原子の数を数えて、そろえる</div><table class="cnt"><tr><th>原子</th><th>左</th><th>右</th><th></th></tr><tr class="ng"><td>Ag<small>銀</small></td><td><b>2</b></td><td><b>1</b></td><td>×</td></tr><tr class="ng"><td>O<small>酸素</small></td><td><b>1</b></td><td><b>2</b></td><td>×</td></tr></table><div class="stp"><b>係数1回目：</b>まず O。左1・右2 なので、左の Ag<sub>2</sub>O を2こにする</div><div class="eqn"><span class="cf">2</span>Ag<sub>2</sub>O <span class="arr">→</span> Ag ＋ O<sub>2</sub></div><table class="cnt"><tr><th>原子</th><th>左</th><th>右</th><th></th></tr><tr class="ng"><td>Ag<small>銀</small></td><td><b>4</b></td><td><b>1</b></td><td>×</td></tr><tr class="ok"><td>O<small>酸素</small></td><td><b>2</b></td><td><b>2</b></td><td>○</td></tr></table><div class="stp"><b>係数2回目：</b>こんどは Ag が左4・右1 にずれた。右の Ag を4こにする</div><div class="eqn"><span class="cf">2</span>Ag<sub>2</sub>O <span class="arr">→</span> <span class="cf">4</span>Ag ＋ O<sub>2</sub></div><table class="cnt"><tr><th>原子</th><th>左</th><th>右</th><th></th></tr><tr class="ok"><td>Ag<small>銀</small></td><td><b>4</b></td><td><b>4</b></td><td>○</td></tr><tr class="ok"><td>O<small>酸素</small></td><td><b>2</b></td><td><b>2</b></td><td>○</td></tr></table><div class="ok1">全部 ○ → 完成！</div>
+<div class="final"><div class="flabel">完成した化学反応式</div><div class="eqn big"><span class="cf">2</span>Ag<sub>2</sub>O <span class="arr">→</span> <span class="cf">4</span>Ag ＋ O<sub>2</sub></div>
+<div class="balls"><span class="grp"><span class="mol"><i style="background:#cbd5e1;color:#1e293b">Ag</i><i style="background:#cbd5e1;color:#1e293b">Ag</i><i style="background:#ef4444;color:#fff">O</i></span><span class="mol"><i style="background:#cbd5e1;color:#1e293b">Ag</i><i style="background:#cbd5e1;color:#1e293b">Ag</i><i style="background:#ef4444;color:#fff">O</i></span></span><span class="arr">→</span><span class="grp"><span class="mol"><i style="background:#cbd5e1;color:#1e293b">Ag</i></span><span class="mol"><i style="background:#cbd5e1;color:#1e293b">Ag</i></span><span class="mol"><i style="background:#cbd5e1;color:#1e293b">Ag</i></span><span class="mol"><i style="background:#cbd5e1;color:#1e293b">Ag</i></span></span><span class="plus">＋</span><span class="grp"><span class="mol"><i style="background:#ef4444;color:#fff">O</i><i style="background:#ef4444;color:#fff">O</i></span></span></div></div>
+<div class="tip">💡 O<sub>2</sub>（2こセット）が出てくる式は、<b>O から合わせる</b>と早い。</div>
+<div class="check"><button data-v="ok">⚡何も見ずに書けた</button><button data-v="mid">🤔少し見て書けた</button><button data-v="ng">🔁書けなかった</button></div>
+</div></section>
+<section class="card eq" id="e3" data-key="chem-3">
+<div class="ehead"><span class="eno">③</span><span class="etitle">塩化銅の電気分解</span><span class="cat">分解</span><span class="qstat"></span></div>
+<div class="what">電流を流すと銅と塩素に分かれる</div>
+<div class="remind">✏️ まず何も見ずにノートに書いてみる → 押して答え合わせ</div>
+<button class="reveal" type="button">👀 作り方を見る</button>
+<div class="hide">
+<div class="sh">STEP1　ことばの式 → 化学式</div><div class="wd">塩化銅 → 銅 ＋ 塩素</div><div class="mini">塩化銅＝<b>CuCl<sub>2</sub></b>　銅＝<b>Cu</b>　塩素＝<b>Cl<sub>2</sub></b></div><div class="sh">STEP2　矢印の左右にならべる（係数はまだ全部1）</div><div class="eqn">CuCl<sub>2</sub> <span class="arr">→</span> Cu ＋ Cl<sub>2</sub></div><div class="sh">STEP3　原子の数を数えて、そろえる</div><table class="cnt"><tr><th>原子</th><th>左</th><th>右</th><th></th></tr><tr class="ok"><td>Cu<small>銅</small></td><td><b>1</b></td><td><b>1</b></td><td>○</td></tr><tr class="ok"><td>Cl<small>塩素</small></td><td><b>2</b></td><td><b>2</b></td><td>○</td></tr></table><div class="ok1">全部 ○ → このままで完成！</div>
+<div class="final"><div class="flabel">完成した化学反応式</div><div class="eqn big">CuCl<sub>2</sub> <span class="arr">→</span> Cu ＋ Cl<sub>2</sub></div>
+<div class="balls"><span class="grp"><span class="mol"><i style="background:#c2410c;color:#fff">Cu</i><i style="background:#22c55e;color:#fff">Cl</i><i style="background:#22c55e;color:#fff">Cl</i></span></span><span class="arr">→</span><span class="grp"><span class="mol"><i style="background:#c2410c;color:#fff">Cu</i></span></span><span class="plus">＋</span><span class="grp"><span class="mol"><i style="background:#22c55e;color:#fff">Cl</i><i style="background:#22c55e;color:#fff">Cl</i></span></span></div></div>
+<div class="tip">💡 最初からそろっている。係数の 1 は書かない。</div>
+<div class="check"><button data-v="ok">⚡何も見ずに書けた</button><button data-v="mid">🤔少し見て書けた</button><button data-v="ng">🔁書けなかった</button></div>
+</div></section>
+<section class="card eq" id="e4" data-key="chem-4">
+<div class="ehead"><span class="eno">④</span><span class="etitle">水の電気分解</span><span class="cat">分解</span><span class="qstat"></span></div>
+<div class="what">電流を流すと水素と酸素に分かれる</div>
+<div class="remind">✏️ まず何も見ずにノートに書いてみる → 押して答え合わせ</div>
+<button class="reveal" type="button">👀 作り方を見る</button>
+<div class="hide">
+<div class="sh">STEP1　ことばの式 → 化学式</div><div class="wd">水 → 水素 ＋ 酸素</div><div class="mini">水＝<b>H<sub>2</sub>O</b>　水素＝<b>H<sub>2</sub></b>　酸素＝<b>O<sub>2</sub></b></div><div class="sh">STEP2　矢印の左右にならべる（係数はまだ全部1）</div><div class="eqn">H<sub>2</sub>O <span class="arr">→</span> H<sub>2</sub> ＋ O<sub>2</sub></div><div class="sh">STEP3　原子の数を数えて、そろえる</div><table class="cnt"><tr><th>原子</th><th>左</th><th>右</th><th></th></tr><tr class="ok"><td>H<small>水素</small></td><td><b>2</b></td><td><b>2</b></td><td>○</td></tr><tr class="ng"><td>O<small>酸素</small></td><td><b>1</b></td><td><b>2</b></td><td>×</td></tr></table><div class="stp"><b>係数1回目：</b>まず O。左1・右2 → 左の H<sub>2</sub>O を2こに</div><div class="eqn"><span class="cf">2</span>H<sub>2</sub>O <span class="arr">→</span> H<sub>2</sub> ＋ O<sub>2</sub></div><table class="cnt"><tr><th>原子</th><th>左</th><th>右</th><th></th></tr><tr class="ng"><td>H<small>水素</small></td><td><b>4</b></td><td><b>2</b></td><td>×</td></tr><tr class="ok"><td>O<small>酸素</small></td><td><b>2</b></td><td><b>2</b></td><td>○</td></tr></table><div class="stp"><b>係数2回目：</b>H が左4・右2 にずれた → 右の H<sub>2</sub> を2こに</div><div class="eqn"><span class="cf">2</span>H<sub>2</sub>O <span class="arr">→</span> <span class="cf">2</span>H<sub>2</sub> ＋ O<sub>2</sub></div><table class="cnt"><tr><th>原子</th><th>左</th><th>右</th><th></th></tr><tr class="ok"><td>H<small>水素</small></td><td><b>4</b></td><td><b>4</b></td><td>○</td></tr><tr class="ok"><td>O<small>酸素</small></td><td><b>2</b></td><td><b>2</b></td><td>○</td></tr></table><div class="ok1">全部 ○ → 完成！</div>
+<div class="final"><div class="flabel">完成した化学反応式</div><div class="eqn big"><span class="cf">2</span>H<sub>2</sub>O <span class="arr">→</span> <span class="cf">2</span>H<sub>2</sub> ＋ O<sub>2</sub></div>
+<div class="balls"><span class="grp"><span class="mol"><i style="background:#f8fafc;color:#334155">H</i><i style="background:#f8fafc;color:#334155">H</i><i style="background:#ef4444;color:#fff">O</i></span><span class="mol"><i style="background:#f8fafc;color:#334155">H</i><i style="background:#f8fafc;color:#334155">H</i><i style="background:#ef4444;color:#fff">O</i></span></span><span class="arr">→</span><span class="grp"><span class="mol"><i style="background:#f8fafc;color:#334155">H</i><i style="background:#f8fafc;color:#334155">H</i></span><span class="mol"><i style="background:#f8fafc;color:#334155">H</i><i style="background:#f8fafc;color:#334155">H</i></span></span><span class="plus">＋</span><span class="grp"><span class="mol"><i style="background:#ef4444;color:#fff">O</i><i style="background:#ef4444;color:#fff">O</i></span></span></div></div>
+<div class="tip">💡 「水2こから、水素2こと酸素1こ」。体積も水素：酸素＝2：1 になる（実験と同じ）。</div>
+<div class="check"><button data-v="ok">⚡何も見ずに書けた</button><button data-v="mid">🤔少し見て書けた</button><button data-v="ng">🔁書けなかった</button></div>
+</div></section>
+<section class="card eq" id="e5" data-key="chem-5">
+<div class="ehead"><span class="eno">⑤</span><span class="etitle">鉄と硫黄の化合</span><span class="cat">化合</span><span class="qstat"></span></div>
+<div class="what">加熱すると硫化鉄ができる</div>
+<div class="remind">✏️ まず何も見ずにノートに書いてみる → 押して答え合わせ</div>
+<button class="reveal" type="button">👀 作り方を見る</button>
+<div class="hide">
+<div class="sh">STEP1　ことばの式 → 化学式</div><div class="wd">鉄 ＋ 硫黄 → 硫化鉄</div><div class="mini">鉄＝<b>Fe</b>　硫黄＝<b>S</b>　硫化鉄＝<b>FeS</b></div><div class="sh">STEP2　矢印の左右にならべる（係数はまだ全部1）</div><div class="eqn">Fe ＋ S <span class="arr">→</span> FeS</div><div class="sh">STEP3　原子の数を数えて、そろえる</div><table class="cnt"><tr><th>原子</th><th>左</th><th>右</th><th></th></tr><tr class="ok"><td>Fe<small>鉄</small></td><td><b>1</b></td><td><b>1</b></td><td>○</td></tr><tr class="ok"><td>S<small>硫黄</small></td><td><b>1</b></td><td><b>1</b></td><td>○</td></tr></table><div class="ok1">全部 ○ → このままで完成！</div>
+<div class="final"><div class="flabel">完成した化学反応式</div><div class="eqn big">Fe ＋ S <span class="arr">→</span> FeS</div>
+<div class="balls"><span class="grp"><span class="mol"><i style="background:#64748b;color:#fff">Fe</i></span></span><span class="plus">＋</span><span class="grp"><span class="mol"><i style="background:#facc15;color:#422006">S</i></span></span><span class="arr">→</span><span class="grp"><span class="mol"><i style="background:#64748b;color:#fff">Fe</i><i style="background:#facc15;color:#422006">S</i></span></span></div></div>
+<div class="tip">💡 最初からそろっている。</div>
+<div class="check"><button data-v="ok">⚡何も見ずに書けた</button><button data-v="mid">🤔少し見て書けた</button><button data-v="ng">🔁書けなかった</button></div>
+</div></section>
+<section class="card eq" id="e6" data-key="chem-6">
+<div class="ehead"><span class="eno">⑥</span><span class="etitle">銅と硫黄の化合</span><span class="cat">化合</span><span class="qstat"></span></div>
+<div class="what">加熱すると硫化銅ができる</div>
+<div class="remind">✏️ まず何も見ずにノートに書いてみる → 押して答え合わせ</div>
+<button class="reveal" type="button">👀 作り方を見る</button>
+<div class="hide">
+<div class="sh">STEP1　ことばの式 → 化学式</div><div class="wd">銅 ＋ 硫黄 → 硫化銅</div><div class="mini">銅＝<b>Cu</b>　硫黄＝<b>S</b>　硫化銅＝<b>CuS</b></div><div class="sh">STEP2　矢印の左右にならべる（係数はまだ全部1）</div><div class="eqn">Cu ＋ S <span class="arr">→</span> CuS</div><div class="sh">STEP3　原子の数を数えて、そろえる</div><table class="cnt"><tr><th>原子</th><th>左</th><th>右</th><th></th></tr><tr class="ok"><td>Cu<small>銅</small></td><td><b>1</b></td><td><b>1</b></td><td>○</td></tr><tr class="ok"><td>S<small>硫黄</small></td><td><b>1</b></td><td><b>1</b></td><td>○</td></tr></table><div class="ok1">全部 ○ → このままで完成！</div>
+<div class="final"><div class="flabel">完成した化学反応式</div><div class="eqn big">Cu ＋ S <span class="arr">→</span> CuS</div>
+<div class="balls"><span class="grp"><span class="mol"><i style="background:#c2410c;color:#fff">Cu</i></span></span><span class="plus">＋</span><span class="grp"><span class="mol"><i style="background:#facc15;color:#422006">S</i></span></span><span class="arr">→</span><span class="grp"><span class="mol"><i style="background:#c2410c;color:#fff">Cu</i><i style="background:#facc15;color:#422006">S</i></span></span></div></div>
+<div class="tip">💡 鉄と硫黄と同じ形。</div>
+<div class="check"><button data-v="ok">⚡何も見ずに書けた</button><button data-v="mid">🤔少し見て書けた</button><button data-v="ng">🔁書けなかった</button></div>
+</div></section>
+<section class="card eq" id="e7" data-key="chem-7">
+<div class="ehead"><span class="eno">⑦</span><span class="etitle">銅と塩素の化合</span><span class="cat">化合</span><span class="qstat"></span></div>
+<div class="what">銅と塩素が結びついて塩化銅ができる</div>
+<div class="remind">✏️ まず何も見ずにノートに書いてみる → 押して答え合わせ</div>
+<button class="reveal" type="button">👀 作り方を見る</button>
+<div class="hide">
+<div class="sh">STEP1　ことばの式 → 化学式</div><div class="wd">銅 ＋ 塩素 → 塩化銅</div><div class="mini">銅＝<b>Cu</b>　塩素＝<b>Cl<sub>2</sub></b>　塩化銅＝<b>CuCl<sub>2</sub></b></div><div class="sh">STEP2　矢印の左右にならべる（係数はまだ全部1）</div><div class="eqn">Cu ＋ Cl<sub>2</sub> <span class="arr">→</span> CuCl<sub>2</sub></div><div class="sh">STEP3　原子の数を数えて、そろえる</div><table class="cnt"><tr><th>原子</th><th>左</th><th>右</th><th></th></tr><tr class="ok"><td>Cu<small>銅</small></td><td><b>1</b></td><td><b>1</b></td><td>○</td></tr><tr class="ok"><td>Cl<small>塩素</small></td><td><b>2</b></td><td><b>2</b></td><td>○</td></tr></table><div class="ok1">全部 ○ → このままで完成！</div>
+<div class="final"><div class="flabel">完成した化学反応式</div><div class="eqn big">Cu ＋ Cl<sub>2</sub> <span class="arr">→</span> CuCl<sub>2</sub></div>
+<div class="balls"><span class="grp"><span class="mol"><i style="background:#c2410c;color:#fff">Cu</i></span></span><span class="plus">＋</span><span class="grp"><span class="mol"><i style="background:#22c55e;color:#fff">Cl</i><i style="background:#22c55e;color:#fff">Cl</i></span></span><span class="arr">→</span><span class="grp"><span class="mol"><i style="background:#c2410c;color:#fff">Cu</i><i style="background:#22c55e;color:#fff">Cl</i><i style="background:#22c55e;color:#fff">Cl</i></span></span></div></div>
+<div class="tip">💡 ③塩化銅の電気分解の<b>ちょうど逆向き</b>。</div>
+<div class="check"><button data-v="ok">⚡何も見ずに書けた</button><button data-v="mid">🤔少し見て書けた</button><button data-v="ng">🔁書けなかった</button></div>
+</div></section>
+<section class="card eq" id="e8" data-key="chem-8">
+<div class="ehead"><span class="eno">⑧</span><span class="etitle">炭素と酸素の化合（酸化）</span><span class="cat">化合（酸化）</span><span class="qstat"></span></div>
+<div class="what">炭素が燃えて二酸化炭素ができる</div>
+<div class="remind">✏️ まず何も見ずにノートに書いてみる → 押して答え合わせ</div>
+<button class="reveal" type="button">👀 作り方を見る</button>
+<div class="hide">
+<div class="sh">STEP1　ことばの式 → 化学式</div><div class="wd">炭素 ＋ 酸素 → 二酸化炭素</div><div class="mini">炭素＝<b>C</b>　酸素＝<b>O<sub>2</sub></b>　二酸化炭素＝<b>CO<sub>2</sub></b></div><div class="sh">STEP2　矢印の左右にならべる（係数はまだ全部1）</div><div class="eqn">C ＋ O<sub>2</sub> <span class="arr">→</span> CO<sub>2</sub></div><div class="sh">STEP3　原子の数を数えて、そろえる</div><table class="cnt"><tr><th>原子</th><th>左</th><th>右</th><th></th></tr><tr class="ok"><td>C<small>炭素</small></td><td><b>1</b></td><td><b>1</b></td><td>○</td></tr><tr class="ok"><td>O<small>酸素</small></td><td><b>2</b></td><td><b>2</b></td><td>○</td></tr></table><div class="ok1">全部 ○ → このままで完成！</div>
+<div class="final"><div class="flabel">完成した化学反応式</div><div class="eqn big">C ＋ O<sub>2</sub> <span class="arr">→</span> CO<sub>2</sub></div>
+<div class="balls"><span class="grp"><span class="mol"><i style="background:#1f2937;color:#fff">C</i></span></span><span class="plus">＋</span><span class="grp"><span class="mol"><i style="background:#ef4444;color:#fff">O</i><i style="background:#ef4444;color:#fff">O</i></span></span><span class="arr">→</span><span class="grp"><span class="mol"><i style="background:#1f2937;color:#fff">C</i><i style="background:#ef4444;color:#fff">O</i><i style="background:#ef4444;color:#fff">O</i></span></span></div></div>
+<div class="tip">💡 最初からそろっている。</div>
+<div class="check"><button data-v="ok">⚡何も見ずに書けた</button><button data-v="mid">🤔少し見て書けた</button><button data-v="ng">🔁書けなかった</button></div>
+</div></section>
+<section class="card eq" id="e9" data-key="chem-9">
+<div class="ehead"><span class="eno">⑨</span><span class="etitle">銅と酸素の化合（酸化）</span><span class="cat">化合（酸化）</span><span class="qstat"></span></div>
+<div class="what">銅を加熱すると酸化銅ができる</div>
+<div class="remind">✏️ まず何も見ずにノートに書いてみる → 押して答え合わせ</div>
+<button class="reveal" type="button">👀 作り方を見る</button>
+<div class="hide">
+<div class="sh">STEP1　ことばの式 → 化学式</div><div class="wd">銅 ＋ 酸素 → 酸化銅</div><div class="mini">銅＝<b>Cu</b>　酸素＝<b>O<sub>2</sub></b>　酸化銅＝<b>CuO</b></div><div class="sh">STEP2　矢印の左右にならべる（係数はまだ全部1）</div><div class="eqn">Cu ＋ O<sub>2</sub> <span class="arr">→</span> CuO</div><div class="sh">STEP3　原子の数を数えて、そろえる</div><table class="cnt"><tr><th>原子</th><th>左</th><th>右</th><th></th></tr><tr class="ok"><td>Cu<small>銅</small></td><td><b>1</b></td><td><b>1</b></td><td>○</td></tr><tr class="ng"><td>O<small>酸素</small></td><td><b>2</b></td><td><b>1</b></td><td>×</td></tr></table><div class="stp"><b>係数1回目：</b>まず O。左2・右1 → 右の CuO を2こに</div><div class="eqn">Cu ＋ O<sub>2</sub> <span class="arr">→</span> <span class="cf">2</span>CuO</div><table class="cnt"><tr><th>原子</th><th>左</th><th>右</th><th></th></tr><tr class="ng"><td>Cu<small>銅</small></td><td><b>1</b></td><td><b>2</b></td><td>×</td></tr><tr class="ok"><td>O<small>酸素</small></td><td><b>2</b></td><td><b>2</b></td><td>○</td></tr></table><div class="stp"><b>係数2回目：</b>Cu が左1・右2 にずれた → 左の Cu を2こに</div><div class="eqn"><span class="cf">2</span>Cu ＋ O<sub>2</sub> <span class="arr">→</span> <span class="cf">2</span>CuO</div><table class="cnt"><tr><th>原子</th><th>左</th><th>右</th><th></th></tr><tr class="ok"><td>Cu<small>銅</small></td><td><b>2</b></td><td><b>2</b></td><td>○</td></tr><tr class="ok"><td>O<small>酸素</small></td><td><b>2</b></td><td><b>2</b></td><td>○</td></tr></table><div class="ok1">全部 ○ → 完成！</div>
+<div class="final"><div class="flabel">完成した化学反応式</div><div class="eqn big"><span class="cf">2</span>Cu ＋ O<sub>2</sub> <span class="arr">→</span> <span class="cf">2</span>CuO</div>
+<div class="balls"><span class="grp"><span class="mol"><i style="background:#c2410c;color:#fff">Cu</i></span><span class="mol"><i style="background:#c2410c;color:#fff">Cu</i></span></span><span class="plus">＋</span><span class="grp"><span class="mol"><i style="background:#ef4444;color:#fff">O</i><i style="background:#ef4444;color:#fff">O</i></span></span><span class="arr">→</span><span class="grp"><span class="mol"><i style="background:#c2410c;color:#fff">Cu</i><i style="background:#ef4444;color:#fff">O</i></span><span class="mol"><i style="background:#c2410c;color:#fff">Cu</i><i style="background:#ef4444;color:#fff">O</i></span></span></div></div>
+<div class="tip">💡 O<sub>2</sub> から合わせる。⑩マグネシウムも<b>まったく同じ形</b>。</div>
+<div class="check"><button data-v="ok">⚡何も見ずに書けた</button><button data-v="mid">🤔少し見て書けた</button><button data-v="ng">🔁書けなかった</button></div>
+</div></section>
+<section class="card eq" id="e10" data-key="chem-10">
+<div class="ehead"><span class="eno">⑩</span><span class="etitle">マグネシウムと酸素の化合（酸化）</span><span class="cat">化合（酸化）</span><span class="qstat"></span></div>
+<div class="what">マグネシウムが燃えて酸化マグネシウムができる</div>
+<div class="remind">✏️ まず何も見ずにノートに書いてみる → 押して答え合わせ</div>
+<button class="reveal" type="button">👀 作り方を見る</button>
+<div class="hide">
+<div class="sh">STEP1　ことばの式 → 化学式</div><div class="wd">マグネシウム ＋ 酸素 → 酸化マグネシウム</div><div class="mini">マグネシウム＝<b>Mg</b>　酸素＝<b>O<sub>2</sub></b>　酸化マグネシウム＝<b>MgO</b></div><div class="sh">STEP2　矢印の左右にならべる（係数はまだ全部1）</div><div class="eqn">Mg ＋ O<sub>2</sub> <span class="arr">→</span> MgO</div><div class="sh">STEP3　原子の数を数えて、そろえる</div><table class="cnt"><tr><th>原子</th><th>左</th><th>右</th><th></th></tr><tr class="ok"><td>Mg<small>マグネシウム</small></td><td><b>1</b></td><td><b>1</b></td><td>○</td></tr><tr class="ng"><td>O<small>酸素</small></td><td><b>2</b></td><td><b>1</b></td><td>×</td></tr></table><div class="stp"><b>係数1回目：</b>まず O。左2・右1 → 右の MgO を2こに</div><div class="eqn">Mg ＋ O<sub>2</sub> <span class="arr">→</span> <span class="cf">2</span>MgO</div><table class="cnt"><tr><th>原子</th><th>左</th><th>右</th><th></th></tr><tr class="ng"><td>Mg<small>マグネシウム</small></td><td><b>1</b></td><td><b>2</b></td><td>×</td></tr><tr class="ok"><td>O<small>酸素</small></td><td><b>2</b></td><td><b>2</b></td><td>○</td></tr></table><div class="stp"><b>係数2回目：</b>Mg が左1・右2 → 左の Mg を2こに</div><div class="eqn"><span class="cf">2</span>Mg ＋ O<sub>2</sub> <span class="arr">→</span> <span class="cf">2</span>MgO</div><table class="cnt"><tr><th>原子</th><th>左</th><th>右</th><th></th></tr><tr class="ok"><td>Mg<small>マグネシウム</small></td><td><b>2</b></td><td><b>2</b></td><td>○</td></tr><tr class="ok"><td>O<small>酸素</small></td><td><b>2</b></td><td><b>2</b></td><td>○</td></tr></table><div class="ok1">全部 ○ → 完成！</div>
+<div class="final"><div class="flabel">完成した化学反応式</div><div class="eqn big"><span class="cf">2</span>Mg ＋ O<sub>2</sub> <span class="arr">→</span> <span class="cf">2</span>MgO</div>
+<div class="balls"><span class="grp"><span class="mol"><i style="background:#e2e8f0;color:#334155">Mg</i></span><span class="mol"><i style="background:#e2e8f0;color:#334155">Mg</i></span></span><span class="plus">＋</span><span class="grp"><span class="mol"><i style="background:#ef4444;color:#fff">O</i><i style="background:#ef4444;color:#fff">O</i></span></span><span class="arr">→</span><span class="grp"><span class="mol"><i style="background:#e2e8f0;color:#334155">Mg</i><i style="background:#ef4444;color:#fff">O</i></span><span class="mol"><i style="background:#e2e8f0;color:#334155">Mg</i><i style="background:#ef4444;color:#fff">O</i></span></span></div></div>
+<div class="tip">💡 ⑨の Cu を Mg に入れかえただけ。</div>
+<div class="check"><button data-v="ok">⚡何も見ずに書けた</button><button data-v="mid">🤔少し見て書けた</button><button data-v="ng">🔁書けなかった</button></div>
+</div></section>
+<section class="card eq" id="e11" data-key="chem-11">
+<div class="ehead"><span class="eno">⑪</span><span class="etitle">酸化銅の炭素による還元</span><span class="cat">還元</span><span class="qstat"></span></div>
+<div class="what">炭素が酸化銅から酸素をうばう</div>
+<div class="remind">✏️ まず何も見ずにノートに書いてみる → 押して答え合わせ</div>
+<button class="reveal" type="button">👀 作り方を見る</button>
+<div class="hide">
+<div class="sh">STEP1　ことばの式 → 化学式</div><div class="wd">酸化銅 ＋ 炭素 → 銅 ＋ 二酸化炭素</div><div class="mini">酸化銅＝<b>CuO</b>　炭素＝<b>C</b>　銅＝<b>Cu</b>　二酸化炭素＝<b>CO<sub>2</sub></b></div><div class="sh">STEP2　矢印の左右にならべる（係数はまだ全部1）</div><div class="eqn">CuO ＋ C <span class="arr">→</span> Cu ＋ CO<sub>2</sub></div><div class="sh">STEP3　原子の数を数えて、そろえる</div><table class="cnt"><tr><th>原子</th><th>左</th><th>右</th><th></th></tr><tr class="ok"><td>Cu<small>銅</small></td><td><b>1</b></td><td><b>1</b></td><td>○</td></tr><tr class="ng"><td>O<small>酸素</small></td><td><b>1</b></td><td><b>2</b></td><td>×</td></tr><tr class="ok"><td>C<small>炭素</small></td><td><b>1</b></td><td><b>1</b></td><td>○</td></tr></table><div class="stp"><b>係数1回目：</b>まず O。左1・右2 → 左の CuO を2こに</div><div class="eqn"><span class="cf">2</span>CuO ＋ C <span class="arr">→</span> Cu ＋ CO<sub>2</sub></div><table class="cnt"><tr><th>原子</th><th>左</th><th>右</th><th></th></tr><tr class="ng"><td>Cu<small>銅</small></td><td><b>2</b></td><td><b>1</b></td><td>×</td></tr><tr class="ok"><td>O<small>酸素</small></td><td><b>2</b></td><td><b>2</b></td><td>○</td></tr><tr class="ok"><td>C<small>炭素</small></td><td><b>1</b></td><td><b>1</b></td><td>○</td></tr></table><div class="stp"><b>係数2回目：</b>Cu が左2・右1 → 右の Cu を2こに。C は1こずつでそろっている</div><div class="eqn"><span class="cf">2</span>CuO ＋ C <span class="arr">→</span> <span class="cf">2</span>Cu ＋ CO<sub>2</sub></div><table class="cnt"><tr><th>原子</th><th>左</th><th>右</th><th></th></tr><tr class="ok"><td>Cu<small>銅</small></td><td><b>2</b></td><td><b>2</b></td><td>○</td></tr><tr class="ok"><td>O<small>酸素</small></td><td><b>2</b></td><td><b>2</b></td><td>○</td></tr><tr class="ok"><td>C<small>炭素</small></td><td><b>1</b></td><td><b>1</b></td><td>○</td></tr></table><div class="ok1">全部 ○ → 完成！</div>
+<div class="final"><div class="flabel">完成した化学反応式</div><div class="eqn big"><span class="cf">2</span>CuO ＋ C <span class="arr">→</span> <span class="cf">2</span>Cu ＋ CO<sub>2</sub></div>
+<div class="balls"><span class="grp"><span class="mol"><i style="background:#c2410c;color:#fff">Cu</i><i style="background:#ef4444;color:#fff">O</i></span><span class="mol"><i style="background:#c2410c;color:#fff">Cu</i><i style="background:#ef4444;color:#fff">O</i></span></span><span class="plus">＋</span><span class="grp"><span class="mol"><i style="background:#1f2937;color:#fff">C</i></span></span><span class="arr">→</span><span class="grp"><span class="mol"><i style="background:#c2410c;color:#fff">Cu</i></span><span class="mol"><i style="background:#c2410c;color:#fff">Cu</i></span></span><span class="plus">＋</span><span class="grp"><span class="mol"><i style="background:#1f2937;color:#fff">C</i><i style="background:#ef4444;color:#fff">O</i><i style="background:#ef4444;color:#fff">O</i></span></span></div></div>
+<div class="tip">💡 炭素は O を2こ持っていける（CO<sub>2</sub>）ので、酸化銅は<b>2こ</b>必要。</div>
+<div class="check"><button data-v="ok">⚡何も見ずに書けた</button><button data-v="mid">🤔少し見て書けた</button><button data-v="ng">🔁書けなかった</button></div>
+</div></section>
+<section class="card eq" id="e12" data-key="chem-12">
+<div class="ehead"><span class="eno">⑫</span><span class="etitle">酸化銅の水素による還元</span><span class="cat">還元</span><span class="qstat"></span></div>
+<div class="what">水素が酸化銅から酸素をうばう</div>
+<div class="remind">✏️ まず何も見ずにノートに書いてみる → 押して答え合わせ</div>
+<button class="reveal" type="button">👀 作り方を見る</button>
+<div class="hide">
+<div class="sh">STEP1　ことばの式 → 化学式</div><div class="wd">酸化銅 ＋ 水素 → 銅 ＋ 水</div><div class="mini">酸化銅＝<b>CuO</b>　水素＝<b>H<sub>2</sub></b>　銅＝<b>Cu</b>　水＝<b>H<sub>2</sub>O</b></div><div class="sh">STEP2　矢印の左右にならべる（係数はまだ全部1）</div><div class="eqn">CuO ＋ H<sub>2</sub> <span class="arr">→</span> Cu ＋ H<sub>2</sub>O</div><div class="sh">STEP3　原子の数を数えて、そろえる</div><table class="cnt"><tr><th>原子</th><th>左</th><th>右</th><th></th></tr><tr class="ok"><td>Cu<small>銅</small></td><td><b>1</b></td><td><b>1</b></td><td>○</td></tr><tr class="ok"><td>O<small>酸素</small></td><td><b>1</b></td><td><b>1</b></td><td>○</td></tr><tr class="ok"><td>H<small>水素</small></td><td><b>2</b></td><td><b>2</b></td><td>○</td></tr></table><div class="ok1">全部 ○ → このままで完成！</div>
+<div class="final"><div class="flabel">完成した化学反応式</div><div class="eqn big">CuO ＋ H<sub>2</sub> <span class="arr">→</span> Cu ＋ H<sub>2</sub>O</div>
+<div class="balls"><span class="grp"><span class="mol"><i style="background:#c2410c;color:#fff">Cu</i><i style="background:#ef4444;color:#fff">O</i></span></span><span class="plus">＋</span><span class="grp"><span class="mol"><i style="background:#f8fafc;color:#334155">H</i><i style="background:#f8fafc;color:#334155">H</i></span></span><span class="arr">→</span><span class="grp"><span class="mol"><i style="background:#c2410c;color:#fff">Cu</i></span></span><span class="plus">＋</span><span class="grp"><span class="mol"><i style="background:#f8fafc;color:#334155">H</i><i style="background:#f8fafc;color:#334155">H</i><i style="background:#ef4444;color:#fff">O</i></span></span></div></div>
+<div class="tip">💡 最初からそろっている。水素は O を1こしか持っていけない（H<sub>2</sub>O）ので1：1。</div>
+<div class="check"><button data-v="ok">⚡何も見ずに書けた</button><button data-v="mid">🤔少し見て書けた</button><button data-v="ng">🔁書けなかった</button></div>
+</div></section>
+<section class="card eq" id="e13" data-key="chem-13">
+<div class="ehead"><span class="eno">⑬</span><span class="etitle">硫化鉄と塩酸（塩化水素）の反応</span><span class="cat">その他</span><span class="qstat"></span></div>
+<div class="what">においのある硫化水素が出る</div>
+<div class="remind">✏️ まず何も見ずにノートに書いてみる → 押して答え合わせ</div>
+<button class="reveal" type="button">👀 作り方を見る</button>
+<div class="hide">
+<div class="sh">STEP1　ことばの式 → 化学式</div><div class="wd">硫化鉄 ＋ 塩化水素 → 塩化鉄 ＋ 硫化水素</div><div class="mini">硫化鉄＝<b>FeS</b>　塩化水素＝<b>HCl</b>　塩化鉄＝<b>FeCl<sub>2</sub></b>　硫化水素＝<b>H<sub>2</sub>S</b></div><div class="sh">STEP2　矢印の左右にならべる（係数はまだ全部1）</div><div class="eqn">FeS ＋ HCl <span class="arr">→</span> FeCl<sub>2</sub> ＋ H<sub>2</sub>S</div><div class="sh">STEP3　原子の数を数えて、そろえる</div><table class="cnt"><tr><th>原子</th><th>左</th><th>右</th><th></th></tr><tr class="ok"><td>Fe<small>鉄</small></td><td><b>1</b></td><td><b>1</b></td><td>○</td></tr><tr class="ok"><td>S<small>硫黄</small></td><td><b>1</b></td><td><b>1</b></td><td>○</td></tr><tr class="ng"><td>H<small>水素</small></td><td><b>1</b></td><td><b>2</b></td><td>×</td></tr><tr class="ng"><td>Cl<small>塩素</small></td><td><b>1</b></td><td><b>2</b></td><td>×</td></tr></table><div class="stp"><b>係数1回目：</b>H が左1・右2、Cl も左1・右2 → 左の HCl を2こにすると両方そろう</div><div class="eqn">FeS ＋ <span class="cf">2</span>HCl <span class="arr">→</span> FeCl<sub>2</sub> ＋ H<sub>2</sub>S</div><table class="cnt"><tr><th>原子</th><th>左</th><th>右</th><th></th></tr><tr class="ok"><td>Fe<small>鉄</small></td><td><b>1</b></td><td><b>1</b></td><td>○</td></tr><tr class="ok"><td>S<small>硫黄</small></td><td><b>1</b></td><td><b>1</b></td><td>○</td></tr><tr class="ok"><td>H<small>水素</small></td><td><b>2</b></td><td><b>2</b></td><td>○</td></tr><tr class="ok"><td>Cl<small>塩素</small></td><td><b>2</b></td><td><b>2</b></td><td>○</td></tr></table><div class="ok1">全部 ○ → 完成！</div>
+<div class="final"><div class="flabel">完成した化学反応式</div><div class="eqn big">FeS ＋ <span class="cf">2</span>HCl <span class="arr">→</span> FeCl<sub>2</sub> ＋ H<sub>2</sub>S</div>
+<div class="balls"><span class="grp"><span class="mol"><i style="background:#64748b;color:#fff">Fe</i><i style="background:#facc15;color:#422006">S</i></span></span><span class="plus">＋</span><span class="grp"><span class="mol"><i style="background:#f8fafc;color:#334155">H</i><i style="background:#22c55e;color:#fff">Cl</i></span><span class="mol"><i style="background:#f8fafc;color:#334155">H</i><i style="background:#22c55e;color:#fff">Cl</i></span></span><span class="arr">→</span><span class="grp"><span class="mol"><i style="background:#64748b;color:#fff">Fe</i><i style="background:#22c55e;color:#fff">Cl</i><i style="background:#22c55e;color:#fff">Cl</i></span></span><span class="plus">＋</span><span class="grp"><span class="mol"><i style="background:#f8fafc;color:#334155">H</i><i style="background:#f8fafc;color:#334155">H</i><i style="background:#facc15;color:#422006">S</i></span></span></div></div>
+<div class="tip">💡 右に Cl<sub>2</sub>・H<sub>2</sub> があるのがヒント。</div>
+<div class="check"><button data-v="ok">⚡何も見ずに書けた</button><button data-v="mid">🤔少し見て書けた</button><button data-v="ng">🔁書けなかった</button></div>
+</div></section>
+<section class="card eq" id="e14" data-key="chem-14">
+<div class="ehead"><span class="eno">⑭</span><span class="etitle">硫酸と水酸化バリウムの反応（中和）</span><span class="cat">その他</span><span class="qstat"></span></div>
+<div class="what">白い沈殿（硫酸バリウム）と水ができる</div>
+<div class="remind">✏️ まず何も見ずにノートに書いてみる → 押して答え合わせ</div>
+<button class="reveal" type="button">👀 作り方を見る</button>
+<div class="hide">
+<div class="sh">STEP1　ことばの式 → 化学式</div><div class="wd">硫酸 ＋ 水酸化バリウム → 硫酸バリウム ＋ 水</div><div class="mini">硫酸＝<b>H<sub>2</sub>SO<sub>4</sub></b>　水酸化バリウム＝<b>Ba(OH)<sub>2</sub></b>　硫酸バリウム＝<b>BaSO<sub>4</sub></b>　水＝<b>H<sub>2</sub>O</b></div><div class="sh">STEP2　矢印の左右にならべる（係数はまだ全部1）</div><div class="eqn">H<sub>2</sub>SO<sub>4</sub> ＋ Ba(OH)<sub>2</sub> <span class="arr">→</span> BaSO<sub>4</sub> ＋ H<sub>2</sub>O</div><div class="sh">STEP3　原子の数を数えて、そろえる</div><table class="cnt"><tr><th>原子</th><th>左</th><th>右</th><th></th></tr><tr class="ng"><td>H<small>水素</small></td><td>2+2=<b>4</b></td><td><b>2</b></td><td>×</td></tr><tr class="ok"><td>S<small>硫黄</small></td><td><b>1</b></td><td><b>1</b></td><td>○</td></tr><tr class="ng"><td>O<small>酸素</small></td><td>4+2=<b>6</b></td><td>4+1=<b>5</b></td><td>×</td></tr><tr class="ok"><td>Ba<small>バリウム</small></td><td><b>1</b></td><td><b>1</b></td><td>○</td></tr></table><div class="stp"><b>係数1回目：</b>H が左4（H<sub>2</sub> と (OH)<sub>2</sub> の H2こ）・右2 → 右の H<sub>2</sub>O を2こに。O も 6 と 6 でそろう</div><div class="eqn">H<sub>2</sub>SO<sub>4</sub> ＋ Ba(OH)<sub>2</sub> <span class="arr">→</span> BaSO<sub>4</sub> ＋ <span class="cf">2</span>H<sub>2</sub>O</div><table class="cnt"><tr><th>原子</th><th>左</th><th>右</th><th></th></tr><tr class="ok"><td>H<small>水素</small></td><td>2+2=<b>4</b></td><td><b>4</b></td><td>○</td></tr><tr class="ok"><td>S<small>硫黄</small></td><td><b>1</b></td><td><b>1</b></td><td>○</td></tr><tr class="ok"><td>O<small>酸素</small></td><td>4+2=<b>6</b></td><td>4+2=<b>6</b></td><td>○</td></tr><tr class="ok"><td>Ba<small>バリウム</small></td><td><b>1</b></td><td><b>1</b></td><td>○</td></tr></table><div class="ok1">全部 ○ → 完成！</div>
+<div class="final"><div class="flabel">完成した化学反応式</div><div class="eqn big">H<sub>2</sub>SO<sub>4</sub> ＋ Ba(OH)<sub>2</sub> <span class="arr">→</span> BaSO<sub>4</sub> ＋ <span class="cf">2</span>H<sub>2</sub>O</div>
+<div class="balls"><span class="grp"><span class="mol"><i style="background:#f8fafc;color:#334155">H</i><i style="background:#f8fafc;color:#334155">H</i><i style="background:#facc15;color:#422006">S</i><i style="background:#ef4444;color:#fff">O</i><i style="background:#ef4444;color:#fff">O</i><i style="background:#ef4444;color:#fff">O</i><i style="background:#ef4444;color:#fff">O</i></span></span><span class="plus">＋</span><span class="grp"><span class="mol"><i style="background:#0d9488;color:#fff">Ba</i><i style="background:#ef4444;color:#fff">O</i><i style="background:#f8fafc;color:#334155">H</i><i style="background:#ef4444;color:#fff">O</i><i style="background:#f8fafc;color:#334155">H</i></span></span><span class="arr">→</span><span class="grp"><span class="mol"><i style="background:#0d9488;color:#fff">Ba</i><i style="background:#facc15;color:#422006">S</i><i style="background:#ef4444;color:#fff">O</i><i style="background:#ef4444;color:#fff">O</i><i style="background:#ef4444;color:#fff">O</i><i style="background:#ef4444;color:#fff">O</i></span></span><span class="plus">＋</span><span class="grp"><span class="mol"><i style="background:#f8fafc;color:#334155">H</i><i style="background:#f8fafc;color:#334155">H</i><i style="background:#ef4444;color:#fff">O</i></span><span class="mol"><i style="background:#f8fafc;color:#334155">H</i><i style="background:#f8fafc;color:#334155">H</i><i style="background:#ef4444;color:#fff">O</i></span></span></div></div>
+<div class="tip">💡 Ba(OH)<sub>2</sub> は OH が<b>2セット</b>＝O が2こ・H が2こ。カッコの外の 2 は中身全部にかかる。</div>
+<div class="check"><button data-v="ok">⚡何も見ずに書けた</button><button data-v="mid">🤔少し見て書けた</button><button data-v="ng">🔁書けなかった</button></div>
+</div></section>
+
+<footer>化学反応式は、配られたプリント「教科書に出てくる化学反応式一覧」の14本と同じです。</footer>
+</div>
+<script>
+(function(){
+  var KEY = 'haruki-chem-eq-2026-10', st = {};
+  try { st = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch(e) { st = {}; }
+  function save(){ try { localStorage.setItem(KEY, JSON.stringify(st)); } catch(e) {} }
+  var LBL = { ok: ['⚡書けた', '#15803d'], mid: ['🤔少し見た', '#a16207'], ng: ['🔁書けなかった', '#b91c1c'] };
+  var cs = document.querySelectorAll('.eq');
+  function paint(c){
+    var v = st[c.getAttribute('data-key')], s = c.querySelector('.qstat');
+    c.querySelectorAll('.check button').forEach(function(b){ b.classList.toggle('on', b.getAttribute('data-v') === v); });
+    if (v) { s.textContent = LBL[v][0]; s.style.color = LBL[v][1]; } else s.textContent = '';
+  }
+  function prog(){
+    var n = 0; cs.forEach(function(c){ if (st[c.getAttribute('data-key')] === 'ok') n++; });
+    document.getElementById('prog').innerHTML = '⚡ 何も見ずに書けた：<b>' + n + '</b> ／ 14本';
+  }
+  cs.forEach(function(c){
+    c.querySelector('.reveal').addEventListener('click', function(){ c.classList.add('revealed'); });
+    c.querySelectorAll('.check button').forEach(function(b){
+      b.addEventListener('click', function(){
+        var k = c.getAttribute('data-key'), v = b.getAttribute('data-v');
+        if (st[k] === v) delete st[k]; else st[k] = v;
+        save(); paint(c); prog();
+      });
+    });
+    paint(c);
+  });
+  prog();
+})();
+</script>
+</body>
+</html>
