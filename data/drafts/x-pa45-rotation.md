@@ -471,9 +471,9 @@ https://haru-powerplatform.github.io/pa45/videos/
 ```
 【#PowerAutomate 45分ハンズオン講座＝PA45】
 
-第30回のアンケート結果です。Teamsのメッセージの「…」から、期限と重要度を選んでTo Doにタスクを入れた回。
+第30回のアンケート結果です。19名に回答いただきました。ありがとうございます。
 
-19名回答で、理解できた87%、役立ちそう90%。コメントも全件載せています。
+理解できた87%、役立ちそう90%。Plannerにも入れたい、リスト名を変えたときの困りごと、初参加の感想まで、さまざまな声に感謝しています。
 
 https://haru-powerplatform.github.io/pa45/achievements/insights/vol-30.html
 ```
