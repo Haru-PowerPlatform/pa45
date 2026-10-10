@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.131-1 経費精算の締切の1週間前と前日に、全員へ自動でお知らせする</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/tips-base.css">
+<style>
+  /* 型E寄り：月のカレンダーが主役（締切と2回のお知らせが自動で入る）＋届く通知 */
+  .stage{gap:12px;}
+  .cal{flex:0 0 600px;min-height:0;display:flex;flex-direction:column;background:#fff;border:2.5px solid #9DB8E0;border-radius:12px;overflow:hidden;
+    box-shadow:0 6px 14px rgba(20,40,90,.12);}
+  .cal .chd{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:6px 12px;background:linear-gradient(90deg,#1D4ED8,#3B82F6);color:#fff;font-size:17px;font-weight:900;}
+  .cal .chd .s{margin-left:auto;font-size:14px;background:rgba(255,255,255,.22);border-radius:999px;padding:1px 10px;}
+  .wk{flex:0 0 26px;display:grid;grid-template-columns:repeat(7,1fr);background:#F1F5F9;font-size:14px;font-weight:900;color:#475569;text-align:center;align-items:center;}
+  .wk span:first-child{color:#DC2626;} .wk span:last-child{color:#2563EB;}
+  .grid{flex:1;min-height:0;display:grid;grid-template-columns:repeat(7,1fr);grid-auto-rows:1fr;}
+  .d{border-right:1px solid #EEF2F6;border-bottom:1px solid #EEF2F6;padding:3px 5px;display:flex;flex-direction:column;gap:2px;min-height:0;}
+  .d .n{font-family:'Roboto Mono',monospace;font-size:15px;font-weight:700;color:#334155;}
+  .d.su .n{color:#DC2626;} .d.sa .n{color:#2563EB;} .d.x .n{color:#CBD5E1;}
+  .d .ev{font-size:13.5px;font-weight:900;border-radius:5px;padding:1px 5px;line-height:1.25;white-space:nowrap;}
+  .ev.r{background:#FEF3C7;color:#92400E;border:1.5px solid #F59E0B;}
+  .ev.r2{background:#FFEDD5;color:#9A3412;border:1.5px solid #EA580C;}
+  .ev.dl{background:#DC2626;color:#fff;}
+  .d.hl{background:#FFFBEB;} .d.dl{background:#FEF2F2;}
+  .legend{flex:0 0 auto;display:flex;gap:12px;padding:5px 12px;border-top:1.5px solid #E5E7EB;font-size:14.5px;font-weight:900;color:#334155;align-items:center;}
+  .legend i{display:inline-block;width:14px;height:14px;border-radius:4px;margin-right:4px;vertical-align:-2px;}
+
+  .right{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px;min-height:0;position:relative;}
+  .tm{flex:0 0 auto;background:#fff;border:2px solid #C5C7F0;border-radius:10px;overflow:hidden;}
+  .tm .th{display:flex;align-items:center;gap:7px;padding:5px 10px;background:#5B5FC7;color:#fff;font-size:15px;font-weight:900;}
+  .tm .th img{width:22px;height:22px;background:#fff;border-radius:5px;padding:2px;}
+  .tm .th .t{margin-left:auto;font-family:'Roboto Mono',monospace;font-size:13.5px;}
+  .tm .ps{display:flex;gap:8px;padding:7px 9px;}
+  .tm .av{flex:0 0 auto;width:30px;height:30px;border-radius:50%;background:linear-gradient(180deg,#8B5CF6,#4F46E5);color:#fff;font-size:13px;font-weight:900;display:flex;align-items:center;justify-content:center;}
+  .tm .bb{flex:1;min-width:0;background:#F3EEFF;border:1.5px solid #D8C9FA;border-radius:8px;padding:5px 9px;font-size:15.5px;font-weight:700;color:var(--navy);line-height:1.42;}
+  .tm .bb b{color:#B91C1C;} .tm .bb .h{display:block;font-size:16.5px;font-weight:900;color:#92400E;}
+  .tm.last .bb .h{color:#B91C1C;}
+  .tm .bb .lk{color:#0F6CBD;text-decoration:underline;font-weight:900;}
+  .lst{flex:1;min-height:0;margin-right:120px;background:#fff;border:2px solid #9FD6BC;border-radius:10px;overflow:hidden;display:flex;flex-direction:column;}
+  .lst .lh{flex:0 0 auto;display:flex;align-items:center;gap:7px;padding:4px 9px;background:linear-gradient(90deg,#036C70,#0E8A8F);color:#fff;font-size:15px;font-weight:900;}
+  .lst .lh img{width:22px;height:22px;background:#fff;border-radius:5px;padding:2px;}
+  .lst .r{flex:1;display:grid;grid-template-columns:1fr 1.3fr;align-items:center;padding:0 10px;border-bottom:1.2px solid #EEF2F6;font-size:15.5px;font-weight:700;color:#334155;}
+  .lst .r .d2{font-family:'Roboto Mono',monospace;}
+  .lst .r.on{background:#FEF2F2;font-weight:900;color:#991B1B;}
+  .bot{flex:0 0 auto;display:flex;flex-direction:column;gap:7px;}
+  .bot .uses{background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:10px;padding:4px 9px;}
+  .ch-r{position:absolute;right:6px;bottom:112px;height:112px;z-index:6;filter:drop-shadow(0 3px 5px rgba(0,0,0,.25));}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={bulb:'<path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/>',
+  arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>'};
+/* 2026年11月：11/1は日曜。締切の例＝11/25（水）*/
+const ev={18:['r','📩 1週間前'],24:['r2','📩 前日'],25:['dl','締切 17:00']};
+const hol={3:'文化の日',23:'勤労感謝'};
+let cells='';
+for(let i=0;i<35;i++){const day=i+1;const dow=i%7;
+  if(day>30){cells+=`<div class="d x"><span class="n">${day-30}</span></div>`;continue;}
+  const cls=['d',dow==0?'su':'',dow==6?'sa':'',ev[day]?(ev[day][0]=='dl'?'dl':'hl'):''].join(' ');
+  cells+=`<div class="${cls}"><span class="n">${day}</span>${hol[day]?`<span class="ev" style="color:#DC2626;font-size:13px">${hol[day]}</span>`:''}${ev[day]?`<span class="ev ${ev[day][0]}">${ev[day][1]}</span>`:''}</div>`;}
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.131-1</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">経費精算の締切の1週間前と前日に、<span class="hl">全員へ自動でお知らせする</span></div>
+    <img class="title-chara" src="${A}chara/chara_smile.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svgw(P.bulb,2.2)}</div>
+    <div class="txt">締切日をリストに1行入れておけば、<b>1週間前と前日の朝</b>に全社のチャネルへお知らせが届きます。<br>毎月のコピペと、送り忘れがなくなります</div>
+  </div>
+
+  <div class="stage">
+    <div class="cal">
+      <div class="chd">2026年 11月<span class="s">締切リストの例：11/25（水）17:00</span></div>
+      <div class="wk"><span>日</span><span>月</span><span>火</span><span>水</span><span>木</span><span>金</span><span>土</span></div>
+      <div class="grid">${cells}</div>
+      <div class="legend"><span><i style="background:#FEF3C7;border:1.5px solid #F59E0B"></i>1週間前の朝 8:30</span>
+        <span><i style="background:#FFEDD5;border:1.5px solid #EA580C"></i>前日の朝 8:30</span><span><i style="background:#DC2626"></i>締切</span></div>
+    </div>
+
+    <div class="right">
+      <div class="tm">
+        <div class="th"><img src="${A}icons/pa_teams.png" alt="">全社 ＞ お知らせ<span class="t">11/18 8:30</span></div>
+        <div class="ps"><span class="av">PA</span><div class="bb"><span class="h">📩 経費精算の締切まで あと1週間</span>
+          10月分の締切は<b>11/25（水）17:00</b>です。<br>領収書の添付を忘れずに。</div></div>
+      </div>
+      <div class="tm last">
+        <div class="th"><img src="${A}icons/pa_teams.png" alt="">全社 ＞ お知らせ<span class="t">11/24 8:30</span></div>
+        <div class="ps"><span class="av">PA</span><div class="bb"><span class="h">⏰ 経費精算の締切は 明日です</span>
+          <b>11/25（水）17:00</b>まで。</div></div>
+      </div>
+      <div class="lst"><div class="lh"><img src="${A}icons/pa_sharepoint.png" alt="">締切リスト（年に1回まとめて入力）</div>
+        <div class="r on"><span>10月分</span><span class="d2">2026/11/25 17:00</span></div>
+        <div class="r"><span>11月分</span><span class="d2">2026/12/23 17:00</span></div></div>
+      <img class="ch-r" src="${A}chara/chara_guts.png" alt="">
+      <div class="bot">
+        <div class="metric"><span class="ml">毎月の締切メール</span><span class="mv">手でコピペ</span><span class="ar">${svgw(P.arrow,3)}</span><span class="mv to">0回</span></div>
+        <div class="uses"><span class="ul">使いどころ</span><span class="u">経費精算</span><span class="u">勤怠の締め</span><span class="u">請求書の提出</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="next">
+    <span class="na">${svgw(P.arrow,3)}</span>
+    <span>締切日を変えたいときは、リストの日付を直すだけです。<b>作り方は2枚目へ</b></span>
+  </div>
+  <div class="src">出典：Microsoft Learn「繰り返しトリガー」「SharePoint コネクタ」「Microsoft Teams コネクタ」「式関数のリファレンス」／日付・文面は例</div>
+`;
+</script>
+</body>
+</html>
