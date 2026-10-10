@@ -6,7 +6,7 @@ PA45 の各回で使ったスライドです。\
 
 | 回 | 開催日 | テーマ | スライド |
 |---:|---|---|:---:|
-| 30 | 2026/10/08（予定） | Teamsの頼まれごとを1クリックでTo Doに入れる | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-30/) |
+| 30 | 2026/10/08 | Teamsの頼まれごとを1クリックでTo Doに入れる | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-30/) |
 | 29 | 2026/10/01 | 動的コンテンツに出てこない値も、Copilotと一緒に式で取り出せるようになる | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-29/) |
 | 28 | 2026/09/17 | Copilotと通知カード1枚でまとめて完了にする | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-28/) |
 | 27 | 2026/09/10 | いま動いているフローをCopilotに相談する5つの渡し方 | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-27/) |
