@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.127-1 保護者の欠席連絡をフォームで受け、学年のTeamsと当日の一覧に入れる</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/tips-base.css">
+<style>
+  /* 型A：Before/After（電話が鳴りやまない職員室 → フォーム＋学年チャネル＋当日一覧）*/
+  .stage{gap:10px;}
+  .col.bad{flex:0 0 380px;}
+  .col.good{flex:1;min-width:0;}
+  .ph{flex:0 0 auto;display:flex;align-items:center;gap:9px;font-size:25px;font-weight:900;line-height:1.1;}
+  .ph .mk{flex:0 0 auto;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;padding:7px;}
+  .col.bad .ph{color:var(--red-dark);} .col.bad .ph .mk{background:var(--red);}
+  .col.good .ph{color:var(--green-dark);} .col.good .ph .mk{background:var(--green);}
+  .sc{flex:0 0 168px;position:relative;border-radius:10px;overflow:hidden;}
+  .sc svg{position:absolute;inset:0;width:100%;height:100%;}
+  .sc .ch{position:absolute;right:0;bottom:0;height:120px;z-index:2;filter:drop-shadow(0 3px 4px rgba(0,0,0,.25));}
+  .memo{flex:1;min-height:0;background:#FFFDF5;border:2px solid #E9D8A6;border-radius:9px;display:flex;flex-direction:column;overflow:hidden;}
+  .memo .mh{flex:0 0 auto;padding:4px 10px;font-size:15px;font-weight:900;color:#92400E;background:#FEF3C7;border-bottom:1.5px solid #E9D8A6;}
+  .memo .r{flex:1;display:flex;align-items:center;gap:8px;padding:0 10px;font-size:15.5px;font-weight:700;color:#44403C;white-space:nowrap;border-bottom:1px dashed #EADFC0;
+    font-family:'Noto Sans JP';}
+  .memo .r .d{font-family:'Roboto Mono',monospace;color:#57534E;flex:0 0 auto;}
+  .memo .r.x{color:#991B1B;background:#FEF2F2;font-weight:900;}
+  .badline{flex:0 0 auto;background:#DC2626;color:#fff;border-radius:8px;padding:6px 10px;font-size:16px;font-weight:900;line-height:1.3;}
+
+  .eng{flex:0 0 112px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;}
+  .eng .lg{width:60px;height:60px;background:#fff;border-radius:15px;padding:8px;box-shadow:0 4px 10px rgba(30,58,138,.25);}
+  .eng .lb{font-size:16px;font-weight:900;color:var(--blue-dark);text-align:center;line-height:1.35;}
+  .eng .ar{width:96px;height:30px;}
+
+  .gwrap{flex:1;min-height:0;min-width:0;display:flex;gap:9px;}
+  /* 保護者のスマホ（フォーム）*/
+  .phone{flex:0 0 206px;background:#111827;border-radius:22px;padding:8px 7px 10px;display:flex;flex-direction:column;box-shadow:0 6px 14px rgba(0,0,0,.25);}
+  .scr{flex:1;min-height:0;background:#fff;border-radius:15px;overflow:hidden;display:flex;flex-direction:column;}
+  .scr .fh{flex:0 0 auto;padding:6px 9px;background:#0F766E;color:#fff;font-size:15px;font-weight:900;line-height:1.25;}
+  .scr .fb{flex:1;min-height:0;display:flex;flex-direction:column;gap:5px;padding:6px 8px;}
+  .q{display:flex;flex-direction:column;gap:2px;}
+  .q .ql{font-size:13.5px;font-weight:900;color:#475569;}
+  .q .qa{background:#F1F5F9;border:1.5px solid #CBD5E1;border-radius:6px;padding:2px 7px;font-size:15.5px;font-weight:900;color:var(--navy);}
+  .q .qa.on{background:#CCFBF1;border-color:#0F766E;color:#0F766E;}
+  .scr .send{margin-top:auto;text-align:center;background:#0F766E;color:#fff;border-radius:7px;padding:5px;font-size:15.5px;font-weight:900;}
+
+  .rcol{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px;}
+  .tm{flex:0 0 auto;background:#fff;border:2px solid #C5C7F0;border-radius:10px;overflow:hidden;}
+  .tm .th{display:flex;align-items:center;gap:7px;padding:4px 9px;background:#5B5FC7;color:#fff;font-size:15px;font-weight:900;}
+  .tm .th img{width:22px;height:22px;background:#fff;border-radius:5px;padding:2px;}
+  .tm .ps{display:flex;gap:7px;padding:6px 8px;}
+  .tm .av{flex:0 0 auto;width:28px;height:28px;border-radius:50%;background:linear-gradient(180deg,#8B5CF6,#4F46E5);color:#fff;font-size:12.5px;font-weight:900;display:flex;align-items:center;justify-content:center;}
+  .tm .bb{flex:1;min-width:0;background:#F3EEFF;border:1.5px solid #D8C9FA;border-radius:8px;padding:4px 8px;font-size:15.5px;font-weight:700;color:var(--navy);line-height:1.36;}
+  .tm .bb b{color:#B91C1C;}
+  .tm .bb .nm{display:block;font-size:13.5px;font-weight:900;color:#64748B;}
+  .list{flex:1;min-height:0;background:#fff;border:2px solid #9FD6BC;border-radius:10px;overflow:hidden;display:flex;flex-direction:column;}
+  .list .lh{flex:0 0 auto;display:flex;align-items:center;gap:7px;padding:4px 9px;background:linear-gradient(90deg,#036C70,#0E8A8F);color:#fff;font-size:15px;font-weight:900;}
+  .list .lh img{width:22px;height:22px;background:#fff;border-radius:5px;padding:2px;}
+  .list .lh .c{margin-left:auto;font-size:13.5px;background:rgba(255,255,255,.25);border-radius:999px;padding:1px 8px;}
+  .lr{flex:1;display:grid;grid-template-columns:84px 1fr 64px;align-items:center;border-bottom:1.2px solid #EEF2F6;font-size:15.5px;font-weight:700;color:#334155;}
+  .lr > span{padding:0 7px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .lr .k{font-weight:900;text-align:center;border-radius:5px;margin:0 6px;padding:0;font-size:14px;}
+  .lr .k.a{background:#FEE2E2;color:#B91C1C;} .lr .k.l{background:#FEF3C7;color:#92400E;}
+  .lr.new{background:#ECFDF5;font-weight:900;}
+  .bot{flex:0 0 auto;display:flex;gap:8px;}
+  .bot .uses{flex:1;background:#fff;border:1.5px solid #CFEFE0;border-radius:10px;padding:4px 9px;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={bulb:'<path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/>',
+  arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',x:'<path d="M6 6l12 12M18 6L6 18"/>',ok:'<path d="M5 12.5l4.5 4.5L19 7"/>'};
+/* 職員室：電話が3本同時に鳴る */
+const TEL=(x,y)=>`<g transform="translate(${x},${y})" filter="url(#tf)">
+  <path d="M0 22 h56 l-6 -18 h-44 z" fill="url(#tg)"/><rect x="2" y="22" width="52" height="16" rx="3" fill="#1F2937"/>
+  <path d="M-2 4 q30 -16 60 0 l-4 8 q-26 -10 -52 0 z" fill="#111827"/>
+  ${[0,1,2].map(i=>`<rect x="${14+i*10}" y="27" width="7" height="6" rx="1.5" fill="#9CA3AF"/>`).join('')}
+  <path d="M-10 -6 l-6 -6 M-12 2 l-8 0 M66 -6 l6 -6 M68 2 l8 0" stroke="#DC2626" stroke-width="3" stroke-linecap="round"/>
+  <text x="28" y="-10" font-family="Noto Sans JP" font-size="11" font-weight="900" fill="#DC2626" text-anchor="middle">プルル</text></g>`;
+const sBad=`<svg viewBox="0 0 356 168" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs><filter id="tf" x="-40%" y="-40%" width="180%" height="190%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#5B1A1A" flood-opacity=".25"/></filter>
+  <linearGradient id="tg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4B5563"/><stop offset="1" stop-color="#1F2937"/></linearGradient></defs>
+  <rect width="356" height="168" fill="#FDE8E8"/><rect y="132" width="356" height="36" fill="#E7C9A9"/>
+  ${TEL(30,96)}${TEL(112,60)}${TEL(30,26)}
+  <g filter="url(#tf)"><rect x="166" y="16" width="70" height="26" rx="13" fill="#DC2626"/>
+  <text x="201" y="34" font-family="Roboto Mono" font-size="14" font-weight="700" fill="#fff" text-anchor="middle">7:40</text></g>
+  <g filter="url(#tf)"><rect x="176" y="106" width="56" height="44" rx="2" fill="#FFF7AE" transform="rotate(-6 204 128)"/>
+  <text x="204" y="126" font-family="Noto Sans JP" font-size="10.5" font-weight="900" fill="#78350F" text-anchor="middle" transform="rotate(-6 204 128)">2組 佐藤</text>
+  <text x="204" y="140" font-family="Noto Sans JP" font-size="10.5" font-weight="900" fill="#78350F" text-anchor="middle" transform="rotate(-6 204 128)">発熱…?</text></g>
+</svg>`;
+const ARR=`<svg class="ar" viewBox="0 0 96 30" xmlns="http://www.w3.org/2000/svg"><path d="M4 15 H 78" stroke="#2563EB" stroke-width="6" stroke-linecap="round" stroke-dasharray="2 9"/>
+  <path d="M72 5 L 88 15 L 72 25" fill="none" stroke="#2563EB" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.127-1</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">欠席連絡をフォームで受けて、<span class="hl">学年のTeamsと今日の一覧に入れる</span></div>
+    <img class="title-chara" src="${A}chara/chara_smile.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svgw(P.bulb,2.2)}</div>
+    <div class="txt">保護者がスマホのフォームで送ると、学年のチャネルに投稿され、<b>今日の欠席一覧</b>に1行入ります。<br>一覧は今日の分だけ表示されるので、毎朝の片付けも要りません</div>
+  </div>
+
+  <div class="stage">
+    <div class="col bad">
+      <div class="ph"><span class="mk">${svgw(P.x,3.2)}</span>電話で受けると</div>
+      <div class="sc">${sBad}<img class="ch" src="${A}chara/chara_tired.png" alt=""></div>
+      <div class="memo">
+        <div class="mh">職員室のメモ（7:40〜8:10）</div>
+        <div class="r"><span class="d">7:41</span>1年2組 佐藤さん 発熱で欠席</div>
+        <div class="r"><span class="d">7:43</span>3年1組 ？？さん 遅刻</div>
+        <div class="r x"><span class="d">7:45</span>話し中で、つながらず</div>
+        <div class="r"><span class="d">7:52</span>担任に伝言…済んだ？</div>
+      </div>
+      <div class="badline">✕ 朝の会までに、担任へ伝わりきらない</div>
+    </div>
+
+    <div class="eng">
+      <img class="lg" src="${A}icons/pa_logo.png" alt="">
+      <div class="lb">送信の<br>たびに<br>動く</div>
+      ${ARR}
+    </div>
+
+    <div class="col good">
+      <div class="ph"><span class="mk">${svgw(P.ok,3.2)}</span>フォームで受けると</div>
+      <div class="gwrap">
+        <div class="phone"><div class="scr">
+          <div class="fh">欠席・遅刻の連絡<br>（さくら小学校）</div>
+          <div class="fb">
+            <div class="q"><span class="ql">学年・組と名前</span><span class="qa">1年2組 佐藤 ゆい</span></div>
+            <div class="q"><span class="ql">日付</span><span class="qa">10/13（火）</span></div>
+            <div class="q"><span class="ql">連絡の種類</span><span class="qa on">● 欠席</span></div>
+            <div class="q"><span class="ql">理由</span><span class="qa">発熱（38.2度）</span></div>
+            <div class="send">送信</div>
+          </div>
+        </div></div>
+        <div class="rcol">
+          <div class="tm">
+            <div class="th"><img src="${A}icons/pa_teams.png" alt="">1年 ＞ 欠席連絡　7:41</div>
+            <div class="ps"><span class="av">PA</span><div class="bb"><span class="nm">フロー ボット</span>
+              1年2組 佐藤 ゆい：<b>欠席</b><br>発熱（38.2度）</div></div>
+          </div>
+          <div class="list">
+            <div class="lh"><img src="${A}icons/pa_sharepoint.png" alt="">今日の欠席・遅刻<span class="c">10/13</span></div>
+            <div class="lr new"><span>1年2組</span><span>佐藤 ゆい</span><span class="k a">欠席</span></div>
+            <div class="lr"><span>1年1組</span><span>鈴木 そうた</span><span class="k l">遅刻</span></div>
+            <div class="lr"><span>3年1組</span><span>田中 みお</span><span class="k a">欠席</span></div>
+            <div class="lr"><span>5年3組</span><span>高橋 れん</span><span class="k l">遅刻</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="bot">
+        <div class="metric"><span class="ml">朝の電話</span><span class="mv">30本</span><span class="ar">${svgw(P.arrow,3)}</span><span class="mv to">0本</span></div>
+        <div class="uses"><span class="ul">使いどころ</span><span class="u">小中学校</span><span class="u">保育園の登園</span><span class="u">部活の欠席</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="next">
+    <span class="na">${svgw(P.arrow,3)}</span>
+    <span>朝の電話番がなくなり、担任は一覧を見るだけになります。<b>作り方は2枚目へ</b></span>
+  </div>
+  <div class="src">出典：Microsoft Learn「Microsoft Forms コネクタ」「Microsoft Teams コネクタ」「SharePoint コネクタ」／学校名・人名は架空</div>
+`;
+</script>
+</body>
+</html>

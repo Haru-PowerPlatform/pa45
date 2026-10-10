@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.127-2 欠席連絡の作り方</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/tips-base.css">
+<style>
+  .scene{height:100px;}
+  .cardb{gap:5px;padding:7px 9px;}
+  .cardh{font-size:15px;}
+  .col.ai{background:#F7F3FF;border:2.5px solid #C9B4F4;}
+  .col.ai .ch2{color:#5B21B6;}
+  .col.ai .ch2 .n{background:linear-gradient(180deg,#A78BFA,#6D28D9);}
+  .col.ai .card{border-color:#C9B4F4;}
+  .col.ai .cardh{background:#EDE4FF;border-bottom-color:#D8C9FA;color:#5B21B6;}
+  .col.ai .cap{background:#E4D8FA;color:#5B21B6;}
+  .step{display:flex;flex-direction:column;gap:3px;border-top:1.5px solid #E5E7EB;padding-top:5px;}
+  .step:first-child{border-top:none;padding-top:0;}
+  .step .sh{display:flex;align-items:center;gap:7px;font-size:15px;font-weight:900;color:#334155;}
+  .step .sh img{width:24px;height:24px;object-fit:contain;flex:0 0 auto;}
+  .fi{display:flex;align-items:center;gap:5px;flex-wrap:wrap;background:#fff;border:2px solid #B9C7DC;border-radius:7px;
+    padding:3px 9px;font-size:15.5px;font-weight:900;color:var(--navy);line-height:1.3;}
+  .fi.hot{border-color:var(--orange);background:#FFF7ED;}
+  .fi .k{font-size:14px;color:#475569;}
+  .qs{display:flex;flex-direction:column;gap:4px;}
+  .qq{display:flex;align-items:center;gap:7px;background:#F7F9FC;border:1.5px solid #E2EAF5;border-radius:7px;padding:3px 9px;font-size:15.5px;font-weight:900;color:var(--navy);}
+  .qq .ty{margin-left:auto;font-size:13.5px;color:#475569;background:#fff;border:1.4px solid #C7D6EE;border-radius:5px;padding:0 7px;}
+  .qq .rq{color:#DC2626;}
+  .set{display:flex;align-items:center;gap:7px;background:#ECFEFF;border:1.6px solid #67E8F9;border-radius:8px;padding:4px 9px;font-size:15px;font-weight:900;color:#0E7490;}
+  .vw{display:flex;align-items:center;gap:6px;flex-wrap:wrap;background:#F7F9FC;border:1.5px solid #E2EAF5;border-radius:8px;padding:6px 8px;font-size:15.5px;font-weight:900;color:var(--navy);}
+  .vw .op{background:#fff;border:1.4px solid #C7D6EE;border-radius:5px;padding:1px 7px;}
+  .vw .op.hot{border-color:var(--orange);background:#FFF7ED;color:#9A3412;font-family:'Roboto Mono',monospace;}
+  .note{display:flex;align-items:center;gap:7px;background:#FFF7ED;border:1.6px solid #FDBA74;border-radius:8px;
+    padding:4px 8px;font-size:14.5px;font-weight:900;color:#9A3412;line-height:1.3;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={warn:'<path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>',
+  bulb:'<path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/>'};
+const VB='0 0 388 100';
+const SH=(id,c)=>`<filter id="${id}" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="${c||'#1B2A44'}" flood-opacity=".22"/></filter>`;
+
+/* ① QRコードのお便り → 保護者のスマホ */
+const QR=(x,y)=>{let r='';const m=[[1,1,1,0,1,1,1],[1,0,1,0,1,0,1],[1,1,1,0,1,1,1],[0,0,0,1,0,1,0],[1,1,1,0,1,0,1],[1,0,1,1,0,1,0],[1,1,1,0,1,1,1]];
+  m.forEach((row,i)=>row.forEach((v,j)=>{if(v)r+=`<rect x="${x+j*5}" y="${y+i*5}" width="5" height="5" fill="#111827"/>`}));return r;};
+const s1=`<svg viewBox="${VB}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs>${SH('f')}</defs>
+  <rect width="388" height="100" fill="#EDF3FA"/>
+  <g filter="url(#f)"><rect x="18" y="8" width="104" height="84" rx="4" fill="#fff" stroke="#94A3B8" stroke-width="1.8"/>
+    <text x="70" y="24" font-family="Noto Sans JP" font-size="11" font-weight="900" fill="#334155" text-anchor="middle">学校だより</text>
+    <rect x="28" y="32" width="50" height="4" rx="2" fill="#CBD5E1"/><rect x="28" y="41" width="40" height="4" rx="2" fill="#CBD5E1"/>
+    <text x="50" y="62" font-family="Noto Sans JP" font-size="9.5" font-weight="900" fill="#0F766E" text-anchor="middle">欠席連絡は</text>
+    <text x="50" y="75" font-family="Noto Sans JP" font-size="9.5" font-weight="900" fill="#0F766E" text-anchor="middle">こちら→</text>${QR(80,52)}</g>
+  <path d="M132 50 H 160" stroke="#2563EB" stroke-width="4.4" stroke-linecap="round"/>
+  <path d="M154 44 l8 6 l-8 6" fill="none" stroke="#2563EB" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <g filter="url(#f)"><rect x="176" y="4" width="54" height="92" rx="9" fill="#111827"/><rect x="180" y="12" width="46" height="76" rx="4" fill="#fff"/>
+    <rect x="180" y="12" width="46" height="13" rx="4" fill="#0F766E"/>
+    <rect x="185" y="31" width="36" height="8" rx="2" fill="#E2E8F0"/><rect x="185" y="44" width="36" height="8" rx="2" fill="#E2E8F0"/>
+    <rect x="185" y="57" width="36" height="8" rx="2" fill="#CCFBF1"/><rect x="185" y="74" width="36" height="9" rx="2" fill="#0F766E"/></g>
+  <g filter="url(#f)"><rect x="246" y="28" width="132" height="44" rx="10" fill="#fff" stroke="#0F766E" stroke-width="2.4"/>
+    <text x="312" y="48" font-family="Noto Sans JP" font-size="13" font-weight="900" fill="#0F766E" text-anchor="middle">いつでも、どこでも</text>
+    <text x="312" y="64" font-family="Noto Sans JP" font-size="12" font-weight="900" fill="#64748B" text-anchor="middle">前の夜でも送れる</text></g>
+</svg>`;
+
+/* ② 送信 → チャネル＋一覧に1行 */
+const s2=`<svg viewBox="${VB}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs>${SH('f','#3B2A66')}<linearGradient id="tm" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7B83EB"/><stop offset="1" stop-color="#4B53BC"/></linearGradient></defs>
+  <rect width="388" height="100" fill="#F1EAFF"/>
+  <g filter="url(#f)"><rect x="16" y="22" width="92" height="56" rx="9" fill="#fff" stroke="#0F766E" stroke-width="2.4"/>
+    <text x="62" y="46" font-family="Noto Sans JP" font-size="13" font-weight="900" fill="#0F766E" text-anchor="middle">フォームの</text>
+    <text x="62" y="64" font-family="Noto Sans JP" font-size="13" font-weight="900" fill="#0F766E" text-anchor="middle">回答 1件</text></g>
+  <path d="M114 44 C 140 24, 160 22, 186 24" stroke="#7C3AED" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <path d="M114 56 C 140 78, 160 78, 186 76" stroke="#7C3AED" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <g filter="url(#f)"><rect x="190" y="6" width="188" height="38" rx="8" fill="#fff" stroke="#9EA3E8" stroke-width="2"/>
+    <rect x="198" y="13" width="24" height="24" rx="6" fill="url(#tm)"/><text x="210" y="30" font-family="Noto Sans JP" font-size="12" font-weight="900" fill="#fff" text-anchor="middle">T</text>
+    <text x="230" y="31" font-family="Noto Sans JP" font-size="13.5" font-weight="900" fill="#334155">1年のチャネルへ投稿</text></g>
+  <g filter="url(#f)"><rect x="190" y="56" width="188" height="38" rx="8" fill="#fff" stroke="#16A34A" stroke-width="2"/>
+    <rect x="198" y="63" width="24" height="24" rx="6" fill="#036C70"/><text x="210" y="80" font-family="Noto Sans JP" font-size="12" font-weight="900" fill="#fff" text-anchor="middle">S</text>
+    <text x="230" y="81" font-family="Noto Sans JP" font-size="13.5" font-weight="900" fill="#065F46">一覧に1行足す</text></g>
+</svg>`;
+
+/* ③ 昨日の行は見えなくなる */
+const s3=`<svg viewBox="${VB}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs>${SH('f','#0B5136')}</defs>
+  <rect width="388" height="100" fill="#DCF3E7"/>
+  <g filter="url(#f)" opacity=".55"><rect x="16" y="14" width="140" height="72" rx="7" fill="#fff" stroke="#94A3B8" stroke-width="2"/>
+    <text x="86" y="32" font-family="Noto Sans JP" font-size="12" font-weight="900" fill="#64748B" text-anchor="middle">10/12（昨日）</text>
+    ${[0,1,2].map(i=>`<rect x="28" y="${42+i*13}" width="116" height="6" rx="3" fill="#CBD5E1"/>`).join('')}
+    <path d="M24 22 L148 80" stroke="#94A3B8" stroke-width="3"/></g>
+  <text x="86" y="98" font-family="Noto Sans JP" font-size="11.5" font-weight="900" fill="#64748B" text-anchor="middle">表示されない</text>
+  <path d="M166 50 H 194" stroke="#16A34A" stroke-width="4.4" stroke-linecap="round"/>
+  <path d="M188 44 l8 6 l-8 6" fill="none" stroke="#16A34A" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <g filter="url(#f)"><rect x="206" y="8" width="172" height="84" rx="7" fill="#fff" stroke="#16A34A" stroke-width="2.4"/>
+    <rect x="206" y="8" width="172" height="20" rx="7" fill="#036C70"/><rect x="206" y="20" width="172" height="8" fill="#036C70"/>
+    <text x="292" y="23" font-family="Noto Sans JP" font-size="12" font-weight="900" fill="#fff" text-anchor="middle">10/13（今日）だけ</text>
+    ${[0,1,2,3].map(i=>`<rect x="216" y="${36+i*13}" width="${[120,104,128,96][i]}" height="6" rx="3" fill="#A7F3D0"/>`).join('')}</g>
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.127-2</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">作り方は<span class="hl">3ステップ</span>（フォーム → 投稿と記録 → 今日だけ表示）</div>
+    <img class="title-chara" src="${A}chara/chara_point.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svgw(P.bulb,2.2)}</div>
+    <div class="txt">フォームに<b>「日付」の質問</b>を入れておくのがコツ。前の夜に送られても、その日の一覧に並びます。<br>毎朝の片付けは、リストの表示を「今日」で絞るだけで済みます</div>
+  </div>
+
+  <div class="stage">
+    <div class="col neutral">
+      <div class="ch2"><span class="n">1</span>保護者用のフォームを作る</div>
+      <div class="scene">${s1}</div>
+      <div class="body"><div class="card">
+        <div class="cardh"><img src="${A}icons/pa_logo.png" alt="">Microsoft Forms「欠席・遅刻の連絡」</div>
+        <div class="cardb">
+          <div class="qs">
+            <div class="qq">学年・組と名前<span class="rq">＊</span><span class="ty">テキスト</span></div>
+            <div class="qq">日付<span class="rq">＊</span><span class="ty">日付</span></div>
+            <div class="qq">連絡の種類<span class="rq">＊</span><span class="ty">欠席／遅刻</span></div>
+            <div class="qq">理由<span class="ty">テキスト</span></div>
+          </div>
+          <div class="set">回答できる人：すべてのユーザー</div>
+        </div>
+      </div></div>
+      <div class="cap">学校だよりに<b>QRコード</b>を載せて配る</div>
+    </div>
+
+    <div class="col ai">
+      <div class="ch2"><span class="n">2</span>送信されたら投稿と記録</div>
+      <div class="scene">${s2}</div>
+      <div class="body"><div class="card">
+        <div class="cardh"><img src="${A}icons/pa_logo.png" alt="">新しい応答が送信されるとき（Forms）</div>
+        <div class="cardb">
+          <div class="step"><span class="sh">応答の詳細を取得する</span></div>
+          <div class="step"><span class="sh"><img src="${A}icons/pa_sharepoint.png" alt="">項目の作成（欠席連絡リスト）</span>
+            <span class="fi hot"><span class="k">日付</span><span class="dyn">日付</span><span class="k">種類</span><span class="dyn">連絡の種類</span></span></div>
+          <div class="step"><span class="sh"><img src="${A}icons/pa_teams.png" alt="">チャネルに投稿（フロー ボット）</span>
+            <span class="fi"><span class="dyn">学年・組と名前</span>：<span class="dyn">連絡の種類</span></span></div>
+        </div>
+      </div></div>
+      <div class="cap">学年ごとに<b>「スイッチ」</b>で投稿先を変える</div>
+    </div>
+
+    <div class="col good">
+      <div class="ch2"><span class="n">3</span>一覧は今日の分だけ表示</div>
+      <div class="scene">${s3}</div>
+      <div class="body"><div class="card">
+        <div class="cardh"><img src="${A}icons/pa_sharepoint.png" alt="">リストのビュー「今日の欠席・遅刻」</div>
+        <div class="cardb">
+          <div class="vw"><span>フィルター</span><span class="op">日付</span><span class="op">次の値に等しい</span><span class="op hot">[今日]</span></div>
+          <div class="note">フローは要らない。「ビューの編集」で<br>絞るだけで、昨日の行が見えなくなる</div>
+          <div class="fi"><span class="k">担任は</span>このビューを学年のチャネルにタブで固定</div>
+        </div>
+      </div></div>
+      <div class="cap">過去の記録は<b>リストに残る</b>。月末の集計にも</div>
+    </div>
+  </div>
+
+  <div class="warnbar">
+    <span class="na">${svgw(P.warn,2.4)}</span>
+    <span class="ws"><span>すべて標準コネクタ（追加料金なし）</span><span>誰でも回答できるので、名前は必須の質問に</span>
+      <span>個人情報の扱いは学校のルールに合わせる</span></span>
+  </div>
+  <div class="src">出典：Microsoft Learn／サポート「Microsoft Forms コネクタ」「Microsoft Teams コネクタ」「SharePoint コネクタ」「フィルターを使用して SharePoint ビューを変更する」／学校名・人名は架空</div>
+`;
+</script>
+</body>
+</html>
