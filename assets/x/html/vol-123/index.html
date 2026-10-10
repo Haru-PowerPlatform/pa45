@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.123-1 1週間分の日報を、AIが今週の成果と注意点の1通にまとめる</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/tips-base.css">
+<style>
+  /* 型F：紙芝居4コマ（月〜木にたまる → 金17:00に集める → AIが読み分ける → 上長に1枚届く）*/
+  .stage{flex-direction:column;gap:8px;}
+  .strip{flex:1;min-height:0;display:flex;gap:14px;}
+  .koma{flex:0 0 250px;min-height:0;display:flex;flex-direction:column;gap:6px;border-radius:14px;padding:7px 9px 8px;position:relative;
+    background:#F8FAFC;border:2.5px solid #DCE3EE;}
+  .koma.k2{background:#EFF6FF;border-color:#A9C6F5;}
+  .koma.k3{background:#F7F3FF;border-color:#C9B4F4;}
+  .koma.k4{flex:1;background:var(--green-bg);border-color:var(--green-line);}
+  .koma + .koma::before{content:"";position:absolute;left:-15px;top:50%;width:16px;height:30px;transform:translateY(-50%);
+    background:#64748B;clip-path:polygon(0 0,100% 50%,0 100%);z-index:4;}
+  .kh{flex:0 0 auto;display:flex;align-items:center;gap:7px;}
+  .kh .no{flex:0 0 auto;width:30px;height:30px;border-radius:50%;background:#475569;color:#fff;font-size:17px;font-weight:900;
+    display:flex;align-items:center;justify-content:center;}
+  .k2 .kh .no{background:var(--blue);} .k3 .kh .no{background:var(--violet);} .k4 .kh .no{background:var(--green);}
+  .kh .tm{font-family:'Roboto Mono','Noto Sans JP',monospace;font-size:15.5px;font-weight:700;color:#fff;background:#1B2A44;
+    border-radius:7px;padding:2px 9px;white-space:nowrap;}
+  .kt{flex:0 0 auto;font-size:22px;font-weight:900;color:var(--navy);line-height:1.15;white-space:nowrap;}
+  .k2 .kt{color:var(--blue-dark);} .k3 .kt{color:#5B21B6;} .k4 .kt{color:var(--green-dark);}
+  .sc{flex:0 0 112px;position:relative;border-radius:10px;overflow:hidden;background:#fff;}
+  .sc svg{position:absolute;inset:0;width:100%;height:100%;}
+  .sc .ch{position:absolute;right:-2px;bottom:-4px;height:116px;z-index:2;filter:drop-shadow(0 3px 4px rgba(0,0,0,.25));}
+  .mk{flex:1;min-height:0;background:#fff;border:2px solid #D5DEEA;border-radius:9px;display:flex;flex-direction:column;overflow:hidden;
+    box-shadow:0 3px 8px rgba(20,40,90,.10);}
+  .mk .mh{flex:0 0 auto;display:flex;align-items:center;gap:7px;padding:4px 8px;background:#F1F5F9;border-bottom:1.5px solid #E2E8F0;
+    font-size:15px;font-weight:900;color:#334155;}
+  .mk .mh img{width:24px;height:24px;object-fit:contain;}
+  .mk .mh .cn{margin-left:auto;font-size:13.5px;background:#DC2626;color:#fff;border-radius:999px;padding:1px 8px;}
+  .rw{flex:1;display:flex;align-items:center;gap:6px;padding:0 8px;border-bottom:1.2px solid #EEF2F6;font-size:15.5px;font-weight:700;color:#334155;
+    white-space:nowrap;overflow:hidden;}
+  .rw .d{flex:0 0 auto;font-size:13.5px;font-weight:900;color:#fff;background:#94A3B8;border-radius:4px;padding:0 5px;}
+  .rw .n{flex:0 0 auto;font-weight:900;color:var(--navy);}
+  .rw .t{overflow:hidden;text-overflow:ellipsis;}
+  .rw.more{justify-content:center;color:#DC2626;font-weight:900;}
+  .row2{flex:1;display:flex;align-items:center;gap:8px;padding:4px 9px;border-bottom:1.2px solid #EEF2F6;font-size:15.5px;font-weight:900;
+    color:var(--navy);line-height:1.3;}
+  .row2 img{width:26px;height:26px;object-fit:contain;flex:0 0 auto;}
+  .row2 .big{font-family:'Roboto Mono',monospace;font-size:17px;color:var(--blue-dark);}
+  .row2 .bx{flex:0 0 auto;width:26px;height:26px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff;}
+  .kc{flex:0 0 auto;font-size:15px;font-weight:900;line-height:1.3;border-radius:8px;padding:4px 8px;background:#E7EEF7;color:#334155;}
+  .k2 .kc{background:#DCEAFE;color:var(--blue-dark);} .k3 .kc{background:#E4D8FA;color:#5B21B6;}
+  .kc b{color:var(--orange);}
+
+  /* ④ 主役：届いたメール */
+  .mail{flex:1;min-height:0;background:#fff;border:2px solid #9FD6BC;border-radius:10px;display:flex;flex-direction:column;overflow:hidden;
+    box-shadow:0 6px 14px rgba(6,95,70,.16);margin-right:96px;}
+  .mail .bar{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:5px 10px;background:linear-gradient(90deg,#0F6CBD,#2B88D8);color:#fff;
+    font-size:15px;font-weight:900;}
+  .mail .bar img{width:24px;height:24px;background:#fff;border-radius:5px;padding:2px;}
+  .mail .bar .tm{margin-left:auto;font-family:'Roboto Mono',monospace;font-size:14px;}
+  .mail .sub{flex:0 0 auto;padding:5px 10px 4px;font-size:16.5px;font-weight:900;color:var(--navy);border-bottom:1.5px solid #E5E7EB;line-height:1.3;}
+  .mail .sub small{display:block;font-size:13.5px;color:var(--weak);font-weight:700;}
+  .sec{flex:0 0 auto;padding:4px 10px 3px;display:flex;flex-direction:column;gap:1px;}
+  .sec .sh{display:flex;align-items:center;gap:6px;font-size:16px;font-weight:900;}
+  .sec.good .sh{color:#B45309;} .sec.warn .sh{color:#B91C1C;}
+  .sec .li{display:flex;align-items:baseline;gap:6px;font-size:15.5px;font-weight:700;color:#1F2937;line-height:1.38;white-space:nowrap;}
+  .sec .li::before{content:"・";flex:0 0 auto;}
+  .sec .li .by{flex:0 0 auto;font-size:13.5px;font-weight:900;color:#64748B;background:#F1F5F9;border-radius:4px;padding:0 5px;}
+  .sec.warn{background:#FEF2F2;border-top:1.5px dashed #F0AEAE;}
+  .sec{flex:1;justify-content:center;}
+  .mail .ft{flex:0 0 auto;display:flex;align-items:center;gap:6px;padding:4px 10px;border-top:1.5px solid #E5E7EB;background:#F8FAFC;font-size:14px;font-weight:900;color:#475569;}
+  .mail .ft .lk{color:#0F6CBD;text-decoration:underline;}
+  .sec .li .cnt{flex:0 0 auto;font-size:13.5px;font-weight:900;color:#fff;background:#DC2626;border-radius:4px;padding:0 6px;}
+  .k4 .newb{position:absolute;right:104px;top:4px;background:#16A34A;color:#fff;font-size:13.5px;font-weight:900;border-radius:999px;padding:2px 10px;z-index:3;}
+  .k4 .ch4{position:absolute;right:2px;bottom:4px;height:132px;z-index:3;filter:drop-shadow(0 3px 5px rgba(0,0,0,.25));}
+
+  .bot{flex:0 0 auto;display:flex;gap:10px;align-items:stretch;}
+  .bot .uses{flex:1;background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:10px;padding:5px 10px;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={bulb:'<path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/>',
+  arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>'};
+const SPARK='<path d="M0 -13l2.4 6.4 6.4 2.4 -6.4 2.4 -2.4 6.4 -2.4 -6.4 -6.4 -2.4 6.4 -2.4z"/><path d="M8.5 4.5l1.1 3 3 1.1 -3 1.1 -1.1 3 -1.1 -3 -3 -1.1 3 -1.1z"/>';
+const VB='0 0 228 112';
+const SH=(id,c)=>`<filter id="${id}" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="1.8" flood-color="${c||'#1B2A44'}" flood-opacity=".22"/></filter>`;
+/* 日報の紙1枚 */
+const SHEET=(x,y,r,c)=>`<g transform="translate(${x},${y}) rotate(${r})" filter="url(#f1)">
+  <rect x="0" y="0" width="44" height="54" rx="3" fill="#fff" stroke="#B8C4D6" stroke-width="1.6"/>
+  <rect x="0" y="0" width="44" height="11" rx="3" fill="${c}"/>
+  <text x="22" y="8.6" font-family="Noto Sans JP" font-size="7.5" font-weight="900" fill="#fff" text-anchor="middle">日報</text>
+  <rect x="6" y="17" width="32" height="3.4" rx="1.7" fill="#CBD5E1"/><rect x="6" y="25" width="26" height="3.4" rx="1.7" fill="#CBD5E1"/>
+  <rect x="6" y="33" width="30" height="3.4" rx="1.7" fill="#CBD5E1"/><rect x="6" y="41" width="20" height="3.4" rx="1.7" fill="#CBD5E1"/></g>`;
+
+/* ① 日報が山積み */
+const s1=`<svg viewBox="${VB}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs>${SH('f1')}</defs>
+  <rect width="228" height="112" fill="#EEF2F7"/>
+  <rect x="0" y="96" width="228" height="16" fill="#D7DEE8"/>
+  ${[[8,44,-8,'#64748B'],[30,40,6,'#2563EB'],[54,46,-4,'#0891B2'],[16,22,4,'#7C3AED'],[42,18,-7,'#16A34A'],
+     [66,24,8,'#EA580C'],[28,0,-3,'#2563EB'],[56,-4,5,'#64748B'],[86,40,-6,'#0891B2'],[80,6,3,'#7C3AED']].map(a=>SHEET(...a)).join('')}
+  <g filter="url(#f1)"><rect x="96" y="70" width="46" height="24" rx="12" fill="#DC2626"/>
+  <text x="119" y="87" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#fff" text-anchor="middle">25件</text></g>
+</svg>`;
+
+/* ② 金曜17:00に自動で起動して集める */
+const s2=`<svg viewBox="${VB}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs>${SH('f2')}<linearGradient id="cal" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3B82F6"/><stop offset="1" stop-color="#1D4ED8"/></linearGradient></defs>
+  <rect width="228" height="112" fill="#E3EEFD"/>
+  <g filter="url(#f2)"><rect x="12" y="14" width="74" height="84" rx="8" fill="#fff" stroke="#93B4E8" stroke-width="2"/>
+    <rect x="12" y="14" width="74" height="24" rx="8" fill="url(#cal)"/><rect x="12" y="30" width="74" height="8" fill="url(#cal)"/>
+    <circle cx="30" cy="14" r="3.5" fill="#1E3A8A"/><circle cx="68" cy="14" r="3.5" fill="#1E3A8A"/>
+    <text x="49" y="31" font-family="Noto Sans JP" font-size="13" font-weight="900" fill="#fff" text-anchor="middle">毎週</text>
+    <text x="49" y="74" font-family="Noto Sans JP" font-size="32" font-weight="900" fill="#1E40AF" text-anchor="middle">金</text>
+    <text x="49" y="92" font-family="Roboto Mono" font-size="13" font-weight="700" fill="#DC2626" text-anchor="middle">17:00</text></g>
+  <path d="M92 56 H 116" stroke="#2563EB" stroke-width="4.4" stroke-linecap="round"/>
+  <path d="M110 50 l8 6 l-8 6" fill="none" stroke="#2563EB" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"/>
+  ${[0,1,2,3,4].map(i=>`<g filter="url(#f2)"><rect x="${128+i*4}" y="${22+i*6}" width="58" height="46" rx="4" fill="#fff" stroke="#A9C6F5" stroke-width="1.6"/>
+    <rect x="${134+i*4}" y="${30+i*6}" width="40" height="3.4" rx="1.7" fill="#CBD5E1"/><rect x="${134+i*4}" y="${38+i*6}" width="30" height="3.4" rx="1.7" fill="#CBD5E1"/></g>`).join('')}
+  <g filter="url(#f2)"><rect x="140" y="80" width="80" height="24" rx="12" fill="#2563EB"/>
+  <text x="180" y="97" font-family="Noto Sans JP" font-size="13.5" font-weight="900" fill="#fff" text-anchor="middle">1つに束ねる</text></g>
+</svg>`;
+
+/* ③ AIが「よかったこと」と「気になること」に読み分ける */
+const s3=`<svg viewBox="${VB}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs>${SH('f3','#3B2A66')}<linearGradient id="ai3" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#A78BFA"/><stop offset="1" stop-color="#6D28D9"/></linearGradient></defs>
+  <rect width="228" height="112" fill="#F1EAFF"/>
+  ${[0,1,2,3].map(i=>`<g filter="url(#f3)"><rect x="${8+i*3}" y="${18+i*12}" width="48" height="34" rx="4" fill="#fff" stroke="#C9B4F4" stroke-width="1.6"/>
+    <rect x="${13+i*3}" y="${25+i*12}" width="34" height="3.2" rx="1.6" fill="#CBD5E1"/><rect x="${13+i*3}" y="${32+i*12}" width="26" height="3.2" rx="1.6" fill="#CBD5E1"/></g>`).join('')}
+  <path d="M66 56 H 82" stroke="#7C3AED" stroke-width="4.2" stroke-linecap="round"/>
+  <g filter="url(#f3)"><circle cx="106" cy="56" r="22" fill="url(#ai3)"/><g transform="translate(106,56) scale(0.9)" fill="#fff">${SPARK}</g></g>
+  <path d="M128 48 C 140 30, 146 27, 154 27" stroke="#D97706" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <path d="M128 64 C 140 82, 146 85, 154 85" stroke="#DC2626" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <g filter="url(#f3)"><rect x="156" y="10" width="66" height="34" rx="8" fill="#FFFBEB" stroke="#F59E0B" stroke-width="2.4"/>
+    <text x="189" y="33" font-family="Noto Sans JP" font-size="14" font-weight="900" fill="#B45309" text-anchor="middle">★ 成果</text></g>
+  <g filter="url(#f3)"><rect x="156" y="68" width="66" height="34" rx="8" fill="#FEF2F2" stroke="#DC2626" stroke-width="2.4"/>
+    <text x="189" y="91" font-family="Noto Sans JP" font-size="14" font-weight="900" fill="#B91C1C" text-anchor="middle">⚠ 注意</text></g>
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.123-1</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">1週間分の日報を、AIが<span class="hl">今週の成果と注意点の1通</span>にまとめる</div>
+    <img class="title-chara" src="${A}chara/chara_smile.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svgw(P.bulb,2.2)}</div>
+    <div class="txt">金曜17時、チームの日報25件をAIがまとめて読み、<b>今週の成果と注意点</b>を1通にして届けます。<br>注意点には、何人の日報に出てきた話かも付きます</div>
+  </div>
+
+  <div class="stage">
+    <div class="strip">
+      <div class="koma">
+        <div class="kh"><span class="no">1</span><span class="tm">月〜金 毎日</span></div>
+        <div class="kt">日報がたまる</div>
+        <div class="sc">${s1}<img class="ch" src="${A}chara/chara_tired.png" alt=""></div>
+        <div class="mk">
+          <div class="mh"><img src="${A}icons/pa_sharepoint.png" alt="">日報リスト<span class="cn">今週 25件</span></div>
+          <div class="rw"><span class="d">月</span><span class="n">山田</span><span class="t">A社に見積を提出</span></div>
+          <div class="rw"><span class="d">火</span><span class="n">佐藤</span><span class="t">B社 納期の件で電話</span></div>
+          <div class="rw"><span class="d">水</span><span class="n">鈴木</span><span class="t">手が回らず残業</span></div>
+          <div class="rw more">… ほか 22件</div>
+        </div>
+        <div class="kc">全部読んでまとめ直すと<b>1時間</b></div>
+      </div>
+
+      <div class="koma k2">
+        <div class="kh"><span class="no">2</span><span class="tm">金 17:00</span></div>
+        <div class="kt">自動で集める</div>
+        <div class="sc">${s2}</div>
+        <div class="mk">
+          <div class="mh"><img src="${A}icons/pa_logo.png" alt="">フローが起動</div>
+          <div class="row2"><img src="${A}icons/pa_schedule.png" alt="">毎週 金曜 <span class="big">17:00</span></div>
+          <div class="row2"><img src="${A}icons/pa_sharepoint.png" alt="">今週の日報を<br>ぜんぶ取得</div>
+          <div class="row2"><img src="${A}icons/pa_dataoperation.png" alt="">25件を1つの<br>文章に束ねる</div>
+        </div>
+        <div class="kc">日報は<b>いつもどおり書くだけ</b></div>
+      </div>
+
+      <div class="koma k3">
+        <div class="kh"><span class="no">3</span><span class="tm">金 17:01</span></div>
+        <div class="kt">AIが読み分ける</div>
+        <div class="sc">${s3}</div>
+        <div class="mk">
+          <div class="mh"><img src="${A}icons/pa_logo.png" alt="">プロンプトの実行</div>
+          <div class="row2"><span class="bx" style="background:#F59E0B">★</span>成果を3つ選ぶ</div>
+          <div class="row2"><span class="bx" style="background:#DC2626">!</span>注意点を2つ選ぶ</div>
+          <div class="row2"><span class="bx" style="background:#7C3AED">人</span>同じ話が何人の<br>日報に出たか数える</div>
+        </div>
+        <div class="kc">25件を<b>横に並べて</b>読むのはAIの得意分野</div>
+      </div>
+
+      <div class="koma k4">
+        <div class="kh"><span class="no">4</span><span class="tm">金 17:02</span></div>
+        <div class="kt">上長に1通で届く</div>
+        <span class="newb">⚡ 自動で届いた</span>
+        <div class="mail">
+          <div class="bar"><img src="${A}icons/pa_outlook.png" alt="">受信トレイ<span class="tm">17:02</span></div>
+          <div class="sub">今週の営業2課 日報まとめ（10/5〜10/9）<small>差出人：Power Automate ／ 宛先：課長 高橋</small></div>
+          <div class="sec good">
+            <div class="sh">★ 今週の成果</div>
+            <div class="li">A社の見積が通過。来週発注の見込み<span class="by">山田</span></div>
+            <div class="li">新人が初めて1人で訪問を完了<span class="by">田中</span></div>
+            <div class="li">問い合わせ対応の手順書が完成<span class="by">佐藤</span></div>
+          </div>
+          <div class="sec warn">
+            <div class="sh">⚠ 気になること</div>
+            <div class="li">B社の納期が2日遅れそう<span class="cnt">3人が言及</span></div>
+            <div class="li">鈴木さんの残業が4日続いている<span class="cnt">4日連続</span></div>
+          </div>
+          <div class="ft">元の日報 25件 → <span class="lk">日報リストを開く</span></div>
+        </div>
+        <img class="ch4" src="${A}chara/chara_guts.png" alt="">
+      </div>
+    </div>
+
+    <div class="bot">
+      <div class="metric"><span class="ml">25件を読んでまとめる</span><span class="mv">1時間</span><span class="ar">${svgw(P.arrow,3)}</span><span class="mv to">1通読むだけ</span></div>
+      <div class="uses"><span class="ul">使いどころ</span><span class="u">営業の課長</span><span class="u">店舗のエリアマネージャー</span><span class="u">PMO</span><span class="u">経営企画</span></div>
+    </div>
+  </div>
+
+  <div class="next">
+    <span class="na">${svgw(P.arrow,3)}</span>
+    <span>日報を読んでまとめ直す、金曜の1時間がなくなります。<b>作り方は2枚目へ</b></span>
+  </div>
+  <div class="src">出典：Microsoft Learn「Power Automate でプロンプトを使用する」「ライセンスとAI Builder クレジット」／人名・部署名は架空</div>
+`;
+</script>
+</body>
+</html>
