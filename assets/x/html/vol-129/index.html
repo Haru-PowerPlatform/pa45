@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.129-1 問い合わせへの回答の下書きを、社内のFAQからAIが用意する</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/tips-base.css">
+<style>
+  /* 型D：やり取り（お客様のメール＋FAQ → AIの下書き → 担当が直して承認 → 返信）*/
+  .stage{gap:10px;}
+  .left{flex:0 0 380px;display:flex;flex-direction:column;gap:8px;min-height:0;}
+  .mail{flex:0 0 auto;background:#fff;border:2px solid #9DB8E0;border-radius:10px;overflow:hidden;box-shadow:0 4px 10px rgba(20,40,90,.12);}
+  .mail .mh{display:flex;align-items:center;gap:7px;padding:5px 10px;background:linear-gradient(90deg,#0F6CBD,#2B88D8);color:#fff;font-size:15px;font-weight:900;}
+  .mail .mh img{width:24px;height:24px;background:#fff;border-radius:5px;padding:2px;}
+  .mail .mh .tm{margin-left:auto;font-family:'Roboto Mono',monospace;font-size:13.5px;}
+  .mail .mb{padding:6px 10px;display:flex;flex-direction:column;gap:3px;}
+  .mail .fr{font-size:13.5px;font-weight:900;color:#64748B;}
+  .mail .sj{font-size:16px;font-weight:900;color:var(--navy);}
+  .mail .tx{font-size:15.5px;font-weight:700;color:#334155;line-height:1.4;}
+  .mail .tx mark{background:#FEF08A;padding:0 2px;border-radius:3px;font-weight:900;}
+  .faq{flex:1;min-height:0;background:#fff;border:2px solid #9FD6BC;border-radius:10px;overflow:hidden;display:flex;flex-direction:column;}
+  .faq .fh{flex:0 0 auto;display:flex;align-items:center;gap:7px;padding:5px 10px;background:linear-gradient(90deg,#036C70,#0E8A8F);color:#fff;font-size:15px;font-weight:900;}
+  .faq .fh img{width:24px;height:24px;background:#fff;border-radius:5px;padding:2px;}
+  .faq .fh .c{margin-left:auto;font-size:13.5px;background:rgba(255,255,255,.25);border-radius:999px;padding:1px 8px;}
+  .fr2{flex:1;display:flex;align-items:center;gap:8px;padding:0 10px;border-bottom:1.2px solid #EEF2F6;font-size:15.5px;font-weight:700;color:#334155;white-space:nowrap;overflow:hidden;}
+  .fr2 .no{flex:0 0 auto;font-family:'Roboto Mono',monospace;font-size:13.5px;color:#64748B;}
+  .fr2.hit{background:#FEF9C3;font-weight:900;color:#854D0E;outline:2.5px solid #F59E0B;outline-offset:-3px;}
+  .fr2 .tg{margin-left:auto;font-size:13.5px;font-weight:900;background:#F59E0B;color:#fff;border-radius:999px;padding:0 8px;}
+
+  .mid{flex:0 0 100px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;}
+  .mid .orb{width:66px;height:66px;border-radius:50%;background:linear-gradient(180deg,#A78BFA,#6D28D9);padding:14px;box-shadow:0 5px 12px rgba(91,33,182,.35);}
+  .mid .lb{font-size:16px;font-weight:900;color:#5B21B6;text-align:center;line-height:1.3;}
+  .mid .ar{width:84px;height:30px;}
+
+  .right{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px;min-height:0;position:relative;}
+  .apv{flex:1;min-height:0;background:#fff;border:2.5px solid #C9B4F4;border-radius:12px;overflow:hidden;display:flex;flex-direction:column;}
+  .apv .ah{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:6px 11px;background:#5B21B6;color:#fff;font-size:15.5px;font-weight:900;}
+  .apv .ah img{width:24px;height:24px;background:#fff;border-radius:5px;padding:2px;}
+  .apv .ah .st{margin-left:auto;font-size:13.5px;background:rgba(255,255,255,.22);border-radius:999px;padding:1px 9px;}
+  .apv .ab{flex:1;min-height:0;display:flex;flex-direction:column;gap:6px;padding:8px 11px;}
+  .apv .lbl{font-size:14px;font-weight:900;color:#7C3AED;}
+  .draft{flex:0 0 auto;background:#FAF7FF;border:2px solid #D8C9FA;border-radius:9px;padding:7px 10px;font-size:15.5px;font-weight:700;color:var(--navy);line-height:1.5;}
+  .draft del{color:#B91C1C;text-decoration:line-through;}
+  .draft ins{text-decoration:none;background:#DCFCE7;color:#065F46;font-weight:900;border-radius:3px;padding:0 2px;}
+  .draft .src2{display:inline-block;font-size:13.5px;font-weight:900;color:#854D0E;background:#FEF3C7;border-radius:5px;padding:0 6px;}
+  .leg{display:flex;gap:10px;font-size:14px;font-weight:900;color:#475569;}
+  .leg del{color:#B91C1C;} .leg ins{text-decoration:none;background:#DCFCE7;color:#065F46;border-radius:3px;padding:0 3px;}
+  .none{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;gap:3px;background:#F8FAFC;border:1.8px dashed #94A3B8;border-radius:9px;padding:6px 10px;}
+  .none .h{font-size:14px;font-weight:900;color:#475569;}
+  .none .q{font-size:15.5px;font-weight:700;color:var(--navy);}
+  .none .a{font-size:15.5px;font-weight:900;color:#B45309;}
+  .apv .btns{flex:0 0 auto;display:flex;gap:8px;align-items:center;}
+  .apv .btns span{font-size:15.5px;font-weight:900;border-radius:7px;padding:5px 14px;}
+  .apv .ok{background:#16A34A;color:#fff;} .apv .ng{background:#F1F5F9;color:#475569;border:1.5px solid #CBD5E1;}
+  .apv .sent{margin-left:auto;font-size:15px;font-weight:900;color:#065F46;background:#ECFDF5;border:1.5px solid #6EE7B7;border-radius:7px;padding:4px 9px;}
+  .bot{flex:0 0 auto;display:flex;gap:8px;}
+  .bot .uses{flex:1;background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:10px;padding:4px 9px;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={bulb:'<path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/>',
+  arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>'};
+const AIW=`<svg viewBox="0 0 24 24" fill="#fff" style="width:100%;height:100%" xmlns="http://www.w3.org/2000/svg">
+  <path d="M12 2.2l1.9 5.1 5.1 1.9-5.1 1.9L12 16.2l-1.9-5.1L5 9.2l5.1-1.9z"/><path d="M18.6 14.6l.9 2.4 2.4.9-2.4.9-.9 2.4-.9-2.4-2.4-.9 2.4-.9z"/></svg>`;
+const ARR=`<svg class="ar" viewBox="0 0 84 30" xmlns="http://www.w3.org/2000/svg"><path d="M4 15 H 68" stroke="#7C3AED" stroke-width="6" stroke-linecap="round" stroke-dasharray="2 9"/>
+  <path d="M62 5 L 78 15 L 62 25" fill="none" stroke="#7C3AED" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.129-1</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">問い合わせへの回答の下書きを、<span class="hl">社内のFAQからAIが用意する</span></div>
+    <img class="title-chara" src="${A}chara/chara_smile.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svgw(P.bulb,2.2)}</div>
+    <div class="txt">届いた問い合わせとFAQをAIに渡すと、<b>FAQに沿った返信の下書き</b>が担当者に届きます。<br>担当は画面で直して承認するだけ。FAQにない質問は「該当なし」と返させます</div>
+  </div>
+
+  <div class="stage">
+    <div class="left">
+      <div class="mail">
+        <div class="mh"><img src="${A}icons/pa_outlook.png" alt="">support@ に届いた問い合わせ<span class="tm">14:05</span></div>
+        <div class="mb">
+          <span class="fr">差出人：山田商事 佐藤様</span>
+          <span class="sj">パスワードを忘れてしまいました</span>
+          <span class="tx">管理画面に入れません。<mark>パスワードの再設定</mark>の方法を教えてください。</span>
+        </div>
+      </div>
+      <div class="faq">
+        <div class="fh"><img src="${A}icons/pa_sharepoint.png" alt="">よくある質問（FAQ）<span class="c">42件</span></div>
+        <div class="fr2"><span class="no">#08</span>請求書の再発行</div>
+        <div class="fr2 hit"><span class="no">#12</span>パスワードの再設定<span class="tg">使う</span></div>
+        <div class="fr2"><span class="no">#15</span>ユーザーの追加</div>
+        <div class="fr2"><span class="no">#21</span>解約の手続き</div>
+        <div class="fr2"><span class="no">#30</span>領収書の宛名変更</div>
+      </div>
+    </div>
+
+    <div class="mid">
+      <div class="orb">${AIW}</div>
+      <div class="lb">FAQから<br>下書き</div>
+      ${ARR}
+      <img src="${A}chara/chara_laptop.png" alt="" style="height:114px;margin-top:8px;filter:drop-shadow(0 3px 5px rgba(0,0,0,.22));">
+    </div>
+
+    <div class="right">
+      <div class="apv">
+        <div class="ah"><img src="${A}icons/pa_logo.png" alt="">承認 ＞ 回答の下書きを確認してください<span class="st">担当：鈴木一郎</span></div>
+        <div class="ab">
+          <span class="lbl">推奨テキスト（その場で直せる）</span>
+          <div class="draft">佐藤様<br>お問い合わせありがとうございます。<br>
+            ログイン画面の「パスワードをお忘れの方」から、登録の<del>メール</del><ins>メールアドレス</ins>を入力してください。再設定用のリンクが届きます。<br>
+            <ins>リンクの有効期限は24時間です。</ins><br><span class="src2">根拠：FAQ #12</span></div>
+          <div class="leg"><span><del>赤</del>＝AIの下書き</span><span><ins>緑</ins>＝担当が直した所</span></div>
+          <div class="none"><span class="h">FAQにない質問が来たときは</span>
+            <span class="q">「API連携はできますか」</span>
+            <span class="a">→ AIは「該当なし」と返し、担当が自分で書く</span></div>
+          <div class="btns"><span class="ok">✓ 承認して送信</span><span class="ng">却下</span><span class="sent">✓ 14:07 返信済み</span></div>
+        </div>
+      </div>
+      <div class="bot">
+        <div class="metric"><span class="ml">返信を書く時間</span><span class="mv">15分</span><span class="ar">${svgw(P.arrow,3)}</span><span class="mv to">2分</span></div>
+        <div class="uses"><span class="ul">使いどころ</span><span class="u">サポート窓口</span><span class="u">社内ヘルプデスク</span><span class="u">総務</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="next">
+    <span class="na">${svgw(P.arrow,3)}</span>
+    <span>同じような質問に、毎回イチから返信を書く作業がなくなります。<b>作り方は2枚目へ</b></span>
+  </div>
+  <div class="src">出典：Microsoft Learn「Power Automate でプロンプトを使用する」「Office 365 Outlook コネクタ」「ライセンスとAI Builder クレジット」／社名・人名・文面は架空</div>
+`;
+</script>
+</body>
+</html>

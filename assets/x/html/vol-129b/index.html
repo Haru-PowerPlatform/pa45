@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.129-2 FAQから回答の下書きを作る作り方</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/tips-base.css">
+<style>
+  .scene{height:100px;}
+  .cardb{gap:5px;padding:7px 9px;}
+  .cardh{font-size:15px;}
+  .col.ai{background:#F7F3FF;border:2.5px solid #C9B4F4;}
+  .col.ai .ch2{color:#5B21B6;}
+  .col.ai .ch2 .n{background:linear-gradient(180deg,#A78BFA,#6D28D9);}
+  .col.ai .card{border-color:#C9B4F4;}
+  .col.ai .cardh{background:#EDE4FF;border-bottom-color:#D8C9FA;color:#5B21B6;}
+  .col.ai .cap{background:#E4D8FA;color:#5B21B6;}
+  .step{display:flex;flex-direction:column;gap:3px;border-top:1.5px solid #E5E7EB;padding-top:5px;}
+  .step:first-child{border-top:none;padding-top:0;}
+  .step .sh{display:flex;align-items:center;gap:7px;font-size:15px;font-weight:900;color:#334155;}
+  .step .sh img{width:24px;height:24px;object-fit:contain;flex:0 0 auto;}
+  .fi{display:flex;align-items:center;gap:5px;flex-wrap:wrap;background:#fff;border:2px solid #B9C7DC;border-radius:7px;
+    padding:3px 9px;font-size:15.5px;font-weight:900;color:var(--navy);line-height:1.3;}
+  .fi.hot{border-color:var(--orange);background:#FFF7ED;}
+  .fi .k{font-size:14px;color:#475569;}
+  .fi .op{background:#F1F5F9;border:1.3px solid #CBD5E1;border-radius:5px;padding:0 6px;font-size:14px;}
+  .code{font-size:15px;padding:6px 9px;line-height:1.45;word-break:normal;white-space:nowrap;overflow:hidden;}
+  .ex{display:flex;flex-direction:column;gap:2px;background:#F3EEFF;border:1.5px dashed #B79CF0;border-radius:8px;padding:5px 9px;font-size:15px;font-weight:700;color:var(--navy);line-height:1.38;}
+  .ex .h{font-size:14px;font-weight:900;color:#5B21B6;}
+  .note{display:flex;align-items:center;gap:7px;background:#FFF7ED;border:1.6px solid #FDBA74;border-radius:8px;padding:4px 8px;font-size:14.5px;font-weight:900;color:#9A3412;line-height:1.3;}
+  .pr{background:#fff;border:2px solid #C9B4F4;border-radius:8px;padding:5px 9px;font-size:15.5px;font-weight:700;color:var(--navy);line-height:1.38;}
+  .pr .k{display:block;font-size:14px;font-weight:900;color:#7C3AED;}
+  .pr b{color:#B91C1C;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={warn:'<path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>',
+  bulb:'<path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/>'};
+const VB='0 0 388 100';
+const SPARK='<path d="M0 -13l2.4 6.4 6.4 2.4 -6.4 2.4 -2.4 6.4 -2.4 -6.4 -6.4 -2.4 6.4 -2.4z"/><path d="M8.5 4.5l1.1 3 3 1.1 -3 1.1 -1.1 3 -1.1 -3 -3 -1.1 3 -1.1z"/>';
+const SH=(id,c)=>`<filter id="${id}" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="${c||'#1B2A44'}" flood-opacity=".22"/></filter>`;
+
+/* ① メール＋FAQの束 */
+const s1=`<svg viewBox="${VB}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs>${SH('f')}</defs><rect width="388" height="100" fill="#EDF3FA"/>
+  <g filter="url(#f)"><rect x="16" y="22" width="80" height="54" rx="5" fill="#fff" stroke="#7FA6D6" stroke-width="2"/>
+    <path d="M16 26 L56 54 L96 26" fill="none" stroke="#7FA6D6" stroke-width="2"/></g>
+  <text x="56" y="92" font-family="Noto Sans JP" font-size="11.5" font-weight="900" fill="#1E40AF" text-anchor="middle">問い合わせ</text>
+  <text x="120" y="56" font-family="Noto Sans JP" font-size="22" font-weight="900" fill="#2563EB" text-anchor="middle">＋</text>
+  ${[0,1,2,3].map(i=>`<g filter="url(#f)"><rect x="${146+i*5}" y="${12+i*6}" width="86" height="56" rx="5" fill="#fff" stroke="#16A34A" stroke-width="1.8"/>
+    <text x="${154+i*5}" y="${27+i*6}" font-family="Roboto Mono" font-size="10" font-weight="700" fill="#065F46">FAQ #${['08','12','15','21'][i]}</text>
+    <rect x="${154+i*5}" y="${33+i*6}" width="66" height="4" rx="2" fill="#CBD5E1"/></g>`).join('')}
+  <text x="194" y="96" font-family="Noto Sans JP" font-size="11.5" font-weight="900" fill="#065F46" text-anchor="middle">FAQ 42件を1つに</text>
+  <path d="M254 50 H 282" stroke="#2563EB" stroke-width="4.4" stroke-linecap="round"/>
+  <path d="M276 44 l8 6 l-8 6" fill="none" stroke="#2563EB" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <g filter="url(#f)"><rect x="294" y="26" width="84" height="48" rx="9" fill="#fff" stroke="#2563EB" stroke-width="2.4"/>
+    <text x="336" y="47" font-family="Noto Sans JP" font-size="12.5" font-weight="900" fill="#1E40AF" text-anchor="middle">AIへ</text>
+    <text x="336" y="64" font-family="Noto Sans JP" font-size="12.5" font-weight="900" fill="#1E40AF" text-anchor="middle">一緒に渡す</text></g>
+</svg>`;
+
+/* ② FAQにある／ない で返し方を変える */
+const s2=`<svg viewBox="${VB}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs>${SH('f','#3B2A66')}<linearGradient id="g2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#A78BFA"/><stop offset="1" stop-color="#6D28D9"/></linearGradient></defs>
+  <rect width="388" height="100" fill="#F3EEFF"/>
+  <g filter="url(#f)"><circle cx="62" cy="50" r="28" fill="url(#g2)"/><g transform="translate(62,50) scale(1.1)" fill="#fff">${SPARK}</g></g>
+  <path d="M94 42 C 120 20, 140 18, 164 20" stroke="#16A34A" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <path d="M94 58 C 120 80, 140 82, 164 80" stroke="#D97706" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <g filter="url(#f)"><rect x="168" y="4" width="210" height="36" rx="8" fill="#fff" stroke="#16A34A" stroke-width="2.4"/>
+    <text x="180" y="27" font-family="Noto Sans JP" font-size="13.5" font-weight="900" fill="#065F46">FAQにある → 返信の下書き</text></g>
+  <g filter="url(#f)"><rect x="168" y="60" width="210" height="36" rx="8" fill="#FFFBEB" stroke="#D97706" stroke-width="2.4"/>
+    <text x="180" y="83" font-family="Noto Sans JP" font-size="13.5" font-weight="900" fill="#92400E">FAQにない → 「該当なし」</text></g>
+</svg>`;
+
+/* ③ 人が直して送る */
+const s3=`<svg viewBox="${VB}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs>${SH('f','#0B5136')}</defs><rect width="388" height="100" fill="#DCF3E7"/>
+  <g filter="url(#f)"><rect x="16" y="10" width="150" height="80" rx="8" fill="#fff" stroke="#7C3AED" stroke-width="2.2"/>
+    <rect x="28" y="24" width="120" height="5" rx="2.5" fill="#CBD5E1"/>
+    <rect x="28" y="36" width="54" height="5" rx="2.5" fill="#FCA5A5"/><path d="M28 38.5 H 82" stroke="#DC2626" stroke-width="1.6"/>
+    <rect x="86" y="34" width="62" height="9" rx="2" fill="#BBF7D0"/>
+    <rect x="28" y="50" width="110" height="5" rx="2.5" fill="#CBD5E1"/>
+    <rect x="28" y="66" width="56" height="16" rx="4" fill="#16A34A"/>
+    <text x="56" y="78" font-family="Noto Sans JP" font-size="10" font-weight="900" fill="#fff" text-anchor="middle">承認</text>
+    <path d="M140 66 l10 -10 l6 6 l-10 10 z" fill="#F59E0B"/><path d="M137 76 l3 -10 l7 7 z" fill="#78350F"/></g>
+  <path d="M176 50 H 204" stroke="#16A34A" stroke-width="4.4" stroke-linecap="round"/>
+  <path d="M198 44 l8 6 l-8 6" fill="none" stroke="#16A34A" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <g filter="url(#f)"><rect x="216" y="22" width="86" height="56" rx="5" fill="#fff" stroke="#16A34A" stroke-width="2.2"/>
+    <path d="M216 26 L259 54 L302 26" fill="none" stroke="#16A34A" stroke-width="2.2"/></g>
+  <text x="340" y="46" font-family="Noto Sans JP" font-size="13" font-weight="900" fill="#065F46" text-anchor="middle">お客様へ</text>
+  <text x="340" y="64" font-family="Noto Sans JP" font-size="13" font-weight="900" fill="#065F46" text-anchor="middle">返信</text>
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.129-2</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">作り方は<span class="hl">3ステップ</span>（FAQと渡す → AIが下書き → 人が直して返信）</div>
+    <img class="title-chara" src="${A}chara/chara_point.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svgw(P.bulb,2.2)}</div>
+    <div class="txt">AIには<b>「FAQに書いてあることだけで答える」</b>と指示するのがコツ。<br>FAQにない質問は「該当なし」と返させ、担当が自分で書きます</div>
+  </div>
+
+  <div class="stage">
+    <div class="col neutral">
+      <div class="ch2"><span class="n">1</span>問い合わせとFAQを集める</div>
+      <div class="scene">${s1}</div>
+      <div class="body"><div class="card">
+        <div class="cardh"><img src="${A}icons/pa_outlook.png" alt="">新しいメールが共有メールボックスに届いたとき (V2)</div>
+        <div class="cardb">
+          <div class="step"><span class="sh"><img src="${A}icons/pa_sharepoint.png" alt="">複数の項目の取得（FAQリスト）</span></div>
+          <div class="step"><span class="sh"><img src="${A}icons/pa_dataoperation.png" alt="">選択 → 結合</span>
+            <span class="fi"><span class="k">1行</span>#番号 質問：回答</span></div>
+          <div class="code"><span class="g">#08</span> 請求書の再発行：マイページの…<br><span class="g">#12</span> パスワードの再設定：ログイン…<br><span class="g">#15</span> ユーザーの追加：管理画面の…</div>
+        </div>
+      </div></div>
+      <div class="cap">FAQは<b>リストで管理</b>。直せば翌日から下書きに効く</div>
+    </div>
+
+    <div class="col ai">
+      <div class="ch2"><span class="n">2</span>AIに下書きさせる</div>
+      <div class="scene">${s2}</div>
+      <div class="body"><div class="card">
+        <div class="cardh"><img src="${A}icons/pa_logo.png" alt="">プロンプトの実行</div>
+        <div class="cardb">
+          <div class="pr"><span class="k">指示（1回だけ書く）</span>
+            <b>FAQに書いてあることだけ</b>を使って、丁寧な返信を書く。最後に使ったFAQの番号。FAQにないときは「該当なし」とだけ返す。</div>
+          <div class="fi hot"><span class="k">問い合わせ</span><span class="dyn">本文</span><span class="k">FAQ</span><span class="dyn">出力（結合）</span></div>
+          <div class="ex"><span class="h">返ってくる例</span>佐藤様　ログイン画面の…（FAQ #12）</div>
+        </div>
+      </div></div>
+      <div class="cap">根拠の<b>FAQ番号</b>を付けさせると、確認が速い</div>
+    </div>
+
+    <div class="col good">
+      <div class="ch2"><span class="n">3</span>担当が直して返信</div>
+      <div class="scene">${s3}</div>
+      <div class="body"><div class="card">
+        <div class="cardh"><img src="${A}icons/pa_logo.png" alt="">開始してテキストの承認を待機</div>
+        <div class="cardb">
+          <div class="fi hot"><span class="k">推奨テキスト</span><span class="dyn">テキスト</span></div>
+          <div class="step"><span class="sh"><img src="${A}icons/pa_condition.png" alt="">条件：結果が「承認」なら</span></div>
+          <div class="step"><span class="sh"><img src="${A}icons/pa_outlook.png" alt="">共有メールボックスからメールを送信する (V2)</span>
+            <span class="fi"><span class="k">宛先</span><span class="dyn">差出人</span><span class="k">本文</span>担当が直した文</span></div>
+          <div class="note">却下したときは、担当が自分で返信する</div>
+        </div>
+      </div></div>
+      <div class="cap">送るかどうかを決めるのは<b>必ず人</b></div>
+    </div>
+  </div>
+
+  <div class="warnbar">
+    <span class="na">${svgw(P.warn,2.4)}</span>
+    <span class="ws"><span>AI Builderのクレジットを消費</span><span>2026/11/1以降はCopilotクレジットへ</span>
+      <span>メールにAIへの指示が紛れ込むことも。人の確認は外さない</span></span>
+  </div>
+  <div class="src">出典：Microsoft Learn「Power Automate でプロンプトを使用する」「プロンプトを用いた自動化のための人間によるレビュー」「Office 365 Outlook コネクタ」／名称は架空</div>
+`;
+</script>
+</body>
+</html>
