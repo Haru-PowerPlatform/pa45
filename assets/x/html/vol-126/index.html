@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.126-1 問い合わせの急ぎ度をAIが判定し、至急の1通だけTeamsで知らせる</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/tips-base.css">
+<style>
+  /* 型C：主役モック（AIが急ぎ度ラベルを付けた受信トレイ ＋ 至急の通知）*/
+  .stage{gap:10px;}
+  .inbox{flex:0 0 600px;min-height:0;display:flex;flex-direction:column;background:#fff;border:2.5px solid #9DB8E0;border-radius:12px;overflow:hidden;
+    box-shadow:0 6px 14px rgba(20,40,90,.14);}
+  .inbox .ih{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:6px 11px;background:linear-gradient(90deg,#0F6CBD,#2B88D8);color:#fff;font-size:16px;font-weight:900;}
+  .inbox .ih img{width:26px;height:26px;background:#fff;border-radius:6px;padding:2px;}
+  .inbox .ih .ai{margin-left:auto;display:flex;align-items:center;gap:5px;font-size:14px;background:rgba(255,255,255,.22);border-radius:999px;padding:2px 10px;}
+  .mr{flex:1;min-height:0;display:flex;align-items:center;gap:10px;padding:0 11px;border-bottom:1.3px solid #E5E7EB;position:relative;}
+  .mr .tm{flex:0 0 46px;font-family:'Roboto Mono',monospace;font-size:14px;font-weight:700;color:#64748B;}
+  .mr .bd{flex:0 0 auto;width:62px;text-align:center;font-size:15px;font-weight:900;border-radius:7px;padding:3px 0;}
+  .mr .bd.h{background:#DC2626;color:#fff;} .mr .bd.m{background:#FDE68A;color:#78350F;} .mr .bd.l{background:#E5E7EB;color:#475569;}
+  .mr .tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px;}
+  .mr .fr{font-size:13.5px;font-weight:900;color:#64748B;white-space:nowrap;}
+  .mr .sj{font-size:16px;font-weight:900;color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .mr .why{flex:0 0 auto;font-size:13.5px;font-weight:900;color:#B91C1C;background:#FEF2F2;border:1.5px solid #FCA5A5;border-radius:6px;padding:2px 7px;}
+  .mr.hot{background:#FEF2F2;outline:3px solid #DC2626;outline-offset:-3px;}
+  .mr.hot .sj{color:#991B1B;}
+
+  .mid{flex:0 0 96px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;}
+  .mid .orb{width:66px;height:66px;border-radius:50%;background:linear-gradient(180deg,#A78BFA,#6D28D9);padding:14px;box-shadow:0 5px 12px rgba(91,33,182,.35);}
+  .mid .lb{font-size:16px;font-weight:900;color:#5B21B6;text-align:center;line-height:1.3;}
+  .mid .ar{width:80px;height:30px;}
+
+  .right{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px;min-height:0;position:relative;}
+  .alert{flex:1;min-height:0;background:#fff;border:2.5px solid #C5C7F0;border-radius:12px;overflow:hidden;display:flex;flex-direction:column;}
+  .alert .th{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:6px 11px;background:#5B5FC7;color:#fff;font-size:15.5px;font-weight:900;}
+  .alert .th img{width:24px;height:24px;background:#fff;border-radius:5px;padding:2px;}
+  .card2{flex:1;min-height:0;margin:8px;border:1.8px solid #FCA5A5;border-left:7px solid #DC2626;border-radius:9px;padding:8px 11px;display:flex;flex-direction:column;gap:5px;
+    background:linear-gradient(180deg,#FFF5F5,#fff 40%);}
+  .card2 .t{font-size:19px;font-weight:900;color:#B91C1C;}
+  .card2 .r{display:flex;gap:8px;font-size:15.5px;font-weight:700;color:var(--navy);line-height:1.35;}
+  .card2 .r .k{flex:0 0 64px;font-size:14px;font-weight:900;color:#64748B;padding-top:1px;}
+  .card2 .q{background:#F8FAFC;border-left:4px solid #CBD5E1;border-radius:4px;padding:4px 8px;font-size:15.5px;font-weight:700;color:#334155;line-height:1.4;}
+  .card2 .q mark{background:#FECACA;color:#991B1B;font-weight:900;padding:0 2px;border-radius:3px;}
+  .card2 .ai{display:flex;align-items:center;gap:6px;background:#F3EEFF;border:1.5px solid #D8C9FA;border-radius:7px;padding:4px 8px;font-size:15px;font-weight:900;color:#5B21B6;}
+  .card2 .who{margin-top:auto;display:flex;align-items:center;gap:7px;font-size:15px;font-weight:900;color:#065F46;background:#ECFDF5;border:1.5px solid #6EE7B7;border-radius:7px;padding:4px 8px;}
+  .bot{flex:0 0 auto;display:flex;flex-direction:column;gap:6px;}
+  .bot .uses{flex:1;background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:10px;padding:4px 9px;}
+  .ch-r{position:absolute;right:-6px;top:30px;height:116px;z-index:6;filter:drop-shadow(0 3px 5px rgba(0,0,0,.25));}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={bulb:'<path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/>',
+  arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>'};
+const AIW=`<svg viewBox="0 0 24 24" fill="#fff" style="width:100%;height:100%" xmlns="http://www.w3.org/2000/svg">
+  <path d="M12 2.2l1.9 5.1 5.1 1.9-5.1 1.9L12 16.2l-1.9-5.1L5 9.2l5.1-1.9z"/><path d="M18.6 14.6l.9 2.4 2.4.9-2.4.9-.9 2.4-.9-2.4-2.4-.9 2.4-.9z"/></svg>`;
+const ARR=`<svg class="ar" viewBox="0 0 80 30" xmlns="http://www.w3.org/2000/svg"><path d="M4 15 H 64" stroke="#DC2626" stroke-width="6" stroke-linecap="round" stroke-dasharray="2 9"/>
+  <path d="M58 5 L 74 15 L 58 25" fill="none" stroke="#DC2626" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const ML=(t,b,c,fr,sj,why,hot)=>`<div class="mr${hot?' hot':''}"><span class="tm">${t}</span><span class="bd ${c}">${b}</span>
+  <span class="tx"><span class="fr">${fr}</span><span class="sj">${sj}</span></span>${why?`<span class="why">${why}</span>`:''}</div>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.126-1</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">問い合わせの急ぎ度をAIが判定し、<span class="hl">至急だけTeamsで知らせる</span></div>
+    <img class="title-chara" src="${A}chara/chara_surprise.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svgw(P.bulb,2.2)}</div>
+    <div class="txt">info@に届いたメールをAIが読み、<b>怒り・期限・取引の見直し</b>が書かれたものを「高」と判定。<br>「高」の1通だけ、理由つきで担当チャネルに知らせます</div>
+  </div>
+
+  <div class="stage">
+    <div class="inbox">
+      <div class="ih"><img src="${A}icons/pa_outlook.png" alt="">info@ 共有メールボックス<span class="ai">✦ AIが急ぎ度を付けた例</span></div>
+      ${ML('09:31','低','l','山田商事 総務部','請求書の宛名変更のお願い')}
+      ${ML('09:24','中','m','鈴木運輸 購買課','来月分の見積をお願いできますか')}
+      ${ML('09:12','高','h','みどり製作所 佐藤','先週の納品、まだ届いていません','怒り＋期限',1)}
+      ${ML('08:57','低','l','田中電機 広報','展示会のご案内')}
+      ${ML('08:45','中','m','高橋工業 設計部','図面の差し替えについて')}
+      ${ML('08:30','低','l','佐藤商店','先日はありがとうございました')}
+      ${ML('08:12','中','m','青葉設備 工務','点検日程のご相談')}
+    </div>
+
+    <div class="mid">
+      <div class="orb">${AIW}</div>
+      <div class="lb">「高」だけ<br>知らせる</div>
+      ${ARR}
+      <img src="${A}chara/chara_guts.png" alt="" style="height:114px;margin-top:10px;filter:drop-shadow(0 3px 5px rgba(0,0,0,.22));">
+    </div>
+
+    <div class="right">
+      <div class="alert">
+        <div class="th"><img src="${A}icons/pa_teams.png" alt="">営業1課 ＞ 問い合わせ　09:13</div>
+        <div class="card2">
+          <span class="t">🔴 至急の問い合わせ</span>
+          <div class="r"><span class="k">差出人</span>みどり製作所 佐藤様</div>
+          <div class="r"><span class="k">件名</span>先週の納品、まだ届いていません</div>
+          <div class="q">今月中に届かなければ、<mark>取引の見直し</mark>も考えています。<mark>明日の朝まで</mark>に状況を教えてください。</div>
+          <div class="ai">✦ AIの判定　高｜期限の指定と取引見直しの言及</div>
+          <div class="r"><span class="k">返信目安</span>30分以内（営業1課 鈴木）</div>
+          <div class="r"><span class="k">元メール</span><span style="color:#0F6CBD;text-decoration:underline">Outlookで開く</span></div>
+          <div class="who">✓ 受信から1分で、担当のチャネルに届く</div>
+        </div>
+      </div>
+      <div class="bot">
+        <div class="metric"><span class="ml">クレームに気づくまで</span><span class="mv">半日</span><span class="ar">${svgw(P.arrow,3)}</span><span class="mv to">1分</span></div>
+        <div class="uses"><span class="ul">使いどころ</span><span class="u">サポート窓口</span><span class="u">営業</span><span class="u">自治体の窓口</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="next">
+    <span class="na">${svgw(P.arrow,3)}</span>
+    <span>受信順に読んでいて、クレームが後回しになる、がなくなります。<b>作り方は2枚目へ</b></span>
+  </div>
+  <div class="src">出典：Microsoft Learn「Power Automate でプロンプトを使用する」「Office 365 Outlook コネクタ」「ライセンスとAI Builder クレジット」／社名・人名・文面は架空</div>
+`;
+</script>
+</body>
+</html>
