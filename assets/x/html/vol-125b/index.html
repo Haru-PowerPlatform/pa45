@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.125-2 安否確認の作り方</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/tips-base.css">
+<style>
+  .scene{height:100px;}
+  .cardb{gap:5px;padding:7px 9px;}
+  .cardh{font-size:15px;}
+  .col.ai{background:#F7F3FF;border:2.5px solid #C9B4F4;}
+  .col.ai .ch2{color:#5B21B6;}
+  .col.ai .ch2 .n{background:linear-gradient(180deg,#A78BFA,#6D28D9);}
+  .col.ai .card{border-color:#C9B4F4;}
+  .col.ai .cardh{background:#EDE4FF;border-bottom-color:#D8C9FA;color:#5B21B6;}
+  .col.ai .cap{background:#E4D8FA;color:#5B21B6;}
+  .step{display:flex;flex-direction:column;gap:3px;border-top:1.5px solid #E5E7EB;padding-top:5px;}
+  .step:first-child{border-top:none;padding-top:0;}
+  .step .sh{display:flex;align-items:center;gap:7px;font-size:15px;font-weight:900;color:#334155;}
+  .step .sh img{width:24px;height:24px;object-fit:contain;flex:0 0 auto;}
+  .fi{display:flex;align-items:center;gap:5px;flex-wrap:wrap;background:#fff;border:2px solid #B9C7DC;border-radius:7px;
+    padding:3px 9px;font-size:15.5px;font-weight:900;color:var(--navy);line-height:1.3;}
+  .fi.hot{border-color:var(--orange);background:#FFF7ED;}
+  .fi .k{font-size:14px;color:#475569;}
+  .fi.code{font-family:'Roboto Mono',monospace;color:#1E40AF;}
+  .note{display:flex;align-items:center;gap:7px;background:#FFF7ED;border:1.6px solid #FDBA74;border-radius:8px;
+    padding:4px 8px;font-size:14.5px;font-weight:900;color:#9A3412;line-height:1.3;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={warn:'<path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>',
+  bulb:'<path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/>'};
+const VB='0 0 388 100';
+const SH=(id,c)=>`<filter id="${id}" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="${c||'#1B2A44'}" flood-opacity=".22"/></filter>`;
+const PHN=(x,y,c,mark)=>`<g transform="translate(${x},${y})" filter="url(#pf)"><rect x="0" y="0" width="22" height="38" rx="4" fill="#1F2937"/>
+  <rect x="2.5" y="4" width="17" height="28" rx="2" fill="${c}"/>${mark?`<text x="11" y="23" font-family="Noto Sans JP" font-size="12" font-weight="900" fill="#fff" text-anchor="middle">${mark}</text>`:''}</g>`;
+
+/* ① ボタン1つで全員のスマホへ */
+const s1=`<svg viewBox="${VB}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs>${SH('pf')}<linearGradient id="rb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F87171"/><stop offset="1" stop-color="#B91C1C"/></linearGradient></defs>
+  <rect width="388" height="100" fill="#EDF3FA"/>
+  <g filter="url(#pf)"><circle cx="54" cy="50" r="32" fill="#E5E7EB"/><circle cx="54" cy="47" r="26" fill="url(#rb)"/>
+    <text x="54" y="44" font-family="Noto Sans JP" font-size="11.5" font-weight="900" fill="#fff" text-anchor="middle">安否</text>
+    <text x="54" y="58" font-family="Noto Sans JP" font-size="11.5" font-weight="900" fill="#fff" text-anchor="middle">確認</text></g>
+  ${[0,1,2,3].map(i=>`<path d="M92 50 C 130 50, 140 ${14+i*24}, 170 ${16+i*24}" stroke="#2563EB" stroke-width="2.6" fill="none" stroke-dasharray="4 4"/>`).join('')}
+  ${[0,1,2,3,4,5,6,7].map(i=>PHN(178+(i%4)*48,6+Math.floor(i/4)*50,'#5B5FC7','!')).join('')}
+</svg>`;
+
+/* ② 回答が名簿に入る */
+const s2=`<svg viewBox="${VB}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs>${SH('pf')}</defs>
+  <rect width="388" height="100" fill="#F1EAFF"/>
+  <g filter="url(#pf)"><rect x="14" y="12" width="104" height="76" rx="8" fill="#fff" stroke="#0F766E" stroke-width="2.2"/>
+    <rect x="14" y="12" width="104" height="18" rx="8" fill="#0F766E"/><rect x="14" y="22" width="104" height="8" fill="#0F766E"/>
+    <text x="66" y="26" font-family="Noto Sans JP" font-size="11" font-weight="900" fill="#fff" text-anchor="middle">Forms 回答</text>
+    ${['無事','けが','出社不可'].map((t,i)=>`<circle cx="30" cy="${44+i*16}" r="5" fill="${i==0?'#0F766E':'#fff'}" stroke="#0F766E" stroke-width="1.8"/>
+      <text x="42" y="${48+i*16}" font-family="Noto Sans JP" font-size="11.5" font-weight="900" fill="#334155">${t}</text>`).join('')}</g>
+  <path d="M126 50 H 152" stroke="#7C3AED" stroke-width="4.4" stroke-linecap="round"/>
+  <path d="M146 44 l8 6 l-8 6" fill="none" stroke="#7C3AED" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <g filter="url(#pf)"><rect x="164" y="8" width="214" height="84" rx="7" fill="#fff" stroke="#C9B4F4" stroke-width="2"/>
+    <text x="176" y="26" font-family="Noto Sans JP" font-size="11.5" font-weight="900" fill="#5B21B6">社員名簿</text>
+    ${[['山田太郎','無事','#047857','#DCFCE7'],['鈴木一郎','けが','#B91C1C','#FEE2E2'],['田中次郎','未回答','#92400E','#FEF3C7']].map(([n,st,c,bg],i)=>
+      `<rect x="168" y="${33+i*19}" width="206" height="17" fill="${i==1?'#FEF2F2':'#fff'}"/>
+       <text x="178" y="${46+i*19}" font-family="Noto Sans JP" font-size="12" font-weight="900" fill="#334155">${n}</text>
+       <rect x="300" y="${35+i*19}" width="66" height="14" rx="7" fill="${bg}"/>
+       <text x="333" y="${46+i*19}" font-family="Noto Sans JP" font-size="11" font-weight="900" fill="${c}" text-anchor="middle">${st}</text>`).join('')}</g>
+</svg>`;
+
+/* ③ 未回答だけにもう一度 */
+const s3=`<svg viewBox="${VB}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs>${SH('pf','#0B5136')}</defs>
+  <rect width="388" height="100" fill="#DCF3E7"/>
+  ${[0,1,2,3,4,5,6,7,8,9].map(i=>{const x=14+(i%5)*30,y=12+Math.floor(i/5)*44,u=(i==3||i==7);
+    return `<g transform="translate(${x},${y})" filter="url(#pf)"><circle cx="11" cy="9" r="8" fill="${u?'#F59E0B':'#34D399'}"/>
+      <path d="M-1 34 q12 -20 24 0 z" fill="${u?'#F59E0B':'#34D399'}"/>
+      ${u?'':`<path d="M6 9 l3.5 3.5 l6 -7" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round"/>`}</g>`}).join('')}
+  <path d="M168 50 H 196" stroke="#16A34A" stroke-width="4.4" stroke-linecap="round"/>
+  <path d="M190 44 l8 6 l-8 6" fill="none" stroke="#16A34A" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <g filter="url(#pf)"><rect x="208" y="10" width="170" height="36" rx="8" fill="#FFFBEB" stroke="#F59E0B" stroke-width="2.2"/>
+    <text x="293" y="33" font-family="Noto Sans JP" font-size="13.5" font-weight="900" fill="#92400E" text-anchor="middle">未回答2人にだけ再通知</text></g>
+  <g filter="url(#pf)"><rect x="208" y="56" width="170" height="36" rx="8" fill="#fff" stroke="#16A34A" stroke-width="2.2"/>
+    <text x="293" y="79" font-family="Noto Sans JP" font-size="13.5" font-weight="900" fill="#065F46" text-anchor="middle">総務へ 回答 8 / 10人</text></g>
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.125-2</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">作り方は<span class="hl">フロー3本</span>（送る → 名簿に入れる → 追いかける）</div>
+    <img class="title-chara" src="${A}chara/chara_point.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svgw(P.bulb,2.2)}</div>
+    <div class="txt">名簿の<b>「状態」列</b>が主役。送るときに全員を「未回答」にし、回答が来たら書き換えます。<br>「未回答」が残っている人だけを、30分ごとに追いかけます</div>
+  </div>
+
+  <div class="stage">
+    <div class="col neutral">
+      <div class="ch2"><span class="n">1</span>ボタンで全員に送る</div>
+      <div class="scene">${s1}</div>
+      <div class="body"><div class="card">
+        <div class="cardh"><img src="${A}icons/pa_logo.png" alt="">フローを手動でトリガーする</div>
+        <div class="cardb">
+          <div class="step"><span class="sh"><img src="${A}icons/pa_sharepoint.png" alt="">名簿を取得 → 項目の更新</span>
+            <span class="fi hot"><span class="k">状態</span>未回答</span></div>
+          <div class="step"><span class="sh"><img src="${A}icons/pa_teams.png" alt="">フロー ボットでチャットする</span>
+            <span class="fi"><span class="k">受信者</span><span class="dyn">メール</span></span>
+            <span class="fi"><span class="k">本文</span>回答してください＋URL</span></div>
+        </div>
+      </div></div>
+      <div class="cap">スマホのアプリから<b>ボタン1つ</b>で起動</div>
+    </div>
+
+    <div class="col ai">
+      <div class="ch2"><span class="n">2</span>回答を名簿に入れる</div>
+      <div class="scene">${s2}</div>
+      <div class="body"><div class="card">
+        <div class="cardh"><img src="${A}icons/pa_logo.png" alt="">新しい応答が送信されるとき（Forms）</div>
+        <div class="cardb">
+          <div class="step"><span class="sh">応答の詳細を取得する</span></div>
+          <div class="step"><span class="sh"><img src="${A}icons/pa_sharepoint.png" alt="">複数の項目の取得</span>
+            <span class="fi code">Email eq '<span class="dyn">Responders' Email</span>'</span></div>
+          <div class="step"><span class="sh"><img src="${A}icons/pa_sharepoint.png" alt="">項目の更新</span>
+            <span class="fi hot"><span class="k">状態</span><span class="dyn">いまの状況</span></span></div>
+        </div>
+      </div></div>
+      <div class="cap">フォームは<b>組織内の人だけ</b>回答できる設定に</div>
+    </div>
+
+    <div class="col good">
+      <div class="ch2"><span class="n">3</span>未回答だけ追いかける</div>
+      <div class="scene">${s3}</div>
+      <div class="body"><div class="card">
+        <div class="cardh"><img src="${A}icons/pa_schedule.png" alt="">繰り返し　30分ごと</div>
+        <div class="cardb">
+          <div class="step"><span class="sh"><img src="${A}icons/pa_sharepoint.png" alt="">複数の項目の取得</span>
+            <span class="fi code hot">Status eq '未回答'</span></div>
+          <div class="step"><span class="sh"><img src="${A}icons/pa_teams.png" alt="">フロー ボットでチャットする</span>
+            <span class="fi"><span class="k">受信者</span>未回答の人だけ</span></div>
+          <div class="step"><span class="sh"><img src="${A}icons/pa_teams.png" alt="">チャネルに投稿（総務へ）</span>
+            <span class="fi"><span class="k">未回答</span><span class="dyn">length(…)</span>人</span></div>
+        </div>
+      </div></div>
+      <div class="cap">全員そろったら、<b>このフローをオフ</b>にする</div>
+    </div>
+  </div>
+
+  <div class="warnbar">
+    <span class="na">${svgw(P.warn,2.4)}</span>
+    <span class="ws"><span>すべて標準コネクタ（追加料金なし）</span><span>Teamsが入っていない人には届かない</span>
+      <span>電話の連絡網も残しておく</span><span>訓練で一度動かしておく</span></span>
+  </div>
+  <div class="src">出典：Microsoft Learn「Microsoft Forms コネクタ」「Microsoft Teams コネクタ」「SharePoint コネクタ」「繰り返しトリガー」／名称は架空</div>
+`;
+</script>
+</body>
+</html>
