@@ -52,6 +52,7 @@ SESSIONS = {
     26: ("Daily Status Card", "2026-09-03", "hourencard"),
     27: ("Ask Copilot Right", "2026-09-10", "copilot"),
     28: ("Card Bulk Complete", "2026-09-17", "checkcard"),
+    29: ("Expression Picker", "2026-10-01", "exprpick"),
     30: ("One-Click To Do", "2026-10-08", "teamstodo"),
 }
 
@@ -90,11 +91,19 @@ PALETTE_OVERRIDE = {
     #          Teamsのインディゴ×ゴールド。吹き出しから立ち上がる親指アップiconが主役。
     24: dict(ring=("#c8caff", "#171a58"), disc=("#4f52c9", "#0b0d33"),
              gold=GOLD, title="#ffffff", sub="#d8daff"),
+    # Vol.29：式で値を取り出す。自動巡回のティールに、アイコンはゴールド（銀だと沈むため）。
+    #          JSONの1行をfxチップが引き抜く＋Copilotのキラキラが主役。
+    29: dict(ring=("#99f6e4", "#083a3a"), disc=("#0d9494", "#032121"),
+             gold=GOLD, title="#ffffff", sub="#a5f3e8"),
     # Vol.30：Teamsの頼まれごとを1クリックでTo Doへ。To Doの青×ゴールド。
     #          吹き出しから矢印でTo Doリストに入る（先頭行がチェック済み）iconが主役。
     30: dict(ring=("#b3d4ff", "#0b2a5c"), disc=("#2f6fe0", "#081a40"),
              gold=GOLD, title="#ffffff", sub="#cfe2ff"),
 }
+
+
+# 幅広の文字が多くて外周に迫る回だけ、タイトル文字サイズを個別に下げる
+TITLE_SIZE_OVERRIDE = {29: 52}
 
 
 def palette_for(vol):
@@ -486,6 +495,54 @@ def icon_teamstodo(g):
   </g>'''
 
 
+def icon_exprpick(g):
+    """動的コンテンツに出てこない値を、Copilotと一緒に式で取り出す。
+    JSONパネルの1行（金）を fx チップが引き抜く＋角にCopilotのキラキラ。"""
+    gl, gm, gd = g
+    x, y, w, h, r = 322, 270, 176, 196, 18
+    fam = "'Segoe UI','Noto Sans JP',sans-serif"
+    # JSONパネル（{ } と行）
+    lines = ""
+    for i, (ind, ww) in enumerate(((0, 0), (18, 96), (18, 112), (18, 80), (0, 0))):
+        ly = y + 40 + i * 30
+        if i in (0, 4):
+            lines += (f'<text x="{x+20}" y="{ly+8}" font-family="{fam}" font-weight="800" font-size="44" '
+                      f'fill="{gd}">{"{" if i == 0 else "}"}</text>')
+            continue
+        hit = (i == 2)
+        if hit:
+            lines += f'<rect x="{x+10}" y="{ly-11}" width="{w-20}" height="28" rx="8" fill="{gl}" opacity="0.6"/>'
+        lines += (f'<rect x="{x+20+ind}" y="{ly-2}" width="{ww}" height="10" rx="5" '
+                  f'fill="{gd if hit else gm}" opacity="{0.7 if hit else 0.4}"/>')
+    panel = (f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="{r}" fill="#fffaf0" stroke="{gd}" stroke-width="4.5"/>')
+    # 取り出した値 → fxチップ（右下）
+    hy = y + 40 + 2 * 30 + 3
+    arrow = (f'<path d="M{x+w-6} {hy} Q{x+w+40} {hy} {x+w+44} {hy+44}" fill="none" stroke="{gl}" '
+             f'stroke-width="9" stroke-linecap="round"/>'
+             f'<path d="M{x+w+30} {hy+36} L{x+w+44} {hy+56} L{x+w+58} {hy+36}" fill="none" stroke="{gl}" '
+             f'stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>')
+    cx0, cy0 = x + w + 2, hy + 66
+    chip = (f'<rect x="{cx0}" y="{cy0}" width="84" height="58" rx="16" fill="url(#sparkgrad)" stroke="{gd}" stroke-width="4"/>'
+            f'<text x="{cx0+42}" y="{cy0+41}" text-anchor="middle" font-family="{fam}" font-style="italic" '
+            f'font-weight="800" font-size="34" fill="{gd}">fx</text>')
+    def spark(cx, cy, rr, inner=0.30):
+        pts = []
+        for i in range(8):
+            ang = -math.pi / 2 + i * math.pi / 4
+            rad = rr if i % 2 == 0 else rr * inner
+            pts.append(f"{cx + rad*math.cos(ang):.1f},{cy + rad*math.sin(ang):.1f}")
+        return " ".join(pts)
+    return f'''
+  <g filter="url(#ishadow)">
+    {panel}
+    {lines}
+    {arrow}
+    {chip}
+    <polygon points="{spark(548, 300, 34)}" fill="url(#sparkgrad)" stroke="{gd}" stroke-width="3"/>
+    <polygon points="{spark(576, 340, 14)}" fill="{gl}"/>
+  </g>'''
+
+
 ICONS = {"foldermail": icon_foldermail, "copilot": icon_copilot,
          "deadline": icon_deadline, "approval": icon_approval,
          "dashboard": icon_dashboard, "card": icon_card,
@@ -494,7 +551,8 @@ ICONS = {"foldermail": icon_foldermail, "copilot": icon_copilot,
          "reaction": icon_reaction,
          "hourencard": icon_hourencard,
          "checkcard": icon_checkcard,
-         "teamstodo": icon_teamstodo}
+         "teamstodo": icon_teamstodo,
+         "exprpick": icon_exprpick}
 
 
 def knurl_dots(cx, cy, r, n, color):
@@ -532,6 +590,7 @@ def build_svg(vol, theme, date, key, pal):
     title = theme.upper()
     # タイトル長に応じてフォントサイズを調整
     tsize = 70 if len(title) <= 12 else (58 if len(title) <= 17 else 48)
+    tsize = TITLE_SIZE_OVERRIDE.get(vol, tsize)
     icon_svg = ICONS.get(key, ICONS["foldermail"])(pal["gold"])
 
     return f'''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {C} {C}" width="{C}" height="{C}">
