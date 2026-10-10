@@ -52,6 +52,7 @@ SESSIONS = {
     26: ("Daily Status Card", "2026-09-03", "hourencard"),
     27: ("Ask Copilot Right", "2026-09-10", "copilot"),
     28: ("Card Bulk Complete", "2026-09-17", "checkcard"),
+    30: ("One-Click To Do", "2026-10-08", "teamstodo"),
 }
 
 
@@ -89,6 +90,10 @@ PALETTE_OVERRIDE = {
     #          Teamsのインディゴ×ゴールド。吹き出しから立ち上がる親指アップiconが主役。
     24: dict(ring=("#c8caff", "#171a58"), disc=("#4f52c9", "#0b0d33"),
              gold=GOLD, title="#ffffff", sub="#d8daff"),
+    # Vol.30：Teamsの頼まれごとを1クリックでTo Doへ。To Doの青×ゴールド。
+    #          吹き出しから矢印でTo Doリストに入る（先頭行がチェック済み）iconが主役。
+    30: dict(ring=("#b3d4ff", "#0b2a5c"), disc=("#2f6fe0", "#081a40"),
+             gold=GOLD, title="#ffffff", sub="#cfe2ff"),
 }
 
 
@@ -438,6 +443,49 @@ def icon_checkcard(g):
     <polygon points="{spark(582, 322, 16)}" fill="{gl}"/>
   </g>'''
 
+def icon_teamstodo(g):
+    """Teamsの頼まれごと → 1クリックでTo Doへ。吹き出しから矢印でTo Doリストに入る（先頭行が新規・チェック済み）。"""
+    gl, gm, gd = g
+    # Teamsの吹き出し（左上）
+    bx, by, bw, bh = 318, 250, 140, 78
+    bubble = (f'<path d="M{bx+26} {by+bh} l-4 26 l30 -26 z" fill="#fffaf0" stroke="{gd}" stroke-width="4" stroke-linejoin="round"/>'
+              f'<rect x="{bx}" y="{by}" width="{bw}" height="{bh}" rx="18" fill="#fffaf0" stroke="{gd}" stroke-width="4.5"/>'
+              f'<rect x="{bx+20}" y="{by+22}" width="96" height="10" rx="5" fill="{gd}" opacity="0.50"/>'
+              f'<rect x="{bx+20}" y="{by+44}" width="70" height="10" rx="5" fill="{gm}" opacity="0.45"/>')
+    # To Doリスト（右下）
+    x, y, w, h, r = 388, 326, 178, 158, 18
+    rows = ""
+    for i, on in enumerate((True, False, False)):
+        ry = y + 46 + i * 36
+        cy = ry + 13
+        if on:
+            rows += f'<rect x="{x+10}" y="{ry-5}" width="{w-20}" height="36" rx="10" fill="{gl}" opacity="0.55"/>'
+        rows += (f'<circle cx="{x+30}" cy="{cy}" r="12" fill="{"url(#sparkgrad)" if on else "#fffaf0"}" '
+                 f'stroke="{gd}" stroke-width="3.5"/>'
+                 f'<rect x="{x+52}" y="{cy-5}" width="{[100, 84, 96][i]}" height="10" rx="5" fill="{gd if on else gm}" opacity="{0.6 if on else 0.4}"/>')
+        if on:
+            rows += (f'<path d="M{x+24} {cy} l5 5 l9 -10" fill="none" stroke="#fffaf0" '
+                     f'stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>')
+    card = (f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="{r}" fill="#fffaf0" stroke="{gd}" stroke-width="4.5"/>'
+            f'<path d="M{x} {y+28} V{y+r} Q{x} {y} {x+r} {y} H{x+w-r} Q{x+w} {y} {x+w} {y+r} V{y+28} Z" fill="url(#sparkgrad)"/>'
+            f'<rect x="{x+18}" y="{y+9}" width="70" height="10" rx="5" fill="#fffaf0" opacity="0.85"/>')
+    # 吹き出し→リストへの矢印（1クリック）
+    arrow = (f'<path d="M466 280 Q520 278 528 312" fill="none" stroke="{gl}" stroke-width="9" stroke-linecap="round"/>'
+             f'<path d="M514 304 L529 324 L543 302" fill="none" stroke="{gl}" stroke-width="9" '
+             f'stroke-linecap="round" stroke-linejoin="round"/>')
+    spark = "".join(f'<circle cx="{cx}" cy="{cy}" r="{cr}" fill="{gl}" opacity="0.85"/>'
+                    for cx, cy, cr in ((572, 300, 7), (330, 372, 6), (348, 404, 4)))
+    # ブランド名の下線と重ならないよう少し下げて縮める
+    return f'''
+  <g filter="url(#ishadow)" transform="translate(0,26) scale(0.94) translate(27,20)">
+    {spark}
+    {bubble}
+    {card}
+    {rows}
+    {arrow}
+  </g>'''
+
+
 ICONS = {"foldermail": icon_foldermail, "copilot": icon_copilot,
          "deadline": icon_deadline, "approval": icon_approval,
          "dashboard": icon_dashboard, "card": icon_card,
@@ -445,7 +493,8 @@ ICONS = {"foldermail": icon_foldermail, "copilot": icon_copilot,
          "branch": icon_branch,
          "reaction": icon_reaction,
          "hourencard": icon_hourencard,
-         "checkcard": icon_checkcard}
+         "checkcard": icon_checkcard,
+         "teamstodo": icon_teamstodo}
 
 
 def knurl_dots(cx, cy, r, n, color):
