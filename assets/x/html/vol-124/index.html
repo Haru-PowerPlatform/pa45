@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.124-1 契約の更新日が近づいたら、担当者にTeamsで知らせる</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/tips-base.css">
+<style>
+  /* 型A：Before/After（手帳に書き写す → 台帳を毎朝フローが見る）*/
+  .stage{gap:10px;}
+  .col.bad{flex:0 0 372px;}
+  .col.good{flex:1;min-width:0;}
+  .ph{flex:0 0 auto;display:flex;align-items:center;gap:9px;font-size:25px;font-weight:900;line-height:1.1;}
+  .ph .mk{flex:0 0 auto;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;padding:7px;}
+  .col.bad .ph{color:var(--red-dark);} .col.bad .ph .mk{background:var(--red);}
+  .col.good .ph{color:var(--green-dark);} .col.good .ph .mk{background:var(--green);}
+  .sc{flex:0 0 150px;position:relative;border-radius:10px;overflow:hidden;}
+  .sc svg{position:absolute;inset:0;width:100%;height:100%;}
+  .sc .ch{position:absolute;right:0;bottom:0;height:122px;z-index:2;filter:drop-shadow(0 3px 4px rgba(0,0,0,.25));}
+
+  /* 手帳の書き写しリスト */
+  .memo{flex:1;min-height:0;background:#FFFDF5;border:2px solid #E9D8A6;border-radius:9px;display:flex;flex-direction:column;overflow:hidden;
+    background-image:repeating-linear-gradient(transparent 0 33px,#EADFC0 33px 34px);}
+  .memo .mh{flex:0 0 auto;padding:4px 10px;font-size:15px;font-weight:900;color:#92400E;background:#FEF3C7;border-bottom:1.5px solid #E9D8A6;}
+  .memo .r{flex:1;display:flex;align-items:center;gap:8px;padding:0 10px;font-size:15.5px;font-weight:700;color:#44403C;white-space:nowrap;}
+  .memo .r .d{font-family:'Roboto Mono',monospace;font-weight:700;color:#57534E;flex:0 0 auto;}
+  .memo .r.miss{background:#FEE2E2;color:#991B1B;font-weight:900;}
+  .memo .r.miss .d{color:#991B1B;}
+  .memo .r .x{margin-left:auto;font-size:13.5px;font-weight:900;color:#fff;background:#DC2626;border-radius:4px;padding:0 6px;}
+  .badline{flex:0 0 auto;background:#DC2626;color:#fff;border-radius:8px;padding:6px 10px;font-size:16px;font-weight:900;line-height:1.3;}
+
+  /* 中央エンジン */
+  .eng{flex:0 0 118px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;}
+  .eng .clk{width:92px;height:92px;}
+  .eng .lb{font-size:17px;font-weight:900;color:var(--blue-dark);text-align:center;line-height:1.35;}
+  .eng .pill{font-size:15px;font-weight:900;color:#fff;background:var(--blue);border-radius:999px;padding:3px 12px;white-space:nowrap;}
+  .eng .ar{width:100px;height:30px;}
+
+  /* After：台帳＋Teams通知 */
+  .gwrap{flex:1;min-height:0;min-width:0;display:flex;gap:10px;}
+  .led{flex:0 0 312px;min-height:0;display:flex;flex-direction:column;background:#fff;border:2px solid #9FD6BC;border-radius:10px;overflow:hidden;}
+  .led .lh{flex:0 0 auto;display:flex;align-items:center;gap:7px;padding:5px 9px;background:linear-gradient(90deg,#036C70,#0E8A8F);color:#fff;font-size:15px;font-weight:900;}
+  .led .lh img{width:24px;height:24px;background:#fff;border-radius:5px;padding:2px;}
+  .lr{flex:1;display:grid;grid-template-columns:1fr 64px 74px;align-items:center;border-bottom:1.2px solid #EEF2F6;font-size:15.5px;font-weight:700;color:#334155;}
+  .lr > span{padding:0 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .lr .dt{font-family:'Roboto Mono',monospace;}
+  .lr.h{flex:0 0 26px;background:#F1F5F9;font-size:13.5px;font-weight:900;color:#475569;}
+  .lr.hit{background:#FEF9C3;font-weight:900;color:#854D0E;position:relative;}
+  .lr.hit .tg{justify-self:end;margin-right:6px;font-size:13.5px;background:#F59E0B;color:#fff;border-radius:999px;padding:0 8px;}
+
+  .chat{flex:1;min-width:0;display:flex;flex-direction:column;background:#F5F5FB;border:2px solid #C5C7F0;border-radius:10px;overflow:hidden;}
+  .chat .th{flex:0 0 auto;display:flex;align-items:center;gap:7px;padding:5px 9px;background:#5B5FC7;color:#fff;font-size:15px;font-weight:900;}
+  .chat .th img{width:24px;height:24px;background:#fff;border-radius:5px;padding:2px;}
+  .cb{flex:1;min-height:0;display:flex;flex-direction:column;gap:7px;padding:7px 8px;}
+  .bm{flex:1;min-height:0;display:flex;gap:7px;}
+  .bm .av{flex:0 0 auto;width:30px;height:30px;border-radius:50%;background:linear-gradient(180deg,#8B5CF6,#4F46E5);color:#fff;
+    font-size:13.5px;font-weight:900;display:flex;align-items:center;justify-content:center;}
+  .bm .card{flex:1;min-width:0;background:#fff;border:1.5px solid #D9DAF3;border-left:6px solid var(--c);border-radius:8px;padding:5px 9px;
+    display:flex;flex-direction:column;justify-content:center;gap:2px;box-shadow:0 2px 5px rgba(40,40,120,.10);}
+  .bm .nm{font-size:13.5px;font-weight:900;color:#64748B;}
+  .bm .t{font-size:16.5px;font-weight:900;color:var(--c);}
+  .bm .k{font-size:15.5px;font-weight:700;color:var(--navy);line-height:1.35;white-space:nowrap;}
+  .bm .k b{color:#B91C1C;}
+  .bot{flex:0 0 auto;display:flex;gap:8px;}
+  .bot .uses{flex:1;background:#fff;border:1.5px solid #CFEFE0;border-radius:10px;padding:4px 9px;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={bulb:'<path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/>',
+  arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',x:'<path d="M6 6l12 12M18 6L6 18"/>',ok:'<path d="M5 12.5l4.5 4.5L19 7"/>'};
+
+/* Before：手帳と契約書の山。1枚だけ書き写し漏れ */
+const sBad=`<svg viewBox="0 0 348 150" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs><filter id="bf" x="-30%" y="-30%" width="160%" height="170%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#5B1A1A" flood-opacity=".22"/></filter>
+  <linearGradient id="bk" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7C2D12"/><stop offset="1" stop-color="#431407"/></linearGradient></defs>
+  <rect width="376" height="150" fill="#FDE8E8"/>
+  ${[0,1,2,3,4].map(i=>`<g filter="url(#bf)" transform="translate(${14+i*6},${30-i*5}) rotate(${-6+i*3})"><rect width="70" height="92" rx="3" fill="#fff" stroke="#CBD5E1" stroke-width="1.6"/>
+    <text x="35" y="18" font-family="Noto Sans JP" font-size="10" font-weight="900" fill="#334155" text-anchor="middle">契約書</text>
+    <rect x="10" y="28" width="50" height="3.5" rx="1.7" fill="#CBD5E1"/><rect x="10" y="38" width="42" height="3.5" rx="1.7" fill="#CBD5E1"/>
+    <rect x="10" y="48" width="48" height="3.5" rx="1.7" fill="#CBD5E1"/><circle cx="52" cy="76" r="9" fill="none" stroke="#DC2626" stroke-width="2"/></g>`).join('')}
+  <path d="M112 80 C 128 66, 140 66, 152 74" stroke="#94A3B8" stroke-width="3.4" fill="none" stroke-dasharray="5 5" stroke-linecap="round"/>
+  <g filter="url(#bf)"><rect x="156" y="34" width="96" height="100" rx="6" fill="url(#bk)"/><rect x="164" y="40" width="82" height="88" rx="3" fill="#FFFDF5"/>
+    ${[0,1,2,3,4,5].map(i=>`<rect x="172" y="${52+i*12}" width="${[58,50,62,44,56,40][i]}" height="3.5" rx="1.7" fill="#A8A29E"/>`).join('')}
+    <text x="205" y="124" font-family="Noto Sans JP" font-size="11" font-weight="900" fill="#92400E" text-anchor="middle">手帳に書き写す</text></g>
+  <g filter="url(#bf)"><circle cx="258" cy="36" r="17" fill="#DC2626"/><text x="258" y="43" font-family="Noto Sans JP" font-size="20" font-weight="900" fill="#fff" text-anchor="middle">!</text></g>
+</svg>`;
+
+const CLK=`<svg class="clk" viewBox="0 0 92 92" xmlns="http://www.w3.org/2000/svg">
+  <defs><linearGradient id="cg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#60A5FA"/><stop offset="1" stop-color="#1D4ED8"/></linearGradient>
+  <filter id="cf" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#1E3A8A" flood-opacity=".3"/></filter></defs>
+  <g filter="url(#cf)"><circle cx="46" cy="46" r="40" fill="url(#cg)"/><circle cx="46" cy="46" r="32" fill="#fff"/>
+  ${[...Array(12)].map((_,i)=>{const a=i*Math.PI/6;return `<circle cx="${46+27*Math.sin(a)}" cy="${46-27*Math.cos(a)}" r="${i%3?1.6:2.6}" fill="#1E40AF"/>`}).join('')}
+  <path d="M46 46 L 46 25" stroke="#1E3A8A" stroke-width="4.4" stroke-linecap="round"/>
+  <path d="M46 46 L 30 56" stroke="#1E3A8A" stroke-width="5" stroke-linecap="round"/><circle cx="46" cy="46" r="4" fill="#DC2626"/></g>
+</svg>`;
+const ARR=`<svg class="ar" viewBox="0 0 100 30" xmlns="http://www.w3.org/2000/svg"><path d="M4 15 H 82" stroke="#2563EB" stroke-width="6" stroke-linecap="round" stroke-dasharray="2 9"/>
+  <path d="M76 5 L 92 15 L 76 25" fill="none" stroke="#2563EB" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.124-1</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">契約の更新日が近づいたら、<span class="hl">担当者にTeamsで知らせる</span></div>
+    <img class="title-chara" src="${A}chara/chara_confident.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svgw(P.bulb,2.2)}</div>
+    <div class="txt">台帳に更新日を入れておけば、毎朝フローが見て<b>60日前と30日前</b>の契約だけを担当者に知らせます。<br>書き写しも、見落としもなくなります</div>
+  </div>
+
+  <div class="stage">
+    <div class="col bad">
+      <div class="ph"><span class="mk">${svgw(P.x,3.2)}</span>手帳に書き写すと</div>
+      <div class="sc">${sBad}<img class="ch" src="${A}chara/chara_cry.png" alt=""></div>
+      <div class="memo">
+        <div class="mh">手帳：更新日メモ</div>
+        <div class="r"><span class="d">11/30</span>複合機リース</div>
+        <div class="r"><span class="d">12/15</span>ソフト年間ライセンス</div>
+        <div class="r miss"><span class="d">12/12</span>保守契約（山田商事）<span class="x">書き忘れ</span></div>
+        <div class="r"><span class="d">01/31</span>清掃委託</div>
+      </div>
+      <div class="badline">✕ 気づいたのは、自動更新された翌日</div>
+    </div>
+
+    <div class="eng">
+      ${CLK}
+      <div class="pill">毎朝 8:00</div>
+      <div class="lb">フローが<br>台帳を見る</div>
+      ${ARR}
+    </div>
+
+    <div class="col good">
+      <div class="ph"><span class="mk">${svgw(P.ok,3.2)}</span>台帳に入れておくと</div>
+      <div class="gwrap">
+        <div class="led">
+          <div class="lh"><img src="${A}icons/pa_sharepoint.png" alt="">契約台帳（42件）</div>
+          <div class="lr h"><span>契約名</span><span>更新日</span><span></span></div>
+          <div class="lr"><span>複合機リース</span><span class="dt">11/30</span><span></span></div>
+          <div class="lr hit"><span>保守契約（山田商事）</span><span class="dt">12/12</span><span class="tg">60日前</span></div>
+          <div class="lr"><span>ソフト年間ライセンス</span><span class="dt">12/15</span><span></span></div>
+          <div class="lr hit"><span>警備委託（佐藤警備）</span><span class="dt">11/12</span><span class="tg">30日前</span></div>
+          <div class="lr"><span>清掃委託</span><span class="dt">01/31</span><span></span></div>
+          <div class="lr"><span>サーバー保守</span><span class="dt">03/31</span><span></span></div>
+        </div>
+        <div class="chat">
+          <div class="th"><img src="${A}icons/pa_teams.png" alt="">Teams チャット　10/13 8:00</div>
+          <div class="cb">
+            <div class="bm"><span class="av">PA</span><div class="card" style="--c:#D97706">
+              <span class="nm">フロー ボット → 鈴木一郎</span>
+              <span class="t">🔔 更新まで あと60日</span>
+              <span class="k">保守契約（山田商事）</span>
+              <span class="k">更新日 12/12 ／ 申し出は<b>11/12まで</b></span></div></div>
+            <div class="bm"><span class="av">PA</span><div class="card" style="--c:#DC2626">
+              <span class="nm">フロー ボット → 佐藤花子</span>
+              <span class="t">🔔 更新まで あと30日</span>
+              <span class="k">警備委託（佐藤警備）</span>
+              <span class="k">更新日 11/12 ／ 見積は<b>今週中</b>に</span></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="bot">
+        <div class="metric"><span class="ml">書き写す件数</span><span class="mv">42件</span><span class="ar">${svgw(P.arrow,3)}</span><span class="mv to">0</span></div>
+        <div class="uses"><span class="ul">使いどころ</span><span class="u">総務の契約管理</span><span class="u">ソフトのライセンス</span><span class="u">資格の更新</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="next">
+    <span class="na">${svgw(P.arrow,3)}</span>
+    <span>自動更新に気づかない、がなくなります。<b>作り方は2枚目へ</b></span>
+  </div>
+  <div class="src">出典：Microsoft Learn「SharePoint コネクタ」「Microsoft Teams コネクタ」「繰り返しトリガー」／契約・社名・人名は架空</div>
+`;
+</script>
+</body>
+</html>

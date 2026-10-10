@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.124-2 契約の更新通知の作り方</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/tips-base.css">
+<style>
+  .scene{height:100px;}
+  .cardb{gap:6px;padding:7px 9px;}
+  .cardh{font-size:15px;}
+  .fld{display:flex;flex-direction:column;gap:2px;}
+  .fld .fl{font-size:14px;font-weight:900;color:#475569;}
+  .fld .fi{display:flex;align-items:center;gap:5px;flex-wrap:wrap;background:#fff;border:2px solid #B9C7DC;border-radius:7px;
+    padding:4px 9px;font-size:15.5px;font-weight:900;color:var(--navy);line-height:1.3;}
+  .fld .fi.hot{border-color:var(--orange);background:#FFF7ED;}
+  .rc{display:grid;grid-template-columns:auto 1fr;gap:4px 8px;align-items:center;}
+  .rc .fl{font-size:14px;font-weight:900;color:#475569;white-space:nowrap;}
+  .rc .fi{display:flex;align-items:center;gap:5px;flex-wrap:wrap;background:#fff;border:2px solid #B9C7DC;border-radius:7px;padding:2px 9px;font-size:15.5px;font-weight:900;color:var(--navy);}
+  .rc .fi.hot{border-color:var(--orange);background:#FFF7ED;}
+  .cols{display:flex;flex-direction:column;gap:4px;}
+  .cl{display:flex;align-items:center;gap:8px;background:#F7F9FC;border:1.5px solid #E2EAF5;border-radius:7px;padding:4px 9px;font-size:15.5px;font-weight:900;color:var(--navy);}
+  .cl .ty{margin-left:auto;font-size:13.5px;font-weight:900;color:#475569;background:#fff;border:1.4px solid #C7D6EE;border-radius:5px;padding:0 7px;}
+  .cl.hot{background:#FFF7ED;border-color:#FDBA74;}
+  .cl .in{font-family:'Roboto Mono',monospace;font-size:13.5px;color:#9A3412;}
+  .code{font-size:15.5px;padding:6px 9px;}
+  .sub{display:flex;align-items:center;gap:7px;font-size:15px;font-weight:900;color:#334155;border-top:1.5px solid #E5E7EB;padding-top:5px;}
+  .sub img{width:24px;height:24px;object-fit:contain;flex:0 0 auto;}
+  .note{display:flex;align-items:center;gap:7px;background:#FFF7ED;border:1.6px solid #FDBA74;border-radius:8px;
+    padding:4px 8px;font-size:14.5px;font-weight:900;color:#9A3412;line-height:1.3;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={warn:'<path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>',
+  bulb:'<path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/>'};
+const VB='0 0 388 100';
+const SH=(id,c)=>`<filter id="${id}" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="${c||'#1B2A44'}" flood-opacity=".22"/></filter>`;
+
+/* ① 契約書 → 台帳の1行 */
+const s1=`<svg viewBox="${VB}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs>${SH('m1f')}</defs>
+  <rect width="388" height="100" fill="#EDF3FA"/>
+  <g filter="url(#m1f)"><rect x="24" y="10" width="64" height="82" rx="3" fill="#fff" stroke="#94A3B8" stroke-width="1.8"/>
+    <text x="56" y="27" font-family="Noto Sans JP" font-size="11" font-weight="900" fill="#334155" text-anchor="middle">契約書</text>
+    <rect x="34" y="36" width="44" height="3.5" rx="1.7" fill="#CBD5E1"/><rect x="34" y="45" width="36" height="3.5" rx="1.7" fill="#CBD5E1"/>
+    <rect x="31" y="56" width="50" height="14" rx="3" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/>
+    <text x="56" y="67" font-family="Roboto Mono" font-size="9.5" font-weight="700" fill="#9A3412" text-anchor="middle">更新 12/12</text>
+    <circle cx="70" cy="82" r="7" fill="none" stroke="#DC2626" stroke-width="1.8"/></g>
+  <path d="M98 51 H 124" stroke="#2563EB" stroke-width="4.4" stroke-linecap="round"/>
+  <path d="M118 45 l8 6 l-8 6" fill="none" stroke="#2563EB" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <g filter="url(#m1f)"><rect x="136" y="12" width="240" height="78" rx="7" fill="#fff" stroke="#93B4E8" stroke-width="2"/>
+    <rect x="136" y="12" width="240" height="20" rx="7" fill="#036C70"/><rect x="136" y="24" width="240" height="8" fill="#036C70"/>
+    <text x="146" y="27" font-family="Noto Sans JP" font-size="11.5" font-weight="900" fill="#fff">契約名　　　　　　更新日　担当者</text>
+    <rect x="137" y="37" width="238" height="22" fill="#FEF3C7"/>
+    <text x="146" y="53" font-family="Noto Sans JP" font-size="12" font-weight="900" fill="#854D0E">保守契約（山田）</text>
+    <text x="262" y="53" font-family="Roboto Mono" font-size="12" font-weight="700" fill="#9A3412">12/12</text>
+    <text x="316" y="53" font-family="Noto Sans JP" font-size="12" font-weight="900" fill="#854D0E">鈴木</text>
+    <rect x="146" y="68" width="90" height="4" rx="2" fill="#CBD5E1"/><rect x="262" y="68" width="34" height="4" rx="2" fill="#CBD5E1"/><rect x="316" y="68" width="28" height="4" rx="2" fill="#CBD5E1"/>
+    <rect x="146" y="79" width="76" height="4" rx="2" fill="#CBD5E1"/><rect x="262" y="79" width="34" height="4" rx="2" fill="#CBD5E1"/><rect x="316" y="79" width="28" height="4" rx="2" fill="#CBD5E1"/></g>
+</svg>`;
+
+/* ② カレンダーで「今日＋60日」「今日＋30日」 */
+const s2=`<svg viewBox="${VB}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs>${SH('m2f')}</defs>
+  <rect width="388" height="100" fill="#E3EEFD"/>
+  <g filter="url(#m2f)"><rect x="14" y="20" width="84" height="64" rx="9" fill="#fff" stroke="#2563EB" stroke-width="2.4"/>
+    <text x="56" y="44" font-family="Noto Sans JP" font-size="13" font-weight="900" fill="#1E40AF" text-anchor="middle">今日</text>
+    <text x="56" y="70" font-family="Roboto Mono" font-size="18" font-weight="700" fill="#1E40AF" text-anchor="middle">10/13</text></g>
+  <path d="M104 40 C 140 14, 190 12, 232 22" stroke="#DC2626" stroke-width="3.6" fill="none" stroke-linecap="round"/>
+  <path d="M104 64 C 160 90, 260 92, 300 74" stroke="#D97706" stroke-width="3.6" fill="none" stroke-linecap="round"/>
+  <text x="166" y="14" font-family="Noto Sans JP" font-size="12.5" font-weight="900" fill="#B91C1C" text-anchor="middle">＋30日</text>
+  <text x="200" y="98" font-family="Noto Sans JP" font-size="12.5" font-weight="900" fill="#B45309" text-anchor="middle">＋60日</text>
+  <g filter="url(#m2f)"><rect x="236" y="8" width="72" height="34" rx="8" fill="#FEF2F2" stroke="#DC2626" stroke-width="2.4"/>
+    <text x="272" y="31" font-family="Roboto Mono" font-size="16" font-weight="700" fill="#B91C1C" text-anchor="middle">11/12</text></g>
+  <g filter="url(#m2f)"><rect x="304" y="58" width="76" height="34" rx="8" fill="#FFFBEB" stroke="#D97706" stroke-width="2.4"/>
+    <text x="342" y="81" font-family="Roboto Mono" font-size="16" font-weight="700" fill="#B45309" text-anchor="middle">12/12</text></g>
+  <text x="344" y="31" font-family="Noto Sans JP" font-size="12.5" font-weight="900" fill="#1E40AF" text-anchor="middle">この日の</text>
+  <text x="344" y="46" font-family="Noto Sans JP" font-size="12.5" font-weight="900" fill="#1E40AF" text-anchor="middle">行だけ</text>
+</svg>`;
+
+/* ③ 担当者ごとにTeamsへ */
+const s3=`<svg viewBox="${VB}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs>${SH('m3f','#0B5136')}<linearGradient id="tm" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7B83EB"/><stop offset="1" stop-color="#4B53BC"/></linearGradient></defs>
+  <rect width="388" height="100" fill="#DCF3E7"/>
+  <g filter="url(#m3f)"><rect x="18" y="26" width="92" height="50" rx="8" fill="#fff" stroke="#16A34A" stroke-width="2.2"/>
+    <text x="64" y="47" font-family="Noto Sans JP" font-size="12.5" font-weight="900" fill="#065F46" text-anchor="middle">該当した行</text>
+    <text x="64" y="66" font-family="Noto Sans JP" font-size="12.5" font-weight="900" fill="#065F46" text-anchor="middle">2件</text></g>
+  <path d="M116 44 C 140 24, 160 22, 186 24" stroke="#16A34A" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <path d="M116 58 C 140 78, 160 80, 186 78" stroke="#16A34A" stroke-width="4" fill="none" stroke-linecap="round"/>
+  ${[['鈴木一郎','あと60日',6,'#D97706'],['佐藤花子','あと30日',58,'#DC2626']].map(([n,t,y,c])=>`<g filter="url(#m3f)">
+    <rect x="192" y="${y}" width="186" height="38" rx="8" fill="#fff" stroke="#9EA3E8" stroke-width="2"/>
+    <rect x="198" y="${+y+7}" width="24" height="24" rx="6" fill="url(#tm)"/>
+    <text x="210" y="${+y+24}" font-family="Noto Sans JP" font-size="12" font-weight="900" fill="#fff" text-anchor="middle">T</text>
+    <text x="230" y="${+y+24}" font-family="Noto Sans JP" font-size="13.5" font-weight="900" fill="#334155">${n}へ</text>
+    <text x="370" y="${+y+24}" font-family="Noto Sans JP" font-size="13.5" font-weight="900" fill="${c}" text-anchor="end">🔔${t}</text></g>`).join('')}
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.124-2</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">作り方は<span class="hl">3ステップ</span>（台帳 → 該当日の行 → 本人に送る）</div>
+    <img class="title-chara" src="${A}chara/chara_point.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svgw(P.bulb,2.2)}</div>
+    <div class="txt">毎朝<b>今日の60日後・30日後</b>を計算して、その日が更新日の行だけを取り出します。<br>追加料金なしの標準コネクタだけで作れます</div>
+  </div>
+
+  <div class="stage">
+    <div class="col neutral">
+      <div class="ch2"><span class="n">1</span>台帳に更新日を入れる</div>
+      <div class="scene">${s1}</div>
+      <div class="body"><div class="card">
+        <div class="cardh"><img src="${A}icons/pa_sharepoint.png" alt="">SharePoint リスト「契約台帳」</div>
+        <div class="cardb">
+          <div class="cols">
+            <div class="cl">契約名<span class="ty">1行テキスト</span></div>
+            <div class="cl">相手先<span class="ty">1行テキスト</span></div>
+            <div class="cl hot">更新日 <span class="in">RenewalDate</span><span class="ty">日付のみ</span></div>
+            <div class="cl hot">担当者<span class="ty">ユーザー</span></div>
+          </div>
+          <div class="note">列は英語名で作り、表示名を後で日本語に</div>
+        </div>
+      </div></div>
+      <div class="cap">担当者を<b>ユーザー列</b>にすると、送り先が決まる</div>
+    </div>
+
+    <div class="col info">
+      <div class="ch2"><span class="n">2</span>毎朝8時、該当日の行を取る</div>
+      <div class="scene">${s2}</div>
+      <div class="body"><div class="card">
+        <div class="cardh"><img src="${A}icons/pa_sharepoint.png" alt="">複数の項目の取得</div>
+        <div class="cardb">
+          <div class="fld"><span class="fl">フィルター クエリ</span>
+            <span class="fi hot">RenewalDate eq '<span class="dyn">60日後</span>' or RenewalDate eq '<span class="dyn">30日後</span>'</span></div>
+          <div class="fld"><span class="fl">60日後の式（30日後は60を30に）</span>
+            <div class="code">addDays(convertFromUtc(utcNow(),<br>'Tokyo Standard Time'),<br>60,'yyyy-MM-dd')</div></div>
+        </div>
+      </div></div>
+      <div class="cap">朝8時はUTCだと<b>前日</b>。日本時間に直して足す</div>
+    </div>
+
+    <div class="col good">
+      <div class="ch2"><span class="n">3</span>担当者に送る</div>
+      <div class="scene">${s3}</div>
+      <div class="body"><div class="card">
+        <div class="cardh"><img src="${A}icons/pa_teams.png" alt="">チャットまたはチャネルでメッセージを投稿する</div>
+        <div class="cardb">
+          <div class="rc">
+            <span class="fl">投稿者</span><span class="fi">フロー ボット</span>
+            <span class="fl">投稿先</span><span class="fi">フロー ボットでチャットする</span>
+            <span class="fl">受信者</span><span class="fi hot"><span class="dyn">担当者 Email</span></span>
+          </div>
+          <div class="fld"><span class="fl">メッセージ</span>
+            <span class="fi">🔔 <span class="dyn">契約名</span> の更新日は <span class="dyn">更新日</span></span></div>
+        </div>
+      </div></div>
+      <div class="cap">取れた行の数だけ、<b>自動でくり返して</b>送られる</div>
+    </div>
+  </div>
+
+  <div class="warnbar">
+    <span class="na">${svgw(P.warn,2.4)}</span>
+    <span class="ws"><span>すべて標準コネクタ（追加料金なし）</span><span>繰り返しは毎日8時・大阪、札幌、東京</span><span>フィルターは表示名でなく内部名で書く</span></span>
+  </div>
+  <div class="src">出典：Microsoft Learn「SharePoint コネクタ」「Microsoft Teams コネクタ」「繰り返しトリガー」「式関数のリファレンス」／名称は架空</div>
+`;
+</script>
+</body>
+</html>
