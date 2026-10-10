@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.128-1 訪問の15分前に資料が、夕方に報告フォームが自動で届く</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/tips-base.css">
+<style>
+  /* 型F：紙芝居4コマ（9:45 資料が届く → 10:00 訪問 → 18:00 報告の声かけ → 18:05 記録に残る）*/
+  .stage{flex-direction:column;gap:8px;}
+  .strip{flex:1;min-height:0;display:flex;gap:14px;}
+  .koma{flex:1;min-width:0;min-height:0;display:flex;flex-direction:column;gap:6px;border-radius:14px;padding:7px 9px 8px;position:relative;
+    background:#F8FAFC;border:2.5px solid #DCE3EE;}
+  .koma.k1{background:#EFF6FF;border-color:#A9C6F5;}
+  .koma.k3{background:#FFFBEB;border-color:#FCD34D;}
+  .koma.k4{background:var(--green-bg);border-color:var(--green-line);}
+  .koma + .koma::before{content:"";position:absolute;left:-15px;top:50%;width:16px;height:30px;transform:translateY(-50%);
+    background:#64748B;clip-path:polygon(0 0,100% 50%,0 100%);z-index:4;}
+  .kh{flex:0 0 auto;display:flex;align-items:center;gap:7px;}
+  .kh .no{flex:0 0 auto;width:30px;height:30px;border-radius:50%;background:#475569;color:#fff;font-size:17px;font-weight:900;
+    display:flex;align-items:center;justify-content:center;}
+  .k1 .kh .no{background:var(--blue);} .k3 .kh .no{background:#D97706;} .k4 .kh .no{background:var(--green);}
+  .kh .tm{font-family:'Roboto Mono','Noto Sans JP',monospace;font-size:15.5px;font-weight:700;color:#fff;background:#1B2A44;
+    border-radius:7px;padding:2px 9px;white-space:nowrap;}
+  .kt{flex:0 0 auto;font-size:22px;font-weight:900;color:var(--navy);line-height:1.15;white-space:nowrap;}
+  .k1 .kt{color:var(--blue-dark);} .k3 .kt{color:#92400E;} .k4 .kt{color:var(--green-dark);}
+  .sc{flex:0 0 116px;position:relative;border-radius:10px;overflow:hidden;background:#fff;}
+  .sc svg{position:absolute;inset:0;width:100%;height:100%;}
+  .sc .ch{position:absolute;right:-2px;bottom:-2px;height:116px;z-index:2;filter:drop-shadow(0 3px 4px rgba(0,0,0,.25));}
+  .mk{flex:1;min-height:0;background:#fff;border:2px solid #D5DEEA;border-radius:9px;display:flex;flex-direction:column;overflow:hidden;
+    box-shadow:0 3px 8px rgba(20,40,90,.10);}
+  .mk .mh{flex:0 0 auto;display:flex;align-items:center;gap:7px;padding:4px 8px;background:#5B5FC7;color:#fff;font-size:14.5px;font-weight:900;}
+  .mk .mh img{width:22px;height:22px;background:#fff;border-radius:5px;padding:2px;}
+  .mk .mh.sp{background:linear-gradient(90deg,#036C70,#0E8A8F);}
+  .mk .bd{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;gap:4px;padding:6px 9px;}
+  .mk .nm{font-size:13.5px;font-weight:900;color:#64748B;}
+  .mk .t{font-size:16px;font-weight:900;color:var(--navy);line-height:1.3;}
+  .mk .r{font-size:15.5px;font-weight:700;color:#334155;line-height:1.35;white-space:nowrap;}
+  .mk .lk{font-size:15.5px;font-weight:900;color:#0F6CBD;text-decoration:underline;}
+  .mk .btn{text-align:center;background:#0F766E;color:#fff;border-radius:7px;padding:4px;font-size:15.5px;font-weight:900;}
+  .mk .ok{display:inline-block;background:#DCFCE7;color:#065F46;border-radius:5px;padding:0 6px;font-size:14px;font-weight:900;}
+  .kc{flex:0 0 auto;font-size:15px;font-weight:900;line-height:1.3;border-radius:8px;padding:4px 8px;background:#E7EEF7;color:#334155;}
+  .k1 .kc{background:#DCEAFE;color:var(--blue-dark);} .k3 .kc{background:#FEF3C7;color:#92400E;} .k4 .kc{background:#CFEFE0;color:var(--green-dark);}
+  .kc b{color:var(--orange);}
+  .bot{flex:0 0 auto;display:flex;gap:10px;align-items:stretch;}
+  .bot .uses{flex:1;background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:10px;padding:5px 10px;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={bulb:'<path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/>',
+  arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>'};
+const VB='0 0 280 116';
+const SH=(id,c)=>`<filter id="${id}" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="1.8" flood-color="${c||'#1B2A44'}" flood-opacity=".22"/></filter>`;
+
+/* ① 移動中の電車でスマホに資料 */
+const s1=`<svg viewBox="${VB}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs>${SH('f1')}<linearGradient id="tr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E2E8F0"/><stop offset="1" stop-color="#94A3B8"/></linearGradient></defs>
+  <rect width="280" height="116" fill="#E3EEFD"/>
+  <g filter="url(#f1)"><rect x="8" y="22" width="150" height="70" rx="14" fill="url(#tr)"/>
+    ${[0,1,2].map(i=>`<rect x="${20+i*44}" y="32" width="34" height="26" rx="4" fill="#BFDBFE"/>`).join('')}
+    <rect x="8" y="66" width="150" height="6" fill="#2563EB"/><circle cx="36" cy="96" r="7" fill="#334155"/><circle cx="130" cy="96" r="7" fill="#334155"/></g>
+  <rect x="0" y="104" width="270" height="4" fill="#94A3B8"/>
+  <g filter="url(#f1)"><rect x="176" y="10" width="42" height="74" rx="7" fill="#111827"/><rect x="179" y="16" width="36" height="60" rx="3" fill="#fff"/>
+    <rect x="179" y="16" width="36" height="11" rx="3" fill="#5B5FC7"/>
+    <rect x="183" y="32" width="28" height="5" rx="2" fill="#CBD5E1"/><rect x="183" y="41" width="22" height="5" rx="2" fill="#CBD5E1"/>
+    <rect x="183" y="52" width="28" height="16" rx="2" fill="#FEE2E2"/><text x="197" y="64" font-family="Noto Sans JP" font-size="8.5" font-weight="900" fill="#B91C1C" text-anchor="middle">PDF</text></g>
+  <g filter="url(#f1)"><circle cx="232" cy="20" r="13" fill="#DC2626"/><text x="232" y="25" font-family="Roboto Mono" font-size="13" font-weight="700" fill="#fff" text-anchor="middle">1</text></g>
+</svg>`;
+
+/* ② 訪問先で商談 */
+const s2=`<svg viewBox="${VB}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs>${SH('f2')}<linearGradient id="bl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#CBD5E1"/><stop offset="1" stop-color="#94A3B8"/></linearGradient></defs>
+  <rect width="280" height="116" fill="#F1F5F9"/>
+  <g filter="url(#f2)"><rect x="14" y="14" width="96" height="94" fill="url(#bl)"/>
+    ${[0,1,2].map(r=>[0,1,2].map(c=>`<rect x="${24+c*28}" y="${24+r*24}" width="18" height="14" fill="#E0F2FE"/>`).join('')).join('')}
+    <rect x="52" y="86" width="20" height="22" fill="#475569"/></g>
+  <text x="62" y="10" font-family="Noto Sans JP" font-size="9.5" font-weight="900" fill="#475569" text-anchor="middle">みどり製作所</text>
+  <g filter="url(#f2)"><rect x="128" y="40" width="70" height="40" rx="4" fill="#fff" stroke="#94A3B8" stroke-width="1.8"/>
+    <rect x="136" y="48" width="44" height="4" rx="2" fill="#CBD5E1"/><rect x="136" y="56" width="36" height="4" rx="2" fill="#CBD5E1"/><rect x="136" y="64" width="40" height="4" rx="2" fill="#CBD5E1"/></g>
+  <text x="163" y="96" font-family="Noto Sans JP" font-size="11" font-weight="900" fill="#334155" text-anchor="middle">商談中</text>
+</svg>`;
+
+/* ③ 夕方：報告のお知らせ */
+const s3=`<svg viewBox="${VB}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs>${SH('f3','#78350F')}<linearGradient id="sun" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FDBA74"/><stop offset="1" stop-color="#FDE68A"/></linearGradient></defs>
+  <rect width="280" height="116" fill="url(#sun)"/>
+  <circle cx="44" cy="84" r="26" fill="#F97316" opacity=".85"/>
+  <rect x="0" y="92" width="270" height="24" fill="#B45309" opacity=".35"/>
+  <g filter="url(#f3)"><rect x="92" y="16" width="112" height="56" rx="9" fill="#fff" stroke="#D97706" stroke-width="2.4"/>
+    <text x="148" y="38" font-family="Noto Sans JP" font-size="12" font-weight="900" fill="#92400E" text-anchor="middle">今日の訪問 2件</text>
+    <text x="148" y="58" font-family="Noto Sans JP" font-size="12" font-weight="900" fill="#B45309" text-anchor="middle">報告まだです</text></g>
+</svg>`;
+
+/* ④ 訪問記録に1行 */
+const s4=`<svg viewBox="${VB}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs>${SH('f4','#0B5136')}</defs>
+  <rect width="280" height="116" fill="#DCF3E7"/>
+  <g filter="url(#f4)"><rect x="10" y="12" width="160" height="92" rx="7" fill="#fff" stroke="#16A34A" stroke-width="2"/>
+    <rect x="10" y="12" width="160" height="18" rx="7" fill="#036C70"/><rect x="10" y="22" width="160" height="8" fill="#036C70"/>
+    <text x="90" y="26" font-family="Noto Sans JP" font-size="11" font-weight="900" fill="#fff" text-anchor="middle">訪問記録</text>
+    ${[0,1,2].map(i=>`<rect x="20" y="${38+i*13}" width="${[130,110,120][i]}" height="6" rx="3" fill="#E2E8F0"/>`).join('')}
+    <rect x="12" y="76" width="156" height="20" fill="#DCFCE7"/><rect x="20" y="83" width="100" height="6" rx="3" fill="#16A34A"/>
+    <text x="158" y="90" font-family="Noto Sans JP" font-size="10" font-weight="900" fill="#065F46" text-anchor="end">✓</text></g>
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.128-1</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">訪問の15分前に資料が、<span class="hl">夕方に報告フォームが自動で届く</span></div>
+    <img class="title-chara" src="${A}chara/chara_confident.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svgw(P.bulb,2.2)}</div>
+    <div class="txt">予定表の件名に<b>「訪問」</b>と入れておくだけ。15分前に資料のリンクがTeamsに届き、<br>夕方には今日の訪問の分だけ報告フォームが届くので、<b>その日のうちに書き終わります</b></div>
+  </div>
+
+  <div class="stage">
+    <div class="strip">
+      <div class="koma k1">
+        <div class="kh"><span class="no">1</span><span class="tm">9:45</span></div>
+        <div class="kt">資料が届く</div>
+        <div class="sc">${s1}</div>
+        <div class="mk"><div class="mh"><img src="${A}icons/pa_teams.png" alt="">フロー ボット</div><div class="bd">
+          <span class="t">🗓 10:00 訪問：みどり製作所</span>
+          <span class="r">場所：本社 3F 会議室</span>
+          <span class="lk">📎 提案書_v3.pdf</span>
+          <span class="lk">📎 前回の訪問メモ</span></div></div>
+        <div class="kc">予定に貼った<b>リンクがそのまま届く</b></div>
+      </div>
+
+      <div class="koma">
+        <div class="kh"><span class="no">2</span><span class="tm">10:00</span></div>
+        <div class="kt">訪問する</div>
+        <div class="sc">${s2}<img class="ch" src="${A}chara/chara_laptop.png" alt=""></div>
+        <div class="mk"><div class="mh"><img src="${A}icons/pa_outlook.png" alt="" style="background:#fff">予定表</div><div class="bd">
+          <span class="t">訪問：みどり製作所</span>
+          <span class="r">10:00〜11:00</span>
+          <span class="t">訪問：鈴木運輸</span>
+          <span class="r">14:00〜15:00</span></div></div>
+        <div class="kc">件名に<b>「訪問」</b>を入れるだけ</div>
+      </div>
+
+      <div class="koma k3">
+        <div class="kh"><span class="no">3</span><span class="tm">18:00</span></div>
+        <div class="kt">報告の声かけ</div>
+        <div class="sc">${s3}</div>
+        <div class="mk"><div class="mh"><img src="${A}icons/pa_teams.png" alt="">フロー ボット</div><div class="bd">
+          <span class="t">今日の訪問 2件の報告を</span>
+          <span class="r">・みどり製作所（10:00）</span>
+          <span class="r">・鈴木運輸（14:00）</span>
+          <span class="btn">報告フォームを開く</span></div></div>
+        <div class="kc">記憶が<b>新しいうち</b>に書ける</div>
+      </div>
+
+      <div class="koma k4">
+        <div class="kh"><span class="no">4</span><span class="tm">18:10</span></div>
+        <div class="kt">記録に残る</div>
+        <div class="sc">${s4}<img class="ch" src="${A}chara/chara_guts.png" alt=""></div>
+        <div class="mk"><div class="mh sp"><img src="${A}icons/pa_sharepoint.png" alt="">訪問記録</div><div class="bd">
+          <span class="t">みどり製作所 <span class="ok">✓ 報告済み</span></span>
+          <span class="r">次回：見積を10/20までに</span>
+          <span class="t">鈴木運輸 <span class="ok">✓ 報告済み</span></span>
+          <span class="r">次回：担当者の紹介</span></div></div>
+        <div class="kc">次の訪問前に<b>ここを見返せる</b></div>
+      </div>
+    </div>
+
+    <div class="bot">
+      <div class="metric"><span class="ml">訪問報告を書くまで</span><span class="mv">3日後</span><span class="ar">${svgw(P.arrow,3)}</span><span class="mv to">当日</span></div>
+      <div class="uses"><span class="ul">使いどころ</span><span class="u">営業の訪問</span><span class="u">保守の現場</span><span class="u">士業の顧問先</span><span class="u">自治体の現地調査</span></div>
+    </div>
+  </div>
+
+  <div class="next">
+    <span class="na">${svgw(P.arrow,3)}</span>
+    <span>報告が3日後になって、話した内容が抜け落ちる、がなくなります。<b>作り方は2枚目へ</b></span>
+  </div>
+  <div class="src">出典：Microsoft Learn「Office 365 Outlook コネクタ」「Microsoft Teams コネクタ」「Microsoft Forms コネクタ」／社名・時刻は架空の例</div>
+`;
+</script>
+</body>
+</html>

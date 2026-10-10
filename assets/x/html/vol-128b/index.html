@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.128-2 訪問の資料と報告フォームの作り方</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/tips-base.css">
+<style>
+  .scene{height:100px;}
+  .cardb{gap:5px;padding:7px 9px;}
+  .cardh{font-size:15px;}
+  .col.am{background:#FFFBEB;border:2.5px solid #FCD34D;}
+  .col.am .ch2{color:#92400E;}
+  .col.am .ch2 .n{background:linear-gradient(180deg,#FBBF24,#D97706);}
+  .col.am .card{border-color:#FCD34D;}
+  .col.am .cardh{background:#FEF3C7;border-bottom-color:#FDE68A;color:#92400E;}
+  .col.am .cap{background:#FDE68A;color:#78350F;}
+  .step{display:flex;flex-direction:column;gap:3px;border-top:1.5px solid #E5E7EB;padding-top:5px;}
+  .step:first-child{border-top:none;padding-top:0;}
+  .step .sh{display:flex;align-items:center;gap:7px;font-size:15px;font-weight:900;color:#334155;}
+  .step .sh img{width:24px;height:24px;object-fit:contain;flex:0 0 auto;}
+  .fi{display:flex;align-items:center;gap:5px;flex-wrap:wrap;background:#fff;border:2px solid #B9C7DC;border-radius:7px;
+    padding:3px 9px;font-size:15.5px;font-weight:900;color:var(--navy);line-height:1.3;}
+  .fi.hot{border-color:var(--orange);background:#FFF7ED;}
+  .fi .k{font-size:14px;color:#475569;}
+  .fi .op{background:#F1F5F9;border:1.3px solid #CBD5E1;border-radius:5px;padding:0 6px;font-size:14px;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={warn:'<path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>',
+  bulb:'<path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/>'};
+const VB='0 0 388 100';
+const SH=(id,c)=>`<filter id="${id}" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="${c||'#1B2A44'}" flood-opacity=".22"/></filter>`;
+const CAL=(x,y,lines)=>`<g transform="translate(${x},${y})" filter="url(#f)"><rect width="128" height="84" rx="7" fill="#fff" stroke="#0F6CBD" stroke-width="2"/>
+  <rect width="128" height="18" rx="7" fill="#0F6CBD"/><rect y="10" width="128" height="8" fill="#0F6CBD"/>
+  <text x="64" y="13.5" font-family="Noto Sans JP" font-size="10.5" font-weight="900" fill="#fff" text-anchor="middle">予定表</text>
+  ${lines.map(([t,s,hot],i)=>`<rect x="6" y="${24+i*19}" width="116" height="15" rx="3" fill="${hot?'#DBEAFE':'#F1F5F9'}"/>
+   <text x="11" y="${35+i*19}" font-family="Noto Sans JP" font-size="10.5" font-weight="900" fill="${hot?'#1E40AF':'#64748B'}">${t}　${s}</text>`).join('')}</g>`;
+
+/* ① 15分前 */
+const s1=`<svg viewBox="${VB}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs>${SH('f')}</defs><rect width="388" height="100" fill="#EDF3FA"/>
+  ${CAL(12,8,[['10:00','訪問：みどり',1],['12:00','昼食',0],['14:00','訪問：鈴木',1]])}
+  <g filter="url(#f)"><circle cx="186" cy="50" r="24" fill="#fff" stroke="#2563EB" stroke-width="2.6"/>
+    <text x="186" y="47" font-family="Noto Sans JP" font-size="11" font-weight="900" fill="#1E40AF" text-anchor="middle">15分</text>
+    <text x="186" y="61" font-family="Noto Sans JP" font-size="11" font-weight="900" fill="#1E40AF" text-anchor="middle">前</text></g>
+  <path d="M148 50 H 160 M212 50 H 232" stroke="#2563EB" stroke-width="4.2" stroke-linecap="round"/>
+  <path d="M226 44 l8 6 l-8 6" fill="none" stroke="#2563EB" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <g filter="url(#f)"><rect x="244" y="18" width="134" height="64" rx="9" fill="#fff" stroke="#5B5FC7" stroke-width="2.2"/>
+    <text x="311" y="40" font-family="Noto Sans JP" font-size="12" font-weight="900" fill="#4B53BC" text-anchor="middle">Teams に</text>
+    <text x="311" y="58" font-family="Noto Sans JP" font-size="12" font-weight="900" fill="#4B53BC" text-anchor="middle">📎 資料のリンク</text></g>
+</svg>`;
+
+/* ② 18時に今日の訪問を拾う */
+const s2=`<svg viewBox="${VB}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs>${SH('f','#78350F')}</defs><rect width="388" height="100" fill="#FEF3C7"/>
+  ${CAL(12,8,[['10:00','訪問：みどり',1],['12:00','昼食',0],['14:00','訪問：鈴木',1]])}
+  <path d="M150 50 H 176" stroke="#D97706" stroke-width="4.2" stroke-linecap="round"/>
+  <path d="M170 44 l8 6 l-8 6" fill="none" stroke="#D97706" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <g filter="url(#f)"><rect x="188" y="12" width="190" height="76" rx="9" fill="#fff" stroke="#D97706" stroke-width="2.2"/>
+    <text x="200" y="33" font-family="Noto Sans JP" font-size="12" font-weight="900" fill="#92400E">「訪問」だけ 2件</text>
+    <text x="200" y="52" font-family="Noto Sans JP" font-size="11.5" font-weight="900" fill="#334155">・みどり製作所</text>
+    <text x="200" y="68" font-family="Noto Sans JP" font-size="11.5" font-weight="900" fill="#334155">・鈴木運輸</text>
+    <rect x="300" y="60" width="70" height="20" rx="5" fill="#0F766E"/><text x="335" y="74" font-family="Noto Sans JP" font-size="10.5" font-weight="900" fill="#fff" text-anchor="middle">報告する</text></g>
+</svg>`;
+
+/* ③ フォームの回答 → 訪問記録 */
+const s3=`<svg viewBox="${VB}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs>${SH('f','#0B5136')}</defs><rect width="388" height="100" fill="#DCF3E7"/>
+  <g filter="url(#f)"><rect x="18" y="10" width="112" height="80" rx="8" fill="#fff" stroke="#0F766E" stroke-width="2.2"/>
+    <rect x="18" y="10" width="112" height="18" rx="8" fill="#0F766E"/><rect x="18" y="20" width="112" height="8" fill="#0F766E"/>
+    <text x="74" y="24" font-family="Noto Sans JP" font-size="10.5" font-weight="900" fill="#fff" text-anchor="middle">訪問報告</text>
+    ${['訪問先','話した内容','次にやること'].map((t,i)=>`<text x="28" y="${44+i*16}" font-family="Noto Sans JP" font-size="10" font-weight="900" fill="#475569">${t}</text>
+      <rect x="84" y="${36+i*16}" width="38" height="10" rx="2" fill="#E2E8F0"/>`).join('')}</g>
+  <path d="M140 50 H 168" stroke="#16A34A" stroke-width="4.4" stroke-linecap="round"/>
+  <path d="M162 44 l8 6 l-8 6" fill="none" stroke="#16A34A" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"/>
+  <g filter="url(#f)"><rect x="180" y="10" width="198" height="80" rx="7" fill="#fff" stroke="#16A34A" stroke-width="2.2"/>
+    <rect x="180" y="10" width="198" height="18" rx="7" fill="#036C70"/><rect x="180" y="20" width="198" height="8" fill="#036C70"/>
+    <text x="279" y="24" font-family="Noto Sans JP" font-size="10.5" font-weight="900" fill="#fff" text-anchor="middle">訪問記録（SharePoint）</text>
+    <rect x="186" y="36" width="186" height="14" fill="#F1F5F9"/><rect x="186" y="54" width="186" height="14" fill="#F1F5F9"/>
+    <rect x="186" y="72" width="186" height="14" fill="#DCFCE7"/>
+    <text x="194" y="83" font-family="Noto Sans JP" font-size="10" font-weight="900" fill="#065F46">みどり製作所　見積を10/20までに　✓</text></g>
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.128-2</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">作り方は<span class="hl">フロー3本</span>（15分前 → 18時の声かけ → 記録）</div>
+    <img class="title-chara" src="${A}chara/chara_point.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svgw(P.bulb,2.2)}</div>
+    <div class="txt">合図は予定の<b>件名に「訪問」</b>が入っているかどうかだけ。<br>資料のリンクは予定の本文に貼っておけば、そのままTeamsに届きます</div>
+  </div>
+
+  <div class="stage">
+    <div class="col info">
+      <div class="ch2"><span class="n">1</span>15分前に資料を送る</div>
+      <div class="scene">${s1}</div>
+      <div class="body"><div class="card">
+        <div class="cardh"><img src="${A}icons/pa_outlook.png" alt="">今後のイベントが間もなく開始される場合 (V3)</div>
+        <div class="cardb">
+          <div class="fi hot"><span class="k">Look-Ahead 時間</span>15</div>
+          <div class="step"><span class="sh"><img src="${A}icons/pa_condition.png" alt="">条件</span>
+            <span class="fi"><span class="dyn">件名</span><span class="op">次の値を含む</span>訪問</span></div>
+          <div class="step"><span class="sh"><img src="${A}icons/pa_teams.png" alt="">フロー ボットでチャットする（自分へ）</span>
+            <span class="fi"><span class="dyn">件名</span><span class="dyn">場所</span><span class="dyn">本文</span></span></div>
+        </div>
+      </div></div>
+      <div class="cap">本文に貼った<b>資料のリンク</b>が、そのまま届く</div>
+    </div>
+
+    <div class="col am">
+      <div class="ch2"><span class="n">2</span>18時に報告を声かけ</div>
+      <div class="scene">${s2}</div>
+      <div class="body"><div class="card">
+        <div class="cardh"><img src="${A}icons/pa_schedule.png" alt="">繰り返し　毎日 18時</div>
+        <div class="cardb">
+          <div class="step"><span class="sh"><img src="${A}icons/pa_outlook.png" alt="">イベントの予定表ビューを取得する (V3)</span>
+            <span class="fi"><span class="k">期間</span>今日の0時〜23時59分</span></div>
+          <div class="step"><span class="sh"><img src="${A}icons/pa_dataoperation.png" alt="">アレイのフィルター処理</span>
+            <span class="fi"><span class="dyn">件名</span><span class="op">次の値を含む</span>訪問</span></div>
+          <div class="step"><span class="sh"><img src="${A}icons/pa_teams.png" alt="">自分へ：件名の一覧＋フォームのURL</span></div>
+        </div>
+      </div></div>
+      <div class="cap">訪問がない日は<b>何も届かない</b>ようにする</div>
+    </div>
+
+    <div class="col good">
+      <div class="ch2"><span class="n">3</span>報告を訪問記録に残す</div>
+      <div class="scene">${s3}</div>
+      <div class="body"><div class="card">
+        <div class="cardh"><img src="${A}icons/pa_logo.png" alt="">新しい応答が送信されるとき（Forms）</div>
+        <div class="cardb">
+          <div class="step"><span class="sh">応答の詳細を取得する</span></div>
+          <div class="step"><span class="sh"><img src="${A}icons/pa_sharepoint.png" alt="">項目の作成（訪問記録）</span>
+            <span class="fi hot"><span class="dyn">訪問先</span><span class="dyn">話した内容</span><span class="dyn">次にやること</span></span></div>
+          <div class="fi"><span class="k">報告者</span><span class="dyn">Responders' Email</span></div>
+        </div>
+      </div></div>
+      <div class="cap">次の訪問の前に、<b>ここを見返す</b></div>
+    </div>
+  </div>
+
+  <div class="warnbar">
+    <span class="na">${svgw(P.warn,2.4)}</span>
+    <span class="ws"><span>すべて標準コネクタ（追加料金なし）</span><span>予定表ビューの期間はUTCで渡る。日本時間に直す</span>
+      <span>予定を動かすと①がもう一度届くことがある</span></span>
+  </div>
+  <div class="src">出典：Microsoft Learn「Office 365 Outlook コネクタ」「Microsoft Teams コネクタ」「Microsoft Forms コネクタ」「データ操作」／名称は架空</div>
+`;
+</script>
+</body>
+</html>
