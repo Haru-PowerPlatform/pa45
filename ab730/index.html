@@ -76,6 +76,18 @@ details.types summary{cursor:pointer;font-weight:700;color:#fde68a}
 .done-btn{margin-top:8px;background:transparent;border:1px solid var(--ok);color:var(--ok);border-radius:8px;padding:5px 10px;font-size:.78rem;cursor:pointer}
 .q.done .done-btn{background:var(--ok);color:#0f172a}
 .no-result{text-align:center;color:var(--muted);padding:40px 20px}
+.terms{margin-top:10px;background:#16233b;border:1px solid #2f4a75;border-radius:10px;padding:10px 12px;font-size:.84rem}
+.terms h4{font-size:.78rem;color:#93c5fd;margin-bottom:6px}
+.terms dl{display:grid;gap:6px}
+.terms dt{font-weight:700;color:#dbeafe}
+.terms dd{margin:0 0 2px;color:var(--text)}
+.terms dd i{font-style:normal;color:var(--muted);display:block;font-size:.78rem}
+details.gloss{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:12px 14px;margin-bottom:16px}
+details.gloss summary{cursor:pointer;font-weight:700;color:#93c5fd}
+details.gloss dl{margin-top:8px;display:grid;gap:8px;font-size:.86rem}
+details.gloss dt{font-weight:700;color:#dbeafe}
+details.gloss dd{margin:0}
+details.gloss dd i{font-style:normal;color:var(--muted);display:block;font-size:.78rem}
 footer{text-align:center;padding:20px;color:var(--muted);font-size:.74rem;margin-top:24px}
 .fab{position:fixed;bottom:18px;right:18px;width:54px;height:54px;border-radius:50%;background:var(--accent);color:#0f172a;border:none;font-size:.78rem;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.5);z-index:20}
 button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
@@ -118,6 +130,11 @@ button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outli
   </ol>
 </details>
 
+<details class="gloss">
+  <summary>用語集（分からない言葉はここ）</summary>
+  <dl id="glossAll"></dl>
+</details>
+
 <div class="controls">
   <input class="search" id="search" type="search" placeholder="キーワードで探す（例：ラベル、ノートブック、会議）" aria-label="キーワードで探す">
   <div class="filters" id="filters">
@@ -133,7 +150,7 @@ button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outli
 <div class="list" id="list"></div>
 
 <footer>
-  更新日: 2026-10-13 ／ 問題文は Microsoft Learn の練習問題を要約したもの（原文ではない）。<br>
+  更新日: 2026-10-13（用語の説明を追加） ／ 問題文は Microsoft Learn の練習問題を要約したもの（原文ではない）。<br>
   正式な情報は Microsoft Learn の AB-730 学習ガイドで確認する。英語版は 2026-10-20 に出題範囲が更新。
 </footer>
 </div>
@@ -224,6 +241,53 @@ const D=[
 {n:50,s:'3.2',miss:0,p:'会議のあとで要約とアクション項目を作らせたい。会議中に何を有効にするか',k:['会議後','要約','有効に'],a:'会議の文字起こし',t:'',pick:'会議後の要約の材料＝文字起こし',why:'録画だけでは分析できるテキストがない。ライブキャプションは保存されない',f:'meeting'}
 ];
 
+/* 用語集：[表示名, 見つける語, 説明, たとえ] */
+const G=[
+['秘密度ラベル',['秘密度ラベル','ラベル'],'文書やメールに付ける「社外秘」「極秘」などの札。札によって、だれが開けるか・社外に送れるかなどが決まる。Copilot もこの札の決まりに従う。','たとえ：書類に押す「社外秘」のはんこ'],
+['DLP（データ損失防止）',['DLP','データ損失防止'],'カード番号や個人情報など、出てはいけない情報が外へ送られたり共有されたりするのを、ルールで自動的に止める仕組み。','たとえ：空港の手荷物検査'],
+['Microsoft Purview',['Purview'],'Microsoft 365 の情報を守る・管理するための機能のまとめ役。秘密度ラベル・DLP・監査・電子情報開示などはこの中にある。','たとえ：会社の情報管理部の道具箱'],
+['プロンプトインジェクション',['インジェクション'],'AI が読む文章の中に、悪い命令をこっそり混ぜて、AI に本来やってはいけないことをさせようとする攻撃。','たとえ：書類の束に「この書類を読んだ人は金庫を開けること」と書いた紙を混ぜる'],
+['幻覚（ハルシネーション）',['幻覚','ねつ造','誤った情報'],'AI が、もっともらしいけれど事実ではない内容を作ってしまうこと。AI がよく知らない話題で起きやすい。','たとえ：知らないことを聞かれて、それらしく話を作ってしまう'],
+['過度の依存',['過度の依存'],'AI の出力を確かめずに、そのまま信じて使ってしまうこと。人の確認を挟むことで防ぐ。',''],
+['引用（参照元）',['引用','参照元','出典'],'Copilot が答えの根拠にした資料へのリンク。リンク先を開いて、本当にそう書いてあるかを確かめられる。',''],
+['責任ある AI',['責任ある AI'],'Microsoft が決めている AI を作る・使うときの原則。公平性・信頼性と安全性・プライバシーとセキュリティ・包括性・透明性・説明責任の6つ。',''],
+['アクセス許可（権限）',['アクセス許可','権限'],'だれがどのファイルやサイトを見られるか・編集できるかの設定。Copilot は、その人が見てよいものしか使わない。','たとえ：社員証で開けられる部屋が決まっている'],
+['監査',['監査'],'だれが・いつ・何をしたかの記録を残して、あとで調べられるようにする機能。止める機能ではない。','たとえ：防犯カメラの録画'],
+['電子情報開示',['電子情報開示'],'訴訟や調査のときに、必要なメールや文書を探して集める機能。止める機能ではない。',''],
+['暗号化',['暗号化'],'データを鍵がないと読めない形に変えること。ただし Copilot が何を出すかを決める仕組みではない。',''],
+['条件付きアクセス',['条件付きアクセス'],'「会社の端末からだけ」「海外からはだめ」など、条件によってサインインを許すか決める仕組み。',''],
+['保持ポリシー',['保持ポリシー'],'メールや文書を何年残すか・いつ消すかを決めるルール。',''],
+['Copilot Chat',['Copilot Chat'],'Copilot と会話する画面。その場で質問して答えをもらう、1回ごとのやり取り向け。',''],
+['エージェント',['エージェント'],'決まった役割と指示を持たせた Copilot。何度でも、何人でも同じやり方で使える。','たとえ：手順書を覚えた専任の担当者'],
+['宣言型エージェント',['宣言型エージェント'],'コードを書かずに、「何をするか」を言葉（指示）と設定で決めて作るエージェント。',''],
+['エージェントビルダー',['エージェントビルダー','ビルダー'],'Microsoft 365 Copilot の中にある、エージェントを作る画面。指示を書いたり、資料をつないだりする。',''],
+['エージェントストア',['エージェントストア','ストア'],'すでに用意されているエージェントを探して追加できる場所。作らずにすぐ使える。','たとえ：スマホのアプリストア'],
+['Copilot Studio',['Copilot Studio'],'本格的なエージェントを作る別のツール。エージェントビルダーより細かく作れるが、そのぶん手間がかかる。',''],
+['ナレッジソース',['ナレッジ'],'エージェントに読ませる資料の置き場所。SharePoint のサイトやファイルなどを指定する。','たとえ：担当者に渡す参考資料のファイル'],
+['指示（インストラクション）',['指示'],'エージェントに「どうふるまうか・どう答えるか」を言葉で書いたもの。中身が矛盾すると答えがぶれる。',''],
+['推奨プロンプト',['推奨プロンプト'],'エージェントの画面に出しておく「こう聞いてみて」という質問の例。答え方は変わらない。',''],
+['カスタム API アクション',['API アクション'],'エージェントが Microsoft 365 の外のシステムに命令を出して、何かを実行できるようにする仕組み。',''],
+['コネクタ',['コネクタ'],'Microsoft 365 の外にあるデータを、Copilot が読めるように取り込む仕組み。読むだけで、実行はしない。',''],
+['アダプティブカード',['アダプティブカード'],'Teams などに出るボタン付きの小さな画面。見せ方を整えるもので、できることは増えない。',''],
+['プロンプト',['プロンプト'],'Copilot へのお願いの文章。やってほしいこと・だれ向けか・どんな形で、を書くと答えが良くなる。',''],
+['プロンプトギャラリー',['ギャラリー'],'よく使う形のプロンプトが並んでいる一覧。Word・Teams・Outlook などのアプリをまたいで使える。','たとえ：お願い文のテンプレート集'],
+['プロンプトの保存・スケジュール',['保存','スケジュール','繰り返し実行'],'保存すると、あとで一覧から使える。スケジュールを設定すると、毎週・毎月などに自動で動く。保存が先。',''],
+['ノートブック',['ノートブック'],'Copilot の会話と関係する資料をひとまとめにしておく場所。続けて作業するときに使う。','たとえ：案件ごとのクリアファイル'],
+['チャット履歴',['チャット履歴'],'これまでの Copilot との会話の一覧。前の会話をもう一度開ける。',''],
+['Copilot ページ',['Copilot ページ'],'Copilot が出した答えを貼って、何人もで一緒に直していける共有の作業スペース。',''],
+['文字起こし',['文字起こし'],'会議の声を文字にして残す機能。会議後の要約やアクション項目は、この文字が材料になる。','たとえ：議事録係'],
+['アクション項目',['アクション項目'],'会議で決まった「だれが・何を・いつまでに」やるかの一覧。',''],
+['エグゼクティブ向けの要約',['エグゼクティブ','上級リーダー','管理者向け'],'忙しい上の人向けに、重要な結果と決定だけを短くまとめたもの。',''],
+['下書き（Draft）',['下書き'],'Word の Copilot の機能。プロンプトや既存の文書をもとに、新しい文書を書き起こす。',''],
+['Loop',['Loop'],'Teams やメールに貼れる、みんなで同時に編集できる部品。文書の下書きを作る機能ではない。',''],
+['マーケットプレース',['マーケットプレース'],'会社の外に向けてアプリやエージェントを公開・販売する場所。社内で共有するためのものではない。',''],
+['共有の管理',['共有の管理'],'作ったエージェントを、だれが使えるかを設定する画面。',''],
+['Copilot for Sales',['Copilot for Sales','役割別'],'営業の仕事専用に作られた Copilot。ふつうの業務の自動化には使わない。','']
+];
+function termsIn(text){return G.filter(g=>g[1].some(w=>text.includes(w)))}
+function dlHTML(list){return list.map(g=>`<dt>${g[0]}</dt><dd>${g[2]}${g[3]?`<i>${g[3]}</i>`:''}</dd>`).join('')}
+document.getElementById('glossAll').innerHTML=dlHTML(G);
+
 const SEC={'1':'① 基礎','2':'② プロンプト・エージェント','3':'③ 文書・会議'};
 const listEl=document.getElementById('list'),searchEl=document.getElementById('search');
 let cur='all';
@@ -243,6 +307,7 @@ function card(d,done){
     <div class="row"><span class="lbl2 l-pick">選ぶポイント</span>${d.pick}</div>
     <div class="row"><span class="lbl2 l-why">解説</span>${d.why}</div>
     <div class="fig">${F[d.f]||''}</div>
+    ${(()=>{const ts=termsIn(d.p+d.a+d.t+d.pick+d.why);return ts.length?`<div class="terms"><h4>この問題の用語</h4><dl>${dlHTML(ts)}</dl></div>`:''})()}
     <button class="done-btn" onclick="toggleDone(${d.n},event)">${done.has(d.n)?'覚えた（解除）':'覚えた'}</button>
   </div></div>`;
 }
