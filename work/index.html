@@ -39,8 +39,11 @@ p{margin:0}
 .top .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:10px}
 .brand{display:flex;align-items:center;gap:10px;color:#fff;text-decoration:none;font-family:var(--f-display);font-weight:700}
 .brand img{width:32px;height:32px;border-radius:50%}
-.top nav{display:flex;gap:16px;font-size:14px}
-.top nav a{color:#dbe6f5;text-decoration:none}
+.top nav{display:flex;align-items:center;gap:0;font-size:14px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:3px}
+.top nav a{position:relative;color:#dbe6f5;text-decoration:none;padding:5px 14px;border-radius:999px;transition:background .2s,color .2s}
+.top nav a+a::before{content:"";position:absolute;left:0;top:25%;height:50%;width:1px;background:rgba(255,255,255,.22)}
+.top nav a:hover,.top nav a.cur{background:rgba(255,255,255,.16);color:#fff}
+.top nav a:hover::before,.top nav a:hover+a::before,.top nav a.cur::before,.top nav a.cur+a::before{opacity:0}
 .top .cta{background:#fff;color:var(--navy);border-radius:999px;padding:6px 14px;font-weight:700;text-decoration:none;font-size:14px;white-space:nowrap}
 
 /* hero */
@@ -236,6 +239,40 @@ main section:nth-of-type(odd) :is(.pk,.crs,.scope>div,.method,.act){background:v
   .contact{padding:24px}
 }
 
+
+/* 参加者の声のグラフ */
+.charts{display:grid;grid-template-columns:1fr 1.5fr;gap:16px;margin-bottom:12px}
+.chart-card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px 20px;box-shadow:var(--sh-1);min-width:0}
+main section:nth-of-type(odd) .chart-card{background:var(--surface)}
+main section:nth-of-type(even) .chart-card{background:var(--bg)}
+.ch-t{font-family:var(--f-display);font-weight:700;margin-bottom:12px;display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center}
+.ch-lg{font-family:var(--f-body);font-weight:400;font-size:12px;color:var(--muted);display:inline-flex;gap:10px;align-items:center}
+.ch-lg i{display:inline-block;width:14px;height:8px;border-radius:2px;margin-right:-6px}
+.ch-lg .b{background:color-mix(in srgb,var(--blue) 35%,transparent)}
+.ch-lg .l1{height:3px;background:#2f8be6}
+.ch-lg .l2{height:3px;background:#2fb3a0}
+.stk{margin-bottom:16px}
+.stk-l{font-size:13px;color:var(--muted);margin-bottom:6px}
+.stk-bar{display:flex;height:26px;border-radius:8px;overflow:hidden;background:var(--line)}
+.stk-bar span{height:100%;width:0;transition:width 1.2s cubic-bezier(.2,.8,.2,1);transition-delay:var(--d,0s);position:relative}
+.stk-bar span b{position:absolute;inset:0;display:grid;place-items:center;font-size:12px;color:#fff;font-weight:700;opacity:0;transition:opacity .4s 1s}
+.stk.go .stk-bar span{width:var(--w)}
+.stk.go .stk-bar span b{opacity:1}
+.stk-lg{list-style:none;margin:8px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12px;color:var(--muted)}
+.stk-lg i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:4px;vertical-align:0}
+.trend svg{width:100%;height:auto;display:block;overflow:visible}
+.trend .bar{fill:color-mix(in srgb,var(--blue) 30%,transparent);transform-box:fill-box;transform-origin:50% 100%;transform:scaleY(0);transition:transform .8s cubic-bezier(.2,.8,.2,1),fill .2s;transition-delay:var(--d,0s)}
+.trend .bar.on{fill:var(--blue)}
+.trend.go .bar{transform:scaleY(1)}
+.trend .ln{fill:none;stroke-width:2.2;stroke-linejoin:round;stroke-linecap:round;transition:stroke-dashoffset 2s ease .6s}
+.trend .ax{stroke:var(--line);stroke-width:1}
+.trend text{fill:var(--muted);font-size:10px;font-family:var(--f-body)}
+.trend .hit{fill:transparent;cursor:pointer}
+.trend .dot{transition:r .2s}
+.trend-tip{font-size:13px;color:var(--muted);margin-top:6px;min-height:1.8em}
+.trend-tip b{color:var(--ink)}
+@media (max-width:900px){.charts{grid-template-columns:1fr}}
+
 /* ===== 陰影と動き ===== */
 :root{--sh-1:0 1px 2px rgba(11,27,51,.06),0 4px 14px rgba(11,27,51,.07);--sh-2:0 2px 4px rgba(11,27,51,.08),0 14px 34px rgba(11,27,51,.14);--glow:0 0 0 1px color-mix(in srgb,var(--blue) 55%,transparent),0 12px 32px color-mix(in srgb,var(--blue) 22%,transparent)}
 @media (prefers-color-scheme: dark){:root{--sh-1:0 1px 2px rgba(0,0,0,.35),0 6px 18px rgba(0,0,0,.28);--sh-2:0 2px 6px rgba(0,0,0,.4),0 18px 40px rgba(0,0,0,.45)}}
@@ -308,7 +345,7 @@ main section:nth-of-type(odd) :is(.pk,.crs,.scope>div,.method,.act){background:v
     <nav aria-label="ページ内リンク">
       <a href="#profile">プロフィール</a><a href="#service">できること</a><a href="#talks">登壇</a><a href="#youtube">YouTube</a><a href="#blog">ブログ</a><a href="#faq">よくある質問</a>
     </nav>
-    <a class="cta" href="#contact">ご相談</a>
+    <a class="cta" data-consult href="#contact">ご相談</a>
   </div>
 </header>
 
@@ -320,7 +357,7 @@ main section:nth-of-type(odd) :is(.pk,.crs,.scope>div,.method,.act){background:v
       <h1>手作業は自動化に、問い合わせは <span class="grad">AI エージェント</span>に。</h1>
       <p class="lead">ITが専門ではない人に、Power Automate の自動化と Copilot Studio のエージェントづくりを教えています。研修・受託開発・登壇のご相談を受け付けています。</p>
       <div class="btns">
-        <a class="btn primary" href="#contact">研修・開発のご相談</a>
+        <a class="btn primary" data-consult href="#contact">研修・開発のご相談</a>
         <a class="btn ghost" href="#results">実績を見る</a>
       </div>
     </div>
@@ -505,6 +542,19 @@ main section:nth-of-type(odd) :is(.pk,.crs,.scope>div,.method,.act){background:v
 <section id="voices">
   <div class="wrap">
     <div class="sec-h"><small>VOICES</small><h2>参加者の声（アンケート原文）</h2><p>PA45 は毎回アンケートを取り、結果を回ごとに公開しています。第1回〜第30回で回答は376件です。</p></div>
+    <div class="charts">
+      <div class="chart-card">
+        <p class="ch-t">回答376件の内訳</p>
+        <div class="stk" data-set="u"><p class="stk-l">理解度</p><div class="stk-bar"></div><ul class="stk-lg"></ul></div>
+        <div class="stk" data-set="f"><p class="stk-l">役立ち度</p><div class="stk-bar"></div><ul class="stk-lg"></ul></div>
+      </div>
+      <div class="chart-card">
+        <p class="ch-t">回ごとの回答数と評価 <span class="ch-lg"><i class="b"></i>回答数 <i class="l1"></i>理解度 <i class="l2"></i>役立ち度</span></p>
+        <div class="trend" role="img" aria-label="第1回から第30回までの回答数と、理解度・役立ち度の推移"></div>
+        <p class="trend-tip" aria-live="polite">棒にふれると、その回の数字が出ます。</p>
+      </div>
+    </div>
+    <p class="src" style="margin:0 0 22px">各回の理解度・役立ち度は、その回のアンケートの集計値（0〜100）。上の実績の 88.3%・92.7% は、この30回分の平均です。</p>
     <div class="grid3">
       <div class="voice">初心者の私でも操作しながらついていける、とても分かりやすい勉強会でした。ありがとうございます。<span>PA45 第3回・回答14件 ─ <a href="https://haru-powerplatform.github.io/pa45/achievements/insights/vol-03.html" target="_blank" rel="noopener">この回の結果を見る</a></span></div>
       <div class="voice">「なんとなく知ってた」から、「はっきりと理解できた」に変わりました。次回も楽しみにしています！<span>PA45 第1回・回答17件 ─ <a href="https://haru-powerplatform.github.io/pa45/achievements/insights/vol-01.html" target="_blank" rel="noopener">この回の結果を見る</a></span></div>
@@ -538,6 +588,7 @@ main section:nth-of-type(odd) :is(.pk,.crs,.scope>div,.method,.act){background:v
         <ul><li>目的（参加者に、研修のあと何ができるようになってほしいか）</li><li>参加者（人数・ITへのなじみ・普段使っているアプリ）</li><li>環境（Microsoft 365 のプラン・Copilot のライセンスの有無）と、希望の時期</li></ul>
       </div>
       <div class="links">
+        <a class="form-link" hidden data-consult href="#contact" target="_blank" rel="noopener">相談フォーム<small>内容・日程・環境を入力して送信（2〜3分）</small></a>
         <a href="https://my.prairie.cards/u/ism.136.0721" target="_blank" rel="noopener">連絡先（デジタル名刺）<small>メール・SNS の連絡先をまとめています</small></a>
         <a href="https://x.com/isamu_Automate" target="_blank" rel="noopener">X @isamu_Automate<small>使い方を1テーマ2枚の図解で発信</small></a>
         <a href="https://powerautomate-create.connpass.com/" target="_blank" rel="noopener">勉強会 PA45（connpass）<small>毎週木曜 20:15・45分・無料</small></a>
@@ -599,7 +650,7 @@ document.getElementById('posts').innerHTML=POSTS.map(p=>`<a class="post" href="$
   addEventListener('scroll',onScroll,{passive:true});onScroll();
   if(reduce||!('IntersectionObserver' in window))return;
   root.classList.add('js');
-  const groups=['.sec-h','.nums .num','.method','.verbs span','.m-out div','.acts .act','.pick .pk','.courses .crs','#service .grid2>*','.steps2 li','.scope>div','.tl li','.vids .vid','.posts .post','.voice','.faq details','.contact'];
+  const groups=['.sec-h','.nums .num','.method','.verbs span','.m-out div','.acts .act','.pick .pk','.courses .crs','#service .grid2>*','.steps2 li','.scope>div','.tl li','.vids .vid','.posts .post','.chart-card','.voice','.faq details','.contact'];
   const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{rootMargin:'0px 0px -8% 0px'});
   const mark=()=>{groups.forEach(sel=>document.querySelectorAll(sel).forEach((e,i)=>{if(!e.classList.contains('rv')){e.classList.add('rv');e.style.setProperty('--d',Math.min(i,8)*70+'ms');io.observe(e)}}))};
   mark();
@@ -613,6 +664,57 @@ document.getElementById('posts').innerHTML=POSTS.map(p=>`<a class="post" href="$
       tn.nodeValue=fmt(0);requestAnimationFrame(step)},{threshold:.4});
     cio.observe(b)});
 })();
+</script>
+<script>
+(()=>{
+  const D={"rows": [[1, 17, 95.6, 91.2], [2, 12, 97.9, 91.7], [3, 14, 94.6, 89.3], [4, 11, 95.5, 100.0], [5, 15, 85.0, 96.7], [6, 10, 90.0, 100.0], [7, 5, 100.0, 100.0], [8, 14, 98.2, 100.0], [9, 15, 91.7, 93.3], [10, 8, 90.6, 100.0], [11, 10, 95.0, 100.0], [12, 11, 72.7, 95.5], [13, 9, 91.7, 88.9], [14, 13, 92.3, 96.2], [15, 8, 90.6, 100.0], [16, 16, 84.4, 87.5], [17, 11, 88.6, 90.9], [18, 20, 95.0, 95.0], [19, 14, 83.9, 85.7], [20, 16, 89.1, 100.0], [21, 15, 93.3, 93.3], [22, 19, 89.5, 84.2], [23, 19, 89.5, 84.2], [24, 18, 76.4, 80.6], [25, 6, 79.2, 83.3], [26, 7, 89.3, 92.9], [27, 10, 92.5, 100.0], [28, 11, 63.6, 86.4], [29, 3, 66.7, 83.3], [30, 19, 86.8, 89.5]], "u": [["とても理解できた", 259], ["理解できた", 86], ["普通", 13], ["少し難しかった", 16], ["難しかった", 2]], "f": [["役立ちそう", 331], ["少し役立ちそう", 31], ["まだイメージがついていない", 14]]};
+  const UC=['#0b6bcb','#2f8be6','#9fb0c6','#e9a85a','#c2552f'], FC=['#0f7a6b','#2fb3a0','#9fb0c6'];
+  document.querySelectorAll('.stk').forEach(el=>{
+    const set=D[el.dataset.set], C=el.dataset.set==='u'?UC:FC, tot=set.reduce((a,b)=>a+b[1],0);
+    const bar=el.querySelector('.stk-bar'), lg=el.querySelector('.stk-lg');
+    set.forEach(([k,v],i)=>{const p=v/tot*100;
+      const s=document.createElement('span');s.style.background=C[i];s.style.setProperty('--w',p+'%');s.style.setProperty('--d',i*0.12+'s');s.title=k+' '+v+'件';
+      if(p>=8){const b=document.createElement('b');b.textContent=Math.round(p)+'%';s.appendChild(b)}
+      bar.appendChild(s);
+      const li=document.createElement('li');li.innerHTML='<i style="background:'+C[i]+'"></i>';li.appendChild(document.createTextNode(k+' '+v+'件'));lg.appendChild(li)});
+  });
+  const box=document.querySelector('.trend'); if(!box)return;
+  const W=640,H=240,L=30,R=34,T=12,B=26,n=D.rows.length,cw=(W-L-R)/n,maxR=Math.max(...D.rows.map(r=>r[1])),ymax=Math.ceil(maxR/5)*5;
+  const yR=v=>T+(H-T-B)*(1-v/ymax), yP=v=>T+(H-T-B)*(1-(v-50)/50), x=i=>L+cw*i+cw/2;
+  let g='<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg">';
+  [0,ymax/2,ymax].forEach(v=>{g+='<line class="ax" x1="'+L+'" x2="'+(W-R)+'" y1="'+yR(v)+'" y2="'+yR(v)+'"/><text x="'+(L-6)+'" y="'+(yR(v)+3)+'" text-anchor="end">'+v+'</text>'});
+  [50,75,100].forEach(v=>{g+='<text x="'+(W-R+6)+'" y="'+(yP(v)+3)+'">'+v+'</text>'});
+  D.rows.forEach((r,i)=>{g+='<rect class="bar" data-i="'+i+'" style="--d:'+(i*0.03)+'s" x="'+(x(i)-cw*0.32)+'" y="'+yR(r[1])+'" width="'+(cw*0.64)+'" height="'+(H-B-yR(r[1]))+'" rx="2"/>';
+    if(i===0||(i+1)%5===0)g+='<text x="'+x(i)+'" y="'+(H-8)+'" text-anchor="middle">'+r[0]+'</text>'});
+  const path=k=>D.rows.map((r,i)=>(i?'L':'M')+x(i).toFixed(1)+' '+yP(r[k]).toFixed(1)).join(' ');
+  g+='<path class="ln" d="'+path(2)+'" stroke="#2f8be6"/><path class="ln" d="'+path(3)+'" stroke="#2fb3a0"/>';
+  g+='<circle class="dot" id="d1" r="0" fill="#2f8be6"/><circle class="dot" id="d2" r="0" fill="#2fb3a0"/>';
+  D.rows.forEach((r,i)=>{g+='<rect class="hit" data-i="'+i+'" x="'+(L+cw*i)+'" y="'+T+'" width="'+cw+'" height="'+(H-T-B)+'"/>'});
+  g+='<text x="'+(W-R+6)+'" y="'+(H-8)+'">%</text><text x="'+(L-6)+'" y="'+(H-8)+'" text-anchor="end">件</text></svg>';
+  box.innerHTML=g;
+  const sv=box.querySelector('svg');
+  sv.querySelectorAll('.ln').forEach(p=>{const len=p.getTotalLength();p.style.strokeDasharray=len;p.style.strokeDashoffset=len});
+  const tip=document.querySelector('.trend-tip'), bars=sv.querySelectorAll('.bar'), d1=sv.querySelector('#d1'), d2=sv.querySelector('#d2');
+  const show=i=>{const r=D.rows[i];bars.forEach(b=>b.classList.toggle('on',+b.dataset.i===i));
+    d1.setAttribute('cx',x(i));d1.setAttribute('cy',yP(r[2]));d1.setAttribute('r',4);d2.setAttribute('cx',x(i));d2.setAttribute('cy',yP(r[3]));d2.setAttribute('r',4);
+    tip.innerHTML='<b>第'+r[0]+'回</b>　回答 '+r[1]+'件　理解度 '+r[2]+'　役立ち度 '+r[3]+'　<a href="https://haru-powerplatform.github.io/pa45/achievements/insights/vol-'+String(r[0]).padStart(2,'0')+'.html" target="_blank" rel="noopener">この回の結果</a>'};
+  sv.querySelectorAll('.hit').forEach(h=>{h.addEventListener('mouseenter',()=>show(+h.dataset.i));h.addEventListener('click',()=>show(+h.dataset.i))});
+  const go=()=>{box.classList.add('go');sv.querySelectorAll('.ln').forEach(p=>p.style.strokeDashoffset=0);document.querySelectorAll('.stk').forEach(s=>s.classList.add('go'))};
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches||!('IntersectionObserver' in window)){go();return}
+  const io=new IntersectionObserver(es=>{if(es.some(e=>e.isIntersecting)){go();io.disconnect()}},{threshold:.3});
+  io.observe(document.querySelector('.charts'));
+})();
+</script>
+<script>
+(()=>{const ls=[...document.querySelectorAll('.top nav a')],ss=ls.map(a=>document.querySelector(a.getAttribute('href'))).filter(Boolean);
+if(!('IntersectionObserver' in window))return;
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){ls.forEach(a=>a.classList.toggle('cur',a.getAttribute('href')==='#'+e.target.id))}}),{rootMargin:'-45% 0px -50% 0px'});
+ss.forEach(s=>io.observe(s))})();
+</script>
+<script>
+/* 相談フォームの URL。入れると「ご相談」のボタンがすべてフォームへ飛ぶ。空のあいだはページ下の連絡先へ */
+const CONSULT_FORM_URL='';
+if(CONSULT_FORM_URL){document.querySelectorAll('[data-consult]').forEach(a=>{a.href=CONSULT_FORM_URL;a.target='_blank';a.rel='noopener';a.hidden=false})}
 </script>
 </body>
 </html>
