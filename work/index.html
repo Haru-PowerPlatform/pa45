@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Haru｜Power Automate・Copilot の研修とハンズオン</title>
+<meta name="description" content="ITが専門ではない人に向けて、Power Automate と Copilot の業務自動化を教えています。オンライン勉強会 PA45 を毎週主催。研修・ハンズオン・登壇のご相談はこのページから。">
+<meta property="og:title" content="Haru｜Power Automate・Copilot の研修とハンズオン">
+<meta property="og:description" content="PA45 を30回主催・のべ1,374名。研修・ハンズオン・登壇の実績とご相談の窓口。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://haru-powerplatform.github.io/pa45/work/">
+<meta property="og:image" content="https://haru-powerplatform.github.io/pa45/work/haru-icon.jpg">
+<meta name="theme-color" content="#0b1b33">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Zen+Kaku+Gothic+Antique:wght@500;700;900&display=swap">
+<style>
+/* Layout: 1カラムの縦長。ヒーロー→数字→できること→進め方→登壇→YouTube→ブログ→声→ご相談 */
+:root{
+  --bg:#f5f7fb; --surface:#ffffff; --ink:#0b1b33; --muted:#56657a; --line:#dce3ee;
+  --navy:#0b1b33; --blue:#0b6bcb; --blue-soft:#e4f0fc; --teal:#0f7a6b; --amber:#b7650b;
+  --f-display:"Zen Kaku Gothic Antique","Hiragino Sans","Yu Gothic",sans-serif;
+  --f-body:"BIZ UDPGothic","Hiragino Sans","Yu Gothic","Meiryo",sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){:root{
+  --bg:#0d1420; --surface:#151e2c; --ink:#e7edf6; --muted:#9fb0c6; --line:#2a3647;
+  --blue:#6aaef0; --blue-soft:#17283f; --teal:#5cc5b4; --amber:#e9a85a; color-scheme:dark}}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.8;-webkit-text-size-adjust:100%}
+a{color:var(--blue)}
+a:focus-visible,button:focus-visible{outline:2px solid var(--blue);outline-offset:3px}
+.wrap{max-width:1040px;margin:0 auto;padding-inline:20px}
+h1,h2,h3{font-family:var(--f-display);margin:0;line-height:1.35;text-wrap:balance}
+p{margin:0}
+
+/* nav */
+.top{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--navy) 92%,transparent);backdrop-filter:saturate(1.4) blur(8px);color:#fff}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-block:10px}
+.brand{display:flex;align-items:center;gap:10px;color:#fff;text-decoration:none;font-family:var(--f-display);font-weight:700}
+.brand img{width:32px;height:32px;border-radius:50%}
+.top nav{display:flex;gap:16px;font-size:14px}
+.top nav a{color:#dbe6f5;text-decoration:none}
+.top .cta{background:#fff;color:var(--navy);border-radius:999px;padding:6px 14px;font-weight:700;text-decoration:none;font-size:14px;white-space:nowrap}
+
+/* hero */
+.hero{background:var(--navy);color:#fff;padding-block:56px 64px;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;inset:auto -10% -60% 40%;height:420px;background:radial-gradient(closest-side,rgba(11,107,203,.55),transparent);pointer-events:none}
+.hero .wrap{display:grid;grid-template-columns:1.4fr 1fr;gap:40px;align-items:center;position:relative;z-index:1}
+.eyebrow{font-size:13px;letter-spacing:.14em;color:#8fc1f2;font-weight:700}
+.hero h1{font-size:clamp(28px,4.6vw,44px);font-weight:900;margin:10px 0 14px}
+.hero .lead{color:#cfdcee;font-size:17px}
+.hero .btns{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}
+.btn{display:inline-block;border-radius:12px;padding:12px 20px;font-weight:700;text-decoration:none}
+.btn.primary{background:#fff;color:var(--navy)}
+.btn.ghost{border:1.5px solid #7fa8d6;color:#fff}
+.card-me{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.18);border-radius:18px;padding:22px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px}
+.card-me img{width:120px;height:120px;border-radius:50%;border:3px solid #fff;object-fit:cover}
+.card-me .nm{font-family:var(--f-display);font-size:22px;font-weight:900}
+.card-me .rl{font-size:14px;color:#cfdcee}
+.card-me .chips{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:4px}
+.chip{font-size:12px;border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:2px 10px;color:#e6eef9}
+
+/* sections */
+main section{padding-block:56px}
+main section:nth-of-type(even){background:var(--surface)}
+.sec-h{display:flex;flex-direction:column;gap:6px;margin-bottom:26px}
+.sec-h small{font-size:12px;letter-spacing:.16em;color:var(--blue);font-weight:700}
+.sec-h h2{font-size:clamp(22px,3.2vw,30px)}
+.sec-h p{color:var(--muted)}
+
+.nums{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.num{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;text-align:center}
+main section:nth-of-type(even) .num{background:var(--bg)}
+.num b{display:block;font-family:var(--f-display);font-size:clamp(28px,4vw,38px);font-weight:900;color:var(--blue);font-variant-numeric:tabular-nums;line-height:1.15}
+.num span{font-size:13px;color:var(--muted)}
+.src{font-size:12px;color:var(--muted);margin-top:12px}
+
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:20px 22px;display:flex;flex-direction:column;gap:8px;min-width:0}
+main section:nth-of-type(even) .box{background:var(--bg)}
+.box .tag{align-self:flex-start;font-size:12px;font-weight:700;background:var(--blue-soft);color:var(--blue);border-radius:999px;padding:2px 10px}
+.box h3{font-size:18px}
+.box .take{font-size:14px;border-top:1px dashed var(--line);padding-top:8px;color:var(--muted)}
+.box ul{margin:0;padding-left:20px}
+.box li{margin:3px 0}
+
+.steps{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;counter-reset:st}
+.step{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 14px;font-size:14px}
+main section:nth-of-type(even) .step{background:var(--bg)}
+.step b{display:block;font-family:var(--f-display);font-size:15px;margin-bottom:4px}
+.step b::before{counter-increment:st;content:counter(st);display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--blue);color:#fff;font-size:13px;margin-right:6px}
+
+.tl{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:0;border-left:3px solid var(--line);margin-left:8px}
+.tl li{position:relative;padding:0 0 20px 22px}
+.tl li::before{content:"";position:absolute;left:-9px;top:6px;width:14px;height:14px;border-radius:50%;background:var(--surface);border:3px solid var(--blue)}
+.tl .d{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.tl .t{font-weight:700}
+.tl .r{display:inline-block;font-size:12px;border-radius:6px;padding:0 8px;margin-left:6px;background:var(--blue-soft);color:var(--blue);font-weight:700}
+.tl .r.org{background:color-mix(in srgb,var(--teal) 16%,transparent);color:var(--teal)}
+.tl .m{font-size:13px;color:var(--muted)}
+
+.vids{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.vid{display:flex;flex-direction:column;gap:8px;text-decoration:none;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.vid img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;background:#000}
+.vid .vt{padding:0 14px 14px;font-size:14px;font-weight:700;line-height:1.55}
+.vid .vd{padding:0 14px;font-size:12px;color:var(--muted)}
+.vid:hover{border-color:var(--blue)}
+.more{margin-top:18px;display:flex;gap:12px;flex-wrap:wrap}
+.more a{font-weight:700}
+
+.posts{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.post{display:block;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;text-decoration:none;color:var(--ink)}
+main section:nth-of-type(even) .post{background:var(--bg)}
+.post .pk{font-size:12px;color:var(--blue);font-weight:700}
+.post .pt{font-weight:700;line-height:1.55}
+.post:hover{border-color:var(--blue)}
+
+.voice{background:var(--surface);border-left:4px solid var(--blue);border-radius:10px;padding:16px 18px}
+main section:nth-of-type(even) .voice{background:var(--bg)}
+.voice span{display:block;font-size:12px;color:var(--muted);margin-top:6px}
+
+.contact{background:var(--navy);color:#fff;border-radius:20px;padding:32px;display:grid;grid-template-columns:1.3fr 1fr;gap:24px;align-items:center}
+.contact h2{color:#fff}
+.contact p{color:#cfdcee}
+.contact ul{margin:12px 0 0;padding-left:20px;color:#cfdcee}
+.contact .links{display:flex;flex-direction:column;gap:10px}
+.contact .links a{display:block;background:#fff;color:var(--navy);border-radius:12px;padding:12px 16px;font-weight:700;text-decoration:none}
+.contact .links a small{display:block;font-weight:400;color:#56657a;font-size:12px}
+
+footer{padding-block:28px;font-size:13px;color:var(--muted);text-align:center}
+
+@media (max-width:900px){
+  .hero .wrap{grid-template-columns:1fr}
+  .nums{grid-template-columns:repeat(2,1fr)}
+  .grid3,.vids{grid-template-columns:repeat(2,1fr)}
+  .steps{grid-template-columns:1fr}
+  .contact{grid-template-columns:1fr}
+  .top nav{display:none}
+}
+@media (max-width:600px){
+  .grid3,.grid2,.vids,.posts{grid-template-columns:1fr}
+  main section{padding-block:44px}
+  .contact{padding:24px}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#top"><img src="haru-icon.jpg" alt="">Haru</a>
+    <nav aria-label="ページ内リンク">
+      <a href="#service">できること</a><a href="#talks">登壇</a><a href="#youtube">YouTube</a><a href="#blog">ブログ</a>
+    </nav>
+    <a class="cta" href="#contact">ご相談</a>
+  </div>
+</header>
+
+<div class="hero" id="top">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">POWER AUTOMATE × COPILOT</p>
+      <h1>手作業を、その場で動く1本の自動化に。</h1>
+      <p class="lead">ITが専門ではない人に向けて、Power Automate と Copilot の業務自動化を教えています。オンライン勉強会 PA45 を毎週主催し、手順の前に「どの仕事を自動にするか」を一緒に決めるところから進めます。</p>
+      <div class="btns">
+        <a class="btn primary" href="#contact">研修・登壇のご相談</a>
+        <a class="btn ghost" href="#results">実績を見る</a>
+      </div>
+    </div>
+    <div class="card-me">
+      <img src="haru-icon.jpg" alt="Haru のアイコン">
+      <p class="nm">Haru（はる）</p>
+      <p class="rl">Power Automate ／ Copilot 講師・ハンズオン設計</p>
+      <div class="chips">
+        <span class="chip">PA45 主催</span><span class="chip">PLUG（広島 Power Platform ユーザー会）運営</span><span class="chip">講師養成講座（トレイン・ザ・トレーナー）修了</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main>
+
+<section id="results">
+  <div class="wrap">
+    <div class="sec-h"><small>RESULTS</small><h2>主催する勉強会 PA45 の実績</h2><p>毎週木曜 20:15 から45分。1テーマを、その場で1つ作り切る形で続けています。</p></div>
+    <div class="nums">
+      <div class="num"><b>30<small style="font-size:.5em">回</small></b><span>開催（毎週）</span></div>
+      <div class="num"><b>1,374<small style="font-size:.5em">名</small></b><span>のべ参加者</span></div>
+      <div class="num"><b>88.3<small style="font-size:.5em">%</small></b><span>「理解できた」以上</span></div>
+      <div class="num"><b>92.7<small style="font-size:.5em">%</small></b><span>「役立ちそう」</span></div>
+    </div>
+    <p class="src">2026年10月13日時点。第1回〜第30回の実測値。参加者は connpass の申込ベース。理解・役立ちは各回アンケート（回答376件）の平均。</p>
+  </div>
+</section>
+
+<section id="service">
+  <div class="wrap">
+    <div class="sec-h"><small>SERVICE</small><h2>お受けしている内容</h2><p>オンラインでの研修・ハンズオン・登壇と、小さな自動化の相談です。料金と時間は、内容をうかがってからお見積りします。</p></div>
+    <div class="grid2">
+      <div class="box"><span class="tag">研修・ハンズオン</span><h3>はじめての業務自動化（Power Automate）</h3><p>毎日くり返している手作業をひとつ選び、その場で動くところまで作ります。前提知識は要りません。</p><p class="take">持ち帰るもの：自分の手で作った、明日から動く自動化ひとつ</p></div>
+      <div class="box"><span class="tag">研修・ハンズオン</span><h3>Copilot の頼み方</h3><p>同じ質問でも、頼み方で返ってくる答えが変わります。仕事で使う頼み方を数個に絞って扱います。</p><p class="take">持ち帰るもの：そのまま使える頼み方のパターン集</p></div>
+      <div class="box"><span class="tag">研修・ワークショップ</span><h3>自動化のネタの見つけ方</h3><p>自分の一日を6つの動詞（受け付ける・書き写す・判断する・知らせる・まとめる・作る）で分けて、自動化の候補を洗い出します。</p><p class="take">持ち帰るもの：自分の仕事から出した自動化候補のリスト</p></div>
+      <div class="box"><span class="tag">研修・ハンズオン</span><h3>Copilot Studio 入門</h3><p>質問に答えるエージェントを作り、社内文書を読ませ、メールを送る手を持たせるところまでを扱います。Power Automate とどう分けて使うかも整理します。</p><p class="take">持ち帰るもの：動くエージェントと、使い分けの判断の目安</p></div>
+      <div class="box"><span class="tag">登壇</span><h3>勉強会・社内イベントでの登壇</h3><p>LT（5〜10分）から、50〜60分のセッションまで。Power Automate を教えてきた立場から、Copilot との線引きをお話しします。</p></div>
+      <div class="box"><span class="tag">相談</span><h3>これは作れますか、の相談</h3><p>やりたいことを書面でいただき、作れるかどうか・必要なライセンス・進め方を文書でお返しします。</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="flow">
+  <div class="wrap">
+    <div class="sec-h"><small>FLOW</small><h2>ご依頼の流れ</h2><p>打ち合わせの場で即答せず、調べが要ることは持ち帰って文書でお返ししています。</p></div>
+    <div class="steps">
+      <div class="step"><b>ご相談</b>目的・参加者・環境をメールでお知らせいただきます。</div>
+      <div class="step"><b>書面で回答</b>内容の案と進め方、日程の候補を文書でお返しします。</div>
+      <div class="step"><b>確認の打ち合わせ</b>書面の内容を確かめる短い打ち合わせです。</div>
+      <div class="step"><b>お見積り・契約</b>範囲と料金を書面で決めます。</div>
+      <div class="step"><b>実施と振り返り</b>実施後にアンケートの結果をお渡しします。</div>
+    </div>
+    <div class="grid2" style="margin-top:16px">
+      <div class="box"><h3>お受けしていること</h3><ul><li>オンラインでの研修・ハンズオン・登壇</li><li>Forms・SharePoint・Teams・Outlook・Excel をつなぐ小さなフロー</li><li>失敗しても手作業に戻せる業務の自動化</li><li>書面での相談と回答</li></ul></div>
+      <div class="box"><h3>お受けしていないこと</h3><ul><li>基幹システムや給与・会計・勤怠の本番処理</li><li>24時間の監視や、止まると事業が止まる仕組み</li><li>即日の対応・電話での緊急対応</li><li>大量の個人情報・機微情報を扱う作業</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section id="talks">
+  <div class="wrap">
+    <div class="sec-h"><small>TALKS</small><h2>登壇・運営の実績</h2></div>
+    <ul class="tl" id="tl"></ul>
+  </div>
+</section>
+
+<section id="youtube">
+  <div class="wrap">
+    <div class="sec-h"><small>YOUTUBE</small><h2>講座の録画（YouTube で全編公開）</h2><p>PA45 の各回を全編公開しています。講座の進め方や話し方を、実際の回で確かめられます。</p></div>
+    <div class="vids" id="vids"></div>
+    <div class="more"><a href="https://www.youtube.com/@Haru_PowerAutomate136" target="_blank" rel="noopener">YouTube チャンネルをすべて見る</a><a href="https://haru-powerplatform.github.io/pa45/videos/" target="_blank" rel="noopener">録画の一覧（テーマ別）</a></div>
+  </div>
+</section>
+
+<section id="blog">
+  <div class="wrap">
+    <div class="sec-h"><small>BLOG</small><h2>ブログ automate136.com</h2><p>フローの作り方と、Copilot Studio の検証の記録を、手順と画面つきで公開しています（公開記事 118 本・2026年10月13日時点）。</p></div>
+    <div class="posts" id="posts"></div>
+    <div class="more"><a href="https://www.automate136.com/" target="_blank" rel="noopener">ブログをすべて見る</a><a href="https://haru-powerplatform.github.io/pa45/slides/links.html" target="_blank" rel="noopener">講座スライドの一覧</a></div>
+  </div>
+</section>
+
+<section id="voices">
+  <div class="wrap">
+    <div class="sec-h"><small>VOICES</small><h2>参加者の声（アンケート原文）</h2></div>
+    <div class="grid3">
+      <div class="voice">初心者の私でも操作しながらついていける、とても分かりやすい勉強会でした。ありがとうございます。<span>PA45 第3回・アンケートより</span></div>
+      <div class="voice">「なんとなく知ってた」から、「はっきりと理解できた」に変わりました。次回も楽しみにしています！<span>PA45 第1回・アンケートより</span></div>
+      <div class="voice">社内アンケートなどはこのように作成しているのですね。作り方が分かったので、今後は私も作成できそうです。<span>PA45 第7回・アンケートより</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="wrap">
+    <div class="contact">
+      <div>
+        <h2>研修・登壇のご相談</h2>
+        <p>次の3点をお知らせいただけると、書面でのお返事が早くなります。</p>
+        <ul><li>目的（参加者に、研修のあと何ができるようになってほしいか）</li><li>参加者（人数・ITへのなじみ・普段使っているアプリ）</li><li>環境（Microsoft 365 のプラン・Copilot のライセンスの有無）と、希望の時期</li></ul>
+      </div>
+      <div class="links">
+        <a href="https://my.prairie.cards/u/ism.136.0721" target="_blank" rel="noopener">連絡先（デジタル名刺）<small>メール・SNS の連絡先をまとめています</small></a>
+        <a href="https://x.com/isamu_Automate" target="_blank" rel="noopener">X @isamu_Automate<small>使い方を1テーマ2枚の図解で発信</small></a>
+        <a href="https://powerautomate-create.connpass.com/" target="_blank" rel="noopener">勉強会 PA45（connpass）<small>毎週木曜 20:15・45分・無料</small></a>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">Haru（はる）｜講師・研修・登壇は個人の活動として行っています。　更新日：2026年10月13日</div>
+</footer>
+
+<script>
+const TALKS=[
+ ['2026.09','ビジュアルプログラミングIoTLT vol.24','LT登壇','作らせる前に、使ってもらう ── 社内で非エンジニアにビジュアルプログラミングを教えた話','https://iotlt.connpass.com/event/400538/'],
+ ['2026.09','第57回 Microsoft 365 勉強会（Japan Microsoft 365 Users Group）','登壇','エージェントに渡す前に ── Power Automate で終わる仕事の見つけ方。50分のセッション・申込414名','https://jpo365ug.connpass.com/event/405603/'],
+ ['2026.08','PLUG MeetUp Vol.3「対話からはじまる現場の変革」（広島・ハイブリッド）','運営','参加51名','https://plug.connpass.com/event/401829/'],
+ ['2026.06','なんでもCopilot 大阪（現地）','登壇','学びを、成果に変える ── Copilot と Power Platform で進める社内DX','https://haru-powerplatform.github.io/pa45/talks/2026-osaka-copilot/slides.html'],
+ ['2026.05','PLUG MeetUp Vol.2（広島・ハイブリッド）','運営','参加75名','https://plug.connpass.com/event/392237/'],
+ ['2026.05','なんでもCopilot #80（第3回なんコパLT大会）','LT登壇','会議コストBotを生み出した話','https://nandemo.connpass.com/event/390633/'],
+ ['2026.03','一歩踏み出せTV 第25話','ゲスト出演','','https://ippo.connpass.com/event/386774/'],
+ ['2026.03','DX推進 Power Platform MeetUp 文化祭 in Hiroshima（PLUG 広島初の現地開催）','主催・LT','参加83名','https://plug.connpass.com/event/381240/'],
+ ['2025.11','Nippon PPEC「PPEC厳島」','運営リーダー・登壇','',''],
+];
+document.getElementById('tl').innerHTML=TALKS.map(t=>`<li><div class="d">${t[0]}</div><div class="t">${t[4]?`<a href="${t[4]}" target="_blank" rel="noopener">${t[1]}</a>`:t[1]}<span class="r${/運営|主催/.test(t[2])?' org':''}">${t[2]}</span></div>${t[3]?`<div class="m">${t[3]}</div>`:''}</li>`).join('');
+
+const VIDS=[
+ ['h3L75SsbRXE','第27回','いま動いているフローをCopilotに相談する5つの渡し方'],
+ ['VVGw6AUsAbk','第26回','毎日のカードで報連相をワンタップに'],
+ ['oO1aHXgcjc8','第25回','メールの添付を開かずに自動保存'],
+ ['5j4O_vkfa6c','第24回','Teamsのスタンプを押すだけで出欠が自動で集まる'],
+ ['kNwyUHMtFt4','第22回','OfficeスクリプトとCopilotでExcel自動化'],
+ ['wOegDNZSeHU','第20回','アダプティブカードの作り方'],
+ ['cghp6TOJfw8','第18回','承認エスカレーション｜放置された承認を、フローが催促して上に上げる'],
+ ['dVM-WF1A79g','第16回','Copilotと作るPower Automate'],
+ ['4QmDeRgGGLk','第8回','申請承認フロー（Approvals）｜承認ボタンつきの申請を作る'],
+];
+document.getElementById('vids').innerHTML=VIDS.map(v=>`<a class="vid" href="https://www.youtube.com/watch?v=${v[0]}" target="_blank" rel="noopener"><img loading="lazy" src="https://i.ytimg.com/vi/${v[0]}/mqdefault.jpg" alt=""><span class="vd">PA45 ${v[1]}</span><span class="vt">${v[2]}</span></a>`).join('');
+
+const POSTS=[
+ ['Copilot Studio','Copilot Studio って何？ Power Automate と何が違うの？','https://www.automate136.com/copilot-studio-vs-power-automate/'],
+ ['Copilot Studio','Copilot Studioで質問に答えるAIを作る｜はじめてのエージェントの作り方','https://www.automate136.com/copilot-studio-first-agent/'],
+ ['Copilot Studio','Copilot Studioで社内FAQに答えるAIを作る｜ナレッジの追加手順','https://www.automate136.com/copilot-studio-knowledge-add/'],
+ ['Copilot Studio','エージェントを点数で確かめる｜評価（Evaluate）の使い方','https://www.automate136.com/copilot-studio-evaluate/'],
+ ['使い分け','Copilot CoworkでPower Automateは消える？ 3つの判断で見極める使い分け','https://www.automate136.com/cowork-vs-automate-divide/'],
+ ['Power Automate','Copilotに式とJSONを書かせる｜PA45 第16回','https://www.automate136.com/pa45-vol16-copilot/'],
+ ['Power Automate','レシートを撮るだけで家計簿が埋まる｜AI Builder 領収書処理の作り方','https://www.automate136.com/receipt-kakeibo-ai-builder/'],
+ ['登壇レポート','作らせる前に、使ってもらう｜Power AutomateとNode-RED','https://www.automate136.com/iotlt-24-power-automate-node-red/'],
+];
+document.getElementById('posts').innerHTML=POSTS.map(p=>`<a class="post" href="${p[2]}" target="_blank" rel="noopener"><span class="pk">${p[0]}</span><div class="pt">${p[1]}</div></a>`).join('');
+</script>
+</body>
+</html>
