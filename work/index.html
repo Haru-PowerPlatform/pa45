@@ -273,6 +273,19 @@ main section:nth-of-type(even) .chart-card{background:var(--bg)}
 .trend-tip b{color:var(--ink)}
 @media (max-width:900px){.charts{grid-template-columns:1fr}}
 
+
+/* 追従する相談ボタン */
+.easy{display:inline-block;font-size:13px;font-weight:700;color:#7ee3cf;border:1px solid rgba(126,227,207,.4);border-radius:999px;padding:2px 12px;margin-bottom:8px}
+.fab{position:fixed;right:20px;bottom:20px;z-index:40;display:flex;align-items:center;gap:10px;padding:12px 20px 12px 14px;border-radius:999px;text-decoration:none;color:#fff;font-weight:700;background:linear-gradient(135deg,#1a7fe0,#0f7a6b);box-shadow:0 10px 28px rgba(11,107,203,.45),0 2px 6px rgba(0,0,0,.25);transform:translateY(140%);opacity:0;transition:transform .45s cubic-bezier(.2,.8,.2,1),opacity .3s,box-shadow .25s}
+.fab.show{transform:none;opacity:1}
+.fab:hover{box-shadow:0 14px 34px rgba(11,107,203,.6),0 2px 6px rgba(0,0,0,.25)}
+.fab .ic{width:22px;height:22px;background:rgba(255,255,255,.18);border-radius:50%;padding:6px;box-sizing:content-box}
+.fab small{display:block;font-size:11px;font-weight:400;opacity:.85;line-height:1.2}
+.fab b{display:block;line-height:1.3}
+.fab::before{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:0 0 0 0 rgba(47,179,160,.55);animation:fabping 3.2s infinite}
+@keyframes fabping{0%{box-shadow:0 0 0 0 rgba(47,179,160,.5)}40%,100%{box-shadow:0 0 0 14px rgba(47,179,160,0)}}
+@media (max-width:600px){.fab{left:16px;right:16px;bottom:14px;justify-content:center}}
+
 /* ===== 陰影と動き ===== */
 :root{--sh-1:0 1px 2px rgba(11,27,51,.06),0 4px 14px rgba(11,27,51,.07);--sh-2:0 2px 4px rgba(11,27,51,.08),0 14px 34px rgba(11,27,51,.14);--glow:0 0 0 1px color-mix(in srgb,var(--blue) 55%,transparent),0 12px 32px color-mix(in srgb,var(--blue) 22%,transparent)}
 @media (prefers-color-scheme: dark){:root{--sh-1:0 1px 2px rgba(0,0,0,.35),0 6px 18px rgba(0,0,0,.28);--sh-2:0 2px 6px rgba(0,0,0,.4),0 18px 40px rgba(0,0,0,.45)}}
@@ -355,7 +368,7 @@ main section:nth-of-type(even) .chart-card{background:var(--bg)}
     <div>
       <p class="eyebrow">POWER AUTOMATE × COPILOT STUDIO</p>
       <h1>手作業は自動化に、問い合わせは <span class="grad">AI エージェント</span>に。</h1>
-      <p class="lead">ITが専門ではない人に、Power Automate の自動化と Copilot Studio のエージェントづくりを教えています。研修・受託開発・登壇のご相談を受け付けています。</p>
+      <p class="lead">ITが専門ではない人に、Power Automate の自動化と Copilot Studio のエージェントづくりを教えています。研修・受託開発・登壇のご相談はお気軽にどうぞ。</p>
       <div class="btns">
         <a class="btn primary" data-consult href="#contact">研修・開発のご相談</a>
         <a class="btn ghost" href="#results">実績を見る</a>
@@ -583,6 +596,7 @@ main section:nth-of-type(even) .chart-card{background:var(--bg)}
   <div class="wrap">
     <div class="contact">
       <div>
+        <p class="easy">ご相談はお気軽に</p>
         <h2>研修・登壇・受託開発のご相談</h2>
         <p>次の3点をお知らせいただけると、書面でのお返事が早くなります。</p>
         <ul><li>目的（参加者に、研修のあと何ができるようになってほしいか）</li><li>参加者（人数・ITへのなじみ・普段使っているアプリ）</li><li>環境（Microsoft 365 のプラン・Copilot のライセンスの有無）と、希望の時期</li></ul>
@@ -710,6 +724,14 @@ document.getElementById('posts').innerHTML=POSTS.map(p=>`<a class="post" href="$
 if(!('IntersectionObserver' in window))return;
 const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){ls.forEach(a=>a.classList.toggle('cur',a.getAttribute('href')==='#'+e.target.id))}}),{rootMargin:'-45% 0px -50% 0px'});
 ss.forEach(s=>io.observe(s))})();
+</script>
+<a class="fab" data-consult href="#contact" aria-label="ご相談はお気軽に"><svg class="ic"><use href="#i-mail"/></svg><span><small>研修・開発・登壇</small><b>ご相談はお気軽に</b></span></a>
+<script>
+(()=>{const f=document.querySelector('.fab'),hero=document.querySelector('.hero'),ct=document.querySelector('#contact');let pastHero=false,atContact=false;
+const upd=()=>f.classList.toggle('show',pastHero&&!atContact);
+if(!('IntersectionObserver' in window)){f.classList.add('show');return}
+new IntersectionObserver(es=>{pastHero=!es[0].isIntersecting;upd()}).observe(hero);
+new IntersectionObserver(es=>{atContact=es[0].isIntersecting;upd()},{threshold:.25}).observe(ct)})();
 </script>
 <script>
 /* 相談フォームの URL。入れると「ご相談」のボタンがすべてフォームへ飛ぶ。空のあいだはページ下の連絡先へ */
