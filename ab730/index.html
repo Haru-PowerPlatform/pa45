@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#1e40af">
+<title>AB-730 復習カード | はる専用</title>
+<meta name="description" content="AB-730（AI Business Professional）練習問題の復習用。問題の要点・答えを選ぶポイント・解説・図解を1問ずつまとめたもの。">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0f172a;--panel:#1e293b;--card:#273449;--line:#3b4a63;
+  --text:#f1f5f9;--muted:#9fb0c6;--accent:#60a5fa;--ok:#34d399;--warn:#fbbf24;--ng:#f87171;--violet:#a78bfa;
+  --radius:14px;--shadow:0 4px 20px rgba(0,0,0,.4);color-scheme:dark;
+}
+html{scroll-behavior:smooth}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Hiragino Sans","Yu Gothic UI",sans-serif;background:var(--bg);color:var(--text);line-height:1.7;-webkit-text-size-adjust:100%;min-height:100vh;padding-bottom:90px}
+.wrap{max-width:1000px;margin:0 auto;padding:16px}
+header{padding:22px 16px;text-align:center;background:linear-gradient(135deg,#1e3a8a 0%,#7c3aed 100%);border-radius:var(--radius);margin-bottom:18px;box-shadow:var(--shadow)}
+header h1{font-size:clamp(1.35rem,5vw,1.9rem);margin-bottom:4px;font-weight:700}
+header p{font-size:.88rem;opacity:.92}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px}
+.stat{background:var(--panel);padding:12px 6px;border-radius:var(--radius);text-align:center;border:1px solid var(--line)}
+.stat .num{font-size:clamp(1.2rem,4.6vw,1.8rem);font-weight:700;color:var(--accent);display:block;font-variant-numeric:tabular-nums}
+.stat .lbl{font-size:.72rem;color:var(--muted)}
+.sec-score{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.ss{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;font-size:.8rem}
+.ss b{font-size:1.05rem}
+.bar{height:8px;background:#0b1222;border-radius:4px;margin-top:6px;overflow:hidden}
+.bar i{display:block;height:100%}
+details.types{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:12px 14px;margin-bottom:16px}
+details.types summary{cursor:pointer;font-weight:700;color:#fde68a}
+.types ol{padding-left:22px;margin-top:8px;font-size:.88rem}
+.types li{margin:5px 0}
+.controls{position:sticky;top:0;background:var(--bg);padding:10px 0;z-index:10;border-bottom:1px solid var(--line);margin-bottom:14px}
+.search{width:100%;padding:11px 14px;border:1px solid #475569;border-radius:10px;background:var(--panel);color:var(--text);font-size:1rem;margin-bottom:8px}
+.search:focus{outline:2px solid var(--accent)}
+.filters{display:flex;gap:6px;flex-wrap:wrap}
+.filter{padding:6px 11px;border:1px solid #475569;border-radius:20px;background:var(--panel);color:var(--text);cursor:pointer;font-size:.78rem;-webkit-tap-highlight-color:transparent}
+.filter.active{background:var(--accent);color:#0f172a;border-color:var(--accent);font-weight:700}
+.list{display:flex;flex-direction:column;gap:12px}
+.q{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;box-shadow:var(--shadow)}
+.q.miss{border-left:5px solid var(--ng)}
+.q.done{opacity:.6}
+.qh{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:6px}
+.no{font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums}
+.tag{font-size:.66rem;padding:2px 8px;border-radius:10px;font-weight:700}
+.t-sec{background:rgba(255,255,255,.12)}
+.t-miss{background:var(--ng);color:#0f172a}
+.t-ok{background:#1f4d3d;color:var(--ok)}
+.point{font-weight:700;font-size:1rem;margin:4px 0 8px}
+.kw{display:inline-block;background:#1e3a8a;color:#dbeafe;border-radius:6px;padding:1px 7px;margin:2px 4px 2px 0;font-size:.78rem}
+.reveal{margin-top:8px;background:#334155;border:1px solid #475569;color:var(--text);border-radius:10px;padding:8px 14px;font-size:.88rem;cursor:pointer;width:100%}
+.ans{display:none;margin-top:10px;border-top:1px dashed var(--line);padding-top:10px;font-size:.9rem}
+.q.open .ans{display:block}
+.q.open .reveal{display:none}
+.row{margin:6px 0}
+.lbl2{display:inline-block;font-size:.7rem;font-weight:700;border-radius:6px;padding:1px 7px;margin-right:6px}
+.l-ans{background:var(--ok);color:#0f172a}
+.l-trap{background:var(--ng);color:#0f172a}
+.l-pick{background:var(--warn);color:#0f172a}
+.l-why{background:var(--violet);color:#0f172a}
+.ansv{font-weight:700;color:#bbf7d0}
+.trapv{color:#fecaca}
+.fig{margin:10px 0 4px;background:#0b1222;border:1px solid var(--line);border-radius:12px;padding:12px;overflow-x:auto}
+.fl{display:flex;align-items:stretch;gap:8px;flex-wrap:wrap;justify-content:center}
+.bx{border:1.5px solid var(--accent);border-radius:9px;padding:7px 10px;font-size:.78rem;text-align:center;min-width:86px;background:#13213b}
+.bx.g{border-color:var(--ok);background:#0f2a22}
+.bx.r{border-color:var(--ng);background:#2c1416}
+.bx.y{border-color:var(--warn);background:#2b2410}
+.bx.v{border-color:var(--violet);background:#221a3a}
+.bx b{display:block;font-size:.84rem}
+.ar{align-self:center;color:var(--muted);font-size:1.1rem}
+.cap{font-size:.72rem;color:var(--muted);text-align:center;margin-top:6px}
+.done-btn{margin-top:8px;background:transparent;border:1px solid var(--ok);color:var(--ok);border-radius:8px;padding:5px 10px;font-size:.78rem;cursor:pointer}
+.q.done .done-btn{background:var(--ok);color:#0f172a}
+.no-result{text-align:center;color:var(--muted);padding:40px 20px}
+footer{text-align:center;padding:20px;color:var(--muted);font-size:.74rem;margin-top:24px}
+.fab{position:fixed;bottom:18px;right:18px;width:54px;height:54px;border-radius:50%;background:var(--accent);color:#0f172a;border:none;font-size:.78rem;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.5);z-index:20}
+button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media(max-width:560px){.stats{grid-template-columns:repeat(2,1fr)}.sec-score{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>AB-730 復習カード</h1>
+  <p>はる専用 / AI Business Professional 練習問題 1回目（2026-10-13・66%）の50問</p>
+</header>
+
+<div class="stats">
+  <div class="stat"><span class="num" id="sTotal">50</span><span class="lbl">問題数</span></div>
+  <div class="stat"><span class="num" id="sMiss">17</span><span class="lbl">1回目に間違えた</span></div>
+  <div class="stat"><span class="num" id="sDone">0</span><span class="lbl">覚えた</span></div>
+  <div class="stat"><span class="num">80%</span><span class="lbl">目標（複数回）</span></div>
+</div>
+
+<div class="sec-score">
+  <div class="ss">① 生成AIの基礎<br><b>10 / 18</b>（56%）<div class="bar"><i style="width:56%;background:var(--ng)"></i></div></div>
+  <div class="ss">② プロンプト・会話・エージェント<br><b>9 / 16</b>（56%）<div class="bar"><i style="width:56%;background:var(--ng)"></i></div></div>
+  <div class="ss">③ 文書と会議<br><b>14 / 16</b>（88%）<div class="bar"><i style="width:88%;background:var(--ok)"></i></div></div>
+</div>
+
+<details class="types" open>
+  <summary>間違えた問題の9つの型（まずここだけ）</summary>
+  <ol>
+    <li>Copilot は今開いているアプリとファイルを優先して答える。Web を使うのに特別な許可は要らない</li>
+    <li>Copilot は今ある権限とラベルをそのまま守る。権限の昇格を求めない・見られない資料は答えない</li>
+    <li>データ漏えいの対策は DLP と秘密度ラベル。暗号化・監査・電子情報開示は漏えいを直接止めない</li>
+    <li>プロンプトインジェクションは「軽減」できる。「排除」のような言い切りはたいてい間違い</li>
+    <li>決まった手順を何人もで繰り返す → エージェント。Copilot for Sales は営業専用で別物</li>
+    <li>定期実行は「保存」→「繰り返し実行を設定」の順</li>
+    <li>アプリをまたいで使う定型プロンプト → プロンプトギャラリー。ノートブックは会話と資料をまとめる場所</li>
+    <li>良いプロンプト＝やってほしいこと＋誰に・どんな形で。指示どうしが矛盾すると答えがぶれる</li>
+    <li>既製のエージェントを手間なく使う → エージェントストア。作るならエージェントビルダー</li>
+  </ol>
+</details>
+
+<div class="controls">
+  <input class="search" id="search" type="search" placeholder="キーワードで探す（例：ラベル、ノートブック、会議）" aria-label="キーワードで探す">
+  <div class="filters" id="filters">
+    <button class="filter active" data-f="all">すべて</button>
+    <button class="filter" data-f="miss">間違えた17問</button>
+    <button class="filter" data-f="todo">まだ覚えていない</button>
+    <button class="filter" data-f="1">① 基礎</button>
+    <button class="filter" data-f="2">② プロンプト・エージェント</button>
+    <button class="filter" data-f="3">③ 文書・会議</button>
+  </div>
+</div>
+
+<div class="list" id="list"></div>
+
+<footer>
+  更新日: 2026-10-13 ／ 問題文は Microsoft Learn の練習問題を要約したもの（原文ではない）。<br>
+  正式な情報は Microsoft Learn の AB-730 学習ガイドで確認する。英語版は 2026-10-20 に出題範囲が更新。
+</footer>
+</div>
+<button class="fab" id="shuffle" title="順番を入れ替える">シャッフル</button>
+
+<script>
+/* 図のひな形 */
+const B=(t,s,c='')=>`<div class="bx ${c}"><b>${t}</b>${s||''}</div>`;
+const A='<div class="ar">→</div>';
+const F={
+ctx:`<div class="fl">${B('① 今のファイル','開いているブック・文書','g')}${A}${B('② 今のアプリ','Excel・Word など','g')}${A}${B('③ 組織のデータ','見てよい範囲だけ')}${A}${B('④ Web','必要に応じて','y')}</div><div class="cap">Copilot は手元に近いものから使う。Web に特別な許可は不要</div>`,
+perm:`<div class="fl">${B('あなた','質問する')}${A}${B('Copilot','代わりに探す','v')}${A}${B('権限の壁','M365 のアクセス許可・秘密度ラベル','r')}${A}${B('見てよい資料だけ','で答える','g')}</div><div class="cap">壁を越えない・昇格を求めない・ラベルを無視しない</div>`,
+builder:`<div class="fl">${B('エージェントビルダー','コード不要')}${A}${B('指示（自然言語）','または手動設定','y')}${A}${B('宣言型エージェント','できあがり','g')}</div><div class="cap">コードの配置・フロー自動化はビルダーの役割ではない</div>`,
+chat:`<div class="fl">${B('Copilot Chat','その場1回の質問','g')}${B('エージェント','決まった手順を何人も繰り返す','v')}${B('アプリの Copilot','Word・Excel の中の作業')}${B('役割別 Copilot','営業向けなど専用','y')}</div><div class="cap">1回きり→Chat／くり返す手順→エージェント</div>`,
+action:`<div class="fl">${B('ナレッジ','SharePoint などを読む')}${B('コネクタ','外のデータを取り込む','y')}${B('カスタム API アクション','外のシステムで実行する','g')}${B('アダプティブカード','見せ方を整える')}</div><div class="cap">M365 の外で何かを実行する＝アクション</div>`,
+rai:`<div class="fl">${B('プライバシーとセキュリティ','機密・個人データを守る','g')}${B('公平性','偏り')}${B('透明性','説明できる')}${B('説明責任','管理・監督')}</div><div class="cap">データを守る話＝プライバシーとセキュリティ</div>`,
+dlp:`<div class="fl">${B('秘密度ラベル','機密を分類して扱いを決める','g')}${B('DLP ポリシー','外へ出るのを止める','g')}${B('監査・電子情報開示','あとで調べる','r')}${B('全部暗号化・全部削除','現実的でない','r')}</div><div class="cap">漏えいを直接止める2つ＝ラベル＋DLP</div>`,
+verify:`<div class="fl">${B('Copilot の出力','下書き','v')}${A}${B('引用・参照元を確認','元の資料に当たる','y')}${A}${B('人がレビュー','判断と文脈を足す','y')}${A}${B('共有・公開','','g')}</div><div class="cap">出力をそのまま信じない（過度の依存を避ける）</div>`,
+hallu:`<div class="fl">${B('学習データに少ない話題','を聞く','r')}${A}${B('もっともらしい誤り','（幻覚・ねつ造）','r')}</div><div class="cap">明確な指示や確かな社内資料は、むしろ正確さを上げる</div>`,
+inject:`<div class="fl">${B('分けた安全な環境','で動かす','g')}${B('実行前に指示を検証','','g')}${A}${B('リスクを軽減','排除はできない','y')}</div><div class="cap">「完全になくす」「無視する」は×</div>`,
+prompt:`<div class="fl">${B('やってほしいこと','タスクを明確に','g')}${B('誰に向けて','対象者','g')}${B('どんな形で','出力形式・トーン','g')}${B('材料','参照する資料')}</div><div class="cap">背景の細かい情報や「全部詳しく」は中心ではない</div>`,
+schedule:`<div class="fl">${B('① プロンプトを作る','')}${A}${B('② 保存','保存済み一覧に出る','g')}${A}${B('③ スケジュール','毎週・毎月くり返す','g')}</div><div class="cap">保存だけでは自動では動かない。共有は他の人が使えるだけ</div>`,
+ref:`<div class="fl">${B('プロンプト','')}${A}${B('特定の会議・ファイルを指定','/ で参照','g')}${A}${B('その中身だけ','を根拠に答える','g')}</div><div class="cap">チャネル全体・サイト全体を指すと範囲が広がる</div>`,
+gallery:`<div class="fl">${B('プロンプトギャラリー','アプリをまたぐ定型プロンプト','g')}${B('ノートブック','会話＋資料をまとめる','v')}${B('チャット履歴','前の会話を開く')}${B('スケジュール','定期実行','y')}</div><div class="cap">定型を使い回す＝ギャラリー／まとめて続ける＝ノートブック</div>`,
+manage:`<div class="fl">${B('名前を変える','会話名を編集','g')}${B('前の会話','チャット履歴','g')}${B('削除','会話ごと消える','r')}${B('新しいチャット','別の会話になる')}</div>`,
+conflict:`<div class="fl">${B('「全部を詳しく」','','r')}<div class="ar">×</div>${B('「100語以内」','','r')}${A}${B('答えの長さがぶれる','指示が矛盾','y')}</div><div class="cap">推奨プロンプト・機能・ナレッジの問題ではない</div>`,
+parts:`<div class="fl">${B('指示','ふるまい・書き方')}${B('ナレッジソース','SharePoint などを参照','g')}${B('機能','画像生成など')}${B('推奨プロンプト','質問の例')}</div><div class="cap">社内の文書を見せたい＝ナレッジソース</div>`,
+share:`<div class="fl">${B('エージェントビルダー','')}${A}${B('共有の管理','テストする人に権限','g')}${A}${B('チームでテスト','')}</div><div class="cap">共有ボタンが出ない＝組織（管理者）の設定で制限。マーケットプレースは社外向け</div>`,
+store:`<div class="fl">${B('もうある','既製のエージェント','g')}${A}${B('エージェントストア','追加してすぐ使う','g')}<div class="ar">／</div>${B('ないから作る','')}${A}${B('エージェントビルダー・Copilot Studio','手間がかかる','y')}</div>`,
+refdoc:`<div class="fl">${B('既存の文書','計画書・背景資料')}${A}${B('参照として指定','Word の下書き','g')}${A}${B('新しい文書','別の読み手向け','g')}</div><div class="cap">要約・トーン編集・アウトラインは「新しい文書」にならない</div>`,
+cross:`<div class="fl">${B('Outlook のメール','')}${B('Teams の会議','')}${B('Copilot ページ','')}${A}${B('Word・PowerPoint の Copilot','参照して取り込む','g')}</div><div class="cap">手でコピー・エクスポートしない</div>`,
+summary:`<div class="fl">${B('長い文書','')}${A}${B('エグゼクティブ向けの要約','重要な結果・決定','g')}</div><div class="cap">スライド化・書き直し・翻訳・各節の細かい要約は×</div>`,
+meeting:`<div class="fl">${B('会議中','文字起こしを有効に','g')}${A}${B('途中で聞く','ここまでの要約・決定と未解決','g')}${A}${B('会議後','要約・アクション項目','g')}</div><div class="cap">会議中に出した指示（アクション重視など）は要約に反映される</div>`,
+pages:`<div class="fl">${B('Copilot の出力','')}${A}${B('Copilot ページ','共有の作業スペース','g')}${A}${B('何人もで一緒に直す','')}</div>`
+};
+
+/* 50問 */
+const D=[
+{n:1,s:'1.1',miss:1,p:'Excel の Copilot に売上の傾向を聞くと、ワークシートの数字だけで答え、業界や Web の話が出てこない。なぜか',k:['なぜ外部の話が出ない','Excel','傾向'],a:'今開いているブックのデータを優先した',t:'Web データを使うには明示の許可が要る',pick:'「なぜこう答えた？」と聞かれたら、まず手元のファイル優先を思い出す',why:'Copilot は今のアプリと開いているファイルを材料に答える。Web は必要に応じて使え、特別な許可は要らない',f:'ctx'},
+{n:2,s:'1.1',miss:1,p:'自分に閲覧権限のない SharePoint の文書を、Copilot に要約させようとすると',k:['権限がない','要約'],a:'Copilot は要求をブロックする',t:'高い権限を申請するよう促される',pick:'権限がない→見られない→答えない。Copilot が権限を求めることはない',why:'Copilot は M365 と同じアクセス制御で動く。権限の昇格を求めたり、制御をすり抜けたりしない',f:'perm'},
+{n:3,s:'1.1',miss:1,p:'Word で Copilot にプロジェクトをまとめさせると、社内の文書だけを使い、公開 Web の情報は入らなかった。なぜか',k:['なぜ','Word','社内文書だけ'],a:'今のアプリと作業ファイルの内容を優先した',t:'SharePoint の文書しか使えない',pick:'「〜しか使えない」という限定は×。手元優先が答え',why:'作業中のアプリや関連ファイルの文脈を優先する。Web は場面とプロンプトで含まれうるので、自動で除外されるわけではない',f:'ctx'},
+{n:4,s:'1.1',miss:0,p:'M365 Copilot のエージェントビルダーで作るものは何か',k:['エージェントビルダー','作る'],a:'自然言語の指示か手動の設定で作る宣言型エージェント',t:'',pick:'ビルダー＝コード不要で指示を書く。宣言型エージェント',why:'カスタムコードの配置やワークフロー自動化はビルダーの役割ではない',f:'builder'},
+{n:5,s:'1.1',miss:0,p:'社員がその場で質問して1回答えをもらうだけ。決まった指示の再利用も、社内知識の整理も要らない。どの Copilot を選ぶか',k:['1回限り','再利用しない'],a:'Microsoft 365 Copilot Chat',t:'',pick:'その場1回きり→Chat',why:'Chat は指示を持ち続けない、その場の会話向け。くり返す手順はエージェント',f:'chat'},
+{n:6,s:'1.1',miss:0,p:'SharePoint を知識に使うコーチング用エージェントに、M365 の外のシステムで処理を実行させたい。何を足すか',k:['M365 の外','実行'],a:'カスタム API アクション',t:'',pick:'外で「実行」＝アクション。外のデータを「読む」＝コネクタ',why:'コネクタはデータの取り込み、アダプティブカードは見せ方。外のシステムに働きかけるのは API アクション',f:'action'},
+{n:7,s:'1.1',miss:1,p:'決まった手順に沿って、何人もが使い回す業務プロセスを AI で自動化したい。どの機能を選ぶか',k:['くり返す','何人も','決まった手順'],a:'エージェント',t:'Copilot for Sales',pick:'「くり返し・複数人・手順」→エージェント。Sales は営業専用',why:'エージェントは手順の決まった業務を再利用できる形にする。Chat はその場、アプリの Copilot は個々のアプリの中',f:'chat'},
+{n:8,s:'1.1',miss:1,p:'経営陣に、Copilot が応答に出せる社内データの範囲をどう決めているか説明したい。正しい説明は',k:['組織データ','ラベル','権限'],a:'今のユーザーが見てよいデータだけを出し、既存のセキュリティを守る',t:'ラベルで制限されていても応答に含める',pick:'ラベル・権限を「上書きする」「無視する」選択肢は全部×',why:'Copilot は M365 のセキュリティ境界の中で動き、アクセス許可と秘密度ラベルを守る',f:'perm'},
+{n:9,s:'1.2',miss:0,p:'機密の業務データと個人データを責任を持って扱いたい。責任ある AI のどの原則を優先するか',k:['機密','個人データ','原則'],a:'プライバシーとセキュリティ',t:'',pick:'データを守る話→プライバシーとセキュリティ',why:'公平性・透明性は偏りや説明の話、説明責任は管理の話',f:'rai'},
+{n:10,s:'1.2',miss:0,p:'AI が作った文章に、誤った情報が混ざる。いちばん考えられる原因は',k:['誤った情報','原因'],a:'学習データにあまり含まれない話題を聞いた',t:'',pick:'幻覚の原因＝学習データに少ない話題',why:'明確な指示や確かな社内資料は、むしろ正確さを上げる側',f:'hallu'},
+{n:11,s:'1.2',miss:1,p:'Copilot の応答から機密データが漏れるリスクを下げたい。やることを2つ選ぶ',k:['漏えい','2つ'],a:'DLP ポリシーを設定する／機密の内容に秘密度ラベルを付ける',t:'機密を含むデータをすべて暗号化する',pick:'漏えい対策の2点セット＝DLP＋秘密度ラベル',why:'全部暗号化・全部削除は現実的でなく、Copilot のふるまいを直接は制御しない',f:'dlp'},
+{n:12,s:'1.2',miss:0,p:'Word の Copilot で作った文書を、共有の前に正確にしたい。やることを2つ',k:['共有前','正確'],a:'人がレビューする／引用で出典を確かめる',t:'',pick:'正確さ＝引用の確認＋人のレビュー',why:'活動履歴は使い方の監査、プライバシー設定はデータ保護。どちらも正しさは確かめない',f:'verify'},
+{n:13,s:'1.2',miss:1,p:'財務・顧客・知的財産などの機密が、Copilot やエージェントから漏れないようにしたい。Purview の機能を2つ',k:['Purview','漏れない','2つ'],a:'データ損失防止（DLP）／秘密度ラベル',t:'監査／電子情報開示',pick:'Purview でも答えは同じ2つ。監査と電子情報開示は「あとで調べる」道具',why:'監査・電子情報開示・ライフサイクル管理は調査や保持の機能で、漏えいを直接は止めない',f:'dlp'},
+{n:14,s:'1.2',miss:1,p:'プロンプトインジェクション攻撃を［　］するには、エージェントを分けた安全な環境で動かし、実行前に指示を検証する。空欄は',k:['インジェクション','空欄'],a:'軽減',t:'排除',pick:'セキュリティの言い切り（排除・完全に防ぐ）は×',why:'この対策でリスクは減るが、なくすことはできない',f:'inject'},
+{n:15,s:'1.2',miss:0,p:'機密のある環境で、Copilot の応答をユーザーが見てよい範囲に限りたい。何を使うか',k:['見てよい範囲'],a:'Microsoft 365 のアクセス許可',t:'',pick:'見える範囲の制御＝アクセス許可',why:'条件付きアクセス・グループの有効期限・保持ポリシーは、応答に出る範囲を直接は決めない',f:'perm'},
+{n:16,s:'1.2',miss:0,p:'Copilot が作った文書に外部の参照が付いているが、内容を本当に裏付けているか分からない。どうするか',k:['参照','裏付け'],a:'頼る前に参照元を自分で確かめる',t:'',pick:'参照は自動で信じない・消さない・足さない。まず確認',why:'責任ある使い方は、出典が内容を支えているかを確かめること',f:'verify'},
+{n:17,s:'1.2',miss:0,p:'データ保護ポリシーがある中で、機密を含むレポートを Copilot で下書きする。何が起きると考えるか',k:['データ保護ポリシー','下書き'],a:'アクセスできるデータからだけ応答を作る',t:'',pick:'ポリシーの下でも答えは「見てよい範囲だけ」',why:'Copilot は権限を越えず、機密のプロンプトを再利用のために保存もしない',f:'perm'},
+{n:18,s:'1.2',miss:0,p:'社外に出す技術文書を Copilot で作る。誤りを出すリスクを下げる2つ',k:['社外','技術文書','2つ'],a:'元の資料や信頼できる資料で確かめる／公開前に人がレビューする',t:'',pick:'12問と同じ型＝確認＋人のレビュー',why:'書式の調整やプロンプトの手直しでは、正しさは確かめられない',f:'verify'},
+{n:19,s:'2.1',miss:0,p:'顧客の声を「分析して」と頼んでいる。管理職が、最重要の課題と次の行動をすぐ知りたい。いちばん良い書き直しは',k:['最重要','次の行動'],a:'くり返し出る上位3テーマと、それぞれの推奨アクション2つを出させる',t:'',pick:'「優先順位」と「次の行動」を両方含むものを選ぶ',why:'詳しい要約や行動の列挙だけでは、優先順位が付かない',f:'prompt'},
+{n:20,s:'2.1',miss:1,p:'共有の Excel から週の状況まとめを作るプロンプトを、毎週金曜に手を動かさず自動で動かしたい。何を設定するか',k:['毎週','自動で'],a:'プロンプトの繰り返し実行（スケジュール）',t:'Outlook の概要通知',pick:'自動で定期的に＝スケジュール',why:'保存は再利用できるだけ、共有は他の人が使えるだけ。Outlook の通知は Copilot を動かさない',f:'schedule'},
+{n:21,s:'2.1',miss:1,p:'上級管理者向けの進捗報告をプロンプトで頼む。分かりやすい答えのために入れる2つ',k:['2つ','上級管理者'],a:'やってほしいタスクの明確な説明／対象者と出力の形',t:'プロジェクトの期間などの背景',pick:'プロンプトの芯＝何を＋誰に・どんな形で',why:'背景の情報は補助。「最大限詳しく」や人の一覧は、目的と形がないと分かりにくくなる',f:'prompt'},
+{n:22,s:'2.1',miss:1,p:'月次の財務まとめのプロンプトを、毎月はじめに自動で動かしたい。最初にやることは',k:['最初に','毎月'],a:'プロンプトを保存する',t:'会話をノートブックに入れる',pick:'定期実行は「保存→スケジュール」の順。最初は保存',why:'ノートブックは整理、共有は他の人の再利用、Web の切り替えは根拠の範囲。どれもスケジュールの前提ではない',f:'schedule'},
+{n:23,s:'2.1',miss:0,p:'四半期レポート用のプロンプトを、あとで保存済みの一覧から使いたい。保存すると何ができるか',k:['保存すると'],a:'保存済みプロンプトの一覧から使える',t:'',pick:'保存＝一覧に残る。自動実行・全社共有・読み取り専用にはならない',why:'自動で動かすのはスケジュール、他の人が使うのは共有で、別の機能',f:'schedule'},
+{n:24,s:'2.1',miss:0,p:'先週の特定の Teams 会議で話した内容だけを根拠に、顧客への返信を作りたい。プロンプトで何を参照するか',k:['特定の会議だけ'],a:'その会議（第4四半期の物流レビュー会議）',t:'',pick:'「〜だけ」と言われたら、その1つを直接指定',why:'チャネル全体やサイト全体を指すと範囲が広がる',f:'ref'},
+{n:25,s:'2.1',miss:1,p:'Teams・Word・Outlook で似た報告をよく書く。アプリをまたいで使える、定型のプロンプトにすぐ届く方法は',k:['アプリをまたぐ','定型'],a:'Copilot プロンプトギャラリー',t:'Copilot ノートブック',pick:'定型を使い回す＝ギャラリー。ノートブックは会話と資料をまとめる場所',why:'スケジュールは定期実行、会話の保存は過去の記録。定型のテンプレートはギャラリー',f:'gallery'},
+{n:26,s:'2.2',miss:0,p:'Copilot Chat の今の会話の名前を、あとで分かるように変えたい',k:['名前を変える'],a:'会話名を編集する',t:'',pick:'名前の変更＝編集。削除や新しいチャットではない',why:'削除は会話ごと消える。新しいチャットは別の会話になる',f:'manage'},
+{n:27,s:'2.2',miss:0,p:'Copilot Chat で、今の会話と関連する資料をひとまとめにするのは［　］。空欄は',k:['まとめる','空欄'],a:'ノートブック',t:'',pick:'会話＋資料をまとめる＝ノートブック',why:'エージェントは作業の支援、チャット履歴は一覧、プロンプトは依頼文',f:'gallery'},
+{n:28,s:'2.2',miss:0,p:'週のはじめに作った Copilot Chat の会話を、もう一度開きたい。どこから開くか',k:['前の会話'],a:'チャット履歴',t:'',pick:'前の会話＝チャット履歴',why:'ノートブックは整理用で、主な履歴の画面ではない',f:'manage'},
+{n:29,s:'2.3',miss:1,p:'エージェントに「すべての活動を詳しく書き、100語以内で答える」と指示したら、答えの長さがぶれる。原因は',k:['ぶれる','指示'],a:'指示どうしが矛盾している',t:'推奨プロンプトを入れていない',pick:'答えが安定しない→指示の中身を疑う',why:'「全部詳しく」と「短く」は両立しない。ナレッジ・推奨プロンプト・機能は関係ない',f:'conflict'},
+{n:30,s:'2.3',miss:0,p:'エージェントに SharePoint の文書を参照させたい。［　］を設定する。空欄は',k:['SharePoint','参照'],a:'ナレッジソース',t:'',pick:'文書を見せる＝ナレッジソース',why:'機能は動作、指示はふるまい、推奨プロンプトは質問の例',f:'parts'},
+{n:31,s:'2.3',miss:0,p:'エージェントをチームに共有したいが、共有のボタンが出ない。設定は正しい。原因は',k:['共有できない'],a:'組織の設定で共有が制限されている',t:'',pick:'本人の設定が正しいなら、管理者側の制限',why:'推奨プロンプトやナレッジは共有と関係ない。マーケットプレースは社外向け',f:'share'},
+{n:32,s:'2.3',miss:0,p:'エージェントを広く出す前に、チームのメンバーにテストしてもらいたい。どうするか',k:['テスト','チーム'],a:'エージェントビルダーの「共有の管理」で権限を付ける',t:'',pick:'社内の人に使わせる＝共有の管理',why:'Teams でリンクを送るだけでは権限が付かない',f:'share'},
+{n:33,s:'2.3',miss:1,p:'キャンペーンのアイデア出しをするエージェントが既製で用意されている。手間を最小にして社員に使わせたい',k:['既製','手間を最小'],a:'エージェントストア',t:'エージェントビルダー',pick:'「もうある・手間なく」→ストア。「作る」→ビルダー',why:'ビルダーと Copilot Studio は作る・カスタマイズするための道具で、手間がかかる',f:'store'},
+{n:34,s:'2.3',miss:1,p:'［　］を使うと、新しく作らずに既製のエージェントを追加してすぐ使える。空欄は',k:['作らずに','空欄'],a:'エージェントストア',t:'エージェントビルダー',pick:'33問と同じ。作らない＝ストア',why:'Copilot Chat は会話の支援で、再利用できる既製エージェントではない',f:'store'},
+{n:35,s:'3.1',miss:0,p:'参考資料なしで、読み手・目的・トーンに合った初稿を Word で作りたい。プロンプトにいちばん大事なのは',k:['初稿','参考資料なし'],a:'読み手・目的・トーン',t:'',pick:'資料がないときの材料＝読み手・目的・トーン',why:'保存場所・共有するアプリ・編集期間は、初稿の中身に影響しない',f:'prompt'},
+{n:36,s:'3.1',miss:0,p:'既存の発売計画書をもとに、Word の Copilot で管理者向けの概要を作りたい',k:['既存の文書から'],a:'計画書を参照させて新しい文書を作る',t:'',pick:'既存から新しく＝参照して新規作成',why:'手でコピー・トーンの書き直し・節ごとの要約では、新しい文書にならない',f:'refdoc'},
+{n:37,s:'3.1',miss:0,p:'詳しい背景資料を、別の読み手向けの新しい文書に使い回したい。Copilot に何を頼むか',k:['別の読み手','使い回す'],a:'既存の文書を参照として新しい文書を作る',t:'',pick:'36問と同じ型',why:'要約は短くするだけ、トーン編集は同じ文書を直すだけ、アウトラインは骨組みだけ',f:'refdoc'},
+{n:38,s:'3.1',miss:0,p:'提案書の背景が、Outlook のメールと Teams の会議メモに散らばっている。手間と重複を減らしたい',k:['散らばっている','アプリをまたぐ'],a:'Word の Copilot で、関連するメールと会議から取り込む',t:'',pick:'アプリをまたぐ＝Copilot の中で参照して取り込む',why:'エクスポートや貼り付けは手順が増える',f:'cross'},
+{n:39,s:'3.1',miss:0,p:'Copilot ページにまとめた新人研修の内容を、PowerPoint の資料に使いたい',k:['Copilot ページ','PowerPoint'],a:'Copilot ページを参照として資料を作る',t:'',pick:'38問と同じ。参照して取り込む',why:'コピーや変換は手間が増え、内容が変わるおそれがある',f:'cross'},
+{n:40,s:'3.1',miss:0,p:'Word でビジネスケースを、要件から Copilot に作らせたい。最初にやることは',k:['最初に','新しい文書'],a:'プロンプトで作ってほしいビジネスケースを説明する',t:'',pick:'新しい文書の最初＝プロンプトで説明',why:'参考ファイルやテンプレートの選択は、初稿のあとでよい',f:'prompt'},
+{n:41,s:'3.1',miss:0,p:'Copilot で作った詳しい下書きから、上級リーダー向けの短い概要を作りたい',k:['上級リーダー','短く'],a:'重要な結果を強調した簡潔な概要を作らせる',t:'',pick:'エグゼクティブ向け＝重要な結果だけ短く',why:'スライド化・書き直し・節ごとの詳しい要約は目的に合わない',f:'summary'},
+{n:42,s:'3.1',miss:0,p:'Copilot で文書を作り始めるとき、最初に書いてほしい内容を伝えるのは何か',k:['最初に伝える'],a:'プロンプト',t:'',pick:'始まりはいつもプロンプト',why:'既存文書や会議メモは参照に使えるが、必須ではない',f:'prompt'},
+{n:43,s:'3.1',miss:0,p:'長いレポートを、詳細を渡さずに上級リーダーへ短く伝えたい',k:['長いレポート','短く'],a:'エグゼクティブ向けの要約を Copilot に頼む',t:'',pick:'41問と同じ型',why:'Chat へのコピーは手間、書き直しは目的が変わる、翻訳は関係ない',f:'summary'},
+{n:44,s:'3.1',miss:0,p:'Word の Copilot で、既存の文書の内容を使って新しい文書を作る機能は',k:['既存の内容で新規'],a:'下書き（Draft）',t:'',pick:'新しく作る＝下書き。要約は縮めるだけ',why:'チャットは会話、Loop は共同編集の部品、要約は短くする機能',f:'refdoc'},
+{n:45,s:'3.2',miss:1,p:'文字起こし中の Teams 会議で「アクション項目を中心に」と Copilot に頼み、会議後に要約させた。指示はどう使われるか',k:['会議中の指示','会議後の要約'],a:'要約でアクション項目が強調される',t:'会議全体で文字起こしが動いたときだけ指示が効く',pick:'会議中に出した指示は、あとの要約にも効く',why:'会議後に指示が捨てられる・全文の文字起こしが条件、という選択肢は誤り',f:'meeting'},
+{n:46,s:'3.2',miss:0,p:'複数のチームで、会議の成果を Copilot ページで一緒にまとめる。いちばんの利点は',k:['Copilot ページ','利点'],a:'何人もが1つの共有スペースで、AI の出力を一緒に直せる',t:'',pick:'ページ＝一緒に直す場所',why:'ほかの選択肢は導入計画や管理の話で、ページの働きではない',f:'pages'},
+{n:47,s:'3.2',miss:0,p:'会議のあと、AI が作ったメモを共有の場所で何人もで直したい。どの機能か',k:['共有の場所','何人もで直す'],a:'Microsoft 365 Copilot ページ',t:'',pick:'46問と同じ',why:'Chat・会議の要約・保存済みプロンプトには、共同で直し続ける場所がない',f:'pages'},
+{n:48,s:'3.2',miss:0,p:'話題が次々変わる会議で、次の議題の前にここまでの決定と未解決をまとめたい',k:['会議中','決定','未解決'],a:'ここまでの未解決の質問と決定の一覧を作らせる',t:'',pick:'会議中のまとめ＝その場で Copilot に聞く',why:'文字起こしは生の記録、会議後の要約は会議中には使えない',f:'meeting'},
+{n:49,s:'3.2',miss:1,p:'途中から会議に参加した。話を止めずに、ここまでの内容をすぐ知りたい',k:['途中参加','止めずに'],a:'ここまでの議論の要約を作らせる',t:'リアルタイムの文字起こしを始める',pick:'すぐ知りたい＝要約。文字起こしはまとめてくれない',why:'文字起こしは記録するだけ。アクション項目やフォローアップのメールは会議後の作業',f:'meeting'},
+{n:50,s:'3.2',miss:0,p:'会議のあとで要約とアクション項目を作らせたい。会議中に何を有効にするか',k:['会議後','要約','有効に'],a:'会議の文字起こし',t:'',pick:'会議後の要約の材料＝文字起こし',why:'録画だけでは分析できるテキストがない。ライブキャプションは保存されない',f:'meeting'}
+];
+
+const SEC={'1':'① 基礎','2':'② プロンプト・エージェント','3':'③ 文書・会議'};
+const listEl=document.getElementById('list'),searchEl=document.getElementById('search');
+let cur='all';
+function getDone(){try{return new Set(JSON.parse(localStorage.getItem('ab730_done')||'[]'))}catch(e){return new Set()}}
+function setDone(s){try{localStorage.setItem('ab730_done',JSON.stringify([...s]))}catch(e){}}
+function toggleDone(n,ev){ev.stopPropagation();const s=getDone();s.has(n)?s.delete(n):s.add(n);setDone(s);render(true)}
+function card(d,done){
+  const sec=SEC[d.s[0]];
+  return `<div class="q${d.miss?' miss':''}${done.has(d.n)?' done':''}" id="q${d.n}">
+  <div class="qh"><span class="no">Q${d.n}</span><span class="tag t-sec">${d.s} ${sec}</span>${d.miss?'<span class="tag t-miss">1回目 ×</span>':'<span class="tag t-ok">1回目 ○</span>'}</div>
+  <div class="point">${d.p}</div>
+  <div>${d.k.map(x=>`<span class="kw">${x}</span>`).join('')}</div>
+  <button class="reveal" onclick="this.parentNode.classList.add('open')">答えと解説を見る</button>
+  <div class="ans">
+    <div class="row"><span class="lbl2 l-ans">正解</span><span class="ansv">${d.a}</span></div>
+    ${d.t?`<div class="row"><span class="lbl2 l-trap">ひっかけ</span><span class="trapv">${d.t}</span>（1回目に選んだ・または選びやすい誤答）</div>`:''}
+    <div class="row"><span class="lbl2 l-pick">選ぶポイント</span>${d.pick}</div>
+    <div class="row"><span class="lbl2 l-why">解説</span>${d.why}</div>
+    <div class="fig">${F[d.f]||''}</div>
+    <button class="done-btn" onclick="toggleDone(${d.n},event)">${done.has(d.n)?'覚えた（解除）':'覚えた'}</button>
+  </div></div>`;
+}
+function render(keepOpen){
+  const open=keepOpen?new Set([...document.querySelectorAll('.q.open')].map(e=>e.id)):new Set();
+  const kw=searchEl.value.trim().toLowerCase(),done=getDone();
+  const list=D.filter(d=>{
+    if(cur==='miss'&&!d.miss)return false;
+    if(cur==='todo'&&done.has(d.n))return false;
+    if(['1','2','3'].includes(cur)&&d.s[0]!==cur)return false;
+    if(kw&&!(d.p+d.a+d.t+d.pick+d.why+d.k.join('')).toLowerCase().includes(kw))return false;
+    return true;});
+  listEl.innerHTML=list.length?list.map(d=>card(d,done)).join(''):'<div class="no-result">当てはまる問題がありません</div>';
+  open.forEach(id=>{const e=document.getElementById(id);if(e)e.classList.add('open')});
+  document.getElementById('sDone').textContent=done.size;
+}
+document.getElementById('filters').addEventListener('click',e=>{const b=e.target.closest('.filter');if(!b)return;document.querySelectorAll('.filter').forEach(x=>x.classList.remove('active'));b.classList.add('active');cur=b.dataset.f;render()});
+searchEl.addEventListener('input',()=>render());
+document.getElementById('shuffle').addEventListener('click',()=>{for(let i=D.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[D[i],D[j]]=[D[j],D[i]]}render();window.scrollTo({top:0,behavior:'smooth'})});
+render();
+</script>
+</body>
+</html>
