@@ -235,10 +235,72 @@ main section:nth-of-type(odd) :is(.pk,.crs,.scope>div,.method,.act){background:v
   main section{padding-block:44px}
   .contact{padding:24px}
 }
-@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+/* ===== 陰影と動き ===== */
+:root{--sh-1:0 1px 2px rgba(11,27,51,.06),0 4px 14px rgba(11,27,51,.07);--sh-2:0 2px 4px rgba(11,27,51,.08),0 14px 34px rgba(11,27,51,.14);--glow:0 0 0 1px color-mix(in srgb,var(--blue) 55%,transparent),0 12px 32px color-mix(in srgb,var(--blue) 22%,transparent)}
+@media (prefers-color-scheme: dark){:root{--sh-1:0 1px 2px rgba(0,0,0,.35),0 6px 18px rgba(0,0,0,.28);--sh-2:0 2px 6px rgba(0,0,0,.4),0 18px 40px rgba(0,0,0,.45)}}
+.box,.num,.crs,.act,.pk,.vid,.post,.method,.scope>div,.faq details,.voice,.m-start,.verbs span{box-shadow:var(--sh-1);transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s,border-color .35s}
+.box:hover,.num:hover,.crs:hover,.act:hover,.pk:hover,.vid:hover,.post:hover,.scope>div:hover,.voice:hover{transform:translateY(-4px);box-shadow:var(--sh-2),var(--glow);border-color:transparent}
+.vid img{transition:transform .5s}
+.vid:hover img{transform:scale(1.05)}
+.num{position:relative;overflow:hidden}
+.num::before{content:"";position:absolute;inset:0 0 auto;height:3px;background:linear-gradient(90deg,#0b6bcb,#5cc5b4)}
+.num b{background:linear-gradient(135deg,#2f8be6,#2fb3a0);-webkit-background-clip:text;background-clip:text;color:transparent}
+.sec-h small{display:inline-flex;align-items:center;gap:8px}
+.sec-h small::before{content:"";width:22px;height:2px;background:linear-gradient(90deg,var(--blue),var(--teal))}
+
+/* hero */
+.hero{background:radial-gradient(1200px 500px at 15% -10%,#18407a 0%,transparent 60%),linear-gradient(160deg,#0b1b33 0%,#0a1428 100%)}
+.hero::before{content:"";position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);background-size:44px 44px;mask-image:radial-gradient(ellipse at 70% 40%,#000 0%,transparent 70%);-webkit-mask-image:radial-gradient(ellipse at 70% 40%,#000 0%,transparent 70%);pointer-events:none}
+.hero::after{animation:drift 14s ease-in-out infinite alternate}
+.hero .orb{position:absolute;width:380px;height:380px;border-radius:50%;filter:blur(70px);opacity:.45;pointer-events:none;background:#0f7a6b;left:-120px;top:-140px;animation:drift2 18s ease-in-out infinite alternate}
+@keyframes drift{to{transform:translate(-12%,-18%) scale(1.15)}}
+@keyframes drift2{to{transform:translate(160px,90px) scale(1.2)}}
+.hero h1 .grad{background:linear-gradient(90deg,#8fc1f2,#7ee3cf,#8fc1f2);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shine 6s linear infinite}
+@keyframes shine{to{background-position:-200% 0}}
+.card-me{backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 20px 50px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.12);position:relative;overflow:hidden}
+.card-me::before{content:"";position:absolute;inset:-40% -60%;background:linear-gradient(115deg,transparent 40%,rgba(255,255,255,.10) 50%,transparent 60%);animation:sweep 7s ease-in-out infinite;pointer-events:none}
+@keyframes sweep{0%,60%{transform:translateX(-40%)}100%{transform:translateX(40%)}}
+@property --a{syntax:"<angle>";inherits:false;initial-value:0deg}
+.card-me .ava{position:relative;padding:4px;border-radius:50%;background:conic-gradient(from var(--a),#0b6bcb,#5cc5b4,#8fc1f2,#0b6bcb);animation:spin 6s linear infinite}
+.card-me .ava img{display:block;border:3px solid #0b1b33}
+@keyframes spin{to{--a:360deg}}
+.btn{transition:transform .25s,box-shadow .25s}
+.btn.primary{box-shadow:0 8px 24px rgba(11,107,203,.45)}
+.btn:hover{transform:translateY(-2px)}
+.btn.primary:hover{box-shadow:0 12px 30px rgba(11,107,203,.6)}
+.top{transition:box-shadow .3s}
+.top.scrolled{box-shadow:0 6px 24px rgba(0,0,0,.3)}
+.prog{position:fixed;top:0;left:0;height:3px;width:100%;transform-origin:0 50%;transform:scaleX(0);background:linear-gradient(90deg,#0b6bcb,#5cc5b4);z-index:30}
+
+/* 図解の動き */
+.m-arrow{background:linear-gradient(90deg,var(--blue) 50%,transparent 50%) 0 0/10px 2px repeat-x;animation:flowx .8s linear infinite}
+@keyframes flowx{to{background-position:10px 0}}
+.m-out div{box-shadow:0 10px 24px rgba(0,0,0,.22);position:relative;overflow:hidden}
+.m-out .pa{background:linear-gradient(135deg,#1a7fe0,#0a55a6)}
+.m-out .cs{background:linear-gradient(135deg,#17a08c,#0b5f53)}
+.m-out div::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.22) 50%,transparent 65%);transform:translateX(-100%);animation:sweep2 4s ease-in-out infinite}
+.m-out .cs::after{animation-delay:2s}
+@keyframes sweep2{0%,55%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+.verbs span:hover{transform:translateY(-2px);border-color:var(--blue)}
+.steps2 li .ic{animation:ping 5s infinite;animation-delay:calc(var(--i,0)*1s)}
+@keyframes ping{0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--blue) 45%,transparent);transform:scale(1)}8%{transform:scale(1.08)}20%{box-shadow:0 0 0 14px transparent;transform:scale(1)}100%{box-shadow:0 0 0 0 transparent}}
+.pk .ar{transition:transform .3s}
+.pk:hover .ar{transform:translateX(4px)}
+.docs span{transition:transform .3s,background .3s}
+.docs span:hover{transform:translateY(-3px);background:color-mix(in srgb,var(--blue) 22%,transparent)}
+.contact{box-shadow:var(--sh-2);background:radial-gradient(600px 300px at 90% 0%,#18407a,transparent 70%),var(--navy)}
+
+/* 出てくる動き（JSが動くときだけ） */
+.js .rv{opacity:0;transform:translateY(22px);transition:opacity .7s cubic-bezier(.2,.8,.2,1),transform .7s cubic-bezier(.2,.8,.2,1);transition-delay:var(--d,0s)}
+.js .rv.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .js .rv{opacity:1;transform:none}}
 </style>
 </head>
 <body>
+<div class="prog" aria-hidden="true"></div>
 
 <header class="top">
   <div class="wrap">
@@ -251,10 +313,11 @@ main section:nth-of-type(odd) :is(.pk,.crs,.scope>div,.method,.act){background:v
 </header>
 
 <div class="hero" id="top">
+  <span class="orb" aria-hidden="true"></span>
   <div class="wrap">
     <div>
       <p class="eyebrow">POWER AUTOMATE × COPILOT STUDIO</p>
-      <h1>手作業は自動化に、問い合わせは AI エージェントに。</h1>
+      <h1>手作業は自動化に、問い合わせは <span class="grad">AI エージェント</span>に。</h1>
       <p class="lead">ITが専門ではない人に、Power Automate の自動化と Copilot Studio のエージェントづくりを教えています。研修・受託開発・登壇のご相談を受け付けています。</p>
       <div class="btns">
         <a class="btn primary" href="#contact">研修・開発のご相談</a>
@@ -262,7 +325,7 @@ main section:nth-of-type(odd) :is(.pk,.crs,.scope>div,.method,.act){background:v
       </div>
     </div>
     <div class="card-me">
-      <img src="haru-icon.jpg" alt="Haru のアイコン">
+      <span class="ava"><img src="haru-icon.jpg" alt="Haru のアイコン"></span>
       <p class="nm">Haru（はる）</p>
       <p class="rl">Power Automate ／ Copilot Studio 講師・ハンズオン設計</p>
       <div class="chips">
@@ -391,11 +454,11 @@ main section:nth-of-type(odd) :is(.pk,.crs,.scope>div,.method,.act){background:v
   <div class="wrap">
     <div class="sec-h"><small>FLOW</small><h2>ご依頼の流れ</h2><p>その場で即答せず、調べが要ることは持ち帰って文書でお返しします。</p></div>
     <ol class="steps2">
-      <li><svg class="ic"><use href="#i-mail"/></svg><b>ご相談</b><span>目的・参加者・環境をメールで</span></li>
-      <li><svg class="ic"><use href="#i-make"/></svg><b>書面で回答</b><span>案・進め方・日程の候補</span></li>
-      <li><svg class="ic"><use href="#i-talk"/></svg><b>確認の打ち合わせ</b><span>書面の内容を確かめる</span></li>
-      <li><svg class="ic"><use href="#i-yen"/></svg><b>見積り・契約</b><span>範囲と料金を書面で</span></li>
-      <li><svg class="ic"><use href="#i-chart"/></svg><b>実施・振り返り</b><span>アンケート結果をお渡し</span></li>
+      <li style="--i:0"><svg class="ic"><use href="#i-mail"/></svg><b>ご相談</b><span>目的・参加者・環境をメールで</span></li>
+      <li style="--i:1"><svg class="ic"><use href="#i-make"/></svg><b>書面で回答</b><span>案・進め方・日程の候補</span></li>
+      <li style="--i:2"><svg class="ic"><use href="#i-talk"/></svg><b>確認の打ち合わせ</b><span>書面の内容を確かめる</span></li>
+      <li style="--i:3"><svg class="ic"><use href="#i-yen"/></svg><b>見積り・契約</b><span>範囲と料金を書面で</span></li>
+      <li style="--i:4"><svg class="ic"><use href="#i-chart"/></svg><b>実施・振り返り</b><span>アンケート結果をお渡し</span></li>
     </ol>
     <div class="scope">
       <div class="ok"><p class="sh">○ お受けしていること</p><div class="tags"><span>オンラインの研修・登壇</span><span>小規模な受託開発</span><span>Forms・SharePoint・Teams・Outlook・Excel のフロー</span><span>手作業に戻せる自動化</span><span>書面での相談</span></div></div>
@@ -527,6 +590,29 @@ const POSTS=[
  ['登壇レポート','作らせる前に、使ってもらう｜Power AutomateとNode-RED','https://www.automate136.com/iotlt-24-power-automate-node-red/'],
 ];
 document.getElementById('posts').innerHTML=POSTS.map(p=>`<a class="post" href="${p[2]}" target="_blank" rel="noopener"><span class="pk">${p[0]}</span><div class="pt">${p[1]}</div></a>`).join('');
+</script>
+<script>
+(()=>{
+  const root=document.documentElement, reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const top=document.querySelector('.top'), prog=document.querySelector('.prog');
+  const onScroll=()=>{const h=root.scrollHeight-innerHeight;prog.style.transform='scaleX('+(h>0?scrollY/h:0)+')';top.classList.toggle('scrolled',scrollY>8)};
+  addEventListener('scroll',onScroll,{passive:true});onScroll();
+  if(reduce||!('IntersectionObserver' in window))return;
+  root.classList.add('js');
+  const groups=['.sec-h','.nums .num','.method','.verbs span','.m-out div','.acts .act','.pick .pk','.courses .crs','#service .grid2>*','.steps2 li','.scope>div','.tl li','.vids .vid','.posts .post','.voice','.faq details','.contact'];
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{rootMargin:'0px 0px -8% 0px'});
+  const mark=()=>{groups.forEach(sel=>document.querySelectorAll(sel).forEach((e,i)=>{if(!e.classList.contains('rv')){e.classList.add('rv');e.style.setProperty('--d',Math.min(i,8)*70+'ms');io.observe(e)}}))};
+  mark();
+  new MutationObserver(mark).observe(document.querySelector('main'),{childList:true,subtree:true});
+  document.querySelectorAll('.num b').forEach(b=>{
+    const tn=b.firstChild; if(!tn||tn.nodeType!==3)return;
+    const raw=tn.nodeValue.trim(), dec=(raw.split('.')[1]||'').length, end=parseFloat(raw.replace(/,/g,''));
+    const fmt=v=>v.toLocaleString('ja-JP',{minimumFractionDigits:dec,maximumFractionDigits:dec});
+    const cio=new IntersectionObserver(es=>{if(!es[0].isIntersecting)return;cio.disconnect();const t0=performance.now(),D=1400;
+      const step=n=>{const p=Math.min((n-t0)/D,1),k=1-Math.pow(1-p,3);tn.nodeValue=fmt(end*k);if(p<1)requestAnimationFrame(step);else tn.nodeValue=raw};
+      tn.nodeValue=fmt(0);requestAnimationFrame(step)},{threshold:.4});
+    cio.observe(b)});
+})();
 </script>
 </body>
 </html>
