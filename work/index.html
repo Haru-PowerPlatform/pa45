@@ -347,6 +347,9 @@ main section:nth-of-type(even) .chart-card{background:var(--bg)}
   *,*::before,*::after{animation:none!important;transition:none!important}
   .js .rv{opacity:1;transform:none}}
 </style>
+<!-- アクセス計測（automate136 と同じ GA4。ブログの案内から何人来て、何人がフォームへ進んだかを見る） -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-8HT3QF9MTV"></script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-8HT3QF9MTV');</script>
 </head>
 <body>
 <div class="prog" aria-hidden="true"></div>
@@ -735,6 +738,8 @@ new IntersectionObserver(es=>{atContact=es[0].isIntersecting;upd()},{threshold:.
 /* 相談フォームの URL。入れると「ご相談」のボタンがすべてフォームへ飛ぶ。空のあいだはページ下の連絡先へ */
 const CONSULT_FORM_URL='https://forms.cloud.microsoft/r/00Xbasp5J3';
 if(CONSULT_FORM_URL){document.querySelectorAll('[data-consult]').forEach(a=>{a.href=CONSULT_FORM_URL;a.target='_blank';a.rel='noopener';a.hidden=false})}
+/* 「ご相談」ボタンが押された回数を GA4 に consult_form_click として送る */
+document.querySelectorAll('[data-consult]').forEach(a=>a.addEventListener('click',()=>{if(typeof gtag==='function')gtag('event','consult_form_click',{link_text:a.textContent.trim().slice(0,40)})}))
 </script>
 </body>
 </html>
