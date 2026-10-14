@@ -109,6 +109,7 @@ try {
       "data\config\links-index.json",
       "sessions\index.html",
       "index.html",
+      "achievements\insights\index.html",
       "README.md",
       "flows\README.md",
       "slides\README.md",

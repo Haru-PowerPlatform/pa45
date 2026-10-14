@@ -230,7 +230,8 @@ async function load(){
 
   // hero stats
   const totalResp=all.reduce((s,d)=>s+(d.total_responses||0),0);
-  const avgU=(all.reduce((s,d)=>s+(d.understanding_pct||0),0)/all.length).toFixed(1);
+  // 理解度は回答数で重み付け（data/insights.json の understanding_avg と同じ計算）
+  const avgU=(all.reduce((s,d)=>s+(d.understanding_pct||0)*(d.total_responses||0),0)/Math.max(totalResp,1)).toFixed(1);
   const avgF=(all.reduce((s,d)=>s+(d.usefulness_pct||0),0)/all.length).toFixed(1);
   setCount('st-vols',all.length); setCount('st-resp',totalResp);
   setCount('st-und',parseFloat(avgU),1); setCount('st-use',parseFloat(avgF),1);

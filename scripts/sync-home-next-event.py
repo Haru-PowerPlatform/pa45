@@ -6,6 +6,7 @@ data/config/upcoming-event.json / data/config/links-index.json から冪等に�
   - 「次回講座（PA45）」カード（<!-- NEXT_EVENT_CARD:START/END -->）
   - 過去回の資料 直近3回＋「すべての回を見る」ボタン（<!-- BACKNUMBER:START/END -->）
   - ヒーローの実績（開催回数・累計参加者・平均理解度）を data/insights.json から
+  - achievements/insights/index.html の description / og / twitter の数字を data/insights.json から
 
 upcoming-event.json を次回へ進めればホームも追従する。
 空（{}）・開催日が過ぎている・キーが欠けている場合も落ちずに「準備中」表示にする。
@@ -25,6 +26,7 @@ INDEX = ROOT / "index.html"
 UPCOMING = ROOT / "data" / "config" / "upcoming-event.json"
 LINKS_INDEX = ROOT / "data" / "config" / "links-index.json"
 INSIGHTS = ROOT / "data" / "insights.json"
+INSIGHTS_PAGE = ROOT / "achievements" / "insights" / "index.html"
 CONNPASS_GROUP = "https://powerautomate-create.connpass.com/"
 WEEKDAYS = "月火水木金土日"
 
@@ -209,7 +211,33 @@ def replace(html: str, name: str, block: str) -> str:
     return pat.sub(lambda _: block, html, count=1)
 
 
+def sync_insights_meta() -> None:
+    """数字で見るPA45 の共有カード・検索用説明文（meta）を insights.json の集計に合わせる。"""
+    try:
+        s = json.loads(INSIGHTS.read_text(encoding="utf-8"))["summary"]
+    except (FileNotFoundError, KeyError, json.JSONDecodeError):
+        return
+    n, p, r = s["sessions"], s["participants_total"], s["responses_total"]
+    u, f = s["understanding_avg"], s["usefulness_avg"]
+    desc = {
+        "description": f"PA45（Power Automate 45）{n}回・のべ{p}名の開催データ。参加者数の推移、理解度{u}%・役立ち度{f}%（アンケート{r}件）、全{n}回のテーマ一覧を公開しています。",
+        "og:description": f"毎週木曜45分のPower Automateハンズオン。{n}回でのべ{p}名、アンケート{r}件で理解度{u}%・役立ち度{f}%。参加者数の推移と全{n}回のテーマを公開しています。",
+        "twitter:description": f"{n}回でのべ{p}名、アンケート{r}件で理解度{u}%・役立ち度{f}%。参加者数の推移と全{n}回のテーマを公開しています。",
+    }
+    raw = INSIGHTS_PAGE.read_bytes()
+    html = raw.decode("utf-8")
+    new = html
+    for key, text in desc.items():
+        attr = "property" if key.startswith("og:") else "name"
+        new = re.sub(rf'(<meta {attr}="{re.escape(key)}" content=")[^"]*(")',
+                     lambda m: m.group(1) + text + m.group(2), new, count=1)
+    if new != html:
+        INSIGHTS_PAGE.write_bytes(new.encode("utf-8"))
+        print(f"数字で見るPA45 meta: {n}回・{p}名・理解度{u}% に更新")
+
+
 def main():
+    sync_insights_meta()
     ev = load_upcoming()
     past = past_sessions(ev)
     raw = INDEX.read_bytes()

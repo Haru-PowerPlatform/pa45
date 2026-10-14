@@ -456,7 +456,8 @@ document.addEventListener('click', function(e) {
 
   // ----- 8. KPI更新（参加者数は活動JSONから）-----
   const totalResponses = allData.reduce((s, d) => s + d.total_responses, 0);
-  const avgUnderstand  = Math.round(allData.reduce((s,d) => s+(d.understanding_pct||0), 0) / allData.length);
+  // 理解度は回答数で重み付け（data/insights.json の understanding_avg と同じ計算）
+  const avgUnderstand  = Math.round(allData.reduce((s,d) => s+(d.understanding_pct||0)*(d.total_responses||0), 0) / Math.max(totalResponses,1));
   const avgUseful      = Math.round(allData.reduce((s,d) => s+(d.usefulness_pct||0),    0) / allData.length);
 
   document.getElementById('kpi-participants').textContent = totalParticipants + '名';
