@@ -155,16 +155,16 @@
 
   <header>
     <span class="eyebrow">PA45 第31回｜ハンズオン手順</span>
-    <h1>ファイルを選んで1クリックでPDFにして送る<small>SharePoint のファイルの「…」から押すと、送り先とひとことを聞かれ、そのファイルが PDF になってメールで届きます。PDF にする変換は OneDrive の機能なので、一度自分の OneDrive にコピーしてから変換し、送ったあとで消します。</small></h1>
+    <h1>ファイルを選んで1クリックでPDFにして送る<small>SharePoint のファイルの「…」から押すと、送り先を聞かれ、そのファイルが PDF になってメールで届きます。PDF にする変換は OneDrive の機能なので、一度自分の OneDrive にコピーしてから変換します。</small></h1>
   </header>
 
   <div class="goal">
-    <b>今日つくるもの：</b> SharePoint のファイルの<b>「…」</b>から押すと、<b>送り先のメールとひとこと</b>を入れる画面が出て、そのファイルを <b>PDF に変換してメールに添付</b>して送るフロー。
+    <b>今日つくるもの：</b> SharePoint のファイルの<b>「…」</b>から押すと、<b>送り先のメール</b>を入れる画面が出て、そのファイルを <b>PDF に変換してメールに添付</b>して送るフロー。
     <div class="flowpath">
-      <span class="st">📁 選択したファイルの場合（送り先・ひとこと）</span><span class="ar">→</span>
+      <span class="st">📁 選択したファイルの場合（送り先）</span><span class="ar">→</span>
       <span class="st">🔎 プロパティ／コンテンツの取得</span><span class="ar">→</span>
       <span class="st hot">☁️ OneDrive に置いて PDF に変換</span><span class="ar">→</span>
-      <span class="st end">📨 添付して送り、コピーを消す</span>
+      <span class="st end">📨 PDF を添付して送る</span>
     </div>
   </div>
 
@@ -217,7 +217,7 @@
 ・例：見積書_2026.10.15.docx → 見積書_2026.10.15.pdf
 
 ② 取引先に送るメールの本文
-・3行以内。1行目は【ひとこと】とだけ書く（あとで差し替える）
+・3行以内
 ・最後の行は「PDFを添付しました。ご確認ください。」</pre></div></div></div>
       <div class="blk"><div class="bn">3</div><div class="bc">返ってきた2つは、STEP 4 で貼ります。このタブは開いたままにしておきます。</div></div>
     </div>
@@ -227,22 +227,22 @@
 <pre id="fx1">concat(substring(body(&#x27;ファイルのプロパティの取得&#x27;)?[&#x27;{FilenameWithExtension}&#x27;], 0, lastIndexOf(body(&#x27;ファイルのプロパティの取得&#x27;)?[&#x27;{FilenameWithExtension}&#x27;], &#x27;.&#x27;)), &#x27;.pdf&#x27;)</pre></div>
     <p class="part-note">②メールの本文</p>
 <div class="codewrap"><button class="copybtn" data-code="mail1">コピー</button>
-<pre id="mail1">【ひとこと】
-お世話になっております。
+<pre id="mail1">お世話になっております。
+お見積書をお送りします。
 PDFを添付しました。ご確認ください。</pre></div>
     </details>
   </section>
 
   <section class="part card2" id="p2">
     <div class="part-h"><span class="part-badge">STEP 1</span><img class="ph-ic" src="assets/icon_sharepoint.png" alt=""><h2>フローを作る（トリガー＝選択したファイルの場合）</h2></div>
-    <div class="goal2"><b>この段のゴール</b>トリガーに、入力欄「送り先のメール」「ひとこと」が付いている</div>
+    <div class="goal2"><b>この段のゴール</b>トリガーに、入力欄「送り先のメール」が付いている</div>
     <p class="why2"><b>なぜ</b>ファイルを自分で選んで押したい。SharePoint のファイルの「…」から押せるのは「選択したファイルの場合」のトリガーだから。</p>
     <div class="blks">
       <div class="blk"><div class="bn">1</div><div class="bc">画面右上の<b>「環境」</b>が<b>既定の環境</b>か確かめます。<br><small>SharePoint のメニューに出るのは既定の環境のフローだけです。開発環境で作ったフローは出ません。</small></div></div>
       <div class="blk"><div class="bn">2</div><div class="bc"><b>「作成」→「インスタント クラウド フロー」</b>。フロー名は <span class="k">PDFにして送る</span>、トリガーは SharePoint の<b>「選択したファイルの場合」</b>を選んで「作成」。<br><small>フロー名がそのまま SharePoint のメニューに出ます。キャンバスではトリガーが manual と表示されます。</small></div></div>
-      <div class="blk"><div class="bn">3</div><div class="bc">トリガーの欄を埋めます。<table class="kv"><tr><th>サイトのアドレス</th><td>準備でファイルを置いたサイト</td></tr><tr><th>ライブラリ名</th><td>ドキュメント</td></tr><tr><th>＋ 入力の追加 →「メール」</th><td>名前を <span class="k">送り先のメール</span></td></tr><tr><th>＋ 入力の追加 →「テキスト」</th><td>名前を <span class="k">ひとこと</span></td></tr></table></div></div>
+      <div class="blk"><div class="bn">3</div><div class="bc">トリガーの欄を埋めます。<table class="kv"><tr><th>サイトのアドレス</th><td>準備でファイルを置いたサイト</td></tr><tr><th>ライブラリ名</th><td>ドキュメント</td></tr><tr><th>＋ 入力の追加 →「メール」</th><td>名前を <span class="k">送り先のメール</span></td></tr></table></div></div>
     </div>
-    <div class="callout tip"><b>💡 入力に付けた名前が、そのまま動的コンテンツの名前になります。</b> 後ろのアクションでは ⚡ から「送り先のメール」「ひとこと」を選べます。</div>
+    <div class="callout tip"><b>💡 入力に付けた名前が、そのまま動的コンテンツの名前になります。</b> 後ろのアクションでは ⚡ から「送り先のメール」を選べます。</div>
   </section>
 
   <section class="part card2" id="p3">
@@ -257,25 +257,23 @@ PDFを添付しました。ご確認ください。</pre></div>
   </section>
 
   <section class="part card2" id="p4">
-    <div class="part-h"><span class="part-badge">STEP 3</span><img class="ph-ic" src="assets/icon_onedrive.png" alt=""><h2>OneDrive に置いて、5秒待って、PDF に変換する</h2></div>
-    <div class="goal2"><b>この段のゴール</b>「ファイルの作成」「遅延」「ファイルの変換」の3つが並んでいる</div>
+    <div class="part-h"><span class="part-badge">STEP 3</span><img class="ph-ic" src="assets/icon_onedrive.png" alt=""><h2>OneDrive に置いて、PDF に変換する</h2></div>
+    <div class="goal2"><b>この段のゴール</b>「ファイルの作成」「ファイルの変換」の2つが並んでいる</div>
     <p class="why2"><b>なぜ</b>PDF への変換は OneDrive の機能で、つないだアカウントの OneDrive にあるファイルしか扱えない（Learn の既知の制限）。だから一度、自分の OneDrive にコピーする。</p>
     <div class="blks">
       <div class="blk"><div class="bn">1</div><div class="bc"><div class="act"><img src="assets/icon_onedrive.png" alt="">OneDrive for Business の<b>「ファイルの作成」</b></div><table class="kv"><tr><th>フォルダーのパス</th><td><span class="k">/PA45一時</span></td></tr><tr><th>ファイル名</th><td><span class="dyn">⚡ ファイル名 (拡張子付き)</span></td></tr><tr><th>ファイル コンテンツ</th><td><span class="dyn">⚡ ファイル コンテンツ</span>（ファイル コンテンツの取得）</td></tr></table></div></div>
-      <div class="blk"><div class="bn">2</div><div class="bc"><div class="act"><img src="assets/pa_logo.png" alt="">スケジュール の<b>「遅延」</b></div><table class="kv"><tr><th>カウント</th><td><span class="k">5</span></td></tr><tr><th>単位</th><td>秒</td></tr></table><small>作った直後に変換すると失敗することがあるため、少し待ちます。</small></div></div>
-      <div class="blk"><div class="bn">3</div><div class="bc"><div class="act"><img src="assets/icon_onedrive.png" alt="">OneDrive for Business の<b>「ファイルの変換」</b></div><table class="kv"><tr><th>ファイル</th><td><span class="dyn">⚡ ID</span>（ファイルの作成）</td></tr><tr><th>ターゲットの種類</th><td>PDF</td></tr></table></div></div>
+      <div class="blk"><div class="bn">2</div><div class="bc"><div class="act"><img src="assets/icon_onedrive.png" alt="">OneDrive for Business の<b>「ファイルの変換」</b></div><table class="kv"><tr><th>ファイル</th><td><span class="dyn">⚡ ID</span>（ファイルの作成）</td></tr><tr><th>ターゲットの種類</th><td>PDF</td></tr></table></div></div>
     </div>
     <div class="callout tip"><b>💡 ライセンス：</b> OneDrive for Business の「ファイルの変換」は <b>Standard</b>。M365 に付いている Power Automate だけで使えます。Word Online (Business) の「Word 文書を PDF に変換する」は <b>Premium</b>（有償）です。</div>
     <div class="callout warn"><b>⚠️ 変換できないファイル：</b> 署名・パスワード・IRM（情報保護）の付いた Word は変換できません。</div>
   </section>
 
   <section class="part card2" id="p5">
-    <div class="part-h"><span class="part-badge">STEP 4</span><img class="ph-ic" src="assets/icon_outlook.png" alt=""><h2>PDF を添付して送り、OneDrive の一時コピーを消す</h2></div>
-    <div class="goal2"><b>この段のゴール</b>「メールの送信 (V2)」と「ファイルの削除」が並んでいる</div>
-    <p class="why2"><b>なぜ</b>宛先とひとことは押した人が入れた値、添付の名前は①の式、中身は変換した PDF。全部前のステップにあるので、書き写しはいらない。</p>
+    <div class="part-h"><span class="part-badge">STEP 4</span><img class="ph-ic" src="assets/icon_outlook.png" alt=""><h2>PDF をメールに添付して送る</h2></div>
+    <div class="goal2"><b>この段のゴール</b>「メールの送信 (V2)」が並んでいる</div>
+    <p class="why2"><b>なぜ</b>宛先は押した人が入れた値、本文は Copilot の②、添付の名前は①の式、中身は変換した PDF。全部前のステップにあるので、書き写しはいらない。</p>
     <div class="blks">
-      <div class="blk"><div class="bn">1</div><div class="bc"><div class="act"><img src="assets/icon_outlook.png" alt="">Office 365 Outlook の<b>「メールの送信 (V2)」</b></div><table class="kv"><tr><th>宛先</th><td><span class="dyn">⚡ 送り先のメール</span></td></tr><tr><th>件名</th><td><span class="k">見積書をお送りします</span></td></tr><tr><th>本文</th><td>Copilot の②を貼り、【ひとこと】を消して <span class="dyn">⚡ ひとこと</span></td></tr><tr><th>添付ファイル 名前<br><small>詳細パラメーターで表示</small></th><td>欄で半角の <span class="k">/</span> →「式を挿入する」→ Copilot の①を貼って「追加」</td></tr><tr><th>添付ファイル コンテンツ</th><td><span class="dyn">⚡ ファイル コンテンツ</span>（ファイルの変換）</td></tr></table></div></div>
-      <div class="blk"><div class="bn">2</div><div class="bc"><div class="act"><img src="assets/icon_onedrive.png" alt="">OneDrive for Business の<b>「ファイルの削除」</b></div><table class="kv"><tr><th>ファイル</th><td><span class="dyn">⚡ ID</span>（ファイルの作成）</td></tr></table></div></div>
+      <div class="blk"><div class="bn">1</div><div class="bc"><div class="act"><img src="assets/icon_outlook.png" alt="">Office 365 Outlook の<b>「メールの送信 (V2)」</b></div><table class="kv"><tr><th>宛先</th><td><span class="dyn">⚡ 送り先のメール</span></td></tr><tr><th>件名</th><td><span class="k">見積書をお送りします</span></td></tr><tr><th>本文</th><td>Copilot の②を貼る</td></tr><tr><th>添付ファイル 名前<br><small>詳細パラメーターで表示</small></th><td>欄で半角の <span class="k">/</span> →「式を挿入する」→ Copilot の①を貼って「追加」</td></tr><tr><th>添付ファイル コンテンツ</th><td><span class="dyn">⚡ ファイル コンテンツ</span>（ファイルの変換）</td></tr></table></div></div>
     </div>
     <details class="mihon"><summary>①PDF 名の式の読み方</summary>
     <table class="kv">
@@ -284,7 +282,7 @@ PDFを添付しました。ご確認ください。</pre></div>
       <tr><th>concat(…, '.pdf')</th><td>うしろに .pdf をつなぐ</td></tr>
     </table>
     </details>
-    <div class="callout tip"><b>💡 送信に失敗しても一時コピーを消したいとき：</b>「ファイルの削除」の「…」→「実行条件の構成」で「に失敗しました」にもチェックを入れます（今日は入れなくて大丈夫です）。</div>
+    <div class="callout tip"><b>💡 おまけ：</b> OneDrive の /PA45一時 には、PDF にする前の Word のコピーが残ります。気になるときは、メールの送信のあとに OneDrive for Business の「ファイルの削除」（ファイル＝⚡ ファイルの作成の「ID」）を足すと消せます。</div>
   </section>
 
   <section class="part card2" id="p6">
@@ -294,7 +292,7 @@ PDFを添付しました。ご確認ください。</pre></div>
     <div class="blks">
       <div class="blk"><div class="bn">1</div><div class="bc">右上の<b>「保存」</b>。</div></div>
       <div class="blk"><div class="bn">2</div><div class="bc">SharePoint の「ドキュメント」で <span class="k">見積書_2026.10.15.docx</span> を選び、<b>「…」→「統合」→「フロー」→「PDFにして送る」</b>。</div></div>
-      <div class="blk"><div class="bn">3</div><div class="bc">入力して<b>「フローの実行」</b>。<table class="kv"><tr><th>送り先のメール</th><td>自分のアドレス</td></tr><tr><th>ひとこと</th><td><span class="k">お見積りをお送りします</span></td></tr></table></div></div>
+      <div class="blk"><div class="bn">3</div><div class="bc">入力して<b>「フローの実行」</b>。<table class="kv"><tr><th>送り先のメール</th><td>自分のアドレス</td></tr></table></div></div>
     </div>
     <div class="callout warn"><b>⚠️ メニューにフローが出ないとき：</b> ①保存したか ②既定の環境で作ったか ③ページを再読み込みしたか を確かめます。</div>
   </section>
