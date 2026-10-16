@@ -54,6 +54,7 @@ SESSIONS = {
     28: ("Card Bulk Complete", "2026-09-17", "checkcard"),
     29: ("Expression Picker", "2026-10-01", "exprpick"),
     30: ("One-Click To Do", "2026-10-08", "teamstodo"),
+    31: ("One-Click PDF Send", "2026-10-15", "pdfsend"),
 }
 
 
@@ -99,6 +100,10 @@ PALETTE_OVERRIDE = {
     #          吹き出しから矢印でTo Doリストに入る（先頭行がチェック済み）iconが主役。
     30: dict(ring=("#b3d4ff", "#0b2a5c"), disc=("#2f6fe0", "#081a40"),
              gold=GOLD, title="#ffffff", sub="#cfe2ff"),
+    # Vol.31：ファイルを選んで1クリックでPDFにして送る。PDFの赤×ゴールド。
+    #          Wordの紙 → PDFの紙 → 封筒へ、の流れのiconが主役。
+    31: dict(ring=("#fecaca", "#5c0b0b"), disc=("#d23b3b", "#3d0808"),
+             gold=GOLD, title="#ffffff", sub="#ffe1e1"),
 }
 
 
@@ -452,6 +457,36 @@ def icon_checkcard(g):
     <polygon points="{spark(582, 322, 16)}" fill="{gl}"/>
   </g>'''
 
+
+def icon_pdfsend(g):
+    """ファイルを選んで1クリックでPDFにして送る。Wordの紙（W）→ PDFの紙（PDF）→ 封筒へ飛ぶ。"""
+    gl, gm, gd = g
+    def paper(x, y, w, h, label, band):
+        fold = 26
+        return (f'<path d="M{x} {y} H{x+w-fold} L{x+w} {y+fold} V{y+h} H{x} Z" fill="#fffaf0" stroke="{gd}" stroke-width="4.5" stroke-linejoin="round"/>'
+                f'<path d="M{x+w-fold} {y} V{y+fold} H{x+w}" fill="none" stroke="{gd}" stroke-width="4" stroke-linejoin="round"/>'
+                f'<rect x="{x+14}" y="{y+44}" width="{w-40}" height="9" rx="4.5" fill="{gm}" opacity="0.45"/>'
+                f'<rect x="{x+14}" y="{y+62}" width="{w-52}" height="9" rx="4.5" fill="{gm}" opacity="0.45"/>'
+                f'<rect x="{x+8}" y="{y+h-46}" width="{w-16}" height="34" rx="8" fill="{band}"/>'
+                f'<text x="{x+w/2}" y="{y+h-22}" text-anchor="middle" font-family="Segoe UI, Arial" font-weight="900" font-size="20" fill="#fffaf0">{label}</text>')
+    word = paper(312, 262, 104, 132, "W", "#2b579a")
+    pdf = paper(436, 296, 112, 142, "PDF", "#c62828")
+    arrow = (f'<path d="M418 300 Q440 282 452 296" fill="none" stroke="{gl}" stroke-width="8" stroke-linecap="round"/>'
+             f'<path d="M440 290 L454 300 L452 282" fill="none" stroke="{gl}" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>')
+    ex, ey, ew, eh = 556, 360, 82, 56
+    env = (f'<rect x="{ex}" y="{ey}" width="{ew}" height="{eh}" rx="8" fill="#fffaf0" stroke="{gd}" stroke-width="4.5"/>'
+           f'<path d="M{ex+4} {ey+6} L{ex+ew/2} {ey+eh/2+4} L{ex+ew-4} {ey+6}" fill="none" stroke="{gd}" stroke-width="4" stroke-linejoin="round"/>')
+    spark = "".join(f'<circle cx="{cx}" cy="{cy}" r="{cr}" fill="{gl}" opacity="0.85"/>'
+                    for cx, cy, cr in ((574, 284, 7), (330, 420, 6), (612, 404, 4)))
+    return f'''
+  <g filter="url(#ishadow)" transform="translate(0,22) scale(0.94) translate(27,14)">
+    {spark}
+    {word}
+    {arrow}
+    {pdf}
+    {env}
+  </g>'''
+
 def icon_teamstodo(g):
     """Teamsの頼まれごと → 1クリックでTo Doへ。吹き出しから矢印でTo Doリストに入る（先頭行が新規・チェック済み）。"""
     gl, gm, gd = g
@@ -552,6 +587,7 @@ ICONS = {"foldermail": icon_foldermail, "copilot": icon_copilot,
          "hourencard": icon_hourencard,
          "checkcard": icon_checkcard,
          "teamstodo": icon_teamstodo,
+         "pdfsend": icon_pdfsend,
          "exprpick": icon_exprpick}
 
 
