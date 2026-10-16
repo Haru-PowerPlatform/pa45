@@ -377,7 +377,8 @@ def main():
         sys.exit(0)
 
     vol        = config["vol"]
-    event_id   = config["event_id"]
+    # upcoming-event.json は "connpass_event_id" で書かれていることがある（2026-10-15 の Action が KeyError で落ちた）
+    event_id   = config.get("event_id") or config.get("connpass_event_id")
     # 和文表記("2026年8月15日（土）…")でも ISO でも受け付けて YYYY-MM-DD に揃える。
     date_str   = normalize_iso_date(config.get("date_iso") or config["date"])
     theme      = config["theme"]

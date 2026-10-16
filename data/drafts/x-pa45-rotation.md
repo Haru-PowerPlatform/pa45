@@ -471,11 +471,11 @@ https://haru-powerplatform.github.io/pa45/videos/
 ```
 【#PowerAutomate 45分ハンズオン講座＝PA45】
 
-第30回のアンケート結果です。19名に回答いただきました。ありがとうございます。
+第31回のアンケート結果です。13名に回答いただきました。ありがとうございます。
 
-理解できた87%、役立ちそう90%。Plannerにも入れたい、リスト名を変えたときの困りごと、初参加の感想まで、さまざまな声に感謝しています。
+理解できた85%、役立ちそう96%。SharePointからそのままPDFにできて便利、Excelのシートだけを選んでPDFにしたい、という声もいただきました。
 
-https://haru-powerplatform.github.io/pa45/achievements/insights/vol-30.html
+https://haru-powerplatform.github.io/pa45/achievements/insights/vol-31.html
 ```
 ※開催直後に出す用。回ごとの単発なので、次の回が終わったら差し替えていく。
 
