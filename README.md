@@ -24,19 +24,19 @@ Power Automate を初めて触る人が、45分で1本のフローを作り終�
 
 ## 数字で見る PA45
 
-第1回（2026/03/06）〜第30回（2026/10/08）の集計です。
+第1回（2026/03/06）〜第31回（2026/10/15）の集計です。
 
 | 項目 | 値 |
 |---|---|
-| 開催回数 | 30回 |
-| 延べ参加者 | 1,374名 |
-| 1回あたりの参加者 | 平均 45.8名／最多 76名 |
-| 参加者の推移 | 第1〜5回の平均 31.0名 → 直近5回の平均 62.6名 |
-| アンケート回答 | 376件 |
-| 理解度スコア（全回平均） | 88.8% |
-| 役立ち度スコア（全回平均） | 92.2% |
+| 開催回数 | 31回 |
+| 延べ参加者 | 1,430名 |
+| 1回あたりの参加者 | 平均 46.1名／最多 76名 |
+| 参加者の推移 | 第1〜5回の平均 31.0名 → 直近5回の平均 63.4名 |
+| アンケート回答 | 390件 |
+| 理解度スコア（全回平均） | 88.7% |
+| 役立ち度スコア（全回平均） | 92.3% |
 | 録画を公開した回 | 24回 |
-| 公開しているフローZIP | 19本 |
+| 公開しているフローZIP | 20本 |
 | 技術Tipsスライド | 130本 |
 
 - 参加者数は connpass の参加者数、スコアは各回のアンケートから集計しています（`data/insights.json`）。
@@ -59,10 +59,11 @@ Power Automate を初めて触る人が、45分で1本のフローを作り終�
 
 ## 全回の一覧
 
-次回は **第31回 ファイルを選んで1クリックでPDFにして送る**（10月15日（木） 20:15〜21:00）です。申込は [connpass](https://powerautomate-create.connpass.com/event/408176/) から。
+次回は **第32回 置くだけで月別・種類別に片付くファイル整理**（10月22日（木） 20:15〜21:00）です。申込は [connpass](https://powerautomate-create.connpass.com/event/409520/) から。
 
 | 回 | 開催日 | テーマ | 参加 | スライド・資料 | フロー | 録画 | アンケート | レポート |
 |---:|---|---|---:|:---:|:---:|:---:|:---:|:---:|
+| 31 | 2026/10/15 | ファイルを選んで1クリックでPDFにして送る | 56名 | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-31/) | [ZIP](https://haru-powerplatform.github.io/pa45/flows/vol-31/PA45-Vol31-PdfSend.zip) | ― | [結果](https://haru-powerplatform.github.io/pa45/achievements/insights/vol-31.html) | ― |
 | 30 | 2026/10/08 | Teamsの頼まれごとを1クリックでTo Doに入れる | 76名 | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-30/) | ― | ― | [結果](https://haru-powerplatform.github.io/pa45/achievements/insights/vol-30.html) | ― |
 | 29 | 2026/10/01 | 動的コンテンツに出てこない値も、Copilotと一緒に式で取り出せるようになる | 72名 | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-29/) | ― | ― | [結果](https://haru-powerplatform.github.io/pa45/achievements/insights/vol-29.html) | ― |
 | 28 | 2026/09/17 | Copilotと通知カード1枚でまとめて完了にする | 61名 | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-28/) | [ZIP](https://haru-powerplatform.github.io/pa45/flows/vol-28/PA45-Vol28-CardBulk.zip) | ― | [結果](https://haru-powerplatform.github.io/pa45/achievements/insights/vol-28.html) | ― |
