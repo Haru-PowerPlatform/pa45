@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>M365 Copilot Vol.1-2 Outlookの［Copilot］で案件のメールをまとめる3ステップ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/mc-base.css">
+<style>
+  /* 型B：流れ3列（開く → 書いて頼む → 確かめて次へ）*/
+  .col.info{gap:8px;}
+  .scene{height:104px;}
+  /* ① Outlook の上部 */
+  .top{flex:0 0 auto;display:flex;align-items:center;gap:8px;background:#0F6CBD;border-radius:9px;padding:9px 10px;}
+  .top .sr{flex:1;min-width:0;padding:5px 4px;font-size:15.5px;font-weight:700;color:#fff;}
+  .top .cp{flex:0 0 auto;position:relative;background:#fff;border-radius:7px;padding:5px 11px;font-size:16px;font-weight:800;color:#242424;
+    box-shadow:0 0 0 4px #F59E0B;}
+  .top .cp .dot{display:inline-block;width:24px;height:24px;border-radius:0;background:url(../../pptx/_assets/icons/ms/copilot.png) center/contain no-repeat;margin-right:5px;vertical-align:-1px;}
+  .apps{flex:1;min-height:0;display:flex;flex-direction:column;gap:6px;}
+  .app{flex:1;display:flex;align-items:center;gap:9px;background:#fff;border:1.5px solid #D8EFEA;border-radius:9px;padding:4px 10px;
+    font-size:16.5px;font-weight:800;color:var(--navy);}
+  .app .ok{flex:0 0 auto;width:24px;height:24px;border-radius:50%;background:#16A34A;color:#fff;padding:5px;}
+  .app .ok svg{width:14px;height:14px;}
+  /* ② 書いて頼む */
+  .box{flex:0 0 auto;background:#fff;border:2px solid var(--mc);border-radius:11px;padding:8px 11px;font-size:16.5px;font-weight:700;color:#1B2A44;line-height:1.45;
+    box-shadow:0 3px 8px rgba(15,118,110,.18);}
+  .box .slot{background:#FEF3C7;border:1.5px dashed #D97706;border-radius:6px;padding:0 5px;color:#92400E;font-weight:900;}
+  .box .per{background:#CCFBF1;border-radius:6px;padding:0 5px;color:var(--mc-dark);font-weight:900;}
+  .vars{flex:1;min-height:0;display:flex;flex-direction:column;gap:6px;}
+  .var{flex:1;display:flex;align-items:center;gap:9px;background:#fff;border:1.5px solid #D8EFEA;border-radius:9px;padding:4px 10px;}
+  .var .k{flex:0 0 96px;font-size:15px;font-weight:900;color:#fff;background:var(--mc);border-radius:6px;text-align:center;padding:3px 0;}
+  .var .v{flex:1;font-size:15.5px;font-weight:700;color:var(--navy);line-height:1.3;}
+  .var .v b{color:#92400E;}
+  /* ③ 確かめて次へ */
+  .chk{flex:1;min-height:0;display:flex;flex-direction:column;gap:6px;}
+  .ck{flex:1;display:flex;align-items:center;gap:9px;background:#fff;border:1.5px solid #D8EFEA;border-radius:9px;padding:4px 10px;}
+  .ck .nb{flex:0 0 auto;width:28px;height:28px;border-radius:50%;background:#F59E0B;color:#fff;font-weight:900;font-size:15px;display:flex;align-items:center;justify-content:center;}
+  .ck .v{flex:1;font-size:15.5px;font-weight:700;color:var(--navy);line-height:1.32;}
+  .ck .v b{color:#B91C1C;}
+  .follow{flex:0 0 auto;background:#E8F4F2;border:1.5px solid #A7E3D8;border-radius:12px 12px 3px 12px;padding:7px 11px;
+    font-size:15.5px;font-weight:700;color:#1B2A44;line-height:1.4;}
+  .follow .fl{display:block;font-size:13.5px;font-weight:900;color:var(--mc);margin-bottom:2px;}
+  .warnbar .ws span b{color:#B91C1C;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={bulb:'<path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/>',
+  warn:'<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18v.5"/>',ok:'<path d="M5 12.5l4.5 4.5L19 7"/>'};
+
+/* ① ノートPCの画面の上に Copilot のボタン */
+const s1=`<svg viewBox="0 0 388 104" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs><linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0EA5E9"/><stop offset=".55" stop-color="#14B8A6"/><stop offset="1" stop-color="#22C55E"/></linearGradient>
+  <filter id="f1" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#134E4A" flood-opacity=".25"/></filter></defs>
+  <rect width="388" height="104" fill="#E6F6F3"/>
+  <g filter="url(#f1)"><rect x="70" y="10" width="200" height="80" rx="6" fill="#334155"/><rect x="76" y="16" width="188" height="68" rx="3" fill="#fff"/>
+  <rect x="76" y="16" width="188" height="14" fill="#0F6CBD"/><rect x="226" y="19" width="34" height="8" rx="3" fill="url(#g1)"/>
+  ${[0,1,2,3].map(i=>`<rect x="84" y="${38+i*11}" width="${[90,120,70,104][i]}" height="5" rx="2.5" fill="#CBD5E1"/>`).join('')}
+  <rect x="56" y="90" width="228" height="7" rx="3" fill="#94A3B8"/></g>
+  <circle cx="243" cy="23" r="14" fill="none" stroke="#F59E0B" stroke-width="3"/>
+  <path d="M292 36 L262 25" stroke="#F59E0B" stroke-width="3" stroke-linecap="round"/>
+  <text x="298" y="42" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#92400E">ここ</text>
+</svg>`;
+/* ② 吹き出しに1文 */
+const s2=`<svg viewBox="0 0 388 104" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <rect width="388" height="104" fill="#E6F6F3"/>
+  <path d="M40 18h220a12 12 0 0 1 12 12v32a12 12 0 0 1-12 12H120l-20 16v-16H40a12 12 0 0 1-12-12V30a12 12 0 0 1 12-12z" fill="#fff" stroke="#0F766E" stroke-width="2.5"/>
+  <rect x="46" y="36" width="80" height="18" rx="5" fill="#FEF3C7" stroke="#D97706" stroke-dasharray="4 3"/>
+  <text x="86" y="50" text-anchor="middle" font-family="Noto Sans JP" font-size="12.5" font-weight="900" fill="#92400E">案件名</text>
+  <rect x="134" y="36" width="44" height="18" rx="5" fill="#CCFBF1"/>
+  <text x="156" y="50" text-anchor="middle" font-family="Noto Sans JP" font-size="12.5" font-weight="900" fill="#134E4A">先週</text>
+  <rect x="186" y="42" width="70" height="6" rx="3" fill="#CBD5E1"/>
+</svg>`;
+/* ③ 要点 → 元のメールで照らし合わせ */
+const s3=`<svg viewBox="0 0 388 104" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs><filter id="f3" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#134E4A" flood-opacity=".22"/></filter></defs>
+  <rect width="388" height="104" fill="#E6F6F3"/>
+  <g filter="url(#f3)"><rect x="34" y="14" width="110" height="76" rx="8" fill="#fff" stroke="#7DD3C4" stroke-width="2"/>
+  ${[0,1,2,3].map(i=>`<rect x="44" y="${26+i*15}" width="14" height="8" rx="2" fill="${['#D97706','#0F766E','#D97706','#2563EB'][i]}"/><rect x="62" y="${27+i*15}" width="${[70,60,66,54][i]}" height="6" rx="3" fill="#CBD5E1"/>`).join('')}</g>
+  <path d="M154 52 h44" stroke="#0F766E" stroke-width="4" stroke-dasharray="3 6" stroke-linecap="round"/>
+  <g filter="url(#f3)"><rect x="210" y="22" width="92" height="62" rx="5" fill="#fff" stroke="#C98585" stroke-width="1.5"/>
+  <path d="M210 24 L256 56 L302 24" fill="none" stroke="#C98585" stroke-width="2"/></g>
+  <circle cx="300" cy="74" r="20" fill="none" stroke="#F59E0B" stroke-width="5"/><path d="M314 88 L330 102" stroke="#F59E0B" stroke-width="6" stroke-linecap="round"/>
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="pills">
+      <div class="vol-pill"><small>M365 Copilot</small>Vol.1-2</div>
+      <div class="lic-pill free">無料の Copilot Chat でできる</div>
+    </div>
+    <div class="title-text">Outlookの［Copilot］で、<span class="hl">案件のメールを<br>まとめる3ステップ</span></div>
+    <div class="title-apps"><img class="msi" src="${A}icons/ms/outlook.svg" alt=""><span class="pl">＋</span><img class="msi" src="${A}icons/ms/copilot.png" alt=""></div>
+    <img class="title-chara" src="${A}chara/chara_point.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip app"><img class="msi" src="${A}icons/ms/copilot.png" alt="" style="width:34px;height:34px"></div>
+    <div class="txt">例文は Microsoft サポートに載っている文のまま。<b>案件名と期間</b>だけ自分の仕事に置き換えます。<br>要約を読んだら、日付と数字は<b>元のメールで確かめてから</b>使います</div>
+  </div>
+
+  <div class="stage">
+    <div class="col info">
+      <div class="ch2"><span class="n">1</span>上の［Copilot］を開く</div>
+      <div class="scene">${s1}</div>
+      <div class="top seg"><span class="sr"><img class="msi" src="${A}icons/ms/outlook.svg" alt="" style="width:26px;height:26px"> Outlook（アプリの上部）</span><span class="cp"><span class="dot"></span>Copilot</span></div>
+      <div class="apps">
+        <div class="app"><span class="ok">${svgw(P.ok,3.4)}</span><img class="msi" src="${A}icons/ms/outlook.svg" alt="" style="width:26px;height:26px">新しい Outlook for Windows</div>
+        <div class="app"><span class="ok">${svgw(P.ok,3.4)}</span><img class="msi" src="${A}icons/ms/outlook.svg" alt="" style="width:26px;height:26px">Outlook for Microsoft 365</div>
+        <div class="app"><span class="ok">${svgw(P.ok,3.4)}</span><img class="msi" src="${A}icons/ms/outlook.svg" alt="" style="width:26px;height:26px">Outlook for Microsoft 365 for Mac</div>
+      </div>
+      <div class="cap">職場・学校のアカウントでサインインして、<br>アプリの上にある［Copilot］を選ぶ</div>
+    </div>
+
+    <div class="col info">
+      <div class="ch2"><span class="n">2</span>案件名と期間を書いて頼む</div>
+      <div class="scene">${s2}<img class="chara" src="${A}chara/chara_laptop.png" alt=""></div>
+      <div class="box"><span class="slot">さくら食品の新パッケージ</span> に関連する<span class="per">先週</span>のメールを要約してください。</div>
+      <div class="vars">
+        <div class="var"><span class="k">期間を変える</span><span class="v">先週 → <b>今月</b>・<b>10月1日から</b></span></div>
+        <div class="var"><span class="k">人で聞く</span><span class="v"><b>/名前</b> で相手を指定する</span></div>
+        <div class="var"><span class="k">別の案件</span><span class="v">案件名を<b>顧客名</b>に置き換える</span></div>
+      </div>
+      <div class="cap">公式の例文の［プロジェクトまたは顧客名］を<br>自分の案件に差し替えるだけ</div>
+    </div>
+
+    <div class="col info">
+      <div class="ch2"><span class="n">3</span>元のメールで確かめる</div>
+      <div class="scene">${s3}</div>
+      <div class="chk">
+        <div class="ck"><span class="nb">1</span><span class="v"><b>日付・数量・金額</b>は、<br>元のメールを開いて確かめる</span></div>
+        <div class="ck"><span class="nb">2</span><span class="v">抜けていそうなら、<br><b>期間を広げて</b>もう一度頼む</span></div>
+      </div>
+      <div class="follow"><span class="fl">続けて頼む例</span>この内容で、社内向けの共有メールの下書きを作成してください。</div>
+      <div class="cap">要約をそのまま転記しない。<br>送る前に自分で読み直す</div>
+    </div>
+  </div>
+
+  <div class="warnbar">
+    <span class="na">${svgw(P.warn,2.4)}</span>
+    <span class="wl">使う前に確認</span>
+    <span class="ws">
+      <span>ライセンスなし＝<b>受信トレイ・予定表・会議</b>など限られた範囲</span>
+      <span>Teams のチャットや社内の資料までまとめるのは、M365 Copilot ライセンスあり</span>
+    </span>
+  </div>
+  <div class="src">出典：Microsoft サポート「Copilot in Outlook とチャットする」「Microsoft 365 アプリでの Copilot Chat のしくみ」／画面は説明用の再現、案件名は架空</div>
+`;
+</script>
+</body>
+</html>

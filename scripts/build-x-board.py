@@ -16,6 +16,7 @@ import html
 import io
 import json
 import re
+import shutil
 import urllib.parse
 from datetime import datetime, timezone, timedelta, date
 from pathlib import Path
@@ -156,7 +157,25 @@ STATUS = {
 SERIES = {
     "tips":    ("#", "tips", "時短ワザ"),
     "copasta": ("コパスタ #", "cs", "コパスタ入門"),
+    # Microsoft 365 Copilot 技術Tips（別ライン・ティール）。フォルダは mc-vol-NN / mc-vol-NNb
+    "m365copilot": ("M365 #", "mc", "M365 Copilot 時短ワザ"),
 }
+
+
+# 投稿用の画像まとめフォルダ（リポジトリの外。公開サイトには載らない）
+POST_IMG_ROOT = ROOT.parent / "pa45-x-images"              # ...\Documents\pa45-x-images
+
+
+def sync_post_image(img: Path, post_dir: Path) -> bool:
+    """img を post_dir にコピー（無い・サイズか更新時刻が違うときだけ）。img が無ければ False。"""
+    if not img.exists():
+        return False
+    dst = post_dir / img.name
+    st = img.stat()
+    if not dst.exists() or dst.stat().st_size != st.st_size or int(dst.stat().st_mtime) != int(st.st_mtime):
+        post_dir.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(img, dst)
+    return True
 
 
 def card_tips(it):
@@ -174,8 +193,7 @@ def card_tips(it):
         img2 = img2_old
         rel2 = f"pa45/assets/x/html/{f}b/{img2.name}"
     # 3枚目・4枚目（4枚組Tips対応）。同フォルダの …c.png / …d.png があれば追加。
-    extra_shots = ""
-    extra_btns = ""
+    extras = []
     for suf, lbl in (("c", "3枚目"), ("d", "4枚目")):
         same = ROOT / "assets" / "x" / "html" / f / f"{f.replace('-', '')}{suf}.png"
         sep = ROOT / "assets" / "x" / "html" / f"{f}{suf}" / f"{f.replace('-', '')}{suf}.png"
@@ -185,27 +203,28 @@ def card_tips(it):
             imgx, relx = sep, f"pa45/assets/x/html/{f}{suf}/{sep.name}"
         else:
             continue
-        extra_shots += f'\n    <a href="{relx}" target="_blank"><img src="{relx}" alt="{lbl}" loading="lazy"></a>'
-        extra_btns += f'\n    <button class="btn copyp" data-p="{html.escape(str(imgx))}">{lbl}パス</button>'
+        extras.append((imgx, relx, lbl))
+    # 投稿用に、その回の画像を全部 Documents\pa45-x-images\<フォルダ名>\ にまとめる。
+    # 元のスライドフォルダ（vol-NN / vol-NNb）は render-x-slide.py の書き出し先なので動かさずコピーする。
+    post_dir = POST_IMG_ROOT / f
+    pd = html.escape(str(post_dir))
+    copied = [sync_post_image(img, post_dir) for img in [img1, img2] + [e[0] for e in extras]]
     label, cls = STATUS.get(it["status"], ("―", "st-todo"))
     # スライドPNGがまだ無い回は、壊れた画像アイコンではなく「未作成」の枠を出す。
     # （ネタだけ先に board へ登録した回が上に並ぶので、画像が全滅したように見えるのを防ぐ）
+    # 画像クリックは画像を開かず、まとめフォルダのパスをコピーする。
     def shot(img, rel, lbl):
         if img.exists():
-            return (f'\n    <a href="{rel}" target="_blank">'
+            return (f'\n    <a href="{rel}" class="copyf" data-p="{pd}" title="クリックで画像フォルダのパスをコピー">'
                     f'<img src="{rel}" alt="{lbl}" loading="lazy"></a>')
         return (f'\n    <div class="noimg">{lbl}'
                 '<span>スライド未作成</span></div>')
 
-    def btn(img, lbl):
-        if not img.exists():
-            return ""
-        return (f'\n    <button class="btn copyp" data-p="{html.escape(str(img))}">{lbl}パス</button>')
-
     shot1 = shot(img1, rel1, "1枚目")
     shot2 = shot(img2, rel2, "2枚目")
-    btn1 = btn(img1, "1枚目")
-    btn2 = btn(img2, "2枚目")
+    extra_shots = "".join(shot(i, r, l) for i, r, l in extras)
+    folder_btn = (f'\n    <button class="btn copyp" data-p="{pd}">画像フォルダをコピー</button>'
+                  if any(copied) else "")
     if img1.exists() and img2.exists():
         miss = ""
     else:
@@ -236,7 +255,7 @@ def card_tips(it):
   {li_pre}
   <div class="acts">
     <button class="btn copy" data-t="{key}{it['vol']}">X用をコピー</button>
-{btn1}{btn2}{extra_btns}
+{folder_btn}
     <a class="btn go" href="{html.escape(intent(it['body']))}" target="_blank" rel="noopener">Xの下書きを開く →</a>
     {li_copy}<a class="btn li" href="{LI_COMPOSE}" target="_blank" rel="noopener">LinkedInを開く →</a>
   </div>
@@ -565,6 +584,10 @@ h1{font-size:24px;font-weight:900;margin-bottom:4px}
 .og.yt{background:#111;color:#bbb;font-size:12px;text-align:center;padding:34px 8px}
 .shots{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .shots img{width:100%;border-radius:8px;border:1px solid var(--ln);display:block}
+.shots a.copyf{position:relative;display:block;cursor:copy}
+.shots a.copyf.done::after{content:'フォルダのパスをコピー';position:absolute;inset:0;display:flex;
+  align-items:center;justify-content:center;background:rgba(0,0,0,.6);color:#fff;font-weight:700;
+  font-size:13px;border-radius:8px}
 .noimg{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
   aspect-ratio:16/9;border-radius:8px;border:1px dashed #d9c49a;background:#fffaf0;
   color:#8a5a00;font-size:11px;font-weight:700}
@@ -627,7 +650,7 @@ function show(pane){
   document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on', x.dataset.pane===pane));
   document.querySelectorAll('.pane').forEach(x=>x.classList.toggle('on', x.id===pane));
 }
-const HASH={'pane-pa45':'#pa45','pane-announce':'#announce','pane-tips':'#tips','pane-cs':'#cs','pane-blog':'#blog','pane-linkedin':'#linkedin','pane-insight':'#insight'};
+const HASH={'pane-pa45':'#pa45','pane-announce':'#announce','pane-tips':'#tips','pane-cs':'#cs','pane-mc':'#mc','pane-blog':'#blog','pane-linkedin':'#linkedin','pane-insight':'#insight'};
 document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
   show(t.dataset.pane);
   history.replaceState(null,'', HASH[t.dataset.pane]||'#pa45');
@@ -683,6 +706,12 @@ document.querySelectorAll('.copy3,.copyp').forEach(b=>b.addEventListener('click'
   await navigator.clipboard.writeText(b.dataset.p);
   flash(b,'パスをコピー');
 }));
+// 画像サムネをクリック → 画像を開かずに、その回の画像フォルダのパスをコピー
+document.querySelectorAll('a.copyf').forEach(a=>a.addEventListener('click',async e=>{
+  e.preventDefault();
+  await navigator.clipboard.writeText(a.dataset.p);
+  a.classList.add('done');setTimeout(()=>a.classList.remove('done'),1500);
+}));
 
 // 投稿済みチェック（このPCのブラウザに保存。35本を数ヶ月かけて回すための進捗管理）
 const KEY='pa45-x-posted';
@@ -718,6 +747,7 @@ def main():
     # 表示順：order（小さいほど上＝保存したくなる実務ネタを前に）→ 無ければ vol 降順で後ろに
     pa_tips.sort(key=lambda t: (t.get("order", 10000), -t["vol"]))
     cs = [t for t in tips if t.get("series") == "copasta"]
+    mc = [t for t in tips if t.get("series") == "m365copilot"]
 
     bf = ROOT / "data" / "blog-board.json"
     blog = json.loads(bf.read_text(encoding="utf-8"))["items"] if bf.exists() else []
@@ -820,6 +850,7 @@ def main():
   <button class="tab" data-pane="pane-announce">開催告知<span class="c">{n_ann}本</span></button>
   <button class="tab" data-pane="pane-tips">X技術Tips<span class="c">{len(pa_tips)}本</span></button>
   <button class="tab" data-pane="pane-cs">コパスタ<span class="c">{len(cs)}本</span></button>
+  <button class="tab" data-pane="pane-mc">M365 Copilot<span class="c">{len(mc)}本</span></button>
   <button class="tab" data-pane="pane-blog">ブログ<span class="c">PA {pa_ready + pa_fix}／コパスタ {cs_ready + cs_fix}</span></button>
   <button class="tab" data-pane="pane-linkedin">LinkedIn<span class="c">{len(linkedin)}本</span></button>
   <button class="tab" data-pane="pane-insight">考察<span class="c">{len(ins_posts)}本</span></button>
@@ -851,7 +882,8 @@ def main():
 <section class="pane" id="pane-tips">
   <div class="note">
     Power Automateの時短ワザ（#PowerAutomate）。画像2枚を1ツイートに添付します。<br>
-    <b>「Xの下書きを開く」→ 画像ボタン → ファイル選択の枠に「画像2枚のパス」を貼り付け</b>で2枚同時に選べます。貼り付け順＝添付順（概念 → 作り方）。<br>
+    各回の画像は <code>Documents\\pa45-x-images\\フォルダ名\\</code> に1か所にまとめてあります。<b>画像をクリック（または「画像フォルダをコピー」）でそのフォルダのパスがコピーされます</b>。<br>
+    <b>「Xの下書きを開く」→ 画像ボタン → ファイル選択のアドレス欄にフォルダのパスを貼り付け → Ctrl+A</b>で2枚同時に選べます。<br>
     <b>LinkedInにも同じ内容を出せます</b>（自分の投稿の再利用はOK）。<b>本文をコピー →「LinkedInを開く」→ 貼り付け → 画像で同じ2枚を添付</b>。<br>
     Vol番号＝フォルダ番号（Vol.69以降が一致）。
   </div>
@@ -861,6 +893,11 @@ def main():
 <section class="pane" id="pane-cs">
   <div class="note">{snote.get("copasta", "Copilot Studio（コパスタ）シリーズ。画像2枚を1ツイートに一緒に添付します。")}</div>
   <div class="grid">{"".join(card_tips(c) for c in cs)}</div>
+</section>
+
+<section class="pane" id="pane-mc">
+  <div class="note">{snote.get("m365copilot", "Microsoft 365 Copilot の時短ワザ（#M365Copilot）。画像2枚を1ツイートに一緒に添付します。")}</div>
+  <div class="grid">{"".join(card_tips(m) for m in mc)}</div>
 </section>
 
 <section class="pane" id="pane-blog">
@@ -920,7 +957,7 @@ def main():
     OUT.write_text(page, encoding="utf-8")
     print(f"[OK] {OUT}")
     print(f"  PA45 {len(pa45)}本 / 開催告知 {n_ann}本（{len(ann)}回×4）"
-          f" / X技術Tips {len(pa_tips)}本 / コパスタ {len(cs)}本"
+          f" / X技術Tips {len(pa_tips)}本 / コパスタ {len(cs)}本 / M365 Copilot {len(mc)}本"
           f" / ブログ {len(blog)}本（下書き{n_draft}｜PA {len(blog_pa)}・コパスタ {len(blog_cs)}）"
           f" / LinkedIn {len(linkedin)}本")
     for e in ann:
