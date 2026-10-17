@@ -221,6 +221,8 @@ def build_next_event_block(vol, next_event):
     if next_event and next_event.get("vol"):
         nv     = next_event["vol"]
         ndate  = next_event.get("date") or "日程調整中"
+        if next_event.get("date_label"):   # upcoming-event.json は date_label/time で持つ
+            ndate = (next_event["date_label"] + " " + next_event.get("time", "")).strip()
         ntheme = next_event.get("theme", "")
         ndesc  = next_event.get("description") or ntheme
         if next_event.get("connpass_url"):
