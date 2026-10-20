@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.149-1 送ってよいかの確認は、チェック1つで済む</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/tips-base.css">
+<style>
+  .stage{flex-direction:column;gap:8px;}
+  .grid{flex:1;min-height:0;display:grid;grid-template-columns:104px repeat(3,1fr);grid-template-rows:auto 1fr auto auto;gap:6px 10px;}
+  .rl{display:flex;align-items:center;justify-content:center;text-align:center;font-size:17px;font-weight:900;color:#475569;line-height:1.25;
+    background:#F1F5F9;border-radius:9px;padding:4px;}
+  .hd{display:flex;align-items:center;gap:9px;border-radius:11px;padding:5px 10px;color:#fff;}
+  .hd .no{flex:0 0 auto;width:32px;height:32px;border-radius:50%;background:#fff;font-size:18px;font-weight:900;display:flex;align-items:center;justify-content:center;}
+  .hd img{width:30px;height:30px;flex:0 0 auto;background:#fff;border-radius:7px;padding:3px;}
+  .hd .nm{display:flex;flex-direction:column;line-height:1.2;}
+  .hd .nm b{font-size:20px;font-weight:900;}
+  .hd .nm i{font-style:normal;font-size:14.5px;font-weight:700;opacity:.95;white-space:nowrap;}
+  .c1{--c:#2563EB;--bg:#EFF6FF;--ln:#BFD3F6;--dk:#1E40AF;}
+  .c2{--c:#038387;--bg:#EAF7F6;--ln:#9ED8D3;--dk:#0F5F59;}
+  .c3{--c:#5B5FC7;--bg:#F1F1FC;--ln:#B4B8F0;--dk:#3B3FA0;}
+  .hd.c1{background:linear-gradient(90deg,#1D4ED8,#3B82F6);} .hd.c2{background:linear-gradient(90deg,#036C70,#0B9A8F);} .hd.c3{background:linear-gradient(90deg,#4B4FB8,#7B83EB);}
+  .hd .no{color:var(--c);}
+  /* モック */
+  .mk{min-height:0;background:#fff;border:2.5px solid var(--ln);border-radius:10px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 3px 9px rgba(20,40,90,.12);}
+  .mk .mh{flex:0 0 auto;display:flex;align-items:center;gap:7px;padding:4px 9px;background:var(--bg);border-bottom:1.5px solid var(--ln);font-size:15.5px;font-weight:900;color:var(--dk);}
+  .mk .mh img{width:24px;height:24px;}
+  .mk .bd{flex:1;min-height:0;display:flex;flex-direction:column;gap:4px;padding:6px 9px;}
+  .ap .ttl{font-size:16.5px;font-weight:900;color:var(--navy);}
+  .ap .row{display:flex;gap:8px;align-items:baseline;border-bottom:1.2px solid #EEF2F6;padding-bottom:1px;white-space:nowrap;}
+  .ap .row .k{font-size:14px;font-weight:900;color:#64748B;flex:0 0 52px;}
+  .ap .row .v{font-size:15.5px;font-weight:900;color:var(--navy);}
+  .ap .cmt{border:1.5px solid #CBD5E1;border-radius:6px;padding:3px 8px;font-size:15.5px;font-weight:700;color:#334155;}
+  .bt{display:flex;gap:6px;margin-top:auto;}
+  .bt span{flex:1;text-align:center;border-radius:7px;padding:4px;font-size:16px;font-weight:900;}
+  .bt .y{background:#16A34A;color:#fff;box-shadow:0 0 0 3px #BBF7D0;} .bt .n{background:#fff;color:#475569;border:2px solid #CBD5E1;}
+  .ls .bd{padding:0;gap:0;}
+  .ls .lr{flex:1;display:grid;grid-template-columns:1fr 62px 62px;align-items:center;font-size:15.5px;font-weight:700;color:#334155;border-bottom:1.2px solid #EEF2F6;padding:0 8px;white-space:nowrap;}
+  .ls .lr.h{flex:0 0 auto;font-size:14px;font-weight:900;color:#475569;background:#F8FAFC;padding:3px 8px;}
+  .ls .lr span:not(:first-child){text-align:center;}
+  .ls .lr.on{background:#DCFCE7;box-shadow:inset 4px 0 0 #16A34A;}
+  .cb{display:inline-flex;width:20px;height:20px;border-radius:4px;border:2px solid #94A3B8;background:#fff;vertical-align:middle;align-items:center;justify-content:center;}
+  .cb.y{background:#038387;border-color:#038387;}
+  .cb.y::after{content:"";width:9px;height:5px;border:solid #fff;border-width:0 0 3px 3px;transform:rotate(-45deg) translate(1px,-1px);}
+  .tm .bd{background:#F5F5F5;gap:5px;}
+  .tm .msg .av{width:28px;height:28px;font-size:13px;}
+  .tm .msg .tx{font-size:15.5px;}
+  .tm .msg .bub{background:#fff;padding:4px 8px;}
+  .tm .msg .nm{font-size:13.5px;margin:0;}
+  .acard{flex:1;min-height:0;background:#fff;border:2px solid #B4B8F0;border-left:5px solid #5B5FC7;border-radius:8px;padding:5px 9px;display:flex;flex-direction:column;gap:3px;}
+  .acard .t{font-size:16px;font-weight:900;color:var(--navy);}
+  .acard .r{font-size:15.5px;font-weight:700;color:#334155;white-space:nowrap;}
+  .bt .p{background:#5B5FC7;color:#fff;box-shadow:0 0 0 3px #C7CAF5;}
+  /* 得意なこと */
+  .fx{display:flex;align-items:center;gap:8px;background:var(--bg);border:2px solid var(--ln);border-radius:10px;padding:5px 8px;}
+  .fx .ill{flex:0 0 122px;height:70px;position:relative;border-radius:8px;overflow:hidden;background:#fff;}
+  .fx .ill svg{position:absolute;inset:0;width:100%;height:100%;}
+  .fx .tx{display:flex;flex-direction:column;gap:4px;}
+  .fx .tx b{font-size:17px;font-weight:900;color:var(--dk);line-height:1.28;}
+  .fx .sp{align-self:flex-start;font-size:14.5px;font-weight:900;color:#fff;background:var(--c);border-radius:999px;padding:1px 10px;}
+  .jobs{display:flex;flex-wrap:wrap;gap:5px;align-content:center;}
+  .jobs span{font-size:15.5px;font-weight:900;color:var(--dk);background:#fff;border:2px solid var(--ln);border-radius:999px;padding:2px 10px;white-space:nowrap;}
+  /* 結論の帯 */
+  .rule{flex:0 0 auto;display:flex;align-items:center;gap:12px;background:#FFFBEB;border:2.5px solid var(--amber);border-radius:12px;padding:5px 130px 5px 12px;position:relative;}
+  .rule .rh{flex:0 0 auto;font-size:17px;font-weight:900;color:#92400E;line-height:1.25;}
+  .pipe{flex:1;display:flex;align-items:center;gap:6px;}
+  .pp{display:flex;align-items:center;gap:6px;border-radius:9px;padding:5px 9px;font-size:16px;font-weight:900;white-space:nowrap;background:#fff;border:2px solid #CBD5E1;color:#334155;}
+  .pp img{width:26px;height:26px;}
+  .pp .au{font-size:13.5px;color:#fff;background:#64748B;border-radius:5px;padding:0 5px;}
+  .pp.hu{background:#16A34A;border-color:#16A34A;color:#fff;box-shadow:0 0 0 4px #BBF7D0;}
+  .pp.hu .cb{border-color:#fff;background:#fff;}
+  .pp.hu .cb::after{content:"";width:9px;height:5px;border:solid #16A34A;border-width:0 0 3px 3px;transform:rotate(-45deg) translate(1px,-1px);}
+  .pp.ir{border-color:var(--red);color:var(--red-dark);background:#FEF2F2;}
+  .pp.ir .lk{font-size:13.5px;color:#fff;background:var(--red);border-radius:5px;padding:0 5px;}
+  .pa{flex:0 0 auto;width:22px;height:22px;color:#94A3B8;}
+  .rule .chara{position:absolute;right:10px;bottom:-72px;height:118px;z-index:2;filter:drop-shadow(0 3px 4px rgba(0,0,0,.25));}
+  .rn{font-size:16px;font-weight:900;color:#92400E;line-height:1.25;margin-left:6px;}
+  .next .uses{margin-left:18px;}
+  .next .uses span.u{font-size:15px;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={bulb:'<path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/>',arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>'};
+const SH=(id,c)=>`<filter id="${id}" x="-30%" y="-30%" width="160%" height="170%"><feDropShadow dx="0" dy="1.5" stdDeviation="1.6" flood-color="${c||'#1B2A44'}" flood-opacity=".25"/></filter>`;
+const VB='0 0 132 76';
+
+/* ① 承認：記録が時刻とコメントごと残る */
+const f1=`<svg viewBox="${VB}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs>${SH('a','#1E3A8A')}</defs><rect width="132" height="76" fill="#DBEAFE"/>
+  <g filter="url(#a)"><rect x="6" y="8" width="80" height="60" rx="5" fill="#fff" stroke="#93C5FD"/>
+    <rect x="6" y="8" width="80" height="12" rx="5" fill="#2563EB"/><rect x="6" y="14" width="80" height="6" fill="#2563EB"/>
+    <rect x="12" y="12" width="30" height="4" rx="2" fill="#fff"/>
+    ${[0,1,2].map(i=>`<circle cx="16" cy="${30+i*13}" r="5" fill="${['#F59E0B','#0EA5E9','#8B5CF6'][i]}"/>
+      <rect x="25" y="${26+i*13}" width="${[30,24,28][i]}" height="4" rx="2" fill="#94A3B8"/><rect x="25" y="${32+i*13}" width="18" height="3" rx="1.5" fill="#CBD5E1"/>
+      <circle cx="76" cy="${30+i*13}" r="4.5" fill="${i<2?'#16A34A':'#DC2626'}"/>
+      <path d="${i<2?`M73.8 ${30+i*13} l1.6 1.6 l3 -3`:`M74 ${28+i*13} l4 4 M78 ${28+i*13} l-4 4`}" stroke="#fff" stroke-width="1.6" fill="none" stroke-linecap="round"/>`).join('')}</g>
+  <g filter="url(#a)" transform="rotate(-12 109 42)"><circle cx="109" cy="42" r="19" fill="#fff" stroke="#DC2626" stroke-width="3"/>
+    <circle cx="109" cy="42" r="14.5" fill="none" stroke="#DC2626" stroke-width="1.2"/>
+    <text x="109" y="47" font-family="Noto Sans JP" font-size="13" font-weight="900" fill="#DC2626" text-anchor="middle">承認</text></g>
+</svg>`;
+/* ② リスト：何件もまとめてチェック */
+const f2=`<svg viewBox="${VB}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs>${SH('b','#0F3D38')}</defs><rect width="132" height="76" fill="#D5F0ED"/>
+  <g filter="url(#b)"><rect x="8" y="6" width="116" height="64" rx="5" fill="#fff" stroke="#9ED8D3"/>
+  ${[1,1,1,1,0].map((on,i)=>`<rect x="9" y="${8+i*12}" width="114" height="11" fill="${on?'#E6F6F4':'#fff'}"/>
+    <rect x="15" y="${12+i*12}" width="${[52,44,58,40,48][i]}" height="4" rx="2" fill="#94A3B8"/>
+    <rect x="96" y="${9.5+i*12}" width="9" height="9" rx="2" fill="${on?'#038387':'#fff'}" stroke="${on?'#038387':'#94A3B8'}" stroke-width="1.4"/>
+    ${on?`<path d="M98 ${14+i*12} l2 2 l4 -4" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round"/>`:''}`).join('')}</g>
+  <path d="M110 66 l0 -15 l11 10 l-6 1 l3 6 l-3 1.4 l-3 -6z" fill="#1F2937" stroke="#fff" stroke-width="1.2"/>
+  <rect x="56" y="52" width="38" height="18" rx="9" fill="#038387"/><text x="75" y="65" font-family="Noto Sans JP" font-size="12" font-weight="900" fill="#fff" text-anchor="middle">4件</text>
+</svg>`;
+/* ③ Teams：会話の流れの中にカード */
+const f3=`<svg viewBox="${VB}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs>${SH('c','#1E1B4B')}</defs><rect width="132" height="76" fill="#E6E7FA"/>
+  <circle cx="14" cy="13" r="6" fill="#64748B"/><rect x="24" y="7" width="58" height="12" rx="6" fill="#fff"/>
+  <g filter="url(#c)"><rect x="24" y="24" width="96" height="30" rx="5" fill="#fff" stroke="#5B5FC7" stroke-width="1.4"/>
+    <rect x="24" y="24" width="4" height="30" rx="2" fill="#5B5FC7"/>
+    <rect x="33" y="29" width="54" height="4" rx="2" fill="#334155"/>
+    <rect x="33" y="40" width="34" height="10" rx="3" fill="#5B5FC7"/><path d="M45 45 l3 3 l6 -6" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <rect x="71" y="40" width="34" height="10" rx="3" fill="#fff" stroke="#CBD5E1"/></g>
+  <circle cx="14" cy="64" r="6" fill="#0EA5E9"/><rect x="24" y="58" width="44" height="12" rx="6" fill="#fff"/>
+  <rect x="74" y="58" width="50" height="12" rx="6" fill="#5B5FC7" opacity=".85"/>
+  <path d="M8 22 V52" stroke="#94A3B8" stroke-width="1.2" stroke-dasharray="2 2"/>
+</svg>`;
+
+const ck=(on)=>`<span class="cb${on?' y':''}"></span>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.149-1</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">送ってよいかの確認は、<span class="hl">チェック1つ</span>で済む<br>押す場所は、仕事に合わせて3つから選ぶ</div>
+    <img class="title-chara" src="${A}chara/chara_confident.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svgw(P.bulb,2.2)}</div>
+    <div class="txt">下書き・宛先の準備まではフローが自動で進めます。<br>人が押すのは<b>取り消せない操作の直前の1回</b>だけ。押した瞬間に続きが動きます</div>
+  </div>
+
+  <div class="stage">
+    <div class="grid">
+      <div></div>
+      <div class="hd c1"><span class="no">1</span><img src="${A}icons/pa_logo.png" alt=""><span class="nm"><b>承認アプリ／メール</b><i>開始して承認を待機</i></span></div>
+      <div class="hd c2"><span class="no">2</span><img src="${A}icons/ms/lists.svg" alt=""><span class="nm"><b>SharePoint リストの列</b><i>はい/いいえ 列にチェック</i></span></div>
+      <div class="hd c3"><span class="no">3</span><img src="${A}icons/ms/teams.svg" alt=""><span class="nm"><b>Teams のカード</b><i>カードのボタンを押す</i></span></div>
+
+      <div class="rl">押す<br>画面</div>
+      <div class="mk ap c1">
+        <div class="mh"><img src="${A}icons/ms/outlook.svg" alt="">承認の依頼が届く</div>
+        <div class="bd">
+          <div class="ttl">見積書の送付：みどり工務店</div>
+          <div class="row"><span class="k">金額</span><span class="v">¥486,000（税込）</span></div>
+          <div class="row"><span class="k">依頼者</span><span class="v">山田 太郎</span></div>
+          <div class="cmt">単価を確認済み。送ってOK</div>
+          <div class="bt"><span class="y">承認</span><span class="n">拒否</span></div>
+        </div>
+      </div>
+      <div class="mk ls c2">
+        <div class="mh"><img src="${A}icons/ms/lists.svg" alt="">11月講座の案内メール</div>
+        <div class="bd">
+          <div class="lr h"><span>タイトル</span><span>送信OK</span><span>送信済み</span></div>
+          <div class="lr"><span>佐藤 花子 様</span><span>${ck(1)}</span><span>はい</span></div>
+          <div class="lr on"><span>鈴木 一郎 様</span><span>${ck(1)}</span><span>いいえ</span></div>
+          <div class="lr on"><span>田中 美咲 様</span><span>${ck(1)}</span><span>いいえ</span></div>
+          <div class="lr"><span>高橋 健 様</span><span>${ck(0)}</span><span>いいえ</span></div>
+        </div>
+      </div>
+      <div class="mk tm c3">
+        <div class="mh"><img src="${A}icons/ms/teams.svg" alt="">営業チーム</div>
+        <div class="bd">
+          <div class="msg"><span class="av">山</span><div class="bub"><div class="tx">商談お疲れさまでした</div></div></div>
+          <div class="acard">
+            <div class="t">鈴木 一郎 様へ、お礼メールを送りますか</div>
+            <div class="r">件名：本日はありがとうございました</div>
+            <div class="bt"><span class="p">送信OK</span><span class="n">直して送る</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="rl">得意な<br>こと</div>
+      <div class="fx c1"><div class="ill">${f1}</div><div class="tx"><b>誰がいつ押したか<br>コメントごと残る</b><span class="sp">押すとほぼ即時</span></div></div>
+      <div class="fx c2"><div class="ill">${f2}</div><div class="tx"><b>一覧で何件も<br>まとめて押せる</b><span class="sp">状態が表に残る</span></div></div>
+      <div class="fx c3"><div class="ill">${f3}</div><div class="tx"><b>会話の流れの中で<br>その場で押せる</b><span class="sp">画面を移らない</span></div></div>
+
+      <div class="rl">向いている<br>仕事</div>
+      <div class="jobs c1"><span>見積書・発注書の送付</span><span>経費の上長確認</span></div>
+      <div class="jobs c2"><span>講座の案内メール</span><span>請求書の月末送付</span></div>
+      <div class="jobs c3"><span>商談後のお礼メール</span><span>お知らせの公開</span></div>
+    </div>
+
+    <div class="rule">
+      <span class="rh">人を置くのは<br>ここだけ</span>
+      <div class="pipe">
+        <span class="pp"><span class="au">自動</span>下書きを作る</span><span class="pa">${svgw(P.arrow,3)}</span>
+        <span class="pp"><span class="au">自動</span>宛先を集める</span><span class="pa">${svgw(P.arrow,3)}</span>
+        <span class="pp hu">${ck(1)}人がチェック</span><span class="pa">${svgw(P.arrow,3)}</span>
+        <span class="pp ir"><img src="${A}icons/pa_outlook.png" alt="">メール送信<span class="lk">取り消せない</span></span>
+        <span class="rn">押した瞬間に<br>フローが送る</span>
+      </div>
+      <img class="chara" src="${A}chara/chara_point.png" alt="">
+    </div>
+  </div>
+
+  <div class="next">
+    <span class="na">${svgw(P.arrow,3)}</span>
+    <span><b>作り方は2枚目へ</b>（②リスト版）</span>
+    <span class="uses"><span class="ul">誰に刺さる</span><span class="u">総務・経理</span><span class="u">営業事務</span><span class="u">講座・勉強会の運営</span></span>
+  </div>
+  <div class="src">出典：Microsoft Learn「承認フローを作成する」「SharePoint コネクタ」「Teams でアダプティブ カードを使用する」／人名・会社名・金額は架空の例</div>
+`;
+</script>
+</body>
+</html>

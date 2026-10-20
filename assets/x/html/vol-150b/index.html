@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.150-2 AIの下書きをリストに置き、チェックで送る作り方</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/tips-base.css">
+<style>
+  .scene{height:72px;}
+  .cardb{gap:5px;padding:6px 9px;}
+  .cardh{font-size:15.5px;padding:6px 10px;}
+  .col.c3{flex:1.32;}
+  .col.ai{background:#F7F3FF;border:2.5px solid #C9B4F4;}
+  .col.ai .ch2{color:#5B21B6;}
+  .col.ai .ch2 .n{background:linear-gradient(180deg,#A78BFA,#6D28D9);}
+  .col.ai .card{border-color:#C9B4F4;}
+  .col.ai .cardh{background:#EDE4FF;border-bottom-color:#D8C9FA;color:#5B21B6;}
+  .col.ai .cap{background:#E4D8FA;color:#5B21B6;}
+  .col.sp{background:#EFFAF8;border:2.5px solid #99DCD3;}
+  .col.sp .ch2{color:#0F5F59;}
+  .col.sp .ch2 .n{background:linear-gradient(180deg,#14B8A6,#0F766E);}
+  .col.sp .card{border-color:#99DCD3;}
+  .col.sp .cardh{background:#DDF4F0;border-bottom-color:#B5E6DE;color:#0F5F59;}
+  .col.sp .cap{background:#CDEDE7;color:#0F5F59;}
+  .col.c3{background:#EFF6FF;border:2.5px solid #A9C6F5;}
+  .col.c3 .ch2{color:var(--blue-dark);}
+  .col.c3 .ch2 .n{background:linear-gradient(180deg,#60A5FA,#2563EB);}
+  .col.c3 .card{border-color:#A9C6F5;}
+  .col.c3 .cardh{background:#E3EEFE;border-bottom-color:#C7DBFB;color:var(--blue-dark);}
+  .col.c3 .cap{background:#DBE8FD;color:var(--blue-dark);}
+  .ch2 .fl{flex:0 0 auto;font-size:14.5px;font-weight:900;color:#fff;border-radius:6px;padding:1px 8px;margin-left:auto;}
+  .ch2 .fl.f1{background:#7C3AED;} .ch2 .fl.f2{background:#2563EB;}
+  .ci2{width:26px;height:26px;flex:0 0 auto;display:block;}
+  .step{display:flex;flex-direction:column;gap:4px;border-top:1.5px solid #E5E7EB;padding-top:5px;}
+  .step .sh{display:flex;align-items:center;gap:7px;font-size:15.5px;font-weight:900;color:#334155;}
+  .step .sh img{width:26px;height:26px;object-fit:contain;flex:0 0 auto;}
+  .fi{display:flex;align-items:center;gap:6px;flex-wrap:wrap;background:#fff;border:2px solid #B9C7DC;border-radius:7px;
+    padding:2px 8px;font-size:15.5px;font-weight:900;color:var(--navy);line-height:1.3;}
+  .fi.hot{border-color:var(--orange);background:#FFF7ED;}
+  .fi .k{font-size:14px;color:#475569;}
+  .fi .k.w{flex:0 0 52px;}
+  .pbox{border:2px solid #C9B4F4;background:#FAF7FF;border-radius:8px;padding:4px 8px;font-size:15.5px;font-weight:700;color:#1F2937;line-height:1.38;}
+  .pbox .pl{font-size:13.5px;font-weight:900;color:#6D28D9;}
+  .pbox b{color:#B91C1C;}
+  .out{display:flex;align-items:center;gap:6px;font-size:15px;font-weight:900;color:#475569;background:#FAF7FF;border:2px dashed #C9B4F4;border-radius:8px;padding:3px 8px;}
+  .nm{display:grid;grid-template-columns:1fr 24px 1fr;align-items:center;gap:4px;font-size:15.5px;font-weight:900;}
+  .nm .en{font-family:'Roboto Mono',monospace;color:#0F5F59;background:#E6F4F1;border-radius:5px;padding:1px 7px;}
+  .nm .ja{color:var(--navy);background:#F1F5F9;border-radius:5px;padding:1px 7px;}
+  .nm i{display:block;width:22px;height:22px;color:#0F766E;}
+  .nmh{font-size:13.5px;font-weight:900;color:#64748B;display:grid;grid-template-columns:1fr 24px 1fr;gap:4px;}
+  .code{font-size:15.5px;line-height:1.45;padding:5px 9px;white-space:nowrap;}
+  .code .c{color:#94A3B8;}
+  .tgh{display:flex;align-items:center;gap:6px;font-size:14px;font-weight:900;color:#475569;}
+  .tgh .tag{background:#1E293B;color:#FDE68A;border-radius:5px;padding:0 7px;font-size:14px;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={warn:'<path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>',
+  bulb:'<path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/>',
+  spark:'<path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/>',
+  arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>'};
+const SH=(id,c)=>`<filter id="${id}" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="${c||'#1B2A44'}" flood-opacity=".22"/></filter>`;
+const ARW=(x1,x2,y,c)=>`<path d="M${x1} ${y} H ${x2}" stroke="${c}" stroke-width="4.4" stroke-linecap="round"/><path d="M${x2-6} ${y-6} l8 6 l-8 6" fill="none" stroke="${c}" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"/>`;
+const T=(x,y,t,sz,wt,f,anc,fam)=>`<text x="${x}" y="${y}" font-family="${fam||'Noto Sans JP'}" font-size="${sz}" font-weight="${wt}" fill="${f}" text-anchor="${anc||'start'}">${t}</text>`;
+
+/* ① 回答 → AI → 下書き */
+const VB1='0 0 394 84';
+const s1=`<svg viewBox="${VB1}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs>${SH('f','#4C1D95')}<linearGradient id="ag" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#A78BFA"/><stop offset="1" stop-color="#6D28D9"/></linearGradient></defs>
+  <rect width="394" height="84" fill="#EDE4FF"/><g transform="translate(16 0)">
+  <g filter="url(#f)"><rect x="12" y="12" width="96" height="60" rx="7" fill="#fff"/><rect x="12" y="12" width="96" height="17" rx="7" fill="#0B9A8F"/><rect x="12" y="21" width="96" height="8" fill="#0B9A8F"/>
+    ${T(60,25,'回答 1件',11,900,'#fff','middle')}${[0,1,2].map(i=>`<rect x="20" y="${38+i*10}" width="${[80,64,48][i]}" height="4.5" rx="2" fill="#94A3B8"/>`).join('')}</g>
+  ${ARW(116,140,42,'#7C3AED')}
+  <g filter="url(#f)"><circle cx="172" cy="42" r="24" fill="url(#ag)"/><path d="M172 27l3.4 8.6 8.6 3.4-8.6 3.4-3.4 8.6-3.4-8.6-8.6-3.4 8.6-3.4z" fill="#fff"/></g>
+  ${ARW(204,228,42,'#7C3AED')}
+  <g filter="url(#f)"><rect x="236" y="8" width="114" height="68" rx="6" fill="#fff" stroke="#A78BFA" stroke-width="2" stroke-dasharray="5 3"/>
+    ${T(246,25,'テキスト',11,900,'#6D28D9')}${[0,1,2,3].map(i=>`<rect x="246" y="${34+i*9}" width="${[92,86,94,52][i]}" height="4.5" rx="2" fill="#7C3AED" opacity=".5"/>`).join('')}</g></g>
+</svg>`;
+/* ② 英数字の列 → 表示名を日本語に */
+const VB2='0 0 394 84';
+const hdr=(x,y,w,cells,fill,tc,fam)=>cells.map((c,i)=>`<rect x="${x+i*w}" y="${y}" width="${w}" height="24" fill="${fill}" stroke="#99DCD3"/>${T(x+i*w+w/2,y+17,c,12,900,tc,'middle',fam)}`).join('');
+const s2=`<svg viewBox="${VB2}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs>${SH('f','#0F3D38')}</defs><rect width="394" height="84" fill="#DDF4F0"/><g transform="translate(16 0)">
+  <g filter="url(#f)">${hdr(10,16,52,['Draft','SendOK','Sent'],'#fff','#0F5F59','Roboto Mono')}
+    ${[0,1].map(r=>[0,1,2].map(i=>`<rect x="${10+i*52}" y="${40+r*14}" width="52" height="14" fill="#fff" stroke="#E2E8F0"/>`).join('')).join('')}</g>
+  ${T(88,80,'① 英数字で作る',11,900,'#0F766E','middle')}
+  ${ARW(172,194,38,'#0F766E')}
+  <g filter="url(#f)">${hdr(200,16,52,['下書き','送信OK','送信済み'],'#0F766E','#fff')}
+    ${[0,1].map(r=>[0,1,2].map(i=>`<rect x="${200+i*52}" y="${40+r*14}" width="52" height="14" fill="#fff" stroke="#E2E8F0"/>`).join('')).join('')}</g>
+  ${T(278,80,'② 表示名だけ日本語に',11,900,'#0F766E','middle')}</g>
+</svg>`;
+/* ③ チェック → 送信 → 送信済み */
+const VB3='0 0 556 84';
+const s3=`<svg viewBox="${VB3}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs>${SH('f','#1E3A8A')}<linearGradient id="eg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#E2E8F0"/></linearGradient></defs>
+  <rect width="556" height="84" fill="#DBE8FD"/><g transform="translate(43 0)">
+  <g filter="url(#f)"><rect x="12" y="22" width="110" height="40" rx="8" fill="#fff" stroke="#0F766E" stroke-width="2"/>
+    <rect x="22" y="32" width="20" height="20" rx="4" fill="#0F766E"/><path d="M26 42 l4 4 l8 -9" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    ${T(50,47,'送信OK',12.5,900,'#0F5F59')}</g>
+  ${ARW(130,156,42,'#2563EB')}
+  <g filter="url(#f)"><rect x="164" y="18" width="72" height="48" rx="10" fill="#1E293B"/>${T(200,38,'条件',11,900,'#FDE68A','middle')}${T(200,56,'OK・未送信',10.5,900,'#fff','middle')}</g>
+  ${ARW(244,270,42,'#2563EB')}
+  <g filter="url(#f)" transform="rotate(-8 310 42)"><rect x="280" y="20" width="62" height="42" rx="4" fill="url(#eg)" stroke="#94A3B8" stroke-width="1.2"/>
+    <path d="M280 24 l31 21 l31 -21" fill="none" stroke="#94A3B8" stroke-width="1.4"/><rect x="328" y="24" width="9" height="11" rx="1" fill="#F87171"/></g>
+  ${ARW(350,372,42,'#16A34A')}
+  <g filter="url(#f)"><rect x="378" y="22" width="90" height="40" rx="8" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>
+    <circle cx="395" cy="42" r="10" fill="#16A34A"/><path d="M390 42 l4 4 l7 -8" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    ${T(434,47,'送信済み',11.5,900,'#065F46','middle')}</g></g>
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.150-2</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">作り方は<span class="hl">フロー2本</span>（下書きをリストに置く → チェックで送る）</div>
+    <img class="title-chara" src="${A}chara/chara_laptop.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svgw(P.bulb,2.2)}</div>
+    <div class="txt">1本目は下書きをリストに置くだけで、<b>メールは送りません</b>。<br>2本目は<b>送信OKがはい・送信済みがいいえ</b>の行だけで動き、人が直した下書き列を送ります</div>
+  </div>
+
+  <div class="stage">
+    <div class="col ai">
+      <div class="ch2"><span class="n">1</span>AIに下書きさせる<span class="fl f1">フロー1</span></div>
+      <div class="scene">${s1}</div>
+      <div class="body"><div class="card">
+        <div class="cardh"><img src="${A}icons/ms/forms.svg" alt="">新しい応答が送信されるとき</div>
+        <div class="cardb">
+          <div class="step" style="border-top:none;padding-top:0"><span class="sh"><img src="${A}icons/ms/forms.svg" alt="">応答の詳細を取得する</span></div>
+          <div class="step"><span class="sh"><span class="ci2" style="color:#7C3AED">${svgw(P.spark,2.2)}</span>プロンプトの実行</span>
+            <div class="pbox"><span class="pl">指示（1回だけ書く）</span><br>参加者へのお礼メールを書く。感想に1文だけ触れる。<b>日付や約束は書かない</b></div>
+            <span class="fi hot"><span class="k">入力</span><span class="dyn">名前</span><span class="dyn">感想</span></span>
+            <span class="out">返ってくる値 <span class="dyn">テキスト</span></span></div>
+        </div>
+      </div></div>
+      <div class="cap">確定できないことは<b>人が書き足す</b>前提</div>
+    </div>
+
+    <div class="col sp">
+      <div class="ch2"><span class="n">2</span>リストに置く<span class="fl f1">フロー1</span></div>
+      <div class="scene">${s2}</div>
+      <div class="body"><div class="card">
+        <div class="cardh"><img src="${A}icons/pa_sharepoint.png" alt="">項目の作成（お礼メール）</div>
+        <div class="cardb">
+          <span class="fi"><span class="k w">宛先</span><span class="dyn">名前</span></span>
+          <span class="fi"><span class="k w">メール</span><span class="dyn">メール</span></span>
+          <span class="fi hot"><span class="k w">下書き</span><span class="dyn">テキスト</span></span>
+          <span class="fi"><span class="k w">送信OK</span>いいえ<span class="k">／</span><span class="k">送信済み</span>いいえ</span>
+          <div class="nmh" style="margin-top:3px"><span>作る列（内部名）</span><span></span><span>表示名</span></div>
+          <div class="nm"><span class="en">SendOK</span><i>${svgw(P.arrow,3)}</i><span class="ja">送信OK</span></div>
+          <div class="nm"><span class="en">Sent</span><i>${svgw(P.arrow,3)}</i><span class="ja">送信済み</span></div>
+        </div>
+      </div></div>
+      <div class="cap">はい/いいえ列は<b>英数字で作る</b>。式で使うため</div>
+    </div>
+
+    <div class="col c3">
+      <div class="ch2"><span class="n">3</span>チェックされたら送る<span class="fl f2">フロー2</span></div>
+      <div class="scene">${s3}</div>
+      <div class="body"><div class="card">
+        <div class="cardh"><img src="${A}icons/pa_sharepoint.png" alt="">アイテムが作成または変更されたとき</div>
+        <div class="cardb">
+          <div class="tgh"><span class="tag">トリガー条件</span>2行とも満たすときだけ起動</div>
+          <div class="code"><span class="y">@equals</span>(triggerOutputs()?['body/<span class="g">SendOK</span>'], true)<br><span class="y">@equals</span>(triggerOutputs()?['body/<span class="g">Sent</span>'], false)</div>
+          <div class="step"><span class="sh"><img src="${A}icons/pa_outlook.png" alt="">メールの送信 (V2)</span>
+            <span class="fi"><span class="k">宛先</span><span class="dyn">メール</span><span class="k">件名</span>勉強会ご参加のお礼</span>
+            <span class="fi hot"><span class="k">本文</span><span class="dyn">下書き</span><span class="k">← 人が直した列から取る</span></span></div>
+          <div class="step"><span class="sh"><img src="${A}icons/pa_sharepoint.png" alt="">項目の更新<span class="fi" style="margin-left:6px"><span class="k">送信済み</span>はい</span></span></div>
+        </div>
+      </div></div>
+      <div class="cap">送信済みをはいにするので、<b>同じ人に二度送らない</b></div>
+    </div>
+  </div>
+
+  <div class="warnbar">
+    <span class="na">${svgw(P.warn,2.4)}</span>
+    <span class="ws"><span>AI Builder はクレジット消費（2026/11/1以降は Copilot クレジット）</span><span>本文はリストの下書き列から取る</span><span>列は英数字で作る</span></span>
+  </div>
+  <div class="src">出典：Microsoft Learn「条件を使用してトリガーをカスタマイズする」「Power Automate でプロンプトを使用する」「SharePoint コネクタ」「Microsoft Forms コネクタ」／名称は架空</div>
+`;
+</script>
+</body>
+</html>

@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.150-1 お礼メールはAIが下書き、人は送信OKにチェックするだけ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/tips-base.css">
+<style>
+  .stage{flex-direction:column;gap:8px;}
+  .flow{flex:1;min-height:0;display:flex;gap:18px;}
+  .fc{flex:1;min-width:0;min-height:0;display:flex;flex-direction:column;gap:6px;border-radius:14px;padding:7px 10px 8px;position:relative;}
+  .fc.c2{flex:1.2;}
+  .fc + .fc::before{content:"";position:absolute;left:-16px;top:50%;width:15px;height:32px;transform:translateY(-50%);
+    background:#64748B;clip-path:polygon(0 0,100% 50%,0 100%);z-index:4;}
+  .fc.c1{background:#F7F3FF;border:2.5px solid #C9B4F4;}
+  .fc.c2{background:#EFFAF8;border:2.5px solid #7FD0C5;}
+  .fc.c3{background:#EFF6FF;border:2.5px solid #A9C6F5;}
+  .kh{flex:0 0 auto;display:flex;align-items:center;gap:8px;}
+  .kh .no{flex:0 0 auto;width:32px;height:32px;border-radius:50%;color:#fff;font-size:18px;font-weight:900;display:flex;align-items:center;justify-content:center;}
+  .kh .kt{font-size:22px;font-weight:900;line-height:1.15;white-space:nowrap;}
+  .kh .role{margin-left:auto;flex:0 0 auto;font-size:15.5px;font-weight:900;color:#fff;border-radius:999px;padding:2px 11px;white-space:nowrap;}
+  .c1 .no,.c1 .role{background:#7C3AED;} .c1 .kt{color:#5B21B6;}
+  .c2 .no,.c2 .role{background:#0F766E;} .c2 .kt{color:#0F5F59;}
+  .c3 .no,.c3 .role{background:#2563EB;} .c3 .kt{color:var(--blue-dark);}
+  .sc{flex:0 0 96px;position:relative;border-radius:10px;overflow:hidden;}
+  .sc svg{position:absolute;inset:0;width:100%;height:100%;}
+  .mk{flex:1;min-height:0;background:#fff;border:2px solid #D5DEEA;border-radius:9px;display:flex;flex-direction:column;overflow:hidden;
+    box-shadow:0 3px 8px rgba(20,40,90,.10);position:relative;}
+  .mk .mh{flex:0 0 auto;display:flex;align-items:center;gap:7px;padding:4px 9px;color:#fff;font-size:15.5px;font-weight:900;}
+  .mk .mh img{width:24px;height:24px;background:#fff;border-radius:5px;padding:2px;}
+  .mh.fm{background:linear-gradient(90deg,#03787C,#0B9A8F);}
+  .mh.sp{background:linear-gradient(90deg,#036C70,#0F766E);}
+  .mh.ol{background:linear-gradient(90deg,#0F6CBD,#2563EB);}
+  .mk .bd{flex:1;min-height:0;display:flex;flex-direction:column;gap:5px;padding:6px 9px;}
+  .lbl{font-size:13.5px;font-weight:900;color:#64748B;}
+  .ans{font-size:15.5px;font-weight:700;color:var(--navy);line-height:1.38;background:#F1F8F7;border-left:4px solid #0B9A8F;border-radius:4px;padding:3px 7px;}
+  .pr{display:flex;align-items:center;gap:6px;font-size:15px;font-weight:900;color:#5B21B6;}
+  .pr .ar2{flex:0 0 auto;width:22px;height:22px;color:#7C3AED;}
+  .draft{flex:1;min-height:0;border:2px dashed #A78BFA;background:#FAF7FF;border-radius:8px;padding:5px 8px;font-size:15.5px;font-weight:700;color:#1F2937;line-height:1.4;}
+  .draft .dl{display:inline-flex;margin-right:6px;vertical-align:1px;align-items:center;gap:5px;font-size:13.5px;font-weight:900;color:#6D28D9;margin-bottom:2px;}
+  .draft .dl i{width:18px;height:18px;color:#7C3AED;display:block;}
+  .draft .mark{background:#EDE4FF;border-radius:3px;padding:0 2px;}
+  /* list */
+  .lt{display:flex;flex-direction:column;}
+  .lr{display:grid;grid-template-columns:78px 1fr 70px 76px;align-items:center;gap:6px;padding:4px 8px;border-bottom:1.2px solid #EEF2F6;
+    font-size:15.5px;font-weight:700;color:#334155;white-space:nowrap;}
+  .lr > span{overflow:hidden;text-overflow:ellipsis;}
+  .lr.h{font-size:13.5px;font-weight:900;color:#475569;background:#F1F5F9;padding:3px 8px;}
+  .lr.h span:nth-child(n+3){text-align:center;}
+  .lr .cb{justify-self:center;width:22px;height:22px;border:2.2px solid #94A3B8;border-radius:4px;background:#fff;}
+  .lr .cb.on{background:#0F766E;border-color:#0F766E;position:relative;}
+  .lr .cb.on::after{content:"";position:absolute;left:6px;top:1px;width:6px;height:12px;border:solid #fff;border-width:0 3px 3px 0;transform:rotate(45deg);}
+  .lr .st{justify-self:center;font-size:14px;font-weight:900;color:#065F46;background:#DCFCE7;border-radius:5px;padding:0 5px;}
+  .lr .st.no{color:#94A3B8;background:none;}
+  .lr.hot{background:#FFF7ED;box-shadow:inset 4px 0 0 var(--orange);color:var(--navy);font-weight:900;}
+  .lr.hot .cb{width:26px;height:26px;box-shadow:0 0 0 4px #FDBA74;}
+  .lr.hot .cb::after{left:7px;top:2px;width:7px;height:13px;}
+  .edit{flex:1;min-height:0;margin:5px 8px 6px;border:2.5px solid var(--orange);border-radius:9px;background:#fff;display:flex;flex-direction:column;position:relative;}
+  .edit .eh{display:flex;align-items:center;gap:6px;padding:3px 9px;background:#FFEDD5;border-radius:6px 6px 0 0;font-size:14.5px;font-weight:900;color:#9A3412;}
+  .edit .eh .pen{width:20px;height:20px;color:#EA580C;display:block;}
+  .edit .et{padding:4px 10px 0;font-size:15.5px;font-weight:700;color:#1F2937;line-height:1.42;}
+  .edit del{color:#94A3B8;text-decoration:line-through 2px #DC2626;}
+  .edit ins{text-decoration:none;background:#FEF08A;color:#9A3412;font-weight:900;border-radius:3px;padding:0 3px;}
+  .okrow{margin:auto 0 8px 10px;display:flex;align-items:center;gap:10px;}
+  .fixn{font-size:15.5px;font-weight:900;color:#9A3412;background:#FFEDD5;border:1.5px solid #FDBA74;border-radius:7px;padding:2px 8px;line-height:1.3;}
+  .okbig{display:flex;align-items:center;gap:9px;background:#0F766E;color:#fff;border-radius:10px;
+    padding:5px 14px 5px 8px;font-size:21px;font-weight:900;box-shadow:0 0 0 4px #99F6E4,0 4px 10px rgba(15,118,110,.35);position:relative;}
+  .okbig .bx{width:32px;height:32px;border-radius:6px;background:#fff;position:relative;}
+  .okbig .bx::after{content:"";position:absolute;left:10px;top:3px;width:9px;height:18px;border:solid #0F766E;border-width:0 4.5px 4.5px 0;transform:rotate(45deg);}
+  .okbig .cur{position:absolute;left:28px;top:10px;width:26px;height:30px;}
+  .c2 .ch{position:absolute;right:-4px;bottom:-4px;height:116px;z-index:3;filter:drop-shadow(0 3px 4px rgba(0,0,0,.25));}
+  /* mail */
+  .mf{display:flex;gap:6px;align-items:baseline;font-size:15.5px;font-weight:700;color:var(--navy);border-bottom:1.2px solid #EEF2F6;padding-bottom:2px;white-space:nowrap;}
+  .mf .k{flex:0 0 auto;font-size:13.5px;font-weight:900;color:#64748B;width:34px;}
+  .mbody{flex:1;min-height:0;font-size:15.5px;font-weight:700;color:#1F2937;line-height:1.4;}
+  .mbody ins{text-decoration:none;background:#FEF08A;color:#9A3412;font-weight:900;border-radius:3px;padding:0 3px;}
+  .sent{display:flex;align-items:center;gap:7px;background:#DCFCE7;border:2px solid #16A34A;border-radius:8px;padding:4px 8px;font-size:15.5px;font-weight:900;color:#065F46;white-space:nowrap;}
+  .sent .tk{flex:0 0 auto;width:24px;height:24px;border-radius:50%;background:#16A34A;color:#fff;display:flex;align-items:center;justify-content:center;}
+  .sent .tk svg{width:16px;height:16px;}
+  .sent .tm{margin-left:auto;font-family:'Roboto Mono',monospace;font-size:15.5px;color:#065F46;}
+  .kc{flex:0 0 auto;font-size:15.5px;font-weight:900;line-height:1.3;border-radius:8px;padding:4px 9px;}
+  .c1 .kc{background:#E4D8FA;color:#5B21B6;} .c2 .kc{background:#CDEDE7;color:#0F5F59;} .c3 .kc{background:#DBE8FD;color:var(--blue-dark);}
+  .kc b{color:var(--orange);}
+  .bot{flex:0 0 auto;display:flex;gap:10px;align-items:stretch;}
+  .roles{flex:0 0 auto;display:flex;align-items:center;gap:8px;background:#FFFBEB;border:2px solid #FCD34D;border-radius:10px;padding:4px 12px;}
+  .roles .rl{font-size:14px;font-weight:900;color:#B45309;margin-right:2px;}
+  .roles .r{display:flex;align-items:center;gap:6px;font-size:22px;font-weight:900;line-height:1;white-space:nowrap;}
+  .roles .r i{display:block;width:28px;height:28px;}
+  .roles .r img{width:28px;height:28px;}
+  .roles .ra{width:22px;height:22px;color:#B45309;flex:0 0 auto;}
+  .bot .uses{flex:1;background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:10px;padding:5px 10px;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={bulb:'<path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/>',arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',
+  down:'<path d="M12 4v15M6 13l6 6 6-6"/>',spark:'<path d="M12 3l1.8 4.7L18.5 9.5l-4.7 1.8L12 16l-1.8-4.7L5.5 9.5l4.7-1.8z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/>',
+  pen:'<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',check:'<path d="M5 12l5 5 9-10"/>',
+  user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7"/>'};
+const SH=(id,c)=>`<filter id="${id}" x="-30%" y="-30%" width="160%" height="170%"><feDropShadow dx="0" dy="2" stdDeviation="2.2" flood-color="${c||'#1B2A44'}" flood-opacity=".25"/></filter>`;
+const ARW=(x1,x2,y,c)=>`<path d="M${x1} ${y} H ${x2}" stroke="${c}" stroke-width="4.4" stroke-linecap="round"/><path d="M${x2-6} ${y-6} l8 6 l-8 6" fill="none" stroke="${c}" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"/>`;
+
+/* ① アンケート回答 → AI → 下書き */
+const VB1='0 0 351 96';
+const s1=`<svg viewBox="${VB1}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs>${SH('f1','#4C1D95')}<linearGradient id="ag" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#A78BFA"/><stop offset="1" stop-color="#6D28D9"/></linearGradient>
+  <linearGradient id="pg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#F3EEFF"/></linearGradient></defs>
+  <rect width="351" height="96" fill="#EDE4FF"/>
+  <g filter="url(#f1)"><rect x="12" y="12" width="104" height="72" rx="8" fill="#fff"/><rect x="12" y="12" width="104" height="18" rx="8" fill="#0B9A8F"/><rect x="12" y="22" width="104" height="8" fill="#0B9A8F"/>
+    <text x="64" y="25" font-family="Noto Sans JP" font-size="11" font-weight="900" fill="#fff" text-anchor="middle">アンケート</text>
+    <text x="20" y="46" font-family="Noto Sans JP" font-size="10.5" font-weight="900" fill="#0F766E">感想（自由記述）</text>
+    ${[0,1,2].map(i=>`<rect x="20" y="${54+i*9}" width="${[86,70,52][i]}" height="4.5" rx="2" fill="#94A3B8"/>`).join('')}</g>
+  ${ARW(124,148,48,'#7C3AED')}
+  <g filter="url(#f1)"><circle cx="180" cy="48" r="26" fill="url(#ag)"/><path d="M180 32l3.6 9 9 3.6-9 3.6-3.6 9-3.6-9-9-3.6 9-3.6z" fill="#fff"/>
+    <path d="M196 60l1.4 3.4 3.4 1.4-3.4 1.4-1.4 3.4-1.4-3.4-3.4-1.4 3.4-1.4z" fill="#FDE68A"/></g>
+  ${ARW(212,236,48,'#7C3AED')}
+  <g filter="url(#f1)"><rect x="244" y="10" width="96" height="76" rx="6" fill="url(#pg)" stroke="#A78BFA" stroke-width="2" stroke-dasharray="5 3"/>
+    <text x="254" y="28" font-family="Noto Sans JP" font-size="11" font-weight="900" fill="#6D28D9">下書き</text>
+    ${[0,1,2,3].map(i=>`<rect x="254" y="${38+i*10}" width="${[74,68,76,40][i]}" height="4.5" rx="2" fill="#7C3AED" opacity=".55"/>`).join('')}
+    <g transform="translate(316 58) rotate(35)"><rect x="0" y="-4" width="26" height="8" rx="2" fill="#F59E0B"/><path d="M0 -4 l-7 4 l7 4z" fill="#FDE68A"/><path d="M-7 0 l2.5 -1.4 v2.8z" fill="#1F2937"/></g></g>
+</svg>`;
+
+/* ③ チェック済みの行 → 封筒が飛ぶ → 受信箱 */
+const VB3='0 0 351 96';
+const s3=`<svg viewBox="${VB3}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs>${SH('f3','#1E3A8A')}<linearGradient id="eg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#E2E8F0"/></linearGradient>
+  <linearGradient id="fg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F8FAFC"/><stop offset="1" stop-color="#CBD5E1"/></linearGradient>
+  <linearGradient id="bg3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#60A5FA"/><stop offset="1" stop-color="#2563EB"/></linearGradient></defs>
+  <rect width="351" height="96" fill="#DBE8FD"/>
+  <g filter="url(#f3)"><rect x="10" y="30" width="96" height="36" rx="7" fill="#fff" stroke="#0F766E" stroke-width="2"/>
+    <rect x="18" y="38" width="20" height="20" rx="4" fill="#0F766E"/><path d="M22 48 l4 4 l8 -9" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <text x="44" y="53" font-family="Noto Sans JP" font-size="12" font-weight="900" fill="#0F5F59">送信OK</text></g>
+  ${[0,1,2].map(i=>`<path d="M${118+i*4} ${40+i*8} h${26-i*6}" stroke="#93C5FD" stroke-width="3" stroke-linecap="round"/>`).join('')}
+  <g filter="url(#f3)" transform="rotate(-10 180 48)"><rect x="150" y="26" width="64" height="44" rx="4" fill="url(#eg)" stroke="#94A3B8" stroke-width="1.2"/>
+    <path d="M150 30 l32 22 l32 -22" fill="url(#fg)" stroke="#94A3B8" stroke-width="1.2"/>
+    <rect x="200" y="30" width="10" height="12" rx="1" fill="#F87171"/></g>
+  ${ARW(222,250,50,'#2563EB')}
+  <g filter="url(#f3)"><path d="M258 34 h76 l10 22 v28 h-96 v-28z" fill="url(#bg3)"/><path d="M248 56 h26 l6 10 h32 l6 -10 h26 v28 h-96z" fill="#1E40AF"/>
+    <rect x="270" y="22" width="52" height="30" rx="3" fill="#fff" stroke="#CBD5E1"/><path d="M270 24 l26 16 l26 -16" fill="none" stroke="#CBD5E1" stroke-width="1.4"/>
+    <circle cx="336" cy="28" r="12" fill="#16A34A"/><path d="M330 28 l4 4 l8 -8" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>
+</svg>`;
+
+const cursor=`<svg class="cur" viewBox="0 0 30 34" xmlns="http://www.w3.org/2000/svg"><path d="M3 2 L3 26 L9.5 20 L14 31 L18.5 29 L14 18.5 L23 18.5 Z" fill="#fff" stroke="#1F2937" stroke-width="2.2" stroke-linejoin="round"/></svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.150-1</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">勉強会のお礼メールは<span class="hl">AIが下書き</span>、<br>人は読んで<span class="hl">送信OKにチェック</span>するだけ</div>
+    <img class="title-chara" src="${A}chara/chara_smile.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">${svgw(P.bulb,2.2)}</div>
+    <div class="txt">AIは書くだけ。送るかどうかは<b>人がリストのチェック</b>で決め、送信はフローが行います。<br>送られるのは人が読んで直した文面なので、<b>AIの文面が確認なしで外に出ない</b></div>
+  </div>
+
+  <div class="stage">
+    <div class="flow">
+      <div class="fc c1">
+        <div class="kh"><span class="no">1</span><span class="kt">AIが下書きを書く</span><span class="role">AI＝書く</span></div>
+        <div class="sc">${s1}</div>
+        <div class="mk">
+          <div class="mh fm"><img src="${A}icons/ms/forms.svg" alt="">アンケート回答：田中 美咲</div>
+          <div class="bd">
+            <div class="ans">トリガー条件が分かった。承認も知りたい</div>
+            <div class="pr"><i class="ar2" style="display:block">${svgw(P.down,3)}</i>プロンプトの実行で下書き</div>
+            <div class="draft"><span class="dl"><i>${svgw(P.spark,2.2)}</i>AIの下書き</span>田中 美咲 様<br>ご参加ありがとうございました。<br><span class="mark">トリガー条件が分かった</span>とのこと、<br>承認のご要望も承りました。</div>
+          </div>
+        </div>
+        <div class="kc">回答が届くたびに、リストの<b>下書き列</b>へ</div>
+      </div>
+
+      <div class="fc c2">
+        <div class="kh"><span class="no">2</span><span class="kt">人が読んで、直して、チェック</span></div>
+        <div class="mk">
+          <div class="mh sp"><img src="${A}icons/ms/lists.svg" alt="">お礼メール（10/20 勉強会）<span class="role" style="margin-left:auto;background:#fff;color:#0F766E;border-radius:999px;padding:0 10px;font-size:15.5px">人＝決める</span></div>
+          <div class="lt">
+            <div class="lr h"><span>宛先</span><span>下書き</span><span>送信OK</span><span>送信済み</span></div>
+            <div class="lr"><span>佐藤 花子</span><span>佐藤 花子 様 本日は遠方から…</span><span class="cb on"></span><span class="st">✓ 18:20</span></div>
+            <div class="lr hot"><span>田中 美咲</span><span>田中 美咲 様 本日はご参加…</span><span class="cb on"></span><span class="st no">―</span></div>
+            <div class="lr"><span>鈴木 一郎</span><span>鈴木 一郎 様 ご質問いただいた…</span><span class="cb"></span><span class="st no">―</span></div>
+            <div class="lr"><span>山田 太郎</span><span>山田 太郎 様 資料のご請求…</span><span class="cb"></span><span class="st no">―</span></div>
+          </div>
+          <div class="edit">
+            <div class="eh"><i class="pen">${svgw(P.pen,2.4)}</i>田中 美咲 さんの下書きを開いて直す</div>
+            <div class="et">…承認の<del>ご要望も承りました</del><ins>回は11/12です</ins>。</div>
+            <div class="okrow"><div class="okbig"><span class="bx"></span>送信OK${cursor}</div><span class="fixn">日付は人が<br>書き足した</span></div>
+          </div>
+          <img class="ch" src="${A}chara/chara_point.png" alt="">
+        </div>
+        <div class="kc">文面は<b>リストの上で直せる</b>。チェックした行だけ次へ</div>
+      </div>
+
+      <div class="fc c3">
+        <div class="kh"><span class="no">3</span><span class="kt">フローが送る</span><span class="role">フロー＝送る</span></div>
+        <div class="sc">${s3}</div>
+        <div class="mk">
+          <div class="mh ol"><img src="${A}icons/ms/outlook.svg" alt="">送信済みアイテム</div>
+          <div class="bd">
+            <div class="mf"><span class="k">宛先</span>misaki.tanaka@example.com</div>
+            <div class="mf"><span class="k">件名</span>勉強会ご参加のお礼</div>
+            <div class="mbody">ご参加ありがとうございました。<br>…承認の<ins>回は11/12です</ins>。</div>
+            <div class="sent"><span class="tk">${svgw(P.check,3.4)}</span>リストの送信済みに ✓<span class="tm">18:32</span></div>
+          </div>
+        </div>
+        <div class="kc">送るのは<b>人が直した文面</b>。<br>送信済みの行は二度送らない</div>
+      </div>
+    </div>
+    <div class="bot">
+      <div class="roles"><span class="rl">役割分担</span>
+        <span class="r" style="color:#5B21B6"><i style="color:#7C3AED">${svgw(P.spark,2.2)}</i>AI＝書く</span><i class="ra">${svgw(P.arrow,3)}</i>
+        <span class="r" style="color:#0F5F59"><i style="color:#0F766E">${svgw(P.user,2.4)}</i>人＝決める</span><i class="ra">${svgw(P.arrow,3)}</i>
+        <span class="r" style="color:var(--blue-dark)"><img src="${A}icons/pa_logo.png" alt="">フロー＝送る</span></div>
+      <div class="uses"><span class="ul">誰に刺さる</span><span class="u">講座・勉強会の運営</span><span class="u">カスタマーサポート</span><span class="u">営業事務</span></div>
+    </div>
+  </div>
+
+  <div class="next">
+    <span class="na">${svgw(P.arrow,3)}</span>
+    <span>Forms ＋ AI Builder のプロンプト ＋ SharePoint リスト ＋ Outlook の<b>フロー2本</b>で作れます。<b>作り方は2枚目へ</b></span>
+  </div>
+  <div class="src">出典：Microsoft Learn「条件を使用してトリガーをカスタマイズする」「Power Automate でプロンプトを使用する」「SharePoint コネクタ」／人名・アドレス・日付は架空の例</div>
+`;
+</script>
+</body>
+</html>
