@@ -84,6 +84,8 @@ try {
   & $py "scripts\build-readme.py"         2>&1 | ForEach-Object { Log "readme: $_" }
   # ホームの「次回講座」と「過去回の資料」直近3回を upcoming-event.json / links-index.json から冪等再生成
   & $py "scripts\sync-home-next-event.py" 2>&1 | ForEach-Object { Log "home: $_" }
+  # 受注ページ（work\index.html）の登壇・運営の実績（data\activities の Event）と PA45 の数字・ブログ本数を冪等再生成
+  & $py "scripts\build-work-page.py"     2>&1 | ForEach-Object { Log "work: $_" }
 
   # 3) 集計値に変化があったときだけOGPを作り直す（ヘッドレスChromeで重いため）
   $sig = (& $py -c "import json;s=json.load(open(r'$repo\data\insights.json',encoding='utf-8'))['summary'];print('|'.join(str(s.get(k)) for k in ['sessions','participants_total','responses_total','understanding_avg','usefulness_avg','participants_max','participants_avg','archive_videos']))").Trim()
@@ -109,6 +111,7 @@ try {
       "data\config\links-index.json",
       "sessions\index.html",
       "index.html",
+      "work\index.html",
       "achievements\insights\index.html",
       "README.md",
       "flows\README.md",
