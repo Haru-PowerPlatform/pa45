@@ -37,7 +37,7 @@ Power Automate を初めて触る人が、45分で1本のフローを作り終�
 | 役立ち度スコア（全回平均） | 92.3% |
 | 録画を公開した回 | 24回 |
 | 公開しているフローZIP | 20本 |
-| 技術Tipsスライド | 146本 |
+| 技術Tipsスライド | 152本 |
 
 - 参加者数は connpass の参加者数、スコアは各回のアンケートから集計しています（`data/insights.json`）。
 - 理解度スコア＝5択（とても理解できた100／理解できた75／普通50／少し難しかった25／難しかった0）の回答数による加重平均。
@@ -127,6 +127,8 @@ PA45 の外で、Power Platform／Copilot のコミュニティに関わった�
 | 2026/09/24 | ビジュアルプログラミングIoTLT vol.24 でLT登壇：作らせる前に、使ってもらう ── 社内で非エンジニアにビジュアルプログラミングを教えた話 | 登壇 | オンラインLTイベント（YouTube配信） | [connpass](https://iotlt.connpass.com/event/400538/) ／ [レポート](https://www.automate136.com/iotlt-24-power-automate-node-red/) |
 | 2026/09/25 | Power Platform Community で回答：Copilot Studio のテストパネルの会話は課金されるか | 回答者 | Power Platform Community（公開・英語） | [スレッド](https://community.powerplatform.com/forums/thread/details/?threadid=dee58f7a-b1b8-f111-aaac-3833c5e8602a) |
 | 2026/09/26 | Power Platform Community で回答：pac CLI でソリューション外のアプリ・フローを移行したい | 回答者 | Power Platform Community（公開・英語） | [スレッド](https://community.powerplatform.com/forums/thread/details/?threadid=ff112885-8bb8-f111-aaac-3833c5e85ffd) |
+| 2026/10/01 | CUGJ_MEETUP Vol.22（Copilot User Group Japan）でLT登壇：答えるエージェントから、仕事を進めるエージェントへ ── エージェントフローで広がる Copilot Studio の使い道 | LT登壇 | オンラインLT 10分・参加50名（connpass） | [connpass](https://cugj.connpass.com/event/407194/) ／ [スライド](https://haru-powerplatform.github.io/pa45/talks/2026-10-01-cugj-lt/) |
+| 2026/10/19 | RPACommunity「Power Automate スペシャル！ライトニングトーク会」でLT登壇：講座の運営をクラウドフローで自動化した話 | LT登壇 | LT 10分・申込132名（connpass） | [connpass](https://rpacommunity.connpass.com/event/407193/) ／ [レポート](https://www.automate136.com/rpacommunity-lt-power-automate-koza-ops/) |
 
 すべての記録は [`data/activities/`](data/activities/) に1件1ファイルで置いています。サイト上では [活動の記録](https://haru-powerplatform.github.io/pa45/achievements/) で見られます。
 
