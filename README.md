@@ -59,8 +59,6 @@ Power Automate を初めて触る人が、45分で1本のフローを作り終�
 
 ## 全回の一覧
 
-次回は **第32回 置くだけで月別フォルダに片付くファイル整理**（10月22日（木） 20:15〜21:00）です。申込は [connpass](https://powerautomate-create.connpass.com/event/409520/) から。
-
 | 回 | 開催日 | テーマ | 参加 | スライド・資料 | フロー | 録画 | アンケート | レポート |
 |---:|---|---|---:|:---:|:---:|:---:|:---:|:---:|
 | 31 | 2026/10/15 | ファイルを選んで1クリックでPDFにして送る | 56名 | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-31/) | [ZIP](https://haru-powerplatform.github.io/pa45/flows/vol-31/PA45-Vol31-PdfSend.zip) | ― | [結果](https://haru-powerplatform.github.io/pa45/achievements/insights/vol-31.html) | ― |

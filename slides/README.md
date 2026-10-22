@@ -6,6 +6,7 @@ PA45 の各回で使ったスライドです。\
 
 | 回 | 開催日 | テーマ | スライド |
 |---:|---|---|:---:|
+| 32 | 2026/10/22 | 置くだけで月別フォルダに片付くファイル整理 | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-32/) |
 | 31 | 2026/10/15 | ファイルを選んで1クリックでPDFにして送る | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-31/) |
 | 30 | 2026/10/08 | Teamsの頼まれごとを1クリックでTo Doに入れる | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-30/) |
 | 29 | 2026/10/01 | 動的コンテンツに出てこない値も、Copilotと一緒に式で取り出せるようになる | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-29/) |
