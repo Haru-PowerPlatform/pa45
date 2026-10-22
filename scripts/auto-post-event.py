@@ -392,13 +392,17 @@ def main():
     print(f"  イベント: 第{vol}回「{theme}」({date_str})")
 
     # 2. 今日の日付チェック（JST）
+    # 2026-10-23 Actions の cron が遅れて開催日の 2:07 に走り、開催前に処理された（第32回）。
+    # → 開催日の 21:00（JST）を過ぎてから2日以内だけ処理する（遅れて翌日に走った分も拾う）。
     today = today_jst()
-    if not args.force and today != date_str:
-        print(f"  本日は {today}、イベント日は {date_str} — 実行日が違うためスキップします。")
+    now = datetime.now(JST)
+    ev_end = datetime.strptime(date_str, "%Y-%m-%d").replace(hour=21, tzinfo=JST)
+    if not args.force and not (ev_end <= now < ev_end + timedelta(days=2)):
+        print(f"  いま {now:%Y-%m-%d %H:%M}、開催後の処理は {ev_end:%Y-%m-%d %H:%M} 以降 — スキップします。")
         print(f"  強制実行するには --force を使ってください。")
         sys.exit(0)
 
-    print(f"  日付一致: {today} ✓")
+    print(f"  開催後の時間帯: {now:%Y-%m-%d %H:%M} ✓")
 
     # 3. 参加者数を connpass から取得
     print(f"  connpassから参加者数を取得中... (event_id={event_id})")
