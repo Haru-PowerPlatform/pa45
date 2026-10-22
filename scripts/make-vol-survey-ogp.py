@@ -82,8 +82,11 @@ VOL_TEXT = {
         "quote": "「SharePointに保管しておいてそのままPDFに変換できるのは便利ですね。業務で使ってみたいです」",
     },
     32: {
-        "title": "ファイルは、\n月のフォルダに片付いたか？",
-        "sub": "受け取りフォルダに届いたファイルを、フローがその月のフォルダへ移す回。",
+        # 2026-10-23 はる「疑問文はやめて。PA45 第32回のアンケート結果だと分かるように文字大きめ」
+        "pill": "ご回答ありがとうございました 🙏",
+        "title": "PA45 第32回\nアンケート結果",
+        "tsize": 70,
+        "sub": "テーマ：置くだけで月別フォルダに片付くファイル整理",
         "quote": "「フォルダの作成やファイルの振り分けを自動化できる点が、実際の業務にも活用できそうだと感じました」",
     },
 }
@@ -139,7 +142,7 @@ TEMPLATE = """<!doctype html>
     <div class="tx"><b>Power Automate</b><span>PA45 コミュニティ</span></div>
   </div>
   <div class="wrap">
-    <div class="pill">PA45　第{vol}回 参加者アンケート 📋</div>
+    <div class="pill">{pill}</div>
     <h1>{title}</h1>
     <div class="sub">{sub}</div>
     <div class="stats">{stats}</div>
@@ -155,7 +158,7 @@ def stat_html(n, unit, label):
             f'<div class="l">{label}</div></div>')
 
 
-def build(vol, title, sub, quote, tsize):
+def build(vol, title, sub, quote, tsize, pill=None):
     data = json.loads((SURVEY_DIR / f"vol-{vol:02d}.json").read_text(encoding="utf-8"))
     stats = [
         (round(data["understanding_pct"]), "%", "内容が理解できた"),
@@ -164,6 +167,7 @@ def build(vol, title, sub, quote, tsize):
     ]
     return TEMPLATE.format(
         vol=vol, title=title, sub=sub, tsize=tsize,
+        pill=pill or f"PA45　第{vol}回 参加者アンケート 📋",
         stats="".join(stat_html(*x) for x in stats),
         quote=f'<div class="quote">{quote}</div>' if quote else "",
     )
@@ -183,7 +187,7 @@ def main():
     sub = args.sub or preset.get("sub", "")
     quote = args.quote or preset.get("quote", "")
 
-    html = build(args.vol, title, sub, quote, args.tsize)
+    html = build(args.vol, title, sub, quote, preset.get("tsize", args.tsize), preset.get("pill"))
     out = OUT_DIR / f"pa45-vol{args.vol}-survey-ogp.png"
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory() as td:
