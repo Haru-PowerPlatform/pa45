@@ -24,17 +24,17 @@ Power Automate を初めて触る人が、45分で1本のフローを作り終�
 
 ## 数字で見る PA45
 
-第1回（2026/03/06）〜第31回（2026/10/15）の集計です。
+第1回（2026/03/06）〜第32回（2026/10/22）の集計です。
 
 | 項目 | 値 |
 |---|---|
-| 開催回数 | 31回 |
-| 延べ参加者 | 1,430名 |
-| 1回あたりの参加者 | 平均 46.1名／最多 76名 |
-| 参加者の推移 | 第1〜5回の平均 31.0名 → 直近5回の平均 63.4名 |
-| アンケート回答 | 390件 |
+| 開催回数 | 32回 |
+| 延べ参加者 | 1,497名 |
+| 1回あたりの参加者 | 平均 46.8名／最多 76名 |
+| 参加者の推移 | 第1〜5回の平均 31.0名 → 直近5回の平均 66.4名 |
+| アンケート回答 | 401件 |
 | 理解度スコア（全回平均） | 88.7% |
-| 役立ち度スコア（全回平均） | 92.3% |
+| 役立ち度スコア（全回平均） | 92.1% |
 | 録画を公開した回 | 24回 |
 | 公開しているフローZIP | 20本 |
 | 技術Tipsスライド | 152本 |
@@ -61,6 +61,7 @@ Power Automate を初めて触る人が、45分で1本のフローを作り終�
 
 | 回 | 開催日 | テーマ | 参加 | スライド・資料 | フロー | 録画 | アンケート | レポート |
 |---:|---|---|---:|:---:|:---:|:---:|:---:|:---:|
+| 32 | 2026/10/22 | 置くだけで月別フォルダに片付くファイル整理 | 67名 | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-32/) | ― | ― | [結果](https://haru-powerplatform.github.io/pa45/achievements/insights/vol-32.html) | ― |
 | 31 | 2026/10/15 | ファイルを選んで1クリックでPDFにして送る | 56名 | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-31/) | [ZIP](https://haru-powerplatform.github.io/pa45/flows/vol-31/PA45-Vol31-PdfSend.zip) | ― | [結果](https://haru-powerplatform.github.io/pa45/achievements/insights/vol-31.html) | ― |
 | 30 | 2026/10/08 | Teamsの頼まれごとを1クリックでTo Doに入れる | 76名 | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-30/) | ― | ― | [結果](https://haru-powerplatform.github.io/pa45/achievements/insights/vol-30.html) | ― |
 | 29 | 2026/10/01 | 動的コンテンツに出てこない値も、Copilotと一緒に式で取り出せるようになる | 72名 | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-29/) | ― | ― | [結果](https://haru-powerplatform.github.io/pa45/achievements/insights/vol-29.html) | ― |
