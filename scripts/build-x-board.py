@@ -558,17 +558,18 @@ def card_linkedin(p, tokens):
             folder_btn = f'<button class="btn copyp" data-p="{pd}">画像フォルダをコピー</button>'
 
     # images：Documents からの相対パスの一覧（プロフィール画像など）。クリックでフォルダのパスをコピー。
-    if p.get("images"):
+    imgs_rel = p.get("images") or ([p["image_file"]] if p.get("image_file") and not f else [])
+    if imgs_rel:
         cells = ""
-        for rel in p["images"]:
+        for rel in imgs_rel:
             img = ROOT.parent / rel
             pd = html.escape(str(img.parent))
             cells += (f'<a href="{html.escape(rel)}" class="copyf" data-p="{pd}" title="クリックで画像フォルダのパスをコピー">'
                       f'<img src="{html.escape(rel)}" alt="{html.escape(img.name)}" loading="lazy"></a>'
                       if img.exists() else f'<div class="noimg">{html.escape(img.name)}<span>画像がありません</span></div>')
         shots = f'<div class="shots one">{cells}</div>'
-        folder_btn = (f'<button class="btn copyp" data-p="{html.escape(str((ROOT.parent / p["images"][0]).parent))}">'
-                      f'画像フォルダをコピー</button>')
+        folder_btn = (f'<button class="btn copyp" data-p="{html.escape(str(ROOT.parent / imgs_rel[0]))}">'
+                      f"画像の場所をコピー</button>")
 
     link_box = link_btns = ""
     lk = p.get("link")
