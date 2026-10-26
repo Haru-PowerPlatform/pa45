@@ -1,0 +1,1211 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>AIが画面を操作する時代に、PADが活躍できる場所｜Happy Low-Code</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Yomogi&family=Zen+Maru+Gothic:wght@500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#142A5C;
+    --navy2:#1f3a7a;
+    --accent:#0066FF;
+    --accent2:#4FA8FF;
+    --text:#222;
+    --light:#6b6b6b;
+    --bg:#FAFAF6;
+    --sky:#E6EEF7;
+    --line:#d8d8cf;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;font-family:"Meiryo UI","Hiragino Kaku Gothic ProN","Yu Gothic UI",sans-serif;background:#000;color:var(--text);overflow:hidden}
+  body{display:flex}
+
+  /* === 目次サイドバー === */
+  .toc{
+    width:260px;flex-shrink:0;height:100vh;
+    background:var(--navy);color:#cfd8e8;
+    overflow-y:auto;padding:18px 14px;
+    border-right:3px solid var(--accent);
+    transition:margin-left .2s;
+  }
+  .toc.hidden{margin-left:-260px}
+  .toc h3{
+    color:#fff;font-size:13px;margin-bottom:14px;
+    padding-bottom:10px;border-bottom:1px solid #2a4a8c;
+    letter-spacing:.05em;
+  }
+  .toc ol{list-style:none}
+  .toc li{
+    padding:9px 10px;margin:3px 0;border-radius:6px;
+    cursor:pointer;color:#cfd8e8;font-size:12.5px;
+    line-height:1.4;transition:background .15s;
+    display:flex;gap:8px;align-items:flex-start;
+  }
+  .toc li:hover{background:#2a4a8c;color:#fff}
+  .toc li.current{background:var(--accent);color:#fff;font-weight:700}
+  .toc li .num{
+    display:inline-block;min-width:18px;color:var(--accent);
+    font-weight:700;font-size:11.5px;padding-top:1px;
+  }
+  .toc li.current .num{color:#fff}
+  .toc li .ttlwrap{display:flex;flex-direction:column;gap:1px;min-width:0}
+  .toc li .ttl{font-weight:600}
+  .toc li .sub{font-size:10.5px;line-height:1.35;color:#8497b8;font-weight:400}
+  .toc li:hover .sub{color:#dbe4f2}
+  .toc li.current .sub{color:#eaf2ff;font-weight:400}
+  .toc-foot{
+    margin-top:18px;padding-top:12px;border-top:1px solid #2a4a8c;
+    font-size:10.5px;color:#8da3c2;line-height:1.6;
+  }
+  .toc-foot kbd{
+    display:inline-block;background:#2a4a8c;color:#fff;
+    padding:1px 5px;border-radius:3px;font-size:10px;
+    margin:0 2px;
+  }
+
+  /* === ステージ（スライド領域） === */
+  .stage{flex:1;position:relative;height:100vh;overflow:hidden;container-type:inline-size}
+  .deck{position:relative;width:100%;height:100%}
+  .slide{
+    position:absolute;inset:0;
+    display:none;flex-direction:column;justify-content:center;
+    padding:6cqh 6cqw;
+    background:var(--bg);
+  }
+  .slide.active{display:flex}
+  .slide.navy{background:var(--navy);color:#fff}
+  .slide.sky{background:var(--sky)}
+  .slide h1{font-size:5.5cqw;line-height:1.25;color:var(--navy);letter-spacing:.01em}
+  .slide.navy h1{color:#fff}
+  .slide h2{font-size:3.4cqw;line-height:1.25;color:var(--accent);font-weight:700;margin-bottom:1cqh}
+  .slide.navy h2{color:#fff}
+  .msg{font-size:3.2cqw;line-height:1.35;color:var(--light);font-weight:700;text-align:center;margin:1.5cqh 0 2cqh}
+  .slide.navy .msg{color:#cfd8e8}
+  .msg .accent{color:var(--accent)}
+  .slide .sub{font-size:1.7cqw;color:var(--light);margin-top:2cqh;line-height:1.6}
+  .slide.navy .sub{color:#cfd8e8}
+  .slide .meta{position:absolute;left:6cqw;bottom:4cqh;font-size:1.1cqw;color:var(--light)}
+  .slide.navy .meta{color:#9eafc8}
+  .slide .pageno{position:absolute;right:5cqw;bottom:4cqh;font-size:1.1cqw;color:var(--light)}
+  .slide.navy .pageno{color:#9eafc8}
+  .accent{color:var(--accent)}
+  .slide.navy .accent{color:var(--accent2)}
+  .navy-text{color:var(--navy)}
+  .lead{font-size:2.4cqw;line-height:1.6;margin-top:3cqh}
+  .lead.big{font-size:3.4cqw;font-weight:700;line-height:1.4;color:var(--accent)}
+  .lead.huge{font-size:5cqw;font-weight:700;line-height:1.3;color:var(--accent)}
+  ul.bullets{font-size:1.9cqw;line-height:2;margin-top:3cqh;list-style:none}
+  ul.bullets li{padding-left:2cqw;position:relative;margin:.8cqh 0}
+  ul.bullets li::before{content:"・";position:absolute;left:0;color:var(--accent);font-weight:700}
+  .cards{display:flex;gap:2cqw;margin-top:4cqh}
+  .card{
+    flex:1;background:#fff;border:2px solid var(--navy);border-radius:1cqw;
+    padding:3cqh 2cqw;text-align:center;
+  }
+  .card .tagline{font-size:1.3cqw;color:var(--accent);font-weight:700;margin-bottom:1cqh;letter-spacing:.05em}
+  .card .desc{font-size:1.2cqw;color:var(--light);margin-top:1cqh;line-height:1.5}
+  .steps{display:flex;align-items:center;gap:1.5cqw;margin-top:4cqh}
+  .step{
+    flex:1;background:#fff;border:2px solid var(--navy);border-radius:1cqw;
+    padding:2.5cqh 1.5cqw;text-align:center;
+  }
+  .step .n{font-size:1.4cqw;color:var(--accent);font-weight:700}
+  .step .t{font-size:1.5cqw;font-weight:700;color:var(--navy);margin-top:1cqh;line-height:1.4}
+  .arrow{font-size:2.5cqw;color:var(--accent);font-weight:700}
+  .progress{position:absolute;left:0;top:0;height:4px;background:var(--accent);transition:width .3s;z-index:5}
+  .big-num{font-size:11cqw;color:var(--accent);font-weight:700;line-height:1}
+  .footer-name{position:absolute;left:6cqw;bottom:8cqh;font-size:1.6cqw;color:#fff;line-height:1.7}
+  .badges{display:flex;gap:1.5cqw;flex-wrap:wrap;margin-top:3cqh}
+  .badge{background:#fff;border:2px solid var(--navy);border-radius:.6cqw;padding:1.2cqh 1.5cqw;font-size:1.4cqw;color:var(--navy);font-weight:700}
+  /* 画像テイスト：極太枠＋右上ロゴ */
+  .slide::after{content:'';position:absolute;top:.9cqh;left:.7cqw;right:.7cqw;bottom:.9cqh;border:.45cqw solid var(--accent);border-radius:.9cqw;pointer-events:none;z-index:4}
+  .brand{position:absolute;top:2.4cqh;right:3cqw;font-size:1.3cqw;font-weight:700;color:var(--accent);letter-spacing:.06em;z-index:6}
+  .slide.navy .brand{color:var(--accent2)}
+  /* 各スライド左上の走るタイトル（自動表示） */
+  .sectitle{position:absolute;top:2.4cqh;left:6cqw;max-width:62cqw;font-size:1.25cqw;font-weight:700;color:var(--accent);letter-spacing:.03em;z-index:6;border-left:.35cqw solid var(--accent);padding-left:.8cqw;line-height:1.2}
+  .slide.navy .sectitle{color:var(--accent2);border-left-color:var(--accent2)}
+  /* アジェンダ */
+  .agenda{display:flex;flex-direction:column;gap:1.4cqh;margin-top:3cqh}
+  .agenda .row{display:flex;align-items:center;gap:1.8cqw;background:#fff;border-radius:.8cqw;padding:1.8cqh 2.4cqw;border-left:.6cqw solid var(--accent)}
+  .agenda .no{font-size:2.4cqw;font-weight:700;color:var(--accent);min-width:3cqw}
+  .agenda .tt{font-size:2cqw;font-weight:700;color:var(--navy)}
+  .agenda .ds{font-size:1.3cqw;color:var(--light);margin-left:.6cqw}
+  /* 難易度の階段図（PPEC p16 再現） */
+  .stair{display:flex;align-items:flex-end;justify-content:center;gap:1.4cqw;margin-top:3.5cqh}
+  .stair .col{display:flex;flex-direction:column;align-items:center}
+  .stair .cap{font-size:1.2cqw;font-weight:700;color:var(--accent);margin-bottom:.7cqh;text-align:center;line-height:1.3;min-height:3cqh}
+  .stair .blk{width:15cqw;border-radius:.8cqw .8cqw 0 0;border:2px solid var(--navy);background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+  .stair .blk .n{font-size:2.2cqw;font-weight:700;color:var(--navy)}
+  .stair .blk .sub2{font-size:1.1cqw;color:var(--light);margin-top:.3cqh}
+  .stair .col.hot .blk{border:3px solid var(--accent);background:#eef4ff}
+  .stair .col.hot .blk .n{color:var(--accent)}
+  .stair .gap{align-self:flex-end;display:flex;align-items:center;justify-content:center;text-align:center;font-size:1.2cqw;font-weight:700;color:var(--accent);border:.3cqw dashed var(--accent);border-radius:.6cqw;width:12cqw;height:17cqh;line-height:1.5;background:rgba(0,102,255,.06);padding:0 1cqw}
+  .stair-axis{display:flex;justify-content:center;align-items:center;gap:.8cqw;margin-top:1.2cqh;font-size:1.3cqw;font-weight:700;color:var(--light)}
+  .note{font-size:1.3cqw;line-height:1.7;color:var(--light);margin-top:2.5cqh;max-width:90%}
+  .slide.navy .note{color:#a8b8d0}
+  .note b{color:var(--accent)}
+  .slide.navy .note b{color:var(--accent2)}
+
+  /* === 図解ユーティリティ === */
+  .actlabel{display:inline-block;font-size:1.2cqw;color:#fff;font-weight:700;background:var(--accent);padding:.6cqh 1.4cqw;border-radius:.5cqw;letter-spacing:.08em}
+  .iconrow{display:flex;align-items:center;justify-content:center;gap:1.4cqw;color:var(--accent);margin-top:1cqh}
+  .iconrow .lbl{font-size:1.2cqw;color:var(--light);font-weight:700;margin-top:.4cqh}
+  .iconrow .step{flex:none;background:transparent;border:none;padding:0;text-align:center}
+  .grid4{display:grid;grid-template-columns:1fr 1fr;gap:1.4cqw;margin-top:2.5cqh}
+  .vcard{background:#fff;border-radius:.9cqw;padding:2cqh 1.8cqw;border-left:.6cqw solid var(--accent)}
+  .vcard .h{font-size:1.6cqw;color:var(--navy);font-weight:700}
+  .vcard .d{font-size:1.2cqw;color:var(--text);margin-top:.6cqh;line-height:1.6}
+  .vcard .d b{color:var(--accent)}
+  .callout{margin-top:3cqh;padding:2.6cqh 3cqw;background:var(--accent);border-radius:1cqw;text-align:center}
+  .callout p{color:#fff;font-weight:700}
+  .callout .accent{color:#FFD24D}
+  /* 起点→知能→結末などの3ボックス（再定義） */
+  .flow3{display:flex;align-items:stretch;gap:1.2cqw;margin-top:3cqh}
+  .flow3 .b{flex:1;background:#fff;border:2px solid var(--navy);border-radius:1cqw;padding:2.4cqh 1.4cqw;text-align:center;display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .flow3 .b.hot{border-color:var(--accent);background:#eef4ff;border-width:3px}
+  .flow3 .b .k{font-size:1.3cqw;color:var(--light);font-weight:700;letter-spacing:.04em}
+  .flow3 .b .v{font-size:2.1cqw;color:var(--navy);font-weight:700;margin-top:.6cqh;line-height:1.35}
+  .flow3 .b.hot .v{color:var(--accent)}
+  .flow3 .b .d{font-size:1.2cqw;color:var(--light);margin-top:.8cqh;line-height:1.5}
+  .flow3 .ar{display:flex;align-items:center;font-size:2.6cqw;color:var(--accent);font-weight:700;flex:none}
+
+  /* === アイコン（インラインSVG） === */
+  .ic{width:2.2cqw;height:2.2cqw;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;vertical-align:-.4cqw}
+  .ic.fill{fill:currentColor;stroke:none}
+  .iclg{width:4.6cqw;height:4.6cqw}
+  .icxl{width:6cqw;height:6cqw}
+  /* === はるアイコン＋吹き出し === */
+  .speak{display:flex;align-items:center;gap:1.6cqw;margin-top:2.5cqh}
+  .speak.center{justify-content:center}
+  .avatar{position:relative;width:9cqw;height:9cqw;border-radius:50%;flex-shrink:0;border:.35cqw solid var(--accent);background:var(--navy);overflow:hidden;display:flex;align-items:center;justify-content:center}
+  .avatar span{color:#fff;font-size:3.4cqw;font-weight:700}
+  .avatar img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .balloon{position:relative;background:#fff;border:2px solid var(--accent);border-radius:1.2cqw;padding:2cqh 2.6cqw;font-size:1.7cqw;color:var(--navy);line-height:1.6;font-weight:700;max-width:78%}
+  .balloon::before{content:'';position:absolute;left:-1.5cqw;top:50%;margin-top:-.7cqw;border:.75cqw solid transparent;border-right-color:var(--accent)}
+  .balloon::after{content:'';position:absolute;left:-1.1cqw;top:50%;margin-top:-.6cqw;border:.65cqw solid transparent;border-right-color:#fff}
+  .balloon .accent{color:var(--accent)}
+  /* 画像枠 */
+  .imgframe{margin-top:1.2cqh;width:100%;background:#fff;border:2px solid var(--accent);border-radius:1cqw;overflow:hidden;display:flex;align-items:center;justify-content:center}
+  .ph{display:none;flex-direction:column;align-items:center;justify-content:center;color:var(--light);text-align:center;font-size:1.3cqw;line-height:1.7}
+  /* 手作り感：ステッカー風切り抜き・テープ留め写真・マーカー */
+  .cutout{filter:drop-shadow(1.6px 1.6px 0 #fff) drop-shadow(-1.6px 1.6px 0 #fff) drop-shadow(1.6px -1.6px 0 #fff) drop-shadow(-1.6px -1.6px 0 #fff) drop-shadow(0 .9cqh 1.3cqh rgba(0,0,0,.30))}
+  .polaroid{background:#fff;padding:1cqh 1cqw 2.4cqh;border-radius:.4cqw;box-shadow:0 1.2cqh 2.4cqh rgba(0,0,0,.35);position:relative}
+  .polaroid img{display:block;width:100%;height:100%;object-fit:cover;border-radius:.2cqw}
+  .polaroid .cap{position:absolute;left:0;right:0;bottom:.5cqh;text-align:center;font-size:1.15cqw;color:#555;font-weight:700}
+  .tape{position:absolute;width:9cqw;height:2.6cqh;background:rgba(255,221,120,.7);top:-1.2cqh;left:50%;transform:translateX(-50%) rotate(-3deg);box-shadow:0 .3cqh .6cqh rgba(0,0,0,.12)}
+  .marker{background:linear-gradient(transparent 58%, rgba(0,102,255,.26) 58%);padding:0 .2cqw;font-weight:700}
+  .marker.y{background:linear-gradient(transparent 58%, rgba(255,210,80,.55) 58%)}
+  /* === 手作り感：フォント・背景リズム・付箋 === */
+  h1,.slide h2{font-family:"Zen Maru Gothic","Meiryo UI",sans-serif}
+  .agenda .tt,.actlabel,.vcard .h,.flow3 .b .v,.card .lbl{font-family:"Zen Maru Gothic","Meiryo UI",sans-serif}
+  .sectitle,.balloon,.polaroid .cap,.hand{font-family:"Yomogi","Meiryo UI",sans-serif;font-weight:400}
+  /* 背景にうっすらドット（手作り・紙っぽさ）。navyは無地、skyはドット付き水色 */
+  .slide{background:radial-gradient(rgba(20,42,92,.05) 1.1px,transparent 1.1px) 0 0/24px 24px, var(--bg)}
+  .slide.sky{background:radial-gradient(rgba(20,42,92,.05) 1.1px,transparent 1.1px) 0 0/24px 24px, var(--sky)}
+  .slide.navy{background:var(--navy)}
+  /* 付箋 */
+  .sticky{position:absolute;background:#fff3a8;padding:1.4cqh 1.6cqw;font-family:"Yomogi","Meiryo UI",sans-serif;font-size:1.4cqw;color:#6b5800;box-shadow:0 .6cqh 1.4cqh rgba(0,0,0,.22);line-height:1.5;z-index:6;border-radius:.2cqw}
+  .hand-c{position:absolute;pointer-events:none;z-index:5}
+
+  /* === RPAC 追加 === */
+  .logo{width:2.6cqw;height:2.6cqw;vertical-align:-.7cqw}
+  .src{position:absolute;right:5cqw;left:5cqw;text-align:right;bottom:7cqh;font-size:1cqw;color:var(--light)}
+  .slide.navy .src{color:#9eafc8}
+  .shotbox{background:#fff;border:2px solid var(--accent);border-radius:1cqw;overflow:hidden;display:flex;align-items:center;justify-content:center;padding:.6cqh .6cqw}
+  .shotbox img{max-width:100%;max-height:100%;object-fit:contain;display:block}
+  .todo{height:100%;box-sizing:border-box;border:3px dashed #e8891c;background:#fff8ee;border-radius:1cqw;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#b25f00;font-weight:800;font-size:1.9cqw;text-align:center;line-height:1.5;padding:2cqh 2cqw}
+  .todo small{display:block;font-size:1.3cqw;font-weight:700;color:#c07a2a;margin-top:.6cqh}
+  .tip{background:#fffbe6;border:2px solid #e8c547;border-radius:.8cqw;padding:1.4cqh 1.6cqw;font-size:1.8cqw;line-height:1.55;color:var(--navy);font-weight:700}
+  .tip b{color:#c0392b}
+  .badge2{display:inline-block;font-size:1.3cqw;font-weight:800;color:#fff;background:var(--accent);border-radius:.4cqw;padding:.3cqh .7cqw;margin-right:.6cqw;vertical-align:.2cqw}
+  .badge2.pad{background:#0066FF} .badge2.cu{background:#7a4fd6} .badge2.wait{background:#e8891c}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:2cqw;margin-top:2cqh;align-items:stretch}
+  .card{background:#fff;border-radius:1cqw;padding:2cqh 1.6cqw;display:flex;flex-direction:column;border:3px solid #0066FF}
+  .card.cu{border-color:#7a4fd6}
+  .card .lab{display:flex;align-items:center;gap:.8cqw;font-size:2.2cqw;font-weight:800;color:var(--navy);font-family:"Zen Maru Gothic","Meiryo UI",sans-serif}
+  .card .lab img{width:3cqw;height:3cqw}
+  .card .big{font-size:5.2cqw;font-weight:800;line-height:1.15;margin-top:1.6cqh;color:#0066FF}
+  .card.cu .big{color:#7a4fd6}
+  .card .d{font-size:2cqw;line-height:1.55;margin-top:1.4cqh;color:var(--text);font-weight:700}
+  .card .d b{color:var(--accent)}
+  .two.cmp .card{justify-content:center;text-align:center}
+  .two.cmp .card .lab{justify-content:center}
+  .steps6{display:grid;grid-template-columns:1fr;gap:.9cqh;margin-top:0}
+  .steps6 .r{display:flex;align-items:center;gap:1cqw;background:#fff;border-radius:.6cqw;padding:1cqh 1.2cqw;border-left:.6cqw solid #0066FF;font-size:1.75cqw;font-weight:700;color:var(--navy)}
+  .steps6 .n{flex:none;width:2.8cqw;height:2.8cqw;border-radius:50%;background:#0066FF;color:#fff;display:flex;align-items:center;justify-content:center;font-size:1.5cqw;font-weight:800}
+  .steps6 .r small{margin-left:auto;font-size:1.25cqw;color:var(--light);font-weight:700}
+  .tbl{width:100%;border-collapse:separate;border-spacing:0 .8cqh;margin-top:1.4cqh;font-size:1.85cqw}
+  .tbl th{font-size:1.7cqw;padding:.6cqh 1cqw;text-align:left;font-family:"Zen Maru Gothic","Meiryo UI",sans-serif}
+  .tbl th.p{color:#0066FF} .tbl th.c{color:#7a4fd6}
+  .tbl th img{width:2.4cqw;height:2.4cqw;vertical-align:-.6cqw;margin-right:.4cqw}
+  .tbl td{background:#fff;padding:1.3cqh 1.2cqw;line-height:1.45;vertical-align:middle;font-weight:700}
+  .tbl td:first-child{font-weight:800;color:var(--navy);border-radius:.6cqw 0 0 .6cqw;width:18%}
+  .tbl td:last-child{border-radius:0 .6cqw .6cqw 0}
+  .tbl td.p{background:#eef4ff} .tbl td.c{background:#f5f0ff}
+  .tbl td.w{background:#fff8ee;color:#b25f00}
+  .tbl td.c{width:38%}
+  .q{font-size:4.2cqw;font-weight:800;color:var(--navy);line-height:1.45;font-family:"Zen Maru Gothic","Meiryo UI",sans-serif}
+  .arch{width:100%;height:auto;display:block;margin-top:1cqh}
+  .arch text{font-family:"Meiryo UI","Yu Gothic UI",sans-serif}
+  .demo{position:absolute;right:5cqw;top:8.5cqh;z-index:5;display:inline-flex;align-items:center;gap:.6cqw;font-size:2.2cqw;font-weight:800;color:#fff;background:#e8891c;border-radius:.8cqw;padding:.8cqh 1.4cqw;box-shadow:0 .4cqh 1cqh rgba(0,0,0,.18)}
+  .demo.rec{background:#7a4fd6}
+  .cap{font-size:1.5cqw;color:var(--text);font-weight:700;margin-top:.6cqh;text-align:center;line-height:1.4}
+  .shotcol{display:flex;flex-direction:column;min-height:0}
+  .shotcol .shotbox{flex:1;min-height:0}
+  .frames{display:grid;grid-template-columns:repeat(4,1fr);gap:1cqw;margin-top:2cqh}
+  .frames .shotbox{height:24cqh}
+  .frames .stepn{font-size:1.7cqw;font-weight:800;color:#7a4fd6;margin-top:.8cqh;line-height:1.4}
+  .frames .stepd{font-size:1.45cqw;font-weight:700;color:var(--text);line-height:1.45}
+  .rec-meta{width:100%;border-collapse:separate;border-spacing:0 .6cqh;font-size:1.8cqw;margin-top:2cqh}
+  .rec-meta td{background:#fff;padding:1cqh 1.2cqw;font-weight:700;line-height:1.4}
+  .rec-meta td:first-child{color:var(--navy);font-weight:800;width:30%;border-radius:.6cqw 0 0 .6cqw}
+  .rec-meta td:last-child{border-radius:0 .6cqw .6cqw 0}
+  .aiq{background:#f5f0ff;border:2px solid #b9a3ea;border-radius:1cqw;padding:.9cqh 1.2cqw;font-size:1.6cqw;line-height:1.55;font-weight:700;color:var(--navy);position:relative}
+  .aiq .who{display:block;font-size:1.2cqw;color:#7a4fd6;font-weight:800;margin-bottom:.3cqh}
+  .aiq b{color:#c0392b}
+  .sectitle{display:none}
+  .chapnav{position:absolute;top:2.4cqh;left:6cqw;right:12cqw;display:flex;align-items:center;gap:.5cqw;z-index:4}
+  .chapnav .c{font-size:1.15cqw;font-weight:800;color:#8a97ad;background:rgba(255,255,255,.7);border:1.5px solid #d3dbe8;border-radius:2cqw;padding:.35cqh .9cqw;white-space:nowrap}
+  .chapnav .c.on{color:#fff;background:var(--accent);border-color:var(--accent)}
+  .chapnav .c.done{color:var(--navy);border-color:#9fb3d6}
+  .chapnav .sep{color:#b8c3d6;font-size:1cqw}
+  .chapnav .subs{display:flex;gap:.3cqw;margin-left:.6cqw;padding-left:.8cqw;border-left:2px solid #d3dbe8}
+  .chapnav .s{font-size:1.05cqw;font-weight:800;color:#8a97ad;border-radius:.4cqw;padding:.25cqh .6cqw;background:rgba(255,255,255,.7)}
+  .chapnav .s.on{color:#fff;background:#c0392b}
+  .slide.navy .chapnav .c{background:rgba(255,255,255,.08);border-color:#3b5584;color:#9eafc8}
+  .slide.navy .chapnav .c.on{background:var(--accent2);border-color:var(--accent2);color:var(--navy)}
+  .slide.navy .chapnav .c.done{color:#dfe7f3;border-color:#6d83ab}
+  .slide.navy .chapnav .s{background:rgba(255,255,255,.08);color:#9eafc8}
+  .chapdoor .no{font-size:2.2cqw;color:var(--accent2);font-weight:800;letter-spacing:.1em}
+  .chapdoor .qq{font-size:4cqw;line-height:1.45;color:#fff;font-weight:800;margin-top:2cqh;font-family:"Zen Maru Gothic","Meiryo UI",sans-serif}
+  .chapdoor .prev{margin-top:4cqh;font-size:1.9cqw;line-height:1.6;color:#cfd8e8;font-weight:700;border-left:.5cqw solid var(--accent2);padding-left:1.4cqw}
+  .chapdoor .prev b{color:#fff}
+  .chapdoor .prev.pts{margin-top:3cqh;display:flex;flex-direction:column;gap:1cqh}
+  .chapdoor .prev .dl{font-size:1.7cqw;color:var(--accent2)}
+  .chapdoor .prev .dp{display:flex;align-items:center;gap:1cqw;font-size:2cqw;color:#fff}
+  .chapdoor .prev .dp .k{flex:none;font-size:1.45cqw;color:var(--navy);background:var(--accent2);border-radius:.5cqw;padding:.2cqh .7cqw}
+  .chapdoor .prev .dp b{color:#ffd23f}
+  .chapend .tag{display:inline-block;font-size:1.7cqw;font-weight:800;color:#fff;background:var(--navy);border-radius:2cqw;padding:.5cqh 1.4cqw}
+  .chapend .pts{display:flex;flex-direction:column;gap:1.4cqh;margin-top:2.4cqh}
+  .chapend .pt{display:flex;align-items:center;gap:1.2cqw;background:#fff;border-radius:.8cqw;padding:1.5cqh 1.6cqw;border-left:.7cqw solid var(--accent);font-size:2.3cqw;font-weight:800;color:var(--navy);line-height:1.45}
+  .chapend .pt .k{flex:none;font-size:1.6cqw;color:#fff;background:var(--accent);border-radius:.5cqw;padding:.3cqh .7cqw}
+  .chapend .pt b{color:#c0392b}
+  .chapend .next{margin-top:2.6cqh;font-size:2cqw;font-weight:800;color:var(--accent)}
+  .chapdoor .goal{position:absolute;top:9cqh;left:6cqw;right:6cqw;font-size:1.6cqw;font-weight:800;color:#9eafc8}
+  .chapdoor .goal b{color:var(--accent2)}
+  .steps4{display:grid;grid-template-columns:repeat(4,1fr);gap:1.1cqw;margin-top:1.6cqh}
+  .steps4 .shotbox{height:21cqh;padding:0}
+  .steps4 .shotbox img{width:100%;height:100%;object-fit:cover;object-position:left top}
+  .steps4 .n{font-size:1.9cqw;font-weight:800;color:var(--navy);margin-top:.8cqh;line-height:1.35}
+  .steps4 .n span{display:inline-block;background:#e11d48;color:#fff;border-radius:50%;width:2.4cqw;height:2.4cqw;line-height:2.4cqw;text-align:center;margin-right:.4cqw;font-size:1.5cqw}
+  .steps4 .d{font-size:1.45cqw;font-weight:700;color:var(--text);line-height:1.45}
+  .chip{display:inline-block;font-size:1.3cqw;font-weight:800;border-radius:.5cqw;padding:.3cqh .6cqw;color:#fff;white-space:nowrap}
+  .chip.ai{background:#7a4fd6} .chip.fl{background:#0066FF} .chip.hu{background:#16a34a} .chip.ng{background:#c0392b}
+  .chips2{margin-left:auto;display:flex;align-items:center;gap:.4cqw;flex:none}
+  .chips2 i{font-style:normal;color:var(--light);font-size:1.3cqw}
+  .topright{position:absolute;top:5.4cqh;right:5cqw;display:flex;gap:.8cqw;align-items:center;z-index:6}
+  .topright .demo{position:static}
+  .slide.withmascot{padding-right:17cqw}
+  .slide.withmascot h2{margin-right:-11cqw}
+  .slide.withmascot .tbl td:first-child{white-space:nowrap}
+  .mascot{position:absolute;right:1.6cqw;bottom:6cqh;width:14cqw;height:40cqh;object-fit:contain;object-position:bottom;z-index:5;pointer-events:none;filter:drop-shadow(.25cqw .25cqw 0 #fff) drop-shadow(-.25cqw .25cqw 0 #fff) drop-shadow(.25cqw -.25cqw 0 #fff) drop-shadow(-.25cqw -.25cqw 0 #fff) drop-shadow(0 .9cqh 1.3cqh rgba(0,0,0,.30))}
+  .side{display:inline-flex;align-items:center;gap:.5cqw;font-size:1.45cqw;font-weight:800;border-radius:2cqw;padding:.4cqh 1.1cqw;border:2px solid;background:#fff}
+  .side img{width:2cqw;height:2cqw}
+  .side.pad{color:#0066FF;border-color:#0066FF}
+  .side.cu{color:#7a4fd6;border-color:#7a4fd6}
+  .side.both{color:#142A5C;border-color:#142A5C}
+  .nextbar{position:absolute;left:0;right:0;bottom:2.1cqh;text-align:center;font-size:1.4cqw;font-weight:800;color:var(--accent);z-index:4}
+  .nextbar b{color:var(--navy)}
+  .slide.navy .nextbar{color:var(--accent2)} .slide.navy .nextbar b{color:#fff}
+  .xls{width:100%;border-collapse:collapse;font-size:1.5cqw}
+  .xls th,.xls td{border:1px solid #d4dcd6;padding:.55cqh .7cqw;text-align:left;font-weight:700;color:#142A5C;white-space:nowrap}
+  .xls tr.colh th{background:#f1f3f2;color:#6b778a;text-align:center;font-size:1.3cqw;padding:.3cqh}
+  .xls th{background:#f1f3f2;color:#6b778a;text-align:center;width:2.6cqw;font-size:1.3cqw}
+  .xls tr.hd td{background:#e6f2ea;color:#107c41;font-weight:800}
+  .slide.blackout{background:#0b0b0d;overflow:hidden}
+  .slide.blackout .bo-fig{position:absolute;right:-10cqw;bottom:-6cqh;height:100cqh;width:auto;object-fit:contain;z-index:1}
+  .slide.blackout .bo-txt{position:relative;z-index:2;max-width:60cqw}
+  .slide.blackout .bo-small{font-size:2.4cqw;color:#9aa3b2;font-weight:700}
+  .slide.blackout .bo-big{white-space:nowrap;font-size:6.6cqw;color:#fff;font-weight:900;line-height:1.15;margin-top:2cqh;letter-spacing:-.04em;font-family:"Zen Maru Gothic","Meiryo UI",sans-serif}
+  .slide.blackout .bo-sub{font-size:2.4cqw;color:#cfd5de;font-weight:700;margin-top:3.6cqh}
+  .slide.blackout .nextbar{color:#9aa3b2} .slide.blackout .nextbar b{color:#fff}
+  /* ?all：台本つき一覧 */
+  body.all{overflow:auto;display:block;background:#ddd}
+  body.all .toc{display:none}
+  body.all .stage{height:auto;overflow:visible}
+  body.all .deck{height:auto}
+  body.all .slide{position:relative;display:flex;width:960px;height:540px;margin:24px auto 0;container-type:inline-size}
+  body.all .noteu{width:960px;margin:0 auto;background:#fff;padding:10px 14px;font-size:14px;line-height:1.7;border-top:3px solid var(--accent)}
+</style>
+</head>
+<body>
+
+<!-- アイコン定義（SVGスプライト） -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/><path d="M8.5 13h7M8.5 16.5h7"/></symbol>
+  <symbol id="i-folder" viewBox="0 0 24 24"><path d="M3 6.5h6l2 2h10V19H3z"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 5h16a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H9l-4 4v-4H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z"/><circle cx="9.5" cy="10.5" r="1.3"/><circle cx="14.5" cy="10.5" r="1.3"/></symbol>
+  <symbol id="i-ai" viewBox="0 0 24 24"><rect x="5" y="8" width="14" height="10" rx="2.5"/><path d="M12 8V4.5M9.5 4.5h5"/><circle cx="9.5" cy="13" r="1.2"/><circle cx="14.5" cy="13" r="1.2"/><path d="M3 12v3M21 12v3"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5.2l3.2 2"/></symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2L4 14h6l-1 8 10-13h-7z"/></symbol>
+  <symbol id="i-fish" viewBox="0 0 24 24"><path d="M2.5 12c3.5-5 11-5.5 15-1.5 1.2 1.2 2 1.5 2 1.5s-.8.3-2 1.5C13.5 17.5 6 17 2.5 12z"/><path d="M19.5 10.5L22 7v10l-2.5-3.5"/><circle cx="7.5" cy="11" r=".9"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.2l3 3 5-6"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M3 3v18h18"/><rect x="7" y="11" width="2.6" height="7"/><rect x="12" y="7" width="2.6" height="11"/><rect x="17" y="13" width="2.6" height="5"/></symbol>
+  <symbol id="i-medal" viewBox="0 0 24 24"><circle cx="12" cy="14" r="5"/><path d="M9 9L6 2M15 9l3-7"/><path d="M12 12.2l.9 1.8 2 .3-1.4 1.4.3 2-1.8-1-1.8 1 .3-2L9.1 14.3l2-.3z"/></symbol>
+  <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 1.5c.7 5 3.3 7.6 8.3 8.3-5 .7-7.6 3.3-8.3 8.3-.7-5-3.3-7.6-8.3-8.3C8.7 9.1 11.3 6.5 12 1.5z" fill="currentColor" stroke="none"/><path d="M18.8 14.2c.3 2.2 1.4 3.3 3.6 3.6-2.2.3-3.3 1.4-3.6 3.6-.3-2.2-1.4-3.3-3.6-3.6 2.2-.3 3.3-1.4 3.6-3.6z" fill="currentColor" stroke="none"/></symbol>
+</svg>
+
+<!-- 目次 -->
+<aside class="toc" id="toc">
+  <h3>目次 / TABLE OF CONTENTS</h3>
+  <ol id="tocList"></ol>
+  <div class="toc-foot">
+    <kbd>←</kbd><kbd>→</kbd> ページ送り<br>
+    <kbd>Space</kbd> 次へ<br>
+    <kbd>F</kbd> フルスクリーン<br>
+    <kbd>T</kbd> 目次の開閉
+  </div>
+</aside>
+
+<!-- ステージ -->
+<div class="stage" id="stage">
+<div class="progress" id="progress"></div>
+<div class="deck" id="deck">
+
+<!-- 1. タイトル -->
+<section class="slide navy" data-title="タイトル" data-note="<b>0:00</b> 名乗って次へ。【準備】このスライドは Chrome で開く。PAD のデモ前に Edge を完全に閉じておく（タスクバー右下の Edge も終了）。PAD の URL は start_from=2026/10/26 固定。">
+  <div style="position:absolute;left:0;top:47%;width:100%;height:12cqh;background:var(--accent);z-index:0"></div>
+  <div style="position:relative;z-index:2;max-width:62cqw">
+    <div style="display:flex;align-items:center;gap:1.6cqw;margin-bottom:2.5cqh">
+      <div class="avatar" style="width:8cqw;height:8cqw;border-color:var(--accent2)"><span>は</span><img src="assets/haru-icon.png" alt="はる" onerror="this.remove()"></div>
+      <div style="line-height:1.4">
+        <div style="font-size:2cqw;color:#fff;font-weight:700">はる（Haru）</div>
+        <div style="font-size:1.3cqw;color:#9eafc8">X：@isamu_Automate</div>
+      </div>
+    </div>
+    <h1 style="font-size:4.2cqw;line-height:1.35">AIが画面を操作する時代に、<br>PADが活躍できる場所</h1>
+    <p style="font-size:2.1cqw;margin-top:2.6cqh;color:#fff;font-weight:700">── 同じ作業をComputer useと比べてみた</p>
+    <p style="font-size:1.5cqw;margin-top:2.2cqh;color:#cfd8e8">Happy Low-Code【ゲスト回】 ／ 2026.10.26</p>
+  </div>
+  <div style="position:absolute;right:4cqw;top:50%;transform:translateY(-50%);display:flex;flex-direction:column;gap:2.4cqh;z-index:2;width:28cqw">
+    <div class="polaroid" style="transform:rotate(-3deg);height:22cqh"><span class="tape"></span><img src="shots/exp/pad-flow.png" alt="PADのフロー" style="object-fit:cover;object-position:left top"><div class="cap">PAD</div></div>
+    <div class="polaroid" style="transform:rotate(2.5deg);height:22cqh"><span class="tape"></span><img src="shots/exp/cu-2events.png" alt="Computer use の実行画面" style="object-fit:cover;object-position:left top"><div class="cap">Computer use</div></div>
+  </div>
+<div class="nextbar">次へ ▶ <b>自己紹介</b></div>
+</section>
+<section class="slide" data-title="自己紹介" data-note="<b>0:25</b> はるです。製造業で働いていて、IT の部署ではありません。社内で Power Platform の推進と講座をしていて、社外では Power Automate の45分講座、PA45 を毎週開いています。10月に、Microsoft 認定トレーナー、MCT になりました。広島で PLUG というコミュニティも立ち上げています。">
+  <h2 style="display:inline-block">自己紹介</h2>
+  <div style="display:grid;grid-template-columns:auto 1fr auto;gap:3cqw;align-items:center;margin-top:3cqh">
+    <div class="avatar" style="width:17cqw;height:17cqw;border-width:.6cqw"><span>は</span><img src="assets/haru-icon.png" alt="はる" onerror="this.remove()"></div>
+    <div>
+      <div style="font-size:3.4cqw;color:var(--navy);font-weight:800">はる（Haru）</div>
+      <div style="font-size:1.8cqw;color:var(--accent);font-weight:700">X：@isamu_Automate</div>
+      <div style="display:flex;flex-direction:column;gap:1.2cqh;margin-top:2.4cqh">
+        <div class="tip" style="font-size:2cqw;padding:1cqh 1.4cqw">製造業・<b>非IT部門</b>からのスタート</div>
+        <div class="tip" style="font-size:2cqw;padding:1cqh 1.4cqw"><b>社内</b>：Power Platform の推進・講座</div>
+        <div class="tip" style="font-size:2cqw;padding:1cqh 1.4cqw"><b>社外</b>：Power Automate 45分講座 <b>PA45</b> を毎週開催／<b>PLUG</b>（広島）発起人</div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:center">
+      <img src="assets/mct.png" alt="Microsoft Certified Trainer" style="width:19cqw;height:19cqw;object-fit:contain">
+      <div style="font-size:1.7cqw;font-weight:800;color:var(--navy);margin-top:.4cqh">Microsoft 認定トレーナー</div>
+      <div style="font-size:1.4cqw;font-weight:700;color:var(--light)">2026年10月〜</div>
+    </div>
+  </div>
+  <div class="meta">Happy Low-Code / Haru</div>
+  <div class="pageno"></div>
+<div class="nextbar">次へ ▶ <b>これまでの歩み：私の自動化は PAD から始まった</b></div>
+</section>
+<section class="slide sky" data-title="これまでの歩み" data-note="<b>1:05</b> これまでを1本のグラフにすると、こうなる。2007年に製造業に入って、製造技術の現場で15年。自分の強みは何か、とくすぶっていた時期が長かった。転機は2022年。産業ロボットの講座だと思って申し込んだら、RPA、UiPath と PAD の講座だった。これなら人の役に立てる、と思った。つまり私の自動化は、PAD から始まっている。今日は、その PAD と、AI が画面を操作する Computer use を比べる。">
+  <h2 style="display:inline-block">これまでの歩み：私の自動化は PAD から始まった</h2>
+  <div style="margin-top:1cqh"><svg class="arch" viewBox="0 0 1200 430" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="lg1" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="#9aa6b8"/><stop offset=".36" stop-color="#9aa6b8"/><stop offset=".45" stop-color="#6b2a7a"/><stop offset=".72" stop-color="#3f4fb0"/><stop offset="1" stop-color="#0078d4"/></linearGradient>
+    <linearGradient id="lg2" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#e9e2f5" stop-opacity=".8"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
+  </defs>
+  <line x1="30" y1="390" x2="1180" y2="390" stroke="#cfd5de" stroke-width="2"/>
+  <path d="M40 250 C 150 262, 230 270, 330 284 C 400 294, 420 350, 470 352 C 540 352, 560 330, 640 318 C 700 310, 740 270, 790 232 C 860 190, 900 180, 960 172 C 1030 162, 1080 140, 1170 128 L 1170 390 L 40 390 Z" fill="url(#lg2)"/>
+  <path d="M40 250 C 150 262, 230 270, 330 284 C 400 294, 420 350, 470 352 C 540 352, 560 330, 640 318 C 700 310, 740 270, 790 232 C 860 190, 900 180, 960 172 C 1030 162, 1080 140, 1170 128" fill="none" stroke="url(#lg1)" stroke-width="7"/>
+  <g font-size="20" font-weight="700" fill="#6b778a" text-anchor="middle">
+    <text x="40" y="418">2007</text><text x="330" y="418">2016</text><text x="470" y="418">2019</text><text x="640" y="418">2021</text><text x="790" y="418">2022</text><text x="960" y="418">2023</text><text x="1170" y="418">2026</text>
+  </g>
+  <g fill="#fff" stroke-width="5"><circle cx="40" cy="250" r="9" stroke="#9aa6b8"/><circle cx="470" cy="352" r="9" stroke="#6b2a7a"/><circle cx="790" cy="232" r="13" stroke="#e8891c"/><circle cx="960" cy="172" r="9" stroke="#3f4fb0"/><circle cx="1170" cy="128" r="9" stroke="#0078d4"/></g>
+  <g font-weight="800">
+    <rect x="20" y="150" width="250" height="78" rx="12" fill="#fff" stroke="#9aa6b8" stroke-width="2"/><text x="36" y="180" font-size="20" fill="#6b778a">2007 製造業に入社</text><text x="36" y="211" font-size="19" fill="#142A5C">製造技術の現場で15年</text>
+    <rect x="300" y="196" width="250" height="78" rx="12" fill="#fff" stroke="#6b2a7a" stroke-width="2"/><text x="316" y="226" font-size="20" fill="#6b2a7a">〜2021 くすぶり期間</text><text x="316" y="257" font-size="19" fill="#142A5C">自分の強みは？と内省</text>
+    <rect x="560" y="18" width="380" height="118" rx="14" fill="#fff8ee" stroke="#e8891c" stroke-width="4"/><text x="580" y="52" font-size="23" fill="#b25f00">2022 運命の勘違い</text><text x="580" y="86" font-size="20" fill="#142A5C">産業ロボットの講座だと思ったら</text><text x="580" y="118" font-size="20" fill="#c0392b">RPA（UiPath・PAD）だった</text>
+    <line x1="790" y1="136" x2="790" y2="218" stroke="#e8891c" stroke-width="3" stroke-dasharray="6 5"/>
+    <rect x="860" y="232" width="200" height="78" rx="12" fill="#fff" stroke="#3f4fb0" stroke-width="2"/><text x="876" y="262" font-size="20" fill="#3f4fb0">2023 推進役に挙手</text><text x="876" y="293" font-size="18" fill="#142A5C">未経験から社内DXへ</text>
+    <rect x="960" y="20" width="230" height="96" rx="12" fill="#fff" stroke="#0078d4" stroke-width="2"/><text x="976" y="50" font-size="20" fill="#0078d4">2025-2026</text><text x="976" y="78" font-size="18" fill="#142A5C">PLUG・PA45 を開始</text><text x="976" y="104" font-size="18" fill="#142A5C">MCT に認定</text>
+  </g>
+</svg></div>
+  <p class="src">気持ちの上がり下がりをグラフにしたもの（2026-03 一歩をフミダセTV で話した内容より）</p>
+  <div class="meta">Happy Low-Code / Haru</div>
+  <div class="pageno"></div>
+<div class="nextbar">次へ ▶ <b>PAD を始めたとき、師匠に最初に言われたこと</b></div>
+</section>
+<section class="slide" data-title="師匠に最初に言われたこと" data-note="<b>2:20</b> PAD を学び始めたとき、会社に PAD の師匠のような人がいた。その人に最初に言われたのが、この3つ。フローを作り始める前に、まず業務フローを整理しなさい。整理したら断捨離しなさい。そのあと、手順を1つずつ Excel に書きなさい。クリック1つまで。早くフローを作ってみたかったので、正直、遠回りに感じた。この話は、最後にもう一度出てくる。">
+  <h2 style="display:inline-block">PAD を始めたとき、師匠に最初に言われたこと</h2>
+  <div style="display:grid;grid-template-columns:auto 1fr;gap:2cqw;align-items:center;margin-top:1.6cqh">
+    <img src="assets/irasutoya/manual_man.png" alt="" style="height:13cqh;object-fit:contain">
+    <div class="aiq" style="font-size:2.1cqw;background:#fffbe6;border-color:#e8c547"><span class="who" style="color:#b25f00">会社の PAD の師匠</span>フローを作り始める前に、<b>業務フローを整理</b>して、<b>断捨離</b>して、<b>手順を1つずつ Excel に書く</b>こと。<b>クリック1つまで</b>。</div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 3.4cqw 1fr 3.4cqw 1fr;align-items:stretch;margin-top:2.2cqh">
+  <div class="card" style="border-color:#0066FF;padding:1.6cqh 1cqw;text-align:center"><div style="height:16cqh;display:flex;align-items:center;justify-content:center"><img src="assets/irasutoya/whiteboard_memo.png" alt="" style="height:15cqh;object-fit:contain"></div><div style="font-size:2.4cqw;font-weight:800;color:#0066FF;margin-top:.8cqh">① 業務フローを整理</div><div class="d" style="font-size:1.75cqw;margin-top:.5cqh;line-height:1.5">今どんな順で<br>何をしているか</div></div>
+  <div style="display:flex;align-items:center;justify-content:center;font-size:3cqw;font-weight:800;color:#e8891c">▶</div>
+  <div class="card" style="border-color:#c0392b;padding:1.6cqh 1cqw;text-align:center"><div style="height:16cqh;display:flex;align-items:center;justify-content:center"><img src="assets/irasutoya/gomi.png" alt="" style="height:15cqh;object-fit:contain"></div><div style="font-size:2.4cqw;font-weight:800;color:#c0392b;margin-top:.8cqh">② 断捨離</div><div class="d" style="font-size:1.75cqw;margin-top:.5cqh;line-height:1.5">要らない手順は<br>捨てる</div></div>
+  <div style="display:flex;align-items:center;justify-content:center;font-size:3cqw;font-weight:800;color:#e8891c">▶</div>
+  <div class="card" style="border-color:#107c41;padding:1.6cqh 1cqw;text-align:center"><div style="height:16cqh;display:flex;align-items:center;justify-content:center"><div style="width:15cqh;height:13cqh"><svg viewBox="0 0 120 100" style="width:100%;height:100%">
+  <rect x="4" y="4" width="112" height="92" rx="8" fill="#fff" stroke="#107c41" stroke-width="4"/>
+  <rect x="4" y="4" width="112" height="20" rx="8" fill="#107c41"/><rect x="4" y="16" width="112" height="8" fill="#107c41"/>
+  <g stroke="#9cc7ae" stroke-width="2"><line x1="4" y1="42" x2="116" y2="42"/><line x1="4" y1="60" x2="116" y2="60"/><line x1="4" y1="78" x2="116" y2="78"/><line x1="30" y1="24" x2="30" y2="96"/><line x1="70" y1="24" x2="70" y2="96"/></g>
+  <g font-size="12" font-weight="800" fill="#107c41"><text x="13" y="37">1</text><text x="13" y="55">2</text><text x="13" y="73">3</text><text x="13" y="91">4</text></g>
+  <g fill="#cfe6d8"><rect x="36" y="30" width="28" height="8" rx="2"/><rect x="36" y="48" width="22" height="8" rx="2"/><rect x="36" y="66" width="30" height="8" rx="2"/><rect x="36" y="84" width="18" height="8" rx="2"/><rect x="76" y="30" width="34" height="8" rx="2"/><rect x="76" y="48" width="26" height="8" rx="2"/><rect x="76" y="66" width="34" height="8" rx="2"/></g>
+</svg></div></div><div style="font-size:2.4cqw;font-weight:800;color:#107c41;margin-top:.8cqh">③ Excel に1つずつ</div><div class="d" style="font-size:1.75cqw;margin-top:.5cqh;line-height:1.5">手順を書く<br><b>クリック1つまで</b></div></div>
+</div>
+  <p class="src" style="text-align:left;left:6cqw">この話は、最後にもう一度出てきます</p>
+  <div class="meta">Happy Low-Code / Haru</div>
+  <div class="pageno"></div>
+<div class="nextbar">次へ ▶ <b>ちょっと面倒</b></div>
+</section>
+<section class="slide blackout" data-title="ちょっと面倒" data-note="<b>3:20</b> 正直な気持ちは、これだった。ちょっと面倒……。早くフローを作って動かしたいのに、整理して、断捨離して、クリック1つまで Excel に書け、と言われる。（間を取る）この、ちょっと面倒、が今日の話の最後につながる。">
+  <img class="bo-fig" src="assets/irasutoya/unzari_man.png" alt="">
+  <div class="bo-txt">
+    <div class="bo-small">正直な気持ちは……</div>
+    <div class="bo-big">ちょっと面倒<span style="font-size:4.4cqw;letter-spacing:-.1em">……</span></div>
+    <div class="bo-sub">早くフローを作って、動かしたいのに</div>
+  </div>
+<div class="nextbar">次へ ▶ <b>きょうの問い</b></div>
+</section>
+<section class="slide sky" data-title="きょうの問い" data-note="<b>3:40</b> Copilot Studio の Computer use は、AI が画面を見て、クリックや入力をしてくれる機能。PAD でやってきたことと、見た目はほとんど同じ。では、PAD はもう要らないのか。逆に、AI に全部任せていいのか。今日はこれを、実際に両方を動かした結果で考える。">
+  <h2 style="display:inline-block">きょうの問い</h2>
+  <div style="display:grid;grid-template-columns:1fr 1.6fr;gap:3cqw;align-items:center;margin-top:4cqh">
+    <img src="assets/irasutoya/kaisya_komaru_man.png" alt="" style="height:36cqh;object-fit:contain;justify-self:center">
+    <div>
+      <p style="font-size:2.2cqw;color:var(--text);font-weight:700;line-height:1.6">AI が画面を見て、<b class="accent">クリックも入力もする</b>時代になった<br><span style="font-size:1.6cqw;color:var(--light)">Copilot Studio の Computer use</span></p>
+      <p class="q" style="margin-top:3cqh;font-size:3.8cqw">では、<br><span class="accent">PAD をやる意味</span>は<br>まだあるのか</p>
+    </div>
+  </div>
+  <p class="src">イラスト：いらすとや</p>
+  <div class="meta">Happy Low-Code / Haru</div>
+  <div class="pageno"></div>
+<div class="nextbar">次へ ▶ <b>今日の2つの道具は、どこにあるのか</b></div>
+</section>
+<section class="slide" data-title="2つの道具の位置づけ" data-note="<b>4:40</b> まず、今日の2つの道具がどこにあるか。いつも使っている Outlook、Teams、SharePoint などが Microsoft 365。それとつないで、業務の仕組みを自分で作れる道具のまとまりが Power Platform。その中に Power Automate があって、メールや Teams をつなぐクラウド フローと、パソコンの画面を操作する PAD、デスクトップ フローがある。同じ Power Platform の中に Copilot Studio があって、AI のエージェントを作れる。エージェントが使う道具の1つが Computer use。AI が画面を見て操作する。今日比べるのは、この2つ、PAD と Computer use。">
+  <h2 style="display:inline-block">今日の2つの道具は、どこにあるのか</h2>
+  <div style="margin-top:.8cqh"><svg class="arch" viewBox="0 0 1200 470" xmlns="http://www.w3.org/2000/svg">
+  <rect x="10" y="10" width="300" height="450" rx="18" fill="#fff" stroke="#9aa6b8" stroke-width="3"/>
+  <text x="160" y="52" text-anchor="middle" font-size="26" font-weight="800" fill="#142A5C">Microsoft 365</text>
+  <text x="160" y="82" text-anchor="middle" font-size="18" font-weight="700" fill="#6b778a">毎日使うアプリ</text>
+  <image href="assets/outlook.png" x="40" y="108" width="60" height="60"/><text x="115" y="146" font-size="22" font-weight="800" fill="#142A5C">Outlook</text>
+  <image href="assets/teams.png" x="40" y="188" width="60" height="60"/><text x="115" y="226" font-size="22" font-weight="800" fill="#142A5C">Teams</text>
+  <image href="assets/sharepoint.png" x="40" y="268" width="60" height="60"/><text x="115" y="306" font-size="22" font-weight="800" fill="#142A5C">SharePoint</text>
+  <image href="assets/onedrive.png" x="40" y="348" width="60" height="60"/><text x="115" y="386" font-size="22" font-weight="800" fill="#142A5C">OneDrive など</text>
+  <line x1="312" y1="235" x2="352" y2="235" stroke="#142A5C" stroke-width="4"/><text x="332" y="222" text-anchor="middle" font-size="16" font-weight="800" fill="#142A5C">つなぐ</text>
+  <rect x="355" y="10" width="835" height="450" rx="18" fill="#f6f8fc" stroke="#142A5C" stroke-width="3"/>
+  <text x="380" y="50" font-size="28" font-weight="800" fill="#142A5C">Power Platform</text>
+  <text x="640" y="50" font-size="18" font-weight="700" fill="#6b778a">ローコードで、業務の仕組みを自分で作る道具のまとまり</text>
+  <rect x="380" y="72" width="390" height="370" rx="16" fill="#eef4ff" stroke="#0066FF" stroke-width="3"/>
+  <image href="assets/powerautomate.png" x="400" y="88" width="52" height="52"/><text x="462" y="124" font-size="26" font-weight="800" fill="#0066FF">Power Automate</text>
+  <text x="400" y="164" font-size="18" font-weight="700" fill="#142A5C">決めた手順で動く「フロー」を作る</text>
+  <rect x="400" y="182" width="350" height="96" rx="12" fill="#fff" stroke="#0066FF" stroke-width="2"/>
+  <text x="418" y="216" font-size="22" font-weight="800" fill="#0066FF">クラウド フロー</text><text x="418" y="250" font-size="17" font-weight="700" fill="#142A5C">メール・Teams・リストなどをつなぐ</text>
+  <rect x="400" y="292" width="350" height="132" rx="12" fill="#fff" stroke="#0066FF" stroke-width="5"/>
+  <text x="418" y="328" font-size="24" font-weight="800" fill="#0066FF">PAD（デスクトップ フロー）</text><text x="418" y="362" font-size="17" font-weight="700" fill="#142A5C">パソコンの画面を、決めた手順で</text><text x="418" y="388" font-size="17" font-weight="700" fill="#142A5C">クリック・入力する（RPA）</text>
+  <text x="418" y="414" font-size="16" font-weight="800" fill="#c0392b">← 今日の比較 その1</text>
+  <rect x="790" y="72" width="385" height="370" rx="16" fill="#f5f0ff" stroke="#7a4fd6" stroke-width="3"/>
+  <image href="assets/copilotstudio.png" x="810" y="88" width="52" height="52"/><text x="872" y="124" font-size="26" font-weight="800" fill="#7a4fd6">Copilot Studio</text>
+  <text x="810" y="164" font-size="18" font-weight="700" fill="#142A5C">AI のエージェントを作る</text>
+  <rect x="810" y="182" width="345" height="96" rx="12" fill="#fff" stroke="#7a4fd6" stroke-width="2"/>
+  <image href="assets/agent.png" x="826" y="200" width="40" height="40"/><text x="876" y="228" font-size="22" font-weight="800" fill="#7a4fd6">エージェント</text><text x="826" y="264" font-size="17" font-weight="700" fill="#142A5C">道具（ツール）を使って仕事をする</text>
+  <rect x="810" y="292" width="345" height="132" rx="12" fill="#fff" stroke="#7a4fd6" stroke-width="5"/>
+  <text x="828" y="328" font-size="24" font-weight="800" fill="#7a4fd6">Computer use（ツール）</text><text x="828" y="362" font-size="17" font-weight="700" fill="#142A5C">AI が画面を見て、その場で考えて</text><text x="828" y="388" font-size="17" font-weight="700" fill="#142A5C">クリック・入力する</text>
+  <text x="828" y="414" font-size="16" font-weight="800" fill="#c0392b">← 今日の比較 その2</text>
+</svg></div>
+  <p class="src">Copilot Studio は Power Platform の一員。Computer use は Copilot Studio のエージェントが使うツールの1つ（Microsoft Learn）</p>
+  <div class="meta">Happy Low-Code / Haru</div>
+  <div class="pageno"></div>
+<div class="topright"><span class="side both"><img src="assets/powerautomate.png" alt="">PAD × <img src="assets/copilotstudio.png" alt="">Computer use</span></div>
+<div class="nextbar">次へ ▶ <b>PAD とは：決めた手順で、画面を操作する</b></div>
+</section>
+<section class="slide withmascot sky" data-title="PAD とは" data-note="<b>6:10</b> PAD は、Power Automate for desktop の略。パソコンの画面の操作を、決めた手順で自動にする。いわゆる RPA。画面の部品、たとえば検索欄やボタンを1つずつ指定して、順番に並べる。Windows 10、11 なら、自分のパソコンで人が動かす使い方は追加の費用なしで使える。私が2022年に出会ったのが、この PAD。">
+  <h2 style="display:inline-block"><img src="assets/powerautomate.png" class="logo" alt="Power Automate Desktop"> PAD とは：決めた手順で、画面を操作する</h2>
+  <div style="display:grid;grid-template-columns:1.25fr 1fr;gap:2.4cqw;margin-top:2cqh;height:48cqh">
+    <div class="shotcol" style=""><div class="shotbox"><img src="shots/exp/pad-flow.png" alt=""></div><p class="cap">部品を1つずつ指定して、順番に並べる（実画面）</p></div>
+    <div style="display:flex;flex-direction:column;gap:1.4cqh;justify-content:center">
+      <div class="tip" style="font-size:2cqw"><b>Power Automate for desktop</b> の略。いわゆる <b>RPA</b></div>
+      <div class="tip" style="font-size:2cqw">検索欄・ボタンなど、<br><b>押す場所を人が決めて</b>並べる</div>
+      <div class="tip" style="font-size:2cqw">Windows 10/11 なら、<br><b>手元で人が動かす使い方は追加費用なし</b></div>
+    </div>
+  </div>
+  <p class="src">Microsoft Learn「Power Automate licensing FAQ」（2026-09-22 確認）</p>
+  <div class="meta">Happy Low-Code / Haru</div>
+  <div class="pageno"></div>
+<div class="topright"><span class="side pad"><img src="assets/powerautomate.png" alt="">いまの話：PAD</span></div>
+<img class="mascot" src="assets/irasutoya/study_gariben_boy.png" alt="">
+<div class="nextbar">次へ ▶ <b>Computer use とは：AI が画面を見て、操作する</b></div>
+</section>
+<section class="slide withmascot" data-title="Computer use とは" data-note="<b>7:10</b> Computer use は、Copilot Studio のエージェントが使う道具の1つ。やりたいことを文章で頼むと、AI が画面を見て、その場でどこを押すかを考えて、クリックや入力をする。押す場所は指定しない。画面が変わっても、見て判断し直す。そのかわり、1手ごとに Copilot クレジットがかかる。標準のモデルで1手5クレジット。">
+  <h2 style="display:inline-block"><img src="assets/copilotstudio.png" class="logo" alt="Copilot Studio"> Computer use とは：AI が画面を見て、操作する</h2>
+  <div style="display:grid;grid-template-columns:1.25fr 1fr;gap:2.4cqw;margin-top:2cqh;height:48cqh">
+    <div class="shotcol" style=""><div class="shotbox"><img src="shots/exp/cu-2events.png" alt=""></div><p class="cap">AI が画面を見て、次に押す場所を決める（実画面）</p></div>
+    <div style="display:flex;flex-direction:column;gap:1.4cqh;justify-content:center">
+      <div class="tip" style="font-size:2cqw"><b>Copilot Studio</b> の<br>エージェントが使う<b>ツール</b>の1つ</div>
+      <div class="tip" style="font-size:2cqw">やりたいことを<b>文章で頼む</b>。<br>押す場所は<b>AI がその場で決める</b></div>
+      <div class="tip" style="font-size:2cqw">1手ごとに <b>Copilot クレジット</b><br>（標準モデルで5）</div>
+    </div>
+  </div>
+  <p class="src">Microsoft Learn「Automate web and desktop apps with computer use」（2026-10-20 更新）</p>
+  <div class="meta">Happy Low-Code / Haru</div>
+  <div class="pageno"></div>
+<div class="topright"><span class="side cu"><img src="assets/copilotstudio.png" alt="">いまの話：Computer use</span></div>
+<img class="mascot" src="assets/irasutoya/gal_o_man.png" alt="">
+<div class="nextbar">次へ ▶ <b>2つを人にたとえると</b></div>
+</section>
+<section class="slide blackout" data-title="2つを人にたとえると" data-note="<b>8:10</b> この2つは、画面をクリックして入力する、という同じ仕事ができる。違うのは、どこを押すかを、人が前もって決めるか、AI がその場で考えるか。人にたとえると、こうなる。PAD は、真面目すぎる人。教科書どおり、書いてあることしかやらない。決めた手順以外はやらないし、1つでもズレたら、そこで止まる。Computer use は、チャラいのに、なぜか頭がいい人。学年に1人はいたタイプ。とりあえずやってみて、ダメなら別の手を考える。その場で考えながら、どんどん進む。あくまで、私の個人の主観。（間を取る）どちらがいいかは、同じ仕事をさせて比べてみる。答えは今日の話の最後に。">
+  <div style="position:absolute;left:0;right:0;top:30cqh;text-align:center;font-size:8.4cqw;font-weight:900;color:#fff;letter-spacing:.06em;transform:rotate(-6deg);z-index:2;pointer-events:none;white-space:nowrap;-webkit-text-stroke:.5cqw #0b0b0d;paint-order:stroke fill;opacity:.95">※個人の主観です</div>
+  <div style="font-size:2cqw;color:#9aa3b2;font-weight:800;margin-top:1cqh;position:relative;z-index:1">同じ仕事ができる2つ。でも性格はまったく違う。人にたとえると……</div>
+  <div style="display:grid;grid-template-columns:1fr 6cqw 1fr;align-items:center;margin-top:2cqh;position:relative;z-index:1">
+    <div style="display:flex;flex-direction:column;align-items:center;text-align:center">
+      <img src="assets/irasutoya/study_gariben_boy.png" alt="" style="height:44cqh;object-fit:contain">
+      <div style="margin-top:1.6cqh;font-size:4.4cqw;font-weight:900;color:#4da3ff;letter-spacing:-.02em">PAD</div>
+      <div style="font-size:2.3cqw;font-weight:800;color:#ffd23f;margin:.6cqh 0 1.2cqh">真面目すぎる人</div>
+      <div style="font-size:2.3cqw;font-weight:800;color:#fff;line-height:1.5">決めた手順以外は、やらない</div><div style="font-size:2.3cqw;font-weight:800;color:#fff;line-height:1.5">1つでもズレたら、そこで止まる</div>
+    </div>
+    <div style="font-size:4cqw;font-weight:900;color:#5c6577;text-align:center">vs</div>
+    <div style="display:flex;flex-direction:column;align-items:center;text-align:center">
+      <img src="assets/irasutoya/gal_o_man.png" alt="" style="height:44cqh;object-fit:contain">
+      <div style="margin-top:1.6cqh;font-size:4.4cqw;font-weight:900;color:#c39bff;letter-spacing:-.02em">Computer use</div>
+      <div style="font-size:2.3cqw;font-weight:800;color:#ffd23f;margin:.6cqh 0 1.2cqh">チャラいのに、なぜか頭がいい人<span style='display:block;font-size:1.6cqw;color:#9aa3b2;margin-top:.3cqh'>（学年に1人はいたタイプ）</span></div>
+      <div style="font-size:2.3cqw;font-weight:800;color:#fff;line-height:1.5">とりあえずやってみて、ダメなら別の手</div><div style="font-size:2.3cqw;font-weight:800;color:#fff;line-height:1.5">その場で考えながら、どんどん進む</div>
+    </div>
+  </div>
+  <div style="position:absolute;left:3cqw;bottom:6cqh;font-size:1.2cqw;color:#5c6577">イラスト：いらすとや</div>
+<div class="nextbar">次へ ▶ <b>ゴールまでの道のり</b></div>
+</section>
+<section class="slide" data-title="今日の流れ" data-note="<b>8:50</b> 今日のゴールは、AI が画面を操作できる時代に、PAD をやる意味を見つけること。PAD はもう要らないのか。それとも、AI 全盛期だからこそやる意味があるのか。同じ作業を両方に任せた実験から答えを探す。流れは4つ。1、しくみ。同じ画面操作でも、中で起きていることが違う。2、実験。同じ作業を両方に任せた結果。3、考察。結果から言えること。4、PAD をやる意味。今日の答え。上の帯に、いまどこにいるかを出しておく。">
+  <h2 style="display:inline-block">ゴールまでの道のり</h2>
+  <p style="font-size:2cqw;color:var(--navy);font-weight:800;margin-top:1cqh">ゴール：<span class="accent">AI が画面を操作する時代に、PAD をやる意味を見つける</span></p>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1.4cqw;margin-top:4cqh">
+    <div class="card" style="border-color:var(--navy);text-align:center;padding:4cqh .8cqw"><div class="big" style="color:var(--navy);font-size:6.4cqw;margin-top:0">1</div><div class="d" style="font-size:2.6cqw;line-height:1.4;margin-top:1.4cqh">しくみ<br><span style="font-size:1.8cqw;color:var(--light)">中で何が起きているか</span></div></div>
+    <div class="card" style="border-color:var(--navy);text-align:center;padding:4cqh .8cqw"><div class="big" style="color:var(--navy);font-size:6.4cqw;margin-top:0">2</div><div class="d" style="font-size:2.6cqw;line-height:1.4;margin-top:1.4cqh">実験<br><span style="font-size:1.8cqw;color:var(--light)">同じ作業を任せてみた</span></div></div>
+    <div class="card" style="border-color:var(--navy);text-align:center;padding:4cqh .8cqw"><div class="big" style="color:var(--navy);font-size:6.4cqw;margin-top:0">3</div><div class="d" style="font-size:2.6cqw;line-height:1.4;margin-top:1.4cqh">考察<br><span style="font-size:1.8cqw;color:var(--light)">結果から言えること</span></div></div>
+    <div class="card" style="border-color:var(--accent);text-align:center;padding:4cqh .8cqw"><div class="big" style="color:var(--accent);font-size:6.4cqw;margin-top:0">4</div><div class="d" style="font-size:2.6cqw;line-height:1.4;margin-top:1.4cqh">PAD をやる意味<br><span style="font-size:1.8cqw;color:var(--light)">今日の答え</span></div></div>
+  </div>
+  <div class="meta">Happy Low-Code / Haru</div>
+  <div class="pageno"></div>
+<div class="nextbar">次へ ▶ <b>第1章 しくみ</b></div>
+</section>
+<section data-ch="1" data-sub="0" class="slide navy chapdoor" data-title="第1章 しくみ" data-note="<b>9:25</b> 第1章、しくみ。見た目は同じ画面操作でも、中で起きていることがまったく違う。まずは作り方から。">
+  <div class="goal">今日のゴール：<b>AI が画面を操作する時代に、PAD をやる意味を見つける</b></div>
+  <div class="no">第1章　しくみ</div>
+  <div class="qq">どちらも画面を操作する。<br>でも、中で起きていることが違う</div>
+  <div class="prev">ここから：同じ作業を、PAD と Computer use の両方で作ってみた。まずは作り方の違いから</div>
+  <div class="meta">Happy Low-Code / Haru</div>
+  <div class="pageno"></div>
+<div class="nextbar">次へ ▶ <b>題材：毎週やっている、4ステップの画面作業</b></div>
+</section>
+<section data-ch="1" data-sub="0" class="slide" data-title="題材" data-note="<b>9:45</b> 題材は、私が毎週やっている作業。connpass は勉強会の申込みサイトで、PA45 の毎回の申込みページもここにある。次回の告知を書くたびに、ここで PA45 の次回を探して、日付と URL を控えている。人がやると1分もかからない、4ステップの作業。公開サイトなので画面をそのまま見せられて、正解も私が知っている。比べるにはちょうどいい。">
+  <h2 style="display:inline-block">題材：毎週やっている、4ステップの画面作業</h2>
+  <p style="font-size:2cqw;color:var(--navy);font-weight:800;margin-top:.6cqh">connpass（勉強会の申込みサイト）で、PA45 の<span class="accent">次回の日付と URL</span>を控える</p>
+  <div class="steps4">
+    <div><div class="shotbox"><img src="shots/connpass/s1-open.png" alt=""></div><div class="n"><span>1</span>connpass を開く</div></div>
+    <div><div class="shotbox"><img src="shots/connpass/s2-search.png" alt=""></div><div class="n"><span>2</span>入れて🔍を押す</div><div class="d">「PowerAutomate45」</div></div>
+    <div><div class="shotbox"><img src="shots/connpass/s3-results.png" alt=""></div><div class="n"><span>3</span>1件目を押す</div></div>
+    <div><div class="shotbox"><img src="shots/connpass/s4-event.png" alt=""></div><div class="n"><span>4</span>日付とURLを控える</div></div>
+  </div>
+  <div class="meta">Happy Low-Code / Haru</div>
+  <div class="pageno"></div>
+<div class="topright"><span class="side both"><img src="assets/powerautomate.png" alt="">PAD × <img src="assets/copilotstudio.png" alt="">Computer use</span></div>
+<div class="nextbar">次へ ▶ <b>PAD：作るときに決めて、そのとおりに押す</b></div>
+</section>
+<section data-ch="1" data-sub="0" class="slide withmascot" data-title="PAD：動かすと、決めたとおりに押して答える" data-note="<b>10:55</b> 【デモ前】Edge が閉じているか確認してから▶。PAD では、画面の部品を1つずつ指定して並べる。作るのに6分30秒かかった。どこを押すかは、作るときに私が決め終えている。動かすとこうなる。Edge が開いて、検索結果のページから1件目、第33回を押して、日付を取って、2026年10月29日、と出た。正解。作るとき、最初は検索欄から入れる形にしたが、検索欄の部品がうまく登録できなかったので、検索結果のページを直接開く形に直した。どこをどう押すかを決めるのは、最後まで人。">
+  <h2 style="display:inline-block"><img src="assets/powerautomate.png" class="logo" alt="Power Automate Desktop"> PAD：作るときに決めて、そのとおりに押す</h2>
+  <div style="display:grid;grid-template-columns:1.55fr 1fr;gap:2cqw;margin-top:1.6cqh;height:50cqh">
+    <div class="shotcol" style=""><div class="shotbox"><img src="shots/exp/pad-run-success.png" alt=""></div><p class="cap">最後に「2026/10/29(木)」と表示（実画面）</p></div>
+    <div style="display:flex;flex-direction:column;gap:1.6cqh;justify-content:center">
+      <div class="card" style="padding:1.4cqh 1.4cqw;text-align:center"><div class="lab" style="justify-content:center;font-size:1.8cqw">作るのにかかった時間</div><div class="big" style="font-size:3.6cqw;margin-top:.2cqh">6分30秒</div></div>
+      <div class="card" style="padding:1.4cqh 1.4cqw;text-align:center;border-color:#16a34a"><div class="big" style="font-size:3.4cqw;color:#16a34a;margin-top:0">正解</div><div class="d" style="font-size:1.8cqw">第33回 10/29(木)</div></div>
+      <div class="tip" style="font-size:1.75cqw">検索結果のページを直接開く形に、<b>人が直した</b>（4アクション）</div>
+    </div>
+  </div>
+  <p class="src">Power Automate for desktop の実画面（2026-10-25）</p>
+  <div style="position:absolute;left:6cqw;bottom:7.4cqh;font-size:1.05cqw;color:#9aa6b8;font-weight:700">メモ：▶の前に Edge を完全に閉じる／スライドは Chrome で開く／URL は 2026/10/26 固定</div>
+  <div class="meta">Happy Low-Code / Haru</div>
+  <div class="pageno"></div>
+<div class="topright"><span class="demo" style="background:#e8891c">▶ デモ<span style="font-size:1.5cqw;font-weight:700">PAD を実行</span></span><span class="side pad"><img src="assets/powerautomate.png" alt="">いまの話：PAD</span></div>
+<img class="mascot" src="assets/irasutoya/study_gariben_boy.png" alt="">
+<div class="nextbar">次へ ▶ <b>Computer use：やりたいことを文章1つで頼む</b></div>
+</section>
+<section data-ch="1" data-sub="0" class="slide withmascot" data-title="Computer use：やりたいことを文章で頼む" data-note="<b>11:55</b> Computer use では、手順の欄にこの1文を書いただけ。部品の指定はしていない。どこを押すかは、AI が実行のときに画面を見て決める。動かす場所は、用意された仮想 PC の中のブラウザー。モデルは Claude Sonnet 4.5。">
+  <h2 style="display:inline-block"><img src="assets/copilotstudio.png" class="logo" alt="Copilot Studio"> Computer use：やりたいことを文章1つで頼む</h2>
+  <div class="shotcol" style="height:20cqh;margin-top:1.6cqh"><div class="shotbox"><img src="shots/exp/cu-instr-pa45.png" alt=""></div><p class="cap">手順の欄に書いたのは、この1文だけ（実画面）</p></div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.6cqw;margin-top:2cqh;height:26cqh">
+    <div class="shotcol" style=""><div class="shotbox"><img src="shots/real/cu-home-card.png" alt=""></div><p class="cap">「コンピューターを使用するエージェント」</p></div>
+    <div class="shotcol" style=""><div class="shotbox"><img src="shots/real/cu-machine.png" alt=""></div><p class="cap">動かす場所＝ホスト型ブラウザー（仮想PC）</p></div>
+  </div>
+  <p class="src">Copilot Studio の実画面（2026-08-14・2026-10-24）／モデル：Claude Sonnet 4.5</p>
+  <div class="meta">Happy Low-Code / Haru</div>
+  <div class="pageno"></div>
+<div class="topright"><span class="side cu"><img src="assets/copilotstudio.png" alt="">いまの話：Computer use</span></div>
+<img class="mascot" src="assets/irasutoya/gal_o_man.png" alt="">
+<div class="nextbar">次へ ▶ <b>Computer use は「撮る→考える→押す」のくり返し</b></div>
+</section>
+<section data-ch="1" data-sub="0" class="slide withmascot sky" data-title="Computer use の中で起きていること" data-note="<b>12:55</b> 【デモ】別ウィンドウの Copilot Studio で、手順の欄が PowerAutomate45 になっているのを確認して、直接テストを押す。押した時刻を控える。左に流れる AI の考えを1分ほど見せたら、動かしたまま次へ進む（止めない）。→ 19枚目で結果を見に戻る。実行すると、左に AI の考えが英語で流れる。connpass を開いた。翻訳のポップアップが出たので閉じる。検索欄が見えたのでクリックする。PowerAutomate45 と入力する。画面を撮って、考えて、押す。これを1手ずつ、終わるまでくり返している。どこを押すかを、実行のたびに、その場で決めている。">
+  <h2 style="display:inline-block">Computer use は「撮る→考える→押す」のくり返し</h2>
+  <div style="display:grid;grid-template-columns:1fr 1.05fr;gap:2cqw;margin-top:1.4cqh;height:52cqh;align-items:center">
+    <div><svg class="arch" viewBox="0 0 640 330" xmlns="http://www.w3.org/2000/svg">
+  <defs><marker id="al" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#7a4fd6"/></marker></defs>
+  <circle cx="320" cy="160" r="112" fill="none" stroke="#d9cdf6" stroke-width="14"/>
+  <rect x="235" y="8" width="170" height="64" rx="14" fill="#fff" stroke="#7a4fd6" stroke-width="3"/><text x="320" y="49" text-anchor="middle" font-size="27" font-weight="800" fill="#142A5C">① 画面を撮る</text>
+  <rect x="440" y="196" width="190" height="64" rx="14" fill="#fff" stroke="#7a4fd6" stroke-width="3"/><text x="535" y="237" text-anchor="middle" font-size="27" font-weight="800" fill="#142A5C">② 考える</text>
+  <rect x="10" y="196" width="190" height="64" rx="14" fill="#fff" stroke="#7a4fd6" stroke-width="3"/><text x="105" y="237" text-anchor="middle" font-size="27" font-weight="800" fill="#142A5C">③ 押す・入力</text>
+  <path d="M410 60 Q 500 90 520 190" fill="none" stroke="#7a4fd6" stroke-width="5" marker-end="url(#al)"/>
+  <path d="M440 250 Q 320 320 205 250" fill="none" stroke="#7a4fd6" stroke-width="5" marker-end="url(#al)"/>
+  <path d="M110 190 Q 140 90 230 60" fill="none" stroke="#7a4fd6" stroke-width="5" marker-end="url(#al)"/>
+  <text x="320" y="152" text-anchor="middle" font-size="26" font-weight="800" fill="#7a4fd6">終わるまで</text>
+  <text x="320" y="186" text-anchor="middle" font-size="26" font-weight="800" fill="#7a4fd6">くり返す</text>
+</svg></div>
+    <div class="shotcol" style="height:100%"><div class="shotbox"><img src="shots/exp/cu-log-start.png" alt=""></div><p class="cap">左に流れる AI の考え（実画面）</p></div>
+  </div>
+  <p class="src">Copilot Studio のテスト画面（2026-10-24）</p>
+  <div class="meta">Happy Low-Code / Haru</div>
+  <div class="pageno"></div>
+<div class="topright"><span class="demo" style="background:#7a4fd6">▶ デモ<span style="font-size:1.5cqw;font-weight:700">Computer use を実行（PowerAutomate45）</span></span><span class="side cu"><img src="assets/copilotstudio.png" alt="">いまの話：Computer use</span></div>
+<img class="mascot" src="assets/irasutoya/gal_o_man.png" alt="">
+<div class="nextbar">次へ ▶ <b>第2章 実験</b></div>
+</section>
+<section data-ch="2" data-sub="0" class="slide navy chapdoor" data-title="第2章 実験" data-note="<b>14:15</b> 第1章で分かったことは3つ。PAD は、どこを押すかを作るときに人が決め終えている。AI は実行のたびにその場で決める。違いは、判断をいつ、誰がしているか。では第2章、実験。判断の仕方が違うと、実際に何が起きるのか。2つの頼み方をした。普通に頼む。それから、まだ存在しないものを頼む。">
+  <div class="goal">今日のゴール：<b>AI が画面を操作する時代に、PAD をやる意味を見つける</b></div>
+  <div class="no">第2章　実験</div>
+  <div class="qq">判断の仕方が違うと、<br>実際に何が起きるのか</div>
+  <div class="prev pts"><div class="dl">第1章で分かったこと</div><div class="dp"><span class="k">PAD</span><span>どこを押すかは、<b>作るときに人が決め終えている</b></span></div><div class="dp"><span class="k">AI</span><span>どこを押すかを、<b>実行のたびにその場で決める</b></span></div><div class="dp"><span class="k">つまり</span><span>違いは、<b>判断をいつ・誰がしているか</b></span></div></div>
+  <div class="meta">Happy Low-Code / Haru</div>
+  <div class="pageno"></div>
+<div class="nextbar">次へ ▶ <b>実験の全体像：Computer use に2つの頼み方をした</b></div>
+</section>
+<section data-ch="2" data-sub="0" class="slide withmascot sky" data-title="実験の全体像" data-note="<b>14:40</b> 実験は2つ。どちらも Computer use に、文章1つで頼んだ。実験1は、普通に頼む。確かめたいのは、正しく答えられるか、そしてどんな道筋で、どれくらい時間とお金がかかるか。結果を先に言うと、正しく答えた。ただし約7分かかって、途中で答えの画面を手放していた。実験2は、まだ存在しないものを頼む。答えは、見つかりません、になるはず。確かめたいのは、答えがないときに、止まって、ない、と言えるか。結果を先に言うと、同じ指示で3回動かして、3回とも結末が違った。1回は正しく、ない、と答え、1回は別のイベントを開き、1回は回り続けて人が止めた。ここから中身を見ていく。">
+  <h2 style="display:inline-block">実験の全体像：Computer use に2つの頼み方をした</h2>
+  <div style="display:grid;grid-template-columns:1.05fr 1.05fr 1.5fr;gap:1cqw;margin-top:2cqh;font-size:1.6cqw;font-weight:800;color:var(--light)">
+    <div>頼み方</div><div>確かめたいこと</div><div>結果（先に言うと）</div>
+  </div>
+  <div style="display:flex;flex-direction:column;gap:1.4cqh;margin-top:.8cqh">
+    <div style="display:grid;grid-template-columns:1.05fr 1.05fr 1.5fr;gap:1cqw;align-items:stretch">
+      <div class="card cu" style="padding:1.2cqh 1.2cqw;justify-content:center"><div style="font-size:1.6cqw;font-weight:800;color:#7a4fd6">実験1</div><div style="font-size:1.9cqw;font-weight:900;color:var(--navy);line-height:1.4;margin-top:.4cqh">普通に頼む<br><span style='font-size:1.4cqw;color:var(--light);white-space:nowrap'>PowerAutomate45 の次回</span></div></div>
+      <div class="card" style="padding:1.2cqh 1.2cqw;justify-content:center;border-color:#9db8f5"><div style="font-size:1.85cqw;font-weight:800;color:var(--navy);line-height:1.5">正しく答えられるか<br><b>時間とお金</b>はどれくらいか</div></div>
+      <div class="card" style="padding:1.2cqh 1.2cqw;justify-content:center;border-color:#16a34a;background:#fff"><div style="font-size:1.85cqw;font-weight:800;color:var(--navy);line-height:1.5"><b style='color:#16a34a'>正解</b>。ただし<b style='color:#c0392b'>約7分</b><br><span style='font-size:1.6cqw'>途中で、答えの画面を手放していた</span></div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1.05fr 1.05fr 1.5fr;gap:1cqw;align-items:stretch">
+      <div class="card cu" style="padding:1.2cqh 1.2cqw;justify-content:center"><div style="font-size:1.6cqw;font-weight:800;color:#7a4fd6">実験2</div><div style="font-size:1.9cqw;font-weight:900;color:var(--navy);line-height:1.4;margin-top:.4cqh">存在しないものを頼む<br><span style='font-size:1.4cqw;color:var(--light);white-space:nowrap'>コパスタ45（0件が正解）</span></div></div>
+      <div class="card" style="padding:1.2cqh 1.2cqw;justify-content:center;border-color:#9db8f5"><div style="font-size:1.85cqw;font-weight:800;color:var(--navy);line-height:1.5">答えがないとき<br><b>止まって、ないと言えるか</b></div></div>
+      <div class="card" style="padding:1.2cqh 1.2cqw;justify-content:center;border-color:#c0392b;background:#fff"><div style="font-size:1.85cqw;font-weight:800;color:var(--navy);line-height:1.5"><b style='color:#c0392b'>3回とも結末が違った</b><br><span style='font-size:1.6cqw'>正しく答えた／別のイベント／回り続けた</span></div></div>
+    </div>
+  </div>
+  <div class="meta">Happy Low-Code / Haru</div>
+  <div class="pageno"></div>
+<div class="topright"><span class="side cu"><img src="assets/copilotstudio.png" alt="">いまの話：Computer use</span></div>
+<img class="mascot" src="assets/irasutoya/gal_o_man.png" alt="">
+<div class="nextbar">次へ ▶ <b>実験1：普通に頼むと正解。ただし約7分</b></div>
+</section>
+<section data-ch="2" data-sub="0" class="slide withmascot" data-title="実験1：普通に頼んだ結果" data-note="<b>15:55</b> 【デモの結果】別ウィンドウに戻り、16枚目で動かした結果を見せる。終わっていれば、かかった時間と答えが合っているかを確認。まだ動いていれば、今どこを見ているかだけ見せて、動かしたまま次へ（20枚目のあとにもう一度見る）。昨日は約7分。実験1。普通に、PowerAutomate45 で頼んだ。答えは正しかった。第33回、10月29日の20時15分から、URL、参加の状況まで。ただ、かかった時間は約7分、手数は11。1手5クレジットなので55クレジット。パックの単価で換算すると1回約66円。人なら1分の作業。">
+  <h2 style="display:inline-block">実験1：普通に頼むと正解。ただし約7分</h2>
+  <div style="display:grid;grid-template-columns:1.05fr 1fr;gap:2cqw;margin-top:1.6cqh;height:34cqh">
+    <div class="shotcol" style=""><div class="shotbox"><img src="shots/exp/cu-answer-pa45.png" alt=""></div><p class="cap">最後の答え（実画面）</p></div>
+    <div class="shotcol" style=""><div class="shotbox"><img src="shots/exp/cu-final-page.png" alt=""></div><p class="cap">開いたイベントのページ</p></div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1.2cqw;margin-top:2.2cqh">
+    <div class="card cu" style="padding:1.4cqh .8cqw;text-align:center"><div class="lab" style="justify-content:center;font-size:1.7cqw">答え</div><div class="big" style="font-size:3cqw;margin-top:.4cqh">正しい</div></div>
+    <div class="card cu" style="padding:1.4cqh .8cqw;text-align:center"><div class="lab" style="justify-content:center;font-size:1.7cqw">時間</div><div class="big" style="font-size:3cqw;margin-top:.4cqh">約7分</div></div>
+    <div class="card cu" style="padding:1.4cqh .8cqw;text-align:center"><div class="lab" style="justify-content:center;font-size:1.7cqw">手数</div><div class="big" style="font-size:3cqw;margin-top:.4cqh">11</div></div>
+    <div class="card cu" style="padding:1.4cqh .8cqw;text-align:center"><div class="lab" style="justify-content:center;font-size:1.7cqw">クレジット</div><div class="big" style="font-size:3cqw;margin-top:.4cqh">55</div><div class="d" style="font-size:1.6cqw;margin-top:.2cqh">約¥66</div></div>
+  </div>
+  <p class="src">2026-10-24 実測。1手5クレジット＝Microsoft Learn computer-use（Claude Sonnet 4.5＝標準）／テスト実行も消費される（管理センターで確認）／¥換算＝25,000クレジット ¥29,985 のパック単価</p>
+  <div class="meta">Happy Low-Code / Haru</div>
+  <div class="pageno"></div>
+<div class="topright"><span class="demo" style="background:#16a34a">↩ デモの結果<span style="font-size:1.5cqw;font-weight:700">16枚目で動かした分</span></span><span class="side cu"><img src="assets/copilotstudio.png" alt="">いまの話：Computer use</span></div>
+<img class="mascot" src="assets/irasutoya/gal_o_man.png" alt="">
+<div class="nextbar">次へ ▶ <b>実験1：一度たどり着いた答えの画面を手放していた</b></div>
+</section>
+<section data-ch="2" data-sub="0" class="slide withmascot sky" data-title="実験1：途中で、答えの画面を手放していた" data-note="<b>17:10</b> 途中を見ると面白いことが起きていた。最初の検索で、結果は2件。開催前のイベントだけに絞り込まれていて、一番上が答えの第33回。ここで正解の画面に来ていた。ところが、タイトルではなくサムネイル画像を押してしまい、戻ったら、絞り込みが外れた37件の画面になった。過去の回が全部並んでいる。そこから AI は、スクロールして、2ページ目へ行って、並び順を変えて、日付を読みながら次回を探し直した。アドレス欄を見ると、最初は開催日の絞り込みが付いていて、あとでは付いていない。">
+  <h2 style="display:inline-block">実験1：一度たどり着いた答えの画面を手放していた</h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.6cqw;margin-top:1.4cqh;height:44cqh">
+    <div class="shotcol" style=""><div class="shotbox"><img src="shots/exp/cu-2events.png" alt=""></div><p class="cap">最初の検索：<b class='accent'>2件</b>（開催前だけ）。答えはここ</p></div>
+    <div class="shotcol" style=""><div class="shotbox"><img src="shots/exp/cu-37events.png" alt=""></div><p class="cap">押し間違えて戻ると：<b style='color:#c0392b'>37件</b>（過去回も全部）</p></div>
+  </div>
+  <div class="tip" style="margin-top:2cqh;font-size:2cqw">アドレス欄：最初は<b>開催日の絞り込みつき</b> → あとは<b>絞り込みなし</b>。そこからスクロール・2ページ目・並び替えで探し直した</div>
+  <p class="src">Copilot Studio のテスト画面（2026-10-24）</p>
+  <div class="meta">Happy Low-Code / Haru</div>
+  <div class="pageno"></div>
+<div class="topright"><span class="side cu"><img src="assets/copilotstudio.png" alt="">いまの話：Computer use</span></div>
+<img class="mascot" src="assets/irasutoya/gal_o_man.png" alt="">
+<div class="nextbar">次へ ▶ <b>実験2：まだ存在しないものを頼んでみた</b></div>
+</section>
+<section data-ch="2" data-sub="0" class="slide" data-title="実験2：まだ存在しないものを頼む" data-note="<b>18:50</b> 【デモ】16枚目のテストが終わっているのを確認してから、手順の欄の PowerAutomate45 を コパスタ45 に書き換えて保存し、直接テストを押す。押す前に参加者に問いかける：AI はどうすると思いますか？ 正しく「ない」と言う／別のイベントを持ってくる／回り続ける、の3つ。押した時刻を控え、動かしたまま次へ。→ 24枚目で結果を見に戻る。3分たっても終わらなければ「回り続けた」として止める。実験2。まだ存在しないものを頼んだ。コパスタ45 は、これから始める予定の講座で、connpass にはまだイベントがない。だから正解は、見つかりません。PAD なら、1件目のリンクが見つからないので、そこで止まって、エラーで知らせる。AI はどうするか。同じ指示で3回動かした。">
+  <h2 style="display:inline-block">実験2：まだ存在しないものを頼んでみた</h2>
+  <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:2cqw;margin-top:1.4cqh;align-items:center">
+    <div>
+      <div class="tip" style="font-size:2cqw">connpass を開き、<b>「コパスタ45」</b>で検索して、次回イベントの日付とURLを記録してください</div>
+      <div class="shotbox" style="height:24cqh;margin-top:1.6cqh"><img src="shots/exp/cu3-0events.png" alt="0件"></div>
+      <p style="font-size:1.9cqw;color:var(--text);font-weight:800;margin-top:1cqh">コパスタ45＝これから始める講座。検索すると<b class="accent">0件</b>＝<b style="color:#c0392b">正解は「見つかりません」</b></p>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:1.6cqh">
+      <div class="card"><div class="lab"><img src="assets/powerautomate.png" alt="Power Automate Desktop">PAD なら</div><div class="d" style="font-size:2.1cqw">リンクが見つからず、<br><b>そこで止まって知らせる</b></div></div>
+      <div class="card cu"><div class="lab"><img src="assets/copilotstudio.png" alt="Copilot Studio">AI は？</div><div class="d" style="font-size:2.1cqw"><b>0件の画面を見たら、どうするか</b><br><span style="font-size:1.7cqw;color:var(--light)">同じ指示・同じモデルで3回動かした</span></div></div>
+    </div>
+  </div>
+  <div class="meta">Happy Low-Code / Haru</div>
+  <div class="pageno"></div>
+<div class="topright"><span class="demo" style="background:#7a4fd6">▶ デモ<span style="font-size:1.5cqw;font-weight:700">コパスタ45 で実行</span></span><span class="side both"><img src="assets/powerautomate.png" alt="">PAD × <img src="assets/copilotstudio.png" alt="">Computer use</span></div>
+<div class="nextbar">次へ ▶ <b>0件を見て、AI は検索語を変えた。なぜ？</b></div>
+</section>
+<section data-ch="2" data-sub="0" class="slide withmascot sky" data-title="実験2の2回目：検索語を変えようとして、回り続けた" data-note="<b>19:50</b> 3回のうち1回は、0件を見て、見つかりませんでした、と正しく答えた。ところが残りの2回は、0件を見たあと、検索語を自分で「コパスタ」に変えた。なぜか。AI の考えを読むと、こう書いてある。正確な名前で検索しても見つかりません。別の検索方法を試してみます。指示は、コパスタ45 で検索して、次回イベントの日付と URL を記録して、だった。AI はこれを、イベントはある、という前提で読んだ。だから0件を、答えではなく、探し方がまずかった、と受け取った。それで気を利かせて、検索語を短くして探し続けた。8月はそれで別のグループのイベントを開き、10月の2回目は、入力欄の候補のコパスタ45 を選び直して0件に戻る、を繰り返して、人が止めた。0件ならどうするか、は指示に書いていなかった。（ここは AI の考えのログから読んだ解釈）">
+  <h2 style="display:inline-block">0件を見て、AI は検索語を変えた。<span class="accent">なぜ？</span></h2>
+  <div style="display:grid;grid-template-columns:1fr 1.15fr;gap:1.8cqw;margin-top:1.2cqh">
+    <div style="display:flex;flex-direction:column;gap:1.1cqh">
+      <div class="aiq" style="font-size:1.65cqw"><span class="who">AI の考え（8月14日・そのまま）</span>「コパスタ45」という正確な名前で検索しても<b>結果が見つかりません</b>。<b>別の検索方法を試してみます</b>。</div>
+      <div class="aiq" style="font-size:1.65cqw"><span class="who">AI の考え（10月24日②・そのまま）</span>該当するイベントが見つかりませんでした。<b>検索キーワードを変更してみます。「コパスタ」だけで検索してみましょう。</b></div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:.6cqh;font-size:1.75cqw;font-weight:800;color:var(--navy)">
+      <div class="card" style="padding:1cqh 1.2cqw;border-color:#7a4fd6;font-size:1.6cqw">指示：「コパスタ45 で検索して、<br><b>次回イベントの日付と URL を記録して</b>」</div>
+      <div style="text-align:center;color:#e8891c">▼</div>
+      <div class="card" style="padding:1cqh 1.2cqw;border-color:#7a4fd6">AI は<b style="color:#c0392b">「イベントはある」前提</b>で読んだ</div>
+      <div style="text-align:center;color:#e8891c">▼</div>
+      <div class="card" style="padding:1cqh 1.2cqw;border-color:#7a4fd6">0件を「答え」ではなく<b style="color:#c0392b">「探し方の失敗」</b>と受け取り、気を利かせて探し続けた</div>
+    </div>
+  </div>
+  <div class="tip" style="margin-top:1.6cqh;font-size:1.85cqw"><b>「0件ならどうするか」は、指示に書いていなかった。</b>8月は別グループのイベントを開き、10月②は候補の「コパスタ45」を選び直して0件に戻る、を繰り返して人が止めた</div>
+  <p class="src">左は Copilot Studio のテスト画面の文の抜き出し（2026-08-14／2026-10-24）。右は AI の考えから読んだ解釈</p>
+  <div class="meta">Happy Low-Code / Haru</div>
+  <div class="pageno"></div>
+<div class="topright"><span class="side cu"><img src="assets/copilotstudio.png" alt="">いまの話：Computer use</span></div>
+<img class="mascot" src="assets/irasutoya/gal_o_man.png" alt="">
+<div class="nextbar">次へ ▶ <b>検索するだけで約400円</b></div>
+</section>
+<section data-ch="2" data-sub="0" class="slide blackout" data-title="検索するだけで約400円" data-note="<b>21:45</b> 管理センターで見たら、この日 connpass で3回検索しただけで、355クレジット、約400円。牛丼1杯分。（間を取る）……じぶんでやる。人なら1分の作業。ここは笑ってもらっていいところ。ただ、回り続けた2回が、そのほとんどを使っている。">
+  <img class="bo-fig" src="assets/irasutoya/gyudon2.png" alt="" style="height:58cqh;right:5cqw;bottom:16cqh">
+  <div class="bo-txt">
+    <div class="bo-small">connpass で検索しただけで（3回）</div>
+    <div class="bo-big">約400円<span style="font-size:4.4cqw;letter-spacing:-.25em">、、？</span></div>
+    <div class="bo-sub">牛丼1杯分</div>
+    <div class="bo-big" style="font-size:5.4cqw;margin-top:4.4cqh;color:#ffd23f">……じぶんでやる</div>
+    <div style="font-size:1.4cqw;color:#7d8696;font-weight:700;margin-top:3cqh">2026-10-24 の3回で 355 クレジット（管理センター）。パック単価 約¥1.2 で換算</div>
+  </div>
+<div class="nextbar">次へ ▶ <b>まとめると：同じ指示で、3回とも結末が違った</b></div>
+</section>
+<section data-ch="2" data-sub="0" class="slide withmascot sky" data-title="実験2：同じ指示で、3回とも結末が違った" data-note="<b>22:15</b> 【デモの結果】別ウィンドウに戻り、21枚目で動かした結果を見せる。表の「今日」の行に口頭で当てはめる。3分を超えて回っていれば「テストをキャンセルする」で止めて、回り続けた例として話す。終わったら手順の欄を PowerAutomate45 に戻しておく（質問対応用）。実は8月14日にも同じ指示で試していて、そのときは、コパスタだけで検索し直して、別のグループのイベントを開いていた。この画面は考察3で見せる。並べるとこうなる。同じ指示、同じモデル。1回は正しく、ありません、と答えた。1回は別のイベントを開いた。1回は止まらずに回り続けた。どれになるかは、やってみるまで分からない。実験1の時間も、8月は1分19秒と3分30秒、今日は7分だった。">
+  <h2 style="display:inline-block">まとめると：同じ指示で、3回とも結末が違った</h2>
+  <table class="tbl" style="margin-top:2.4cqh;font-size:2.15cqw">
+    <tr><th>実行</th><th class="c">0件のあと、AI がしたこと</th><th class="c">結末</th></tr>
+    <tr><td>8月14日</td><td class="c">「コパスタ」に変えて検索し直した</td><td class="c" style="color:#c0392b"><b>別のグループのイベント</b>を開いた</td></tr>
+    <tr><td>10月24日 ①</td><td class="c">検索語は変えなかった</td><td class="c" style="color:#16a34a"><b>「見つかりません」</b>と正しく答えた</td></tr>
+    <tr><td>10月24日 ②</td><td class="c">「コパスタ」に変えようとした</td><td class="c" style="color:#c0392b"><b>回り続け、人が止めた</b></td></tr>
+    <tr><td style="color:#7a4fd6">今日</td><td class="c" style="color:#7a4fd6;font-weight:800">（いまのデモで確認）</td><td class="c" style="color:#7a4fd6;font-weight:800">？</td></tr>
+  </table>
+  <div class="tip" style="margin-top:2.4cqh;font-size:2.05cqw">普通に頼んだときの時間も、<b>1分19秒・3分30秒（8月）、7分（10月）</b>とばらついた</div>
+  <p class="src">すべて Claude Sonnet 4.5・同じ手順の文。2026-08-14／2026-10-24 実測</p>
+  <div class="meta">Happy Low-Code / Haru</div>
+  <div class="pageno"></div>
+<div class="topright"><span class="demo" style="background:#16a34a">↩ デモの結果<span style="font-size:1.5cqw;font-weight:700">21枚目で動かした分</span></span><span class="side cu"><img src="assets/copilotstudio.png" alt="">いまの話：Computer use</span></div>
+<img class="mascot" src="assets/irasutoya/gal_o_man.png" alt="">
+<div class="nextbar">次へ ▶ <b>第3章 考察</b></div>
+</section>
+<section data-ch="3" data-sub="0" class="slide navy chapdoor" data-title="第3章 考察" data-note="<b>23:55</b> 第3章、考察。この結果から何が言えるか。4つにまとめた。">
+  <div class="goal">今日のゴール：<b>AI が画面を操作する時代に、PAD をやる意味を見つける</b></div>
+  <div class="no">第3章　考察</div>
+  <div class="qq">この結果から、<br>何が言えるのか</div>
+  <div class="prev">第2章で分かったこと：AI は<b>正しく答えられる</b>。ただし<b>時間も結末も、毎回同じとは限らない</b></div>
+  <div class="meta">Happy Low-Code / Haru</div>
+  <div class="pageno"></div>
+<div class="nextbar">次へ ▶ <b>AI は毎回ゼロから考える。だから時間が読めない</b></div>
+</section>
+<section data-ch="3" data-sub="1" class="slide" data-title="考察1：AI は毎回ゼロから考える" data-note="<b>24:15</b> 考察1。AI は毎回ゼロから考える。だから時間が読めない。同じ作業で、1分19秒、3分30秒、7分とばらついた。PAD は、どこを押すかを考えるのを、作るときの1回で済ませている。あとは毎回同じ道を通る。AI は実行のたびに考え直すので、迷えば迷うほど時間もクレジットもかかる。仕事に置き換えると、新人に毎回口で説明するか、手順書を1回作って渡すか、の違い。">
+  <div><span style="display:inline-block;font-size:1.7cqw;font-weight:800;color:#fff;background:#c0392b;border-radius:2cqw;padding:.5cqh 1.4cqw">考察 1</span></div>
+  <h2 style="display:inline-block;margin-top:.8cqh">AI は<span class='accent'>毎回ゼロから考える</span>。だから時間が読めない</h2>
+  <div style="display:grid;grid-template-columns:1.25fr 1fr;gap:1.6cqw;margin-top:1.4cqh;height:50cqh">
+    <div style="min-height:0;display:flex;flex-direction:column"><div style="background:#fff;border-radius:1cqw;padding:1.6cqh 1.4cqw;flex:1;display:flex;flex-direction:column;justify-content:space-around">
+  <div style="font-size:1.7cqw;font-weight:800;color:#0066FF;display:flex;align-items:center;gap:.6cqw"><img src="assets/powerautomate.png" style="width:2.4cqw;height:2.4cqw" alt="Power Automate Desktop">PAD：考えるのは、作るときの1回だけ</div>
+  <div style="display:flex;gap:.4cqw"><div style="height:4.2cqh;width:36%;background:#c0392b;border-radius:.5cqw;color:#fff;font-size:1.4cqw;font-weight:800;display:flex;align-items:center;justify-content:center;white-space:nowrap;overflow:hidden">考える 6分30秒</div><div style="height:4.2cqh;width:15%;background:#0066FF;border-radius:.5cqw;color:#fff;font-size:1.4cqw;font-weight:800;display:flex;align-items:center;justify-content:center;white-space:nowrap;overflow:hidden">実行</div><div style="height:4.2cqh;width:15%;background:#0066FF;border-radius:.5cqw;color:#fff;font-size:1.4cqw;font-weight:800;display:flex;align-items:center;justify-content:center;white-space:nowrap;overflow:hidden">実行</div><div style="height:4.2cqh;width:15%;background:#0066FF;border-radius:.5cqw;color:#fff;font-size:1.4cqw;font-weight:800;display:flex;align-items:center;justify-content:center;white-space:nowrap;overflow:hidden">実行</div><div style="font-size:1.3cqw;font-weight:800;color:#0066FF;align-self:center">…毎回同じ道</div></div>
+  <div style="font-size:1.7cqw;font-weight:800;color:#7a4fd6;display:flex;align-items:center;gap:.6cqw;margin-top:1cqh"><img src="assets/copilotstudio.png" style="width:2.4cqw;height:2.4cqw" alt="Copilot Studio">AI：実行のたびに、毎回ゼロから考える</div>
+  <div style="display:flex;gap:.4cqw;align-items:center"><div style="height:4.2cqh;width:9%;background:#c0392b;border-radius:.5cqw;color:#fff;font-size:1.4cqw;font-weight:800;display:flex;align-items:center;justify-content:center;white-space:nowrap;overflow:hidden">考</div><div style="height:4.2cqh;width:9%;background:#7a4fd6;border-radius:.5cqw;color:#fff;font-size:1.4cqw;font-weight:800;display:flex;align-items:center;justify-content:center;white-space:nowrap;overflow:hidden">押</div><div style="font-size:1.4cqw;font-weight:800;color:#7a4fd6">1分19秒</div></div>
+  <div style="display:flex;gap:.4cqw;align-items:center"><div style="height:4.2cqh;width:9%;background:#c0392b;border-radius:.5cqw;color:#fff;font-size:1.4cqw;font-weight:800;display:flex;align-items:center;justify-content:center;white-space:nowrap;overflow:hidden">考</div><div style="height:4.2cqh;width:9%;background:#7a4fd6;border-radius:.5cqw;color:#fff;font-size:1.4cqw;font-weight:800;display:flex;align-items:center;justify-content:center;white-space:nowrap;overflow:hidden">押</div><div style="height:4.2cqh;width:9%;background:#c0392b;border-radius:.5cqw;color:#fff;font-size:1.4cqw;font-weight:800;display:flex;align-items:center;justify-content:center;white-space:nowrap;overflow:hidden">考</div><div style="height:4.2cqh;width:9%;background:#7a4fd6;border-radius:.5cqw;color:#fff;font-size:1.4cqw;font-weight:800;display:flex;align-items:center;justify-content:center;white-space:nowrap;overflow:hidden">押</div><div style="font-size:1.4cqw;font-weight:800;color:#7a4fd6">3分30秒</div></div>
+  <div style="display:flex;gap:.4cqw;align-items:center"><div style="height:4.2cqh;width:9%;background:#c0392b;border-radius:.5cqw;color:#fff;font-size:1.4cqw;font-weight:800;display:flex;align-items:center;justify-content:center;white-space:nowrap;overflow:hidden">考</div><div style="height:4.2cqh;width:9%;background:#7a4fd6;border-radius:.5cqw;color:#fff;font-size:1.4cqw;font-weight:800;display:flex;align-items:center;justify-content:center;white-space:nowrap;overflow:hidden">押</div><div style="height:4.2cqh;width:9%;background:#c0392b;border-radius:.5cqw;color:#fff;font-size:1.4cqw;font-weight:800;display:flex;align-items:center;justify-content:center;white-space:nowrap;overflow:hidden">考</div><div style="height:4.2cqh;width:9%;background:#7a4fd6;border-radius:.5cqw;color:#fff;font-size:1.4cqw;font-weight:800;display:flex;align-items:center;justify-content:center;white-space:nowrap;overflow:hidden">押</div><div style="height:4.2cqh;width:9%;background:#c0392b;border-radius:.5cqw;color:#fff;font-size:1.4cqw;font-weight:800;display:flex;align-items:center;justify-content:center;white-space:nowrap;overflow:hidden">考</div><div style="height:4.2cqh;width:9%;background:#7a4fd6;border-radius:.5cqw;color:#fff;font-size:1.4cqw;font-weight:800;display:flex;align-items:center;justify-content:center;white-space:nowrap;overflow:hidden">押</div><div style="height:4.2cqh;width:9%;background:#c0392b;border-radius:.5cqw;color:#fff;font-size:1.4cqw;font-weight:800;display:flex;align-items:center;justify-content:center;white-space:nowrap;overflow:hidden">考</div><div style="height:4.2cqh;width:9%;background:#7a4fd6;border-radius:.5cqw;color:#fff;font-size:1.4cqw;font-weight:800;display:flex;align-items:center;justify-content:center;white-space:nowrap;overflow:hidden">押</div><div style="font-size:1.4cqw;font-weight:800;color:#7a4fd6">7分（遠回り）</div></div>
+</div></div>
+    <div style="display:flex;flex-direction:column;gap:1cqh;justify-content:center">
+      <div style="background:#fff;border-left:.6cqw solid #7a4fd6;border-radius:.6cqw;padding:1cqh 1.1cqw;display:flex;gap:.9cqw;align-items:center"><div style="flex:1"><div style="font-size:1.35cqw;font-weight:800;color:#7a4fd6">実験で起きたこと</div><div style="font-size:1.72cqw;font-weight:700;color:var(--navy);line-height:1.5;margin-top:.2cqh">同じ作業なのに、AI は<b>1分19秒・3分30秒・7分</b>とばらついた</div></div></div>
+      <div style="background:#fff;border-left:.6cqw solid #c0392b;border-radius:.6cqw;padding:1cqh 1.1cqw;display:flex;gap:.9cqw;align-items:center"><div style="flex:1"><div style="font-size:1.35cqw;font-weight:800;color:#c0392b">つまり</div><div style="font-size:1.72cqw;font-weight:700;color:var(--navy);line-height:1.5;margin-top:.2cqh">PAD は考えるのを<b>作るときに済ませている</b>。AI は<b>実行のたびに考え直す</b></div></div></div>
+      <div style="background:#fff;border-left:.6cqw solid #16a34a;border-radius:.6cqw;padding:1cqh 1.1cqw;display:flex;gap:.9cqw;align-items:center"><div style="flex:1"><div style="font-size:1.35cqw;font-weight:800;color:#16a34a">仕事に置き換えると</div><div style="font-size:1.72cqw;font-weight:700;color:var(--navy);line-height:1.5;margin-top:.2cqh">新人に<b>毎回口で説明</b>するか、<b>手順書を1回作って渡す</b>か</div></div><img src="assets/irasutoya/manual_man.png" alt="" style="height:7.4cqh;width:auto;object-fit:contain;flex:none"></div>
+    </div>
+  </div>
+  <div class="meta">Happy Low-Code / Haru</div>
+  <div class="pageno"></div>
+<div class="topright"><span class="side both"><img src="assets/powerautomate.png" alt="">PAD × <img src="assets/copilotstudio.png" alt="">Computer use</span></div>
+<div class="nextbar">次へ ▶ <b>PAD は止まって知らせる。AI は止まらない</b></div>
+</section>
+<section data-ch="3" data-sub="2" class="slide sky" data-title="考察2：PAD は止まって知らせる" data-note="<b>25:45</b> 考察2。PAD は止まって知らせる。AI は止まらない。準備中に PAD は、検索欄が見つからなくて止まった。どこで止まったか、エラーで分かったので、私が直せた。AI は0件でも探し方を変えて回り続け、人が止めた。止まる、というのは、ここを確かめて、と人に声をかけてくれること。仕事に置き換えると、分からないと聞きに来る新人と、黙って自己流で進める新人の違い。">
+  <div><span style="display:inline-block;font-size:1.7cqw;font-weight:800;color:#fff;background:#c0392b;border-radius:2cqw;padding:.5cqh 1.4cqw">考察 2</span></div>
+  <h2 style="display:inline-block;margin-top:.8cqh">PAD は<span class='accent'>止まって知らせる</span>。AI は止まらない</h2>
+  <div style="display:grid;grid-template-columns:1.25fr 1fr;gap:1.6cqw;margin-top:1.4cqh;height:50cqh">
+    <div style="min-height:0;display:flex;flex-direction:column"><div style="display:grid;grid-template-columns:1fr 1fr;gap:1cqw;flex:1;min-height:0">
+  <div class="shotcol"><div style="font-size:1.6cqw;font-weight:800;color:#0066FF;margin-bottom:.6cqh"><img src="assets/powerautomate.png" style="width:2.2cqw;height:2.2cqw;vertical-align:-.5cqw" alt="Power Automate Desktop"> PAD：止まって知らせた</div><div class="shotbox"><img src="shots/exp/pad-error-detail.png" alt=""></div><p class="cap">「フォーム フィールドが見つかりません」</p></div>
+  <div class="shotcol"><div style="font-size:1.6cqw;font-weight:800;color:#7a4fd6;margin-bottom:.6cqh"><img src="assets/copilotstudio.png" style="width:2.2cqw;height:2.2cqw;vertical-align:-.5cqw" alt="Copilot Studio"> AI：0件のまま回り続けた</div><div class="shotbox"><img src="shots/exp/cu3b-screen.png" alt=""></div><p class="cap">終わる様子がなく、人が止めた</p></div>
+</div></div>
+    <div style="display:flex;flex-direction:column;gap:1cqh;justify-content:center">
+      <div style="background:#fff;border-left:.6cqw solid #7a4fd6;border-radius:.6cqw;padding:1cqh 1.1cqw;display:flex;gap:.9cqw;align-items:center"><div style="flex:1"><div style="font-size:1.35cqw;font-weight:800;color:#7a4fd6">実験で起きたこと</div><div style="font-size:1.72cqw;font-weight:700;color:var(--navy);line-height:1.5;margin-top:.2cqh">PAD は準備中に、検索欄が見つからず<b>止まった</b>。AI は 0件でも<b>探し続けた</b></div></div></div>
+      <div style="background:#fff;border-left:.6cqw solid #c0392b;border-radius:.6cqw;padding:1cqh 1.1cqw;display:flex;gap:.9cqw;align-items:center"><div style="flex:1"><div style="font-size:1.35cqw;font-weight:800;color:#c0392b">つまり</div><div style="font-size:1.72cqw;font-weight:700;color:var(--navy);line-height:1.5;margin-top:.2cqh">止まる＝<b>「ここを確かめて」と人に声をかけてくれる</b>こと</div></div></div>
+      <div style="background:#fff;border-left:.6cqw solid #16a34a;border-radius:.6cqw;padding:1cqh 1.1cqw;display:flex;gap:.9cqw;align-items:center"><div style="flex:1"><div style="font-size:1.35cqw;font-weight:800;color:#16a34a">仕事に置き換えると</div><div style="font-size:1.72cqw;font-weight:700;color:var(--navy);line-height:1.5;margin-top:.2cqh">分からないと<b>聞きに来る新人</b>と、<b>黙って自己流で進める新人</b></div></div><img src="assets/irasutoya/kaisya_komaru_man.png" alt="" style="height:7.4cqh;width:auto;object-fit:contain;flex:none"></div>
+    </div>
+  </div>
+  <div class="meta">Happy Low-Code / Haru</div>
+  <div class="pageno"></div>
+<div class="topright"><span class="side both"><img src="assets/powerautomate.png" alt="">PAD × <img src="assets/copilotstudio.png" alt="">Computer use</span></div>
+<div class="nextbar">次へ ▶ <b>AI の失敗は、成功に見えることがある</b></div>
+</section>
+<section data-ch="3" data-sub="3" class="slide" data-title="考察3：AI の失敗は成功に見える" data-note="<b>27:25</b> 考察3。AI の失敗は、成功に見えることがある。8月の実験で AI は、別のグループのイベントを開いて、イベント情報を確認できました、と報告してきた。PAD の失敗は、エラーで止まるので一目で分かる。AI の失敗は、見た目は成功なので、中身を確かめないと分からない。仕事に置き換えると、それらしい報告書が届いたけれど、中身は別の案件だった、という状態。だから、確かめる手間まで含めてコストを考える必要がある。">
+  <div><span style="display:inline-block;font-size:1.7cqw;font-weight:800;color:#fff;background:#c0392b;border-radius:2cqw;padding:.5cqh 1.4cqw">考察 3</span></div>
+  <h2 style="display:inline-block;margin-top:.8cqh">AI の失敗は、<span class='accent'>成功に見える</span>ことがある</h2>
+  <div style="display:grid;grid-template-columns:1.25fr 1fr;gap:1.6cqw;margin-top:1.4cqh;height:50cqh">
+    <div style="min-height:0;display:flex;flex-direction:column"><div style="display:grid;grid-template-columns:1fr 1.25fr;gap:1cqw;flex:1;min-height:0">
+  <div style="display:flex;flex-direction:column"><div style="font-size:1.6cqw;font-weight:800;color:#0066FF;margin-bottom:.6cqh">PAD の失敗</div>
+    <div style="flex:1;border:3px solid #c0392b;border-radius:1cqw;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center"><div style="width:7cqw;height:7cqw;border-radius:50%;background:#c0392b;color:#fff;font-size:4.6cqw;font-weight:800;display:flex;align-items:center;justify-content:center">✕</div><div style="font-size:2cqw;font-weight:800;color:#c0392b;margin-top:1cqh">エラーで止まる</div></div></div>
+  <div style="display:flex;flex-direction:column"><div style="font-size:1.6cqw;font-weight:800;color:#7a4fd6;margin-bottom:.6cqh">AI の失敗（8月14日）</div>
+    <div style="flex:1;border:3px solid #16a34a;border-radius:1cqw;background:#fff;position:relative;overflow:hidden"><img src="shots/real/cu-wrong-page.png" alt="" style="width:100%;height:100%;object-fit:cover;object-position:top;opacity:.9">
+      <div style="position:absolute;left:.8cqw;top:.8cqh;background:#ecfdf5;border:2px solid #16a34a;border-radius:.5cqw;font-size:1.45cqw;font-weight:800;color:#16a34a;padding:.3cqh .6cqw">✓ イベント情報を確認できました</div>
+      <div style="position:absolute;right:.8cqw;bottom:1cqh;transform:rotate(-8deg);border:4px solid #c0392b;color:#c0392b;font-size:1.9cqw;font-weight:800;padding:.4cqh .8cqw;border-radius:.5cqw;background:rgba(255,255,255,.92)">実は別のイベント</div></div></div>
+</div></div>
+    <div style="display:flex;flex-direction:column;gap:1cqh;justify-content:center">
+      <div style="background:#fff;border-left:.6cqw solid #7a4fd6;border-radius:.6cqw;padding:1cqh 1.1cqw;display:flex;gap:.9cqw;align-items:center"><div style="flex:1"><div style="font-size:1.35cqw;font-weight:800;color:#7a4fd6">実験で起きたこと</div><div style="font-size:1.72cqw;font-weight:700;color:var(--navy);line-height:1.5;margin-top:.2cqh">8月、AI は別グループのイベントを開き<b>「確認できました」</b>と報告した</div></div></div>
+      <div style="background:#fff;border-left:.6cqw solid #c0392b;border-radius:.6cqw;padding:1cqh 1.1cqw;display:flex;gap:.9cqw;align-items:center"><div style="flex:1"><div style="font-size:1.35cqw;font-weight:800;color:#c0392b">つまり</div><div style="font-size:1.72cqw;font-weight:700;color:var(--navy);line-height:1.5;margin-top:.2cqh">PAD の失敗は一目で分かる。AI の失敗は<b>中身を確かめないと分からない</b></div></div></div>
+      <div style="background:#fff;border-left:.6cqw solid #16a34a;border-radius:.6cqw;padding:1cqh 1.1cqw;display:flex;gap:.9cqw;align-items:center"><div style="flex:1"><div style="font-size:1.35cqw;font-weight:800;color:#16a34a">仕事に置き換えると</div><div style="font-size:1.72cqw;font-weight:700;color:var(--navy);line-height:1.5;margin-top:.2cqh"><b>それらしい報告書</b>が届くが、<b>中身は別の案件</b>だった</div></div><img src="assets/irasutoya/business_shock.png" alt="" style="height:7.4cqh;width:auto;object-fit:contain;flex:none"></div>
+    </div>
+  </div>
+  <div class="meta">Happy Low-Code / Haru</div>
+  <div class="pageno"></div>
+<div class="topright"><span class="side both"><img src="assets/powerautomate.png" alt="">PAD × <img src="assets/copilotstudio.png" alt="">Computer use</span></div>
+<div class="nextbar">次へ ▶ <b>AI は、同じ指示でも毎回結果が違う</b></div>
+</section>
+<section data-ch="3" data-sub="4" class="slide sky" data-title="考察4：AI は同じ指示でも毎回違う" data-note="<b>28:55</b> 考察4。AI は、同じ指示でも毎回結果が違う。まだ存在しないイベントを、同じ指示、同じモデルで3回頼んだら、正しく答えた、別のイベントを開いた、回り続けた、と3通りに分かれた。PAD は同じ手順なら毎回同じなので、1回確かめれば次も信じられる。AI は1回うまくいっても、次もうまくいくとは限らない。仕事で AI に任せるなら、何回か試して、ぶれ幅を見てから本番にする。">
+  <div><span style="display:inline-block;font-size:1.7cqw;font-weight:800;color:#fff;background:#c0392b;border-radius:2cqw;padding:.5cqh 1.4cqw">考察 4</span></div>
+  <h2 style="display:inline-block;margin-top:.8cqh">AI は、同じ指示でも<span class='accent'>毎回結果が違う</span></h2>
+  <div style="display:grid;grid-template-columns:1.25fr 1fr;gap:1.6cqw;margin-top:1.4cqh;height:50cqh">
+    <div style="min-height:0;display:flex;flex-direction:column"><div style="display:flex;flex-direction:column;gap:1.4cqh;flex:1;justify-content:center">
+  <div style="font-size:1.6cqw;font-weight:800;color:#0066FF"><img src="assets/powerautomate.png" style="width:2.2cqw;height:2.2cqw;vertical-align:-.5cqw" alt="Power Automate Desktop"> PAD：同じ手順なら、毎回同じ</div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.8cqw;background:#fff;border-radius:1cqw;padding:1.2cqh .8cqw;border:3px solid #0066FF"><div style="display:flex;flex-direction:column;align-items:center;gap:.4cqh"><div style="width:5cqw;height:5cqw;border-radius:50%;background:#0066FF;color:#fff;font-size:2.8cqw;font-weight:800;display:flex;align-items:center;justify-content:center">✓</div><div style="font-size:1.55cqw;font-weight:800;color:var(--navy);text-align:center;line-height:1.3">同じ動き</div><div style="font-size:1.3cqw;font-weight:700;color:var(--light)">1回目</div></div><div style="display:flex;flex-direction:column;align-items:center;gap:.4cqh"><div style="width:5cqw;height:5cqw;border-radius:50%;background:#0066FF;color:#fff;font-size:2.8cqw;font-weight:800;display:flex;align-items:center;justify-content:center">✓</div><div style="font-size:1.55cqw;font-weight:800;color:var(--navy);text-align:center;line-height:1.3">同じ動き</div><div style="font-size:1.3cqw;font-weight:700;color:var(--light)">2回目</div></div><div style="display:flex;flex-direction:column;align-items:center;gap:.4cqh"><div style="width:5cqw;height:5cqw;border-radius:50%;background:#0066FF;color:#fff;font-size:2.8cqw;font-weight:800;display:flex;align-items:center;justify-content:center">✓</div><div style="font-size:1.55cqw;font-weight:800;color:var(--navy);text-align:center;line-height:1.3">同じ動き</div><div style="font-size:1.3cqw;font-weight:700;color:var(--light)">3回目</div></div></div>
+  <div style="font-size:1.6cqw;font-weight:800;color:#7a4fd6"><img src="assets/copilotstudio.png" style="width:2.2cqw;height:2.2cqw;vertical-align:-.5cqw" alt="Copilot Studio"> AI：同じ指示（コパスタ45）でも、毎回違う</div>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.8cqw;background:#fff;border-radius:1cqw;padding:1.2cqh .8cqw;border:3px solid #7a4fd6"><div style="display:flex;flex-direction:column;align-items:center;gap:.4cqh"><div style="width:5cqw;height:5cqw;border-radius:50%;background:#16a34a;color:#fff;font-size:2.8cqw;font-weight:800;display:flex;align-items:center;justify-content:center">✓</div><div style="font-size:1.55cqw;font-weight:800;color:var(--navy);text-align:center;line-height:1.3">正しく「ない」</div><div style="font-size:1.3cqw;font-weight:700;color:var(--light)">10/24 ①</div></div><div style="display:flex;flex-direction:column;align-items:center;gap:.4cqh"><div style="width:5cqw;height:5cqw;border-radius:50%;background:#c0392b;color:#fff;font-size:2.8cqw;font-weight:800;display:flex;align-items:center;justify-content:center">↪</div><div style="font-size:1.55cqw;font-weight:800;color:var(--navy);text-align:center;line-height:1.3">別のイベント</div><div style="font-size:1.3cqw;font-weight:700;color:var(--light)">8/14</div></div><div style="display:flex;flex-direction:column;align-items:center;gap:.4cqh"><div style="width:5cqw;height:5cqw;border-radius:50%;background:#e8891c;color:#fff;font-size:2.8cqw;font-weight:800;display:flex;align-items:center;justify-content:center">⟳</div><div style="font-size:1.55cqw;font-weight:800;color:var(--navy);text-align:center;line-height:1.3">回り続けた</div><div style="font-size:1.3cqw;font-weight:700;color:var(--light)">10/24 ②</div></div></div>
+</div></div>
+    <div style="display:flex;flex-direction:column;gap:1cqh;justify-content:center">
+      <div style="background:#fff;border-left:.6cqw solid #7a4fd6;border-radius:.6cqw;padding:1cqh 1.1cqw;display:flex;gap:.9cqw;align-items:center"><div style="flex:1"><div style="font-size:1.35cqw;font-weight:800;color:#7a4fd6">実験で起きたこと</div><div style="font-size:1.72cqw;font-weight:700;color:var(--navy);line-height:1.5;margin-top:.2cqh">同じ指示・同じモデルで3回頼んだら、<b>結末が3通り</b>に分かれた</div></div></div>
+      <div style="background:#fff;border-left:.6cqw solid #c0392b;border-radius:.6cqw;padding:1cqh 1.1cqw;display:flex;gap:.9cqw;align-items:center"><div style="flex:1"><div style="font-size:1.35cqw;font-weight:800;color:#c0392b">つまり</div><div style="font-size:1.72cqw;font-weight:700;color:var(--navy);line-height:1.5;margin-top:.2cqh">PAD は<b>1回確かめれば次も信じられる</b>。AI は<b>1回うまくいっても次は分からない</b></div></div></div>
+      <div style="background:#fff;border-left:.6cqw solid #16a34a;border-radius:.6cqw;padding:1cqh 1.1cqw;display:flex;gap:.9cqw;align-items:center"><div style="flex:1"><div style="font-size:1.35cqw;font-weight:800;color:#16a34a">仕事に置き換えると</div><div style="font-size:1.72cqw;font-weight:700;color:var(--navy);line-height:1.5;margin-top:.2cqh">AI に任せるなら、<b>何回か試して、ぶれ幅を見てから</b>本番に</div></div><img src="assets/irasutoya/business_think.png" alt="" style="height:7.4cqh;width:auto;object-fit:contain;flex:none"></div>
+    </div>
+  </div>
+  <div class="meta">Happy Low-Code / Haru</div>
+  <div class="pageno"></div>
+<div class="topright"><span class="side both"><img src="assets/powerautomate.png" alt="">PAD × <img src="assets/copilotstudio.png" alt="">Computer use</span></div>
+<div class="nextbar">次へ ▶ <b>第4章 PAD をやる意味</b></div>
+</section>
+<section data-ch="4" data-sub="0" class="slide navy chapdoor" data-title="第4章 PAD をやる意味" data-note="<b>30:25</b> 第3章で分かったことは4つ。AI は毎回ゼロから考えるので時間が読めない。PAD は止まって知らせるが、AI は止まらない。AI の失敗は成功に見えることがある。AI は同じ指示でも毎回違う。では第4章。いよいよ今日の問いの答え。AI が画面を操作できる時代に、PAD をやる意味は何か。">
+  <div class="goal">今日のゴール：<b>AI が画面を操作する時代に、PAD をやる意味を見つける</b></div>
+  <div class="no">第4章　PAD をやる意味</div>
+  <div class="qq">AI が画面を操作する時代に、<br>PAD をやる意味は何か</div>
+  <div class="prev pts"><div class="dl">第3章で分かったこと</div><div class="dp"><span class="k">1</span><span>AI は<b>毎回ゼロから考える</b>。だから時間が読めない</span></div><div class="dp"><span class="k">2</span><span>PAD は<b>止まって知らせる</b>。AI は止まらない</span></div><div class="dp"><span class="k">3</span><span>AI の失敗は<b>成功に見える</b>ことがある</span></div><div class="dp"><span class="k">4</span><span>AI は<b>同じ指示でも毎回違う</b></span></div></div>
+  <div class="meta">Happy Low-Code / Haru</div>
+  <div class="pageno"></div>
+<div class="nextbar">次へ ▶ <b>師匠の言葉は、AI 時代の答えだった</b></div>
+</section>
+<section data-ch="4" data-sub="0" class="slide withmascot navy" data-title="師匠の言葉は、AI 時代の答えだった" data-note="<b>30:45</b> ここで、最初に話した師匠の言葉に戻る。業務フローを整理する、断捨離する、手順を1つずつ Excel に書く、クリック1つまで。当時は遠回りに感じたこの3つが、今日の実験で AI がつまずいたところを、そのまま防いでいた。AI 時代に必要な力は、師匠が最初に教えてくれたことだった。言い換えると、AI 全盛期に PAD をやる意味は、業務を棚卸しして、断捨離して適切にして、言語化する力が鍛えられること。よく、AI 時代はプロンプトの書き方が大事と言われる。でもプロンプトの中身は、この3つをやったあとに書く言葉そのもの。">
+  <p style="font-size:2cqw;color:#cfd8e8">最初の話に戻ります</p>
+  <h1 style="font-size:4cqw;margin-top:1.4cqh;line-height:1.4">師匠の言葉は、<span class="accent">AI 時代の答え</span>だった</h1>
+  <div style="display:grid;grid-template-columns:1fr 5cqw 1fr;gap:0;margin-top:2.6cqh;align-items:stretch">
+    <div style="background:#fffbe6;border-radius:1cqw;padding:1.6cqh 1.4cqw">
+      <div style="font-size:1.7cqw;font-weight:800;color:#b25f00">PAD を始めたとき、師匠に言われたこと</div>
+      <div style="display:flex;flex-direction:column;gap:1.2cqh;margin-top:1.2cqh;font-size:2.1cqw;font-weight:800;color:var(--navy)">
+        <div>① 業務フローを整理する</div><div>② 断捨離する</div><div>③ 手順を1つずつ Excel に書く<br><span style="font-size:1.6cqw;color:#b25f00">（クリック1つまで）</span></div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;justify-content:space-around;align-items:center;font-size:3.4cqw;font-weight:800;color:var(--accent2)"><div>＝</div><div>＝</div><div>＝</div></div>
+    <div style="background:#fff;border-radius:1cqw;padding:1.6cqh 1.4cqw">
+      <div style="font-size:1.7cqw;font-weight:800;color:#0066FF">今日の実験で分かったこと</div>
+      <div style="display:flex;flex-direction:column;gap:1.2cqh;margin-top:1.2cqh;font-size:2.1cqw;font-weight:800;color:var(--navy)">
+        <div><span style="color:#0066FF">棚卸し</span>：何をしているか全部出す</div><div><span style="color:#c0392b">断捨離・適切化</span>：あいまいさを決めきる</div><div><span style="color:#16a34a">言語化</span>：誰でも同じに動く言葉に<br><span style="font-size:1.6cqw;color:var(--light)">＝AI への良い指示</span></div>
+      </div>
+    </div>
+  </div>
+  <div style="margin-top:2cqh;font-size:2cqw;font-weight:800;color:#fff;background:rgba(255,255,255,.1);border-left:.5cqw solid var(--accent2);padding:1cqh 1.4cqw">よく言う「プロンプトの書き方」の中身は、<span style="color:#ffd23f">この3つをやったあとに書く言葉</span>そのもの</div>
+  <div class="meta">Happy Low-Code / Haru</div>
+  <div class="pageno"></div>
+<div class="topright"><span class="side pad"><img src="assets/powerautomate.png" alt="">いまの話：PAD</span></div>
+<img class="mascot" src="assets/irasutoya/study_gariben_boy.png" alt="">
+<div class="nextbar">次へ ▶ <b>師匠の Excel 表で、AI のつまずきは防げていた</b></div>
+</section>
+<section data-ch="4" data-sub="0" class="slide withmascot" data-title="師匠の Excel 表で、AI のつまずきは防げていた" data-note="<b>31:55</b> 師匠に言われたとおり、今日の作業を Excel に書くとこうなる。1行が1操作、クリック1つまで。入力する文字は PowerAutomate45 で、変えない。検索したら、開催前だけの2件が出ているかを確かめる。0件なら、ここで止める。日付を読んだら、PA45 の回かを確かめる。色を付けた4か所は、今日 AI がつまずいたところ。近道を手放した、検索語を変えた、回り続けた、別のイベントを並べた。4つとも、この表を書いた時点で防げていた。そしてこの表は、そのまま PAD のフローにもなるし、AI への指示にもなる。">
+  <h2 style="display:inline-block">師匠の Excel 表で、<span class="accent">AI のつまずきは防げていた</span></h2>
+  <div style="margin-top:1.2cqh"><div style="border:2px solid #107c41;border-radius:.8cqw;overflow:hidden;background:#fff">
+  <div style="background:#107c41;color:#fff;font-size:1.5cqw;font-weight:800;padding:.6cqh 1cqw">PA45の次回を調べる_手順.xlsx</div>
+  <table class="xls">
+    <tr class="colh"><th></th><th>A</th><th>B</th><th>C</th><th>D</th><th>E</th></tr>
+    <tr class="hd"><th>1</th><td>画面</td><td>操作</td><td>対象</td><td>入力・値</td><td>確かめること・止めどころ</td></tr>
+    <tr><th>2</th><td>Edge</td><td><b>開く</b></td><td>connpass</td><td>https://connpass.com/</td><td>トップが出たか</td></tr>
+    <tr><th>3</th><td>トップ</td><td><b>クリック</b></td><td>検索欄</td><td>―</td><td>―</td></tr>
+    <tr><th>4</th><td>トップ</td><td><b>入力</b></td><td>検索欄</td><td style="background:#7a4fd622;outline:3px solid #7a4fd6;outline-offset:-3px"><span style="display:inline-block;background:#7a4fd6;color:#fff;border-radius:50%;width:2.2cqw;height:2.2cqw;line-height:2.2cqw;text-align:center;font-size:1.3cqw;margin-right:.4cqw">②</span>PowerAutomate45（変えない）</td><td>―</td></tr>
+    <tr><th>5</th><td>トップ</td><td><b>クリック</b></td><td>🔍 ボタン</td><td>―</td><td style="background:#0066FF22;outline:3px solid #0066FF;outline-offset:-3px"><span style="display:inline-block;background:#0066FF;color:#fff;border-radius:50%;width:2.2cqw;height:2.2cqw;line-height:2.2cqw;text-align:center;font-size:1.3cqw;margin-right:.4cqw">①</span>開催前だけ・2件か</td></tr>
+    <tr><th>6</th><td>検索結果</td><td><b>クリック</b></td><td>1件目のタイトル</td><td>―</td><td style="background:#c0392b22;outline:3px solid #c0392b;outline-offset:-3px"><span style="display:inline-block;background:#c0392b;color:#fff;border-radius:50%;width:2.2cqw;height:2.2cqw;line-height:2.2cqw;text-align:center;font-size:1.3cqw;margin-right:.4cqw">③</span>0件なら、ここで止める</td></tr>
+    <tr><th>7</th><td>イベント</td><td><b>読み取る</b></td><td>開催日時</td><td>―</td><td style="background:#16a34a22;outline:3px solid #16a34a;outline-offset:-3px"><span style="display:inline-block;background:#16a34a;color:#fff;border-radius:50%;width:2.2cqw;height:2.2cqw;line-height:2.2cqw;text-align:center;font-size:1.3cqw;margin-right:.4cqw">④</span>PA45 の回か確かめる</td></tr>
+    <tr><th>8</th><td>―</td><td><b>表示する</b></td><td>メッセージ</td><td>日付と URL</td><td>―</td></tr>
+  </table>
+</div></div>
+  <div style="display:flex;gap:1.4cqw;align-items:center;margin-top:1.2cqh;white-space:nowrap">
+    <div style="font-size:1.5cqw;font-weight:800;color:#7a4fd6">AI のつまずき：</div>
+    <div style="display:flex;align-items:center;gap:.6cqw;font-size:1.6cqw;font-weight:800;color:var(--navy)"><span style="display:inline-block;background:#0066FF;color:#fff;border-radius:50%;width:2.2cqw;height:2.2cqw;line-height:2.2cqw;text-align:center;font-size:1.3cqw;flex:none">①</span>近道を手放した</div><div style="display:flex;align-items:center;gap:.6cqw;font-size:1.6cqw;font-weight:800;color:var(--navy)"><span style="display:inline-block;background:#7a4fd6;color:#fff;border-radius:50%;width:2.2cqw;height:2.2cqw;line-height:2.2cqw;text-align:center;font-size:1.3cqw;flex:none">②</span>検索語を変えた</div><div style="display:flex;align-items:center;gap:.6cqw;font-size:1.6cqw;font-weight:800;color:var(--navy)"><span style="display:inline-block;background:#c0392b;color:#fff;border-radius:50%;width:2.2cqw;height:2.2cqw;line-height:2.2cqw;text-align:center;font-size:1.3cqw;flex:none">③</span>回り続けた</div><div style="display:flex;align-items:center;gap:.6cqw;font-size:1.6cqw;font-weight:800;color:var(--navy)"><span style="display:inline-block;background:#16a34a;color:#fff;border-radius:50%;width:2.2cqw;height:2.2cqw;line-height:2.2cqw;text-align:center;font-size:1.3cqw;flex:none">④</span>別のイベントを並べた</div>
+  </div>
+  <div class="tip" style="margin-top:1.2cqh;font-size:1.9cqw">この表は、そのまま <b>PAD のフロー</b>にも、<b>AI への指示</b>にもなる</div>
+  <p class="src">今日の題材を、師匠の教えのとおりに書いた例</p>
+  <div class="meta">Happy Low-Code / Haru</div>
+  <div class="pageno"></div>
+<div class="topright"><span class="side pad"><img src="assets/powerautomate.png" alt="">いまの話：PAD</span></div>
+<img class="mascot" src="assets/irasutoya/study_gariben_boy.png" alt="">
+<div class="nextbar">次へ ▶ <b>PAD は決めないと動かない</b></div>
+</section>
+<section data-ch="4" data-sub="0" class="slide" data-title="PAD は、決めないと動かない" data-note="<b>33:45</b> なぜ PAD でこの力が鍛えられるのか。PAD は、決めないと動かない。どこから始めるか、どの部品を押すか、何を入れるか、見つからなければどうするか。1つでもあいまいだと、作れないし、動かない。今回も、検索欄の住所があいまいだっただけで止まった。AI は逆。存在しない講座の名前を渡しても、あいまいなまま動いてしまう。だから、あいまいさに自分で気づけない。PAD は、あいまいさを許さないので、決めきる練習を毎回させてくれる。そして、止まるたびに、ここが変わると動かない、と分かって直す。作るたびにこれを繰り返すので、どこで止まりうるか、止まったらどうするか、を先に考える力、失敗の想像力が身につく。AI は止まらないので、AI に頼むときは、これを自分で想像して先に書いておくしかない。">
+  <h2 style="display:inline-block"><img src="assets/powerautomate.png" class="logo" alt="Power Automate Desktop"> PAD は<span class="accent">決めないと動かない</span></h2>
+  <div class="two" style="margin-top:2cqh">
+    <div class="card" style="padding:1.8cqh 1.4cqw"><div style="display:flex;align-items:center;gap:1.6cqw"><img src="assets/irasutoya/tomare.png" alt="" style="height:15cqh;object-fit:contain"><div><div class="lab" style="font-size:2.1cqw"><img src="assets/powerautomate.png" alt="Power Automate Desktop">PAD</div><div class="d" style="font-size:1.9cqw;line-height:1.65;margin-top:.6cqh">1つでもあいまいだと<br><b>作れない・動かない</b></div></div></div>
+      <div class="tip" style="margin-top:1.4cqh;font-size:1.7cqw">今回：検索欄の住所があいまいで<b>止まった</b></div></div>
+    <div class="card cu" style="padding:1.8cqh 1.4cqw"><div style="display:flex;align-items:center;gap:1.6cqw"><img src="assets/irasutoya/ai_robot_pc.png" alt="" style="height:15cqh;object-fit:contain"><div><div class="lab" style="font-size:2.1cqw"><img src="assets/copilotstudio.png" alt="Copilot Studio">AI</div><div class="d" style="font-size:1.9cqw;line-height:1.65;margin-top:.6cqh">あいまいなままでも<br><b>それらしく動く</b></div></div></div>
+      <div class="tip" style="margin-top:1.4cqh;font-size:1.7cqw">今回：存在しない講座名でも<b>動き続けた</b></div></div>
+  </div>
+  <div class="tip" style="margin-top:1.8cqh;font-size:1.95cqw">止まる → 原因が分かる → 直す、を作るたびに繰り返す。だから<b>「どこで止まりうるか」を先に考える力（失敗の想像力）</b>が身につく</div>
+  <div style="margin-top:1.2cqh;font-size:1.8cqw;font-weight:800;color:#7a4fd6">AI は止まらないので、その想像を<b style="color:#c0392b">先に指示に書いておく</b>しかない</div>
+  <div class="meta">Happy Low-Code / Haru</div>
+  <div class="pageno"></div>
+<div class="topright"><span class="side both"><img src="assets/powerautomate.png" alt="">PAD × <img src="assets/copilotstudio.png" alt="">Computer use</span></div>
+<div class="nextbar">次へ ▶ <b>AI を確実にしようとするほど、指示は手順に近づく</b></div>
+</section>
+<section data-ch="4" data-sub="0" class="slide" data-title="AI を確実にしようとするほど、指示は手順に近づく" data-note="<b>35:15</b> ここから、もう一歩考えた。AI のつまずきを防ごうとして、さっきの4つを指示に足していくと、どうなるか。どこから始めるか、何を入れるか、どこで止めるか、どう確かめるか。足すほど、指示はどんどん PAD の手順に近づいていく。AI を確実にしようとするほど、人が先に決めることが増える。つまり、AI に任せるかどうかは、オンかオフではなく、どこまで人が先に決めておくかの、目盛りの話。私の考えでは、何を、どこから、どこまで、どう確かめるか、は人が決める。PAD を作ってきた人なら、ここはもう考えられる。AI に任せるのは、どこを押すか。画面が変わっても見て判断できる、という AI の強みはそこにある。">
+  <div><span style="display:inline-block;font-size:1.7cqw;font-weight:800;color:#fff;background:#7a4fd6;border-radius:2cqw;padding:.5cqh 1.4cqw">PAD をやる意味</span></div>
+  <h2 style="display:inline-block;margin-top:1cqh">AI を確実にしようとするほど、<span class="accent">指示は手順に近づく</span></h2>
+  <div style="margin-top:1cqh"><svg class="arch" viewBox="0 0 1200 360" xmlns="http://www.w3.org/2000/svg">
+  <defs><linearGradient id="gl" gradientUnits="userSpaceOnUse" x1="20" y1="0" x2="1180" y2="0"><stop offset="0" stop-color="#7a4fd6"/><stop offset="1" stop-color="#0066FF"/></linearGradient>
+  <marker id="ag3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#142A5C"/></marker></defs>
+  <g font-weight="800">
+    <rect x="10" y="230" width="220" height="110" rx="14" fill="#efe7ff" stroke="#7a4fd6" stroke-width="3"/><text x="120" y="275" text-anchor="middle" font-size="28" fill="#7a4fd6">指示 1文</text><text x="120" y="310" text-anchor="middle" font-size="21" fill="#142A5C">今回の実験</text>
+    <rect x="245" y="185" width="220" height="155" rx="14" fill="#fff" stroke="#8a62dc" stroke-width="3"/><text x="355" y="225" text-anchor="middle" font-size="26" fill="#142A5C">＋ どこから</text><text x="355" y="255" text-anchor="middle" font-size="20" fill="#6b778a">開始 URL の条件</text>
+    <rect x="480" y="140" width="220" height="200" rx="14" fill="#fff" stroke="#6a72e0" stroke-width="3"/><text x="590" y="180" text-anchor="middle" font-size="26" fill="#142A5C">＋ 何を</text><text x="590" y="210" text-anchor="middle" font-size="20" fill="#6b778a">検索語を変えない</text>
+    <rect x="715" y="95" width="220" height="245" rx="14" fill="#fff" stroke="#3f6fe6" stroke-width="3"/><text x="825" y="135" text-anchor="middle" font-size="26" fill="#142A5C">＋ どこで止める</text><text x="825" y="165" text-anchor="middle" font-size="20" fill="#6b778a">0件なら終える</text>
+    <rect x="950" y="50" width="240" height="290" rx="14" fill="#dbe8ff" stroke="#0066FF" stroke-width="4"/><text x="1070" y="90" text-anchor="middle" font-size="26" fill="#142A5C">＋ どう確かめる</text><text x="1070" y="120" text-anchor="middle" font-size="20" fill="#6b778a">URL を添えて返す</text>
+    <image href="assets/powerautomate.png" x="1040" y="160" width="60" height="60"/><text x="1070" y="255" text-anchor="middle" font-size="26" fill="#0066FF">ほぼ PAD の</text><text x="1070" y="285" text-anchor="middle" font-size="26" fill="#0066FF">手順と同じ</text>
+  </g>
+  <line x1="20" y1="20" x2="1180" y2="20" stroke="url(#gl)" stroke-width="8" marker-end="url(#ag3)"/>
+  <text x="20" y="48" font-size="22" font-weight="800" fill="#7a4fd6">AI が毎回その場で考える</text>
+  <text x="940" y="48" font-size="22" font-weight="800" fill="#0066FF" text-anchor="end">人が先に決めておく</text>
+</svg></div>
+  <div class="tip" style="margin-top:1.2cqh;font-size:1.9cqw">AI に任せるかどうかは、オンかオフではなく、<b>どこまで人が先に決めておくか</b>の目盛り。<br>人が決めるのは<b>「何を・どこまで」</b>、AI に任せるのは<b>「どこを押すか」</b></div>
+  <div class="meta">Happy Low-Code / Haru</div>
+  <div class="pageno"></div>
+<div class="topright"><span class="side both"><img src="assets/powerautomate.png" alt="">PAD × <img src="assets/copilotstudio.png" alt="">Computer use</span></div>
+<div class="nextbar">次へ ▶ <b>AI が賢くなるほど、決めきって言葉にする力の価値は上がる</b></div>
+</section>
+<section data-ch="4" data-sub="0" class="slide navy" data-title="AI が賢くなるほど、この力の価値は上がる" data-note="<b>36:45</b> よく出る反論にも答えておく。AI がもっと賢くなれば、あいまいな指示でも正しくやってくれるのでは。私は逆だと思う。賢くなるほど、あいまいな指示でも、それらしく、上手に進むようになる。今回の別のイベントのように、間違いに気づく機会はむしろ減る。だから、渡す前に業務を棚卸しして、決めきって、言葉にする力の価値は、AI が賢くなるほど上がる。">
+  <p style="font-size:2cqw;color:#cfd8e8">よく出る反論：「AI が賢くなれば、あいまいでも大丈夫では？」</p>
+  <h1 style="font-size:3.8cqw;margin-top:1.4cqh;line-height:1.45">AI が賢くなるほど、<br><span class="accent">決めきって言葉にする力</span>の価値は上がる</h1>
+  <div style="display:grid;grid-template-columns:auto 1fr;gap:2.4cqw;align-items:center;margin-top:3cqh">
+    <img src="assets/irasutoya/man_vs_ai.png" alt="" style="height:24cqh;object-fit:contain;background:#fff;border-radius:1cqw;padding:1cqh 1cqw">
+    <div style="display:flex;flex-direction:column;gap:1.4cqh">
+      <div style="font-size:2.1cqw;color:#fff;font-weight:700;line-height:1.6">賢くなるほど、あいまいな指示でも<br><b style="color:var(--accent2)">それらしく、上手に進む</b></div>
+      <div style="font-size:2.1cqw;color:#fff;font-weight:700;line-height:1.6">→ 間違いに<b style="color:var(--accent2)">気づく機会は、むしろ減る</b><br><span style="font-size:1.6cqw;color:#cfd8e8">（今回の「別のイベントを確認できました」のように）</span></div>
+    </div>
+  </div>
+  <div class="meta">Happy Low-Code / Haru</div>
+  <div class="pageno"></div>
+<div class="topright"><span class="side both"><img src="assets/powerautomate.png" alt="">PAD × <img src="assets/copilotstudio.png" alt="">Computer use</span></div>
+<div class="nextbar">次へ ▶ <b>師匠の手順を、Computer use に渡したら</b></div>
+</section>
+<section data-ch="4" data-sub="0" class="slide blackout" data-title="師匠の手順を、Computer use に渡したら" data-note="<b>38:05</b> 最後に、もう1つだけ試したことがある。師匠の表を、1行に1つの操作を書いた13行の手順にして、Computer use に渡してみた。前は、候補の検索語を選んだり、サムネイルを押して答えの画面を手放したりしていた。今回は、候補が出ても、指示では選ばないことになっている、と言って自分で入力した。2件の画面で、タイトルの文字を押した。そして正しく答えた。（間を取る）師匠の手順を、Computer use に渡したら、ちゃんとできた。PAD で鍛えた、業務を決めきって言葉にする力は、そのまま AI を動かす力になる。">
+  <img class="bo-fig" src="assets/irasutoya/duo_akusyu.png" alt="" style="height:66cqh;right:3cqw;bottom:13cqh;filter:drop-shadow(.3cqw .3cqw 0 #fff) drop-shadow(-.3cqw .3cqw 0 #fff) drop-shadow(.3cqw -.3cqw 0 #fff) drop-shadow(-.3cqw -.3cqw 0 #fff)">
+  <div class="bo-txt" style="max-width:52cqw">
+    <div class="bo-small">最後に、もう1つだけ試した</div>
+    <div style="font-size:3.2cqw;font-weight:900;color:#fff;line-height:1.45;margin-top:1.6cqh">師匠の手順を、<br>Computer use に渡したら…</div>
+    <div class="bo-big" style="font-size:6.4cqw;margin-top:3cqh;color:#ffd23f">ちゃんとできた</div>
+    <div style="font-size:1.55cqw;color:#9aa3b2;font-weight:700;margin-top:3.4cqh;line-height:1.7">師匠の表を、13行の手順にして渡した<br>→ 候補を選ばず、タイトルを押して<b style="color:#fff">正解</b>（10/26 実測）</div>
+  </div>
+<div class="nextbar">次へ ▶ <b>PAD は、棚卸し・断捨離・言語化の力を鍛える場所。その力が、そのまま AI への指示になる</b></div>
+</section>
+<section data-ch="5" data-sub="0" class="slide navy" data-title="まとめ" data-note="<b>39:05</b> まとめ。AI が画面を操作できる時代に、PAD をやる意味。仕事としては、毎回同じに動いて、想定外なら止まって知らせてほしい仕事を任せられる。そして力としては、業務を棚卸しして、断捨離して、言語化する力が鍛えられる。それは AI に仕事を渡すときに、そのまま使える。私の自動化も、2022年に PAD から始まった。非IT の現場で身につけたのは、まさにこの力だった。">
+  <p style="font-size:2cqw;color:#cfd8e8">まとめ：AI が画面を操作する時代に、PAD をやる意味</p>
+  <h1 style="font-size:3.6cqw;margin-top:1.6cqh;line-height:1.45">PAD は、<span class="accent">棚卸し・断捨離・言語化</span>の力を鍛える場所。<br>その力が、そのまま AI への指示になる</h1>
+  <div class="two" style="margin-top:3cqh">
+    <div class="card" style="background:#fff;padding:1.6cqh 1.4cqw"><div class="lab" style="font-size:2cqw"><img src="assets/powerautomate.png" alt="Power Automate Desktop">仕事として</div><div class="d" style="font-size:1.85cqw;margin-top:.6cqh">毎回同じに動き、想定外なら<b>止まって知らせてほしい仕事</b></div></div>
+    <div class="card cu" style="background:#fff;padding:1.6cqh 1.4cqw"><div class="lab" style="font-size:2cqw"><img src="assets/copilotstudio.png" alt="Copilot Studio">力として</div><div class="d" style="font-size:1.85cqw;margin-top:.6cqh">業務を決めきって言葉にする力。<b>AI に渡すときにそのまま使える</b></div></div>
+  </div>
+  <p style="font-size:1.8cqw;color:#cfd8e8;margin-top:2.4cqh;font-weight:700">私の自動化も、2022年に PAD から始まった。非IT の現場で身につけたのは、この力だった</p>
+  <div class="meta">Happy Low-Code / Haru</div>
+  <div class="pageno"></div>
+<div class="topright"><span class="side both"><img src="assets/powerautomate.png" alt="">PAD × <img src="assets/copilotstudio.png" alt="">Computer use</span></div>
+<div class="nextbar">次へ ▶ <b>持ち帰り3つ：明日、業務を1つ選んで</b></div>
+</section>
+<section data-ch="5" data-sub="0" class="slide sky" data-title="持ち帰り3つ" data-note="<b>40:05</b> 持ち帰りは3つ。明日、自分の業務を1つ選んで、手順を全部書き出す。それを見て、要らない手順を捨て、あいまいな所を決めきる。最後に、誰がやっても同じに動く言葉にする。それが PAD のフローになり、AI への指示にもなる。">
+  <h2 style="display:inline-block">持ち帰り3つ：明日、業務を1つ選んで</h2>
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.6cqw;margin-top:2.4cqh">
+    <div class="card" style="border-color:#0066FF;padding:1.6cqh 1cqw;text-align:center"><img src="assets/irasutoya/tanaoroshi.png" alt="" style="height:15cqh;object-fit:contain;margin:0 auto"><div style="font-size:2.3cqw;font-weight:800;color:#0066FF;margin-top:.8cqh">① 棚卸し</div><div class="d" style="font-size:1.8cqw;margin-top:.4cqh;line-height:1.55">手順を<b>全部書き出す</b><br><span style="font-size:1.5cqw;color:var(--light)">毎回やっていることを、順番に</span></div></div>
+    <div class="card" style="border-color:#c0392b;padding:1.6cqh 1cqw;text-align:center"><img src="assets/irasutoya/gomi.png" alt="" style="height:15cqh;object-fit:contain;margin:0 auto"><div style="font-size:2.3cqw;font-weight:800;color:#c0392b;margin-top:.8cqh">② 断捨離・適切化</div><div class="d" style="font-size:1.8cqw;margin-top:.4cqh;line-height:1.55">要らない手順を<b>捨て</b>、<br>あいまいさを<b>決めきる</b><br><span style="font-size:1.5cqw;color:var(--light)">どこから・何を・どこで止める</span></div></div>
+    <div class="card" style="border-color:#16a34a;padding:1.6cqh 1cqw;text-align:center"><img src="assets/irasutoya/writing06_businessman.png" alt="" style="height:15cqh;object-fit:contain;margin:0 auto"><div style="font-size:2.3cqw;font-weight:800;color:#16a34a;margin-top:.8cqh">③ 言語化</div><div class="d" style="font-size:1.8cqw;margin-top:.4cqh;line-height:1.55">誰でも同じに動く<b>言葉にする</b><br><span style="font-size:1.5cqw;color:var(--light)">PAD のフローにも、AI の指示にもなる</span></div></div>
+  </div>
+  <div class="meta">Happy Low-Code / Haru</div>
+  <div class="pageno"></div>
+<div class="topright"><span class="side both"><img src="assets/powerautomate.png" alt="">PAD × <img src="assets/copilotstudio.png" alt="">Computer use</span></div>
+<div class="nextbar">次へ ▶ <b>ご質問タイム</b></div>
+</section>
+<section class="slide" data-title="質問タイム" data-note="<b>40:45</b> 質問タイム（21:50〜）。時間が余れば、実験2の3通りの結末か、指示の書き方の例に戻って補足する。">
+  <div style="text-align:center">
+    <p class="q" style="font-size:4.6cqw">ご質問どうぞ</p>
+    <p style="font-size:2.2cqw;color:var(--navy);font-weight:700;margin-top:3cqh">PAD・Computer use・使い分け、なんでも</p>
+  </div>
+  <div class="meta">Happy Low-Code / Haru</div>
+  <div class="pageno"></div>
+</section>
+<section class="slide" data-title="Thanks" data-note="<b>45:45</b> お礼。">
+  <div style="text-align:center">
+    <div class="avatar" style="width:12cqw;height:12cqw;margin:0 auto"><span>は</span><img src="assets/haru-icon.png" alt="はる" onerror="this.remove()"></div>
+    <h1 style="margin-top:3cqh">ありがとうございました</h1>
+    <p style="font-size:2.2cqw;color:var(--navy);font-weight:700;margin-top:2.5cqh">X：@isamu_Automate</p>
+  </div>
+  <div class="meta">Happy Low-Code / Haru</div>
+  <div class="pageno"></div>
+</section>
+</div>
+</div>
+
+<script>
+const slides=document.querySelectorAll('.slide');
+const tocList=document.getElementById('tocList');
+const toc=document.getElementById('toc');
+const stage=document.getElementById('stage');
+const progress=document.getElementById('progress');
+let i=0;
+
+const tocSummaries=[
+  "AIが画面を操作する時代に、PADが活躍できる場所",
+  "非IT出身。PA45・PLUG・MCT",
+  "2022年、PADとの出会いが転機",
+  "整理→断捨離→Excelに1クリックずつ",
+  "正直、ちょっと面倒",
+  "PADをやる意味はまだあるのか",
+  "M365・Power Platform・PAD・Computer use の関係",
+  "決めた手順で画面を操作するRPA",
+  "AIが画面を見て操作するツール",
+  "PAD＝真面目すぎる／Computer use＝チャラいのに頭がいい",
+  "しくみ→実験→考察→使い分け",
+  "中で起きていることが違う",
+  "connpassでPA45の次回を控える4ステップ",
+  "作るのに6分30秒。動かすと正解",
+  "手順の欄に1文。部品の指定なし",
+  "撮る→考える→押すのループ",
+  "判断の仕方の違いで、何が起きるか",
+  "実験1＝普通に頼む／実験2＝存在しないものを頼む。結果を先に",
+  "正解。約7分・手数11・55クレジット",
+  "2件の画面に来ていたのに、37件の画面で探し直した",
+  "存在しないものを頼む。正解は「見つかりません」",
+  "0件を見て検索語を変えた。指示が「ある」前提だった",
+  "3回で約400円。じぶんでやる",
+  "3回とも結末が違う。時間もばらつく",
+  "結果から言える4つのこと",
+  "AIは毎回考える＝時間が読めない",
+  "PADは止まって知らせる、AIは止まらない",
+  "AIの失敗は成功に見える",
+  "AIは同じ指示でも毎回違う",
+  "AI全盛期にPADをやる意味",
+  "師匠の3つ＝今日の答え",
+  "Excel表の4か所＝AIのつまずき4つ",
+  "PADは決めないと動かない",
+  "確実にするほど手順に近づく",
+  "賢くなるほど言語化の価値は上がる",
+  "師匠の手順×Computer use＝ちゃんとできた",
+  "PADは棚卸し・断捨離・言語化を鍛える場所",
+  "棚卸し・断捨離・言語化を明日1つ",
+  "質問タイム",
+  "ありがとうございました"
+];
+slides.forEach((s,idx)=>{
+  const li=document.createElement('li');
+  li.innerHTML='<span class="num">'+(idx+1).toString().padStart(2,'0')+'</span><span class="ttlwrap"><span class="ttl">'+(s.dataset.title||'')+'</span><span class="sub">'+(tocSummaries[idx]||'')+'</span></span>';
+  li.addEventListener('click',e=>{e.stopPropagation();show(idx)});
+  tocList.appendChild(li);
+});
+const tocItems=tocList.querySelectorAll('li');
+
+// 背景リズム：navy以外の明るいスライドを cream / 薄青 で交互に
+let _lt=0;
+slides.forEach(s=>{ if(s.classList.contains('navy'))return; _lt++; if(_lt%2===0)s.classList.add('sky'); else s.classList.remove('sky'); });
+
+const total=slides.length;
+slides.forEach((s,idx)=>{
+  const pn=s.querySelector('.pageno');
+  if(pn)pn.textContent=(idx+1)+' / '+total;
+  const b=document.createElement('div');
+  b.className='brand';
+  b.textContent='Haru';
+  s.appendChild(b);
+  const skip=['タイトル','Thanks'];
+  if(!skip.includes(s.dataset.title||'')){
+    const k=document.createElement('div');
+    k.className='sectitle';
+    k.textContent=s.dataset.title||'';
+    s.appendChild(k);
+  }
+});
+
+function show(n){
+  slides[i].classList.remove('active');
+  tocItems[i].classList.remove('current');
+  i=(n+slides.length)%slides.length;
+  slides[i].classList.add('active');
+  tocItems[i].classList.add('current');
+  progress.style.width=((i+1)/slides.length*100)+'%';
+  tocItems[i].scrollIntoView({block:'nearest',behavior:'smooth'});
+}
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){show(i+1);e.preventDefault()}
+  else if(e.key==='ArrowLeft'||e.key==='PageUp')show(i-1);
+  else if(e.key==='Home')show(0);
+  else if(e.key==='End')show(slides.length-1);
+  else if(e.key==='t'||e.key==='T')toc.classList.toggle('hidden');
+  else if(e.key==='f'||e.key==='F'){
+    if(!document.fullscreenElement)document.documentElement.requestFullscreen();
+    else document.exitFullscreen();
+  }
+});
+
+stage.addEventListener('click',e=>{
+  const r=stage.getBoundingClientRect();
+  const x=e.clientX-r.left;
+  if(x>r.width*.6)show(i+1);
+  else if(x<r.width*.4)show(i-1);
+});
+
+show(0);
+(function(){
+  const CH=['しくみ','実験','考察','PADをやる意味','まとめ'];
+  const SUB=['1 毎回考える','2 止まる','3 成功に見える','4 毎回違う'];
+  slides.forEach(s=>{
+    const ch=parseInt(s.dataset.ch||'0',10); if(!ch) return;
+    const sub=parseInt(s.dataset.sub||'0',10);
+    const nav=document.createElement('div'); nav.className='chapnav';
+    let h='';
+    CH.forEach((c,k)=>{ const n=k+1; h+='<span class="c'+(n===ch?' on':(n<ch?' done':''))+'">'+n+' '+c+'</span>'; if(n<CH.length) h+='<span class="sep">›</span>';
+      if(n===3 && ch===3){ h+='<span class="subs">'+SUB.map((t,j)=>'<span class="s'+(j+1===sub?' on':'')+'">'+t+'</span>').join('')+'</span>'; } });
+    nav.innerHTML=h; s.appendChild(nav);
+  });
+})();
+
+if(/[?&]all\b/.test(location.search)){
+  document.body.classList.add('all');
+  slides.forEach(s=>{s.classList.add('active');const n=document.createElement('div');n.className='noteu';n.innerHTML='<b>'+(s.dataset.title||'')+'</b><br>'+(s.dataset.note||'');s.after(n);});
+}
+</script>
+</body>
+</html>
