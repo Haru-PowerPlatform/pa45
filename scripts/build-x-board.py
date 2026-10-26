@@ -179,6 +179,24 @@ def sync_post_image(img: Path, post_dir: Path) -> bool:
     return True
 
 
+# LinkedIn用の本文（li_body）には、最後のハッシュタグの前に MCT としての一言と受注ページを足す。
+# x-tips-board.json 側は変えず、ボードに出すときだけ付ける（MCTを外すときはここを空にする）。
+LI_MCT_FOOTER = ("Microsoft 認定トレーナー（MCT）として、Power Automate・Copilot Studio の研修とハンズオンをしています。\n"
+                 "研修のご相談：https://haru-powerplatform.github.io/pa45/work/")
+
+
+def li_with_mct(body):
+    if not body or not LI_MCT_FOOTER or "認定トレーナー" in body:
+        return body
+    head, sep, tags = body.rpartition("\n\n#")
+    if not sep:
+        return f"{body}\n\n{LI_MCT_FOOTER}"
+    tags = "#" + tags
+    if "#MCT" not in tags:
+        tags += " #MCT"
+    return f"{head}\n\n{LI_MCT_FOOTER}\n\n{tags}"
+
+
 def tip_images(f):
     """Tipsの画像（1〜4枚目）を探す。card_tips と LinkedIn のTips紹介カードで共用。
     戻り値＝(img1, rel1, img2, rel2, extras[(img, rel, lbl)])"""
@@ -241,7 +259,7 @@ def card_tips(it):
         label, cls = ("スライド未作成", "st-miss")
 
     # LinkedIn用の詳しい本文（作り方をXより丁寧に）。あればコピー用の隠しpreと専用ボタンを出す。
-    li_body = it.get("li_body")
+    li_body = li_with_mct(it.get("li_body"))
     li_pre = li_copy = ""
     li_flag = ""
     if li_body:
