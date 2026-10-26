@@ -161,7 +161,7 @@
 
   <header>
     <span class="eyebrow">PA45 第33回｜ハンズオン手順</span>
-    <h1>内部名で困らない。内部名はフローが自動で調べる<small>SharePoint リストの列には、画面に出る名前（表示名）と、フローが使う名前（内部名）の2つがあります。日本語の列名は、内部名が _x72b6__x614b_ のような記号の並びになります。今日は、その内部名をフローに調べてもらい、メールで受け取って、絞り込みに使います。</small></h1>
+    <h1>内部名で困らない。内部名はフローが自動で調べる<small>フローの中で、SharePoint リストの列の名前が _x72b6__x614b_ のような記号で出てきて困ったことはありませんか。文字化けではなく、日本語の列名は内部名が記号の並びになります。今日は、その内部名を毎回手で調べる代わりに、フローに調べてもらってメールで受け取ります。</small></h1>
   </header>
 
   <div class="goal">
@@ -173,11 +173,12 @@
     </div>
   </div>
 
-  <details class="callout tip mihon" style="margin-bottom:10px;"><summary><b>■ 今回の考え方（スライドの考え方①②）</b></summary>
+  <details class="callout tip mihon" style="margin-bottom:10px;" open><summary><b>■ 今回のポイント（4つ）</b></summary>
     <ul style="margin:6px 0 0;padding-left:20px;">
-      <li>事務の仕事は、受け付ける／書き写す／判断する／知らせる／まとめる／作る、の6つの動詞の組み合わせ。時間が消えるのは動詞と動詞のあいだ。</li>
-      <li>今回は、判断する（貸出中の行だけ選ぶ）とまとめる（列の内部名を表にする）。調べる作業そのものもフローに任せる。</li>
-      <li>動的コンテンツから選ぶだけの欄なら、内部名は要りません。フィルター クエリや並べ替え順のように、列を文字で書くところで要ります。</li>
+      <li><b>HTTP 要求</b>：決まったアクションに無い頼みごと（列の内部名の一覧をください）を、自分で書いて SharePoint に送る。ブラウザが Web ページを開くのと同じ「頼んで、返事をもらう」しくみ。</li>
+      <li><b>URI</b>：SharePoint の中の住所＋条件。左から「このサイトの・このリストの・列の一覧」と読む。</li>
+      <li><b>方法・ヘッダー</b>：GET＝見せて（読むだけ）。ヘッダーの Accept で「返事は JSON で、付属情報なしで」と頼む。</li>
+      <li><b>選択 → HTML テーブル</b>：返事の JSON から表示名と内部名だけ取り出し、メールで読める表にする。</li>
     </ul>
   </details>
   <div class="callout tip" style="margin-bottom:10px;"><b>📖 この手順書の読み方：</b> 各アクションに表があります。表は <b>欄 ／ 入れるもの（⚡ のどのアクションから選ぶか）／ なぜ・あとでどう役立つか</b> の順です。オレンジの「次に渡るもの」は、そのアクションが終わったあと、後ろのアクションに何が渡るかです。</div>
@@ -238,13 +239,20 @@
         <li><b>$select=Title,InternalName</b>＝表示名（Title）と内部名（InternalName）だけ返してもらう</li>
       </ul>
     </details>
+    <details class="callout tip mihon"><summary><b>■ 方法とヘッダーの読み方</b></summary>
+      <ul style="margin:6px 0 0;padding-left:20px;">
+        <li><b>方法 GET</b>＝見せて（読むだけ）。ほかに POST（作って）・PATCH（変えて）・DELETE（消して）があるが、今日は使わない</li>
+        <li><b>Accept</b>＝返事の形の希望／<b>application/json</b>＝JSON という形で／<b>odata=nometadata</b>＝付属情報なしで、中身だけ</li>
+        <li>ヘッダーを入れないと、返事が value の無い形で届き、STEP 3 の選択で止まります</li>
+      </ul>
+    </details>
     <div class="callout warn"><b>⚠️ GET だけにする：</b> このアクションは、SharePoint のいろいろな操作を送れます。今日は読むだけの GET だけを使います。</div>
   </section>
 
   <section class="part card2" id="p3">
     <div class="part-h"><span class="part-badge">STEP 3</span><img class="ph-ic" src="assets/pa_logo.png" alt=""><h2>表示名と内部名だけにする（選択）</h2></div>
     <div class="goal2"><b>この段のゴール</b>「選択」の元と、マップの表示名・内部名の2行が埋まっている</div>
-    <p class="why2"><b>なぜ</b>STEP 2 の答えは、列ごとに項目が並んだ一覧。表にする前に、表示名と内部名の2つだけに絞る。</p>
+    <p class="why2"><b>なぜ</b>STEP 2 の返事は JSON（機械向けの文字）。value の中に列が1件ずつ並んでいる。その1件ずつから、表示名（Title）と内部名（InternalName）の2つだけ取り出して、日本語の名前を付ける。item() は「いま見ている1件」。</p>
     <div class="blks">
       <div class="blk"><div class="bn">1</div><div class="bc">「＋」→「アクションの追加」で、データ操作の<b>「選択」</b>を選びます。</div></div>
       <div class="blk"><div class="bn">2</div><div class="bc"><div class="act"><img src="assets/pa_logo.png" alt="">データ操作 の<b>「選択」</b></div><img class="shot" src="assets/real-t3-select.png" alt="選択の設定画面"><table class="kv kv3"><tr class="kvh"><th>欄</th><td>入れるもの（どこから選ぶか）</td><td class="lt">なぜ・あとでどう役立つか</td></tr><tr><th>元</th><td>欄の右の fx →「動的コンテンツ」で「SharePoint に HTTP 要求を送信します」の<b>「本文」</b>を押す → 入った式の後ろに <span class="k">?['value']</span> を足して「追加」（下の式を貼っても同じ）</td><td class="lt">STEP 2 の答えの中の value（列の一覧）。追加すると value のチップになる</td></tr><tr><th>マップ 1行目</th><td>左に <span class="k">表示名</span>、右は式で下の Title</td><td class="lt">画面に出る名前</td></tr><tr><th>マップ 2行目</th><td>左に <span class="k">内部名</span>、右は式で下の InternalName</td><td class="lt">フローが使う名前</td></tr></table>元<div class="codewrap"><button class="copybtn" data-code="fxfrom">コピー</button>
@@ -258,7 +266,7 @@
   <section class="part card2" id="p4">
     <div class="part-h"><span class="part-badge">STEP 4・5</span><img class="ph-ic" src="assets/icon_outlook.png" alt=""><h2>表にして、自分あてにメールで送る</h2></div>
     <div class="goal2"><b>この段のゴール</b>「HTML テーブルの作成」と「メールの送信 (V2)」の欄が埋まっている</div>
-    <p class="why2"><b>なぜ</b>表にして自分に送っておけば、あとで内部名をコピーして使える。</p>
+    <p class="why2"><b>なぜ</b>選択の出力はまだ JSON なので、メールにそのまま貼ると記号だらけで読めない。HTML テーブルの作成で表に変えると、メールの中で表として見える。表にして自分に送っておけば、あとで内部名をコピーして使える。</p>
     <div class="blks">
       <div class="blk"><div class="bn">1</div><div class="bc">「＋」→ データ操作の<b>「HTML テーブルの作成」</b>。<img class="shot" src="assets/real-t4-table.png" alt="HTML テーブルの作成の設定画面"><table class="kv kv3"><tr class="kvh"><th>欄</th><td>入れるもの（どこから選ぶか）</td><td class="lt">なぜ・あとでどう役立つか</td></tr><tr><th>From</th><td><span class="dyn">⚡ 出力</span><span class="src">（選択）</span></td><td class="lt">2列の表になる</td></tr></table><div class="later"><b>次に渡るもの</b><span class="dyn">⚡ Output</span><span class="src">（HTML テーブルの作成）</span> → STEP 5 の本文</div></div></div>
       <div class="blk"><div class="bn">2</div><div class="bc">「＋」→ Office 365 Outlook の<b>「メールの送信 (V2)」</b>。<img class="shot" src="assets/real-t5-mail.png" alt="メールの送信 (V2) の設定画面"><table class="kv kv3"><tr class="kvh"><th>欄</th><td>入れるもの（どこから選ぶか）</td><td class="lt">なぜ・あとでどう役立つか</td></tr><tr><th>宛先</th><td>自分のメールアドレス</td><td class="lt">自分に届く</td></tr><tr><th>件名</th><td><span class="dyn">⚡ リスト名</span><span class="src">（フローを手動でトリガーする）</span> ＋ <span class="k"> の内部名</span></td><td class="lt">どのリストの表かが分かる</td></tr><tr><th>本文</th><td><span class="dyn">⚡ Output</span><span class="src">（HTML テーブルの作成）</span></td><td class="lt">表がそのままメールに入る</td></tr></table></div></div>
