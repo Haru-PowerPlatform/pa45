@@ -6,6 +6,7 @@ PA45 の各回で使ったスライドです。\
 
 | 回 | 開催日 | テーマ | スライド |
 |---:|---|---|:---:|
+| 33 | 2026/10/29（予定） | 内部名で困らない。内部名はフローが自動で調べる | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-33/) |
 | 32 | 2026/10/22 | 置くだけで月別フォルダに片付くファイル整理 | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-32/) |
 | 31 | 2026/10/15 | ファイルを選んで1クリックでPDFにして送る | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-31/) |
 | 30 | 2026/10/08 | Teamsの頼まれごとを1クリックでTo Doに入れる | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-30/) |
