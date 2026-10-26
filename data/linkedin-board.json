@@ -12,6 +12,11 @@
    "note": "自分を知ってもらう投稿。最初に LI-01 を出し、そのあとブログ紹介・Tips紹介を混ぜていく想定。数字（回数・人数・理解度など）は data/insights.json から毎回最新値が入ります。"
   },
   {
+   "id": "announce",
+   "label": "PA45の告知",
+   "note": "開催週に出す LinkedIn 向けの告知。connpass の URL を貼るとカードが出ます。"
+  },
+  {
    "id": "blog",
    "label": "ブログ紹介",
    "note": "automate136 の公開記事の紹介。本文の最後に記事URLを入れてあるので、貼り付けるとリンクのカードが出ます。"
@@ -204,6 +209,28 @@
    "sub": "X技術Tips Vol.147 の画像を添付",
    "tips_folder": "vol-147",
    "body": "Power Automate の研修・ハンズオンをしている Microsoft 認定トレーナー（MCT）です。\n今回は AI Builder を使った経費精算の例です。\n\n経費の領収書は、店舗名・日付・合計を台帳に手で写してから上司に回すことが多く、写し間違いも起きます。\nAI Builder の領収書処理で読み取った値は、そのまま台帳に入れず、上司への承認依頼に入れます。\n上司が写真と見比べて承認したものだけを台帳に記録します。\n\n▼作り方（3ステップ）\n① SharePoint「ファイルの作成時 (プロパティのみ)」→「ファイル コンテンツの取得」→ AI Builder「領収書から情報を抽出する」\n② Office 365 ユーザー「上司の取得 (V2)」→「開始して承認を待機」。詳細に店舗名・合計・合計の信頼度、項目リンクに写真のリンク\n③ 結果が Approve なら SharePoint「項目の作成」で経費台帳に1行。合計は float() で数値にする。拒否なら本人に Teams で知らせる\n\n▼使う前に確認\n・実行のたびに AI Builder クレジットを消費します（ライセンス付属のクレジットは2026年11月1日まで）\n・画像は JPEG・PNG・PDF、20MBまで。複数ページの領収書は読めません\n・上司が登録されていない人は「上司の取得 (V2)」が失敗します\n\n#PowerAutomate #AIBuilder #MCT"
+  },
+  {
+   "no": 20,
+   "group": "announce",
+   "angle": "開催告知",
+   "title": "PA45 第33回（10/29 木 20:15〜）の告知",
+   "sub": "開催週の月曜〜開催日の昼までに。画像は不要（URLでカードが出る）",
+   "event_vol": 33,
+   "link": {
+    "title": "PA45 第33回：内部名で困らない。内部名はフローが自動で調べる",
+    "url": "https://powerautomate-create.connpass.com/event/409887/"
+   },
+   "body": "今週木曜（10/29）20:15〜21:00、PA45 第33回を開催します。\nPA45 は、Power Automate のフローを45分で1本作るオンラインのハンズオン講座です。\nMicrosoft 認定トレーナー（MCT）として、毎週続けています。\n\n今回のテーマは、内部名で困らない。内部名はフローが自動で調べる。\nSharePoint リストの列の内部名をフローで一覧にしてメールで受け取り、その内部名で条件に合う行だけを取り出します。\n列名のエラーで止まらないように、調べる作業もフローに任せる作り方を1つ持ち帰る回です。\n\n・オンライン開催、参加は無料\n・見るだけの参加もできます\n・ITが専門ではない人向けに、実際の画面を見ながら進めます\n\n申込はこちら\nhttps://powerautomate-create.connpass.com/event/409887/\n\n#PowerAutomate #SharePoint #MCT"
+  },
+  {
+   "no": 21,
+   "group": "tips",
+   "angle": "PA×Planner",
+   "title": "Planner で完了にしたら、依頼した人への報告と作業記録まで終わる",
+   "sub": "X技術Tips Vol.154 の画像を添付",
+   "tips_folder": "vol-154",
+   "body": "Microsoft 認定トレーナー（MCT）として Power Automate の研修をしています。\n今回は Planner と Teams をつなぐ小さな自動化です。\n\nPlanner でいつもの完了チェックを入れるだけで、Teams のチャネルに完了の報告が投稿され、作業記録のリストにも1行残ります。\n終わりましたの報告を書く手間と、送り忘れがなくなります。\n\n▼作り方（3ステップ）\n① Planner「タスクが完了したとき」でグループとプランを選ぶ\n② Teams「チャットまたはチャネルでメッセージを投稿する」にタスク名と完了日時。完了日時は UTC なので convertFromUtc で日本時間に直す\n③ SharePoint「項目の作成」で作業記録に1行（完了日時・タスク・プラン）\n\n▼使う前に確認\n・Planner コネクタは基本プランのみ対応\n・トリガーは約6分（360秒）ごとの確認なので、完了から数分遅れて動く\n・To Do の場合は「特定のフォルダー内の to-do が更新されたとき (V2)」で完了済みかを判定する形になる（実機では未確認）\n\n出典：Microsoft Learn「Planner コネクタ」「Microsoft To-Do (Business) コネクタ」\n\n#PowerAutomate #Planner #MCT"
   }
  ]
 }

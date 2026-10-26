@@ -122,7 +122,7 @@ def li_queue(items):
         if i % 4 == 0 and rest_mct:
             q.append(rest_mct.pop(0))
     q += rest_mct
-    q += [p for p in items if p.get("group") not in ("mct", "blog", "tips", "profile")]
+    q += [p for p in items if p.get("group") not in ("mct", "blog", "tips", "profile", "announce")]
     return q
 
 
