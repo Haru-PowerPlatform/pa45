@@ -557,6 +557,19 @@ def card_linkedin(p, tokens):
         if any(copied):
             folder_btn = f'<button class="btn copyp" data-p="{pd}">画像フォルダをコピー</button>'
 
+    # images：Documents からの相対パスの一覧（プロフィール画像など）。クリックでフォルダのパスをコピー。
+    if p.get("images"):
+        cells = ""
+        for rel in p["images"]:
+            img = ROOT.parent / rel
+            pd = html.escape(str(img.parent))
+            cells += (f'<a href="{html.escape(rel)}" class="copyf" data-p="{pd}" title="クリックで画像フォルダのパスをコピー">'
+                      f'<img src="{html.escape(rel)}" alt="{html.escape(img.name)}" loading="lazy"></a>'
+                      if img.exists() else f'<div class="noimg">{html.escape(img.name)}<span>画像がありません</span></div>')
+        shots = f'<div class="shots one">{cells}</div>'
+        folder_btn = (f'<button class="btn copyp" data-p="{html.escape(str((ROOT.parent / p["images"][0]).parent))}">'
+                      f'画像フォルダをコピー</button>')
+
     link_box = link_btns = ""
     lk = p.get("link")
     if lk:
@@ -647,6 +660,7 @@ h1{font-size:24px;font-weight:900;margin-bottom:4px}
 .og{width:100%;border-radius:10px;border:1px solid var(--ln);display:block}
 .og.yt{background:#111;color:#bbb;font-size:12px;text-align:center;padding:34px 8px}
 .shots{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.shots.one{grid-template-columns:1fr}
 .shots img{width:100%;border-radius:8px;border:1px solid var(--ln);display:block}
 .shots a.copyf{position:relative;display:block;cursor:copy}
 .shots a.copyf.done::after{content:'フォルダのパスをコピー';position:absolute;inset:0;display:flex;
