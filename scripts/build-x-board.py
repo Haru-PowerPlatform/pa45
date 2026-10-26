@@ -84,6 +84,7 @@ def _insight_tokens():
     return {
         "{{N}}":    str(s.get("sessions", "")),
         "{{PT}}":   str(s.get("participants_total", "")),
+        "{{PTC}}":  f'{int(s.get("participants_total", 0) or 0):,}',   # 1,497 の形
         "{{RT}}":   str(s.get("responses_total", "")),
         "{{UND}}":  d1(s.get("understanding_avg", 0)),
         "{{USE}}":  d1(s.get("usefulness_avg", 0)),
@@ -178,9 +179,9 @@ def sync_post_image(img: Path, post_dir: Path) -> bool:
     return True
 
 
-def card_tips(it):
-    prefix, key, sname = SERIES.get(it.get("series", "tips"), SERIES["tips"])
-    f = it["folder"]
+def tip_images(f):
+    """Tipsの画像（1〜4枚目）を探す。card_tips と LinkedIn のTips紹介カードで共用。
+    戻り値＝(img1, rel1, img2, rel2, extras[(img, rel, lbl)])"""
     img1 = ROOT / "assets" / "x" / "html" / f / f"{f.replace('-', '')}.png"
     rel1 = f"pa45/assets/x/html/{f}/{img1.name}"
     # 2枚目は「同じフォルダ(vol-NN/…b.png)」を優先。無ければ旧構成(vol-NNb/…)にフォールバック
@@ -204,6 +205,13 @@ def card_tips(it):
         else:
             continue
         extras.append((imgx, relx, lbl))
+    return img1, rel1, img2, rel2, extras
+
+
+def card_tips(it):
+    prefix, key, sname = SERIES.get(it.get("series", "tips"), SERIES["tips"])
+    f = it["folder"]
+    img1, rel1, img2, rel2, extras = tip_images(f)
     # 投稿用に、その回の画像を全部 Documents\pa45-x-images\<フォルダ名>\ にまとめる。
     # 元のスライドフォルダ（vol-NN / vol-NNb）は render-x-slide.py の書き出し先なので動かさずコピーする。
     post_dir = POST_IMG_ROOT / f
@@ -502,19 +510,57 @@ def group_announce(ev):
 # これまでの活動を少しずつ、いろんな角度で投稿するための在庫。
 # LinkedInは本文の事前入力ができないため、「本文をコピー」→「LinkedInを開く」→貼り付け。
 # 文字数上限は3000（Xの280とは別物）。
-def card_linkedin(p):
-    n = len(p["body"])
+# data/linkedin-board.json の1件：
+#   no / group（サブタブのid）/ angle / title / sub / body
+#   link {title, url}  … ブログ紹介。本文の最後にURLを入れてあるので、貼るとリンクカードが出る
+#   tips_folder "vol-151" … Tips紹介。X技術Tipsと同じ画像を添付する
+# 本文の {{N}} {{PTC}} {{UND}} などは data/insights.json の最新値に置き換わる。
+def card_linkedin(p, tokens):
+    body = _apply_tokens(p["body"], tokens)
+    n = len(body)
     over = ' style="color:#b3261e"' if n > 3000 else ""
     key = f"li-{p['no']}"
+    sub = f'<div class="sub">{html.escape(p["sub"])}</div>' if p.get("sub") else ""
+
+    shots = folder_btn = ""
+    f = p.get("tips_folder")
+    if f:
+        img1, rel1, img2, rel2, extras = tip_images(f)
+        post_dir = POST_IMG_ROOT / f
+        pd = html.escape(str(post_dir))
+        imgs = [(img1, rel1, "1枚目"), (img2, rel2, "2枚目")] + list(extras)
+        copied = [sync_post_image(i, post_dir) for i, _, _ in imgs]
+        cells = "".join(
+            (f'<a href="{r}" class="copyf" data-p="{pd}" title="クリックで画像フォルダのパスをコピー">'
+             f'<img src="{r}" alt="{l}" loading="lazy"></a>') if i.exists()
+            else f'<div class="noimg">{l}<span>スライド未作成</span></div>'
+            for i, r, l in imgs)
+        shots = f'<div class="shots">{cells}</div>'
+        if any(copied):
+            folder_btn = f'<button class="btn copyp" data-p="{pd}">画像フォルダをコピー</button>'
+
+    link_box = link_btns = ""
+    lk = p.get("link")
+    if lk:
+        u = html.escape(lk["url"])
+        link_box = (f'<div class="lilink"><b>紹介する記事</b>'
+                    f'<a href="{u}" target="_blank" rel="noopener">{html.escape(lk["title"])}</a>'
+                    f'<code>{u}</code></div>')
+        link_btns = (f'<a class="btn" href="{u}" target="_blank" rel="noopener">記事を開く</a>'
+                     f'<button class="btn copyu" data-p="{u}">URLをコピー</button>')
     return f'''
 <article class="card">
   <div class="head"><span class="no">LI-{p['no']:02d}</span><h2>{html.escape(p['title'])}</h2>
     <span class="ser ser-li">{html.escape(p.get('angle', ''))}</span>
     <span class="len len3000"{over}>{n}</span></div>
-  <pre class="body" id="{key}">{html.escape(p['body'])}</pre>
+  {sub}
+  {shots}
+  {link_box}
+  <pre class="body" id="{key}">{html.escape(body)}</pre>
   <div class="acts">
     <button class="btn copy go" data-t="{key}">本文をコピー</button>
-    <a class="btn" href="{LI_COMPOSE}" target="_blank" rel="noopener">LinkedInを開く →</a>
+    {folder_btn}{link_btns}
+    <a class="btn li" href="{LI_COMPOSE}" target="_blank" rel="noopener">LinkedInを開く →</a>
   </div>
   <label class="done-row"><input type="checkbox" class="donebox" data-k="{key}"> 投稿済みにする</label>
 </article>'''
@@ -635,6 +681,12 @@ body.hide-posted .card.posted{display:none}
 .libody{background:#f2f7fc;border-color:#cfe0f2}
 .libody::before{content:"LinkedIn用（作り方くわしめ）";display:block;font-size:10.5px;font-weight:800;
   color:#0a66c2;margin:-2px 0 6px}
+.lilink{font-size:12px;background:#f2f7fc;border:1px solid #cfe0f2;border-radius:10px;padding:9px 11px;
+  display:flex;flex-direction:column;gap:3px}
+.lilink b{font-size:10.5px;font-weight:800;color:#0a66c2}
+.lilink a{color:var(--tx);font-weight:700;text-decoration:none;line-height:1.5}
+.lilink a:hover{text-decoration:underline}
+.lilink code{font-size:10.5px;color:var(--mu);overflow-wrap:anywhere}
 .len140::after{content:"/140"}
 .len3000::after{content:"/3000";opacity:.55}
 .evgroup{margin-bottom:28px}
@@ -662,15 +714,18 @@ function lsGet(k){try{return localStorage.getItem(k)}catch(e){return null}}
 function lsSet(k,v){try{localStorage.setItem(k,v)}catch(e){}}
 
 // ── ブログタブ：PA／コパスタのサブタブ ──────────────────────
+// サブタブはタブ（.pane）ごとに独立させる（ブログとLinkedInで互いに消し合わない）
+function subKey(pane){return pane.id==='pane-blog'?'pa45-blog-sub':'pa45-'+pane.id+'-sub';}
 document.querySelectorAll('.subtab').forEach(t=>t.addEventListener('click',()=>{
-  document.querySelectorAll('.subtab').forEach(x=>x.classList.toggle('on',x===t));
-  document.querySelectorAll('.subpane').forEach(x=>x.classList.toggle('on',x.id===t.dataset.sub));
-  lsSet('pa45-blog-sub',t.dataset.sub);
+  const pane=t.closest('.pane');
+  pane.querySelectorAll('.subtab').forEach(x=>x.classList.toggle('on',x===t));
+  pane.querySelectorAll('.subpane').forEach(x=>x.classList.toggle('on',x.id===t.dataset.sub));
+  lsSet(subKey(pane),t.dataset.sub);
 }));
-(function(){
-  const saved=lsGet('pa45-blog-sub');
-  if(saved){const t=document.querySelector('.subtab[data-sub="'+saved+'"]'); if(t)t.click();}
-})();
+document.querySelectorAll('.pane').forEach(pane=>{
+  const saved=lsGet(subKey(pane));
+  if(saved){const t=pane.querySelector('.subtab[data-sub="'+saved+'"]'); if(t)t.click();}
+});
 
 // ── ブログタブ：並び順（各グループの中を並べ替える）─────────────
 const BSORT={
@@ -705,6 +760,10 @@ document.querySelectorAll('.copy').forEach(b=>b.addEventListener('click',async()
 document.querySelectorAll('.copy3,.copyp').forEach(b=>b.addEventListener('click',async()=>{
   await navigator.clipboard.writeText(b.dataset.p);
   flash(b,'パスをコピー');
+}));
+document.querySelectorAll('.copyu').forEach(b=>b.addEventListener('click',async()=>{
+  await navigator.clipboard.writeText(b.dataset.p);
+  flash(b,'URLをコピー');
 }));
 // 画像サムネをクリック → 画像を開かずに、その回の画像フォルダのパスをコピー
 document.querySelectorAll('a.copyf').forEach(a=>a.addEventListener('click',async e=>{
@@ -804,8 +863,9 @@ def main():
     ann_manual = json.loads(af.read_text(encoding="utf-8"))["events"] if af.exists() else []
     upf = ROOT / "data" / "config" / "upcoming-event.json"
     ann = []
-    if upf.exists():
-        up = json.loads(upf.read_text(encoding="utf-8"))
+    # 開催後処理のあと次の回を登録するまでは upcoming-event.json が {} になる → 手動エントリの最新回を出す
+    up = json.loads(upf.read_text(encoding="utf-8")) if upf.exists() else {}
+    if up.get("vol"):
         uv = int(up["vol"])
         manual = next((e for e in ann_manual if int(e.get("vol", -1)) == uv), None)
         ann = [manual] if manual else [derive_announce_from_upcoming(up)]
@@ -822,6 +882,22 @@ def main():
     lidata = json.loads(lif.read_text(encoding="utf-8")) if lif.exists() else {}
     linkedin = lidata.get("items", [])
     li_note = lidata.get("note", "")
+    li_tokens = _insight_tokens()
+    # サブタブ（group）ごとに分ける。groups に無い group の投稿は「その他」に入れる
+    li_groups = list(lidata.get("groups", []))
+    known = {g["id"] for g in li_groups}
+    if any(p.get("group") not in known for p in linkedin):
+        li_groups.append({"id": "other", "label": "その他", "note": ""})
+    li_subtabs = li_panes = ""
+    for gi, g in enumerate(li_groups):
+        rows = [p for p in linkedin
+                if p.get("group") == g["id"] or (g["id"] == "other" and p.get("group") not in known)]
+        on = " on" if gi == 0 else ""
+        li_subtabs += (f'<button class="subtab{on}" data-sub="lp-{g["id"]}">{html.escape(g["label"])}'
+                       f'<span class="c">{len(rows)}本</span></button>')
+        gnote = f'<p class="lead" style="margin-bottom:12px">{g["note"]}</p>' if g.get("note") else ""
+        li_panes += (f'<div class="subpane{on}" id="lp-{g["id"]}">{gnote}'
+                     f'<div class="grid">{"".join(card_linkedin(p, li_tokens) for p in rows)}</div></div>')
 
     extra = load_extra_tab()
 
@@ -937,9 +1013,10 @@ def main():
 <section class="pane" id="pane-linkedin">
   <div class="note">
     {li_note or "LinkedIn投稿の在庫（切り口ローテ）。"}<br>
-    切り口が続かないよう、週1本くらいのペースで混ぜて出すのがおすすめ。追加は <code>data/linkedin-board.json</code> に1件足して <code>python scripts/build-x-board.py</code>。
+    追加は <code>data/linkedin-board.json</code> に1件足して <code>python scripts/build-x-board.py</code>。
   </div>
-  <div class="grid">{"".join(card_linkedin(p) for p in linkedin)}</div>
+  <div class="subtabs">{li_subtabs}</div>
+  {li_panes}
 </section>
 
 <section class="pane" id="pane-insight">
