@@ -3,193 +3,47 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=1280, initial-scale=1">
-<title>X技術Tips Vol.153-2 チェックを入れたときだけ動くフローの作り方</title>
+<title>X技術Tips Vol.153-2 作り方</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../_base/tips-base.css">
+<link rel="stylesheet" href="../_base/x145.css">
 <style>
-  .scene{height:80px;}
-  .cardb{gap:5px;padding:7px 9px;}
-  .cardh{font-size:15px;}
-  .col.c2{flex:1.42;}
-  .col.sp{background:#EEF7F7;border:2.5px solid #9BCFCF;}
-  .col.sp .ch2{color:#035A5D;}
-  .col.sp .ch2 .n{background:linear-gradient(180deg,#0E8A8F,#036C70);}
-  .col.sp .card{border-color:#9BCFCF;}
-  .col.sp .cardh{background:#DCEFEF;border-bottom-color:#B8DEDE;color:#035A5D;}
-  .col.sp .cap{background:#CDE8E8;color:#035A5D;}
-  .col.ml{background:#F0F7FF;border:2.5px solid #A9C6F5;}
-  .col.ml .ch2{color:var(--blue-dark);}
-  .col.ml .card{border-color:#A9C6F5;}
-  .col.ml .cap{background:#DCE8FB;color:var(--blue-dark);}
-  .fi{display:flex;align-items:center;gap:6px;flex-wrap:wrap;background:#fff;border:2px solid #B9C7DC;border-radius:7px;
-    padding:3px 9px;font-size:15.5px;font-weight:900;color:var(--navy);line-height:1.3;}
-  .fi.hot{border-color:var(--orange);background:#FFF7ED;}
-  .fi .k{font-size:14px;color:#475569;}
-  .fi .mono{font-family:'Roboto Mono',monospace;font-weight:700;}
-  .fi .tp{margin-left:auto;font-size:14px;color:#035A5D;background:#DCEFEF;border-radius:5px;padding:0 6px;}
-  .step{display:flex;flex-direction:column;gap:4px;border-top:1.5px solid #E5E7EB;padding-top:5px;}
-  .step .sh{display:flex;align-items:center;gap:7px;font-size:15.5px;font-weight:900;color:#334155;}
-  .step .sh img{width:26px;height:26px;object-fit:contain;flex:0 0 auto;}
-  .nm{display:grid;grid-template-columns:1fr 18px 1fr;align-items:center;gap:4px;}
-  .nm .a{font-size:15.5px;font-weight:900;color:var(--navy);background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:6px;padding:2px 7px;}
-  .nm .b{font-family:'Roboto Mono',monospace;font-size:15.5px;font-weight:700;color:#035A5D;background:#E6F4F1;border-radius:6px;padding:2px 7px;}
-  .nm .t{font-size:14px;color:#64748B;font-weight:900;text-align:center;}
-  .nmh{display:grid;grid-template-columns:1fr 18px 1fr;gap:4px;font-size:14px;font-weight:900;color:#64748B;}
-  /* ② トリガーの設定タブ */
-  .tabs{display:flex;gap:4px;border-bottom:2px solid #E2E8F0;}
-  .tabs span{font-size:15.5px;font-weight:900;color:#64748B;padding:2px 12px 4px;position:relative;}
-  .tabs span.on{color:var(--blue);}
-  .tabs span.on::after{content:"";position:absolute;left:6px;right:6px;bottom:-2px;height:3px;border-radius:2px;background:var(--blue);}
-  .tc{display:flex;align-items:center;gap:8px;font-size:16px;font-weight:900;color:var(--navy);}
-  .tc .add{margin-left:auto;display:inline-flex;align-items:center;gap:4px;font-size:15.5px;color:var(--blue);background:#EFF6FF;border:2px solid var(--blue);border-radius:7px;padding:1px 10px;box-shadow:0 0 0 3px #FED7AA;}
-  .bdg{flex:0 0 auto;width:22px;height:22px;border-radius:50%;background:var(--orange);color:#fff;font-size:13.5px;font-weight:900;display:inline-flex;align-items:center;justify-content:center;}
-  .cl{display:flex;align-items:center;gap:6px;}
-  .cl .code{flex:1;padding:5px 9px;line-height:1.36;}
-  .code .at{color:#FDBA74;}
-  .and{display:flex;align-items:center;gap:7px;font-size:15px;font-weight:900;color:var(--blue-dark);background:#EFF6FF;border:1.5px dashed #93B4F0;border-radius:7px;padding:2px 9px;}
-  .and img{width:22px;height:22px;}
-  /* ③ */
-  .col.gn{background:var(--green-bg);border:2.5px solid var(--green-line);}
-  .col.gn .ch2{color:var(--green-dark);}
-  .col.gn .ch2 .n{background:linear-gradient(180deg,#34D399,#16A34A);}
-  .col.gn .card{border-color:var(--green-line);}
-  .col.gn .cardh{background:#EAF9F1;border-bottom-color:#BFE7D3;color:var(--green-dark);}
-  .col.gn .cap{background:#CFEFE0;color:var(--green-dark);}
-  .yes{font-size:14.5px;font-weight:900;color:#fff;background:#16A34A;border-radius:5px;padding:0 8px;}
+
 </style>
 </head>
 <body>
-<div id="slide"></div>
-<script>
-const A="../../pptx/_assets/";
-const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
-const P={warn:'<path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>',
-  bulb:'<path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/>'};
-const SH=(id,c)=>`<filter id="${id}" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="${c||'#1B2A44'}" flood-opacity=".22"/></filter>`;
-const ARW=(x1,x2,y,c)=>`<path d="M${x1} ${y} H ${x2}" stroke="${c}" stroke-width="4" stroke-linecap="round"/><path d="M${x2-6} ${y-6} l8 6 l-8 6" fill="none" stroke="${c}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>`;
-const T=(x,y,t,sz,c,w,anc,f)=>`<text x="${x}" y="${y}" font-family="${f||'Noto Sans JP'}" font-size="${sz}" font-weight="${w||900}" fill="${c}" text-anchor="${anc||'start'}">${t}</text>`;
-
-/* ① 日本語で作ると内部名が符号になる／英数字で作ってから名前を変える */
-const s1=`<svg viewBox="0 0 421 100" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><g transform="translate(34 0)">
-  <defs>${SH('f','#033A3C')}</defs><rect x="-34" width="421" height="100" fill="#DCEFEF"/>
-  <g filter="url(#f)"><rect x="8" y="8" width="70" height="34" rx="6" fill="#fff" stroke="#DC2626" stroke-width="2"/>${T(43,31,'送信',15,'#1F2937',900,'middle')}</g>
-  ${ARW(84,110,25,'#DC2626')}
-  <g filter="url(#f)"><rect x="118" y="8" width="180" height="34" rx="6" fill="#1E293B"/>${T(208,30,'_x9001__x4fe1_',14,'#FCA5A5',700,'middle','Roboto Mono')}</g>
-  <circle cx="320" cy="25" r="14" fill="#DC2626"/><path d="M314 19 l12 12 M326 19 l-12 12" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
-  <g filter="url(#f)"><rect x="8" y="56" width="70" height="34" rx="6" fill="#fff" stroke="#036C70" stroke-width="2"/>${T(43,78,'SendOK',13.5,'#035A5D',700,'middle','Roboto Mono')}</g>
-  ${ARW(84,110,73,'#036C70')}
-  <g filter="url(#f)"><rect x="118" y="56" width="180" height="34" rx="6" fill="#fff" stroke="#16A34A" stroke-width="2"/>
-    ${T(126,78,'表示名',11.5,'#64748B')}${T(162,78,'送信OK',14,'#1F2937')}${T(214,78,'SendOK',12,'#035A5D',700,'start','Roboto Mono')}</g>
-  <circle cx="320" cy="73" r="14" fill="#16A34A"/><path d="M313 73 l5 5 9-10" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/>
-</g></svg>`;
-/* ② トリガー → 設定 → トリガー条件 ＋追加 */
-const s2=`<svg viewBox="0 0 599 100" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><g transform="translate(52 0)">
-  <defs>${SH('f','#1E3A8A')}</defs><rect x="-52" width="599" height="100" fill="#E3EDFB"/>
-  <g filter="url(#f)"><rect x="10" y="22" width="150" height="56" rx="8" fill="#fff" stroke="#036C70" stroke-width="2.4"/>
-    <rect x="20" y="36" width="28" height="28" rx="6" fill="#036C70"/>${T(34,56,'S',17,'#fff',900,'middle')}
-    ${T(56,46,'アイテムが作成',12,'#1F2937')}${T(56,63,'または変更…',12,'#1F2937')}</g>
-  ${ARW(168,196,50,'#2563EB')}
-  <g filter="url(#f)"><rect x="204" y="30" width="86" height="40" rx="8" fill="#fff" stroke="#2563EB" stroke-width="2.4"/>${T(247,56,'設定',16,'#1E40AF',900,'middle')}
-    <path d="M216 66 h62" stroke="#2563EB" stroke-width="3"/></g>
-  ${ARW(298,326,50,'#2563EB')}
-  <g filter="url(#f)"><rect x="334" y="18" width="150" height="64" rx="8" fill="#fff" stroke="#2563EB" stroke-width="2.4"/>
-    ${T(346,42,'トリガー条件',14,'#1F2937')}
-    <rect x="346" y="52" width="66" height="22" rx="5" fill="#EFF6FF" stroke="#2563EB" stroke-width="2"/>${T(379,68,'＋追加',12.5,'#2563EB',900,'middle')}
-    <rect x="420" y="52" width="54" height="22" rx="5" fill="#1E293B"/>${T(447,68,'@…',12,'#FDBA74',700,'middle','Roboto Mono')}</g>
-</g></svg>`;
-/* ③ 送ったらすぐ 送信済み＝はい */
-const s3=`<svg viewBox="0 0 421 100" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><g transform="translate(34 0)">
-  <defs>${SH('f','#064E3B')}<linearGradient id="eg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#E9EEF5"/></linearGradient></defs>
-  <rect x="-34" width="421" height="100" fill="#DCF3E7"/>
-  <g filter="url(#f)"><rect x="14" y="24" width="76" height="52" rx="4" fill="url(#eg)" stroke="#CBD5E1"/><path d="M14 26 L52 54 L90 26" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.4"/>
-    <rect x="76" y="29" width="10" height="11" rx="1" fill="#0F6CBD"/></g>
-  ${T(52,94,'送信',12,'#065F46',900,'middle')}
-  ${ARW(98,126,50,'#16A34A')}
-  <g filter="url(#f)"><rect x="134" y="14" width="208" height="72" rx="7" fill="#fff" stroke="#16A34A" stroke-width="2"/>
-    <rect x="134" y="14" width="208" height="20" rx="7" fill="#F1F5F9"/>${T(144,29,'タイトル',11,'#475569')}${T(240,29,'送信OK',11,'#475569')}${T(292,29,'送信済み',11,'#475569')}
-    <rect x="136" y="42" width="204" height="36" fill="#DCFCE7"/><rect x="136" y="42" width="4" height="36" fill="#16A34A"/>
-    ${T(146,65,'見積書の送付',12.5,'#1F2937')}
-    <rect x="240" y="51" width="36" height="20" rx="4" fill="#DCFCE7" stroke="#86EFAC"/>${T(258,66,'はい',12,'#065F46',900,'middle')}
-    <rect x="290" y="48" width="44" height="26" rx="5" fill="#16A34A"/>${T(312,66,'はい',13.5,'#fff',900,'middle')}
-    <circle cx="334" cy="46" r="9" fill="#EA580C"/>${T(334,50.5,'⚡',10,'#fff',900,'middle')}</g>
-</g></svg>`;
-
-const C1=`<span class="at">@</span>equals(triggerOutputs()?[<span class="y">'body/SendOK'</span>],<br>&nbsp;<span class="g">true</span>)`;
-const C2=`<span class="at">@</span>equals(triggerOutputs()?[<span class="y">'body/Sent'</span>],<br>&nbsp;<span class="r">false</span>)`;
-
-document.getElementById('slide').innerHTML=`
+<div id="slide">
   <div class="titlebar">
     <div class="vol-pill">Vol.153-2</div>
-    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
-    <div class="title-text">チェックした1回だけ動かす作り方は<br><span class="hl">3ステップ</span>（列を作る → 条件を2行 → 書き戻す）</div>
-    <img class="title-chara" src="${A}chara/chara_laptop.png" alt="">
+    <img class="vol-logo" src="../../pptx/_assets/icons/pa_logo.png" alt="">
+    <div class="title-text">作り方は<span class="hl">アクション2つ</span>（見張る → 移す）</div>
+    <img class="title-chara" src="../../pptx/_assets/chara/chara_laptop.png" alt="">
   </div>
-
   <div class="concl">
-    <div class="chip">${svgw(P.bulb,2.2)}</div>
-    <div class="txt">トリガー条件は<b>何行でも並べられ、全部満たしたときだけ</b>起動します。<br>送ったら<b>すぐ「送信済み＝はい」</b>にすれば、その書き戻しでは条件を満たさず止まります</div>
+    <div class="chip"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/></svg></div>
+    <div class="txt">移動先のパスに<b>年月の式</b>を入れるのが要です。<br>フォルダーが無いときは移すときに作られるので、月が変わっても何もしなくて済みます</div>
   </div>
-
   <div class="stage">
-    <div class="col sp">
-      <div class="ch2"><span class="n">1</span>列を英数字で作る</div>
-      <div class="scene">${s1}</div>
-      <div class="body"><div class="card">
-        <div class="cardh"><img src="${A}icons/ms/lists.svg" alt="">リストに列を2つ追加</div>
-        <div class="cardb">
-          <span class="fi"><span class="k">名前</span><span class="mono">SendOK</span><span class="tp">はい/いいえ</span></span>
-          <span class="fi"><span class="k">名前</span><span class="mono">Sent</span><span class="tp">はい/いいえ</span></span>
-          <div class="step"><span class="sh">あとで表示名だけ日本語に変える</span>
-            <div class="nm"><span class="a">送信OK</span><span class="t">→</span><span class="b">SendOK</span></div>
-            <div class="nm"><span class="a">送信済み</span><span class="t">→</span><span class="b">Sent</span></div>
-          </div>
-        </div>
-      </div></div>
-      <div class="cap">名前を変えても<b>式の名前は最初のまま</b></div>
+    <div class="col info">
+      <div class="ch2"><span class="n">1</span>受け取りフォルダーを見張る</div>
+      <div class="body"><div class="card"><div class="cardb"><div class="act"><img src="../../pptx/_assets/icons/pa_onedrive.png" alt="">ファイルの作成時 (プロパティのみ)</div><span class="fi hot"><span class="k">フォルダー</span>/写真の受け取り</span><span class="fi"><span class="k">サブフォルダーを含める</span>いいえ</span><div class="why">フォルダーはアイコンから選ぶ</div><div class="ex"><div class="exh">結果の例</div><div class="exb"><div>スマホの OneDrive アプリで<br>写真の受け取り にアップロード</div><div style="color:#64748B">5分ごとに新しいファイルを確認</div></div></div></div></div></div>
+      <div class="cap">受け取り専用の<b>空のフォルダー</b>を1つ作る</div>
     </div>
-
-    <div class="col ml c2">
-      <div class="ch2"><span class="n">2</span>トリガー条件に2行入れる</div>
-      <div class="scene">${s2}</div>
-      <div class="body"><div class="card">
-        <div class="cardh"><img src="${A}icons/pa_sharepoint.png" alt="">アイテムが作成または変更されたとき</div>
-        <div class="cardb">
-          <div class="tabs"><span>パラメーター</span><span class="on">設定</span></div>
-          <div class="tc">トリガー条件<span class="add">＋追加</span></div>
-          <div class="cl"><span class="bdg">1</span><div class="code">${C1}</div></div>
-          <div class="cl"><span class="bdg">2</span><div class="code">${C2}</div></div>
-        </div>
-      </div></div>
-      <div class="cap">2行並べると<b>両方満たしたときだけ</b>起動。式は必ず <b>@</b> で始める</div>
+    <div class="col info">
+      <div class="ch2"><span class="n">2</span>年月のパスへ移す</div>
+      <div class="body"><div class="card"><div class="cardb"><div class="act"><img src="../../pptx/_assets/icons/pa_onedrive.png" alt="">ファイルの移動または名前変更</div><span class="fi"><span class="k">ファイル</span>{Identifier}</span><span class="fi hot"><span class="k">対象ファイルのパス</span>/写真/<code>yyyy-MM</code>/ファイル名</span><div class="why">yyyy-MM は convertFromUtc で作成日時から作る</div><div class="ex"><div class="exh">結果の例</div><div class="exb"><div style="font-family:Roboto Mono;font-size:14px">/写真/2026-10/IMG_4023.jpg</div><div style="color:#64748B">2026-10 が無ければ作られる</div></div></div></div></div></div>
+      <div class="cap">フォルダーが無くても<b>移すときに作られる</b></div>
     </div>
-
-    <div class="col gn">
-      <div class="ch2"><span class="n">3</span>送ったらすぐ書き戻す</div>
-      <div class="scene">${s3}</div>
-      <div class="body"><div class="card">
-        <div class="cardh"><img src="${A}icons/pa_outlook.png" alt="">メールの送信 (V2)</div>
-        <div class="cardb">
-          <span class="fi"><span class="k">宛先</span><span class="dyn">宛先メール</span><span class="k">（リストの列）</span></span>
-          <span class="fi"><span class="k">件名</span><span class="dyn">タイトル</span></span>
-          <div class="step"><span class="sh"><img src="${A}icons/pa_sharepoint.png" alt="">項目の更新</span>
-            <span class="fi"><span class="k">ID</span><span class="dyn">ID</span><span class="k">（トリガーの値）</span></span>
-            <span class="fi hot"><span class="k">送信済み</span><span class="yes">はい</span></span>
-          </div>
-        </div>
-      </div></div>
-      <div class="cap">この書き戻しは<b>②の2行目</b>で止まる</div>
+    <div class="col info">
+      <div class="ch2"><span class="n">3</span>応用</div>
+      <div class="body"><div class="card"><div class="cardb"><div class="act"><img src="../../pptx/_assets/icons/pa_onedrive.png" alt="">対象ファイルのパスを変えるだけ</div><span class="fi"><span class="k">年ごと</span>/写真/<code>yyyy</code>/</span><span class="fi"><span class="k">種類ごと</span>拡張子で分ける</span><div class="ex"><div class="exh">結果の例</div><div class="exb"><div>/写真/2026-10/山田工業/… のように<br>案件名の段を足すこともできる</div></div></div></div></div></div>
+      <div class="cap">アクションは<b>増やさずに</b>パスの式だけ変える</div>
     </div>
   </div>
-
-  <div class="warnbar">
-    <span class="na">${svgw(P.warn,2.4)}</span>
-    <span class="ws"><span>日本語で列を作ると、式で使う名前が _x9001__x4fe1_ のような符号になる</span><span>条件を満たさない変更は実行履歴に残らない。動かないときはまず式を確認</span>
-      <span>送信済みを いいえ に戻すと、もう一度送られる</span></span>
-  </div>
-  <div class="src">出典：Microsoft Learn「条件を使用してトリガーをカスタマイズする」「SharePoint コネクタ」／画面は再現・件名などは架空の例</div>
-`;
-</script>
+  <div class="warnbar"><span class="na"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg></span><span class="ws"><span>分かれるのは撮影日ではなく、OneDrive に入った日の年月</span><span>同じ名前のファイルがあると上書きせず失敗する（上書きは いいえ）</span><span>受け取りフォルダーの中のサブフォルダーは見ない設定</span></span></div>
+  <div class="src">出典：Microsoft Learn</div>
+</div>
 </body>
 </html>

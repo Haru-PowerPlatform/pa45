@@ -3,177 +3,47 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=1280, initial-scale=1">
-<title>X技術Tips Vol.154-2 Planner の完了を Teams と作業記録に流す作り方</title>
+<title>X技術Tips Vol.154-2 作り方</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../_base/tips-base.css">
+<link rel="stylesheet" href="../_base/x145.css">
 <style>
-  .scene{height:86px;}
-  .col{gap:6px;}
-  .cardb{gap:5px;padding:6px 9px;}
-  .col.tm .cardb{gap:4px;padding:5px 9px;}
-  .cardh{font-size:15.5px;}
-  .cardh .pi{width:28px;height:28px;flex:0 0 auto;}
-  .col.pl{background:#F3F8F2;border:2.5px solid #9BCB98;}
-  .col.pl .ch2{color:#1B5E20;}
-  .col.pl .ch2 .n{background:linear-gradient(180deg,#4CAF50,#2E7D32);}
-  .col.pl .card{border-color:#9BCB98;}
-  .col.pl .cardh{background:#E3F2E1;border-bottom-color:#C3E3C0;color:#1B5E20;}
-  .col.pl .cap{background:#D4ECD1;color:#1B5E20;}
-  .col.tm{background:#F3F3FC;border:2.5px solid #B4B8F0;}
-  .col.tm .ch2{color:#3B3FA0;}
-  .col.tm .ch2 .n{background:linear-gradient(180deg,#7B83EB,#5B5FC7);}
-  .col.tm .card{border-color:#B4B8F0;}
-  .col.tm .cardh{background:#E6E7FA;border-bottom-color:#CDD0F5;color:#3B3FA0;}
-  .col.tm .cap{background:#DDE0FB;color:#3B3FA0;}
-  .col.sp{background:#EFFAF8;border:2.5px solid #99DCD3;}
-  .col.sp .ch2{color:#0F5F59;}
-  .col.sp .ch2 .n{background:linear-gradient(180deg,#14B8A6,#0F766E);}
-  .col.sp .card{border-color:#99DCD3;}
-  .col.sp .cardh{background:#DDF4F0;border-bottom-color:#B5E6DE;color:#0F5F59;}
-  .col.sp .cap{background:#CDEDE7;color:#0F5F59;}
-  .fi{display:flex;align-items:center;gap:6px;flex-wrap:wrap;background:#fff;border:2px solid #B9C7DC;border-radius:7px;
-    padding:3px 9px;font-size:15.5px;font-weight:900;color:var(--navy);line-height:1.3;}
-  .fi.hot{border-color:var(--orange);background:#FFF7ED;}
-  .fi .k{flex:0 0 auto;font-size:14px;color:#475569;min-width:84px;}
-  .outs{display:flex;flex-direction:column;gap:5px;background:#F6FBF5;border:2px dashed #9BCB98;border-radius:8px;padding:6px 8px;margin-top:auto;}
-  .outs .oh{font-size:14px;font-weight:900;color:#1B5E20;}
-  .outs .o{display:flex;align-items:center;gap:7px;font-size:15px;font-weight:900;color:#475569;}
-  .outs .o .dyn{font-size:15px;}
-  .msgbox{display:flex;flex-direction:column;gap:3px;background:#FFF7ED;border:2px solid var(--orange);border-radius:8px;padding:4px 9px;flex:1;min-height:0;}
-  .msgbox .k{font-size:14px;font-weight:900;color:#475569;min-width:76px;}
-  .msgbox .l{display:flex;align-items:center;gap:5px;flex-wrap:wrap;font-size:15.5px;font-weight:900;color:var(--navy);line-height:1.3;}
-  .msgbox .l.lb{display:block;line-height:1.55;}
-  .fx{-webkit-box-decoration-break:clone;box-decoration-break:clone;font-family:'Roboto Mono',monospace;font-size:14.5px;font-weight:700;color:#9A3412;background:#FFEDD5;border-radius:5px;padding:1px 6px;line-height:1.35;}
+
 </style>
 </head>
 <body>
-<div id="slide"></div>
-<script>
-const A="../../pptx/_assets/";
-const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
-const P={warn:'<path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>',
-  bulb:'<path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/>'};
-const VB='0 7 388 86';
-const SH=(id,c)=>`<filter id="${id}" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="${c||'#1B2A44'}" flood-opacity=".22"/></filter>`;
-const ARW=(x1,x2,y,c)=>`<path d="M${x1} ${y} H ${x2}" stroke="${c}" stroke-width="4.4" stroke-linecap="round"/><path d="M${x2-6} ${y-6} l8 6 l-8 6" fill="none" stroke="${c}" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"/>`;
-const PLI=`<svg class="pi" width="28" height="28" viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg">
-  <defs><linearGradient id="pg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5CC15F"/><stop offset="1" stop-color="#1B6E2A"/></linearGradient></defs>
-  <rect x="3" y="3" width="22" height="22" rx="5" fill="url(#pg)"/>
-  <rect x="6.5" y="7" width="4" height="13" rx="1.5" fill="#fff"/><rect x="12" y="7" width="4" height="9" rx="1.5" fill="#E8F5E9"/><rect x="17.5" y="7" width="4" height="15" rx="1.5" fill="#C8E6C9"/></svg>`;
-const CKC=(cx,cy,r)=>`<circle cx="${cx}" cy="${cy}" r="${r}" fill="#16A34A"/><path d="M${cx-r*.45} ${cy+r*.05}l${r*.35} ${r*.35} ${r*.62} -${r*.66}" fill="none" stroke="#fff" stroke-width="${r*.28}" stroke-linecap="round" stroke-linejoin="round"/>`;
-
-/* ① ボードのタスクに完了✓ → 定期確認の時計 → 起動 */
-const s1=`<svg viewBox="${VB}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-  <defs>${SH('f','#14532D')}</defs><rect width="388" height="100" fill="#E3F2E1"/>
-  <g filter="url(#f)"><rect x="14" y="12" width="146" height="76" rx="9" fill="#fff" stroke="#16A34A" stroke-width="2.4"/>
-    ${CKC(36,36,12)}<text x="54" y="41" font-family="Noto Sans JP" font-size="13.5" font-weight="900" fill="#166534" text-decoration="line-through">見積書を送付</text>
-    <rect x="26" y="58" width="98" height="20" rx="10" fill="#16A34A"/><text x="75" y="72" font-family="Noto Sans JP" font-size="11.5" font-weight="900" fill="#fff" text-anchor="middle">完了 14:32</text></g>
-  ${ARW(168,198,50,'#2E7D32')}
-  <text x="236" y="16" font-family="Noto Sans JP" font-size="11" font-weight="900" fill="#1B5E20" text-anchor="middle">約6分ごと</text>
-  <g filter="url(#f)"><circle cx="236" cy="52" r="26" fill="#fff" stroke="#2E7D32" stroke-width="2.6"/>
-    ${[0,1,2,3,4,5,6,7,8,9,10,11].map(i=>{const a=i*Math.PI/6;return `<path d="M${236+20*Math.sin(a)} ${52-20*Math.cos(a)} L ${236+23*Math.sin(a)} ${52-23*Math.cos(a)}" stroke="#64748B" stroke-width="2"/>`}).join('')}
-    <path d="M236 52 V 36 M236 52 L 248 59" stroke="#1F2937" stroke-width="3" stroke-linecap="round"/></g>
-  
-  ${ARW(274,304,50,'#2E7D32')}
-  <g filter="url(#f)"><rect x="312" y="18" width="64" height="64" rx="16" fill="#2563EB"/><path d="M348 26 l-16 26 h12 l-6 22 l18 -28 h-12z" fill="#FDE68A"/></g>
-</svg>`;
-/* ② 吹き出しがチャネルへ */
-const s2=`<svg viewBox="${VB}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-  <defs>${SH('f','#1E1B4B')}</defs><rect width="388" height="100" fill="#E6E7FA"/>
-  <g filter="url(#f)"><rect x="14" y="16" width="200" height="66" rx="10" fill="#fff" stroke="#2563EB" stroke-width="2.2"/><rect x="14" y="16" width="7" height="66" rx="3" fill="#2563EB"/>
-    ${CKC(40,36,10)}<text x="56" y="41" font-family="Noto Sans JP" font-size="13" font-weight="900" fill="#166534">タスクが完了しました</text>
-    <text x="32" y="62" font-family="Noto Sans JP" font-size="12" font-weight="900" fill="#1E3A8A">見積書を送付</text>
-    <text x="32" y="76" font-family="Roboto Mono" font-size="11" font-weight="700" fill="#B45309">10/20 14:32</text></g>
-  ${ARW(222,254,50,'#5B5FC7')}
-  <g filter="url(#f)"><rect x="262" y="12" width="114" height="76" rx="10" fill="#5B5FC7"/>
-    <text x="319" y="34" font-family="Noto Sans JP" font-size="12" font-weight="900" fill="#fff" text-anchor="middle">営業1課</text>
-    <rect x="272" y="44" width="94" height="34" rx="7" fill="#fff"/><text x="319" y="66" font-family="Noto Sans JP" font-size="12" font-weight="900" fill="#3B3FA0" text-anchor="middle">案件の報告</text></g>
-</svg>`;
-/* ③ リストに緑の1行 */
-const s3=`<svg viewBox="${VB}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-  <defs>${SH('f','#134E4A')}</defs><rect width="388" height="100" fill="#DDF4F0"/>
-  <g filter="url(#f)"><rect x="40" y="10" width="300" height="82" rx="8" fill="#fff" stroke="#99DCD3" stroke-width="2"/>
-    <rect x="40" y="10" width="300" height="20" rx="8" fill="#0F766E"/><rect x="40" y="22" width="300" height="8" fill="#0F766E"/>
-    <text x="52" y="25" font-family="Noto Sans JP" font-size="11.5" font-weight="900" fill="#fff">作業記録</text>
-    <rect x="52" y="38" width="70" height="7" rx="3" fill="#CBD5E1"/><rect x="134" y="38" width="110" height="7" rx="3" fill="#CBD5E1"/><rect x="256" y="38" width="60" height="7" rx="3" fill="#CBD5E1"/>
-    <rect x="44" y="54" width="292" height="30" rx="4" fill="#DCFCE7"/><rect x="44" y="54" width="5" height="30" fill="#16A34A"/>
-    <text x="56" y="74" font-family="Roboto Mono" font-size="12" font-weight="700" fill="#065F46">10/20 14:32</text>
-    <text x="150" y="74" font-family="Noto Sans JP" font-size="12.5" font-weight="900" fill="#065F46">見積書を送付</text>
-    <rect x="262" y="61" width="66" height="17" rx="8.5" fill="#16A34A"/><text x="295" y="74" font-family="Noto Sans JP" font-size="11" font-weight="900" fill="#fff" text-anchor="middle">⚡ 1行</text></g>
-</svg>`;
-
-document.getElementById('slide').innerHTML=`
+<div id="slide">
   <div class="titlebar">
     <div class="vol-pill">Vol.154-2</div>
-    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
-    <div class="title-text">作り方は<span class="hl">3ステップ</span><br>完了を拾う → Teams に報告 → 作業記録に1行</div>
-    <img class="title-chara" src="${A}chara/chara_laptop.png" alt="">
+    <img class="vol-logo" src="../../pptx/_assets/icons/pa_logo.png" alt="">
+    <div class="title-text">作り方は<span class="hl">3ステップ</span>（取る → CSV にする → 保存）</div>
+    <img class="title-chara" src="../../pptx/_assets/chara/chara_laptop.png" alt="">
   </div>
-
   <div class="concl">
-    <div class="chip">${svgw(P.bulb,2.2)}</div>
-    <div class="txt">トリガーは Planner の<b>「タスクが完了したとき」</b>。プランを1つ選ぶだけです。<br>タスク名と完了日時を<b>動的コンテンツ</b>で、Teams の報告と作業記録の両方に入れます</div>
+    <div class="chip"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/></svg></div>
+    <div class="txt">取得した行を <b>CSV テーブルの作成</b> で表の文字に変え、日付入りの名前でファイルにします。<br>先頭に BOM を足しておくと、Excel でそのまま開けます</div>
   </div>
-
   <div class="stage">
-    <div class="col pl">
-      <div class="ch2"><span class="n">1</span>完了したタスクを拾う</div>
-      <div class="scene">${s1}</div>
-      <div class="body"><div class="card">
-        <div class="cardh">${PLI}タスクが完了したとき</div>
-        <div class="cardb">
-          <span class="fi"><span class="k">グループ ID</span>営業1課</span>
-          <span class="fi hot"><span class="k">プラン ID</span>A社 見積もり対応</span>
-          <div class="outs"><span class="oh">後ろで使える動的コンテンツ</span>
-            <span class="o"><span class="dyn">Title</span>タスクの名前</span>
-            <span class="o"><span class="dyn">完了日時</span>完了にした日時</span></div>
-        </div>
-      </div></div>
-      <div class="cap">完了の丸を押したタスクで<b>起動</b>する</div>
+    <div class="col info">
+      <div class="ch2"><span class="n">1</span>毎週金曜に全行を取る</div>
+      <div class="body"><div class="card"><div class="cardb"><div class="act"><img src="../../pptx/_assets/icons/pa_schedule.png" alt="">繰り返し</div><span class="fi hot"><span class="k">曜日</span>金曜日</span><span class="fi"><span class="k">時間</span>18</span><div class="act"><img src="../../pptx/_assets/icons/pa_sharepoint.png" alt="">複数の項目の取得</div><span class="fi"><span class="k">リスト名</span>社員名簿</span><span class="fi hot"><span class="k">上位カウント</span>5000</span><div class="why">指定しないと既定の件数で止まる</div><div class="ex"><div class="exh">結果の例</div><div class="exb"><div>金 18:00 ／ 金 18:00 ／ 金 18:00 …</div><div style="color:#64748B">上位カウント 5000 で全行を取る</div></div></div></div></div></div>
+      <div class="cap">曜日と時刻は<b>人が触らない時間</b>に</div>
     </div>
-
-    <div class="col tm">
-      <div class="ch2"><span class="n">2</span>Teams に完了を報告</div>
-      <div class="scene">${s2}</div>
-      <div class="body"><div class="card">
-        <div class="cardh"><img src="${A}icons/pa_teams.png" alt="">チャットまたはチャネルで<br>メッセージを投稿する</div>
-        <div class="cardb">
-          <span class="fi"><span class="k">投稿者</span>フロー ボット</span>
-          <span class="fi"><span class="k">投稿先</span>チャネル：営業1課 ＞ 案件の報告</span>
-          <div class="msgbox">
-            <span class="l"><span class="k">メッセージ</span>タスクが完了しました：<span class="dyn">Title</span></span>
-            <span class="l lb">完了日時：<span class="fx">convertFromUtc(<span class="dyn">完了日時</span>, 'Tokyo Standard Time', 'M/d HH:mm')</span></span></div>
-        </div>
-      </div></div>
-      <div class="cap">完了日時は<b>UTC</b>。日本時間に直して載せる</div>
+    <div class="col info">
+      <div class="ch2"><span class="n">2</span>CSV の形にする</div>
+      <div class="body"><div class="card"><div class="cardb"><div class="act"><img src="../../pptx/_assets/icons/pa_dataoperation.png" alt="">CSV テーブルの作成</div><span class="fi"><span class="k">From</span>body/value</span><span class="fi hot"><span class="k">Columns</span>カスタム</span><span class="fi"><span class="k">見出しと値</span>ID・氏名・部署・誕生日…</span><div class="why">列名を日本語の見出しにそろえる</div><div class="ex"><div class="exh">結果の例</div><div class="exb"><div style="font-family:Roboto Mono;font-size:13.5px">ID,氏名,部署,誕生日,入社日,更新日時<br>1,山田 太郎,営業部,1990-10-28,…</div></div></div></div></div></div>
+      <div class="cap">カスタムにすると<b>要る列だけ</b>を順番どおりに出せる</div>
     </div>
-
-    <div class="col sp">
-      <div class="ch2"><span class="n">3</span>作業記録に1行足す</div>
-      <div class="scene">${s3}</div>
-      <div class="body"><div class="card">
-        <div class="cardh"><img src="${A}icons/pa_sharepoint.png" alt="">項目の作成</div>
-        <div class="cardb">
-          <span class="fi"><span class="k">サイトのアドレス</span>営業1課</span>
-          <span class="fi"><span class="k">リスト名</span>作業記録</span>
-          <span class="fi hot"><span class="k">タイトル</span><span class="dyn">Title</span></span>
-          <span class="fi hot"><span class="k">完了日時</span><span class="dyn">完了日時</span></span>
-          <span class="fi"><span class="k">プラン</span>A社 見積もり対応</span>
-        </div>
-      </div></div>
-      <div class="cap">1件ごとに1行。<b>月末の振り返り</b>に使える</div>
+    <div class="col info">
+      <div class="ch2"><span class="n">3</span>日付入りで保存</div>
+      <div class="body"><div class="card"><div class="cardb"><div class="act"><img src="../../pptx/_assets/icons/pa_sharepoint.png" alt="">ファイルの作成</div><span class="fi"><span class="k">フォルダーのパス</span>/Shared Documents/バックアップ/社員名簿</span><span class="fi hot"><span class="k">ファイル名</span>社員名簿_<code>yyyyMMdd</code>.csv</span><span class="fi hot"><span class="k">ファイル コンテンツ</span><code>concat(BOM, CSV)</code></span><div class="why">BOM を付けると Excel で開いたとき文字化けしない</div><div class="ex"><div class="exh">結果の例</div><div class="exb"><div style="font-family:Roboto Mono;font-size:14px">/バックアップ/社員名簿/<br>社員名簿_20261030.csv</div></div></div></div></div></div>
+      <div class="cap">日付をファイル名に入れて<b>上書きしない</b></div>
     </div>
   </div>
-
-  <div class="warnbar">
-    <span class="na">${svgw(P.warn,2.4)}</span>
-    <span class="ws"><span>Planner は基本プランのみ対応</span><span>約6分（360秒）ごとの確認で、完了から数分遅れて動く</span><span>Excel は変更で動くトリガーが無い</span>
-      <span>To Do なら「特定のフォルダー内の to-do が更新されたとき (V2)」で完了済みを判定（実機未確認）</span></span>
-  </div>
-  <div class="src">出典：Microsoft Learn「Planner コネクタ」「Microsoft To-Do (Business) コネクタ」「Microsoft Teams コネクタ」「SharePoint コネクタ」「Excel Online (Business) コネクタ」</div>
-`;
-</script>
+  <div class="warnbar"><span class="na"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg></span><span class="ws"><span>SharePoint にもごみ箱（93日）とバージョン履歴がある。これは追加の保険</span><span>5000 行を超えるリストは、取得の設定でページ処理を有効に</span><span>人や選択肢の列は、表示名を取り出す式にする</span></span></div>
+  <div class="src">出典：Microsoft Learn</div>
+</div>
 </body>
 </html>

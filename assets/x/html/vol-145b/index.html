@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>X技術Tips Vol.145-2 作り方</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/tips-base.css">
+<link rel="stylesheet" href="../_base/x145.css">
+<style>
+
+</style>
+</head>
+<body>
+<div id="slide">
+  <div class="titlebar">
+    <div class="vol-pill">Vol.145-2</div>
+    <img class="vol-logo" src="../../pptx/_assets/icons/pa_logo.png" alt="">
+    <div class="title-text">作り方は<span class="hl">4ステップ</span>（時刻 → 天気 → 予定 → 投稿）</div>
+    <img class="title-chara" src="../../pptx/_assets/chara/chara_laptop.png" alt="">
+  </div>
+  <div class="concl">
+    <div class="chip"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/></svg></div>
+    <div class="txt">天気は<b>MSN 天気</b>、予定は<b>予定表ビュー</b>で取り、Teams の1通にまとめます。<br>コネクタはどちらも標準なので、追加のライセンスは要りません</div>
+  </div>
+  <div class="stage">
+    <div class="col info">
+      <div class="ch2"><span class="n">1</span>毎朝7:30に動かす</div>
+      <div class="body"><div class="card"><div class="cardb"><div class="act"><img src="../../pptx/_assets/icons/pa_schedule.png" alt="">繰り返し</div><span class="fi"><span class="k">頻度</span>週</span><span class="fi"><span class="k">曜日</span>月〜金</span><span class="fi hot"><span class="k">時刻</span>7 時 30 分</span><span class="fi"><span class="k">タイム ゾーン</span>大阪、札幌、東京</span><div class="why">土日は動かない設定にしておく</div><div class="ex"><div class="exh">結果の例</div><div class="exb"><div>月 7:30 ／ 火 7:30 ／ 水 7:30 ／ 木 7:30 ／ 金 7:30</div><div style="color:#94A3B8">土・日は起動しない</div></div></div></div></div></div>
+      <div class="cap">タイム ゾーンを<b>東京</b>にしないと9時間ずれる</div>
+    </div>
+    <div class="col info">
+      <div class="ch2"><span class="n">2</span>今日の天気を取る</div>
+      <div class="body"><div class="card"><div class="cardb"><div class="act"><img src="../_base/msn-weather.svg" alt="">今日の予測を取得する</div><span class="fi hot"><span class="k">場所</span>東京都千代田区</span><span class="fi"><span class="k">単位</span>Metric</span><div class="why">MSN 天気は標準コネクタ。サインインは要らない</div><div class="ex"><div class="exh">結果の例</div><div class="exb"><div>日 条件：くもり時々雨</div><div>最高気温 18 ／ 最低気温 11</div><div>日 降水確率 60</div></div></div></div></div></div>
+      <div class="cap">場所は<b>市区町村名</b>でも郵便番号でも入る</div>
+    </div>
+    <div class="col info">
+      <div class="ch2"><span class="n">3</span>今日の予定を取る</div>
+      <div class="body"><div class="card"><div class="cardb"><div class="act"><img src="../../pptx/_assets/icons/pa_outlook.png" alt="">イベントの予定表ビューを取得する (V3)</div><span class="fi"><span class="k">カレンダー ID</span>Calendar</span><span class="fi hot"><span class="k">開始時刻</span><code>utcNow()</code></span><span class="fi hot"><span class="k">終了時刻</span><code>addHours(utcNow(), 14)</code></span><div class="why">朝から14時間分＝夜までの予定</div><div class="ex"><div class="exh">結果の例</div><div class="exb"><table class="lt"><tr><th>subject</th><th>start（UTC）</th></tr><tr><td>営業部 定例</td><td>00:30</td></tr><tr><td>打ち合わせ</td><td>02:00</td></tr></table></div></div></div></div></div>
+      <div class="cap">開始・終了は<b>UTC で入れる</b>欄</div>
+    </div>
+    <div class="col info">
+      <div class="ch2"><span class="n">4</span>表にして Teams へ</div>
+      <div class="body"><div class="card"><div class="cardb"><div class="act"><img src="../../pptx/_assets/icons/pa_dataoperation.png" alt="">選択</div><span class="fi hot"><span class="k">時刻</span><code>convertFromUtc(…,'HH:mm')</code></span><span class="fi"><span class="k">予定</span>subject</span><div class="act"><img src="../../pptx/_assets/icons/pa_dataoperation.png" alt="">HTML テーブルの作成</div><div class="act"><img src="../../pptx/_assets/icons/pa_teams.png" alt="">チャットまたはチャネルでメッセージを投稿する</div><span class="fi"><span class="k">投稿先</span>フロー ボットとチャットをする</span></div></div></div>
+      <div class="cap">予定の時刻は<b>日本時間に直してから</b>表へ</div>
+    </div>
+  </div>
+  <div class="warnbar"><span class="na"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg></span><span class="ws"><span>予定表の時刻は UTC。表にする前に convertFromUtc で日本時間へ</span><span>MSN 天気の呼び出しは1接続あたり60秒に8回まで</span><span>予定が無い日は表が空のまま届く</span></span></div>
+  <div class="src">出典：Microsoft Learn</div>
+</div>
+</body>
+</html>

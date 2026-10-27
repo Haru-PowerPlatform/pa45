@@ -3,182 +3,47 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=1280, initial-scale=1">
-<title>X技術Tips Vol.152-2 状態で絞ってアンケートを送る作り方</title>
+<title>X技術Tips Vol.152-2 作り方</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../_base/tips-base.css">
+<link rel="stylesheet" href="../_base/x145.css">
 <style>
-  .scene{height:100px;}
-  .cardb{gap:5px;padding:7px 9px;}
-  .cardh{font-size:15.5px;}
-  .col.sp{background:#EFFAF8;border:2.5px solid #99DCD3;}
-  .col.sp .ch2{color:#0F5F59;}
-  .col.sp .ch2 .n{background:linear-gradient(180deg,#14B8A6,#0F766E);}
-  .col.sp .card{border-color:#99DCD3;}
-  .col.sp .cardh{background:#DDF4F0;border-bottom-color:#B5E6DE;color:#0F5F59;}
-  .col.sp .cap{background:#CDEDE7;color:#0F5F59;}
-  .rc{display:grid;grid-template-columns:auto 1fr;gap:4px 8px;align-items:center;}
-  .rc .fl{font-size:14px;font-weight:900;color:#475569;white-space:nowrap;}
-  .rc .fi{white-space:nowrap;}
-  .fi{display:flex;align-items:center;gap:5px;flex-wrap:wrap;background:#fff;border:2px solid #B9C7DC;border-radius:7px;
-    padding:2px 9px;font-size:15.5px;font-weight:900;color:var(--navy);line-height:1.3;}
-  .fi.hot{border-color:var(--orange);background:#FFF7ED;}
-  .fi .k{font-size:14px;color:#475569;}
-  .fi.code{font-family:'Roboto Mono',monospace;font-weight:700;color:#9A3412;}
-  .fld{display:flex;flex-direction:column;gap:2px;}
-  .fld .fl{font-size:14px;font-weight:900;color:#475569;}
-  .sub{display:flex;align-items:center;gap:7px;font-size:15.5px;font-weight:900;color:#334155;border-top:1.5px solid #E5E7EB;padding-top:5px;}
-  .sub img{width:26px;height:26px;object-fit:contain;flex:0 0 auto;}
-  .sub .s2{font-size:14px;color:#64748B;}
-  .cols{display:grid;grid-template-columns:1fr 1fr;gap:4px;}
-  .cl{display:flex;align-items:baseline;justify-content:space-between;gap:4px;white-space:nowrap;background:#F7F9FC;border:1.5px solid #E2EAF5;border-radius:7px;padding:2px 8px;}
-  .cl .in{font-family:'Roboto Mono',monospace;font-size:15px;font-weight:700;color:#9A3412;}
-  .cl .ty{font-size:13.5px;font-weight:900;color:#475569;}
-  .op{font-size:14px;font-weight:900;color:#fff;background:#64748B;border-radius:5px;padding:0 6px;}
-  .yes{display:flex;align-items:center;gap:6px;font-size:15.5px;font-weight:900;color:var(--navy);}
-  .yes img{width:26px;height:26px;flex:0 0 auto;}
-  .yes .yl{flex:0 0 auto;font-size:14px;color:#fff;background:#16A34A;border-radius:5px;padding:0 6px;}
-  .step{display:flex;flex-direction:column;gap:4px;border-top:1.5px solid #E5E7EB;padding-top:5px;}
-  .step:first-child{border-top:none;padding-top:0;}
-  .step .sh{display:flex;align-items:center;gap:7px;font-size:15.5px;font-weight:900;color:#334155;}
-  .step .sh img{width:26px;height:26px;object-fit:contain;flex:0 0 auto;}
-  .step .sh .nb{flex:0 0 auto;width:22px;height:22px;border-radius:50%;background:#16A34A;color:#fff;font-size:14px;display:flex;align-items:center;justify-content:center;}
-  .fn{font-family:'Roboto Mono',monospace;font-size:15.5px;font-weight:700;color:#9A3412;}
-  .warnbar .ws span{font-size:15px;}
+
 </style>
 </head>
 <body>
-<div id="slide"></div>
-<script>
-const A="../../pptx/_assets/";
-const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
-const P={warn:'<path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>',
-  bulb:'<path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/>'};
-const VB='0 0 388 100';
-const SH=(id,c)=>`<filter id="${id}" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="${c||'#1B2A44'}" flood-opacity=".22"/></filter>`;
-const ARW=(x1,x2,y,c)=>`<path d="M${x1} ${y} H ${x2}" stroke="${c}" stroke-width="4.4" stroke-linecap="round"/><path d="M${x2-6} ${y-6} l8 6 l-8 6" fill="none" stroke="${c}" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"/>`;
-const T=(x,y,t,sz,fill,anc,fam)=>`<text x="${x}" y="${y}" font-family="${fam||'Noto Sans JP'}" font-size="${sz}" font-weight="900" fill="${fill}" text-anchor="${anc||'start'}">${t}</text>`;
-
-/* ① 毎朝10時：時計＋日めくり＋リスト */
-const s1=`<svg viewBox="${VB}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-  <defs>${SH('a')}<radialGradient id="cf" cx=".4" cy=".35" r=".7"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#E2E8F0"/></radialGradient></defs>
-  <rect width="388" height="100" fill="#EDF3FA"/>
-  <g filter="url(#a)"><circle cx="56" cy="50" r="38" fill="url(#cf)" stroke="#1E40AF" stroke-width="4"/>
-    ${Array.from({length:12},(_,i)=>{const a=i*Math.PI/6;return `<circle cx="${56+31*Math.sin(a)}" cy="${50-31*Math.cos(a)}" r="2" fill="#475569"/>`}).join('')}
-    <path d="M56 50 L${56+18*Math.sin(-Math.PI/3)} ${50-18*Math.cos(-Math.PI/3)}" stroke="#1F2937" stroke-width="4.5" stroke-linecap="round"/>
-    <path d="M56 50 V 22" stroke="#1F2937" stroke-width="3" stroke-linecap="round"/><circle cx="56" cy="50" r="3.5" fill="#EA580C"/></g>
-  ${[0,1,2].map(i=>`<g filter="url(#a)" transform="translate(${112+i*44} ${18+i*0})"><rect width="38" height="46" rx="5" fill="#fff" stroke="#93B4E8" stroke-width="1.8"/><rect width="38" height="13" rx="5" fill="#2563EB"/><rect y="8" width="38" height="5" fill="#2563EB"/>${T(19,38,['20','21','22'][i],17,'#1E3A8A','middle','Roboto Mono')}</g>`).join('')}
-  ${T(156,84,'毎日 10:00',13,'#1E40AF','middle')}
-  ${ARW(250,276,46,'#0F766E')}
-  <g filter="url(#a)"><rect x="286" y="14" width="92" height="72" rx="6" fill="#fff" stroke="#99DCD3" stroke-width="2"/><rect x="286" y="14" width="92" height="16" rx="6" fill="#036C70"/><rect x="286" y="24" width="92" height="6" fill="#036C70"/>
-    ${[0,1,2,3].map(i=>`<rect x="294" y="${37+i*12}" width="44" height="6" rx="3" fill="#CBD5E1"/><rect x="346" y="${36+i*12}" width="24" height="8" rx="4" fill="${['#DCFCE7','#F1F5F9','#DCFCE7','#E0E7FF'][i]}"/>`).join('')}</g>
-</svg>`;
-/* ② 行を絞る：漏斗 */
-const s2=`<svg viewBox="${VB}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-  <defs>${SH('b')}<linearGradient id="fn" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#60A5FA"/><stop offset="1" stop-color="#1D4ED8"/></linearGradient></defs>
-  <rect width="388" height="100" fill="#E3EEFD"/>
-  ${[['開催予定','#E0E7FF','#3730A3'],['中止','#F1F5F9','#475569'],['開催済み','#DCFCE7','#166534'],['送信済み','#FEE2E2','#991B1B']].map((r,i)=>`<g filter="url(#b)"><rect x="10" y="${6+i*23}" width="96" height="19" rx="9.5" fill="${r[1]}" stroke="${r[2]}" stroke-width="1.4"/>${T(58,20+i*23,r[0],12,r[2],'middle')}</g>`).join('')}
-  ${[0,1,3].map(i=>`<path d="M112 ${15+i*23} l10 0" stroke="#DC2626" stroke-width="3" stroke-linecap="round"/><path d="M128 ${10+i*23} l9 9 M137 ${10+i*23} l-9 9" stroke="#DC2626" stroke-width="3" stroke-linecap="round"/>`).join('')}
-  <path d="M112 61 C 150 61, 150 50, 170 50" stroke="#16A34A" stroke-width="3.5" fill="none"/>
-  <g filter="url(#b)"><path d="M172 14 h92 l-30 36 v34 l-32 -10 v-24 z" fill="url(#fn)"/>${T(218,32,'3つで絞る',12.5,'#fff','middle')}</g>
-  ${ARW(266,292,62,'#16A34A')}
-  <g filter="url(#b)"><rect x="300" y="44" width="80" height="36" rx="8" fill="#fff" stroke="#16A34A" stroke-width="2.4"/>${T(340,61,'入門講座',12,'#1F2937','middle')}${T(340,75,'1行だけ',11.5,'#16A34A','middle')}</g>
-</svg>`;
-/* ③ 送る→書き戻す */
-const s3=`<svg viewBox="${VB}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-  <defs>${SH('c','#064E3B')}<linearGradient id="ev" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#DCFCE7"/></linearGradient></defs>
-  <rect width="388" height="100" fill="#DCF3E7"/>
-  <g filter="url(#c)" transform="rotate(-8 60 46)"><rect x="18" y="20" width="84" height="54" rx="6" fill="url(#ev)" stroke="#16A34A" stroke-width="2"/><path d="M20 23 L60 52 L100 23" fill="none" stroke="#16A34A" stroke-width="2.2"/>
-    <rect x="80" y="58" width="16" height="12" rx="2" fill="#2563EB"/></g>
-  ${[[110,30],[116,48],[108,66]].map(p=>`<path d="M${p[0]} ${p[1]} h18" stroke="#86EFAC" stroke-width="3.4" stroke-linecap="round"/>`).join('')}
-  ${ARW(140,170,50,'#16A34A')}
-  <g filter="url(#c)"><rect x="180" y="16" width="198" height="68" rx="7" fill="#fff" stroke="#7FCEA9" stroke-width="2"/>
-    ${T(192,38,'送信済み',13,'#475569')}
-    <rect x="258" y="24" width="48" height="20" rx="4" fill="#F1F5F9"/>${T(282,39,'いいえ',12,'#94A3B8','middle')}<path d="M262 34 h40" stroke="#DC2626" stroke-width="2"/>
-    ${ARW(310,330,34,'#16A34A')}
-    <rect x="336" y="22" width="36" height="24" rx="5" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/>${T(354,39,'はい',13,'#166534','middle')}
-    ${T(192,70,'送信日時',13,'#475569')}${T(258,70,'10/21 10:01',13,'#166534','start','Roboto Mono')}</g>
-</svg>`;
-
-document.getElementById('slide').innerHTML=`
+<div id="slide">
   <div class="titlebar">
     <div class="vol-pill">Vol.152-2</div>
-    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
-    <div class="title-text">作り方は<span class="hl">3ステップ</span>（毎朝見る → 状態で絞る → 送って書き戻す）</div>
-    <img class="title-chara" src="${A}chara/chara_laptop.png" alt="">
+    <img class="vol-logo" src="../../pptx/_assets/icons/pa_logo.png" alt="">
+    <div class="title-text">作り方は<span class="hl">3ステップ</span>（取る → 今日に絞る → 表で送る）</div>
+    <img class="title-chara" src="../../pptx/_assets/chara/chara_laptop.png" alt="">
   </div>
-
   <div class="concl">
-    <div class="chip">${svgw(P.bulb,2.2)}</div>
-    <div class="txt">日付の計算はしません。フィルター クエリで<b>開催済み・送信OK・未送信</b>の行を取り、URLの空欄は条件で見ます。<br>送ったら<b>同じ実行の中で</b>送信済みに書き戻すので、翌朝は対象から外れます</div>
+    <div class="chip"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/></svg></div>
+    <div class="txt">チャネルのメッセージをまとめて取り、<b>アレイのフィルター処理</b>で今日の日付の投稿だけ残します。<br>選択で3列に絞ってから表にすると、メールで読みやすくなります</div>
   </div>
-
   <div class="stage">
     <div class="col info">
-      <div class="ch2"><span class="n">1</span>毎朝10時に同じリストを見る</div>
-      <div class="scene">${s1}</div>
-      <div class="body"><div class="card">
-        <div class="cardh"><img src="${A}icons/pa_schedule.png" alt="">繰り返し</div>
-        <div class="cardb">
-          <div class="rc">
-            <span class="fl">間隔／頻度</span><span class="fi">1　日</span>
-            <span class="fl">タイム ゾーン</span><span class="fi hot">(UTC+09:00) 大阪、札幌、東京</span>
-            <span class="fl">設定時刻（時間）</span><span class="fi hot">10</span>
-          </div>
-          <div class="sub"><img src="${A}icons/ms/lists.svg" alt="">リストの列<span class="s2">英数字で作る</span></div>
-          <div class="cols">
-            <div class="cl"><span class="in">Status</span><span class="ty">選択肢</span></div>
-            <div class="cl"><span class="in">SurveyUrl</span><span class="ty">1行テキスト</span></div>
-            <div class="cl"><span class="in">SendOK</span><span class="ty">はい/いいえ</span></div>
-            <div class="cl"><span class="in">Sent</span><span class="ty">はい/いいえ</span></div>
-          </div>
-        </div>
-      </div></div>
-      <div class="cap">選択肢は<b>開催予定／開催済み／中止</b></div>
+      <div class="ch2"><span class="n">1</span>夕方に投稿を取る</div>
+      <div class="body"><div class="card"><div class="cardb"><div class="act"><img src="../../pptx/_assets/icons/pa_schedule.png" alt="">繰り返し</div><span class="fi"><span class="k">時刻</span>平日 17:30</span><div class="act"><img src="../../pptx/_assets/icons/pa_teams.png" alt="">チャネルのメッセージを取得します。</div><span class="fi"><span class="k">チーム</span>PA45 Demo</span><span class="fi hot"><span class="k">チャネル</span>General</span><div class="ex"><div class="exh">結果の例</div><div class="exb"><div>そのチャネルの投稿が新しい順に取れる</div><div style="color:#64748B">昨日以前の投稿も混ざっている</div></div></div></div></div></div>
+      <div class="cap">アクション名の最後に<b>。</b>まで付いている</div>
     </div>
-
     <div class="col info">
-      <div class="ch2"><span class="n">2</span>状態で行を絞る</div>
-      <div class="scene">${s2}</div>
-      <div class="body"><div class="card">
-        <div class="cardh"><img src="${A}icons/pa_sharepoint.png" alt="">複数の項目の取得</div>
-        <div class="cardb">
-          <div class="fld"><span class="fl">フィルター クエリ（リスト：講座アンケート送付）</span>
-            <span class="fi code hot">Status eq '開催済み' and<br>SendOK eq 1 and Sent eq 0</span></div>
-          <div class="sub"><img src="${A}icons/pa_condition.png" alt="">条件<span class="s2">Apply to each の中</span></div>
-          <span class="fi"><span class="fn">empty(…?['SurveyUrl'])</span><span class="op">次の値に等しい</span><span class="fn">false</span></span>
-          <span class="fi" style="background:#F1F5F9;border-color:#CBD5E1"><span class="k">空欄の判定はフィルターに入れず、条件で見る</span></span>
-        </div>
-      </div></div>
-      <div class="cap">URLが<b>空欄の行</b>は、はいの側に進まない</div>
+      <div class="ch2"><span class="n">2</span>今日の分だけにする</div>
+      <div class="body"><div class="card"><div class="cardb"><div class="act"><img src="../../pptx/_assets/icons/pa_dataoperation.png" alt="">アレイのフィルター処理</div><span class="fi"><span class="k">From</span>メッセージの一覧</span><span class="fi hot"><span class="k">条件</span><code>convertFromUtc(createdDateTime)</code> 等しい 今日</span><div class="why">日付は両方とも yyyy-MM-dd にそろえて比べる</div><div class="ex"><div class="exh">結果の例</div><div class="exb"><div>作成日時（日本時間の日付）＝ 今日 の投稿だけ残る</div></div></div></div></div></div>
+      <div class="cap">UTC のままだと<b>朝9時前</b>の投稿がずれる</div>
     </div>
-
-    <div class="col good">
-      <div class="ch2"><span class="n">3</span>送って、すぐ送信済みに</div>
-      <div class="scene">${s3}</div>
-      <div class="body"><div class="card">
-        <div class="cardh"><span class="yes"><span class="yl">はい</span>の側に2つ並べる</span></div>
-        <div class="cardb">
-          <div class="step"><span class="sh"><span class="nb">1</span><img src="${A}icons/pa_outlook.png" alt="">メールの送信 (V2)</span>
-            <span class="fi"><span class="k">宛先</span><span class="dyn">参加者のアドレス</span></span>
-            <span class="fi"><span class="k">件名</span>アンケート：<span class="dyn">タイトル</span></span>
-            <span class="fi hot"><span class="k">本文</span><span class="dyn">アンケートURL</span></span></div>
-          <div class="step"><span class="sh"><span class="nb">2</span><img src="${A}icons/pa_sharepoint.png" alt="">項目の更新</span>
-            <span class="fi hot"><span class="k">送信済み</span>はい<span class="k">送信日時</span><span class="fn">utcNow()</span></span></div>
-        </div>
-      </div></div>
-      <div class="cap">送信と書き戻しは<b>同じ実行の中</b>で</div>
+    <div class="col info">
+      <div class="ch2"><span class="n">3</span>表にしてメール</div>
+      <div class="body"><div class="card"><div class="cardb"><div class="act"><img src="../../pptx/_assets/icons/pa_dataoperation.png" alt="">選択</div><span class="fi"><span class="k">時刻</span>HH:mm（日本時間）</span><span class="fi"><span class="k">投稿した人</span>from.user.displayName</span><span class="fi hot"><span class="k">内容</span><code>take(…, 120)</code></span><div class="act"><img src="../../pptx/_assets/icons/pa_dataoperation.png" alt="">HTML テーブルの作成</div><div class="act"><img src="../../pptx/_assets/icons/pa_outlook.png" alt="">メールの送信 (V2)</div><span class="fi"><span class="k">件名</span>【今日のチャネル】M/d の投稿まとめ</span><div class="ex"><div class="exh">結果の例</div><div class="exb"><div>11:40 ｜ 鈴木 一郎 ｜ 明日の定例は 10:00 から…</div></div></div></div></div></div>
+      <div class="cap">内容は<b>120文字</b>で切って読みやすく</div>
     </div>
   </div>
-
-  <div class="warnbar">
-    <span class="na">${svgw(P.warn,2.4)}</span>
-    <span class="ws"><span>送ったら同じ実行ですぐ書き戻す</span><span>列は英数字で作り、表示名を後で日本語に</span>
-      <span>フィルター クエリは内部名で書く</span><span>「項目の更新」は必須列も入れる</span></span>
-  </div>
-  <div class="src">出典：Microsoft Learn「SharePoint コネクタ」「Office 365 Outlook コネクタ」「繰り返しトリガー」「式関数のリファレンス」／名称は架空</div>
-`;
-</script>
+  <div class="warnbar"><span class="na"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg></span><span class="ws"><span>スレッドへの返信は入らない（返信は別のアクションで取る）</span><span>本文は HTML のまま入る。タグが見えるときは Html からテキストへ を挟む</span><span>見たいチャネルの数だけ同じ組を並べる</span></span></div>
+  <div class="src">出典：Microsoft Learn</div>
+</div>
 </body>
 </html>

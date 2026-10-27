@@ -3,177 +3,47 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=1280, initial-scale=1">
-<title>X技術Tips Vol.151-2 会場の回答をTeamsに流す作り方</title>
+<title>X技術Tips Vol.151-2 作り方</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../_base/tips-base.css">
+<link rel="stylesheet" href="../_base/x145.css">
 <style>
-  .scene{height:100px;}
-  .cardb{gap:5px;padding:7px 9px;}
-  .cardh{font-size:15.5px;}
-  .col.fm{background:#EFFAF8;border:2.5px solid #99DCD3;}
-  .col.fm .ch2{color:#0F5F59;}
-  .col.fm .ch2 .n{background:linear-gradient(180deg,#14B8A6,#0F766E);}
-  .col.fm .card{border-color:#99DCD3;}
-  .col.fm .cardh{background:#DDF4F0;border-bottom-color:#B5E6DE;color:#0F5F59;}
-  .col.fm .cap{background:#CDEDE7;color:#0F5F59;}
-  .col.pa{background:var(--blue-bg);border:2.5px solid #A9C6F5;}
-  .col.pa .ch2{color:var(--blue-dark);}
-  .col.pa .cap{background:#DBE8FD;color:var(--blue-dark);}
-  .col.tm{background:#F3F3FC;border:2.5px solid #B4B8F0;}
-  .col.tm .ch2{color:#3B3FA0;}
-  .col.tm .ch2 .n{background:linear-gradient(180deg,#7B83EB,#5B5FC7);}
-  .col.tm .card{border-color:#B4B8F0;}
-  .col.tm .cardh{background:#E6E7FA;border-bottom-color:#CDD0F5;color:#3B3FA0;}
-  .col.tm .cap{background:#DDE0FB;color:#3B3FA0;}
-  .step{display:flex;flex-direction:column;gap:4px;border-top:1.5px solid #E5E7EB;padding-top:5px;}
-  .step .sh{display:flex;align-items:center;gap:7px;font-size:15.5px;font-weight:900;color:#334155;}
-  .step .sh img{width:26px;height:26px;object-fit:contain;flex:0 0 auto;}
-  .fi{display:flex;align-items:center;gap:6px;flex-wrap:wrap;background:#fff;border:2px solid #B9C7DC;border-radius:7px;
-    padding:3px 9px;font-size:15.5px;font-weight:900;color:var(--navy);line-height:1.3;}
-  .fi.hot{border-color:var(--orange);background:#FFF7ED;}
-  .fi .k{font-size:14px;color:#475569;}
-  .qq{display:flex;align-items:center;gap:7px;font-size:15.5px;font-weight:900;color:var(--navy);background:#F8FAFC;border:1.5px solid #E2E8F0;border-radius:7px;padding:3px 8px;}
-  .qq .qn{flex:0 0 auto;width:22px;height:22px;border-radius:50%;background:#0F766E;color:#fff;font-size:13.5px;display:flex;align-items:center;justify-content:center;}
-  .qq .qt{margin-left:auto;font-size:13.5px;color:#0F766E;background:#E6F4F1;border-radius:5px;padding:0 6px;white-space:nowrap;}
-  .chs{display:flex;gap:5px;flex-wrap:wrap;padding-left:29px;}
-  .chs span{display:inline-flex;align-items:center;gap:4px;font-size:14.5px;font-weight:900;color:#0F5F59;}
-  .chs span i{width:15px;height:15px;border:2px solid #0F766E;border-radius:3px;}
-  .qrrow{display:flex;align-items:center;gap:8px;background:#FFF7ED;border:2px solid var(--orange);border-radius:8px;padding:4px 8px;font-size:15.5px;font-weight:900;color:#9A3412;line-height:1.3;}
-  .qrrow svg{flex:0 0 auto;width:36px;height:36px;}
-  .outs{display:flex;flex-direction:column;gap:4px;background:#F5F9FF;border:2px dashed #A9C6F5;border-radius:8px;padding:5px 8px;}
-  .outs .oh{font-size:14px;font-weight:900;color:var(--blue-dark);}
-  .outs .o{display:flex;align-items:center;gap:6px;font-size:15px;font-weight:900;color:#475569;}
-  .msgbox{display:flex;flex-direction:column;gap:3px;background:#fff;border:2px solid var(--orange);border-radius:8px;padding:4px 9px;background:#FFF7ED;}
-  .msgbox .k{font-size:14px;font-weight:900;color:#475569;}
-  .msgbox .v{display:flex;align-items:center;gap:5px;flex-wrap:wrap;font-size:15.5px;font-weight:900;color:var(--navy);}
+
 </style>
 </head>
 <body>
-<div id="slide"></div>
-<script>
-const A="../../pptx/_assets/";
-const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
-const P={warn:'<path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>',
-  bulb:'<path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/>'};
-const VB='0 0 388 100';
-const SH=(id,c)=>`<filter id="${id}" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="${c||'#1B2A44'}" flood-opacity=".22"/></filter>`;
-const ARW=(x1,x2,y,c)=>`<path d="M${x1} ${y} H ${x2}" stroke="${c}" stroke-width="4.4" stroke-linecap="round"/><path d="M${x2-6} ${y-6} l8 6 l-8 6" fill="none" stroke="${c}" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round"/>`;
-const QR=(x,y,s,sd)=>{const n=21,c=s/n;let r='';let seed=sd||7;const rnd=()=>{seed=(seed*9301+49297)%233280;return seed/233280;};
-  const fin=(i,j)=>(i<7&&j<7)||(i<7&&j>=n-7)||(i>=n-7&&j<7);
-  for(let i=0;i<n;i++)for(let j=0;j<n;j++){if(fin(i,j))continue;if(rnd()<.47)r+=`<rect x="${x+j*c}" y="${y+i*c}" width="${c+.15}" height="${c+.15}" fill="#111827"/>`;}
-  const F=(fx,fy)=>`<rect x="${fx}" y="${fy}" width="${7*c}" height="${7*c}" fill="#111827"/><rect x="${fx+c}" y="${fy+c}" width="${5*c}" height="${5*c}" fill="#fff"/><rect x="${fx+2*c}" y="${fy+2*c}" width="${3*c}" height="${3*c}" fill="#111827"/>`;
-  return `<rect x="${x-c}" y="${y-c}" width="${s+2*c}" height="${s+2*c}" fill="#fff"/>${r}${F(x,y)}${F(x+(n-7)*c,y)}${F(x,y+(n-7)*c)}`;};
-
-/* ① 質問を作る → QR → スライドに貼る */
-const s1=`<svg viewBox="${VB}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-  <defs>${SH('f','#0F3D38')}</defs><rect width="388" height="100" fill="#DDF4F0"/>
-  <g filter="url(#f)"><rect x="14" y="12" width="96" height="76" rx="7" fill="#fff" stroke="#0F766E" stroke-width="2"/>
-    <rect x="14" y="12" width="96" height="14" rx="7" fill="#0F766E"/><rect x="14" y="20" width="96" height="6" fill="#0F766E"/>
-    ${[0,1,2].map(i=>`<rect x="24" y="${36+i*16}" width="11" height="11" rx="2" fill="${i==0?'#0F766E':'#fff'}" stroke="#0F766E" stroke-width="1.8"/><rect x="42" y="${39+i*16}" width="${[54,44,50][i]}" height="5" rx="2.5" fill="#94A3B8"/>`).join('')}</g>
-  ${ARW(118,146,50,'#0F766E')}
-  <g filter="url(#f)">${QR(158,22,56,11)}</g>
-  ${ARW(226,254,50,'#0F766E')}
-  <g filter="url(#f)"><rect x="262" y="14" width="114" height="72" rx="5" fill="#fff" stroke="#94A3B8" stroke-width="2"/>
-    <rect x="262" y="14" width="114" height="13" rx="5" fill="#2563EB"/><rect x="262" y="21" width="114" height="6" fill="#2563EB"/>
-    <rect x="270" y="36" width="44" height="6" rx="3" fill="#334155"/><rect x="270" y="48" width="36" height="5" rx="2.5" fill="#CBD5E1"/><rect x="270" y="58" width="40" height="5" rx="2.5" fill="#CBD5E1"/>
-    ${QR(326,36,40,5)}</g>
-</svg>`;
-/* ② 応答が来たら中身を取る */
-const s2=`<svg viewBox="${VB}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-  <defs>${SH('f','#1E3A8A')}</defs><rect width="388" height="100" fill="#DBE8FD"/>
-  <g filter="url(#f)"><rect x="18" y="14" width="56" height="78" rx="10" fill="#1F2937"/><rect x="23" y="22" width="46" height="58" rx="3" fill="#fff"/>
-    <rect x="23" y="22" width="46" height="10" fill="#0F766E"/><rect x="28" y="40" width="9" height="9" rx="2" fill="#0F766E"/><rect x="41" y="42" width="22" height="5" rx="2" fill="#94A3B8"/>
-    <rect x="28" y="64" width="36" height="10" rx="3" fill="#0F766E"/></g>
-  ${ARW(82,116,52,'#2563EB')}
-  <g filter="url(#f)"><rect x="126" y="24" width="56" height="56" rx="14" fill="#fff"/><image href="${A}icons/pa_logo.png" x="134" y="32" width="40" height="40"/></g>
-  ${ARW(190,224,52,'#2563EB')}
-  <g filter="url(#f)"><rect x="232" y="14" width="142" height="76" rx="8" fill="#fff" stroke="#2563EB" stroke-width="2"/>
-    <rect x="242" y="26" width="52" height="18" rx="4" fill="#EEF2FF"/><text x="268" y="39" font-family="Noto Sans JP" font-size="10.5" font-weight="900" fill="#4338CA" text-anchor="middle">表示名</text>
-    <text x="302" y="40" font-family="Noto Sans JP" font-size="13" font-weight="900" fill="#1F2937">山田</text>
-    <rect x="242" y="56" width="52" height="18" rx="4" fill="#EEF2FF"/><text x="268" y="69" font-family="Noto Sans JP" font-size="10.5" font-weight="900" fill="#4338CA" text-anchor="middle">選択</text>
-    <text x="302" y="70" font-family="Noto Sans JP" font-size="13" font-weight="900" fill="#1F2937">承認フロー</text></g>
-</svg>`;
-/* ③ 投影中のチャネルに流れる */
-const s3=`<svg viewBox="${VB}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-  <defs>${SH('f','#1E1B4B')}</defs><rect width="388" height="100" fill="#E6E7FA"/>
-  <g filter="url(#f)"><rect x="40" y="8" width="308" height="80" rx="4" fill="#1E293B"/>
-    <rect x="48" y="15" width="292" height="66" rx="2" fill="#fff"/>
-    ${[0,1,2].map(i=>`<rect x="56" y="${20+i*20}" width="${[230,210,250][i]}" height="16" rx="4" fill="${i==2?'#DCFCE7':'#F1F5F9'}" stroke="${i==2?'#16A34A':'#E2E8F0'}" stroke-width="1.6"/>
-      <circle cx="66" cy="${28+i*20}" r="5" fill="#2563EB"/><rect x="76" y="${25+i*20}" width="${[40,40,40][i]}" height="6" rx="3" fill="#334155"/><rect x="122" y="${24+i*20}" width="${[70,52,70][i]}" height="8" rx="3" fill="#C7CBF5"/>`).join('')}
-    <text x="326" y="64" font-family="Noto Sans JP" font-size="10.5" font-weight="900" fill="#16A34A" text-anchor="middle">NEW</text></g>
-  <path d="M194 88 v8 M170 96 h48" stroke="#64748B" stroke-width="3" stroke-linecap="round"/>
-</svg>`;
-
-document.getElementById('slide').innerHTML=`
+<div id="slide">
   <div class="titlebar">
     <div class="vol-pill">Vol.151-2</div>
-    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
-    <div class="title-text">作り方は<span class="hl">3ステップ</span>（質問とQR → 応答を取る → チャネルに投稿）</div>
-    <img class="title-chara" src="${A}chara/chara_laptop.png" alt="">
+    <img class="vol-logo" src="../../pptx/_assets/icons/pa_logo.png" alt="">
+    <div class="title-text">作り方は<span class="hl">3ステップ</span>（フラグ → 書き出す → 保存）</div>
+    <img class="title-chara" src="../../pptx/_assets/chara/chara_laptop.png" alt="">
   </div>
-
   <div class="concl">
-    <div class="chip">${svgw(P.bulb,2.2)}</div>
-    <div class="txt">投稿先を<b>発表用のチャネル</b>にして、そのチャネルを会場に投影しておくだけ。<br>回答が届くたびに、<b>表示名と選んだ項目</b>が1件ずつ画面に増えていきます</div>
+    <div class="chip"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/></svg></div>
+    <div class="txt"><b>メールのエクスポート (V2)</b> の出力を、そのままファイルの中身にします。<br>ファイル名の先頭に受信日時を入れておくと、フォルダーの並びがそのまま時系列になります</div>
   </div>
-
   <div class="stage">
-    <div class="col fm">
-      <div class="ch2"><span class="n">1</span>Formsで質問を作る</div>
-      <div class="scene">${s1}</div>
-      <div class="body"><div class="card">
-        <div class="cardh"><img src="${A}icons/ms/forms.svg" alt="">Microsoft Forms ＞ 勉強会アンケート</div>
-        <div class="cardb">
-          <div class="qq"><span class="qn">1</span>表示名<span class="qt">テキスト</span></div>
-          <div class="qq"><span class="qn">2</span>使ってみたいもの<span class="qt">チェックボックス</span></div>
-          <div class="chs"><span><i></i>承認フロー</span><span><i></i>経費精算</span><span><i></i>会議の議事録</span></div>
-          <div class="qrrow"><svg viewBox="0 0 36 36">${QR(3,3,30,3)}</svg><span>フォームの<b>QRコード</b>を<br>発表スライドに貼る</span></div>
-        </div>
-      </div></div>
-      <div class="cap">表示名は<b>ニックネーム可</b>と書いておく</div>
+    <div class="col info">
+      <div class="ch2"><span class="n">1</span>フラグで動く</div>
+      <div class="body"><div class="card"><div class="cardb"><div class="act"><img src="../../pptx/_assets/icons/pa_outlook.png" alt="">メールにフラグが設定されている場合 (V3)</div><span class="fi hot"><span class="k">フォルダー</span>Inbox</span><span class="fi"><span class="k">重要度</span>Any</span><span class="fi"><span class="k">添付ファイルを含める</span>いいえ</span><div class="ex"><div class="exh">結果の例</div><div class="exb"><div>旗を付けたメール1通ごとに1回動く</div><div style="color:#64748B">フォルダー：Inbox</div></div></div></div></div></div>
+      <div class="cap">フラグは<b>あとで見返すメールの印</b>として付ける</div>
     </div>
-
-    <div class="col pa">
-      <div class="ch2"><span class="n">2</span>フローで応答を受け取る</div>
-      <div class="scene">${s2}</div>
-      <div class="body"><div class="card">
-        <div class="cardh"><img src="${A}icons/ms/forms.svg" alt="">新しい応答が送信されるとき</div>
-        <div class="cardb">
-          <span class="fi"><span class="k">フォーム ID</span>勉強会アンケート</span>
-          <div class="step"><span class="sh"><img src="${A}icons/ms/forms.svg" alt="">応答の詳細を取得する</span>
-            <span class="fi hot"><span class="k">フォーム ID</span>同上<span class="k">応答 ID</span><span class="dyn">応答 ID</span></span></div>
-          <div class="outs"><span class="o"><span class="oh">出てくる値</span><span class="dyn">表示名</span><span class="dyn">使ってみたいもの</span></span></div>
-        </div>
-      </div></div>
-      <div class="cap">トリガーの<b>応答 ID</b>で、回答の中身を取りに行く</div>
+    <div class="col info">
+      <div class="ch2"><span class="n">2</span>原本を取り出す</div>
+      <div class="body"><div class="card"><div class="cardb"><div class="act"><img src="../../pptx/_assets/icons/pa_outlook.png" alt="">メールのエクスポート (V2)</div><span class="fi hot"><span class="k">メッセージ ID</span>メッセージ ID（トリガーの出力）</span><div class="why">メール1通を EML 形式で書き出す</div><div class="ex"><div class="exh">結果の例</div><div class="exb"><div>件名・本文・添付をまとめた1つのファイル</div><div style="color:#64748B">（拡張子 .eml）</div></div></div></div></div></div>
+      <div class="cap">転送や印刷と違い、<b>ヘッダーごと</b>残る</div>
     </div>
-
-    <div class="col tm">
-      <div class="ch2"><span class="n">3</span>発表用チャネルに投稿</div>
-      <div class="scene">${s3}</div>
-      <div class="body"><div class="card">
-        <div class="cardh"><img src="${A}icons/ms/teams.svg" alt="">チャットまたはチャネルで<br>メッセージを投稿する</div>
-        <div class="cardb">
-          <span class="fi"><span class="k">次のように投稿する</span>Flow ボット<span class="k">投稿</span>チャネル</span>
-          <span class="fi"><span class="k">チーム</span>勉強会ライブ<span class="k">チャネル</span>会場スクリーン</span>
-          <div class="msgbox"><span class="k">メッセージ</span>
-            <span class="v"><span class="dyn">表示名</span>さん：<span class="dyn">使ってみたいもの</span></span></div>
-        </div>
-      </div></div>
-      <div class="cap">投稿者は<b>Flow ボット</b>。自分の名前で流れない</div>
+    <div class="col info">
+      <div class="ch2"><span class="n">3</span>名前を付けて保存</div>
+      <div class="body"><div class="card"><div class="cardb"><div class="act"><img src="../../pptx/_assets/icons/pa_sharepoint.png" alt="">ファイルの作成</div><span class="fi"><span class="k">フォルダーのパス</span>/Shared Documents/案件メール</span><span class="fi hot"><span class="k">ファイル名</span>受信日時_差出人_件名.eml</span><span class="fi hot"><span class="k">ファイル コンテンツ</span>本文（エクスポートの出力）</span><div class="why">件名の / : ? は replace で置き換える</div><div class="ex"><div class="exh">結果の例</div><div class="exb"><div style="font-family:Roboto Mono;font-size:13.5px">20261027_0930_tanaka@example.com_見積の件.eml</div></div></div></div></div></div>
+      <div class="cap">日時を先頭にすると<b>名前順＝時系列</b></div>
     </div>
   </div>
-
-  <div class="warnbar">
-    <span class="na">${svgw(P.warn,2.4)}</span>
-    <span class="ws"><span>本番前にリハーサルで1回流す</span><span>匿名にするならFormsの設定で名前を記録しない</span>
-      <span>投影画面に個人名や通知が映らないよう、表示名の扱いを決めておく</span><span>投稿まで少し時間がかかることがある</span>
-      <span>複数チェックすると ["承認フロー","経費精算"] の形で届く</span></span>
-  </div>
-  <div class="src">出典：Microsoft Learn「Microsoft Forms コネクタ」「Microsoft Teams コネクタ」／チーム名・人名は架空の例</div>
-`;
-</script>
+  <div class="warnbar"><span class="na"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg></span><span class="ws"><span>フラグ済みのメールに返信やカテゴリ変更をすると、もう一度動くことがある</span><span>件名にファイル名で使えない文字があると保存に失敗する</span><span>案件ごとに分けたいときは件名や差出人で条件を足す</span></span></div>
+  <div class="src">出典：Microsoft Learn</div>
+</div>
 </body>
 </html>

@@ -3,187 +3,47 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=1280, initial-scale=1">
-<title>X技術Tips Vol.149-2 3つの置き場所をフローのどこに入れるか</title>
+<title>X技術Tips Vol.149-2 頼み方</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../_base/tips-base.css">
+<link rel="stylesheet" href="../_base/x145.css">
 <style>
-  .scene{height:96px;}
-  .cardb{gap:4px;padding:6px 9px;}
-  .cardh{font-size:15.5px;padding:6px 10px;}
-  .col.c1{background:#EFF6FF;border:2.5px solid #BFD3F6;}
-  .col.c1 .ch2{color:#1E40AF;}
-  .col.c1 .card{border-color:#BFD3F6;}
-  .col.c1 .cardh{background:#E0ECFD;border-bottom-color:#C7D9F7;color:#1E40AF;}
-  .col.c1 .cap{background:#D6E5FC;color:#1E40AF;}
-  .col.c2{background:#EFFAF8;border:2.5px solid #99DCD3;}
-  .col.c2 .ch2{color:#0F5F59;}
-  .col.c2 .ch2 .n{background:linear-gradient(180deg,#14B8A6,#0F766E);}
-  .col.c2 .card{border-color:#99DCD3;}
-  .col.c2 .cardh{background:#DDF4F0;border-bottom-color:#B5E6DE;color:#0F5F59;}
-  .col.c2 .cap{background:#CDEDE7;color:#0F5F59;}
-  .col.c3{background:#F3F3FC;border:2.5px solid #B4B8F0;}
-  .col.c3 .ch2{color:#3B3FA0;}
-  .col.c3 .ch2 .n{background:linear-gradient(180deg,#7B83EB,#5B5FC7);}
-  .col.c3 .card{border-color:#B4B8F0;}
-  .col.c3 .cardh{background:#E6E7FA;border-bottom-color:#CDD0F5;color:#3B3FA0;}
-  .col.c3 .cap{background:#DDE0FB;color:#3B3FA0;}
-  .ch2 img{width:30px;height:30px;flex:0 0 auto;}
-  .step{display:flex;flex-direction:column;gap:4px;border-top:1.5px solid #E5E7EB;padding-top:4px;}
-  .step .sh{display:flex;align-items:center;gap:7px;font-size:15.5px;font-weight:900;color:#334155;flex-wrap:wrap;}
-  .step .sh img{width:26px;height:26px;object-fit:contain;flex:0 0 auto;}
-  .fi{display:flex;align-items:center;gap:6px;flex-wrap:wrap;background:#fff;border:2px solid #B9C7DC;border-radius:7px;
-    padding:2px 8px;font-size:15.5px;font-weight:900;color:var(--navy);line-height:1.3;}
-  .fi.hot{border-color:var(--orange);background:#FFF7ED;}
-  .fi .k{font-size:14px;color:#475569;}
-  .wait{display:flex;align-items:center;gap:6px;font-size:15px;font-weight:900;color:#92400E;background:#FEF3C7;border:2px dashed #F59E0B;border-radius:7px;padding:2px 8px;}
-  .wait svg{width:20px;height:20px;flex:0 0 auto;color:#D97706;}
-  .go{display:flex;align-items:center;gap:6px;font-size:15px;font-weight:900;color:#065F46;background:#DCFCE7;border:2px dashed #16A34A;border-radius:7px;padding:2px 8px;}
-  .go svg{width:20px;height:20px;flex:0 0 auto;color:#16A34A;}
-  .yes{display:flex;align-items:center;gap:6px;font-size:15.5px;font-weight:900;color:var(--navy);background:#fff;border:2px solid #86EFAC;border-left:6px solid #16A34A;border-radius:7px;padding:2px 8px;}
-  .yes img{width:24px;height:24px;flex:0 0 auto;}
-  .yes .yl{flex:0 0 auto;font-size:13.5px;color:#fff;background:#16A34A;border-radius:5px;padding:0 6px;}
-  .ref{align-self:flex-end;font-size:14px;font-weight:900;color:#0F5F59;background:#E6F6F4;border:1.5px solid #99DCD3;border-radius:999px;padding:0 10px;}
-  .ac{display:flex;flex-direction:column;gap:3px;background:#fff;border:2px solid #B4B8F0;border-left:5px solid #5B5FC7;border-radius:7px;padding:3px 8px;}
-  .ac .t{font-size:15.5px;font-weight:900;color:var(--navy);}
-  .ac .bt{display:flex;gap:6px;}
-  .ac .bt span{flex:1;text-align:center;border-radius:6px;padding:1px 4px;font-size:15.5px;font-weight:900;}
-  .ac .bt .p{background:#5B5FC7;color:#fff;} .ac .bt .n{background:#fff;color:#475569;border:2px solid #CBD5E1;}
+
 </style>
 </head>
 <body>
-<div id="slide"></div>
-<script>
-const A="../../pptx/_assets/";
-const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
-const P={warn:'<path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/>',
-  bulb:'<path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/>',
-  sand:'<path d="M6 2h12M6 22h12M7 2c0 5 10 6 10 10s-10 5-10 10M17 2c0 5-10 6-10 10s10 5 10 10"/>',
-  bolt:'<path d="M13 2L4 14h7l-1 8 9-12h-7z"/>'};
-const VB='0 0 388 96';
-const SH=(id,c)=>`<filter id="${id}" x="-40%" y="-40%" width="190%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="${c||'#1B2A44'}" flood-opacity=".22"/></filter>`;
-const ARW=(x1,x2,y,c)=>`<path d="M${x1} ${y} H ${x2}" stroke="${c}" stroke-width="4" stroke-linecap="round"/><path d="M${x2-6} ${y-6} l8 6 l-8 6" fill="none" stroke="${c}" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>`;
-const ENV=(x,y,id)=>`<g filter="url(#${id})"><rect x="${x}" y="${y}" width="62" height="42" rx="4" fill="url(#ev)" stroke="#CBD5E1" stroke-width="1.4"/>
-  <path d="M${x} ${y+2} L${x+31} ${y+24} L${x+62} ${y+2}" fill="none" stroke="#94A3B8" stroke-width="2"/></g>`;
-const HG=(cx,cy)=>`<g><circle cx="${cx}" cy="${cy}" r="15" fill="#FEF3C7" stroke="#F59E0B" stroke-width="2.4"/>
-  <path d="M${cx-6} ${cy-9} h12 M${cx-6} ${cy+9} h12 M${cx-5} ${cy-9} c0 5 10 5 10 9 s-10 4 -10 9 M${cx+5} ${cy-9} c0 5 -10 5 -10 9 s10 4 10 9" stroke="#B45309" stroke-width="1.8" fill="none"/>
-  <path d="M${cx-3} ${cy+7} h6 l-3 -3z" fill="#D97706"/></g>`;
-const EVG='<linearGradient id="ev" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#E2E8F0"/></linearGradient>';
-const TXT=(x,y,t,c,sz)=>`<text x="${x}" y="${y}" font-family="Noto Sans JP" font-size="${sz||12}" font-weight="900" fill="${c}" text-anchor="middle">${t}</text>`;
-
-/* ① 実行の途中で止まって待つ：承認 */
-const s1=`<svg viewBox="${VB}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-  <defs>${SH('f','#1E3A8A')}${EVG}</defs><rect width="388" height="96" fill="#DBEAFE"/>
-  <g filter="url(#f)"><rect x="12" y="26" width="70" height="40" rx="8" fill="#fff" stroke="#93C5FD" stroke-width="2"/>${TXT(47,51,'下書き','#1E40AF')}</g>
-  ${ARW(86,112,46,'#2563EB')}
-  <g filter="url(#f)"><rect x="118" y="12" width="132" height="70" rx="9" fill="#fff" stroke="#2563EB" stroke-width="2.4"/>
-    <rect x="128" y="22" width="70" height="5" rx="2.5" fill="#334155"/><rect x="128" y="32" width="50" height="4" rx="2" fill="#CBD5E1"/>
-    <rect x="128" y="56" width="46" height="18" rx="4" fill="#16A34A"/>${TXT(151,69,'承認','#fff',11)}
-    <rect x="180" y="56" width="46" height="18" rx="4" fill="#fff" stroke="#CBD5E1"/>${TXT(203,69,'拒否','#475569',11)}</g>
-  ${HG(240,18)}
-  ${ARW(256,286,46,'#2563EB')}
-  ${ENV(298,25,'f')}
-</svg>`;
-/* ② 押されたら起動：待たない */
-const s2=`<svg viewBox="${VB}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-  <defs>${SH('f','#0F3D38')}${EVG}</defs><rect width="388" height="96" fill="#DDF4F0"/>
-  <g filter="url(#f)"><rect x="12" y="14" width="150" height="68" rx="7" fill="#fff" stroke="#99DCD3" stroke-width="1.6"/>
-    ${[0,1,2].map(i=>`<rect x="13" y="${16+i*21}" width="148" height="20" fill="${i==1?'#DCFCE7':'#fff'}"/>
-      <rect x="22" y="${24+i*21}" width="${[70,58,76][i]}" height="5" rx="2.5" fill="#94A3B8"/>
-      <rect x="132" y="${19+i*21}" width="14" height="14" rx="3" fill="${i<2?'#038387':'#fff'}" stroke="${i<2?'#038387':'#94A3B8'}" stroke-width="1.8"/>
-      ${i<2?`<path d="M135 ${26+i*21} l3 3 l5 -6" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round"/>`:''}`).join('')}</g>
-  <path d="M164 47 H 200" stroke="#16A34A" stroke-width="4"/>
-  <g filter="url(#f)"><circle cx="222" cy="47" r="20" fill="#16A34A"/><path d="M225 33 l-10 16 h8 l-2 12 l10 -16 h-8z" fill="#FDE68A"/></g>
-  ${ARW(248,286,47,'#0F766E')}
-  ${ENV(298,26,'f')}
-</svg>`;
-/* ③ 会話の中で止まって待つ：Teams */
-const s3=`<svg viewBox="${VB}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-  <defs>${SH('f','#1E1B4B')}${EVG}</defs><rect width="388" height="96" fill="#E6E7FA"/>
-  <rect x="10" y="6" width="236" height="84" rx="8" fill="#F5F5F5" stroke="#B4B8F0" stroke-width="1.5"/>
-  <circle cx="26" cy="20" r="7" fill="#64748B"/><rect x="38" y="13" width="96" height="14" rx="7" fill="#fff"/>
-  <g filter="url(#f)"><rect x="38" y="34" width="196" height="50" rx="6" fill="#fff" stroke="#5B5FC7" stroke-width="1.6"/>
-    <rect x="38" y="34" width="5" height="50" rx="2" fill="#5B5FC7"/>
-    <rect x="50" y="42" width="110" height="5" rx="2.5" fill="#334155"/>
-    <rect x="50" y="58" width="80" height="18" rx="4" fill="#5B5FC7"/>${TXT(90,71,'送信OK','#fff',11)}
-    <rect x="138" y="58" width="86" height="18" rx="4" fill="#fff" stroke="#CBD5E1"/>${TXT(181,71,'直して送る','#475569',11)}</g>
-  ${HG(226,22)}
-  ${ARW(254,286,48,'#5B5FC7')}
-  ${ENV(298,27,'f')}
-</svg>`;
-
-document.getElementById('slide').innerHTML=`
+<div id="slide">
   <div class="titlebar">
     <div class="vol-pill">Vol.149-2</div>
-    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
-    <div class="title-text">3つの置き場所は、<span class="hl">フローのどこに入れるか</span></div>
-    <img class="title-chara" src="${A}chara/chara_laptop.png" alt="">
+    <img class="vol-logo" src="../../pptx/_assets/icons/pa_logo.png" alt="">
+    <div class="title-text">頼み方は<span class="hl">何が起きたら／何を／どこへ</span>の1文</div>
+    <img class="title-chara" src="../../pptx/_assets/chara/chara_laptop.png" alt="">
   </div>
-
   <div class="concl">
-    <div class="chip">${svgw(P.bulb,2.2)}</div>
-    <div class="txt">どれも<b>メール送信の直前</b>に1か所だけ置きます。<br>①と③はフローが<b>途中で止まって待ち</b>、②は押された瞬間に<b>新しく起動</b>します</div>
+    <div class="chip"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/></svg></div>
+    <div class="txt">Copilot は、文に書いたことからトリガーとアクションを選びます。<br>書いていない設定値は入らないので、<b>フォルダー名や宛先も文に入れておく</b>と手直しが減ります</div>
   </div>
-
   <div class="stage">
-    <div class="col c1">
-      <div class="ch2"><span class="n">1</span><img src="${A}icons/pa_logo.png" alt="">承認アプリ</div>
-      <div class="scene">${s1}</div>
-      <div class="body"><div class="card">
-        <div class="cardh"><img src="${A}icons/pa_logo.png" alt="">開始して承認を待機</div>
-        <div class="cardb">
-          <span class="fi"><span class="k">承認の種類</span>承認/拒否 - 最初に応答</span>
-          <span class="fi"><span class="k">タイトル</span>見積書の送付<span class="k">割り当て先</span>上長のメール</span>
-          <span class="fi"><span class="k">詳細</span><span class="dyn">金額</span><span class="dyn">依頼者</span></span>
-          <span class="wait">${svgw(P.sand,2.2)}承認されるまでここで待つ</span>
-          <div class="step"><span class="sh"><img src="${A}icons/pa_condition.png" alt="">条件：<span class="dyn">結果</span>が Approve に等しい</span>
-            <span class="yes"><span class="yl">はい</span><img src="${A}icons/pa_outlook.png" alt="">メールの送信 (V2)</span></div>
-        </div>
-      </div></div>
-      <div class="cap">フローは<b>ここで止まって待つ</b>。記録が残る</div>
+    <div class="col info">
+      <div class="ch2"><span class="n">1</span>開く場所</div>
+      <div class="body"><div class="card"><div class="cardb"><div class="act"><img src="../../pptx/_assets/icons/pa_logo.png" alt="">ホーム ＞ Copilot から作成する</div><span class="fi"><span class="k">画面</span>記述して作成する（ステップ 1/2）</span><div class="why">マイ フローの上にある3つのカードの右端</div><div class="ex"><div class="exh">結果の例</div><div class="exb"><div>最初から作成する ／ テンプレートから作成する ／ <b style="color:#1D4ED8">Copilot から作成する</b></div></div></div></div></div></div>
+      <div class="cap">作る前に<b>環境</b>が合っているか右上で確かめる</div>
     </div>
-
-    <div class="col c2">
-      <div class="ch2"><span class="n">2</span><img src="${A}icons/ms/lists.svg" alt="">SharePoint リスト</div>
-      <div class="scene">${s2}</div>
-      <div class="body"><div class="card">
-        <div class="cardh"><img src="${A}icons/pa_sharepoint.png" alt="">アイテムが作成または変更されたとき</div>
-        <div class="cardb">
-          <span class="fi hot"><span class="k">設定 ＞ トリガー条件</span><span class="ref" style="margin-left:auto">式は Vol.153</span>送信OK＝はい かつ 送信済み＝いいえ</span>
-          <span class="go">${svgw(P.bolt,2.2)}チェックされた瞬間に起動</span>
-          <div class="step"><span class="sh"><img src="${A}icons/pa_outlook.png" alt="">メールの送信 (V2)<span class="fi" style="padding:1px 8px"><span class="k">宛先</span><span class="dyn">宛先</span></span></span></div>
-          <div class="step"><span class="sh"><img src="${A}icons/pa_sharepoint.png" alt="">項目の更新<span class="fi" style="padding:1px 8px"><span class="k">送信済み</span>はい</span></span></div>
-          <span class="fi" style="border-style:dashed;border-color:#64748B;background:#F1F5F9;color:#334155">書き戻しの再起動は 送信済み＝はい で止まる</span>
-        </div>
-      </div></div>
-      <div class="cap">待たずに、<b>押されたら起動</b>。何件でもまとめて</div>
+    <div class="col info">
+      <div class="ch2"><span class="n">2</span>頼み方</div>
+      <div class="body"><div class="card"><div class="cardb"><div class="act"><img src="../../pptx/_assets/icons/ms/copilot.png" alt="">やりたいことを1文で書く</div><span class="fi hot"><span class="k">何が起きたら</span>添付ファイル付きのメールが届いたら</span><span class="fi"><span class="k">何を</span>添付ファイルを保存して</span><span class="fi"><span class="k">どこへ</span>OneDrive の請求書フォルダー・Teams</span><div class="why">例を選ぶ欄もある。近いものを選んで書き換えてもよい</div><div class="ex"><div class="exh">結果の例</div><div class="exb"><div>添付ファイル付きのメールが届いたら、添付ファイルを OneDrive の請求書フォルダーに保存して、Teams で自分に知らせる</div></div></div></div></div></div>
+      <div class="cap">フォルダー名や宛先も<b>文に入れておく</b></div>
     </div>
-
-    <div class="col c3">
-      <div class="ch2"><span class="n">3</span><img src="${A}icons/ms/teams.svg" alt="">Teams のカード</div>
-      <div class="scene">${s3}</div>
-      <div class="body"><div class="card">
-        <div class="cardh" style="letter-spacing:-.6px;gap:6px"><img src="${A}icons/pa_teams.png" alt="" style="width:24px;height:24px">アダプティブ カードを投稿して応答を待機する</div>
-        <div class="cardb">
-          <span class="fi"><span class="k">投稿者</span>フロー ボット<span class="k">投稿先</span>チャネル</span>
-          <div class="ac"><span class="t">鈴木 一郎 様へ、お礼メールを送りますか</span>
-            <div class="bt"><span class="p">送信OK</span><span class="n">直して送る</span></div></div>
-          <span class="wait">${svgw(P.sand,2.2)}ボタンが押されるまで待つ</span>
-          <div class="step"><span class="sh"><img src="${A}icons/pa_condition.png" alt="">条件：押されたボタンの値が 送信OK</span>
-            <span class="yes"><span class="yl">はい</span><img src="${A}icons/pa_outlook.png" alt="">メールの送信 (V2)</span></div>
-        </div>
-      </div></div>
-      <div class="cap"><b>会話の中で待つ</b>。画面を移らずに押せる</div>
+    <div class="col info">
+      <div class="ch2"><span class="n">3</span>出てきた後</div>
+      <div class="body"><div class="card"><div class="cardb"><div class="act"><img src="../../pptx/_assets/icons/pa_logo.png" alt="">保持して続行する</div><span class="fi hot"><span class="k">ステップ 2/2</span>接続の確認</span><div class="why">使うコネクタの接続に緑のチェックが付く</div><div class="act"><img src="../../pptx/_assets/icons/pa_logo.png" alt="">フローを作成</div><span class="fi hot"><span class="k">足りないもの</span>＋から手で追加</span><span class="fi"><span class="k">空の欄</span>フォルダー・宛先を入れる</span><div class="ex"><div class="exh">結果の例</div><div class="exb"><div>接続：Office 365 Outlook ✓</div><div>足したもの：ファイルの作成／メッセージを投稿する</div></div></div></div></div></div>
+      <div class="cap">提案は<b>保存前の下書き</b>。保存は自分で押す</div>
     </div>
   </div>
-
-  <div class="warnbar">
-    <span class="na">${svgw(P.warn,2.4)}</span>
-    <span class="ws"><span>①③は応答まで待ち続ける（実行は最長30日で期限切れ）</span><span>②は書き戻しで再起動する → 送信済み の条件が必須</span><span>人を置くのは取り消せない操作の直前だけ</span></span>
-  </div>
-  <div class="src">出典：Microsoft Learn「自動化フロー、スケジュールされたフロー、インスタント フローの制限事項」「条件を使用してトリガーをカスタマイズする」「SharePoint コネクタ」「Microsoft Teams コネクタ」／人名・会社名は架空の例</div>
-`;
-</script>
+  <div class="warnbar"><span class="na"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg></span><span class="ws"><span>提案はそのまま正しいとは限らない。アクションと設定値を1つずつ見る</span><span>AI が作るので、同じ文でも毎回同じ提案になるとは限らない</span><span>保存してオンにするまでは動かない</span></span></div>
+  <div class="src">出典：Microsoft Learn</div>
+</div>
 </body>
 </html>

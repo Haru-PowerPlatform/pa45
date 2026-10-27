@@ -3,217 +3,56 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=1280, initial-scale=1">
-<title>X技術Tips Vol.153-1 チェックを入れた1回だけ、メールが1通届く</title>
+<title>X技術Tips Vol.153-1 写真を年月フォルダーへ</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../_base/tips-base.css">
+<link rel="stylesheet" href="../_base/x145.css">
 <style>
-  /* 型A：Before/After（保存のたびに同じメール → チェックを入れた1回だけ）*/
-  .stage{gap:10px;}
-  .col.bad{flex:0 0 468px;}
-  .col.good{flex:1;min-width:0;}
-  .ph .mk{padding:7px;}
-  .loop{flex:0 0 196px;position:relative;border-radius:10px;overflow:hidden;background:#FCE4E4;}
-  .loop svg{position:absolute;inset:0;width:100%;height:100%;}
-  .loop .chara{position:absolute;right:-4px;bottom:-6px;height:116px;z-index:2;filter:drop-shadow(0 3px 4px rgba(0,0,0,.25));}
-  /* 受信トレイのモック */
-  .inbox{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:2px solid #F0AEAE;border-radius:10px;overflow:hidden;box-shadow:0 3px 8px rgba(90,20,20,.10);}
-  .inbox .ih{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:4px 10px;background:linear-gradient(90deg,#0F6CBD,#2B88D8);color:#fff;font-size:15.5px;font-weight:900;}
-  .inbox .ih img{width:24px;height:24px;background:#fff;border-radius:5px;padding:2px;}
-  .inbox .ih .cnt{margin-left:auto;background:#DC2626;border-radius:999px;padding:0 9px;font-size:14.5px;}
-  .mr{flex:1;min-height:0;display:grid;grid-template-columns:44px 1fr auto;align-items:center;gap:7px;padding:0 9px;border-bottom:1.2px solid #F3E3E3;}
-  .mr .tm{font-family:'Roboto Mono',monospace;font-size:14.5px;font-weight:700;color:#64748B;}
-  .mr .sj{font-size:15.5px;font-weight:900;color:var(--navy);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .mr .rs{font-size:14px;font-weight:900;color:#fff;background:#DC2626;border-radius:6px;padding:1px 7px;white-space:nowrap;}
-  .mr .rs.g{background:#64748B;}
-  .mr.more{grid-template-columns:1fr;color:#B91C1C;font-size:15.5px;font-weight:900;text-align:center;background:#FEF2F2;border-bottom:none;}
-  .badline{flex:0 0 auto;background:#DC2626;color:#fff;border-radius:8px;padding:5px 10px;font-size:16px;font-weight:900;line-height:1.3;}
-  /* 中央エンジン */
-  .eng{flex:0 0 172px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;}
-  .eng .gate{width:150px;height:118px;}
-  .eng .pill{font-size:16px;font-weight:900;color:#fff;background:#2563EB;border-radius:999px;padding:3px 13px;white-space:nowrap;box-shadow:0 2px 4px rgba(0,0,0,.2);}
-  .eng .cond{width:100%;display:flex;flex-direction:column;gap:4px;background:#fff;border:2.5px solid #93B4F0;border-radius:10px;padding:7px 8px;box-shadow:0 3px 8px rgba(20,40,90,.12);}
-  .eng .cc{display:flex;align-items:center;justify-content:space-between;gap:4px;font-size:15.5px;font-weight:900;color:var(--navy);background:#EFF6FF;border-radius:6px;padding:2px 7px;}
-  .eng .cc .v{font-size:14.5px;color:#fff;border-radius:5px;padding:0 6px;}
-  .eng .cc .v.y{background:#16A34A;} .eng .cc .v.n{background:#64748B;}
-  .eng .and{align-self:center;font-size:14.5px;font-weight:900;color:#2563EB;}
-  .eng .lb{font-size:16px;font-weight:900;color:var(--blue-dark);text-align:center;line-height:1.35;}
-  .eng .ar{width:110px;height:28px;}
-  /* After：リストの変更とフローの反応 */
-  .lst{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:2px solid #A7E3C0;border-radius:10px;overflow:hidden;box-shadow:0 3px 8px rgba(20,90,50,.10);}
-  .lst .lh{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:4px 10px;background:linear-gradient(90deg,#036C70,#0E8A8F);color:#fff;font-size:15.5px;font-weight:900;}
-  .lst .lh img{width:24px;height:24px;background:#fff;border-radius:5px;padding:2px;}
-  .lr{flex:1;min-height:0;display:grid;grid-template-columns:1fr 70px 78px 132px;align-items:center;gap:6px;padding:0 9px;border-bottom:1.2px solid #EEF2F6;}
-  .lr.h{flex:0 0 27px;font-size:14px;font-weight:900;color:#475569;background:#F1F5F9;}
-  .lr .wh{font-size:15.5px;font-weight:900;color:var(--navy);white-space:nowrap;}
-  .lr .wh .by{font-size:14px;color:#64748B;margin-left:3px;}
-  .yn{justify-self:start;font-size:14.5px;font-weight:900;border-radius:5px;padding:0 7px;}
-  .yn.y{background:#DCFCE7;color:#065F46;border:1.5px solid #86EFAC;}
-  .yn.n{background:#F1F5F9;color:#64748B;border:1.5px solid #CBD5E1;}
-  .yn.chg{box-shadow:0 0 0 2.5px #EA580C;}
-  .rx{display:flex;align-items:center;gap:5px;font-size:15px;font-weight:900;white-space:nowrap;}
-  .rx.off{color:#94A3B8;}
-  .rx.off i{width:18px;height:18px;border-radius:50%;border:2px solid #CBD5E1;position:relative;flex:0 0 auto;}
-  .rx.off i::after{content:"";position:absolute;left:3px;right:3px;top:6px;height:2.5px;background:#CBD5E1;}
-  .rx.on{color:#fff;background:#16A34A;border-radius:7px;padding:2px 8px;box-shadow:0 0 0 3px #BBF7D0;}
-  .lr.hit{background:#ECFDF5;box-shadow:inset 5px 0 0 #16A34A;}
-  .lr.hit .wh{color:#065F46;}
-  .gbot{flex:0 0 auto;display:flex;gap:9px;align-items:stretch;}
-  .run{flex:1;display:flex;flex-direction:column;background:#fff;border:2px solid #A7E3C0;border-radius:10px;overflow:hidden;}
-  .run .rh{display:flex;align-items:center;gap:7px;padding:3px 9px;background:#EAF9F1;color:#065F46;font-size:15px;font-weight:900;border-bottom:1.5px solid #BFE7D3;}
-  .run .rh img{width:22px;height:22px;}
-  .run .rr{display:flex;align-items:center;gap:8px;padding:4px 9px;font-size:15.5px;font-weight:900;color:var(--navy);}
-  .run .rr .ok{display:inline-flex;align-items:center;gap:4px;background:#DCFCE7;color:#065F46;border-radius:999px;padding:0 9px;font-size:14.5px;}
-  .run .rn{padding:0 9px 4px;font-size:14.5px;font-weight:900;color:#64748B;}
-  .gbot .mail{flex:0 0 150px;position:relative;border-radius:10px;overflow:hidden;background:#DCF3E7;}
-  .gbot .mail svg{position:absolute;inset:0;width:100%;height:100%;}
-  .metric .mv{font-size:23px;}
+
 </style>
 </head>
 <body>
-<div id="slide"></div>
-<script>
-const A="../../pptx/_assets/";
-const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
-const P={bulb:'<path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/>',
-  arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',x:'<path d="M6 6l12 12M18 6L6 18"/>',ok:'<path d="M5 12.5l4.5 4.5L19 7"/>'};
-
-/* リアルな封筒（x,y,幅,回転,番号） */
-const ENV=(x,y,w,r,n,id)=>{const h=w*0.66;return `<g filter="url(#${id})" transform="rotate(${r} ${x+w/2} ${y+h/2})">
-  <rect x="${x}" y="${y}" width="${w}" height="${h}" rx="3" fill="url(#eg)" stroke="#CBD5E1" stroke-width="1"/>
-  <path d="M${x} ${y+2} L${x+w/2} ${y+h*0.58} L${x+w} ${y+2}" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.2"/>
-  <rect x="${x+w-14}" y="${y+5}" width="9" height="10" rx="1" fill="#F87171"/>
-  ${n?`<circle cx="${x+4}" cy="${y+3}" r="10" fill="#DC2626" stroke="#fff" stroke-width="2"/><text x="${x+4}" y="${y+7.5}" font-family="Roboto Mono" font-size="12" font-weight="700" fill="#fff" text-anchor="middle">${n}</text>`:''}</g>`;};
-
-/* Before：書き戻しでもう一度起動するループ */
-const sLoop=`<svg viewBox="0 0 444 196" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-  <defs><filter id="lf" x="-30%" y="-30%" width="160%" height="170%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#5B1A1A" flood-opacity=".25"/></filter>
-    <linearGradient id="eg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#E9EEF5"/></linearGradient>
-    <linearGradient id="pg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3B82F6"/><stop offset="1" stop-color="#1D4ED8"/></linearGradient>
-    <marker id="ah" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="4.2" markerHeight="4.2" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#DC2626"/></marker></defs>
-  <rect width="444" height="196" fill="#FCE4E4"/>
-  <!-- リスト -->
-  <g filter="url(#lf)"><rect x="12" y="20" width="132" height="92" rx="7" fill="#fff" stroke="#0E8A8F" stroke-width="2"/>
-    <rect x="12" y="20" width="132" height="20" rx="7" fill="#036C70"/><rect x="12" y="32" width="132" height="8" fill="#036C70"/>
-    <text x="78" y="35" font-family="Noto Sans JP" font-size="12" font-weight="900" fill="#fff" text-anchor="middle">見積の送付リスト</text>
-    <rect x="16" y="48" width="124" height="24" rx="3" fill="#FEF3C7"/>
-    <text x="22" y="65" font-family="Noto Sans JP" font-size="12.5" font-weight="900" fill="#1F2937">見積書の送府</text>
-    <path d="M96 52 v16" stroke="#EA580C" stroke-width="2"/>
-    <text x="22" y="92" font-family="Noto Sans JP" font-size="11.5" font-weight="700" fill="#64748B">誤字を直す・保存</text>
-    <circle cx="128" cy="88" r="8" fill="#EA580C"/><path d="M124 88 l3 3 5-6" stroke="#fff" stroke-width="2" fill="none"/></g>
-  <!-- 上の矢印：変更 → フロー -->
-  <path d="M148 52 C 172 30, 190 30, 206 46" stroke="#DC2626" stroke-width="4.5" fill="none" marker-end="url(#ah)"/>
-  <text x="176" y="24" font-family="Noto Sans JP" font-size="12.5" font-weight="900" fill="#991B1B" text-anchor="middle">変更されたら</text>
-  <!-- フロー -->
-  <g filter="url(#lf)"><circle cx="234" cy="70" r="30" fill="url(#pg)"/><path d="M237 48 l-14 25 h12 l-6 19 l19 -27 h-12 l6 -17z" fill="#FDE68A"/></g>
-  <text x="234" y="34" font-family="Noto Sans JP" font-size="12.5" font-weight="900" fill="#1E40AF" text-anchor="middle">フロー</text>
-  <!-- フロー → メール -->
-  <path d="M268 66 H 290" stroke="#DC2626" stroke-width="4.5" fill="none" marker-end="url(#ah)"/>
-  <!-- 下の戻り矢印：書き戻し → また起動 -->
-  <path d="M222 102 C 208 160, 120 168, 84 120" stroke="#DC2626" stroke-width="5" fill="none" stroke-dasharray="9 5" marker-end="url(#ah)"/>
-  <rect x="100" y="150" width="150" height="38" rx="8" fill="#DC2626"/>
-  <text x="175" y="166" font-family="Noto Sans JP" font-size="12.5" font-weight="900" fill="#fff" text-anchor="middle">送信済みを書き戻す</text>
-  <text x="175" y="182" font-family="Noto Sans JP" font-size="12.5" font-weight="900" fill="#FDE68A" text-anchor="middle">＝これも変更→また起動</text>
-  <!-- 増えていく封筒 -->
-  ${ENV(300,30,52,-8,1,'lf')}${ENV(320,66,52,6,2,'lf')}${ENV(296,104,52,-4,3,'lf')}${ENV(352,22,46,10,4,'lf')}${ENV(268,140,46,-12,'','lf')}
-</svg>`;
-
-/* 中央：トリガー条件のゲート */
-const GATE=`<svg class="gate" viewBox="0 0 150 118" xmlns="http://www.w3.org/2000/svg">
-  <defs><linearGradient id="gg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#60A5FA"/><stop offset="1" stop-color="#1D4ED8"/></linearGradient>
-  <filter id="gf" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="3" stdDeviation="2.6" flood-color="#1E3A8A" flood-opacity=".3"/></filter></defs>
-  <rect x="6" y="100" width="138" height="10" rx="5" fill="#CBD5E1"/>
-  <g filter="url(#gf)"><rect x="12" y="20" width="22" height="84" rx="5" fill="url(#gg)"/><rect x="116" y="20" width="22" height="84" rx="5" fill="url(#gg)"/>
-    <rect x="34" y="40" width="82" height="13" rx="4" fill="#F59E0B"/>${[0,1,2,3].map(i=>`<rect x="${40+i*20}" y="40" width="10" height="13" fill="#fff" opacity=".85"/>`).join('')}
-    <circle cx="23" cy="12" r="9" fill="#16A34A" stroke="#fff" stroke-width="2.5"/><circle cx="127" cy="12" r="9" fill="#DC2626" stroke="#fff" stroke-width="2.5"/></g>
-  <g transform="translate(52 62)"><rect width="46" height="34" rx="5" fill="#fff" stroke="#16A34A" stroke-width="2.5"/>
-    <rect x="7" y="9" width="14" height="14" rx="3" fill="#16A34A"/><path d="M10 16 l3 3 6-7" stroke="#fff" stroke-width="2.4" fill="none"/>
-    <rect x="25" y="11" width="15" height="4" rx="2" fill="#94A3B8"/><rect x="25" y="19" width="11" height="4" rx="2" fill="#94A3B8"/></g>
-</svg>`;
-const ARR=`<svg class="ar" viewBox="0 0 110 28" xmlns="http://www.w3.org/2000/svg"><path d="M4 14 H 92" stroke="#16A34A" stroke-width="6" stroke-linecap="round" stroke-dasharray="2 9"/>
-  <path d="M86 4 L 102 14 L 86 24" fill="none" stroke="#16A34A" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-/* After：届くのは1通 */
-const sMail=`<svg viewBox="0 0 150 88" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-  <defs><filter id="mf" x="-30%" y="-30%" width="160%" height="170%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#064E3B" flood-opacity=".25"/></filter>
-    <linearGradient id="eg2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#E9EEF5"/></linearGradient></defs>
-  <rect width="150" height="88" fill="#DCF3E7"/>
-  <g filter="url(#mf)"><rect x="36" y="16" width="76" height="50" rx="4" fill="url(#eg2)" stroke="#CBD5E1"/>
-    <path d="M36 18 L74 46 L112 18" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="1.4"/><rect x="98" y="21" width="10" height="11" rx="1" fill="#34D399"/></g>
-  <g filter="url(#mf)"><circle cx="112" cy="16" r="13" fill="#16A34A" stroke="#fff" stroke-width="2.5"/><text x="112" y="21.5" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#fff" text-anchor="middle">1</text></g>
-  <text x="75" y="82" font-family="Noto Sans JP" font-size="12.5" font-weight="900" fill="#065F46" text-anchor="middle">届くのは1通だけ</text>
-</svg>`;
-
-const SUBJ='【見積】ABC設備工業様 見積書の送付';
-document.getElementById('slide').innerHTML=`
+<div id="slide">
   <div class="titlebar">
     <div class="vol-pill">Vol.153-1</div>
-    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
-    <div class="title-text">リストを直すたびに飛んでいたメールが、<br><span class="hl">チェックを入れた1回だけ</span>になる</div>
-    <img class="title-chara" src="${A}chara/chara_confident.png" alt="">
+    <img class="vol-logo" src="../../pptx/_assets/icons/pa_logo.png" alt="">
+    <div class="title-text">スマホから上がった写真が、<br><span class="hl">年月のフォルダーへ自動で</span>振り分けられる</div>
+    <img class="title-chara" src="../../pptx/_assets/chara/chara_smile.png" alt="">
   </div>
-
   <div class="concl">
-    <div class="chip">${svgw(P.bulb,2.2)}</div>
-    <div class="txt">トリガーに<b>2行の条件</b>を足すだけ。「送信OK＝はい」かつ「送信済み＝いいえ」のときしか起動しません。<br>誤字の修正やフロー自身の書き戻しでは<b>起動せず、実行履歴にも残りません</b></div>
+    <div class="chip"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/></svg></div>
+    <div class="txt">OneDrive の受け取りフォルダーに写真が入ると、<b>2026-10</b> のような年月フォルダーへ移します。<br>フォルダーを先に作っておく必要はありません</div>
   </div>
-
   <div class="stage">
     <div class="col bad">
-      <div class="ph"><span class="mk">${svgw(P.x,3.2)}</span>保存のたびに動くフロー</div>
-      <div class="loop">${sLoop}<img class="chara" src="${A}chara/chara_trouble.png" alt=""></div>
-      <div class="inbox">
-        <div class="ih"><img src="${A}icons/pa_outlook.png" alt="">受信トレイ（お客様側）<span class="cnt">同じ件名 4通</span></div>
-        <div class="mr"><span class="tm">10:02</span><span class="sj">${SUBJ}</span><span class="rs g">作成</span></div>
-        <div class="mr"><span class="tm">10:02</span><span class="sj">${SUBJ}</span><span class="rs">書き戻し</span></div>
-        <div class="mr"><span class="tm">10:15</span><span class="sj">${SUBJ}</span><span class="rs">誤字の修正</span></div>
-        <div class="mr"><span class="tm">10:15</span><span class="sj">${SUBJ}</span><span class="rs">書き戻し</span></div>
-        <div class="mr more">…書き戻すたびに、また次の1通</div>
-      </div>
-      <div class="badline">✕ 直しても、フローが書き戻しても、同じメール</div>
+      <div class="ph"><span class="mk"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg></span>1つのフォルダーに195枚</div>
+      <div class="win od" style="flex:1"><div class="wh"><img src="../../pptx/_assets/icons/pa_onedrive.png" alt="">写真の受け取り</div><div class="wb">
+        <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:5px"><span style="aspect-ratio:4/3;border-radius:4px;background:linear-gradient(135deg,#86EFAC,#fff)"></span><span style="aspect-ratio:4/3;border-radius:4px;background:linear-gradient(135deg,#C4B5FD,#fff)"></span><span style="aspect-ratio:4/3;border-radius:4px;background:linear-gradient(135deg,#C4B5FD,#fff)"></span><span style="aspect-ratio:4/3;border-radius:4px;background:linear-gradient(135deg,#86EFAC,#fff)"></span><span style="aspect-ratio:4/3;border-radius:4px;background:linear-gradient(135deg,#FDE68A,#fff)"></span><span style="aspect-ratio:4/3;border-radius:4px;background:linear-gradient(135deg,#C4B5FD,#fff)"></span><span style="aspect-ratio:4/3;border-radius:4px;background:linear-gradient(135deg,#FCA5A5,#fff)"></span><span style="aspect-ratio:4/3;border-radius:4px;background:linear-gradient(135deg,#67E8F9,#fff)"></span><span style="aspect-ratio:4/3;border-radius:4px;background:linear-gradient(135deg,#C4B5FD,#fff)"></span><span style="aspect-ratio:4/3;border-radius:4px;background:linear-gradient(135deg,#93C5FD,#fff)"></span><span style="aspect-ratio:4/3;border-radius:4px;background:linear-gradient(135deg,#C4B5FD,#fff)"></span><span style="aspect-ratio:4/3;border-radius:4px;background:linear-gradient(135deg,#93C5FD,#fff)"></span><span style="aspect-ratio:4/3;border-radius:4px;background:linear-gradient(135deg,#FCA5A5,#fff)"></span><span style="aspect-ratio:4/3;border-radius:4px;background:linear-gradient(135deg,#FDE68A,#fff)"></span><span style="aspect-ratio:4/3;border-radius:4px;background:linear-gradient(135deg,#C4B5FD,#fff)"></span><span style="aspect-ratio:4/3;border-radius:4px;background:linear-gradient(135deg,#86EFAC,#fff)"></span><span style="aspect-ratio:4/3;border-radius:4px;background:linear-gradient(135deg,#86EFAC,#fff)"></span><span style="aspect-ratio:4/3;border-radius:4px;background:linear-gradient(135deg,#67E8F9,#fff)"></span><span style="aspect-ratio:4/3;border-radius:4px;background:linear-gradient(135deg,#FCA5A5,#fff)"></span><span style="aspect-ratio:4/3;border-radius:4px;background:linear-gradient(135deg,#C4B5FD,#fff)"></span><span style="aspect-ratio:4/3;border-radius:4px;background:linear-gradient(135deg,#C4B5FD,#fff)"></span><span style="aspect-ratio:4/3;border-radius:4px;background:linear-gradient(135deg,#FCA5A5,#fff)"></span><span style="aspect-ratio:4/3;border-radius:4px;background:linear-gradient(135deg,#FCA5A5,#fff)"></span><span style="aspect-ratio:4/3;border-radius:4px;background:linear-gradient(135deg,#67E8F9,#fff)"></span></div>
+        <div style="font-size:15px;font-weight:800;color:#64748B">IMG_4021.jpg ／ IMG_4022.jpg ／ IMG_4023.jpg …</div>
+      </div></div>
+      <div class="cap">現場写真を探すのに<b>スクロールが続く</b></div>
+      <img class="chara" src="../../pptx/_assets/chara/chara_tired.png" alt="" style="position:absolute;right:8px;bottom:50px;height:112px">
     </div>
-
-    <div class="eng">
-      ${GATE}
-      <div class="pill">トリガー条件</div>
-      <div class="cond">
-        <span class="cc">送信OK<span class="v y">はい</span></span>
-        <span class="and">かつ</span>
-        <span class="cc">送信済み<span class="v n">いいえ</span></span>
-      </div>
-      <div class="lb">のときだけ<br>フローを起動</div>
-      ${ARR}
-    </div>
-
     <div class="col good">
-      <div class="ph"><span class="mk">${svgw(P.ok,3.2)}</span>チェックした1回だけ動く</div>
-      <div class="lst">
-        <div class="lh"><img src="${A}icons/pa_sharepoint.png" alt="">見積の送付リスト ／ 同じ行への変更</div>
-        <div class="lr h"><span>何をしたか</span><span>送信OK</span><span>送信済み</span><span>フロー</span></div>
-        <div class="lr"><span class="wh">件名の誤字を直す<span class="by">山田</span></span><span class="yn n">いいえ</span><span class="yn n">いいえ</span><span class="rx off"><i></i>起動しない</span></div>
-        <div class="lr hit"><span class="wh">送信OKにチェック<span class="by">山田</span></span><span class="yn y chg">はい</span><span class="yn n">いいえ</span><span class="rx on">⚡ 起動・送信</span></div>
-        <div class="lr"><span class="wh">送信済みを書き戻す<span class="by">フロー</span></span><span class="yn y">はい</span><span class="yn y chg">はい</span><span class="rx off"><i></i>起動しない</span></div>
-        <div class="lr"><span class="wh">備考に追記<span class="by">佐藤</span></span><span class="yn y">はい</span><span class="yn y">はい</span><span class="rx off"><i></i>起動しない</span></div>
-      </div>
-      <div class="gbot">
-        <div class="run">
-          <div class="rh"><img src="${A}icons/pa_logo.png" alt="">実行履歴</div>
-          <div class="rr">10:15<span class="ok">✓ 成功</span><span style="font-size:14.5px;color:#475569">見積書の送付</span></div>
-          <div class="rn">起動しなかった3回は、履歴にも残らない</div>
-        </div>
-        <div class="mail">${sMail}</div>
-      </div>
-      <div class="metric"><span class="ml">お客様に届くメール</span><span class="mv">保存のたびに1通</span><span class="ar">${svgw(P.arrow,3)}</span><span class="mv to">チェックで1通</span></div>
+      <div class="ph"><span class="mk"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></span>入ったそばから年月へ移る</div>
+      <div class="win od" style="flex:1"><div class="wh"><img src="../../pptx/_assets/icons/pa_onedrive.png" alt="">写真</div><div class="wb" style="gap:7px"><div style="display:flex;align-items:center;gap:10px;border:1.5px solid #DCE3EE;border-radius:9px;padding:7px 10px;background:#fff">
+          <svg viewBox="0 0 24 24" width="34" height="34"><path d="M2 6a2 2 0 0 1 2-2h5l2 2h9a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2z" fill="#F6C343"/></svg>
+          <div style="flex:1"><div class="ms">2026-08</div><div class="mf">45 枚</div></div>
+          <div style="display:grid;grid-template-columns:repeat(4,22px);gap:3px"><span style="height:16px;border-radius:3px;background:#86EFAC"></span><span style="height:16px;border-radius:3px;background:#86EFAC"></span><span style="height:16px;border-radius:3px;background:#67E8F9"></span><span style="height:16px;border-radius:3px;background:#86EFAC"></span></div></div><div style="display:flex;align-items:center;gap:10px;border:1.5px solid #DCE3EE;border-radius:9px;padding:7px 10px;background:#fff">
+          <svg viewBox="0 0 24 24" width="34" height="34"><path d="M2 6a2 2 0 0 1 2-2h5l2 2h9a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2z" fill="#F6C343"/></svg>
+          <div style="flex:1"><div class="ms">2026-09</div><div class="mf">88 枚</div></div>
+          <div style="display:grid;grid-template-columns:repeat(4,22px);gap:3px"><span style="height:16px;border-radius:3px;background:#C4B5FD"></span><span style="height:16px;border-radius:3px;background:#FCA5A5"></span><span style="height:16px;border-radius:3px;background:#67E8F9"></span><span style="height:16px;border-radius:3px;background:#93C5FD"></span></div></div><div style="display:flex;align-items:center;gap:10px;border:1.5px solid #DCE3EE;border-radius:9px;padding:7px 10px;background:#fff">
+          <svg viewBox="0 0 24 24" width="34" height="34"><path d="M2 6a2 2 0 0 1 2-2h5l2 2h9a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2z" fill="#F6C343"/></svg>
+          <div style="flex:1"><div class="ms">2026-10</div><div class="mf">62 枚</div></div>
+          <div style="display:grid;grid-template-columns:repeat(4,22px);gap:3px"><span style="height:16px;border-radius:3px;background:#67E8F9"></span><span style="height:16px;border-radius:3px;background:#93C5FD"></span><span style="height:16px;border-radius:3px;background:#86EFAC"></span><span style="height:16px;border-radius:3px;background:#C4B5FD"></span></div></div>
+        <div style="font-size:15px;font-weight:800;color:#065F46">写真の受け取り は、いつも空のまま</div></div></div>
+      <div class="cap">年月のフォルダーは<b>無くても自動で作られる</b></div>
     </div>
   </div>
-
-  <div class="next">
-    <span class="na">${svgw(P.arrow,3)}</span>
-    <span>はい/いいえ列2つ ＋ トリガー条件2行 で作れます。<b>作り方は2枚目へ</b></span>
-    <span class="uses" style="margin-left:auto"><span class="u">見積・請求の送付</span><span class="u">申請の通知</span><span class="u">案内メール</span></span>
-  </div>
-  <div class="src">出典：Microsoft Learn「条件を使用してトリガーをカスタマイズする」／社名・人名は架空の例・画面は再現</div>
-`;
-</script>
+  <div class="next"><span class="na"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span><span>作り方は<b>2枚目</b>、実際に作ったフローの画面は<b>3・4枚目</b></span></div>
+  <div class="src">出典：Microsoft Learn</div>
+</div>
 </body>
 </html>
