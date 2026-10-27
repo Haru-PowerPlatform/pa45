@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>M365 Copilot Vol.6-3 実際の画面：チャネルのスレッド</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/mc-base.css">
+<style>
+  /* 実画面スクショ＋右に手順カード */
+  .shotcol{flex:0 0 860px;display:flex;flex-direction:column;gap:7px;min-height:0;}
+  .shots{flex:1;min-height:0;display:flex;flex-direction:row;gap:8px;}
+  .shot{min-height:0;min-width:0;background:#fff;border:2.5px solid var(--mc-line);border-radius:12px;overflow:hidden;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 10px rgba(15,60,55,.15);}
+  .shot img{width:100%;height:100%;object-fit:contain;display:block;}
+  .real{flex:0 0 auto;align-self:flex-start;font-size:14px;font-weight:900;color:#fff;background:var(--mc);border-radius:999px;padding:2px 12px;}
+  .steps{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px;}
+  .st{flex:1;min-height:0;display:flex;gap:10px;align-items:center;background:#fff;border:2.5px solid var(--mc-line);border-radius:12px;padding:8px 12px;}
+  .st .n{flex:0 0 auto;width:34px;height:34px;border-radius:9px;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:20px;background:linear-gradient(180deg,#14B8A6,#0F766E);}
+  .st .t{font-size:18.5px;font-weight:900;color:#1B2A44;line-height:1.36;}
+  .st .t b{color:var(--orange);white-space:nowrap;}
+  .st .t small{display:block;font-size:15.5px;font-weight:700;color:#4B5563;line-height:1.38;margin-top:2px;}
+  .st.hint{background:#FFFBEB;border-color:#F59E0B;}
+  .st.hint .n{background:linear-gradient(180deg,#FBBF24,#D97706);padding:5px;}
+  .warnbar .ws span b{color:#B91C1C;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={warn:'<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18v.5"/>',q:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 0 1 5 0c0 1.7-2.5 2-2.5 4M12 17v.5"/>',arr:'<path d="M5 12h14M13 6l6 6-6 6"/>'};
+const CPI=(w)=>`<img class="msi" src="${A}icons/ms/copilot.png" alt="" style="width:${w||24}px;height:${w||24}px">`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="pills">
+      <div class="vol-pill"><small>M365 Copilot</small>Vol.6-3</div>
+      <div class="lic-pill paid">M365 Copilot ライセンスが要る</div>
+    </div>
+    <div class="title-text">実際の画面：返信が積み重なった<br><span class="hl">チャネルのスレッド</span></div>
+    <div class="title-apps"><img class="msi" src="${A}icons/ms/teams.svg" alt=""><span class="pl">＋</span><img class="msi" src="${A}icons/ms/copilot.png" alt=""></div>
+    <img class="title-chara" src="${A}chara/chara_think.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip app">${CPI(34)}</div>
+    <div class="txt">休みのあいだに返信が増えたスレッドを、頭から読まずに Copilot に聞きます</div>
+  </div>
+
+  <div class="stage">
+    <div class="shotcol">
+      <span class="real">実際の画面（2026年10月）</span>
+      <div class="shots"><div class="shot" style="flex:2.430 1 0"><img src="shot-1.png" alt=""></div></div>
+    </div>
+    <div class="steps">
+      <div class="st"><span class="n">1</span><div class="t">チャネルの投稿に返信が並ぶ<small>自分あての依頼が途中に埋もれる</small></div></div>
+      <div class="st"><span class="n">2</span><div class="t">Web 版では投稿の［…］に Copilot が出なかった<small>撮影時の Teams（Web）</small></div></div>
+      <div class="st"><span class="n">3</span><div class="t">左のアプリバーの<b>Copilot</b>から聞く<small>チーム名とチャネル名を書いて頼む</small></div></div>
+    </div>
+  </div>
+
+  <div class="next">
+    <span class="na">${svgw(P.arr,2.6)}</span>
+    <span><b>聞いた結果は4枚目へ</b></span>
+  </div>
+  <div class="src">出典：Microsoft サポート「Teams のチャットとチャネルで Microsoft Copilot を使用する方法」／画面は 2026年10月のTeams（Web）で撮影、個人情報はマスク済み・サンプルデータは架空・投稿は撮影用</div>
+`;
+</script>
+</body>
+</html>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>M365 Copilot Vol.9-1 売上表に前月比の列を、関数を書かずに足す</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/mc-base.css">
+<style>
+  /* 型B：流れ3列（右下の Copilot を開く → 1文で頼む → 列が足される）*/
+  .col.info{gap:7px;}
+  .col.done{background:var(--green-bg);border:2.5px solid var(--green-line);}
+  .col.done .ch2{color:var(--green-dark);} .col.done .ch2 .n{background:linear-gradient(180deg,#34D399,#16A34A);}
+  .col.done .cap{color:var(--green-dark);background:#CFEFE0;}
+  .scene{height:96px;}
+  .col.done .scene{background:#DCF3E7;}
+  .scene .chara{height:104px;bottom:-6px;}
+  /* Excel の表 */
+  .xl{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:2px solid #9FD5B5;border-radius:10px;overflow:hidden;box-shadow:0 4px 10px rgba(16,124,65,.14);}
+  .xl .xh{flex:0 0 auto;display:flex;align-items:center;gap:7px;padding:4px 9px;background:#107C41;color:#fff;font-size:15px;font-weight:700;}
+  .xl .fx{flex:0 0 auto;display:flex;align-items:center;gap:6px;padding:3px 8px;border-bottom:1px solid #E1DFDD;font-family:"Roboto Mono",monospace;font-size:15px;font-weight:700;color:#242424;}
+  .xl .fx i{font-style:italic;color:#6B7280;font-family:"Segoe UI",sans-serif;}
+  .xl .fx .ex{margin-left:auto;font-family:"Noto Sans JP",sans-serif;font-size:12.5px;font-weight:900;color:#B45309;}
+  .grid{flex:1;min-height:0;display:flex;flex-direction:column;}
+  .gr{flex:1;display:flex;border-bottom:1px solid #EDEBE9;font-size:15.5px;font-weight:700;color:#242424;}
+  .gr span{display:flex;align-items:center;padding:0 7px;border-right:1px solid #EDEBE9;}
+  .gr span:nth-child(1){flex:1.2;} .gr span:nth-child(2),.gr span:nth-child(3){flex:1;justify-content:flex-end;font-family:"Roboto Mono",monospace;font-size:15px;}
+  .gr span:nth-child(4){flex:1.05;justify-content:flex-end;font-family:"Roboto Mono",monospace;font-size:15px;}
+  .gr.h{background:#F3F2F1;font-size:14.5px;font-weight:900;color:#424242;}
+  .gr.h span{justify-content:center !important;font-family:"Noto Sans JP",sans-serif !important;}
+  .gr .q{background:#FEF2F2;color:#DC2626;justify-content:center !important;font-family:"Noto Sans JP",sans-serif !important;font-weight:900;}
+  .gr .nw{background:#DCFCE7;color:#065F46;font-weight:900;}
+  .gr .nw.dn{color:#B91C1C;}
+  .gr.h .nw{background:#16A34A;color:#fff;}
+  .gr.h .q{background:#FECACA;}
+  .xl .cpb{align-self:flex-end;margin:5px 7px;display:flex;align-items:center;gap:5px;background:#fff;border:1.5px solid #C7C7C7;border-radius:7px;padding:3px 10px;font-size:15px;font-weight:800;box-shadow:0 0 0 3px #F59E0B;}
+  /* Copilot の欄 */
+  .cp{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:2px solid var(--mc-line);border-radius:10px;overflow:hidden;box-shadow:0 4px 10px rgba(15,60,55,.13);}
+  .cp .hd{flex:0 0 auto;display:flex;align-items:center;gap:7px;padding:5px 10px;background:#F3F2F1;border-bottom:1px solid #E1DFDD;font-size:15px;font-weight:700;}
+  .cp .bd{flex:1;min-height:0;display:flex;flex-direction:column;gap:7px;padding:8px 10px;}
+  .ask{align-self:flex-end;max-width:96%;background:#E8F4F2;border:1.5px solid #A7E3D8;border-radius:11px 11px 3px 11px;padding:6px 10px;
+    font-family:"Noto Sans JP",sans-serif;font-size:16.5px;font-weight:700;color:#1B2A44;line-height:1.42;}
+  .ask .hl{background:linear-gradient(transparent 55%,#FDE68A 55%);}
+  .plan{flex:1 0 auto;display:flex;flex-direction:column;justify-content:space-around;gap:4px;background:#FAFAFA;border:1.5px solid #E1DFDD;border-radius:9px;padding:5px 9px;font-family:"Noto Sans JP",sans-serif;}
+  .plan .pl{font-size:13.5px;font-weight:900;color:var(--mc);}
+  .plan div{display:flex;align-items:center;gap:7px;font-size:15px;font-weight:700;color:#374151;}
+  .plan div b{flex:0 0 auto;width:22px;height:22px;border-radius:50%;background:#0F766E;color:#fff;font-size:12.5px;display:flex;align-items:center;justify-content:center;}
+  .stop{align-self:flex-end;font-size:14px;font-weight:800;color:#6B7280;}
+  .warnbar .ws span b{color:#B91C1C;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>'};
+const CPI=(w)=>`<img class="msi" src="${A}icons/ms/copilot.png" alt="" style="width:${w||24}px;height:${w||24}px">`;
+const XLI=(w)=>`<img class="msi" src="${A}icons/ms/excel.svg" alt="" style="width:${w||22}px;height:${w||22}px">`;
+const defs=`<defs><filter id="sh" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#134E4A" flood-opacity=".25"/></filter></defs>`;
+/* ① 関数の本と検索の画面を行ったり来たり */
+const s1=`<svg viewBox="0 0 388 96" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">${defs}
+  <rect width="388" height="96" fill="#E6F6F3"/>
+  <g filter="url(#sh)"><rect x="24" y="16" width="64" height="74" rx="4" fill="#1D4ED8"/><rect x="30" y="16" width="5" height="74" fill="#1E3A8A"/>
+  <text x="60" y="48" text-anchor="middle" font-family="Roboto Mono" font-size="16" font-weight="700" fill="#fff">f(x)</text><text x="60" y="68" text-anchor="middle" font-family="Noto Sans JP" font-size="10" font-weight="900" fill="#BFDBFE">関数辞典</text></g>
+  <path d="M100 52 C120 32,140 32,158 50" fill="none" stroke="#DC2626" stroke-width="3" stroke-dasharray="3 6" stroke-linecap="round"/>
+  <path d="M158 60 C140 78,120 78,100 62" fill="none" stroke="#DC2626" stroke-width="3" stroke-dasharray="3 6" stroke-linecap="round"/>
+  <g filter="url(#sh)"><rect x="168" y="14" width="120" height="74" rx="6" fill="#fff" stroke="#94A3B8" stroke-width="1.5"/><rect x="168" y="14" width="120" height="16" rx="6" fill="#E2E8F0"/>
+  <rect x="178" y="38" width="96" height="12" rx="6" fill="#fff" stroke="#94A3B8"/><circle cx="268" cy="44" r="3.5" fill="none" stroke="#64748B" stroke-width="1.5"/>
+  <text x="182" y="47.5" font-family="Noto Sans JP" font-size="8.5" font-weight="700" fill="#64748B">前月比 エクセル 式</text>
+  ${[0,1].map(i=>`<rect x="178" y="${58+i*12}" width="${[90,70][i]}" height="5" rx="2.5" fill="#CBD5E1"/>`).join('')}</g>
+</svg>`;
+/* ② 吹き出しに1文 */
+const s2=`<svg viewBox="0 0 388 96" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">${defs}
+  <rect width="388" height="96" fill="#E6F6F3"/>
+  <g filter="url(#sh)"><path d="M30 14h220a12 12 0 0 1 12 12v30a12 12 0 0 1-12 12H110l-18 16V68H30a12 12 0 0 1-12-12V26a12 12 0 0 1 12-12z" fill="#fff" stroke="#0F766E" stroke-width="2.5"/></g>
+  <text x="140" y="47" text-anchor="middle" font-family="Noto Sans JP" font-size="17" font-weight="900" fill="#134E4A">前月比の列を足して</text>
+</svg>`;
+/* ③ 新しい列が緑で光る */
+const s3=`<svg viewBox="0 0 388 96" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">${defs}
+  <rect width="388" height="96" fill="#DCF3E7"/>
+  <g filter="url(#sh)"><rect x="24" y="12" width="230" height="76" rx="5" fill="#fff" stroke="#9FD5B5" stroke-width="1.5"/></g>
+  ${[0,1,2,3].map(i=>`<rect x="24" y="${12+i*19}" width="230" height="19" fill="none" stroke="#E5E7EB"/>`).join('')}
+  ${[80,136,192].map(x=>`<line x1="${x}" y1="12" x2="${x}" y2="88" stroke="#E5E7EB"/>`).join('')}
+  <rect x="192" y="12" width="62" height="76" fill="#BBF7D0" stroke="#16A34A" stroke-width="2.5"/>
+  <text x="223" y="26" text-anchor="middle" font-family="Noto Sans JP" font-size="11" font-weight="900" fill="#065F46">前月比</text>
+  ${['+5%','−8%','+12%'].map((t,i)=>`<text x="246" y="${45+i*19}" text-anchor="end" font-family="Roboto Mono" font-size="11" font-weight="700" fill="${i===1?'#B91C1C':'#065F46'}">${t}</text>`).join('')}
+  <path d="M262 30l3 7 7 3-7 3-3 7-3-7-7-3 7-3z" fill="#FEF9C3" stroke="#F59E0B" stroke-width="1.5"/>
+</svg>`;
+const st=['本店','駅前店','港店','北口店','南口店'];
+const s9=[412,298,355,186,240], s10=[433,274,398,191,236];
+const rows=(mode)=>st.map((n,i)=>{
+  const r=(s10[i]/s9[i]-1)*100; const t=(r>=0?'+':'−')+Math.abs(r).toFixed(1)+'%';
+  const c4=mode==='q'?`<span class="q"></span>`:`<span class="nw${r<0?' dn':''}">${t}</span>`;
+  return `<div class="gr"><span>${n}</span><span>${s9[i]}</span><span>${s10[i]}</span>${c4}</div>`;}).join('');
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="pills">
+      <div class="vol-pill"><small>M365 Copilot</small>Vol.9-1</div>
+      <div class="lic-pill paid">M365 Copilot ライセンスが要る</div>
+    </div>
+    <div class="title-text">売上表に<span class="hl">前月比の列</span>を、<br>関数を書かずに足す</div>
+    <div class="title-apps"><img class="msi" src="${A}icons/ms/excel.svg" alt=""><span class="pl">＋</span><img class="msi" src="${A}icons/ms/copilot.png" alt=""></div>
+    <img class="title-chara" src="${A}chara/chara_smile.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip app">${XLI(34)}</div>
+    <div class="txt">Excel の右下の<b>［Copilot］</b>に、足したい列を1文で頼む。<br>既定のモードはブックを直接編集するので、式を調べなくても<b>列が入ったところ</b>から確かめられます</div>
+  </div>
+
+  <div class="stage">
+    <div class="col info">
+      <div class="ch2"><span class="n">1</span>右下の［Copilot］を開く</div>
+      <div class="scene">${s1}<img class="chara" src="${A}chara/chara_trouble.png" alt=""></div>
+      <div class="xl seg">
+        <div class="xh">${XLI(20)}店舗別売上.xlsx</div>
+        <div class="grid">
+          <div class="gr h"><span>店舗</span><span>9月</span><span>10月</span><span class="q">前月比？</span></div>
+          ${rows('q')}
+        </div>
+        <span class="cpb">${CPI(20)}Copilot</span>
+      </div>
+      <div class="cap">前月比の式を<br>調べに行かずに済む</div>
+    </div>
+
+    <div class="col info">
+      <div class="ch2"><span class="n">2</span>足したい列を1文で頼む</div>
+      <div class="scene">${s2}<img class="chara" src="${A}chara/chara_laptop.png" alt=""></div>
+      <div class="cp seg">
+        <div class="hd">${CPI()}Copilot（Excel）<span class="repro">説明用の再現</span></div>
+        <div class="bd">
+          <div class="ask"><span class="hl">10月の前月比</span>を、右の列に<br>％で追加してください。</div>
+          <div class="plan"><span class="pl">Copilot が手順を立てて進める</span>
+            <div><b>1</b>9月と10月の列を見つける</div>
+            <div><b>2</b>前月比の列を作って式を入れる</div>
+            <div><b>3</b>％の表示形式にする</div>
+          </div>
+
+        </div>
+      </div>
+      <div class="cap">列の名前と表示のしかたを<br>文に入れておく</div>
+    </div>
+
+    <div class="col done">
+      <div class="ch2"><span class="n">3</span>入った列を確かめる</div>
+      <div class="scene">${s3}<img class="chara" src="${A}chara/chara_guts.png" alt=""></div>
+      <div class="xl seg">
+        <div class="xh">${XLI(20)}店舗別売上.xlsx</div>
+        <div class="fx"><i>fx</i>=C2/B2-1<span class="ex">式の例</span></div>
+        <div class="grid">
+          <div class="gr h"><span>店舗</span><span>9月</span><span>10月</span><span class="nw">前月比</span></div>
+          ${rows('a')}
+        </div>
+      </div>
+      <div class="cap">セルを選んで<b>式を見る</b>。<br>1行だけ電卓で検算する</div>
+    </div>
+  </div>
+
+  <div class="next">
+    <span class="na">${svgw(P.arrow,3)}</span>
+    <span>3つのモードと、売上表でそのまま頼める文。<b>早見表は2枚目へ</b></span>
+  </div>
+  <div class="src">出典：Microsoft サポート「Excel の Copilot の使用を開始する」「Excel の Copilot に関してよく寄せられる質問」／Microsoft Learn「Microsoft Copilot service description」／画面は説明用の再現、店舗・数字・式は架空の例</div>
+`;
+</script>
+</body>
+</html>

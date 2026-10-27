@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>M365 Copilot Vol.7-2 Copilotのプロンプトをスケジュールする3ステップ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/mc-base.css">
+<style>
+  /* 型B：流れ3列（ポインターを合わせる → いつ・何回・通知を決めて保存 → 管理画面で止める・直す）*/
+  .col.info{gap:7px;}
+  .scene{height:84px;}
+  .scene .chara{height:98px;bottom:-8px;}
+  .mock{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:2px solid var(--mc-line);border-radius:11px;overflow:hidden;box-shadow:0 4px 10px rgba(15,60,55,.13);}
+  .mock .hd{flex:0 0 auto;display:flex;align-items:center;gap:7px;padding:5px 10px;background:#F3F2F1;border-bottom:1px solid #E1DFDD;font-size:15px;font-weight:700;}
+  .mock .bd{flex:1;min-height:0;display:flex;flex-direction:column;gap:6px;padding:7px 10px;}
+  .pr{align-self:flex-end;max-width:96%;background:#E8F4F2;border:1.5px solid #A7E3D8;border-radius:11px 11px 3px 11px;padding:5px 10px;
+    font-family:"Noto Sans JP",sans-serif;font-size:15.5px;font-weight:700;color:#1B2A44;line-height:1.4;position:relative;}
+  .hov{align-self:flex-end;display:flex;gap:6px;}
+  .hov span{display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:8px;border:1.5px solid #D1D1D1;background:#fff;}
+  .hov span svg{width:22px;height:22px;}
+  .hov span.on{border:2.5px solid #F59E0B;background:#FFFBEB;}
+  .tip{align-self:flex-end;font-size:15.5px;font-weight:900;color:#92400E;background:#FFFBEB;border:2.5px solid #F59E0B;border-radius:7px;padding:5px 11px;position:relative;}
+  .note{align-self:flex-end;font-size:14px;font-weight:800;color:#6B7280;}
+  
+  .fld{flex:1;display:flex;flex-direction:column;justify-content:center;gap:1px;border:1.5px solid #D1D1D1;border-radius:9px;padding:2px 10px;}
+  .fld .l{font-size:14.5px;font-weight:900;color:#374151;}
+  .fld .v{display:flex;align-items:center;gap:7px;font-size:15.5px;font-weight:700;color:#9CA3AF;}
+  .fld .v svg{width:20px;height:20px;}
+  .tg{width:46px;height:24px;border-radius:999px;background:#0F766E;position:relative;flex:0 0 auto;}
+  .tg::after{content:"";position:absolute;right:3px;top:3px;width:18px;height:18px;border-radius:50%;background:#fff;}
+  .save{align-self:flex-end;font-size:16px;font-weight:900;color:#fff;background:#0F6CBD;border-radius:7px;padding:4px 18px;box-shadow:0 0 0 3px #F59E0B;}
+  .tabs{display:flex;gap:6px;}
+  .tabs span{font-size:15px;font-weight:900;padding:2px 10px;border-radius:999px;background:#F1F5F9;color:#64748B;}
+  .tabs span.on{background:#CCFBF1;color:#134E4A;}
+  .item{display:flex;align-items:center;gap:7px;border:1.5px solid #E1DFDD;border-radius:9px;padding:5px 9px;font-size:15.5px;font-weight:900;color:#1B2A44;}
+  .acts{flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;gap:5px;}
+  .acts span{display:flex;align-items:center;gap:5px;white-space:nowrap;border:1.5px solid #D1D1D1;border-radius:8px;padding:2px 6px;font-size:14.5px;font-weight:800;color:#242424;}
+  .acts span svg{width:20px;height:20px;flex:0 0 auto;}
+  .acts span.hot{border:2.5px solid #F59E0B;background:#FFFBEB;color:#92400E;}
+  .warnbar .ws span b{color:#B91C1C;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const sv=(p,c)=>`<svg viewBox="0 0 24 24" fill="none" stroke="${c||'#242424'}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={warn:'<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18v.5"/>',clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  copy:'<rect x="8" y="8" width="12" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h2"/>',
+  pen:'<path d="M4 20h4L19 9l-4-4L4 16z"/>',mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>',
+  rep:'<path d="M4 12a8 8 0 0 1 14-5l2 2M20 12a8 8 0 0 1-14 5l-2-2"/><path d="M20 4v5h-5M4 20v-5h5"/>',
+  play:'<path d="M7 4l13 8-13 8z"/>',pause:'<path d="M8 5v14M16 5v14"/>',trash:'<path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/>',
+  gear:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/>'};
+const CPI=(w)=>`<img class="msi" src="${A}icons/ms/copilot.png" alt="" style="width:${w||24}px;height:${w||24}px">`;
+const defs=`<defs><filter id="sh" x="-30%" y="-30%" width="160%" height="170%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#134E4A" flood-opacity=".25"/></filter></defs>`;
+/* ① 吹き出しにマウスのポインター、時計のボタン */
+const s1=`<svg viewBox="0 0 388 84" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">${defs}
+  <rect width="388" height="84" fill="#E6F6F3"/>
+  <g filter="url(#sh)"><rect x="30" y="14" width="170" height="40" rx="12" fill="#fff" stroke="#7DD3C4" stroke-width="2"/></g>
+  <rect x="44" y="26" width="120" height="7" rx="3.5" fill="#99E2D6"/><rect x="44" y="38" width="90" height="7" rx="3.5" fill="#CBD5E1"/>
+  <g filter="url(#sh)"><rect x="168" y="58" width="22" height="22" rx="5" fill="#FFFBEB" stroke="#F59E0B" stroke-width="2.5"/></g>
+  <circle cx="179" cy="69" r="6" fill="none" stroke="#92400E" stroke-width="2"/><path d="M179 66v3l2 1.5" stroke="#92400E" stroke-width="1.8" fill="none"/>
+  <path d="M186 64 l0 20 l5 -5 l4 8 l4 -2 l-4 -8 l7 0 z" fill="#fff" stroke="#1F2937" stroke-width="2" stroke-linejoin="round"/>
+</svg>`;
+/* ② 時計・くり返し・メール の3つを決める */
+const s2=`<svg viewBox="0 0 388 84" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">${defs}
+  <rect width="388" height="84" fill="#E6F6F3"/>
+  ${[0,1,2].map(i=>`<g filter="url(#sh)"><circle cx="${48+i*72}" cy="42" r="26" fill="#fff" stroke="#0F766E" stroke-width="3"/></g>`).join('')}
+  <circle cx="48" cy="42" r="14" fill="none" stroke="#134E4A" stroke-width="3"/><path d="M48 34v8l6 4" stroke="#134E4A" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M108 42a12 12 0 0 1 21-8M132 42a12 12 0 0 1-21 8" fill="none" stroke="#134E4A" stroke-width="3" stroke-linecap="round"/><path d="M129 28v7h-7M111 56v-7h7" fill="none" stroke="#134E4A" stroke-width="3" stroke-linecap="round"/>
+  <rect x="178" y="32" width="28" height="20" rx="3" fill="none" stroke="#134E4A" stroke-width="3"/><path d="M178 34l14 10 14-10" fill="none" stroke="#134E4A" stroke-width="3"/>
+</svg>`;
+/* ③ 一覧の中の1件に、再生・停止・ゴミ箱 */
+const s3=`<svg viewBox="0 0 388 84" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">${defs}
+  <rect width="388" height="84" fill="#E6F6F3"/>
+  <g filter="url(#sh)"><rect x="24" y="10" width="200" height="66" rx="9" fill="#fff" stroke="#7DD3C4" stroke-width="2"/></g>
+  ${[0,1,2].map(i=>`<rect x="34" y="${20+i*18}" width="12" height="12" rx="3" fill="${i===0?'#0F766E':'#CBD5E1'}"/><rect x="52" y="${23+i*18}" width="${[100,84,92][i]}" height="6" rx="3" fill="${i===0?'#1B2A44':'#CBD5E1'}"/>`).join('')}
+  <g transform="translate(160 18)"><path d="M0 0l10 6-10 6z" fill="#0F766E"/><rect x="18" y="0" width="3.5" height="12" fill="#D97706"/><rect x="25" y="0" width="3.5" height="12" fill="#D97706"/><path d="M38 2h12M41 2v-2h6v2M40 3l1 10h6l1-10" fill="none" stroke="#DC2626" stroke-width="2"/></g>
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="pills">
+      <div class="vol-pill"><small>M365 Copilot</small>Vol.7-2</div>
+      <div class="lic-pill paid">M365 Copilot ライセンスが要る</div>
+    </div>
+    <div class="title-text">Copilotのプロンプトを<span class="hl">決まった時刻に<br>動かす3ステップ</span></div>
+    <div class="title-apps"><img class="msi" src="${A}icons/ms/copilot.png" alt=""><span class="pl">＋</span><img class="msi" src="${A}icons/ms/outlook.svg" alt=""><img class="msi" src="${A}icons/ms/teams.svg" alt=""></div>
+    <img class="title-chara" src="${A}chara/chara_point.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip app">${CPI(34)}</div>
+    <div class="txt">一度送ったプロンプトにポインターを合わせ、<b>［このプロンプトをスケジュールする］</b>を選びます。<br>止める・直すは、右上の設定メニューの<b>［スケジュールされたプロンプト］</b>から</div>
+  </div>
+
+  <div class="stage">
+    <div class="col info">
+      <div class="ch2"><span class="n">1</span>プロンプトに合わせる</div>
+      <div class="scene">${s1}<img class="chara" src="${A}chara/chara_laptop.png" alt=""></div>
+      <div class="mock seg">
+        <div class="hd">${CPI()}Copilot Chat<span class="repro">説明用の再現</span></div>
+        <div class="bd">
+          <div class="pr">今日の会議ごとに、議題と<br>事前に読むメール・資料を<br>まとめてください。</div>
+          <div class="tip">このプロンプトをスケジュールする</div>
+          <div class="note">プロンプトにポインターを合わせると出る</div>
+        </div>
+      </div>
+      <div class="cap">まず1回ふつうに送って、<br>答えが良かったプロンプトを選ぶ</div>
+    </div>
+
+    <div class="col info">
+      <div class="ch2"><span class="n">2</span>いつ・何回・通知を決める</div>
+      <div class="scene">${s2}<img class="chara" src="${A}chara/chara_think.png" alt=""></div>
+      <div class="mock seg">
+        <div class="hd">${sv(P.clock,'#0F766E').replace('<svg','<svg style="width:22px;height:22px"')}スケジュール<span class="repro">説明用の再現</span></div>
+        <div class="bd">
+          <div class="fld"><span class="l">いつ実行するか</span><span class="v">${sv(P.clock,'#9CA3AF')}時刻と頻度を選ぶ</span></div>
+          <div class="fld"><span class="l">何回実行するか</span><span class="v">${sv(P.rep,'#9CA3AF')}回数を選ぶ</span></div>
+          <div class="fld" style="flex-direction:row;align-items:center;justify-content:space-between"><span class="l">メールで通知</span><span class="tg"></span></div>
+          <div class="save">保存</div>
+        </div>
+      </div>
+      <div class="cap">答えはチャットの一覧に<b>太字</b>で届く</div>
+    </div>
+
+    <div class="col info">
+      <div class="ch2"><span class="n">3</span>一覧で止める・直す</div>
+      <div class="scene">${s3}<img class="chara" src="${A}chara/chara_guts.png" alt=""></div>
+      <div class="mock seg">
+        <div class="hd">${sv(P.gear,'#424242').replace('<svg','<svg style="width:22px;height:22px"')}スケジュールされたプロンプト<span class="repro">再現</span></div>
+        <div class="bd">
+          <div class="tabs"><span class="on">アクティブ</span></div>
+          <div class="item">${CPI(22)}今日の会議の準備</div>
+          <div class="acts">
+            <span>${sv(P.play,'#0F766E')}今すぐ実行</span>
+            <span class="hot">${sv(P.pause,'#92400E')}オフにする</span>
+            <span>${sv(P.pen,'#424242')}スケジュールの編集</span>
+            <span>${sv(P.trash,'#DC2626')}削除</span>
+          </div>
+        </div>
+      </div>
+      <div class="cap">休暇中は<b>オフにする</b>、<br>いらなくなったら<b>削除</b></div>
+    </div>
+  </div>
+
+  <div class="warnbar">
+    <span class="na" style="width:30px;height:30px;color:#C2410C">${svgw(P.warn,2.4)}</span>
+    <span class="wl">使う前に確認</span>
+    <span class="ws">
+      <span>使う人ごとに <b>M365 Copilot ライセンス</b></span>
+      <span>1人<b>最大10件</b>まで</span>
+      <span>接続エクスペリエンスがオフだと出てこない</span>
+      <span>Copilot Chat・Teams・Outlook（Web・デスクトップ）で使える</span>
+    </span>
+  </div>
+  <div class="src">出典：Microsoft サポート「よく使う Copilot プロンプトのスケジュールを設定する」／Microsoft Learn「Manage Scheduled Prompts for Microsoft Copilot」（ms.date 2026-08-24）／画面は説明用の再現</div>
+`;
+</script>
+</body>
+</html>

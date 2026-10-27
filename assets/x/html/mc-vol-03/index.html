@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>M365 Copilot Vol.3-1 自動応答とフラグ付けを、設定画面を探さずOutlookに1文で頼む</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/mc-base.css">
+<style>
+  /* 型B：流れ3列（休む前に自動応答 → 休む前に上司の未読へフラグ → 戻ったら自動応答オフ）*/
+  .col.info{gap:7px;}
+  .scene{height:98px;}
+  .scene .chara{height:112px;bottom:-8px;}
+  .ch2 small{font-size:15px;font-weight:900;color:#fff;background:var(--mc-mid);border-radius:999px;padding:2px 9px;margin-left:2px;}
+  /* Copilot の欄（Outlook）*/
+  .cp{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:2px solid var(--mc-line);border-radius:11px;overflow:hidden;
+    box-shadow:0 4px 10px rgba(15,60,55,.13);}
+  .cp .hd{flex:0 0 auto;display:flex;align-items:center;gap:7px;padding:5px 10px;background:#F3F2F1;border-bottom:1px solid #E1DFDD;font-size:15px;font-weight:700;}
+  .cp .bd{flex:1;min-height:0;display:flex;flex-direction:column;gap:6px;padding:7px 9px;}
+  .ask{align-self:flex-end;max-width:96%;background:#E8F4F2;border:1.5px solid #A7E3D8;border-radius:11px 11px 3px 11px;padding:5px 10px;}
+  .ask .en{font-family:"Segoe UI",sans-serif;font-size:17px;font-weight:700;color:#1B2A44;line-height:1.3;}
+  .ask .ja{display:block;font-size:14px;font-weight:800;color:var(--mc);margin-top:1px;}
+  .res{flex:1;min-height:0;display:flex;flex-direction:column;gap:4px;background:#FAFAFA;border:1.5px solid #E1DFDD;border-radius:11px 11px 11px 3px;padding:6px 9px;}
+  .res .rh{flex:0 0 auto;display:flex;align-items:center;gap:6px;font-size:15px;font-weight:900;color:var(--mc-dark);}
+  .kv{flex:1;display:flex;align-items:center;gap:7px;font-size:15.5px;font-weight:700;color:#1B2A44;line-height:1.3;}
+  .kv .k{flex:0 0 46px;font-size:13.5px;font-weight:900;color:#fff;background:var(--mc);border-radius:5px;text-align:center;padding:2px 0;}
+  .kv b{color:#B91C1C;}
+  .draft{font-size:15.5px;font-weight:700;color:#374151;background:#fff;border:1.5px dashed #99E2D6;border-radius:7px;padding:4px 8px;line-height:1.35;}
+  /* フラグの結果 */
+  .fr{flex:1;display:flex;align-items:center;gap:7px;border-bottom:1px solid #EFEDEB;font-size:15.5px;font-weight:700;color:#242424;}
+  .fr:last-child{border-bottom:none;}
+  .fr .who{flex:0 0 74px;font-weight:800;white-space:nowrap;}
+  .fr .sb{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#424242;}
+  .fr .fl{flex:0 0 auto;width:26px;height:26px;}
+  /* オフ */
+  .tg{flex:1;display:flex;align-items:center;justify-content:center;gap:12px;font-size:17px;font-weight:900;color:#1B2A44;}
+  .tg .sw{width:64px;height:34px;border-radius:999px;background:#C8C6C4;position:relative;flex:0 0 auto;}
+  .tg .sw::after{content:"";position:absolute;left:4px;top:4px;width:26px;height:26px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.3);}
+  .alt{flex:0 0 auto;font-size:14.5px;font-weight:800;color:#374151;background:#F0FDFA;border:1.5px solid #A7E3D8;border-radius:7px;padding:3px 8px;line-height:1.35;}
+  .alt .en{font-family:"Segoe UI",sans-serif;font-size:15.5px;color:#134E4A;font-weight:700;}
+  .cap{font-size:15.5px;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>'};
+const FLAG=`<svg class="fl" viewBox="0 0 24 24"><path d="M6 3v19" stroke="#7F1D1D" stroke-width="2.4" stroke-linecap="round"/><path d="M6 4h12l-3 4.5 3 4.5H6z" fill="#DC2626"/></svg>`;
+const CPI=`<img class="msi" src="${A}icons/ms/copilot.png" alt="" style="width:24px;height:24px">`;
+
+/* ① 休む前：カレンダーの来週金曜に丸＋スーツケース */
+const s1=`<svg viewBox="0 0 388 98" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs><filter id="f1" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#134E4A" flood-opacity=".25"/></filter>
+  <linearGradient id="sc1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F97316"/><stop offset="1" stop-color="#C2410C"/></linearGradient></defs>
+  <rect width="388" height="98" fill="#E6F6F3"/>
+  <g transform="translate(24 0) scale(0.875)">
+  <g filter="url(#f1)"><rect x="18" y="10" width="170" height="92" rx="8" fill="#fff" stroke="#7DD3C4" stroke-width="2"/>
+  <rect x="18" y="10" width="170" height="20" rx="8" fill="#0F766E"/><rect x="18" y="22" width="170" height="8" fill="#0F766E"/>
+  <text x="103" y="25" text-anchor="middle" font-family="Noto Sans JP" font-size="13" font-weight="900" fill="#fff">10月</text>
+  ${['月','火','水','木','金'].map((d,i)=>`<text x="${40+i*31}" y="46" text-anchor="middle" font-family="Noto Sans JP" font-size="12" font-weight="900" fill="#64748B">${d}</text>`).join('')}
+  ${[13,14,15,16,17,20,21,22,23,24].map((n,i)=>`<text x="${40+(i%5)*31}" y="${68+Math.floor(i/5)*24}" text-anchor="middle" font-family="Roboto Mono" font-size="14" font-weight="700" fill="${n===24?'#B91C1C':'#334155'}">${n}</text>`).join('')}</g>
+  <circle cx="164" cy="87" r="14" fill="none" stroke="#DC2626" stroke-width="3.2"/>
+  <rect x="196" y="4" width="112" height="24" rx="12" fill="#DC2626"/><text x="252" y="21" text-anchor="middle" font-family="Noto Sans JP" font-size="14" font-weight="900" fill="#fff">この日は休み</text>
+  <g filter="url(#f1)" transform="translate(222 38)"><rect x="12" y="-8" width="22" height="12" rx="4" fill="none" stroke="#7C2D12" stroke-width="3.5"/>
+  <rect x="0" y="2" width="46" height="56" rx="7" fill="url(#sc1)"/><rect x="0" y="22" width="46" height="5" fill="#FDBA74"/>
+  <circle cx="10" cy="60" r="4" fill="#334155"/><circle cx="36" cy="60" r="4" fill="#334155"/></g>
+</g>
+</svg>`;
+/* ② 封筒の山のうち、上司の3通にだけ赤い旗 */
+const env=(x,y,r,f)=>`<g transform="translate(${x} ${y}) rotate(${r})" filter="url(#f2)">
+  <rect x="-24" y="-16" width="48" height="32" rx="4" fill="#fff" stroke="${f?'#DC2626':'#B6C2CF'}" stroke-width="${f?2:1.2}"/>
+  <path d="M-24 -14 L0 3 L24 -14" fill="none" stroke="${f?'#E57373':'#B6C2CF'}" stroke-width="2"/>
+</g>`;
+const flg=(x,y,r)=>`<g transform="translate(${x} ${y}) rotate(${r})" filter="url(#f2)"><path d="M14 -34v26" stroke="#7F1D1D" stroke-width="2.6"/><path d="M14 -34h18l-5 6 5 6h-18z" fill="#DC2626"/></g>`;
+const s2=`<svg viewBox="0 0 388 98" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs><filter id="f2" x="-40%" y="-60%" width="180%" height="200%"><feDropShadow dx="0" dy="2" stdDeviation="1.5" flood-color="#134E4A" flood-opacity=".22"/></filter></defs>
+  <rect width="388" height="98" fill="#E6F6F3"/>
+  <g transform="translate(70 0) scale(0.875)">
+  ${[[40,86,-6,0],[96,88,5,1],[150,86,-3,0],[204,88,7,0],[68,56,8,0],[122,58,-6,1],[178,56,4,0],[232,60,-8,1],[150,30,6,0],[96,30,-5,0]].map(e=>env(...e)).join('')}
+  ${[[96,88,5],[122,58,-6],[232,60,-8]].map(e=>flg(...e)).join('')}
+  <rect x="236" y="74" width="118" height="26" rx="13" fill="#DC2626"/><text x="295" y="92" text-anchor="middle" font-family="Noto Sans JP" font-size="14" font-weight="900" fill="#fff">上司の未読だけ</text>
+</g>
+</svg>`;
+/* ③ 戻った日：机にコーヒー、自動応答のスイッチがオフ */
+const s3=`<svg viewBox="0 0 388 98" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs><filter id="f3" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#134E4A" flood-opacity=".25"/></filter>
+  <linearGradient id="dk3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C08457"/><stop offset="1" stop-color="#9A6440"/></linearGradient>
+  <linearGradient id="cup3" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#E2E8F0"/></linearGradient></defs>
+  <rect width="388" height="98" fill="#E6F6F3"/><rect x="0" y="84" width="388" height="14" fill="url(#dk3)"/>
+  <g transform="translate(24 0) scale(0.875)">
+  <g filter="url(#f3)"><rect x="20" y="14" width="150" height="70" rx="10" fill="#fff" stroke="#7DD3C4" stroke-width="2"/>
+  <text x="34" y="40" font-family="Noto Sans JP" font-size="14" font-weight="900" fill="#134E4A">自動応答</text>
+  <rect x="34" y="50" width="62" height="26" rx="13" fill="#C8C6C4"/><circle cx="47" cy="63" r="10" fill="#fff"/>
+  <text x="106" y="69" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#475569">オフ</text></g>
+  <g filter="url(#f3)"><ellipse cx="215" cy="95" rx="26" ry="5" fill="#CBD5E1"/><path d="M196 62h38l-4 32h-30z" fill="url(#cup3)" stroke="#94A3B8" stroke-width="1.2"/>
+  <path d="M234 68c10 0 10 16 0 16" fill="none" stroke="#94A3B8" stroke-width="3"/><ellipse cx="215" cy="62" rx="19" ry="4" fill="#7C4A2D"/></g>
+  <path d="M206 52c-4-6 4-8 0-14M218 52c-4-6 4-8 0-14" fill="none" stroke="#94A3B8" stroke-width="2" stroke-linecap="round"/>
+</g>
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="pills">
+      <div class="vol-pill"><small>M365 Copilot</small>Vol.3-1</div>
+      <div class="lic-pill free">無料の Copilot Chat でできる</div>
+    </div>
+    <div class="title-text">自動応答とフラグ付けを、<span class="hl">設定画面を<br>探さず</span>Outlookに1文で頼む</div>
+    <div class="title-apps"><img class="msi" src="${A}icons/ms/outlook.svg" alt=""><span class="pl">＋</span><img class="msi" src="${A}icons/ms/copilot.png" alt=""></div>
+    <img class="title-chara" src="${A}chara/chara_smile.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip app"><img class="msi" src="${A}icons/ms/outlook.svg" alt="" style="width:34px;height:34px"></div>
+    <div class="txt">Outlook の［Copilot］は、聞くだけでなく<b>操作まで</b>頼めます。ライセンスがなくても可。<br>手順ページは<b>今は英語のみ対応</b>なので、英語の1文で頼むのが確実です</div>
+  </div>
+
+  <div class="stage">
+    <div class="col info">
+      <div class="ch2"><span class="n">1</span>休む前：自動応答を頼む</div>
+      <div class="scene">${s1}<img class="chara" src="${A}chara/chara_laptop.png" alt=""></div>
+      <div class="cp seg">
+        <div class="hd">${CPI}Copilot（Outlook）<span class="repro">説明用の再現</span></div>
+        <div class="bd">
+          <div class="ask"><span class="en">Set up an automatic reply for next Friday.</span><span class="ja">来週の金曜日の自動応答を設定して</span></div>
+          <div class="res">
+            <div class="rh">${CPI}自動応答の下書き</div>
+            <div class="kv"><span class="k">期間</span><span><b>10/24（金）</b>終日</span></div>
+            <div class="draft">10/24は不在です。10/27以降に返信します。</div>
+          </div>
+        </div>
+      </div>
+      <div class="cap">前回の不在メッセージの書き方から<br>下書きが出る。読んで<b>確認すると設定</b></div>
+    </div>
+
+    <div class="col info">
+      <div class="ch2"><span class="n">2</span>休む前：上司の未読に旗</div>
+      <div class="scene">${s2}<img class="chara" style="left:6px;right:auto" src="${A}chara/chara_point.png" alt=""></div>
+      <div class="cp seg">
+        <div class="hd">${CPI}Copilot（Outlook）<span class="repro">説明用の再現</span></div>
+        <div class="bd">
+          <div class="ask"><span class="en">Flag all unread emails from my manager.</span><span class="ja">上司からの未読メールをすべてフラグ</span></div>
+          <div class="res">
+            <div class="fr"><span class="who">田中 部長</span><span class="sb">見積の再確認</span>${FLAG}</div>
+            <div class="fr"><span class="who">田中 部長</span><span class="sb">来期の体制について</span>${FLAG}</div>
+            <div class="fr"><span class="who">田中 部長</span><span class="sb">RE: 10月の出張</span>${FLAG}</div>
+          </div>
+        </div>
+      </div>
+      <div class="cap">休む前に<b>旗の付いた分だけ</b>片づける。<br>5通を超えると［確認］カードが出る</div>
+    </div>
+
+    <div class="col info">
+      <div class="ch2"><span class="n">3</span>戻ったら：自動応答をオフ</div>
+      <div class="scene">${s3}<img class="chara" src="${A}chara/chara_guts.png" alt=""></div>
+      <div class="cp seg">
+        <div class="hd">${CPI}Copilot（Outlook）<span class="repro">説明用の再現</span></div>
+        <div class="bd">
+          <div class="ask"><span class="en">Turn off my automatic replies.</span><span class="ja">自動応答をオフにして</span></div>
+          <div class="res">
+            <div class="tg"><span class="sw"></span>自動応答：オフ</div>
+            <div class="alt">休みが延びたら<br><span class="en">Update my automatic reply.</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="cap">戻った朝に切り忘れない。<br>設定画面は<b>一度も開かない</b></div>
+    </div>
+  </div>
+
+  <div class="next">
+    <span class="na">${svgw(P.arrow,3)}</span>
+    <span>英語の1文はそのままコピーして使えます。<b>頼める文の早見表は2枚目へ</b></span>
+  </div>
+  <div class="src">出典：Microsoft サポート「Copilot in Outlook とチャットする」「Outlook で Microsoft Copilot を使用して自動応答を管理する」「Outlook で Microsoft Copilot を使用してメールをトリアージする」／画面は説明用の再現、人名・件名は架空</div>
+`;
+</script>
+</body>
+</html>

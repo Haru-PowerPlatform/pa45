@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>M365 Copilot Vol.4-1 Copilotが書いた案内文を、そのまま同僚と一緒に直せるページにする</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/mc-base.css">
+<style>
+  /* 型C：主役モックどーん（左に小さく Before／右いっぱいに Copilot ＋ ページ）*/
+  .stage{gap:11px;}
+  .col.bad{flex:0 0 330px;}
+  .sc{flex:1;min-height:0;position:relative;border-radius:10px;overflow:hidden;background:#FCE4E4;}
+  .sc svg{position:absolute;inset:0;width:100%;height:100%;}
+  .sc .ch{position:absolute;left:4px;bottom:0;height:128px;z-index:2;filter:drop-shadow(0 3px 4px rgba(0,0,0,.25));}
+  .loop{flex:0 0 auto;display:flex;flex-direction:column;gap:5px;}
+  .loop div{display:flex;align-items:center;gap:8px;background:#fff;border:1.5px solid var(--red-line);border-radius:8px;padding:4px 9px;font-size:15.5px;font-weight:800;color:#7F1D1D;}
+  .loop div i{flex:0 0 auto;width:24px;height:24px;border-radius:50%;background:#DC2626;color:#fff;font-style:normal;font-size:13.5px;font-weight:900;display:flex;align-items:center;justify-content:center;}
+  .badline{flex:0 0 auto;background:#DC2626;color:#fff;border-radius:8px;padding:6px 10px;font-size:16px;font-weight:900;line-height:1.3;}
+
+  .hero{flex:1;min-width:0;display:flex;flex-direction:column;gap:7px;}
+  .hero .ph{color:var(--green-dark);}
+  .hero .ph .mk{background:linear-gradient(180deg,#34D399,#16A34A);}
+  .app{flex:1;min-height:0;display:flex;background:#fff;border:2px solid var(--green-line);border-radius:12px;overflow:hidden;box-shadow:0 5px 14px rgba(20,90,60,.16);}
+  /* 左：チャット */
+  .chat{flex:0 0 318px;display:flex;flex-direction:column;border-right:1.5px solid #E1DFDD;background:#FAFAFA;}
+  .chat .hd,.page .hd{flex:0 0 auto;display:flex;align-items:center;gap:7px;padding:6px 10px;background:#F3F2F1;border-bottom:1px solid #E1DFDD;font-size:15px;font-weight:700;}
+  .chat .bd{flex:1;min-height:0;display:flex;flex-direction:column;gap:7px;padding:8px 9px;}
+  .ask{align-self:flex-end;max-width:94%;background:#E8F4F2;border:1.5px solid #A7E3D8;border-radius:11px 11px 3px 11px;padding:5px 9px;
+    font-family:"Noto Sans JP",sans-serif;font-size:15.5px;font-weight:700;color:#1B2A44;line-height:1.38;}
+  .ans{flex:1;min-height:0;background:#fff;border:1.5px solid #E1DFDD;border-radius:11px 11px 11px 3px;padding:6px 9px;font-family:"Noto Sans JP",sans-serif;
+    font-size:15.5px;font-weight:700;color:#374151;line-height:1.4;position:relative;}
+  .ans .ln{height:8px;border-radius:4px;background:#E5E7EB;margin-top:6px;}
+  .tools{flex:0 0 auto;display:flex;align-items:center;gap:12px;padding:0 4px;font-size:18px;color:#616161;font-weight:900;}
+  .tools .dots{border:2.5px solid #F59E0B;border-radius:6px;padding:0 8px;line-height:1.1;color:#242424;}
+  .menu{flex:0 0 auto;background:#fff;border:1.5px solid #D1D1D1;border-radius:9px;box-shadow:0 6px 14px rgba(0,0,0,.18);padding:4px;}
+  .menu div{display:flex;align-items:center;gap:8px;padding:5px 9px;font-size:16px;font-weight:700;border-radius:6px;}
+  .menu .on{background:#FEF3C7;outline:2.5px solid #F59E0B;color:#92400E;font-weight:900;}
+  .menu .off{color:#9CA3AF;}
+  /* 右：ページ */
+  .page{flex:1;min-width:0;display:flex;flex-direction:column;}
+  .page .hd .sh{margin-left:auto;display:flex;align-items:center;gap:5px;background:#fff;border:1.5px solid #C7C7C7;border-radius:6px;padding:2px 9px;font-size:14.5px;font-weight:800;}
+  .page .hd .sh svg{width:20px;height:20px;}
+  .page .bd{flex:1;min-height:0;display:flex;flex-direction:column;gap:6px;padding:9px 14px;font-family:"Noto Sans JP",sans-serif;position:relative;}
+  .pt{font-size:22px;font-weight:900;color:#1B2A44;}
+  .row{flex:1;display:flex;align-items:center;gap:10px;border-bottom:1.2px dashed #E5E7EB;font-size:16.5px;font-weight:700;color:#1B2A44;position:relative;}
+  .row:last-child{border-bottom:none;}
+  .row .k{flex:0 0 74px;font-size:14.5px;font-weight:900;color:#fff;background:var(--mc);border-radius:6px;text-align:center;padding:2px 0;}
+  .row s{color:#9CA3AF;}
+  .row .new{background:#DBEAFE;border-radius:4px;padding:0 4px;color:#1E3A8A;}
+  .row .new2{background:#FCE7F3;border-radius:4px;padding:0 4px;color:#831843;}
+  .cur{position:absolute;right:0;top:50%;transform:translateY(-50%);display:flex;align-items:center;gap:4px;font-size:13.5px;font-weight:900;color:#fff;border-radius:6px;padding:2px 8px;}
+  .cur.b{background:#2563EB;} .cur.p{background:#DB2777;}
+  .live{flex:0 0 auto;display:flex;align-items:center;gap:6px;}
+  .live .av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13.5px;font-weight:900;border:2px solid #fff;margin-left:-6px;}
+  .bot{flex:0 0 auto;display:flex;gap:8px;align-items:stretch;}
+  .bot .metric{flex:0 0 auto;}
+  .bot .uses{flex:1;background:#fff;border:1.5px solid #CFEFE0;border-radius:10px;padding:4px 9px;}
+  .metric .mv{font-size:23px;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',x:'<path d="M6 6l12 12M18 6L6 18"/>',ok:'<path d="M5 12.5l4.5 4.5L19 7"/>',
+  share:'<path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"/><path d="M12 3v12M7 8l5-5 5 5"/>'};
+const CPI=(w)=>`<img class="msi" src="${A}icons/ms/copilot.png" alt="" style="width:${w||24}px;height:${w||24}px">`;
+
+/* Before：版違いの Word ファイルが増えていく */
+const doc=(x,y,r,name,c)=>`<g transform="translate(${x} ${y}) rotate(${r})" filter="url(#df)">
+  <path d="M0 0h62l18 18v70H0z" fill="#fff" stroke="#93A9D6" stroke-width="1.5"/><path d="M62 0v18h18" fill="#E2E8F0" stroke="#93A9D6" stroke-width="1.5"/>
+  <rect x="-8" y="10" width="34" height="30" rx="4" fill="#185ABD"/><text x="9" y="31" text-anchor="middle" font-family="Segoe UI" font-size="18" font-weight="700" fill="#fff">W</text>
+  ${[0,1,2].map(i=>`<rect x="34" y="${28+i*9}" width="${[36,30,34][i]}" height="4" rx="2" fill="#CBD5E1"/>`).join('')}
+  <rect x="6" y="-26" width="78" height="22" rx="4" fill="${c}"/><text x="45" y="-10" text-anchor="middle" font-family="Noto Sans JP" font-size="11.5" font-weight="900" fill="#fff">${name}</text></g>`;
+const sBad=`<svg viewBox="0 0 306 243" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs><filter id="df" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#7F1D1D" flood-opacity=".25"/></filter></defs>
+  <rect width="306" height="243" fill="#FCE4E4"/>
+  <g transform="translate(-6 14) scale(1.0)">${doc(112,34,-5,'案内文_v1','#64748B')}${doc(160,82,4,'v2_佐藤修正','#D97706')}${doc(204,128,-3,'最終(2)','#DC2626')}</g>
+  <text x="270" y="44" font-family="Noto Sans JP" font-size="34" font-weight="900" fill="#DC2626">?</text>
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="pills">
+      <div class="vol-pill"><small>M365 Copilot</small>Vol.4-1</div>
+      <div class="lic-pill free">無料の Copilot Chat でできる</div>
+    </div>
+    <div class="title-text">Copilotが書いた案内文を、<span class="hl">そのまま同僚と<br>一緒に直せるページ</span>にする</div>
+    <div class="title-apps"><img class="msi" src="${A}icons/ms/copilot.png" alt=""><span class="pl">＋</span><img class="msi" src="${A}icons/ms/onedrive.svg" alt=""></div>
+    <img class="title-chara" src="${A}chara/chara_confident.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip app">${CPI(34)}</div>
+    <div class="txt">Copilot の回答の下にある［…］から<b>［Pages で編集］</b>。回答がそのまま編集できるページになり、<br>リンクを渡せば同僚と<b>同時に</b>直せます。Microsoft 365 Copilot ライセンスがなくても使えます</div>
+  </div>
+
+  <div class="stage">
+    <div class="col bad">
+      <div class="ph"><span class="mk">${svgw(P.x,3.2)}</span>コピペで回すと</div>
+      <div class="sc">${sBad}<img class="ch" src="${A}chara/chara_trouble.png" alt=""></div>
+      <div class="loop">
+        <div><i>1</i>回答をコピーして Word に貼る</div>
+        <div><i>2</i>ファイルを添付して送る</div>
+        <div><i>3</i>返ってきた版をまた合わせる</div>
+      </div>
+      <div class="badline">✕ どれが最新か分からなくなる</div>
+    </div>
+
+    <div class="hero">
+      <div class="ph"><span class="mk">${svgw(P.ok,3.2)}</span>［Pages で編集］にすると</div>
+      <div class="app seg">
+        <div class="chat">
+          <div class="hd">${CPI()}Copilot Chat<span class="repro">説明用の再現</span></div>
+          <div class="bd">
+            <div class="ask">11月の新人向け Excel 研修の案内文を作ってください。</div>
+            <div class="ans">11月 Excel 研修のご案内<div class="ln" style="width:92%"></div><div class="ln" style="width:78%"></div><div class="ln" style="width:85%"></div><div class="ln" style="width:70%"></div><div class="ln" style="width:88%"></div></div>
+            <div class="tools"><span><svg viewBox="0 0 24 24" style="width:24px;height:24px" fill="none" stroke="#616161" stroke-width="2" stroke-linejoin="round"><path d="M7 10v10H4V10zM7 10l4-7c2 0 3 1 2.5 3L13 10h6a2 2 0 0 1 2 2.3l-1.2 6A2 2 0 0 1 17.8 20H7"/></svg></span><span><svg viewBox="0 0 24 24" style="width:24px;height:24px" fill="none" stroke="#616161" stroke-width="2" stroke-linejoin="round"><rect x="8" y="8" width="12" height="13" rx="2"/><path d="M16 8V5a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h2"/></svg></span><span class="dots">…</span></div>
+            <div class="menu"><div class="on">${svgw('<path d="M4 20h4L19 9l-4-4L4 16z"/>',2.4).replace('class="ic"','class="ic" style="width:22px;height:22px;flex:0 0 auto"')}Pages で編集</div></div>
+          </div>
+        </div>
+        <div class="page">
+          <div class="hd">ページ<div class="live"><span class="av" style="background:#0F766E;margin-left:6px">私</span><span class="av" style="background:#2563EB">佐</span><span class="av" style="background:#DB2777">鈴</span></div>
+            <span class="sh">${svgw(P.share,2.4)}共有</span></div>
+          <div class="bd">
+            <div class="pt">11月 Excel 研修のご案内</div>
+            <div class="row"><span class="k">日時</span>11/12（水）14:00〜16:00</div>
+            <div class="row"><span class="k">場所</span><s>第2会議室</s> <span class="new">7F 大会議室</span><span class="cur b">佐藤 が編集中</span></div>
+            <div class="row"><span class="k">対象</span>今年4月入社の方</div>
+            <div class="row"><span class="k">持ち物</span>ノートPC・<span class="new2">電源アダプター</span><span class="cur p">鈴木 が追加</span></div>
+            <div class="row"><span class="k">申込</span>11/5（水）までにこのページに名前を書く</div>
+          </div>
+        </div>
+      </div>
+      <div class="bot">
+        <div class="metric"><span class="ml">案内文の版</span><span class="mv">ファイル3つ</span><span class="ar">${svgw(P.arrow,3)}</span><span class="mv to">ページ1枚</span></div>
+        <div class="uses"><span class="ul">使いどころ</span><span class="u">研修の案内</span><span class="u">社内イベント</span><span class="u">手順のたたき台</span><span class="u">会議のメモ</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="next">
+    <span class="na">${svgw(P.arrow,3)}</span>
+    <span>ページにする・共有する・一緒に直す。<b>3ステップは2枚目へ</b></span>
+  </div>
+  <div class="src">出典：Microsoft サポート「Microsoft Copilot ページの使用を開始する」「Microsoft Copilot ページを共有する」／Microsoft Learn「Frequently asked questions about Microsoft Copilot Chat」／画面は説明用の再現、人名・研修は架空</div>
+`;
+</script>
+</body>
+</html>

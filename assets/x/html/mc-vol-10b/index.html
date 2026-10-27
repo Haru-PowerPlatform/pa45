@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>M365 Copilot Vol.10-2 Wordの要約を開くたびに出す条件と、読み進め方の3ステップ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/mc-base.css">
+<style>
+  /* 型B：流れ3列（OneDrive/SharePoint に置いて開く → 詳細を表示 → 気になる点を Copilot Chat で聞く）*/
+  .col.info{gap:7px;}
+  .scene{height:84px;}
+  .scene .chara{height:98px;bottom:-8px;}
+  .mock{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:2px solid var(--mc-line);border-radius:11px;overflow:hidden;box-shadow:0 4px 10px rgba(15,60,55,.13);}
+  .mock .hd{flex:0 0 auto;display:flex;align-items:center;gap:7px;padding:5px 10px;background:#185ABD;color:#fff;border-bottom:1px solid #E1DFDD;font-size:15px;font-weight:700;}
+  .mock .hd .repro{color:#DBEAFE;}
+  .mock .hd.cp{background:#F3F2F1;color:#242424;}
+  .mock .hd.cp .repro{color:#8A8886;}
+  .mock .bd{flex:1;min-height:0;display:flex;flex-direction:column;gap:6px;padding:8px 10px;}
+  .loc{flex:1;display:flex;align-items:center;gap:9px;border:1.5px solid #D8EFEA;border-radius:9px;padding:3px 10px;font-size:15.5px;font-weight:800;color:#1B2A44;}
+  .loc .r{margin-left:auto;font-size:14px;font-weight:900;border-radius:999px;padding:1px 9px;white-space:nowrap;}
+  .loc .r.ok{background:#DCFCE7;color:#065F46;} .loc .r.ng{background:#FEF3C7;color:#92400E;}
+  .loc svg{width:26px;height:26px;flex:0 0 auto;}
+  .sum{flex:1;min-height:0;display:flex;flex-direction:column;gap:4px;border:2.5px solid #F59E0B;border-radius:10px;padding:6px 9px;font-family:"Noto Sans JP",sans-serif;}
+  .sum .sh{display:flex;align-items:center;gap:6px;font-size:15.5px;font-weight:900;color:#1B2A44;}
+  .sum .li{display:flex;align-items:center;gap:7px;font-size:15px;font-weight:700;color:#374151;}
+  .sum .li .dot{flex:0 0 auto;width:7px;height:7px;border-radius:50%;background:#0F766E;}
+  .sum .ln{flex:1;height:7px;border-radius:4px;background:#E5E7EB;}
+  .dt{align-self:flex-start;font-size:15px;font-weight:900;color:#185ABD;border:2.5px solid #F59E0B;background:#FFFBEB;border-radius:7px;padding:2px 10px;}
+  .full{flex:0 0 auto;display:flex;flex-direction:column;gap:3px;background:#F0FDFA;border:1.5px dashed #7DD3C4;border-radius:8px;padding:5px 9px;font-size:14.5px;font-weight:800;color:#134E4A;}
+  .pills{display:flex;gap:6px;align-items:center;}
+  .pills span{font-size:14px;font-weight:800;color:#6B7280;background:#F3F4F6;border:1.5px solid #E5E7EB;border-radius:999px;padding:1px 10px;}
+  .pills span.on{border:2.5px solid #F59E0B;background:#FFFBEB;color:#92400E;}
+  .ask{align-self:flex-end;max-width:96%;background:#E8F4F2;border:1.5px solid #A7E3D8;border-radius:11px 11px 3px 11px;padding:5px 10px;
+    font-family:"Noto Sans JP",sans-serif;font-size:15.5px;font-weight:700;color:#1B2A44;line-height:1.4;}
+  .ask .el{display:block;font-size:13.5px;font-weight:900;color:var(--mc);}
+  .ans{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:space-around;background:#FAFAFA;border:1.5px solid #E1DFDD;border-radius:9px;padding:5px 9px;font-family:"Noto Sans JP",sans-serif;}
+  .ans div{display:flex;align-items:center;gap:7px;font-size:15px;font-weight:700;color:#1B2A44;}
+  .ans .d{flex:0 0 auto;font-family:"Roboto Mono",monospace;font-size:13.5px;font-weight:700;color:#fff;background:#B91C1C;border-radius:5px;padding:0 6px;}
+  .warnbar .ws span b{color:#B91C1C;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const sv=(p,c)=>`<svg viewBox="0 0 24 24" fill="none" stroke="${c||'#242424'}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={warn:'<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18v.5"/>',pc:'<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/>'};
+const CPI=(w)=>`<img class="msi" src="${A}icons/ms/copilot.png" alt="" style="width:${w||24}px;height:${w||24}px">`;
+const WDI=(w)=>`<img class="msi" src="${A}icons/ms/word.svg" alt="" style="width:${w||22}px;height:${w||22}px">`;
+const defs=`<defs><filter id="sh" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#134E4A" flood-opacity=".25"/></filter>
+  <linearGradient id="cl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#38BDF8"/><stop offset="1" stop-color="#0369A1"/></linearGradient></defs>`;
+/* ① 文書が雲（OneDrive/SharePoint）へ */
+const s1=`<svg viewBox="0 0 388 84" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">${defs}
+  <rect width="388" height="84" fill="#E6F6F3"/>
+  <g filter="url(#sh)"><path d="M40 10h36l12 12v54H40z" fill="#fff" stroke="#185ABD" stroke-width="2"/><rect x="34" y="30" width="26" height="22" rx="3" fill="#185ABD"/>
+  <text x="47" y="46" text-anchor="middle" font-family="Segoe UI" font-size="14" font-weight="700" fill="#fff">W</text></g>
+  <path d="M100 44h52" stroke="#0F766E" stroke-width="5" stroke-linecap="round" stroke-dasharray="2 9"/><path d="M146 34l12 10-12 10" fill="none" stroke="#0F766E" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <g filter="url(#sh)"><path d="M184 62h76a16 16 0 0 0 2-32 24 24 0 0 0-45-6 18 18 0 0 0-33 10 14 14 0 0 0 0 28z" fill="url(#cl)"/></g>
+  <path d="M212 46l8 8 16-16" fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>`;
+/* ② 要約カードが下に伸びる */
+const s2=`<svg viewBox="0 0 388 84" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">${defs}
+  <rect width="388" height="84" fill="#E6F6F3"/>
+  <g filter="url(#sh)"><rect x="30" y="10" width="110" height="34" rx="7" fill="#fff" stroke="#F59E0B" stroke-width="2.5"/></g>
+  ${[0,1].map(i=>`<rect x="40" y="${19+i*10}" width="${[80,64][i]}" height="5" rx="2.5" fill="#CBD5E1"/>`).join('')}
+  <path d="M150 28h30" stroke="#0F766E" stroke-width="5" stroke-linecap="round" stroke-dasharray="2 9"/><path d="M174 18l12 10-12 10" fill="none" stroke="#0F766E" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <g filter="url(#sh)"><rect x="196" y="6" width="110" height="74" rx="7" fill="#fff" stroke="#F59E0B" stroke-width="2.5"/></g>
+  ${[0,1,2,3,4].map(i=>`<rect x="206" y="${16+i*12}" width="${[84,70,88,60,76][i]}" height="5" rx="2.5" fill="${i<2?'#99E2D6':'#CBD5E1'}"/>`).join('')}
+</svg>`;
+/* ③ 文書から吹き出し（質問） */
+const s3=`<svg viewBox="0 0 388 84" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">${defs}
+  <rect width="388" height="84" fill="#E6F6F3"/>
+  <g filter="url(#sh)"><path d="M30 8h40l12 12v58H30z" fill="#fff" stroke="#185ABD" stroke-width="2"/></g>
+  ${[0,1,2,3].map(i=>`<rect x="38" y="${28+i*11}" width="${[34,28,36,24][i]}" height="5" rx="2.5" fill="#CBD5E1"/>`).join('')}
+  <g filter="url(#sh)"><path d="M104 14h150a10 10 0 0 1 10 10v26a10 10 0 0 1-10 10H140l-14 12V60h-22a10 10 0 0 1-10-10V24a10 10 0 0 1 10-10z" fill="#fff" stroke="#0F766E" stroke-width="2.5"/></g>
+  <text x="179" y="43" text-anchor="middle" font-family="Noto Sans JP" font-size="15" font-weight="900" fill="#134E4A">期限はどれ？</text>
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="pills2" style="display:flex;flex-direction:column;align-items:flex-start;gap:6px">
+      <div class="vol-pill"><small>M365 Copilot</small>Vol.10-2</div>
+      <div class="lic-pill paid">M365 Copilot ライセンスが要る</div>
+    </div>
+    <div class="title-text">Wordの要約が<span class="hl">開くたびに出る条件</span>と、<br>読み進め方の3ステップ</div>
+    <div class="title-apps"><img class="msi" src="${A}icons/ms/word.svg" alt=""><span class="pl">＋</span><img class="msi" src="${A}icons/ms/onedrive.svg" alt=""><img class="msi" src="${A}icons/ms/sharepoint.svg" alt=""></div>
+    <img class="title-chara" src="${A}chara/chara_point.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip app">${WDI(34)}</div>
+    <div class="txt">自動で出るのは、<b>OneDrive か SharePoint</b> に保存した<b>200語以上</b>の文書。<br>短い文書や手元の PC の文書は、上部の［概要］から作れます</div>
+  </div>
+
+  <div class="stage">
+    <div class="col info">
+      <div class="ch2"><span class="n">1</span>クラウドに置いて開く</div>
+      <div class="scene">${s1}<img class="chara" src="${A}chara/chara_laptop.png" alt=""></div>
+      <div class="mock seg">
+        <div class="hd">${WDI(20)}保存場所で変わる<span class="repro">説明用の再現</span></div>
+        <div class="bd">
+          <div class="loc"><img class="msi" src="${A}icons/ms/onedrive.svg" alt="" style="width:26px;height:26px">OneDrive<span class="r ok">開くと自動</span></div>
+          <div class="loc"><img class="msi" src="${A}icons/ms/sharepoint.svg" alt="" style="width:26px;height:26px">SharePoint<span class="r ok">開くと自動</span></div>
+          <div class="loc">${sv(P.pc,'#64748B')}ほかの場所<span class="r ng">開いてから作る</span></div>
+          <div class="loc" style="border-style:dashed">${WDI(24)}200語未満<span class="r ng">上部の［概要］</span></div>
+        </div>
+      </div>
+      <div class="cap">共有フォルダーの報告書は、<br>そのまま開くだけで出る</div>
+    </div>
+
+    <div class="col info">
+      <div class="ch2"><span class="n">2</span>［詳細を表示］で全文</div>
+      <div class="scene">${s2}<img class="chara" src="${A}chara/chara_think.png" alt=""></div>
+      <div class="mock seg">
+        <div class="hd">${WDI(20)}市場調査報告書.docx<span class="repro">説明用の再現</span></div>
+        <div class="bd">
+          <div class="sum">
+            <div class="sh">${CPI(20)}概要（プレビュー）</div>
+            <div class="li"><span class="dot"></span><span class="ln"></span></div>
+            <div class="li"><span class="dot"></span><span class="ln" style="flex:.8"></span></div>
+            <span class="dt">詳細を表示</span>
+          </div>
+          <div class="full"><span>プレビューの続きの、全体の概要が開く</span><span>どの章から読むか決めてから本文へ</span></div>
+        </div>
+      </div>
+      <div class="cap">プレビューで足りなければ<br><b>［詳細を表示］</b></div>
+    </div>
+
+    <div class="col info">
+      <div class="ch2"><span class="n">3</span>気になる点は聞く</div>
+      <div class="scene">${s3}<img class="chara" src="${A}chara/chara_guts.png" alt=""></div>
+      <div class="mock seg">
+        <div class="hd cp">${CPI(20)}Copilot Chat（Word）<span class="repro">説明用の再現</span></div>
+        <div class="bd">
+          <div class="pills"><span class="on">提案</span><span>提案</span><span style="border:none;background:none">要約の下</span></div>
+          <div class="ask"><span class="el">自分で聞く例</span>11月末までに決めることを、<br>期限つきで並べてください。</div>
+          <div class="ans">
+            <div><span class="d">11/15</span>値下げ案の試算を出す</div>
+            <div><span class="d">11/30</span>価格を据え置くか決める</div>
+          </div>
+        </div>
+      </div>
+      <div class="cap">要約の下の提案を押すと、<br>Copilot Chat が開く</div>
+    </div>
+  </div>
+
+  <div class="warnbar">
+    <span class="na" style="width:30px;height:30px;color:#C2410C">${svgw(P.warn,2.4)}</span>
+    <span class="wl">使う前に確認</span>
+    <span class="ws">
+      <span>使う人ごとに <b>M365 Copilot ライセンス</b></span>
+      <span>出典が毎回つくとは限らない。数字は<b>本文で確かめる</b></span>
+      <span>Word for Microsoft 365（Windows・Mac・iPad・Web）</span>
+    </span>
+  </div>
+  <div class="src">出典：Microsoft サポート「Word の Copilot を使用してドキュメントの要約を作成する」／画面は説明用の再現、報告書・回答は架空の例</div>
+`;
+</script>
+</body>
+</html>

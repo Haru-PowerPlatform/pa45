@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>M365 Copilot Vol.3-2 Outlookの Copilot にそのまま頼める英語の1文 早見表</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/mc-base.css">
+<style>
+  /* 型E：早見表（左に開く場所と確認カードのモック／右に頼める1文の一覧）*/
+  .stage{gap:12px;}
+  .lft{flex:0 0 392px;display:flex;flex-direction:column;gap:8px;min-height:0;}
+  .rgt{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px;min-height:0;}
+  .hd{flex:0 0 auto;display:flex;align-items:center;gap:9px;font-size:22px;font-weight:900;color:var(--mc-dark);}
+  .hd .n{flex:0 0 auto;width:34px;height:34px;border-radius:9px;color:#fff;display:flex;align-items:center;justify-content:center;
+    font-size:19px;font-weight:900;background:linear-gradient(180deg,#14B8A6,#0F766E);box-shadow:0 2px 4px rgba(0,0,0,.22);}
+  /* Outlook の上部 */
+  .top{flex:0 0 auto;display:flex;align-items:center;gap:8px;background:#0F6CBD;border-radius:9px;padding:8px 10px;}
+  .top .sr{flex:1;min-width:0;display:flex;align-items:center;gap:6px;font-size:15.5px;font-weight:700;color:#fff;}
+  .top .cpb{flex:0 0 auto;display:flex;align-items:center;gap:5px;background:#fff;border-radius:7px;padding:4px 11px;font-size:16px;font-weight:800;color:#242424;
+    box-shadow:0 0 0 4px #F59E0B;}
+  /* 確認カード */
+  .pane{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:2px solid var(--mc-line);border-radius:11px;overflow:hidden;box-shadow:0 4px 10px rgba(15,60,55,.13);}
+  .pane .ph2{flex:0 0 auto;display:flex;align-items:center;gap:7px;padding:5px 10px;background:#F3F2F1;border-bottom:1px solid #E1DFDD;font-size:15px;font-weight:700;}
+  .pane .pb{flex:1;min-height:0;display:flex;flex-direction:column;gap:8px;padding:8px 10px;}
+  .ask{align-self:flex-end;max-width:96%;background:#E8F4F2;border:1.5px solid #A7E3D8;border-radius:11px 11px 3px 11px;padding:5px 10px;
+    font-family:"Segoe UI",sans-serif;font-size:16.5px;font-weight:700;color:#1B2A44;line-height:1.3;}
+  .conf{flex:1;min-height:0;display:flex;flex-direction:column;gap:7px;border:2.5px dashed #F59E0B;border-radius:11px;padding:8px 10px;background:#FFFBEB;position:relative;}
+  .conf .cl{font-size:15.5px;font-weight:900;color:#92400E;}
+  .conf .ln{height:9px;border-radius:5px;background:#E5E7EB;}
+  .envs{flex:1;min-height:0;position:relative;}
+  .envs svg{position:absolute;inset:0;width:100%;height:100%;}
+  .btns{flex:0 0 auto;display:flex;gap:8px;}
+  .btns span{flex:1;text-align:center;border-radius:7px;padding:5px 0;font-size:16px;font-weight:800;}
+  .btns .ok{background:#0F6CBD;color:#fff;} .btns .ng{background:#fff;border:1.5px solid #C7C7C7;color:#242424;}
+  .lcap{flex:0 0 auto;font-size:15.5px;font-weight:900;line-height:1.35;border-radius:9px;padding:7px 11px;color:var(--mc-dark);background:#D5F3EE;}
+  .lcap b{color:var(--orange);}
+  /* 早見表 */
+  .trow{gap:10px;padding:4px 5px 4px 10px;}
+  .trow .ico{flex:0 0 auto;width:42px;height:42px;border-radius:10px;background:#CCFBF1;display:flex;align-items:center;justify-content:center;padding:5px;}
+  .trow .ico svg{width:32px;height:32px;}
+  .trow.hot .ico{background:#FED7AA;}
+  .trow .k{flex:0 0 178px;font-size:17px;}
+  .trow .v{flex:1;font-family:"Segoe UI",sans-serif;font-size:17px;font-weight:700;line-height:1.25;color:#134E4A;background:#fff;border:1.5px solid #99E2D6;}
+  .trow .v small{display:block;font-family:"Noto Sans JP",sans-serif;font-size:13.5px;font-weight:800;color:var(--weak);}
+  .grp{flex:0 0 auto;font-size:14.5px;font-weight:900;color:#fff;background:var(--mc);border-radius:999px;padding:2px 12px;align-self:flex-start;}
+  .grp.o{background:#C2410C;}
+  .warnbar .ws span b{color:#B91C1C;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={warn:'<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18v.5"/>'};
+const CPI=(w)=>`<img class="msi" src="${A}icons/ms/copilot.png" alt="" style="width:${w||24}px;height:${w||24}px">`;
+/* 行ごとのミニ図（その内容そのもの）*/
+const cal=(c,t)=>`<svg viewBox="0 0 32 32"><rect x="3" y="6" width="26" height="23" rx="4" fill="#fff" stroke="#0F766E" stroke-width="2"/><rect x="3" y="6" width="26" height="7" rx="3" fill="#0F766E"/><text x="16" y="26" text-anchor="middle" font-family="Roboto Mono" font-size="11" font-weight="700" fill="${c}">${t}</text></svg>`;
+const I={
+  fri:cal('#B91C1C','金'),
+  tmr:cal('#B91C1C','明'),
+  upd:`<svg viewBox="0 0 32 32"><rect x="3" y="6" width="26" height="23" rx="4" fill="#fff" stroke="#0F766E" stroke-width="2"/><rect x="3" y="6" width="26" height="7" rx="3" fill="#0F766E"/><path d="M8 21h14" stroke="#0F766E" stroke-width="3" stroke-linecap="round"/><path d="M19 17l4 4-4 4" fill="none" stroke="#0F766E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  off:`<svg viewBox="0 0 32 32"><rect x="2" y="9" width="28" height="15" rx="7.5" fill="#C8C6C4"/><circle cx="10" cy="16.5" r="5.5" fill="#fff"/></svg>`,
+  flag:`<svg viewBox="0 0 32 32"><rect x="3" y="10" width="22" height="16" rx="3" fill="#fff" stroke="#DC2626" stroke-width="2"/><path d="M3 11l11 8 11-8" fill="none" stroke="#E57373" stroke-width="2"/><path d="M23 3v15" stroke="#7F1D1D" stroke-width="2.4"/><path d="M23 3h8l-2.5 3.5L31 10h-8z" fill="#DC2626"/></svg>`,
+  pin:`<svg viewBox="0 0 32 32"><rect x="3" y="10" width="22" height="16" rx="3" fill="#fff" stroke="#0F766E" stroke-width="2"/><path d="M3 11l11 8 11-8" fill="none" stroke="#7DD3C4" stroke-width="2"/><g transform="rotate(35 24 9)"><rect x="20" y="2" width="8" height="9" rx="2" fill="#F59E0B"/><path d="M18 11h12" stroke="#B45309" stroke-width="2.4" stroke-linecap="round"/><path d="M24 11v8" stroke="#475569" stroke-width="2.2" stroke-linecap="round"/></g></svg>`,
+  fold:`<svg viewBox="0 0 32 32"><path d="M3 9a3 3 0 0 1 3-3h7l3 3h10a3 3 0 0 1 3 3v12a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3z" fill="#FCD34D" stroke="#B45309" stroke-width="1.8"/><path d="M12 19h8M16 15v8" stroke="#92400E" stroke-width="2.6" stroke-linecap="round"/></svg>`
+};
+/* 確認カードの中：対象のメールが7通 */
+const envs=`<svg viewBox="0 0 352 70" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+  ${[0,1,2,3,4,5,6].map(i=>`<g transform="translate(${10+i*48} 14)"><rect width="40" height="28" rx="4" fill="#fff" stroke="#DC2626" stroke-width="1.8"/><path d="M0 2 L20 16 L40 2" fill="none" stroke="#E57373" stroke-width="1.8"/></g>`).join('')}
+  <text x="176" y="64" text-anchor="middle" font-family="Noto Sans JP" font-size="14" font-weight="900" fill="#92400E">対象が5通を超えると、実行前に確かめる</text>
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="pills">
+      <div class="vol-pill"><small>M365 Copilot</small>Vol.3-2</div>
+      <div class="lic-pill free">無料の Copilot Chat でできる</div>
+    </div>
+    <div class="title-text">Outlookの Copilot に<span class="hl">そのまま頼める<br>英語の1文</span>の早見表</div>
+    <div class="title-apps"><img class="msi" src="${A}icons/ms/outlook.svg" alt=""><span class="pl">＋</span><img class="msi" src="${A}icons/ms/copilot.png" alt=""></div>
+    <img class="title-chara" src="${A}chara/chara_point.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip app"><img class="msi" src="${A}icons/ms/copilot.png" alt="" style="width:34px;height:34px"></div>
+    <div class="txt">右の文は Microsoft サポートの例文。<b>日付や相手</b>だけ変えて送ります。<br>一度に多くのメールを動かすときは、実行前に<b>［確認］カード</b>が出ます</div>
+  </div>
+
+  <div class="stage">
+    <div class="lft">
+      <div class="hd"><span class="n">1</span>開く場所と確認カード</div>
+      <div class="top seg"><span class="sr"><img class="msi" src="${A}icons/ms/outlook.svg" alt="" style="width:26px;height:26px">Outlook（アプリの上部）</span><span class="cpb">${CPI(22)}Copilot</span></div>
+      <div class="pane seg">
+        <div class="ph2">${CPI()}Copilot（Outlook）<span class="repro">説明用の再現</span></div>
+        <div class="pb">
+          <div class="ask">Flag all unread emails from my manager.</div>
+          <div class="conf">
+            <div class="cl">確認カード</div>
+            <div class="ln" style="width:80%"></div>
+            <div class="envs">${envs}</div>
+            <div class="btns"><span class="ok">確認</span><span class="ng">キャンセル</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="lcap">5通以下なら、確認なしでそのまま動く。<br>多いときは<b>［確認］を押すまで動かない</b></div>
+    </div>
+
+    <div class="rgt">
+      <div class="hd"><span class="n">2</span>そのまま使える1文</div>
+      <span class="grp">休みの前後（自動応答）</span>
+      <div class="tbl" style="flex:4">
+        <div class="trow"><span class="ico">${I.fri}</span><span class="k">来週金曜を休む</span><span class="v">Set up an automatic reply for next Friday.<small>来週の金曜日の自動応答を設定して</small></span></div>
+        <div class="trow"><span class="ico">${I.tmr}</span><span class="k">明日を休む</span><span class="v">Set up automatic replies for tomorrow.<small>明日の自動応答を設定して</small></span></div>
+        <div class="trow"><span class="ico">${I.upd}</span><span class="k">休みが延びた</span><span class="v">Update my automatic reply.<small>自動応答を更新して</small></span></div>
+        <div class="trow"><span class="ico">${I.off}</span><span class="k">休みから戻った</span><span class="v">Turn off my automatic replies.<small>自動応答をオフにして</small></span></div>
+      </div>
+      <span class="grp o">受信トレイの整理</span>
+      <div class="tbl" style="flex:3">
+        <div class="trow hot"><span class="ico">${I.flag}</span><span class="k">上司の未読を拾う</span><span class="v">Flag all unread emails from my manager.<small>上司からの未読メールをすべてフラグ</small></span></div>
+        <div class="trow hot"><span class="ico">${I.pin}</span><span class="k">上司のメールを上に</span><span class="v">Pin my emails from my manager.<small>上司からのメールをピン留め</small></span></div>
+        <div class="trow hot"><span class="ico">${I.fold}</span><span class="k">領収書をまとめる</span><span class="v">Create a folder called Receipts.<small>Receipts という名前のフォルダーを作成</small></span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="warnbar">
+    <span class="na" style="width:30px;height:30px;color:#C2410C">${svgw(P.warn,2.4)}</span>
+    <span class="wl">使う前に確認</span>
+    <span class="ws">
+      <span>自動応答と整理の手順ページは<b>今は英語のみ対応</b>。日本語で通るかは自分の環境で確かめる</span>
+      <span>ライセンスなし＝受信トレイ・予定表・会議など<b>限られた範囲</b></span>
+      <span>動かした後は受信トレイで確かめる</span>
+    </span>
+  </div>
+  <div class="src">出典：Microsoft サポート「Copilot in Outlook とチャットする」「Outlook で Microsoft Copilot を使用して自動応答を管理する」「Outlook で Microsoft Copilot を使用してメールをトリアージする」／画面は説明用の再現</div>
+`;
+</script>
+</body>
+</html>

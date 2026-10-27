@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>M365 Copilot Vol.10-3 実際の画面：開くと要約</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/mc-base.css">
+<style>
+  /* 実画面スクショ＋右に手順カード */
+  .shotcol{flex:0 0 659px;display:flex;flex-direction:column;gap:7px;min-height:0;}
+  .shots{flex:1;min-height:0;display:flex;flex-direction:row;gap:8px;}
+  .shot{min-height:0;min-width:0;background:#fff;border:2.5px solid var(--mc-line);border-radius:12px;overflow:hidden;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 10px rgba(15,60,55,.15);}
+  .shot img{width:100%;height:100%;object-fit:contain;display:block;}
+  .real{flex:0 0 auto;align-self:flex-start;font-size:14px;font-weight:900;color:#fff;background:var(--mc);border-radius:999px;padding:2px 12px;}
+  .steps{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px;}
+  .st{flex:1;min-height:0;display:flex;gap:10px;align-items:center;background:#fff;border:2.5px solid var(--mc-line);border-radius:12px;padding:8px 12px;}
+  .st .n{flex:0 0 auto;width:34px;height:34px;border-radius:9px;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:20px;background:linear-gradient(180deg,#14B8A6,#0F766E);}
+  .st .t{font-size:18.5px;font-weight:900;color:#1B2A44;line-height:1.36;}
+  .st .t b{color:var(--orange);white-space:nowrap;}
+  .st .t small{display:block;font-size:15.5px;font-weight:700;color:#4B5563;line-height:1.38;margin-top:2px;}
+  .st.hint{background:#FFFBEB;border-color:#F59E0B;}
+  .st.hint .n{background:linear-gradient(180deg,#FBBF24,#D97706);padding:5px;}
+  .warnbar .ws span b{color:#B91C1C;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={warn:'<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18v.5"/>',q:'<circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 0 1 5 0c0 1.7-2.5 2-2.5 4M12 17v.5"/>',arr:'<path d="M5 12h14M13 6l6 6-6 6"/>'};
+const CPI=(w)=>`<img class="msi" src="${A}icons/ms/copilot.png" alt="" style="width:${w||24}px;height:${w||24}px">`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="pills">
+      <div class="vol-pill"><small>M365 Copilot</small>Vol.10-3</div>
+      <div class="lic-pill paid">M365 Copilot ライセンスが要る</div>
+    </div>
+    <div class="title-text">実際の画面：開くと本文の上に<br><span class="hl">「要約」の帯が自動で出る</span></div>
+    <div class="title-apps"><img class="msi" src="${A}icons/ms/word.svg" alt=""><span class="pl">＋</span><img class="msi" src="${A}icons/ms/copilot.png" alt=""></div>
+    <img class="title-chara" src="${A}chara/chara_surprise.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip app">${CPI(34)}</div>
+    <div class="txt">OneDrive の文書を Word で開くだけ。頼む操作はいりません</div>
+  </div>
+
+  <div class="stage">
+    <div class="shotcol">
+      <span class="real">実際の画面（2026年10月）</span>
+      <div class="shots"><div class="shot" style="flex:1.526 1 0"><img src="shot-1.png" alt=""></div></div>
+    </div>
+    <div class="steps">
+      <div class="st"><span class="n">1</span><div class="t">OneDrive か SharePoint の文書を開く</div></div>
+      <div class="st"><span class="n">2</span><div class="t">上の<b>要約</b>の帯を読む<small>開いて数秒で出た（撮影時）</small></div></div>
+      <div class="st"><span class="n">3</span><div class="t"><b>詳細を表示</b>で全体を広げる</div></div>
+    </div>
+  </div>
+
+  <div class="next">
+    <span class="na">${svgw(P.arr,2.6)}</span>
+    <span><b>「詳細を表示」を押したあとは4枚目へ</b></span>
+  </div>
+  <div class="src">出典：Microsoft サポート「Word で Copilot を使用してドキュメントの要約を作成する」／画面は 2026年10月のWord（Web）で撮影、個人情報はマスク済み・サンプルデータは架空</div>
+`;
+</script>
+</body>
+</html>

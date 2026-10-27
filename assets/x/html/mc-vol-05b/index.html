@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>M365 Copilot Vol.5-2 PDFを渡して、部署に関係する箇所と期限を抜き出す3ステップ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/mc-base.css">
+<style>
+  /* 型B：流れ3列（アップロード → ひな形で頼む → ページ番号で原文を確かめる）*/
+  .col.info{gap:7px;}
+  .scene{height:80px;}
+  .scene .chara{height:96px;bottom:-8px;}
+  .mock{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:2px solid var(--mc-line);border-radius:11px;overflow:hidden;box-shadow:0 4px 10px rgba(15,60,55,.13);}
+  .mock .hd{flex:0 0 auto;display:flex;align-items:center;gap:7px;padding:5px 10px;background:#F3F2F1;border-bottom:1px solid #E1DFDD;font-size:15px;font-weight:700;}
+  .mock .bd{flex:1;min-height:0;display:flex;flex-direction:column;gap:6px;padding:8px 10px;}
+  .box{display:flex;align-items:center;gap:8px;border:1.5px solid #C7C7C7;border-radius:9px;padding:5px 8px;font-size:15px;color:#9CA3AF;font-weight:700;}
+  .plus{flex:0 0 auto;width:30px;height:30px;border-radius:50%;border:2.5px solid #F59E0B;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;color:#242424;}
+  .menu{display:flex;flex-direction:column;gap:3px;border:1.5px solid #D1D1D1;border-radius:9px;padding:4px;box-shadow:0 5px 12px rgba(0,0,0,.14);}
+  .menu div{display:flex;align-items:center;gap:8px;padding:5px 8px;font-size:15.5px;font-weight:700;border-radius:6px;color:#242424;}
+  .menu svg{width:22px;height:22px;flex:0 0 auto;}
+  .menu .on{background:#FEF3C7;outline:2.5px solid #F59E0B;color:#92400E;font-weight:900;}
+  .menu .sub{font-size:13.5px;color:#6B7280;font-weight:800;margin-left:auto;}
+  .tpl{flex:0 0 auto;background:#fff;border:2px solid var(--mc);border-radius:10px;padding:7px 10px;font-family:"Noto Sans JP",sans-serif;font-size:16px;font-weight:700;color:#1B2A44;line-height:1.5;
+    box-shadow:0 3px 8px rgba(15,118,110,.18);}
+  .slot{white-space:nowrap;background:#FEF3C7;border:1.5px dashed #D97706;border-radius:6px;padding:0 5px;color:#92400E;font-weight:900;}
+  .vars{flex:1;min-height:0;display:flex;flex-direction:column;gap:5px;}
+  .var{flex:1;display:flex;align-items:center;gap:8px;background:#fff;border:1.5px solid #D8EFEA;border-radius:9px;padding:3px 9px;}
+  .var .k{flex:0 0 88px;font-size:14.5px;font-weight:900;color:#fff;background:var(--mc);border-radius:6px;text-align:center;padding:3px 0;}
+  .var .v{flex:1;font-size:15.5px;font-weight:700;color:var(--navy);line-height:1.3;}
+  .var .v b{color:#92400E;}
+  .chk{flex:0 0 auto;display:flex;align-items:center;gap:8px;background:#fff;border:1.5px solid #E1DFDD;border-radius:9px;padding:5px 9px;font-size:15.5px;font-weight:700;color:#1B2A44;}
+  .chk .pn{font-family:"Roboto Mono",monospace;font-weight:700;color:#fff;background:#0F766E;border-radius:6px;padding:1px 8px;}
+  .quote{flex:1;min-height:0;border-left:5px solid #F59E0B;background:#FFFBEB;border-radius:6px;padding:6px 10px;font-size:15.5px;font-weight:700;color:#374151;line-height:1.45;font-family:"Noto Sans JP",sans-serif;}
+  .quote .ql{display:block;font-size:13.5px;font-weight:900;color:#B45309;}
+  .quote b{color:#B91C1C;}
+  .follow{flex:0 0 auto;background:#E8F4F2;border:1.5px solid #A7E3D8;border-radius:11px 11px 3px 11px;padding:5px 10px;font-size:15.5px;font-weight:700;color:#1B2A44;line-height:1.4;font-family:"Noto Sans JP",sans-serif;}
+  .follow .fl{display:block;font-size:13.5px;font-weight:900;color:var(--mc);}
+  .warnbar .ws span b{color:#B91C1C;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const sv=(p,c)=>`<svg viewBox="0 0 24 24" fill="none" stroke="${c||'#242424'}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={warn:'<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18v.5"/>',
+  up:'<path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/>',
+  cloud:'<path d="M7 18h10a4 4 0 0 0 .5-8 6 6 0 0 0-11.4 1.5A3.3 3.3 0 0 0 7 18z"/>',
+  srch:'<circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/>'};
+const CPI=(w)=>`<img class="msi" src="${A}icons/ms/copilot.png" alt="" style="width:${w||24}px;height:${w||24}px">`;
+
+/* ① PDF がチャットの入力欄へ入っていく */
+const s1=`<svg viewBox="0 0 388 80" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs><filter id="f1" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#134E4A" flood-opacity=".25"/></filter></defs>
+  <rect width="388" height="80" fill="#E6F6F3"/>
+  <g filter="url(#f1)"><path d="M40 8h40l14 14v52H40z" fill="#fff" stroke="#B91C1C" stroke-width="2"/><path d="M80 8v14h14" fill="#FECACA" stroke="#B91C1C" stroke-width="2"/>
+  <rect x="34" y="36" width="44" height="20" rx="4" fill="#DC2626"/><text x="56" y="51" text-anchor="middle" font-family="Segoe UI" font-size="13" font-weight="700" fill="#fff">PDF</text></g>
+  <path d="M106 42h60" stroke="#0F766E" stroke-width="5" stroke-linecap="round" stroke-dasharray="2 9"/><path d="M160 32l12 10-12 10" fill="none" stroke="#0F766E" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <g filter="url(#f1)"><rect x="184" y="22" width="150" height="40" rx="12" fill="#fff" stroke="#7DD3C4" stroke-width="2"/>
+  <circle cx="204" cy="42" r="11" fill="none" stroke="#F59E0B" stroke-width="3"/><path d="M204 36v12M198 42h12" stroke="#242424" stroke-width="2.6" stroke-linecap="round"/>
+  <rect x="224" y="38" width="90" height="8" rx="4" fill="#CBD5E1"/></g>
+</svg>`;
+/* ② ひな形の2か所（部署・項目）だけ差し替える */
+const s2=`<svg viewBox="0 0 388 80" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs><filter id="f2" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#134E4A" flood-opacity=".25"/></filter></defs>
+  <rect width="388" height="80" fill="#E6F6F3"/>
+  <g filter="url(#f2)"><rect x="24" y="14" width="236" height="52" rx="10" fill="#fff" stroke="#0F766E" stroke-width="2"/></g>
+  <rect x="36" y="26" width="30" height="7" rx="3.5" fill="#CBD5E1"/>
+  <rect x="72" y="22" width="70" height="16" rx="4" fill="#FEF3C7" stroke="#D97706" stroke-dasharray="4 3"/><text x="107" y="34.5" text-anchor="middle" font-family="Noto Sans JP" font-size="11" font-weight="900" fill="#92400E">部署名</text>
+  <rect x="148" y="26" width="98" height="7" rx="3.5" fill="#CBD5E1"/>
+  <rect x="36" y="44" width="50" height="16" rx="4" fill="#FEF3C7" stroke="#D97706" stroke-dasharray="4 3"/><text x="61" y="56.5" text-anchor="middle" font-family="Noto Sans JP" font-size="11" font-weight="900" fill="#92400E">項目</text>
+  <rect x="92" y="48" width="150" height="7" rx="3.5" fill="#CBD5E1"/>
+</svg>`;
+/* ③ 虫めがねで原文の1行を確かめる */
+const s3=`<svg viewBox="0 0 388 80" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs><filter id="f3" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#134E4A" flood-opacity=".25"/></filter></defs>
+  <rect width="388" height="80" fill="#E6F6F3"/>
+  <g filter="url(#f3)"><rect x="120" y="6" width="130" height="70" rx="5" fill="#fff" stroke="#94A3B8" stroke-width="1.5"/></g>
+  <text x="128" y="22" font-family="Roboto Mono" font-size="11" font-weight="700" fill="#0F766E">p.33</text>
+  ${[0,1,2,3].map(i=>`<rect x="128" y="${30+i*11}" width="${[110,96,104,80][i]}" height="5" rx="2.5" fill="${i===2?'#FCD34D':'#CBD5E1'}"/>`).join('')}
+  <circle cx="226" cy="52" r="20" fill="rgba(255,255,255,.35)" stroke="#F59E0B" stroke-width="5"/><path d="M240 66l14 12" stroke="#F59E0B" stroke-width="7" stroke-linecap="round"/>
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="pills">
+      <div class="vol-pill"><small>M365 Copilot</small>Vol.5-2</div>
+      <div class="lic-pill free">無料の Copilot Chat でできる</div>
+    </div>
+    <div class="title-text">PDFを渡して、<span class="hl">部署に関係する箇所と<br>期限</span>を抜き出す3ステップ</div>
+    <div class="title-apps"><img class="msi" src="${A}icons/ms/copilot.png" alt=""><span class="pl">＋</span><img class="msi" src="${A}icons/ms/onedrive.svg" alt=""></div>
+    <img class="title-chara" src="${A}chara/chara_point.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip app">${CPI(34)}</div>
+    <div class="txt">入力欄の<b>＋（ソースの追加と管理）</b>から PDF を渡し、部署名と項目を入れたひな形で頼む。<br>期限や数字は、返ってきた<b>ページ番号</b>で原文を開いて確かめてから使います</div>
+  </div>
+
+  <div class="stage">
+    <div class="col info">
+      <div class="ch2"><span class="n">1</span>＋から PDF を渡す</div>
+      <div class="scene">${s1}</div>
+      <div class="mock seg">
+        <div class="hd">${CPI()}Copilot Chat<span class="repro">説明用の再現</span></div>
+        <div class="bd">
+          <div class="menu">
+            <div>${sv(P.srch)}作業コンテンツの追加</div>
+            <div class="on">${sv(P.up,'#92400E')}画像とファイルのアップロード</div>
+            <div>${sv(P.cloud)}クラウド ファイルを添付<span class="sub">OneDrive</span></div>
+          </div>
+          <div class="box"><span class="plus">＋</span>メッセージを入力</div>
+        </div>
+      </div>
+      <div class="cap">手元の PDF は<b>アップロード</b>、<br>OneDrive にあるなら<b>クラウド ファイル</b></div>
+    </div>
+
+    <div class="col info">
+      <div class="ch2"><span class="n">2</span>ひな形の2か所を変えて頼む</div>
+      <div class="scene">${s2}<img class="chara" src="${A}chara/chara_laptop.png" alt=""></div>
+      <div class="tpl">このPDFから、<span class="slot">品質保証部</span>に関係する<br>箇所と<span class="slot">期限</span>を表にしてください。<br>ページ番号も入れてください。</div>
+      <div class="vars">
+        <div class="var"><span class="k">変わった所</span><span class="v">前の版から<b>変わった箇所</b>だけ</span></div>
+        <div class="var"><span class="k">数字</span><span class="v"><b>数量・金額・寸法</b>の一覧</span></div>
+        <div class="var"><span class="k">頼まれごと</span><span class="v">こちらが<b>出すもの・やること</b></span></div>
+      </div>
+      <div class="cap">部署名と項目を変えるだけで、<br>同じひな形を使い回せる</div>
+    </div>
+
+    <div class="col info">
+      <div class="ch2"><span class="n">3</span>ページ番号で原文を確かめる</div>
+      <div class="scene">${s3}<img class="chara" src="${A}chara/chara_think.png" alt=""></div>
+      <div class="chk"><span class="pn">p.33</span>初回品の検査成績書を提出（11/28まで）</div>
+      <div class="follow"><span class="fl">続けて頼む例</span>この期限が書いてある文を、<br>そのまま抜き出してください。</div>
+      <div class="quote"><span class="ql">原文（PDF を開いて照らし合わせる）</span>初回納入品については、検査成績書を<br><b>11月28日</b>までに提出すること。</div>
+      <div class="cap">日付・数字は<b>原文で確かめてから</b><br>社内に回す</div>
+    </div>
+  </div>
+
+  <div class="warnbar">
+    <span class="na" style="width:30px;height:30px;color:#C2410C">${svgw(P.warn,2.4)}</span>
+    <span class="wl">使う前に確認</span>
+    <span class="ws">
+      <span>ライセンスなしは<b>Standard アクセス</b>。混雑時は遅くなる・使えない機能が出ることがある</span>
+      <span>アップロードしたファイルは自分の OneDrive に保存される</span>
+      <span>社外から届いた資料の扱いは社内のルールに合わせる</span>
+    </span>
+  </div>
+  <div class="src">出典：Microsoft サポート「Copilot Chat のプロンプトにコンテンツを追加する」「Microsoft Copilot Chat の機能への Standard アクセスと優先アクセス」／Microsoft Learn「Frequently asked questions about Microsoft Copilot Chat」／画面は説明用の再現、文面は架空</div>
+`;
+</script>
+</body>
+</html>

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>M365 Copilot Vol.7-1 毎朝8時に、今日の会議と準備することが届く</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/mc-base.css">
+<style>
+  /* 型F：紙芝居4コマ（1回書く → 朝8時に Copilot が動く → チャットに届く → そのまま動ける）*/
+  .stage{gap:9px;}
+  .koma{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px;border-radius:14px;padding:8px 9px 9px;background:var(--mc-bg);border:2.5px solid var(--mc-line);position:relative;}
+  .koma.k4{background:var(--green-bg);border-color:var(--green-line);}
+  .kh{flex:0 0 auto;display:flex;align-items:center;gap:8px;font-weight:900;font-size:21px;line-height:1.15;color:var(--mc-dark);}
+  .kh .n{flex:0 0 auto;width:32px;height:32px;border-radius:9px;color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;
+    background:linear-gradient(180deg,#14B8A6,#0F766E);box-shadow:0 2px 4px rgba(0,0,0,.22);}
+  .k4 .kh{color:var(--green-dark);} .k4 .kh .n{background:linear-gradient(180deg,#34D399,#16A34A);}
+  .tm{flex:0 0 auto;align-self:flex-start;font-family:"Roboto Mono",monospace;font-size:15px;font-weight:700;color:#fff;background:#134E4A;border-radius:6px;padding:1px 9px;}
+  .k4 .tm{background:#065F46;}
+  .ks{flex:0 0 150px;position:relative;border-radius:10px;overflow:hidden;background:#E6F6F3;}
+  .k4 .ks{background:#DCF3E7;}
+  .ks svg{position:absolute;inset:0;width:100%;height:100%;}
+  .ks .chara{position:absolute;right:2px;bottom:0;height:116px;z-index:2;filter:drop-shadow(0 3px 5px rgba(0,0,0,.22));}
+  .mk{flex:1;min-height:0;display:flex;flex-direction:column;gap:5px;background:#fff;border:2px solid var(--mc-line);border-radius:10px;padding:7px 9px;box-shadow:0 3px 8px rgba(15,60,55,.12);}
+  .k4 .mk{border-color:var(--green-line);}
+  .mk .ml{font-size:13.5px;font-weight:900;color:var(--mc);}
+  .mk .pr{font-size:15.5px;font-weight:700;color:#1B2A44;line-height:1.36;background:#E8F4F2;border-radius:8px;padding:4px 8px;}
+  .mk .btn{align-self:flex-start;display:flex;align-items:center;gap:6px;border:2.5px solid #F59E0B;background:#FFFBEB;border-radius:7px;padding:2px 8px;font-size:15px;line-height:1.25;font-weight:900;color:#92400E;}
+  .mk .btn svg{width:20px;height:20px;}
+  .row{display:flex;align-items:center;gap:7px;font-size:15.5px;font-weight:700;color:#1B2A44;border-bottom:1px dashed #E5E7EB;padding:3px 0;}
+  .row:last-child{border-bottom:none;}
+  .row .t{flex:0 0 auto;font-family:"Roboto Mono",monospace;font-size:14.5px;font-weight:700;color:#fff;background:#0F766E;border-radius:5px;padding:0 6px;}
+  .row b{color:#B91C1C;}
+  .chl{display:flex;align-items:center;gap:7px;border-radius:7px;padding:5px 8px;font-size:15.5px;font-weight:700;color:#424242;}
+  .chl.bold{font-weight:900;color:#1B2A44;background:#FEF3C7;outline:2.5px solid #F59E0B;}
+  .chl svg{width:20px;height:20px;flex:0 0 auto;}
+  .kc{flex:0 0 auto;font-size:15.5px;font-weight:900;line-height:1.32;border-radius:9px;padding:6px 9px;color:var(--mc-dark);background:#D5F3EE;}
+  .k4 .kc{color:var(--green-dark);background:#CFEFE0;}
+  .kc b{color:var(--orange);}
+  .runs{display:flex;gap:4px;flex-wrap:wrap;}
+  .runs span{font-size:14px;font-weight:900;border-radius:6px;padding:2px 6px;background:#F1F5F9;color:#64748B;border:1.5px solid #CBD5E1;}
+  .runs span.done{background:#CCFBF1;color:#134E4A;border-color:#5EC8B8;}
+  .prev{flex:1;display:flex;flex-direction:column;justify-content:space-around;background:#FAFAFA;border:1.5px solid #E1DFDD;border-radius:8px;padding:4px 9px;}
+  .prev div{height:8px;border-radius:4px;background:#E5E7EB;}
+  .mk{justify-content:space-between;}
+  .arr{position:absolute;right:-17px;top:50%;width:26px;height:26px;z-index:4;color:var(--mc);background:#fff;border-radius:50%;padding:3px;box-shadow:0 2px 5px rgba(0,0,0,.2);}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const sv=(p,c)=>`<svg viewBox="0 0 24 24" fill="none" stroke="${c||'#242424'}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',clock:'<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  chat:'<path d="M4 5h16v11H9l-5 4z"/>',mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>'};
+const CPI=(w)=>`<img class="msi" src="${A}icons/ms/copilot.png" alt="" style="width:${w||24}px;height:${w||24}px">`;
+const defs=`<defs><filter id="sh" x="-30%" y="-30%" width="160%" height="170%"><feDropShadow dx="0" dy="3" stdDeviation="2.5" flood-color="#134E4A" flood-opacity=".28"/></filter>
+  <linearGradient id="dk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C08457"/><stop offset="1" stop-color="#9A6440"/></linearGradient>
+  <linearGradient id="cg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0EA5E9"/><stop offset=".55" stop-color="#14B8A6"/><stop offset="1" stop-color="#22C55E"/></linearGradient>
+  <linearGradient id="ng" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1E3A8A"/><stop offset="1" stop-color="#3B5BA9"/></linearGradient>
+  <linearGradient id="mg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FDE68A"/><stop offset="1" stop-color="#BAE6FD"/></linearGradient></defs>`;
+/* ① 夕方：ノートPCでプロンプトを1回書く（夕日） */
+const s1=`<svg viewBox="0 0 283 150" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">${defs}
+  <rect width="283" height="150" fill="#FFE8D6"/><circle cx="40" cy="40" r="22" fill="#FB923C"/><rect x="0" y="120" width="283" height="30" fill="url(#dk)"/>
+  <g filter="url(#sh)"><rect x="34" y="62" width="110" height="62" rx="5" fill="#334155"/><rect x="40" y="68" width="98" height="50" rx="2" fill="#fff"/>
+  <rect x="46" y="76" width="70" height="6" rx="3" fill="#99E2D6"/><rect x="46" y="88" width="84" height="6" rx="3" fill="#CBD5E1"/><rect x="46" y="100" width="58" height="6" rx="3" fill="#CBD5E1"/>
+  <rect x="22" y="122" width="134" height="6" rx="3" fill="#94A3B8"/></g>
+  <g filter="url(#sh)"><circle cx="128" cy="62" r="15" fill="#fff" stroke="#F59E0B" stroke-width="3"/><path d="M128 54v8l5 3" fill="none" stroke="#0F766E" stroke-width="2.6" stroke-linecap="round"/></g>
+</svg>`;
+/* ② 朝8時：夜明け、時計、Copilot がひとりで動く（自分は通勤中） */
+const s2=`<svg viewBox="0 0 283 150" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">${defs}
+  <rect width="283" height="150" fill="url(#mg)"/>
+  <g filter="url(#sh)"><circle cx="70" cy="72" r="46" fill="#fff" stroke="#0F766E" stroke-width="5"/>
+  ${Array.from({length:12},(_,i)=>{const a=i*Math.PI/6;return `<circle cx="${70+38*Math.sin(a)}" cy="${72-38*Math.cos(a)}" r="${i%3?2:3.2}" fill="#134E4A"/>`}).join('')}
+  <path d="M70 72 L70 42" stroke="#134E4A" stroke-width="5" stroke-linecap="round"/><path d="M70 72 L48 85" stroke="#134E4A" stroke-width="6" stroke-linecap="round"/><circle cx="70" cy="72" r="5" fill="#F59E0B"/></g>
+  <g filter="url(#sh)"><rect x="128" y="34" width="56" height="56" rx="15" fill="url(#cg)"/><path d="M144 54h24M144 64h16M144 74h20" stroke="#fff" stroke-width="5" stroke-linecap="round"/></g>
+  <path d="M190 40l3 7 7 3-7 3-3 7-3-7-7-3 7-3z" fill="#FEF9C3" stroke="#F59E0B" stroke-width="1.5"/>
+  <text x="156" y="112" text-anchor="middle" font-family="Noto Sans JP" font-size="14" font-weight="900" fill="#134E4A">ひとりで実行</text>
+</svg>`;
+/* ③ 届く：チャット一覧に太字で1件＋メールの通知 */
+const s3=`<svg viewBox="0 0 283 150" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">${defs}
+  <rect width="283" height="150" fill="#E6F6F3"/>
+  <g filter="url(#sh)"><rect x="18" y="16" width="130" height="118" rx="10" fill="#fff" stroke="#7DD3C4" stroke-width="2"/></g>
+  <rect x="28" y="28" width="70" height="8" rx="4" fill="#0F766E"/>
+  <rect x="26" y="46" width="114" height="26" rx="6" fill="#FEF3C7" stroke="#F59E0B" stroke-width="2.5"/><circle cx="40" cy="59" r="7" fill="url(#cg)"/><rect x="52" y="55" width="78" height="8" rx="4" fill="#1B2A44"/>
+  ${[0,1,2].map(i=>`<rect x="34" y="${84+i*15}" width="${[90,74,84][i]}" height="6" rx="3" fill="#CBD5E1"/>`).join('')}
+  <g filter="url(#sh)" transform="translate(160 66)"><rect width="60" height="42" rx="6" fill="#fff" stroke="#0F6CBD" stroke-width="2.5"/><path d="M0 4 L30 26 L60 4" fill="none" stroke="#0F6CBD" stroke-width="2.5"/>
+  <circle cx="58" cy="2" r="10" fill="#DC2626"/><text x="58" y="7" text-anchor="middle" font-family="Roboto Mono" font-size="13" font-weight="700" fill="#fff">1</text></g>
+</svg>`;
+/* ④ 席について、コーヒー片手にそのまま動ける */
+const s4=`<svg viewBox="0 0 283 150" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">${defs}
+  <linearGradient id="cup" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#E2E8F0"/></linearGradient>
+  <rect width="283" height="150" fill="#DCF3E7"/><rect x="0" y="120" width="283" height="30" fill="url(#dk)"/>
+  <g filter="url(#sh)"><rect x="18" y="20" width="118" height="92" rx="8" fill="#fff" stroke="#7FCEA9" stroke-width="2"/>
+  ${[0,1,2].map(i=>`<rect x="28" y="${32+i*24}" width="18" height="14" rx="3" fill="#0F766E"/><rect x="52" y="${36+i*24}" width="${[66,52,60][i]}" height="6" rx="3" fill="#CBD5E1"/><path d="M${120} ${36+i*24} l3 4 6-8" fill="none" stroke="#16A34A" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>`).join('')}</g>
+  <g filter="url(#sh)"><ellipse cx="160" cy="121" rx="24" ry="5" fill="#CBD5E1"/><path d="M142 88h36l-4 32h-28z" fill="url(#cup)" stroke="#94A3B8" stroke-width="1.2"/>
+  <path d="M178 94c10 0 10 16 0 16" fill="none" stroke="#94A3B8" stroke-width="3"/><ellipse cx="160" cy="88" rx="18" ry="4" fill="#7C4A2D"/></g>
+  <path d="M152 78c-4-6 4-8 0-14M166 78c-4-6 4-8 0-14" fill="none" stroke="#94A3B8" stroke-width="2" stroke-linecap="round"/>
+</svg>`;
+const AR=`<span class="arr">${svgw(P.arrow,3)}</span>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="pills">
+      <div class="vol-pill"><small>M365 Copilot</small>Vol.7-1</div>
+      <div class="lic-pill paid">M365 Copilot ライセンスが要る</div>
+    </div>
+    <div class="title-text">毎朝8時に、<span class="hl">今日の会議と<br>準備すること</span>が届く</div>
+    <div class="title-apps"><img class="msi" src="${A}icons/ms/copilot.png" alt=""><span class="pl">＋</span><img class="msi" src="${A}icons/ms/outlook.svg" alt=""><img class="msi" src="${A}icons/ms/teams.svg" alt=""></div>
+    <img class="title-chara" src="${A}chara/chara_smile.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip app">${CPI(34)}</div>
+    <div class="txt">よく使うプロンプトは<b>［このプロンプトをスケジュールする］</b>で、時刻と回数を決めて自動で動かせます。<br>毎朝同じことを頼む手間がなくなり、届いた答えを読むところから1日が始まります</div>
+  </div>
+
+  <div class="stage">
+    <div class="koma">
+      <div class="kh"><span class="n">1</span>1回だけ書く</div>
+      <span class="tm">前日 18:00</span>
+      <div class="ks">${s1}<img class="chara" src="${A}chara/chara_laptop.png" alt=""></div>
+      <div class="mk">
+        <span class="ml">Copilot Chat</span>
+        <div class="pr">今日の会議ごとに、議題と<br>事前に読むメール・資料を<br>まとめてください。</div>
+        <span class="btn">${sv(P.clock,'#92400E')}このプロンプトをスケジュールする</span>
+      </div>
+      <div class="kc">時刻と回数を決めて<b>保存</b></div>
+      ${AR}
+    </div>
+    <div class="koma">
+      <div class="kh"><span class="n">2</span>朝、ひとりで動く</div>
+      <span class="tm">翌朝 8:00</span>
+      <div class="ks">${s2}</div>
+      <div class="mk">
+        <span class="ml">自分は何もしない</span>
+        <div class="row">${CPI(22)}決めた時刻に実行</div>
+        <div class="row">${sv(P.clock,'#0F766E').replace('<svg','<svg style="width:22px;height:22px"')}決めた回数だけくり返す</div>
+        <div class="runs">${[1,2,3].map(i=>`<span class="${i<3?'done':''}">${i}回目${i<3?' ✓':''}</span>`).join('')}<span>…</span></div>
+        <div class="row" style="border:none;color:#6B7280;font-size:14.5px">止めるときは［オフにする］</div>
+      </div>
+      <div class="kc">通勤中でも、<b>先に</b>動いてくれる</div>
+      ${AR}
+    </div>
+    <div class="koma">
+      <div class="kh"><span class="n">3</span>チャットに届く</div>
+      <span class="tm">8:00 すぎ</span>
+      <div class="ks">${s3}<img class="chara" src="${A}chara/chara_surprise.png" alt=""></div>
+      <div class="mk">
+        <span class="ml">Copilot の左の［チャット］</span>
+        <div class="chl bold">${CPI(20)}今日の会議の準備</div>
+        <div class="prev"><div style="width:90%"></div><div style="width:70%"></div><div style="width:82%"></div></div>
+        <div class="chl">${sv(P.mail,'#0F6CBD')}メールの通知も選べる</div>
+      </div>
+      <div class="kc">スケジュールした分は<b>太字＋印</b>で並ぶ</div>
+      ${AR}
+    </div>
+    <div class="koma k4">
+      <div class="kh"><span class="n">4</span>読んで、すぐ動く</div>
+      <span class="tm">8:30 始業</span>
+      <div class="ks">${s4}<img class="chara" src="${A}chara/chara_guts.png" alt=""></div>
+      <div class="mk">
+        <span class="ml">届いた答え（例）</span>
+        <div class="row"><span class="t">10:00</span><span>定例：<b>見積の差分</b>を見る</span></div>
+        <div class="row"><span class="t">13:30</span>商談：前回のメールを読む</div>
+        <div class="row"><span class="t">16:00</span>1on1：議題を2つ用意</div>
+        <div class="row"><span class="t">17:30</span><span>明日の資料を<b>印刷</b></span></div>
+      </div>
+      <div class="kc">予定表とメールを<b>行き来しない</b></div>
+    </div>
+  </div>
+
+  <div class="next">
+    <span class="na">${svgw(P.arrow,3)}</span>
+    <span>決めるのは「いつ・何回・メール通知」の3つだけ。<b>設定と止め方は2枚目へ</b></span>
+  </div>
+  <div class="src">出典：Microsoft サポート「よく使う Copilot プロンプトのスケジュールを設定する」／Microsoft Learn「Manage Scheduled Prompts for Microsoft Copilot」／画面は説明用の再現、予定と回答は架空の例</div>
+`;
+</script>
+</body>
+</html>

@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>M365 Copilot Vol.10-1 長い報告書を開いた瞬間に、上に要約が出ている</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/mc-base.css">
+<style>
+  /* 型C：主役モックどーん（左に小さく Before／右いっぱいに Word を開いたときの要約）*/
+  .stage{gap:11px;}
+  .col.bad{flex:0 0 318px;}
+  .sc{flex:1;min-height:0;position:relative;border-radius:10px;overflow:hidden;background:#FCE4E4;}
+  .sc svg{position:absolute;inset:0;width:100%;height:100%;}
+  .sc .ch{position:absolute;right:2px;bottom:0;height:132px;z-index:2;filter:drop-shadow(0 3px 4px rgba(0,0,0,.25));}
+  .badlist{flex:0 0 auto;display:flex;flex-direction:column;gap:5px;}
+  .badlist div{display:flex;align-items:center;gap:8px;background:#fff;border:1.5px solid var(--red-line);border-radius:8px;padding:4px 9px;font-size:15.5px;font-weight:800;color:#7F1D1D;}
+  .badlist i{flex:0 0 auto;width:22px;height:22px;border-radius:50%;background:#DC2626;color:#fff;font-style:normal;font-size:13px;font-weight:900;display:flex;align-items:center;justify-content:center;}
+  .badline{flex:0 0 auto;background:#DC2626;color:#fff;border-radius:8px;padding:6px 10px;font-size:16px;font-weight:900;line-height:1.3;}
+
+  .hero{flex:1;min-width:0;display:flex;flex-direction:column;gap:7px;}
+  .hero .ph{color:var(--green-dark);} .hero .ph .mk{background:linear-gradient(180deg,#34D399,#16A34A);}
+  .wd{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:2px solid var(--green-line);border-radius:12px;overflow:hidden;box-shadow:0 5px 14px rgba(20,90,60,.16);}
+  .wd .wh{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:5px 11px;background:#185ABD;color:#fff;font-size:15.5px;font-weight:700;}
+  .wd .wh .loc{font-size:13.5px;font-weight:800;background:rgba(255,255,255,.2);border-radius:999px;padding:0 9px;}
+  .wd .wh .repro{color:#DBEAFE;}
+  .paper{flex:1;min-height:0;display:flex;flex-direction:column;gap:7px;padding:10px 18px;background:#F3F2F1;position:relative;}
+  .sum{flex:0 0 auto;display:flex;flex-direction:column;gap:5px;background:#fff;border:2.5px solid #F59E0B;border-radius:11px;padding:8px 12px;box-shadow:0 6px 14px rgba(146,64,14,.16);font-family:"Noto Sans JP",sans-serif;position:relative;}
+  .sum .sh{display:flex;align-items:center;gap:7px;font-size:17px;font-weight:900;color:#1B2A44;}
+  .sum .sh .auto{margin-left:auto;font-size:13.5px;font-weight:900;color:#fff;background:#16A34A;border-radius:999px;padding:1px 10px;}
+  .sum .li{display:flex;align-items:flex-start;gap:8px;font-size:17.5px;font-weight:700;color:#1B2A44;line-height:1.38;}
+  .sum .li b{color:#B91C1C;}
+  .sum .li .dot{flex:0 0 auto;width:8px;height:8px;border-radius:50%;background:#0F766E;margin-top:9px;}
+  .sum .more{display:flex;align-items:center;gap:8px;}
+  .sum .more .dt{font-size:15px;font-weight:900;color:#185ABD;border:2px solid #185ABD;border-radius:7px;padding:1px 10px;}
+  .sum .more .pill{font-size:14px;font-weight:800;color:#6B7280;background:#F3F4F6;border:1.5px solid #E5E7EB;border-radius:999px;padding:1px 10px;}
+  .doc{flex:1;min-height:0;display:flex;flex-direction:column;gap:7px;background:#fff;border:1px solid #E1DFDD;border-radius:4px;padding:10px 16px;position:relative;overflow:hidden;}
+  .doc .t{font-size:18px;font-weight:900;color:#1B2A44;font-family:"Noto Sans JP",sans-serif;}
+  .doc .ln{height:8px;border-radius:4px;background:#E5E7EB;}
+  .doc::after{content:"";position:absolute;left:0;right:0;bottom:0;height:60%;background:linear-gradient(transparent,#fff 90%);}
+  .doc .pg{position:absolute;right:12px;bottom:8px;z-index:2;font-family:"Roboto Mono",monospace;font-size:14px;font-weight:700;color:#6B7280;}
+  .bot{flex:0 0 auto;display:flex;gap:8px;align-items:stretch;}
+  .bot .uses{flex:1;background:#fff;border:1.5px solid #CFEFE0;border-radius:10px;padding:4px 9px;}
+  .metric .mv{font-size:23px;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={arrow:'<path d="M5 12h14M13 6l6 6-6 6"/>',x:'<path d="M6 6l12 12M18 6L6 18"/>',ok:'<path d="M5 12.5l4.5 4.5L19 7"/>'};
+const CPI=(w)=>`<img class="msi" src="${A}icons/ms/copilot.png" alt="" style="width:${w||24}px;height:${w||24}px">`;
+const WDI=(w)=>`<img class="msi" src="${A}icons/ms/word.svg" alt="" style="width:${w||22}px;height:${w||22}px">`;
+
+/* Before：分厚い報告書の束と「どこから？」 */
+const sBad=`<svg viewBox="0 0 294 286" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs><filter id="bf" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="#7F1D1D" flood-opacity=".25"/></filter>
+  <linearGradient id="dk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C08457"/><stop offset="1" stop-color="#9A6440"/></linearGradient></defs>
+  <rect width="294" height="286" fill="#FCE4E4"/><rect x="0" y="258" width="294" height="28" fill="url(#dk)"/><g transform="translate(8 4) scale(1.15)">
+  <g filter="url(#bf)">${Array.from({length:12},(_,i)=>`<rect x="${18+(i%2)*3}" y="${210-i*8}" width="150" height="11" rx="1.5" fill="${i%2?'#fff':'#EFF6FF'}" stroke="#BFDBFE" stroke-width=".8"/>`).join('')}
+  <rect x="18" y="86" width="152" height="34" rx="3" fill="#fff" stroke="#93C5FD" stroke-width="1.5"/>
+  <rect x="24" y="92" width="22" height="22" rx="3" fill="#185ABD"/><text x="35" y="108" text-anchor="middle" font-family="Segoe UI" font-size="14" font-weight="700" fill="#fff">W</text>
+  <text x="104" y="108" text-anchor="middle" font-family="Noto Sans JP" font-size="13.5" font-weight="900" fill="#1E3A8A">市場調査報告書</text></g>
+  <rect x="18" y="48" width="104" height="24" rx="12" fill="#DC2626"/><text x="70" y="65" text-anchor="middle" font-family="Noto Sans JP" font-size="13.5" font-weight="900" fill="#fff">全50ページ</text>
+  <text x="196" y="66" font-family="Noto Sans JP" font-size="34" font-weight="900" fill="#DC2626">?</text>
+</g>
+</svg>`;
+const ln=(w)=>`<div class="ln" style="width:${w}%"></div>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="pills">
+      <div class="vol-pill"><small>M365 Copilot</small>Vol.10-1</div>
+      <div class="lic-pill paid">M365 Copilot ライセンスが要る</div>
+    </div>
+    <div class="title-text">長い報告書を開いた瞬間に、<span class="hl">上に要約が<br>出ている</span></div>
+    <div class="title-apps"><img class="msi" src="${A}icons/ms/word.svg" alt=""><span class="pl">＋</span><img class="msi" src="${A}icons/ms/copilot.png" alt=""></div>
+    <img class="title-chara" src="${A}chara/chara_surprise.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip app">${WDI(34)}</div>
+    <div class="txt">OneDrive か SharePoint にある Word 文書は、開くと<b>上に要約</b>が出ます。頼む操作もいりません。<br>全文の要約は<b>［詳細を表示］</b>、気になる点はそのまま Copilot に聞けます</div>
+  </div>
+
+  <div class="stage">
+    <div class="col bad">
+      <div class="ph"><span class="mk">${svgw(P.x,3.2)}</span>頭から読むと</div>
+      <div class="sc">${sBad}<img class="ch" src="${A}chara/chara_think.png" alt=""></div>
+      <div class="badlist">
+        <div><i>1</i>目次を見て、結論の章を探す</div>
+        <div><i>2</i>決めることがどこにあるか探す</div>
+      </div>
+      <div class="badline">✕ 読む前の下調べで時間が消える</div>
+    </div>
+
+    <div class="hero">
+      <div class="ph"><span class="mk">${svgw(P.ok,3.2)}</span>開いた瞬間に、上にこれが出る</div>
+      <div class="wd seg">
+        <div class="wh">${WDI(22)}市場調査報告書.docx<span class="loc">SharePoint</span><span class="repro">画面は説明用の再現</span></div>
+        <div class="paper">
+          <div class="sum">
+            <div class="sh">${CPI(22)}概要<span class="auto">開くと自動で</span></div>
+            <div class="li"><span class="dot"></span><span>国内の市場は前年から<b>8%</b>伸びた。伸びたのは20代の利用</span></div>
+            <div class="li"><span class="dot"></span><span>競合2社が<b>来春</b>に値下げを予定している</span></div>
+            <div class="li"><span class="dot"></span><span>決めること：<b>11月末</b>までに価格を据え置くか下げるか</span></div>
+            <div class="li"><span class="dot"></span><span>報告書の提案は据え置き。理由は第5章にまとまっている</span></div>
+            <div class="more"><span class="dt">詳細を表示</span><span class="pill">提案</span><span class="pill">提案</span><span style="font-size:13.5px;font-weight:800;color:#6B7280">押すと Copilot Chat で質問</span></div>
+          </div>
+          <div class="doc">
+            <div class="t">1. 調査の目的と方法</div>
+            ${ln(96)}${ln(88)}${ln(92)}${ln(70)}${ln(94)}
+            <span class="pg">1 / 50 ページ</span>
+          </div>
+        </div>
+      </div>
+      <div class="bot">
+        <div class="metric"><span class="ml">最初に読むもの</span><span class="mv">50ページ</span><span class="ar">${svgw(P.arrow,3)}</span><span class="mv to">要約4行</span></div>
+        <div class="uses"><span class="ul">使いどころ</span><span class="u">稟議</span><span class="u">調査報告</span><span class="u">提案書</span><span class="u">引き継ぎ資料</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="next">
+    <span class="na">${svgw(P.arrow,3)}</span>
+    <span>自動で出る条件と、出ないときの出し方。<b>3ステップは2枚目へ</b></span>
+  </div>
+  <div class="src">出典：Microsoft サポート「Word の Copilot を使用してドキュメントの要約を作成する」／画面は説明用の再現、報告書・数字・要約は架空の例</div>
+`;
+</script>
+</body>
+</html>

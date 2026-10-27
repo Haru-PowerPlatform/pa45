@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>M365 Copilot Vol.9-2 ExcelのCopilotの3つのモードと、売上表で頼める文の早見表</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/mc-base.css">
+<style>
+  /* 型E：早見表（左に3つのモード／右に売上表で頼める文）*/
+  .stage{gap:12px;}
+  .lft{flex:0 0 372px;display:flex;flex-direction:column;gap:7px;min-height:0;}
+  .rgt{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px;min-height:0;}
+  .hd{flex:0 0 auto;display:flex;align-items:center;gap:9px;font-size:22px;font-weight:900;color:var(--mc-dark);}
+  .hd .n{flex:0 0 auto;width:34px;height:34px;border-radius:9px;color:#fff;display:flex;align-items:center;justify-content:center;
+    font-size:19px;font-weight:900;background:linear-gradient(180deg,#14B8A6,#0F766E);box-shadow:0 2px 4px rgba(0,0,0,.22);}
+  .mode{flex:1;min-height:0;display:flex;align-items:center;gap:10px;background:#fff;border:2px solid var(--mc-line);border-radius:11px;padding:6px 10px;box-shadow:0 3px 8px rgba(15,60,55,.1);}
+  .mode.def{border:2.5px solid #F59E0B;background:#FFFBEB;}
+  .mode .pic{flex:0 0 auto;width:84px;height:64px;}
+  .mode .pic svg{width:100%;height:100%;}
+  .mode .tx{flex:1;display:flex;flex-direction:column;gap:2px;}
+  .mode .nm{display:flex;align-items:center;gap:6px;font-size:18px;font-weight:900;color:#1B2A44;}
+  .mode .nm small{font-size:12.5px;font-weight:900;color:#fff;background:#D97706;border-radius:999px;padding:0 7px;}
+  .mode .ds{font-size:15px;font-weight:700;color:#4B5563;line-height:1.35;}
+  .lcap{flex:0 0 auto;font-size:15.5px;font-weight:900;line-height:1.35;border-radius:9px;padding:7px 11px;color:var(--mc-dark);background:#D5F3EE;}
+  .lcap b{color:var(--orange);}
+  .grp{flex:0 0 auto;font-size:14.5px;font-weight:900;color:#fff;background:var(--mc);border-radius:999px;padding:2px 12px;align-self:flex-start;}
+  .grp.o{background:#C2410C;}
+  .trow{gap:10px;padding:3px 6px 3px 10px;}
+  .trow .ico{flex:0 0 auto;width:44px;height:40px;border-radius:9px;background:#fff;border:1.5px solid #CDEDE7;display:flex;align-items:center;justify-content:center;padding:3px;}
+  .trow .ico svg{width:38px;height:32px;}
+  .trow .k{flex:0 0 170px;font-size:16.5px;}
+  .trow .v{flex:1;font-size:15.5px;font-weight:700;color:#1B2A44;background:#fff;border:1.5px solid #99E2D6;line-height:1.3;}
+  .trow.hot .v{border-color:#FDBA74;}
+  .warnbar .ws span b{color:#B91C1C;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={warn:'<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18v.5"/>'};
+const CPI=(w)=>`<img class="msi" src="${A}icons/ms/copilot.png" alt="" style="width:${w||24}px;height:${w||24}px">`;
+const XLI=(w)=>`<img class="msi" src="${A}icons/ms/excel.svg" alt="" style="width:${w||22}px;height:${w||22}px">`;
+const sheet=(extra)=>`<rect x="4" y="6" width="56" height="50" rx="4" fill="#fff" stroke="#107C41" stroke-width="2"/><rect x="4" y="6" width="56" height="10" rx="4" fill="#107C41"/>
+  ${[0,1,2].map(i=>`<line x1="4" y1="${28+i*10}" x2="60" y2="${28+i*10}" stroke="#D1FAE5"/>`).join('')}<line x1="24" y1="16" x2="24" y2="56" stroke="#D1FAE5"/><line x1="42" y1="16" x2="42" y2="56" stroke="#D1FAE5"/>${extra||''}`;
+/* モードごとのミニ図 */
+const M={
+  edit:`<svg viewBox="0 0 84 64">${sheet('<rect x="42" y="16" width="18" height="40" fill="#BBF7D0"/>')}<g transform="translate(58 22) rotate(40)"><rect x="0" y="0" width="9" height="30" rx="2" fill="#F59E0B"/><path d="M0 30l4.5 8 4.5-8z" fill="#92400E"/></g></svg>`,
+  plan:`<svg viewBox="0 0 84 64"><rect x="8" y="4" width="50" height="56" rx="5" fill="#fff" stroke="#0F766E" stroke-width="2"/>
+    ${[0,1,2].map(i=>`<circle cx="18" cy="${18+i*15}" r="5" fill="#0F766E"/><text x="18" y="${21.5+i*15}" text-anchor="middle" font-size="8" font-weight="900" fill="#fff">${i+1}</text><rect x="27" y="${15+i*15}" width="${[24,20,22][i]}" height="5" rx="2.5" fill="#99E2D6"/>`).join('')}
+    <circle cx="66" cy="44" r="12" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/><path d="M60 44l4 4 8-8" fill="none" stroke="#92400E" stroke-width="3" stroke-linecap="round"/></svg>`,
+  chat:`<svg viewBox="0 0 84 64">${sheet()}<path d="M44 26h34a5 5 0 0 1 5 5v14a5 5 0 0 1-5 5H58l-8 7v-7h-6a5 5 0 0 1-5-5V31a5 5 0 0 1 5-5z" fill="#E0F2FE" stroke="#0369A1" stroke-width="2"/>
+    <rect x="47" y="33" width="28" height="4" rx="2" fill="#0369A1"/><rect x="47" y="41" width="20" height="4" rx="2" fill="#7DD3FC"/>
+    <g transform="translate(8 40)"><rect x="0" y="6" width="14" height="11" rx="2" fill="#64748B"/><path d="M3 6V3a4 4 0 0 1 8 0v3" fill="none" stroke="#64748B" stroke-width="2"/></g></svg>`
+};
+/* 行ごとのミニ図 */
+const R={
+  ratio:`<svg viewBox="0 0 38 32"><rect x="1" y="2" width="36" height="28" rx="3" fill="#fff" stroke="#107C41" stroke-width="1.5"/><rect x="25" y="2" width="12" height="28" fill="#BBF7D0"/><text x="31" y="20" text-anchor="middle" font-family="Roboto Mono" font-size="9" font-weight="700" fill="#065F46">%</text></svg>`,
+  top:`<svg viewBox="0 0 38 32"><rect x="1" y="2" width="36" height="28" rx="3" fill="#fff" stroke="#107C41" stroke-width="1.5"/>${[0,1,2,3].map(i=>`<rect x="4" y="${5+i*6.5}" width="30" height="5" rx="1.5" fill="${i<2?'#FDE68A':'#E5E7EB'}"/>`).join('')}</svg>`,
+  pivot:`<svg viewBox="0 0 38 32"><rect x="1" y="2" width="36" height="28" rx="3" fill="#fff" stroke="#107C41" stroke-width="1.5"/><rect x="1" y="2" width="36" height="7" fill="#107C41"/><rect x="1" y="9" width="11" height="21" fill="#D1FAE5"/>${[0,1].map(i=>`<rect x="15" y="${13+i*8}" width="18" height="4" rx="2" fill="#CBD5E1"/>`).join('')}</svg>`,
+  chart:`<svg viewBox="0 0 38 32"><rect x="1" y="2" width="36" height="28" rx="3" fill="#fff" stroke="#107C41" stroke-width="1.5"/><path d="M5 25l8-8 7 5 12-12" fill="none" stroke="#0F766E" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+  sort:`<svg viewBox="0 0 38 32"><rect x="1" y="2" width="36" height="28" rx="3" fill="#fff" stroke="#107C41" stroke-width="1.5"/>${[0,1,2].map(i=>`<rect x="5" y="${7+i*7}" width="${[22,16,10][i]}" height="5" rx="2" fill="#14B8A6"/>`).join('')}<path d="M31 7v18M28 22l3 3 3-3" fill="none" stroke="#134E4A" stroke-width="2" stroke-linecap="round"/></svg>`,
+  ask:`<svg viewBox="0 0 38 32"><path d="M4 4h30a3 3 0 0 1 3 3v15a3 3 0 0 1-3 3H15l-7 6v-6H4a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3z" fill="#FFF7ED" stroke="#C2410C" stroke-width="1.6"/><text x="19" y="19" text-anchor="middle" font-family="Noto Sans JP" font-size="12" font-weight="900" fill="#C2410C">?</text></svg>`
+};
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="pills">
+      <div class="vol-pill"><small>M365 Copilot</small>Vol.9-2</div>
+      <div class="lic-pill paid">M365 Copilot ライセンスが要る</div>
+    </div>
+    <div class="title-text">ExcelのCopilotの<span class="hl">3つのモード</span>と、<br>売上表で頼める文の早見表</div>
+    <div class="title-apps"><img class="msi" src="${A}icons/ms/excel.svg" alt=""><span class="pl">＋</span><img class="msi" src="${A}icons/ms/copilot.png" alt=""></div>
+    <img class="title-chara" src="${A}chara/chara_point.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip app">${XLI(34)}</div>
+    <div class="txt">いきなり書き換えるのが心配なら<b>［プラン］</b>で手順を見てから。表を変えずに聞くだけなら<b>［チャットのみ］</b>。<br>Copilot が保存した変更は、ファイルを開ける全員に見えます</div>
+  </div>
+
+  <div class="stage">
+    <div class="lft">
+      <div class="hd"><span class="n">1</span>3つのモード</div>
+      <div class="mode def"><span class="pic">${M.edit}</span><span class="tx"><span class="nm">編集を許可<small>既定</small></span><span class="ds">ブックを直接編集する。<br>何段階かの作業もまとめて進める</span></span></div>
+      <div class="mode"><span class="pic">${M.plan}</span><span class="tx"><span class="nm">プラン</span><span class="ds">先に手順の計画を出す。<br>確かめてから始められる</span></span></div>
+      <div class="mode"><span class="pic">${M.chat}</span><span class="tx"><span class="nm">チャットのみ</span><span class="ds">ブックは変えずに、<br>データについて聞くだけ</span></span></div>
+      <div class="lcap">開くのは Excel の<b>右下の［Copilot］</b>。<br>Windows・Mac・Web で3つとも使える</div>
+    </div>
+
+    <div class="rgt">
+      <div class="hd"><span class="n">2</span>売上表で頼む文の例</div>
+      <span class="grp">表を変える（編集を許可）</span>
+      <div class="tbl" style="flex:5">
+        <div class="trow"><span class="ico">${R.ratio}</span><span class="k">前月比の列</span><span class="v">10月の前月比を、右の列に％で追加してください。</span></div>
+        <div class="trow"><span class="ico">${R.top}</span><span class="k">上位を目立たせる</span><span class="v">10月の売上が多い上位3店舗を、色で強調してください。</span></div>
+        <div class="trow"><span class="ico">${R.pivot}</span><span class="k">店舗ごとの合計</span><span class="v">店舗ごとの合計を、ピボットテーブルにしてください。</span></div>
+        <div class="trow"><span class="ico">${R.chart}</span><span class="k">推移をグラフに</span><span class="v">月ごとの売上の推移を、店舗別のグラフにしてください。</span></div>
+        <div class="trow"><span class="ico">${R.sort}</span><span class="k">並べ替え</span><span class="v">前月比の大きい順に並べ替えてください。</span></div>
+      </div>
+      <span class="grp o">表を変えずに聞く（チャットのみ）</span>
+      <div class="tbl" style="flex:1">
+        <div class="trow hot"><span class="ico" style="border-color:#FDBA74">${R.ask}</span><span class="k">落ちた店舗を知る</span><span class="v">前月より売上が落ちた店舗と、目立つ点を教えてください。</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="warnbar">
+    <span class="na">${svgw(P.warn,2.4)}</span>
+    <span class="wl">使う前に確認</span>
+    <span class="ws">
+      <span>表を直接変えるのは <b>M365 Copilot (Premium)</b> のとき</span>
+      <span>計算方法が<b>自動</b>のブックだけ編集できる</span>
+      <span>途中で止めるなら入力欄の右下の［停止］</span>
+    </span>
+  </div>
+  <div class="src">出典：Microsoft サポート「Excel の Copilot の使用を開始する」「Excel の Copilot に関してよく寄せられる質問」／Microsoft Learn「Microsoft Copilot service description」／頼む文は架空の例</div>
+`;
+</script>
+</body>
+</html>

@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>M365 Copilot Vol.4-2 Copilotの回答をページにして、同僚と一緒に直す3ステップ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/mc-base.css">
+<style>
+  /* 型B：流れ3列（ページにする → 共有する → 一緒に直す）*/
+  .col.info{gap:7px;}
+  .scene{height:80px;}
+  .scene .chara{height:96px;bottom:-8px;}
+  .mock{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:2px solid var(--mc-line);border-radius:11px;overflow:hidden;box-shadow:0 4px 10px rgba(15,60,55,.13);}
+  .mock .hd{flex:0 0 auto;display:flex;align-items:center;gap:7px;padding:5px 10px;background:#F3F2F1;border-bottom:1px solid #E1DFDD;font-size:15px;font-weight:700;}
+  .mock .bd{flex:1;min-height:0;display:flex;flex-direction:column;gap:6px;padding:8px 10px;}
+  .tools{display:flex;align-items:center;gap:12px;}
+  .tools .dots{border:2.5px solid #F59E0B;border-radius:6px;padding:0 9px;font-size:18px;font-weight:900;line-height:1.1;}
+  .mi{display:flex;align-items:center;gap:8px;border-radius:7px;padding:6px 10px;font-size:16px;font-weight:800;}
+  .mi.on{background:#FEF3C7;outline:2.5px solid #F59E0B;color:#92400E;}
+  .mi svg{width:22px;height:22px;flex:0 0 auto;}
+  .ch{display:flex;gap:6px;}
+  .ch span{flex:1;text-align:center;font-size:15px;font-weight:800;border:1.5px solid #C7C7C7;border-radius:7px;padding:4px 0;background:#fff;}
+  .alt{flex:0 0 auto;font-size:15px;font-weight:800;color:#374151;background:#F0FDFA;border:1.5px dashed #7DD3C4;border-radius:8px;padding:5px 9px;line-height:1.38;}
+  .alt b{color:var(--mc-dark);}
+  .shb{margin-left:4px;display:flex;align-items:center;gap:5px;border:2.5px solid #F59E0B;border-radius:7px;padding:2px 10px;font-size:15.5px;font-weight:800;}
+  .shb svg{width:20px;height:20px;}
+  .opt{flex:1;display:flex;flex-direction:column;justify-content:center;gap:2px;border:1.5px solid #D1D1D1;border-radius:9px;padding:4px 10px;}
+  .opt .t{font-size:16px;font-weight:900;color:#1B2A44;display:flex;align-items:center;gap:7px;}
+  .opt .t svg{width:22px;height:22px;flex:0 0 auto;}
+  .opt .d{font-size:14.5px;font-weight:700;color:#4B5563;line-height:1.32;font-family:"Noto Sans JP",sans-serif;}
+  .opt.hot{border:2.5px solid #F59E0B;background:#FFFBEB;}
+  .ask{align-self:flex-end;max-width:96%;background:#E8F4F2;border:1.5px solid #A7E3D8;border-radius:11px 11px 3px 11px;padding:5px 10px;
+    font-family:"Noto Sans JP",sans-serif;font-size:15.5px;font-weight:700;color:#1B2A44;line-height:1.38;}
+  .ask .el{display:block;font-size:13.5px;font-weight:900;color:var(--mc);}
+  .pg{flex:1;min-height:0;display:flex;flex-direction:column;gap:4px;border:1.5px solid #E1DFDD;border-radius:9px;padding:6px 9px;font-family:"Noto Sans JP",sans-serif;}
+  .pg .r{flex:1;display:flex;align-items:center;gap:8px;font-size:15.5px;font-weight:700;color:#1B2A44;border-bottom:1px dashed #E5E7EB;}
+  .pg .r:last-child{border-bottom:none;}
+  .pg .k{flex:0 0 60px;font-size:13.5px;font-weight:900;color:#fff;background:var(--mc);border-radius:5px;text-align:center;padding:1px 0;}
+  .pg .nw{background:#DCFCE7;border-radius:4px;padding:0 4px;color:#065F46;}
+  .warnbar .ws span b{color:#B91C1C;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const sv=(p,c)=>`<svg viewBox="0 0 24 24" fill="none" stroke="${c||'#242424'}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={warn:'<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18v.5"/>',pen:'<path d="M4 20h4L19 9l-4-4L4 16z"/>',
+  share:'<path d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7"/><path d="M12 3v12M7 8l5-5 5 5"/>',
+  link:'<path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/>',
+  comp:'<rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/>'};
+const CPI=(w)=>`<img class="msi" src="${A}icons/ms/copilot.png" alt="" style="width:${w||24}px;height:${w||24}px">`;
+
+/* ① 吹き出し（回答）が1枚の紙（ページ）に変わる */
+const s1=`<svg viewBox="0 0 388 80" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs><filter id="f1" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#134E4A" flood-opacity=".25"/></filter></defs>
+  <rect width="388" height="80" fill="#E6F6F3"/><g transform="translate(10 0) scale(0.816)">
+  <g filter="url(#f1)"><path d="M30 14h110a10 10 0 0 1 10 10v36a10 10 0 0 1-10 10H70l-16 14V70H30a10 10 0 0 1-10-10V24a10 10 0 0 1 10-10z" fill="#fff" stroke="#7DD3C4" stroke-width="2"/>
+  ${[0,1,2].map(i=>`<rect x="34" y="${28+i*12}" width="${[96,80,88][i]}" height="6" rx="3" fill="#CBD5E1"/>`).join('')}</g>
+  <path d="M160 48h46" stroke="#0F766E" stroke-width="5" stroke-linecap="round" stroke-dasharray="2 9"/><path d="M200 38l12 10-12 10" fill="none" stroke="#0F766E" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <g filter="url(#f1)"><rect x="224" y="8" width="70" height="84" rx="6" fill="#fff" stroke="#0F766E" stroke-width="2.5"/>
+  <rect x="232" y="18" width="46" height="8" rx="3" fill="#0F766E"/>
+  ${[0,1,2,3].map(i=>`<rect x="232" y="${34+i*13}" width="${[52,40,48,36][i]}" height="5" rx="2.5" fill="#99E2D6"/>`).join('')}
+  <path d="M280 72l8-8 4 4-8 8h-4z" fill="#F59E0B"/></g></g>
+</svg>`;
+/* ② ページから Teams・Outlook へリンクが飛ぶ */
+const s2=`<svg viewBox="0 0 388 80" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs><filter id="f2" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#134E4A" flood-opacity=".25"/></filter></defs>
+  <rect width="388" height="80" fill="#E6F6F3"/><g transform="translate(35 0) scale(0.816)">
+  <g filter="url(#f2)"><rect x="30" y="10" width="66" height="80" rx="6" fill="#fff" stroke="#0F766E" stroke-width="2.5"/><rect x="38" y="20" width="42" height="8" rx="3" fill="#0F766E"/>
+  ${[0,1,2].map(i=>`<rect x="38" y="${36+i*13}" width="${[48,36,44][i]}" height="5" rx="2.5" fill="#99E2D6"/>`).join('')}</g>
+  <path d="M104 42 C150 20,170 20,196 30" fill="none" stroke="#0F766E" stroke-width="3.5" stroke-dasharray="3 7" stroke-linecap="round"/>
+  <path d="M104 58 C150 80,170 80,196 70" fill="none" stroke="#0F766E" stroke-width="3.5" stroke-dasharray="3 7" stroke-linecap="round"/>
+  <g filter="url(#f2)"><rect x="200" y="12" width="40" height="36" rx="9" fill="#fff"/><rect x="200" y="54" width="40" height="36" rx="9" fill="#fff"/></g></g>
+</svg>`;
+/* ③ 1枚のページに3人のカーソル */
+const s3=`<svg viewBox="0 0 388 80" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <defs><filter id="f3" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#134E4A" flood-opacity=".25"/></filter></defs>
+  <rect width="388" height="80" fill="#E6F6F3"/><g transform="translate(35 0) scale(0.816)">
+  <g filter="url(#f3)"><rect x="96" y="8" width="170" height="84" rx="8" fill="#fff" stroke="#0F766E" stroke-width="2.5"/></g>
+  <rect x="108" y="18" width="80" height="9" rx="3" fill="#0F766E"/>
+  ${[0,1,2,3].map(i=>`<rect x="108" y="${36+i*13}" width="${[140,110,128,96][i]}" height="6" rx="3" fill="#CBD5E1"/>`).join('')}
+  <rect x="212" y="47" width="2.5" height="14" fill="#2563EB"/><rect x="206" y="35" width="26" height="12" rx="3" fill="#2563EB"/><text x="219" y="44.5" text-anchor="middle" font-family="Noto Sans JP" font-size="9.5" font-weight="900" fill="#fff">佐藤</text>
+  <rect x="176" y="73" width="2.5" height="14" fill="#DB2777"/><rect x="170" y="61" width="26" height="12" rx="3" fill="#DB2777"/><text x="183" y="70.5" text-anchor="middle" font-family="Noto Sans JP" font-size="9.5" font-weight="900" fill="#fff">鈴木</text>
+  <rect x="236" y="60" width="2.5" height="14" fill="#0F766E"/><rect x="230" y="48" width="18" height="12" rx="3" fill="#0F766E"/><text x="239" y="57.5" text-anchor="middle" font-family="Noto Sans JP" font-size="9.5" font-weight="900" fill="#fff">私</text></g>
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="pills">
+      <div class="vol-pill"><small>M365 Copilot</small>Vol.4-2</div>
+      <div class="lic-pill free">無料の Copilot Chat でできる</div>
+    </div>
+    <div class="title-text">Copilotの回答をページにして、<span class="hl">同僚と<br>一緒に直す3ステップ</span></div>
+    <div class="title-apps"><img class="msi" src="${A}icons/ms/copilot.png" alt=""><span class="pl">＋</span><img class="msi" src="${A}icons/ms/teams.svg" alt=""><img class="msi" src="${A}icons/ms/outlook.svg" alt=""></div>
+    <img class="title-chara" src="${A}chara/chara_point.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip app">${CPI(34)}</div>
+    <div class="txt">ページにするのは<b>回答の下の［…］</b>から。共有は<b>ページ右上の共有アイコン</b>から。<br>受け取った人はページだけを開いて直せます。Copilot とのチャットは渡りません</div>
+  </div>
+
+  <div class="stage">
+    <div class="col info">
+      <div class="ch2"><span class="n">1</span>回答をページにする</div>
+      <div class="scene">${s1}<img class="chara" src="${A}chara/chara_laptop.png" alt=""></div>
+      <div class="mock seg">
+        <div class="hd">${CPI()}Copilot Chat<span class="repro">説明用の再現</span></div>
+        <div class="bd">
+          <div class="tools">${sv('<path d="M7 10v10H4V10zM7 10l4-7c2 0 3 1 2.5 3L13 10h6a2 2 0 0 1 2 2.3l-1.2 6A2 2 0 0 1 17.8 20H7"/>','#616161').replace('<svg','<svg style="width:24px;height:24px"')}<span class="dots">…</span><span style="font-size:14.5px;font-weight:800;color:#92400E;font-family:'Noto Sans JP'">回答の下</span></div>
+          <div class="mi on">${sv(P.pen,'#92400E')}Pages で編集</div>
+          <div class="alt">追加先は<b>新しいページ</b>か<b>作ったページ</b></div>
+          <div class="alt">別ルート：<b>＋→［その他］→<br>［下書きページまたはコード］</b></div>
+        </div>
+      </div>
+      <div class="cap">Copilot Chat の横にページが開く。<br>タイトルはページの上で直せる</div>
+    </div>
+
+    <div class="col info">
+      <div class="ch2"><span class="n">2</span>共有アイコンから渡す</div>
+      <div class="scene">${s2}<img class="msi" src="${A}icons/ms/teams.svg" alt="" style="position:absolute;left:204px;top:12px;width:24px;height:24px"><img class="msi" src="${A}icons/ms/outlook.svg" alt="" style="position:absolute;left:204px;top:46px;width:24px;height:24px"><img class="chara" src="${A}chara/chara_smile.png" alt=""></div>
+      <div class="mock seg">
+        <div class="hd">ページ<span class="repro">説明用の再現</span><div class="shb">${sv(P.share)}共有</div></div>
+        <div class="bd">
+          <div class="opt hot"><div class="t">${sv(P.link,'#92400E')}リンクをコピー</div><div class="d">Teams・Outlook に貼る。<br>相手は Loop でこのページだけ開く</div></div>
+          <div class="opt"><div class="t">${sv(P.comp,'#0F766E')}コンポーネントのコピー</div><div class="d">Teams・Outlook・OneNote に貼る。<br>そこで直すとページにも反映</div></div>
+        </div>
+      </div>
+      <div class="cap">チャットに貼るなら<b>リンク</b>、<br>会議のメモに埋め込むなら<b>コンポーネント</b></div>
+    </div>
+
+    <div class="col info">
+      <div class="ch2"><span class="n">3</span>一緒に直す・頼んで直す</div>
+      <div class="scene">${s3}<img class="chara" src="${A}chara/chara_guts.png" alt=""></div>
+      <div class="mock seg">
+        <div class="hd">${CPI()}ページ＋Copilot<span class="repro">説明用の再現</span></div>
+        <div class="bd">
+          <div class="ask"><span class="el">頼み方の例</span>場所を7F大会議室に変えて、締め切りの行を足してください。</div>
+          <div class="pg">
+            <div class="r"><span class="k">場所</span><span class="nw">7F 大会議室</span></div>
+            <div class="r"><span class="k">締め切り</span><span class="nw">11/5（水）</span></div>
+            <div class="r"><span class="k">持ち物</span>ノートPC・電源アダプター</div>
+          </div>
+        </div>
+      </div>
+      <div class="cap">同僚は直接書き込む。自分は<br>Copilot に<b>ページの更新</b>を頼める</div>
+    </div>
+  </div>
+
+  <div class="warnbar">
+    <span class="na" style="width:30px;height:30px;color:#C2410C">${svgw(P.warn,2.4)}</span>
+    <span class="wl">使う前に確認</span>
+    <span class="ws">
+      <span>職場・学校のアカウントは<b>SharePoint か OneDrive のストレージ</b>があること</span>
+      <span>ページは削除するまで残る。前に作ったページは Copilot の<b>ライブラリ</b>から</span>
+      <span>使える AI 機能は組織の管理者が決める</span>
+    </span>
+  </div>
+  <div class="src">出典：Microsoft サポート「Microsoft Copilot ページの使用を開始する」「Microsoft Copilot ページを共有する」／画面は説明用の再現、頼み方の例は架空</div>
+`;
+</script>
+</body>
+</html>

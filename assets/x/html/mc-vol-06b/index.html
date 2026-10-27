@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>M365 Copilot Vol.6-2 TeamsのチャットとチャネルでCopilotを開く場所と、聞ける範囲の早見表</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/mc-base.css">
+<style>
+  /* 型E：早見表（左に開く場所のモック／右に場面ごとの一覧）*/
+  .stage{gap:12px;}
+  .lft{flex:0 0 400px;display:flex;flex-direction:column;gap:8px;min-height:0;}
+  .rgt{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px;min-height:0;}
+  .hd{flex:0 0 auto;display:flex;align-items:center;gap:9px;font-size:22px;font-weight:900;color:var(--mc-dark);}
+  .hd .n{flex:0 0 auto;width:34px;height:34px;border-radius:9px;color:#fff;display:flex;align-items:center;justify-content:center;
+    font-size:19px;font-weight:900;background:linear-gradient(180deg,#14B8A6,#0F766E);box-shadow:0 2px 4px rgba(0,0,0,.22);}
+  /* チャットの画面（右に Copilot の欄）*/
+  .mt{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:2px solid #C5CAF2;border-radius:12px;overflow:hidden;box-shadow:0 6px 14px rgba(0,0,0,.14);}
+  .mt .bar{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:6px 10px;background:#EBEBF7;color:#242424;font-size:15px;font-weight:700;}
+  .mt .bar .cp{margin-left:auto;display:flex;align-items:center;gap:6px;background:#fff;color:#242424;border-radius:6px;padding:3px 10px;font-size:15px;font-weight:800;box-shadow:0 0 0 3px #F59E0B;}
+  .mt .bd{flex:1;min-height:0;display:flex;gap:6px;padding:7px;background:#F5F5F5;}
+  .mt .msgs{flex:0 0 104px;display:flex;flex-direction:column;gap:6px;}
+  .mt .msgs div{flex:1;border-radius:7px;background:#fff;border:1px solid #E1DFDD;display:flex;align-items:center;gap:5px;padding:0 6px;}
+  .mt .msgs i{flex:0 0 auto;width:22px;height:22px;border-radius:50%;}
+  .mt .msgs b{flex:1;height:7px;border-radius:4px;background:#D6D9EE;}
+  .side{flex:1;min-width:0;display:flex;flex-direction:column;background:#fff;border-radius:8px;overflow:hidden;border:1px solid #E1DFDD;}
+  .side .sh{flex:0 0 auto;display:flex;align-items:center;gap:7px;padding:6px 10px;border-bottom:1px solid #E1DFDD;font-size:15.5px;font-weight:700;}
+  .side .sb{flex:1;min-height:0;display:flex;flex-direction:column;gap:7px;padding:8px 9px;}
+  .side .ex{align-self:flex-end;max-width:96%;background:#E8EBFA;border:1.5px solid #C5CAF2;border-radius:10px 10px 3px 10px;padding:5px 9px;font-size:15px;font-weight:700;color:#1B2A44;line-height:1.35;}
+  .side .an{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:space-around;gap:5px;background:#FAFAFA;border:1.5px solid #E1DFDD;border-radius:10px;padding:6px 9px;}
+  .side .an div{display:flex;align-items:center;gap:6px;}
+  .side .an .ln{flex:1;height:8px;border-radius:4px;background:#E5E7EB;}
+  .side .an .rf{flex:0 0 auto;font-size:13px;font-weight:900;color:#5B5FC7;border:2px solid #F59E0B;border-radius:999px;padding:0 7px;}
+  .side .pop{font-size:15px;font-weight:800;color:#92400E;background:#FFFBEB;border-radius:7px;padding:5px 9px;line-height:1.35;border:2px dashed #F59E0B;}
+  .lcap{flex:0 0 auto;font-size:15.5px;font-weight:900;line-height:1.35;border-radius:9px;padding:7px 11px;color:var(--mc-dark);background:#D5F3EE;}
+  .lcap b{color:var(--orange);}
+  /* 早見表 */
+  .trow{gap:10px;padding:4px 10px;}
+  .trow .ico{flex:0 0 auto;width:38px;height:38px;border-radius:10px;background:#CCFBF1;color:var(--mc-dark);display:flex;align-items:center;justify-content:center;padding:7px;}
+  .trow.hot .ico{background:#FED7AA;color:#9A3412;}
+  .trow .k{flex:0 0 238px;font-size:17px;}
+  .trow .k small{display:block;font-size:13.5px;font-weight:800;color:var(--weak);}
+  .trow .v{flex:1;font-size:15.5px;font-weight:800;line-height:1.32;}
+  .trow .v b{color:#B91C1C;}
+  .trow .v .ui{background:#fff;border:1.5px solid #99E2D6;border-radius:5px;padding:0 5px;color:#134E4A;white-space:nowrap;}
+  .trow.hot .v .ui{border-color:#FDBA74;color:#9A3412;}
+  .warnbar .ws span b{color:#B91C1C;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={warn:'<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18v.5"/>',
+  chat:'<path d="M4 5h16v11H9l-5 4z"/>',
+  chan:'<path d="M5 9h14M5 15h14M10 4L8 20M16 4l-2 16"/>',
+  thread:'<path d="M5 4h14v6H5z"/><path d="M8 10v4h11v6H8"/>',
+  meet:'<rect x="3" y="6" width="13" height="12" rx="2"/><path d="M16 10l5-3v10l-5-3z"/>',
+  cal:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+  no:'<circle cx="12" cy="12" r="9"/><path d="M6 6l12 12"/>'};
+const CPI=(w)=>`<img class="msi" src="${A}icons/ms/copilot.png" alt="" style="width:${w||24}px;height:${w||24}px">`;
+const m=(c)=>`<div><i style="background:${c}"></i><b></b></div>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="pills">
+      <div class="vol-pill"><small>M365 Copilot</small>Vol.6-2</div>
+      <div class="lic-pill paid">M365 Copilot ライセンスが要る</div>
+    </div>
+    <div class="title-text">Teamsのチャットとチャネルで、<span class="hl">Copilotを<br>開く場所と読む範囲</span>の早見表</div>
+    <div class="title-apps"><img class="msi" src="${A}icons/ms/teams.svg" alt=""><span class="pl">＋</span><img class="msi" src="${A}icons/ms/copilot.png" alt=""></div>
+    <img class="title-chara" src="${A}chara/chara_point.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip app"><img class="msi" src="${A}icons/ms/teams.svg" alt="" style="width:34px;height:34px"></div>
+    <div class="txt">Copilot が読むのは<b>開いているチャットやスレッド</b>の中。既定は<b>過去30日</b>です。<br>画像・Loop コンポーネント・ファイルの中身は要約に入りません</div>
+  </div>
+
+  <div class="stage">
+    <div class="lft">
+      <div class="hd"><span class="n">1</span>チャットで開く</div>
+      <div class="mt seg">
+        <div class="bar"><img class="msi" src="${A}icons/ms/teams.svg" alt="" style="width:26px;height:26px">新製品プロジェクト<span class="cp">${CPI(22)}Copilot を開く</span></div>
+        <div class="bd">
+          <div class="msgs">${m('#2563EB')}${m('#DB2777')}${m('#059669')}${m('#7C3AED')}${m('#2563EB')}</div>
+          <div class="side">
+            <div class="sh">${CPI(26)}Copilot</div>
+            <div class="sb">
+              <div class="ex">私が見逃したことを<br>要約してください。</div>
+              <div class="an">
+                <div><span class="ln"></span><span class="rf">1</span></div>
+                <div><span class="ln" style="flex:.8"></span><span class="rf">2</span></div>
+                <div><span class="ln" style="flex:.9"></span><span class="rf">3</span></div>
+              </div>
+              <div class="pop">番号から<br>元の投稿をたどれる</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="lcap">チャットの右上の［Copilot を開く］で、<br>右側に自分だけのやり取りが開く</div>
+    </div>
+
+    <div class="rgt">
+      <div class="hd"><span class="n">2</span>場面ごとの開き方</div>
+      <div class="tbl">
+        <div class="trow"><span class="ico">${svgw(P.chat,2.2)}</span><span class="k">1対1・グループの<br>チャット</span><span class="v">チャットの右上の <span class="ui">Copilot を開く</span></span></div>
+        <div class="trow"><span class="ico">${svgw(P.chan,2.2)}</span><span class="k">チャネルの投稿</span><span class="v">返信を展開して投稿を開き、<span class="ui">Copilot を開く</span><br>候補は <span class="ui">その他のプロンプト</span> から</span></div>
+        <div class="trow"><span class="ico">${svgw(P.thread,2.2)}</span><span class="k">長いスレッドだけ<small>1,000文字以上のスレッド</small></span><span class="v"><span class="ui">その他のアクション</span> → <span class="ui">スレッドの要約</span></span></div>
+        <div class="trow"><span class="ico">${svgw(P.meet,2.2)}</span><span class="k">会議のチャット</span><span class="v">文字起こしがあれば、その内容も読む。<br>なければ会議チャットの会話だけ</span></div>
+        <div class="trow"><span class="ico">${svgw(P.cal,2.2)}</span><span class="k">期間を絞る<small>既定は過去30日</small></span><span class="v">答えが出たあとで、期間を指定して<br>絞り込める</span></div>
+        <div class="trow hot"><span class="ico">${svgw(P.no,2.2)}</span><span class="k">要約に入らないもの</span><span class="v"><b>画像・Loop コンポーネント・ファイル</b>。<br>ファイルは自分で開いて読む</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="warnbar">
+    <span class="na">${svgw(P.warn,2.4)}</span>
+    <span class="wl">使う前に確認</span>
+    <span class="ws">
+      <span>使う人ごとに <b>M365 Copilot ライセンス</b></span>
+      <span>返信する前に、番号から元の投稿を開いて確かめる</span>
+      <span>引用元の表示やコピーは、管理者の設定で変わる</span>
+    </span>
+  </div>
+  <div class="src">出典：Microsoft サポート「Teams のチャットとチャネルで Microsoft Copilot を使用する方法」／Microsoft Learn「Overview of AI in Microsoft Teams」／画面は説明用の再現</div>
+`;
+</script>
+</body>
+</html>
