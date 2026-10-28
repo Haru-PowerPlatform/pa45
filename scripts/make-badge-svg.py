@@ -55,6 +55,7 @@ SESSIONS = {
     29: ("Expression Picker", "2026-10-01", "exprpick"),
     30: ("One-Click To Do", "2026-10-08", "teamstodo"),
     31: ("One-Click PDF Send", "2026-10-15", "pdfsend"),
+    32: ("Monthly Folder Sort", "2026-10-22", "monthfolder"),
 }
 
 
@@ -104,6 +105,10 @@ PALETTE_OVERRIDE = {
     #          Wordの紙 → PDFの紙 → 封筒へ、の流れのiconが主役。
     31: dict(ring=("#fecaca", "#5c0b0b"), disc=("#d23b3b", "#3d0808"),
              gold=GOLD, title="#ffffff", sub="#ffe1e1"),
+    # Vol.32：置くだけで月別フォルダに片付く。フォルダの琥珀×ゴールド（赤(31)からの変化）。
+    #          ファイルが矢印で今月（10）のフォルダへ入るiconが主役。
+    32: dict(ring=("#fde4a8", "#4a2c05"), disc=("#c9780f", "#331d02"),
+             gold=GOLD, title="#ffffff", sub="#fff0cc"),
 }
 
 
@@ -578,6 +583,42 @@ def icon_exprpick(g):
   </g>'''
 
 
+def icon_monthfolder(g):
+    """置くだけで月別フォルダに片付く。上の紙が矢印で、並んだ月フォルダのうち今月（10）へ入る。"""
+    gl, gm, gd = g
+    fam = "'Segoe UI','Noto Sans JP',sans-serif"
+    # 置いたファイル（上中央）
+    px, py, pw, ph, fold = 392, 288, 76, 92, 20
+    paper = (f'<path d="M{px} {py} H{px+pw-fold} L{px+pw} {py+fold} V{py+ph} H{px} Z" fill="#fffaf0" stroke="{gd}" stroke-width="4.5" stroke-linejoin="round"/>'
+             f'<path d="M{px+pw-fold} {py} V{py+fold} H{px+pw}" fill="none" stroke="{gd}" stroke-width="4" stroke-linejoin="round"/>'
+             f'<rect x="{px+13}" y="{py+34}" width="{pw-32}" height="8" rx="4" fill="{gm}" opacity="0.5"/>'
+             f'<rect x="{px+13}" y="{py+50}" width="{pw-42}" height="8" rx="4" fill="{gm}" opacity="0.5"/>'
+             f'<rect x="{px+13}" y="{py+66}" width="{pw-36}" height="8" rx="4" fill="{gm}" opacity="0.5"/>')
+    # 月フォルダ3つ（下段）。右端＝今月が金で主役
+    def folder(x, y, w, h, label, on):
+        body = "url(#sparkgrad)" if on else "#fffaf0"
+        return (f'<path d="M{x} {y+12} Q{x} {y} {x+12} {y} H{x+38} L{x+50} {y+14} H{x+w-12} Q{x+w} {y+14} {x+w} {y+26} V{y+h-12} Q{x+w} {y+h} {x+w-12} {y+h} H{x+12} Q{x} {y+h} {x} {y+h-12} Z" '
+                f'fill="{body}" stroke="{gd}" stroke-width="4.5" stroke-linejoin="round"/>'
+                f'<text x="{x+w/2}" y="{y+h-20}" text-anchor="middle" font-family="{fam}" font-weight="900" '
+                f'font-size="34" fill="{gd}" opacity="{1 if on else 0.55}">{label}</text>')
+    folders = (folder(284, 402, 92, 74, "08", False) +
+               folder(386, 402, 92, 74, "09", False) +
+               folder(488, 396, 108, 86, "10", True))
+    # 紙 → 今月フォルダへの矢印
+    arrow = (f'<path d="M476 326 Q536 326 540 372" fill="none" stroke="{gl}" stroke-width="9" stroke-linecap="round"/>'
+             f'<path d="M525 362 L540 384 L555 362" fill="none" stroke="{gl}" stroke-width="9" '
+             f'stroke-linecap="round" stroke-linejoin="round"/>')
+    spark = "".join(f'<circle cx="{cx}" cy="{cy}" r="{cr}" fill="{gl}" opacity="0.85"/>'
+                    for cx, cy, cr in ((582, 318, 7), (330, 320, 6), (356, 360, 4)))
+    return f'''
+  <g filter="url(#ishadow)" transform="translate(0,6)">
+    {spark}
+    {paper}
+    {arrow}
+    {folders}
+  </g>'''
+
+
 ICONS = {"foldermail": icon_foldermail, "copilot": icon_copilot,
          "deadline": icon_deadline, "approval": icon_approval,
          "dashboard": icon_dashboard, "card": icon_card,
@@ -588,7 +629,8 @@ ICONS = {"foldermail": icon_foldermail, "copilot": icon_copilot,
          "checkcard": icon_checkcard,
          "teamstodo": icon_teamstodo,
          "pdfsend": icon_pdfsend,
-         "exprpick": icon_exprpick}
+         "exprpick": icon_exprpick,
+         "monthfolder": icon_monthfolder}
 
 
 def knurl_dots(cx, cy, r, n, color):
