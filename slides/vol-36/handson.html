@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<!-- generated: pac-flows/vol36-excelimport/build_vol36_handson.py（直接編集しない） -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PA45 第36回 ハンズオン手順｜Excel の表を、ボタン1つで SharePoint リストへ</title>
+<style>
+  .card2{background:#fff;border:1px solid #e2e8f0;border-radius:18px;padding:22px 24px;margin:34px 0;box-shadow:0 4px 14px rgba(15,23,42,.06);}
+  .card2 .part-h{display:flex;align-items:center;gap:12px;}
+  .card2 .ph-ic{width:44px;height:44px;object-fit:contain;}
+  .goal2{margin:14px 0 8px;background:#f0fdf4;border:2px solid #86efac;border-radius:12px;padding:10px 14px;font-size:15px;font-weight:700;color:#14532d;}
+  .goal2 b,.why2 b{display:inline-block;background:#16a34a;color:#fff;border-radius:6px;padding:1px 8px;margin-right:10px;font-size:13px;}
+  .why2{margin:0 0 16px;font-size:14px;color:#475569;line-height:1.7;} .why2 b{background:#64748b;}
+  .blks{display:flex;flex-direction:column;gap:14px;}
+  .blk{display:flex;gap:14px;align-items:flex-start;background:#f8fafc;border-radius:14px;padding:14px 16px;}
+  .blk .bn{flex:0 0 auto;width:30px;height:30px;border-radius:50%;background:#4358c8;color:#fff;font-weight:900;display:flex;align-items:center;justify-content:center;}
+  .blk .bc{flex:1;min-width:0;font-size:15px;line-height:1.8;}
+  .blk .bc small{color:#64748b;font-size:13px;}
+  .act{display:flex;align-items:center;gap:10px;font-size:16px;margin-bottom:8px;}
+  .act img{width:30px;height:30px;object-fit:contain;}
+  table.kv{width:100%;border-collapse:separate;border-spacing:0;margin:8px 0 4px;font-size:14px;background:#fff;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;}
+  table.kv th{width:34%;text-align:left;background:#eef1fc;color:#2c3a94;padding:8px 12px;border-bottom:1px solid #e2e8f0;font-weight:800;vertical-align:top;}
+  table.kv td{padding:8px 12px;border-bottom:1px solid #e2e8f0;}
+  table.kv tr:last-child th,table.kv tr:last-child td{border-bottom:none;}
+  .dyn{background:#ede9fe;color:#6b21a8;border-radius:6px;padding:1px 8px;font-weight:800;white-space:nowrap;}
+  details.mihon{margin-top:14px;} details.mihon summary{cursor:pointer;font-weight:800;color:#2c3a94;}
+  .blk .codewrap{margin-top:8px;}
+  .shot{display:block;max-width:100%;max-height:420px;width:auto;border:1px solid #cbd5e1;border-radius:10px;margin:10px 0 6px;box-shadow:0 2px 8px rgba(15,23,42,.08);}
+  .src{font-size:12px;color:#64748b;margin-left:4px;}
+  .later{margin-top:10px;background:#fff7ed;border-left:5px solid #f97316;border-radius:8px;padding:8px 12px;font-size:14px;line-height:1.7;color:#7c2d12;}
+  .later b{display:inline-block;background:#f97316;color:#fff;border-radius:6px;padding:0 8px;margin-right:8px;font-size:13px;}
+  table.kv3 th{width:26%;} table.kv3 td.lt{width:34%;background:#fff7ed;color:#7c2d12;font-size:13px;}
+  table.kv3 tr.kvh th,table.kv3 tr.kvh td{background:#f1f5f9;color:#475569;font-size:12px;font-weight:800;padding:5px 12px;}
+  .tree{font-family:Consolas,"Meiryo UI",monospace;background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:10px 14px;line-height:1.8;font-size:14px;white-space:pre;}
+</style>
+
+<meta name="description" content="PA45 第29回のハンズオン手順書。毎朝8時に、件名にPA45が入ったメールをとってきて、件数といちばん新しい件名を式で取り出し、Teamsに1通で届けるフローを作ります。動的コンテンツの一覧に出てこない値を、自分で取り出せるようになります。">
+<style>
+  :root{
+    --pa:#3a4fb8;--pa-dark:#2c3a94;--pa-bg:#eef1fc;
+    --sp:#0f6cbd;--sp-bg:#e6f0fb;
+    --teams:#5b5fc7;--teams-dark:#4347a8;--teams-bg:#eef0fb;
+    --blue-text:#14528f;--blue-mid:#2a7dd4;--blue-bg:#eaf2fc;
+    --ink:#1f2937;--muted:#475569;--border:#e2e8f0;--amber:#b45309;--code-bg:#0f172a;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:linear-gradient(160deg,#eef1fc 0%,#f5f8fc 42%,#fff 100%);
+    font-family:"Meiryo UI","Yu Gothic UI","Segoe UI",sans-serif;color:var(--ink);
+    min-height:100vh;padding:0 16px 70px;line-height:1.7;}
+  .wrap{max-width:860px;margin:0 auto;}
+
+  .topbar{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.93);
+    -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+    border:1px solid var(--border);border-top:none;border-radius:0 0 14px 14px;
+    box-shadow:0 2px 10px rgba(20,82,143,.08);margin-bottom:18px;}
+  .topbar-in{display:flex;align-items:center;gap:10px;padding:9px 14px;flex-wrap:wrap;}
+  .brand{display:flex;flex-direction:column;text-decoration:none;color:var(--blue-text);font-weight:800;font-size:18px;line-height:1;}
+  .brand span{font-size:9px;font-weight:600;color:var(--muted);letter-spacing:.04em;margin-top:3px;}
+  .tnav{display:flex;gap:3px;flex-wrap:wrap;margin-left:auto;}
+  .tnav a{text-decoration:none;color:var(--blue-text);font-size:12.5px;font-weight:700;padding:6px 10px;border-radius:8px;white-space:nowrap;}
+  .tnav a:hover{background:var(--blue-bg);}
+  .tnav a.cur{background:var(--pa);color:#fff;}
+
+  header{text-align:center;margin-bottom:6px;}
+  .eyebrow{display:inline-block;background:var(--pa);color:#fff;font-weight:700;font-size:13px;letter-spacing:.06em;padding:5px 16px;border-radius:20px;}
+  h1{font-size:29px;font-weight:800;color:var(--pa-dark);margin:14px 0 6px;line-height:1.28;}
+  h1 small{display:block;font-size:15.5px;color:var(--muted);font-weight:600;margin-top:6px;}
+  .crumbs{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:12.5px;color:var(--muted);margin-bottom:14px;justify-content:center;}
+  .crumbs a{color:var(--blue-mid);text-decoration:none;font-weight:700;}
+  .crumbs .sep{color:#cbd5e1;}
+
+  .goal{background:#fff;border:1px solid var(--border);border-left:5px solid var(--pa);border-radius:12px;padding:14px 20px;margin-bottom:16px;box-shadow:0 2px 8px rgba(20,82,143,.05);}
+  .goal b{color:var(--pa-dark);}
+  .flowpath{display:flex;flex-wrap:wrap;align-items:center;gap:8px;justify-content:center;margin:14px 0 0;font-weight:800;color:var(--pa-dark);font-size:14.5px;}
+  .flowpath .st{background:var(--sp-bg);border:1px solid #a9cdec;border-radius:22px;padding:7px 15px;}
+  .flowpath .st.hot{background:var(--teams-bg);border-color:#c3c5ef;color:var(--teams-dark);}
+  .flowpath .st.end{background:#fff7ed;border-color:#fdba74;color:#9a3412;}
+  .flowpath .ar{color:var(--pa);font-size:18px;}
+
+  .toc{display:flex;flex-wrap:wrap;gap:8px;background:#fff;border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:22px;box-shadow:0 2px 8px rgba(20,82,143,.05);}
+  .toc-lbl{font-size:12px;font-weight:800;color:var(--pa-dark);background:var(--pa-bg);padding:4px 11px;border-radius:8px;}
+  .toc a{text-decoration:none;color:var(--blue-text);font-size:13px;font-weight:700;padding:6px 12px;border-radius:8px;border:1px solid var(--border);}
+  .toc a:hover{background:var(--blue-bg);border-color:var(--blue-mid);}
+
+  .part{scroll-margin-top:70px;margin:26px 0 0;}
+  .part-h{display:flex;align-items:center;gap:12px;margin-bottom:6px;}
+  .part-badge{flex:0 0 auto;background:var(--pa);color:#fff;font-weight:800;font-size:14px;padding:6px 14px;border-radius:20px;}
+  .part-badge.sp{background:var(--sp);}
+  .part-badge.tm{background:var(--teams);}
+  .part-h h2{font-size:20px;font-weight:800;color:var(--pa-dark);margin:0;}
+  .part-note{font-size:14px;color:var(--muted);margin:0 0 12px;}
+
+  ol.steps{list-style:none;counter-reset:st;padding:0;margin:0;}
+  ol.steps>li{position:relative;padding:14px 16px 14px 54px;background:#fff;border:1px solid var(--border);border-radius:12px;margin-bottom:10px;box-shadow:0 2px 6px rgba(20,82,143,.05);font-size:15px;}
+  ol.steps>li::before{counter-increment:st;content:counter(st);position:absolute;left:14px;top:13px;width:28px;height:28px;border-radius:50%;background:var(--pa);color:#fff;font-weight:800;font-size:15px;display:flex;align-items:center;justify-content:center;}
+  ol.steps.sp>li::before{background:var(--sp);}
+  ol.steps.tm>li::before{background:var(--teams);}
+  ol.steps>li b{color:var(--pa-dark);}
+  .k{display:inline-block;background:#f1f5f9;border:1px solid #d7dee7;border-radius:6px;padding:1px 8px;font-weight:700;font-size:13.5px;color:#334155;white-space:nowrap;}
+  .pick{display:inline-block;background:#fff7ed;border:1px solid #fdba74;border-radius:6px;padding:1px 8px;font-weight:800;font-size:13.5px;color:#c2410c;}
+  ul.sub{margin:8px 0 0;padding-left:20px;font-size:14px;color:var(--muted);}
+  ul.sub li{margin:3px 0;}
+
+  .setrow{display:flex;flex-wrap:wrap;gap:6px 10px;margin:8px 0 0;padding:10px 12px;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:10px;font-size:13.5px;}
+  .setrow .kv{display:flex;gap:6px;align-items:center;}
+  .setrow .kv .kk{font-weight:800;color:var(--pa-dark);}
+  .setrow .kv .vv{background:#fff;border:1px solid #d7dee7;border-radius:6px;padding:1px 9px;font-weight:700;color:#334155;}
+
+  .callout{border-radius:10px;padding:12px 18px;font-size:14px;margin:12px 0;line-height:1.7;}
+  .callout.tip{background:var(--sp-bg);border-left:5px solid var(--sp);color:#0b4a7a;}
+  .callout.warn{background:#fffbeb;border-left:5px solid #f59e0b;color:#78350f;}
+  .callout.info{background:var(--blue-bg);border-left:5px solid var(--blue-mid);color:#14528f;}
+  .callout.pa{background:var(--pa-bg);border-left:5px solid var(--pa);color:var(--pa-dark);}
+  .callout.tm{background:var(--teams-bg);border-left:5px solid var(--teams);color:var(--teams-dark);}
+
+  .codewrap{position:relative;margin:10px 0;}
+  .codewrap .lbl{font-size:12px;font-weight:800;color:#cbd5e1;background:#1e293b;display:inline-block;padding:4px 12px;border-radius:8px 8px 0 0;}
+  pre{margin:0;background:var(--code-bg);color:#e2e8f0;border-radius:0 10px 10px 10px;padding:16px 18px;overflow-x:auto;font-size:12.5px;line-height:1.65;
+    font-family:"Cascadia Code","Consolas","SFMono-Regular",monospace;white-space:pre-wrap;word-break:break-word;}
+  .copybtn{position:absolute;top:6px;right:8px;background:#334155;color:#e2e8f0;border:none;border-radius:7px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer;}
+  .copybtn:hover{background:#475569;}
+
+  table.fx{width:100%;border-collapse:collapse;margin:12px 0;font-size:13.5px;}
+  table.fx th{background:var(--pa-bg);color:var(--pa-dark);font-weight:800;border:1px solid #cbd5e1;padding:8px 10px;text-align:left;}
+  table.fx td{border:1px solid #cbd5e1;padding:8px 10px;vertical-align:top;}
+  table.fx code{background:#0f172a;color:#fbbf24;border-radius:5px;padding:2px 7px;font-family:"Consolas",monospace;font-size:12px;}
+  table.fx td.v{font-weight:800;color:#0b5e37;white-space:nowrap;}
+
+  .backrow{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:30px;}
+  .btn.sec{display:inline-flex;align-items:center;gap:6px;background:#fff;color:var(--blue-text);border:1px solid var(--blue-mid);text-decoration:none;font-size:14px;font-weight:700;padding:10px 20px;border-radius:9px;}
+  .btn.sec:hover{background:var(--blue-bg);}
+  figure.shot{margin:14px 0 6px;}
+  figure.shot img{display:block;width:100%;border:1px solid #cbd5e1;border-radius:10px;box-shadow:0 6px 18px rgba(20,82,143,.14);}
+  figure.shot.narrow img{max-width:420px;margin:0 auto;}
+  figure.shot figcaption{font-size:12.5px;color:var(--muted);margin-top:7px;text-align:center;}
+  footer{margin-top:26px;text-align:center;color:#94a3b8;font-size:12px;line-height:1.8;}
+  .chap{display:inline-block;font-size:12px;font-weight:900;background:#fbbf24;color:#1e293b;border-radius:6px;padding:2px 8px;margin-right:8px;white-space:nowrap;}
+  .whyline{margin:4px 0 10px;font-size:15px;font-weight:800;color:#9a3412;background:#fff7ed;border-left:5px solid #ea580c;border-radius:6px;padding:6px 12px;}
+</style>
+<style>.shot img{max-width:640px;margin:0 auto;}</style>
+</head>
+<body>
+<div class="wrap">
+
+  <nav class="topbar" aria-label="サイト内メニュー">
+    <div class="topbar-in">
+      <a class="brand" href="../../">PA45<span>Power Automate 45</span></a>
+      <div class="tnav">
+        <a href="../../">🏠 ホーム</a>
+        <a href="links.html">🗂️ 第36回の資料</a>
+        <a href="./" class="cur">🛠️ ハンズオン手順</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="crumbs">
+    <a href="../../">🏠 PA45トップ</a><span class="sep">›</span>
+    <a href="links.html">第36回 資料</a><span class="sep">›</span>
+    <span>ハンズオン手順</span>
+  </div>
+
+  <header>
+    <span class="eyebrow">PA45 第36回｜ハンズオン手順</span>
+    <h1>Excel の表を、ボタン1つで SharePoint リストへ<small>人事から毎月 Excel で届く研修の申込者一覧を、フローが1行ずつ SharePoint リストに書き写します。何行あっても、For each が行の数だけくり返すので、フローは同じまま使えます。</small></h1>
+  </header>
+
+  <div class="goal">
+    <b>今日つくるもの：</b> ボタンを押すと、Excel の表「申込者」の行が、<b>「研修の受講者」リストに1件ずつ</b>作られるフロー。
+    <div class="flowpath">
+      <span class="st">👆 手動でトリガー</span><span class="ar">→</span>
+      <span class="st">📗 表内に存在する行を一覧表示</span><span class="ar">→</span>
+      <span class="st hot">🔁 For each</span><span class="ar">→</span>
+      <span class="st end">📝 項目の作成</span>
+    </div>
+  </div>
+
+  <details class="callout tip mihon" style="margin-bottom:10px;"><summary><b>■ 今回の考え方（スライドの考え方①②）</b></summary>
+    <ul style="margin:6px 0 0;padding-left:20px;">
+      <li>事務の仕事は、受け付ける／書き写す／判断する／知らせる／まとめる／作る、の6つの動詞の組み合わせ。</li>
+      <li>今回は「書き写す」をまるごとフローに任せる。届いた一覧（受け付ける）を、台帳のリストへ1行ずつ写す。</li>
+      <li>1回きりなら、リストの「グリッド ビューで編集」に貼り付けても入る。毎月届く・行が多いときにフローが効く。</li>
+      <li>持ち帰る1つ＝<b>一覧を1件ずつ処理するときは For each。何行あっても同じフロー</b>。</li>
+    </ul>
+  </details>
+  <div class="callout tip" style="margin-bottom:10px;"><b>📖 この手順書の読み方：</b> 各アクションに表があります。表は <b>欄 ／ 入れるもの（⚡ のどのアクションから選ぶか）／ なぜ・あとでどう役立つか</b> の順です。オレンジの「次に渡るもの」は、そのアクションが終わったあと、後ろのアクションに何が渡るかです。</div>
+  <div class="callout info" style="margin-bottom:4px;"><b>🔰 初参加の方へ：</b> ここから始めて大丈夫です。OneDrive と SharePoint が使える会社・学校のアカウントがあれば作れます（個人の Microsoft アカウントでは作れません）。</div>
+
+  <nav class="toc" aria-label="手順の目次">
+    <span class="toc-lbl">目次</span>
+    <a href="#p0">準備① Excel を置く</a>
+    <a href="#p0b">準備② リストを作る</a>
+    <a href="#p1">1. フローを作る</a>
+    <a href="#p2">2. Excel を読む</a>
+    <a href="#p3">3. 1件ずつ作る</a>
+    <a href="#p4">4. テスト</a>
+    <a href="#p5">おまけ</a>
+  </nav>
+
+  <section class="part card2" id="p0">
+    <div class="part-h"><span class="part-badge">準備①</span><img class="ph-ic" src="assets/icon_excel.png" alt=""><h2>練習用の Excel を OneDrive に置く（3分）</h2></div>
+    <div class="goal2"><b>この段のゴール</b>自分の OneDrive の PA45第36回 フォルダに、研修申込者一覧.xlsx がある</div>
+    <p class="why2"><b>なぜ</b>フローが読むのは、OneDrive か SharePoint に置いた Excel だけ。手元の PC にあるファイルは読めない。今日は、人事から届いた一覧の代わりに練習用のファイルを使う。</p>
+    <div class="blks">
+      <div class="blk"><div class="bn">1</div><div class="bc">下の URL をコピーしてブラウザに貼ると、練習用のファイル（架空の名簿・8人）がダウンロードされます。<div class="codewrap"><button class="copybtn" data-code="sampleurl">コピー</button>
+<pre id="sampleurl">https://haru-powerplatform.github.io/pa45/slides/vol-36/sample/%E7%A0%94%E4%BF%AE%E7%94%B3%E8%BE%BC%E8%80%85%E4%B8%80%E8%A6%A7.xlsx</pre></div><img class="shot" src="assets/real-xlsx.png" alt="練習用の Excel。氏名・部署・コースの表"><small>表の名前は「申込者」です（Excel の「テーブル デザイン」タブの左端で確かめられます）。</small></div></div>
+      <div class="blk"><div class="bn">2</div><div class="bc">OneDrive を開き、<b>「＋ 新規」→「フォルダー」</b>で <span class="k">PA45第36回</span> を作ります。その中に、ダウンロードしたファイルをドラッグしてアップロードします。<div class="later"><b>次に渡るもの</b>ファイル → STEP 2 の「ファイル」／表の名前「申込者」→ STEP 2 の「テーブル」</div></div></div>
+    </div>
+    <div class="callout warn"><b>⚠️ 自分の Excel で試すとき：</b> フローが読めるのは「テーブル」になった表だけです。表の中のセルを選んで <b>「ホーム」→「テーブルとして書式設定」</b> を押し、先頭行を見出しにしておきます。</div>
+  </section>
+
+  <section class="part card2" id="p0b">
+    <div class="part-h"><span class="part-badge">準備②</span><img class="ph-ic" src="assets/icon_sharepoint.png" alt=""><h2>SharePoint に「研修の受講者」リストを作る（3分）</h2></div>
+    <div class="goal2"><b>この段のゴール</b>SharePoint のサイトに、タイトル・部署・コースの3列を持つ「研修の受講者」リストがある</div>
+    <p class="why2"><b>なぜ</b>書き写す先を先に作る。列の名前を Excel と同じにしておくと、STEP 3 でどこに何を入れるか迷わない。</p>
+    <div class="blks">
+      <div class="blk"><div class="bn">1</div><div class="bc">リストを作ってよい SharePoint のサイト（チームのサイトなど）を開き、<b>「＋ 新規」→「リスト」→「空白のリスト」</b>。名前は <span class="k">研修の受講者</span>。<img class="shot" src="assets/real-sp-newlist.png" alt="SharePoint の新規 → リスト"></div></div>
+      <div class="blk"><div class="bn">2</div><div class="bc"><b>「＋ 列の追加」→「1 行テキスト」</b>で <span class="k">部署</span> を、同じ手順で <span class="k">コース</span> を作ります。<br><small>最初からある「タイトル」列は、そのまま氏名を入れる列として使います。</small><div class="later"><b>次に渡るもの</b>リスト → STEP 3 のリスト名／タイトル・部署・コース → STEP 3 の欄</div></div></div>
+    </div>
+
+  </section>
+
+  <section class="part card2" id="p1">
+    <div class="part-h"><span class="part-badge">STEP 1</span><img class="ph-ic" src="assets/pa_logo.png" alt=""><h2>フローを作る（トリガー＝手動）</h2></div>
+    <div class="goal2"><b>この段のゴール</b>「フローを手動でトリガーする」だけが置かれたフローができている</div>
+    <p class="why2"><b>なぜ</b>Excel が届いたときに、自分のタイミングで動かしたい。だから入口はボタン（手動）。</p>
+    <div class="blks">
+      <div class="blk"><div class="bn">1</div><div class="bc"><b>「作成」→「インスタント クラウド フロー」</b>。フロー名は <span class="k">PA45 第36回 Excel をリストへ</span>、トリガーは<b>「フローを手動でトリガーする」</b>を選んで「作成」。</div></div>
+    </div>
+
+  </section>
+
+  <section class="part card2" id="p2">
+    <div class="part-h"><span class="part-badge">STEP 2</span><img class="ph-ic" src="assets/icon_excel.png" alt=""><h2>Excel の表を全部読む</h2></div>
+    <div class="goal2"><b>この段のゴール</b>「表内に存在する行を一覧表示」の4つの欄（場所・ドキュメント ライブラリ・ファイル・テーブル）が埋まっている</div>
+    <p class="why2"><b>なぜ</b>まず表の行を全部フローに読み込む。読み込んだ行は、列の名前（氏名・部署・コース）で ⚡ に出てくる。</p>
+    <div class="blks">
+      <div class="blk"><div class="bn">1</div><div class="bc">トリガーの下の<b>「＋」→「アクションの追加」</b>で「表内に存在する行を一覧表示」と検索します。<b>同じ名前が2つ並びます。使うのは Excel Online (Business) の方</b>です。<img class="shot" src="assets/real-search.png" alt="表内に存在する行を一覧表示 の検索結果。Business と OneDrive の2つ"><small>Excel Online (OneDrive) は、個人用（Microsoft アカウント）の OneDrive 向けです。</small></div></div>
+      <div class="blk"><div class="bn">2</div><div class="bc"><div class="act"><img src="assets/icon_excel.png" alt="">Excel Online (Business) の<b>「表内に存在する行を一覧表示」</b></div><img class="shot" src="assets/real-excel.png" alt="表内に存在する行を一覧表示の設定画面"><table class="kv kv3"><tr class="kvh"><th>欄</th><td>入れるもの（どこから選ぶか）</td><td class="lt">なぜ・あとでどう役立つか</td></tr><tr><th>場所</th><td>OneDrive for Business</td><td class="lt">自分の OneDrive</td></tr><tr><th>ドキュメント ライブラリ</th><td>ドキュメント</td><td class="lt">OneDrive の中の置き場</td></tr><tr><th>ファイル</th><td>欄の右のフォルダーのアイコン → PA45第36回 → 研修申込者一覧.xlsx</td><td class="lt">準備①で置いたファイル</td></tr><tr><th>テーブル</th><td>申込者</td><td class="lt">読む表</td></tr></table><div class="later"><b>次に渡るもの</b><span class="dyn">⚡ 氏名</span>・<span class="dyn">⚡ 部署</span>・<span class="dyn">⚡ コース</span>（表の列名がそのまま ⚡ になる）→ STEP 3 の欄</div></div></div>
+    </div>
+
+  </section>
+
+  <section class="part card2" id="p3">
+    <div class="part-h"><span class="part-badge">STEP 3</span><img class="ph-ic" src="assets/icon_sharepoint.png" alt=""><h2>1行ずつ、リストに1件作る</h2></div>
+    <div class="goal2"><b>この段のゴール</b>「項目の作成」が For each の中にあり、タイトル・部署・コースに ⚡ が入っている</div>
+    <p class="why2"><b>なぜ</b>読んだ行を、リストの欄に入れる。⚡ 氏名を入れた瞬間、フローが自動で For each（行の数だけくり返す入れ物）を付ける。くり返しを自分で組まなくていい。</p>
+    <div class="blks">
+      <div class="blk"><div class="bn">1</div><div class="bc">Excel のアクションの下の<b>「＋」→「アクションの追加」</b>で、SharePoint の<b>「項目の作成」</b>を選びます。</div></div>
+      <div class="blk"><div class="bn">2</div><div class="bc"><div class="act"><img src="assets/icon_sharepoint.png" alt="">SharePoint の<b>「項目の作成」</b></div><img class="shot" src="assets/real-create.png" alt="項目の作成の設定画面"><table class="kv kv3"><tr class="kvh"><th>欄</th><td>入れるもの（どこから選ぶか）</td><td class="lt">なぜ・あとでどう役立つか</td></tr><tr><th>サイトのアドレス</th><td>準備②でリストを作ったサイト</td><td class="lt">書き写す先のサイト</td></tr><tr><th>リスト名</th><td>研修の受講者</td><td class="lt">準備②のリスト</td></tr><tr><th>タイトル</th><td><span class="dyn">⚡ 氏名</span><span class="src">（表内に存在する行を一覧表示）</span></td><td class="lt">1人分の氏名</td></tr><tr><th>部署</th><td><span class="dyn">⚡ 部署</span><span class="src">（表内に存在する行を一覧表示）</span><br><small>「詳細パラメーター」の「すべて表示」で欄が出る</small></td><td class="lt">1人分の部署</td></tr><tr><th>コース</th><td><span class="dyn">⚡ コース</span><span class="src">（表内に存在する行を一覧表示）</span></td><td class="lt">1人分のコース</td></tr></table></div></div>
+      <div class="blk"><div class="bn">3</div><div class="bc">タイトルに ⚡ 氏名を入れたところで、<b>項目の作成が「For each」に囲まれます</b>。これで「行の数だけ、項目の作成をくり返す」形になります。<img class="shot" src="assets/real-foreach-in.png" alt="項目の作成が For each に囲まれた画面"><small>For each の「前のステップから出力を選択します」には、表内に存在する行を一覧表示の行（value）が自動で入ります。触らなくて大丈夫です。昔の画面では Apply to each という名前でした。</small></div></div>
+    </div>
+
+  </section>
+
+  <section class="part card2" id="p4">
+    <div class="part-h"><span class="part-badge">STEP 4</span><img class="ph-ic" src="assets/ira_computer_businesswoman4_laugh.png" alt=""><h2>保存して、テストする</h2></div>
+    <div class="goal2"><b>この段のゴール</b>実行がすべて緑になり、「研修の受講者」リストに8人入っている</div>
+    <p class="why2"><b>なぜ</b>ボタンを1回押すと、表の8行が8件になる。For each の中で何回動いたかも確かめる。</p>
+    <div class="blks">
+      <div class="blk"><div class="bn">1</div><div class="bc">右上の<b>「保存」</b>→<b>「テスト」</b>→<b>「手動」</b>→<b>「テスト」</b>。サインインの画面で<b>「続行」</b>→<b>「フローの実行」</b>→<b>「完了」</b>。</div></div>
+      <div class="blk"><div class="bn">2</div><div class="bc">全部に緑のチェックが付けば成功です。For each の「&lt; 1 /8 &gt;」で、何回目にだれを入れたかを1回ずつ見られます。<img class="shot" src="assets/real-run.png" alt="実行結果。For each が 1/8"></div></div>
+      <div class="blk"><div class="bn">3</div><div class="bc">「研修の受講者」リストを開いて確かめます。<img class="shot" src="assets/real-list.png" alt="研修の受講者リストに8件"><table class="kv kv3"><tr class="kvh"><th>欄</th><td>入れるもの（どこから選ぶか）</td><td class="lt">なぜ・あとでどう役立つか</td></tr><tr><th>件数</th><td>8件</td><td class="lt">Excel の表の行の数と同じ</td></tr><tr><th>タイトル・部署・コース</th><td>Excel と同じ中身</td><td class="lt">STEP 3 の ⚡</td></tr></table></div></div>
+    </div>
+    <div class="callout warn"><b>⚠️ もう一度押すと：</b> 同じ8人がもう一度入ります（重複は自動で防ぎません）。来月は、新しい月の Excel に差し替えてから押します。</div>
+  </section>
+
+  <section class="part card2" id="p5">
+    <div class="part-h"><span class="part-badge">おまけ</span><img class="ph-ic" src="assets/ira_businesswoman2_idea.png" alt=""><h2>時間に余裕がある人向け</h2></div>
+    <div class="goal2"><b>この段のゴール</b>（任意）</div>
+    <p class="why2"><b>なぜ</b>当日の45分では扱わない。持ち帰って試す人向け。</p>
+    <div class="blks">
+      <div class="blk"><div class="bn">1</div><div class="bc"><b>日付の列があるとき：</b> Excel の日付は、そのままだと 46000 のような数字（シリアル値）で届きます。表内に存在する行を一覧表示の詳細パラメーター <b>「DateTime 形式」</b>を <b>ISO 8601</b> にすると、2026-11-19 の形で届きます。<small>（当日のデモの表には日付列がないので、まだ試していません）</small></div></div>
+      <div class="blk"><div class="bn">2</div><div class="bc"><b>256行より多いとき：</b> 表内に存在する行を一覧表示は、既定では最初の256行までを読みます。多い表では、アクションの「設定」の「改ページ」をオンにして、しきい値に読みたい行数を入れます。</div></div>
+      <div class="blk"><div class="bn">3</div><div class="bc"><b>Excel を置いたら自動で動かす：</b> トリガーを OneDrive for Business の「ファイルの作成時」に変えると、フォルダに置いただけで動きます（第32回の形）。そのときは、表内に存在する行を一覧表示の「ファイル」に、トリガーの ⚡ Id を入れます。</div></div>
+    </div>
+
+  </section>
+
+  <div class="backrow">
+    <a class="btn sec" href="links.html">← 第36回の資料にもどる</a>
+    <a class="btn sec" href="../../">🏠 サイトのトップへ</a>
+  </div>
+
+  <footer>
+    PA45 第36回 ハンズオン手順 ／ Excel 表内に存在する行を一覧表示 × For each × SharePoint 項目の作成<br>
+    人名・社名・ファイルはすべて架空のサンプルです。画面や手順は公開日時点のもので、今後変わる可能性があります。
+  </footer>
+</div>
+
+<script>
+  document.querySelectorAll('.copybtn').forEach(function(b){
+    b.addEventListener('click', function(){
+      var el = document.getElementById(b.dataset.code);
+      var text = el.innerText;
+      navigator.clipboard.writeText(text).then(function(){
+        var o = b.textContent; b.textContent = 'コピーしました'; setTimeout(function(){ b.textContent = o; }, 1400);
+      });
+    });
+  });
+</script>
+</body>
+</html>
