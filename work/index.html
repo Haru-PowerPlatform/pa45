@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Zen+Kaku+Gothic+Antique:wght@500;700;900&display=swap">
 <style>
-/* Layout: 1カラムの縦長。ヒーロー→ご相談→できること（3つの柱）→ご依頼の流れ→FAQ→実績（数字・プロフィール・登壇・声・ブログ・資料）→最後のご相談 */
+/* Layout: 上のタブでページを切り替える。ホーム（ヒーロー→ご相談までの流れ→ご相談）／できること／ご依頼の流れ／よくある質問／実績／ブログ・資料。ホーム以外の末尾に相談フォームへの案内 */
 :root{
   --bg:#f5f7fb; --surface:#ffffff; --ink:#0b1b33; --muted:#56657a; --line:#dce3ee;
   --navy:#0b1b33; --blue:#0b6bcb; --blue-soft:#e4f0fc; --teal:#0f7a6b; --amber:#b7650b;
@@ -173,7 +173,7 @@ footer{padding-block:28px;font-size:13px;color:var(--muted);text-align:center}
 .crs .take{margin-top:auto;font-size:13px;border-top:1px dashed var(--line);padding-top:6px;color:var(--muted)}
 main section:nth-of-type(odd) :is(.pk,.crs,.scope>div,.method,.act){background:var(--surface)}
 .col{display:flex;flex-direction:column;gap:16px}
-#s-build,#s-ask,#s-talk{scroll-margin-top:70px}
+#s-build,#s-ask,#s-solo,#s-talk{scroll-margin-top:70px}
 .ex{display:flex;flex-wrap:wrap;gap:6px}
 .ex span{font-size:13px;border:1px solid var(--line);border-radius:8px;padding:3px 10px;background:var(--surface)}
 .docs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:4px}
@@ -225,7 +225,6 @@ main section:nth-of-type(odd) :is(.pk,.crs,.scope>div,.method,.act){background:v
   .grid3{grid-template-columns:repeat(2,1fr)}
   .steps{grid-template-columns:1fr}
   .contact{grid-template-columns:1fr}
-  .top nav{display:none}
 }
 @media (max-width:600px){
   .grid3,.grid2,.posts{grid-template-columns:1fr}
@@ -355,7 +354,7 @@ main section:nth-of-type(even) .chart-card{background:var(--bg)}
 .pl-job{padding:14px 18px 0;font-weight:700;line-height:1.6}
 .pl dl{margin:0;padding:6px 18px 0;font-size:14px}
 .pl dt{margin-top:12px;font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.08em}
-.pl dd{margin:6px 0 0;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.pl dd{margin:6px 0 0;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:10px 12px;line-height:1.65}
 .pl dd b{display:block;font-family:var(--f-display)}
 .pl dd span{display:block;margin-top:4px;font-size:13px;color:var(--muted);border-top:1px dashed var(--line);padding-top:4px}
 .pl dd.ex{background:none;border:0;padding:0}
@@ -384,6 +383,42 @@ main section:nth-of-type(even) .chart-card{background:var(--bg)}
 .endcta p{flex:1 1 320px}
 #contact-end{padding-block:40px 96px}
 @media (max-width:900px){.pillars{grid-template-columns:1fr}.m-out{flex-direction:column}}
+
+/* タブ切り替え（JS が動くときだけ1枚ずつ表示。動かなければ全部縦に並ぶ） */
+.tabs-on .tabpanel{display:none}
+.tabs-on .tabpanel.on{display:block}
+.tabs-on[data-tab="home"] #contact-end{display:none}
+.top nav a.cur{background:#fff;color:var(--navy);font-weight:700}
+.top nav a{white-space:nowrap}
+@media (max-width:900px){
+  .top .wrap{flex-wrap:wrap;row-gap:8px}
+  .top nav{order:3;width:100%;display:grid;grid-template-columns:repeat(3,1fr);gap:3px;border-radius:14px}
+  .top nav a{padding:6px 4px;text-align:center;font-size:13px;border-radius:10px}
+  .top nav a+a::before{display:none}
+  #s-learn,#flow,#service,#faq,#results,#blog,#contact,.sub{scroll-margin-top:150px}
+}
+/* ホームの動線 */
+.paths{display:grid;grid-template-columns:1fr 34px 1fr 34px 1fr;align-items:stretch;gap:6px}
+.path{position:relative;display:flex;flex-direction:column;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px 20px 18px;text-decoration:none;color:var(--ink);box-shadow:var(--sh-1);transition:transform .35s cubic-bezier(.2,.8,.2,1),box-shadow .35s,border-color .35s}
+.path:hover{transform:translateY(-4px);box-shadow:var(--sh-2),var(--glow);border-color:transparent}
+.path .pn{position:absolute;top:14px;right:16px;font-family:var(--f-display);font-weight:900;font-size:28px;line-height:1;color:var(--line)}
+.path .ic{width:46px;height:46px;padding:11px;border-radius:14px;background:var(--blue-soft);color:var(--blue)}
+.path b{font-family:var(--f-display);font-size:18px}
+.path .pd{font-size:14px;color:var(--muted);flex:1}
+.path .pa{align-self:flex-start;font-size:14px;font-weight:700;color:var(--blue);background:var(--blue-soft);border-radius:999px;padding:4px 14px}
+.path.go{background:linear-gradient(135deg,#1a7fe0,#0f7a6b);color:#fff;border-color:transparent}
+.path.go .ic{background:rgba(255,255,255,.18);color:#fff}
+.path.go .pd{color:#e6f2ff}.path.go .pn{color:rgba(255,255,255,.35)}
+.path.go .pa{background:#fff;color:var(--navy)}
+.path-ar{align-self:center;height:2px;position:relative;color:var(--blue);background:linear-gradient(90deg,currentColor 50%,transparent 50%) 0 0/8px 2px repeat-x;animation:flowx .8s linear infinite}
+.path-ar::after{content:"";position:absolute;right:-2px;top:-5px;border:6px solid transparent;border-left:8px solid currentColor;border-right:0}
+.path-sub{margin-top:18px;font-size:14px;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 16px}
+.path-sub a{font-weight:700}
+@media (max-width:900px){
+  .paths{grid-template-columns:1fr}
+  .path-ar{justify-self:center;width:2px;height:22px;background:linear-gradient(180deg,currentColor 50%,transparent 50%) 0 0/2px 8px repeat-y;animation:none}
+  .path-ar::after{right:-5px;top:auto;bottom:-8px;border:6px solid transparent;border-top:8px solid currentColor;border-bottom:0}
+}
 </style>
 <!-- アクセス計測（automate136 と同じ GA4。ブログの案内から何人来て、何人がフォームへ進んだかを見る） -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-8HT3QF9MTV"></script>
@@ -395,36 +430,12 @@ main section:nth-of-type(even) .chart-card{background:var(--bg)}
 <header class="top">
   <div class="wrap">
     <a class="brand" href="#top"><img src="haru-icon.jpg" alt="">Haru</a>
-    <nav aria-label="ページ内リンク">
-      <a href="#service">できること</a><a href="#flow">ご依頼の流れ</a><a href="#faq">よくある質問</a><a href="#results">実績</a><a href="#blog">ブログ</a>
+    <nav aria-label="ページの切り替え">
+      <a href="#top" data-tab="home">ホーム</a><a href="#service" data-tab="service">できること</a><a href="#flow" data-tab="flow">ご依頼の流れ</a><a href="#faq" data-tab="faq">よくある質問</a><a href="#results" data-tab="results">実績</a><a href="#blog" data-tab="blog">ブログ・資料</a>
     </nav>
     <a class="cta" data-consult href="#contact">ご相談</a>
   </div>
 </header>
-
-<div class="hero" id="top">
-  <span class="orb" aria-hidden="true"></span>
-  <div class="wrap">
-    <div>
-      <p class="eyebrow">POWER AUTOMATE × MICROSOFT 365 COPILOT × COPILOT STUDIO</p>
-      <h1>手作業は自動化に、書く・まとめるは Copilot に、問い合わせは <span class="grad">AI エージェント</span>に。</h1>
-      <p class="lead">ITが専門ではない人に、Power Automate・Microsoft 365 Copilot・Copilot Studio の3つを、仕事に合わせて使い分けるところから教えています。研修・受託開発のご相談はお気軽にどうぞ。</p>
-      <div class="btns">
-        <a class="btn primary" data-consult href="#contact">研修・開発のご相談</a>
-        <a class="btn ghost" href="#service">できることを見る</a>
-      </div>
-    </div>
-    <div class="card-me">
-      <span class="ava"><img src="haru-icon.jpg" alt="Haru のアイコン"></span>
-      <p class="nm">Haru（はる）</p>
-      <p class="rl">Power Automate ／ Microsoft 365 Copilot ／ Copilot Studio 講師・ハンズオン設計</p>
-      <img class="mct" src="../assets/img/mct-badge.png" alt="Microsoft Certified Trainer">
-      <div class="chips">
-        <span class="chip">Microsoft 認定トレーナー（MCT）</span><span class="chip">PA45 主催</span><span class="chip">PLUG（広島 Power Platform ユーザー会）運営</span>
-      </div>
-    </div>
-  </div>
-</div>
 
 <main>
 
@@ -456,12 +467,51 @@ main section:nth-of-type(even) .chart-card{background:var(--bg)}
   </defs>
 </svg>
 
+<div class="tabpanel" data-tab="home" aria-label="ホーム">
+<div class="hero" id="top">
+  <span class="orb" aria-hidden="true"></span>
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">POWER AUTOMATE × MICROSOFT 365 COPILOT × COPILOT STUDIO</p>
+      <h1>手作業は自動化に、書く・まとめるは Copilot に、問い合わせは <span class="grad">AI エージェント</span>に。</h1>
+      <p class="lead">ITが専門ではない人に、Power Automate・Microsoft 365 Copilot・Copilot Studio の3つを、仕事に合わせて使い分けるところから教えています。研修・受託開発・個人伴走のご相談はお気軽にどうぞ。</p>
+      <div class="btns">
+        <a class="btn primary" data-consult href="#contact">研修・開発のご相談</a>
+        <a class="btn ghost" href="#service">できることを見る</a>
+      </div>
+    </div>
+    <div class="card-me">
+      <span class="ava"><img src="haru-icon.jpg" alt="Haru のアイコン"></span>
+      <p class="nm">Haru（はる）</p>
+      <p class="rl">Power Automate ／ Microsoft 365 Copilot ／ Copilot Studio 講師・ハンズオン設計</p>
+      <img class="mct" src="../assets/img/mct-badge.png" alt="Microsoft Certified Trainer">
+      <div class="chips">
+        <span class="chip">Microsoft 認定トレーナー（MCT）</span><span class="chip">PA45 主催</span><span class="chip">PLUG（広島 Power Platform ユーザー会）運営</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section id="path">
+  <div class="wrap">
+    <div class="sec-h"><small>START</small><h2>ご相談までの流れ</h2><p>知りたいことに合わせて、上のタブからページを選べます。</p></div>
+    <div class="paths">
+      <a class="path" href="#service"><span class="pn">1</span><svg class="ic"><use href="#i-spark"/></svg><b>できることを確かめる</b><span class="pd">Power Automate・Microsoft 365 Copilot・Copilot Studio の3つで、研修・受託開発・個人伴走をお受けしています。</span><span class="pa">できること</span></a>
+      <i class="path-ar" aria-hidden="true"></i>
+      <a class="path" href="#flow"><span class="pn">2</span><svg class="ic"><use href="#i-cal"/></svg><b>進め方を確かめる</b><span class="pd">ご相談から実施までの5段階と、お受けしていること・していないこと。</span><span class="pa">ご依頼の流れ</span></a>
+      <i class="path-ar" aria-hidden="true"></i>
+      <a class="path go" data-consult href="#contact"><span class="pn">3</span><svg class="ic"><use href="#i-mail"/></svg><b>相談フォームから送る</b><span class="pd">入力は2〜3分。受け付けてから3営業日以内に、メールでお返事します。</span><span class="pa">相談フォームを開く</span></a>
+    </div>
+    <p class="path-sub">ほかに：<a href="#faq">よくある質問</a><a href="#results">これまでの実績</a><a href="#blog">ブログ・資料</a></p>
+  </div>
+</section>
+
 <section id="contact">
   <div class="wrap">
     <div class="contact">
       <div>
         <p class="easy">ご相談はお気軽に</p>
-        <h2>研修・受託開発のご相談</h2>
+        <h2>研修・受託開発・個人伴走のご相談</h2>
         <p>次の3点をお知らせいただけると、書面でのお返事が早くなります。</p>
         <ul><li>目的（参加者に、研修のあと何ができるようになってほしいか）</li><li>参加者（人数・ITへのなじみ・普段使っているアプリ）</li><li>環境（Microsoft 365 のプラン・Copilot のライセンスの有無）と、希望の時期</li></ul>
         <p class="reply-note">お返事は、受け付けてから3営業日以内にメールでお送りします。</p>
@@ -469,60 +519,58 @@ main section:nth-of-type(even) .chart-card{background:var(--bg)}
       <div class="links">
         <a class="form-link" hidden data-consult href="#contact" target="_blank" rel="noopener">相談フォームを開く<small>内容・日程・環境を入力して送信（2〜3分）</small></a>
         <a class="to-flow" href="#flow">ご依頼の流れを見る<small>ご相談から実施までの5段階</small></a>
-        <a href="https://my.prairie.cards/u/ism.136.0721" target="_blank" rel="noopener">連絡先（デジタル名刺）<small>メール・SNS の連絡先をまとめています</small></a>
-        <a href="https://x.com/isamu_Automate" target="_blank" rel="noopener">X @isamu_Automate<small>使い方を1テーマ2枚の図解で発信</small></a>
-        <a href="https://powerautomate-create.connpass.com/" target="_blank" rel="noopener">勉強会 PA45（connpass）<small>毎週木曜 20:15・45分・無料</small></a>
       </div>
     </div>
   </div>
 </section>
-
+</div>
+<div class="tabpanel" data-tab="service" aria-label="できること">
 <section id="service">
   <div class="wrap">
-    <div class="sec-h"><small>SERVICE</small><h2>提供している内容（3つの柱）</h2><p>Power Automate・Microsoft 365 Copilot・Copilot Studio の3つで、研修・受託開発・相談をお受けしています。料金と時間は、内容をうかがってからお見積りします。</p></div>
+    <div class="sec-h"><small>SERVICE</small><h2>提供している内容（3つの柱）</h2><p>Power Automate・Microsoft 365 Copilot・Copilot Studio の3つで、研修・受託開発・相談・個人伴走をお受けしています。料金と時間は、内容をうかがってからお見積りします。</p></div>
 
     <div class="pillars">
       <article class="pl pl-pa">
         <header><svg class="ic"><use href="#i-flow"/></svg><div><small>柱 1</small><h3>Power Automate</h3></div></header>
-        <p class="pl-job">決まった手順の作業を、フローで自動に回す</p>
-        <div class="pl-fig" role="img" aria-label="例：フォームの回答をリストに記録して、Teams に通知する"><span><svg class="ic"><use href="#i-make"/></svg>フォーム<br>回答</span><i></i><span><svg class="ic"><use href="#i-table"/></svg>リストに<br>記録</span><i></i><span><svg class="ic"><use href="#i-bell"/></svg>Teams に<br>通知</span></div>
-        <p class="pl-cap">人がしていた転記と連絡を、フローが受け持つ</p>
+        <p class="pl-job">くり返しの手作業を、フローで自動に回す</p>
+        <div class="pl-fig" role="img" aria-label="くり返しの手作業を、フローにして自動で回す"><span><svg class="ic"><use href="#i-in"/></svg>くり返しの<br>手作業</span><i></i><span><svg class="ic"><use href="#i-flow"/></svg>フロー<br>にする</span><i></i><span><svg class="ic"><use href="#i-bell"/></svg>自動で<br>回る</span></div>
+        <p class="pl-cap">Microsoft 365 のアプリ同士をつなぎ、人の手順を置き換える</p>
         <dl>
-          <dt>研修</dt><dd><b>はじめての業務自動化</b>手作業をひとつ選び、その場で動かす。前提知識なし。<span>持ち帰り：明日から動く自動化ひとつ</span></dd>
-          <dd><b>自動化のネタの見つけ方</b>一日の仕事から、自動にできる作業を選び出す。<span>持ち帰り：自動化候補のリスト</span></dd>
-          <dt>受託</dt><dd class="ex"><span>Forms → SharePoint → 通知</span><span>承認の流れ</span><span>メール添付の自動保存</span></dd>
+          <dt>研修</dt><dd>自分の業務から自動にできる作業を見つけ、フローを自分で作れるようになるまで</dd>
+          <dt>受託開発</dt><dd>業務に合わせたフローの設計・作成・テスト</dd>
+          <dt>相談</dt><dd>作れるかどうか・必要なライセンス・進め方の確認</dd>
         </dl>
-        <div class="pl-ref"><p>実績・資料</p><a href="https://haru-powerplatform.github.io/pa45/sessions/" target="_blank" rel="noopener">PA45 全33回の講座アーカイブ</a><a href="https://www.automate136.com/pa45-vol8-approvals/" target="_blank" rel="noopener">記事：承認フローの作り方</a></div>
+        <div class="pl-ref"><p>実績・資料</p><a href="https://haru-powerplatform.github.io/pa45/sessions/" target="_blank" rel="noopener">PA45 全33回の講座アーカイブ</a><a href="https://www.automate136.com/" target="_blank" rel="noopener">ブログ automate136.com</a></div>
       </article>
 
       <article class="pl pl-cp">
         <header><svg class="ic"><use href="#i-spark"/></svg><div><small>柱 2</small><h3>Microsoft 365 Copilot</h3></div></header>
         <p class="pl-job">Word・Excel・Teams・Outlook の中で、書く・まとめるを Copilot に頼む</p>
-        <div class="pl-fig" role="img" aria-label="例：会議やメールを Copilot が要約して下書きにする"><span><svg class="ic"><use href="#i-talk"/></svg>会議・<br>メール</span><i></i><span><svg class="ic"><use href="#i-spark"/></svg>Copilot<br>に頼む</span><i></i><span><svg class="ic"><use href="#i-pen"/></svg>要約・<br>下書き</span></div>
-        <p class="pl-cap">書き出しとまとめを任せ、人は確認と仕上げをする</p>
+        <div class="pl-fig" role="img" aria-label="書く・まとめる仕事を Copilot に頼み、人が確認して仕上げる"><span><svg class="ic"><use href="#i-pen"/></svg>書く・<br>まとめる</span><i></i><span><svg class="ic"><use href="#i-spark"/></svg>Copilot<br>に頼む</span><i></i><span><svg class="ic"><use href="#i-users"/></svg>人が確認<br>して仕上げ</span></div>
+        <p class="pl-cap">日々の文書・メール・会議の仕事に Copilot を組み込む</p>
         <dl>
-          <dt>研修</dt><dd><b>Copilot の頼み方</b>仕事で使う頼み方を数個に絞る。<span>持ち帰り：頼み方のパターン集</span></dd>
-          <dd><b>Copilot と Power Automate の使い分け</b>Copilot に頼む仕事と、フローで回す仕事を分ける。<span>持ち帰り：自分の仕事の振り分け表</span></dd>
-          <dt>相談</dt><dd class="ex"><span>Copilot Cowork の始め方（管理者向け）</span><span>会議の要約を Teams に残す</span></dd>
+          <dt>研修</dt><dd>仕事での Copilot の頼み方と、Power Automate との使い分け</dd>
+          <dt>導入の相談</dt><dd>使い始めの設定と、社内での使い方の整理</dd>
         </dl>
         <div class="pl-ref"><p>実績・資料</p><a href="https://www.automate136.com/cowork-vs-automate-divide/" target="_blank" rel="noopener">記事：Copilot Cowork と Power Automate の使い分け</a><a href="https://haru-powerplatform.github.io/pa45/talks/2026-osaka-copilot/slides.html" target="_blank" rel="noopener">登壇：なんでもCopilot 大阪</a></div>
       </article>
 
       <article class="pl pl-cs">
         <header><svg class="ic"><use href="#i-bot"/></svg><div><small>柱 3</small><h3>Copilot Studio</h3></div></header>
-        <p class="pl-job">社内の問い合わせに答える AI エージェントを作る</p>
-        <div class="pl-fig" role="img" aria-label="例：社員の質問に、社内の資料をもとにエージェントが答える"><span><svg class="ic"><use href="#i-ask"/></svg>社員の<br>質問</span><i></i><span><svg class="ic"><use href="#i-bot"/></svg>エージェント<br>（AI）</span><i></i><span><svg class="ic"><use href="#i-make"/></svg>資料をもとに<br>回答</span></div>
-        <p class="pl-cap">よくある質問への回答を、エージェントが返す</p>
+        <p class="pl-job">社内の質問に答え、仕事を進める AI エージェントを作る</p>
+        <div class="pl-fig" role="img" aria-label="社内の質問に、社内の資料をもとにエージェントが答える"><span><svg class="ic"><use href="#i-ask"/></svg>社内の<br>質問</span><i></i><span><svg class="ic"><use href="#i-bot"/></svg>エージェント<br>（AI）</span><i></i><span><svg class="ic"><use href="#i-talk"/></svg>資料をもとに<br>回答</span></div>
+        <p class="pl-cap">社内の資料を読ませ、必要に応じてフローともつなぐ</p>
         <dl>
-          <dt>研修</dt><dd><b>Copilot Studio 入門</b>答える → 文書を読む → メールを送る、まで。<span>持ち帰り：動くエージェントと使い分けの目安</span></dd>
-          <dt>受託</dt><dd class="ex"><span>社内の問い合わせに答えるエージェント</span><span>社内 FAQ をナレッジにする</span></dd>
+          <dt>研修</dt><dd>エージェントの作り方（答える・資料を読む・ほかの仕事とつなぐ）</dd>
+          <dt>受託開発</dt><dd>業務に合わせたエージェントの設計・作成・テスト</dd>
+          <dt>相談</dt><dd>作れるかどうか・必要なライセンス・進め方の確認</dd>
         </dl>
         <div class="pl-ref"><p>実績・資料</p><a href="https://www.automate136.com/copilot-studio-first-agent/" target="_blank" rel="noopener">記事：はじめてのエージェントの作り方</a><a href="https://www.automate136.com/copilot-studio-evaluate/" target="_blank" rel="noopener">記事：評価（Evaluate）の使い方</a></div>
       </article>
     </div>
 
     <h3 class="sub">お受けする形（3つの柱のどれでも）</h3>
-    <div class="grid3 forms3">
+    <div class="grid2 forms4">
       <div class="box" id="s-learn"><span class="tag">研修・ハンズオン</span><h3>自分たちで作れるようになりたい</h3><p>オンラインで、参加者が自分の画面で動かすところまで進めます。</p><p class="take">持ち帰り：動くものと、その回の手順書</p></div>
       <div class="box" id="s-build"><span class="tag">受託開発</span><h3>作ってほしい</h3>
         <div class="docs" aria-label="お渡しするもの">
@@ -532,10 +580,12 @@ main section:nth-of-type(even) .chart-card{background:var(--bg)}
         </div>
         <p class="take">作業場所とライセンスは事前に確認／完成後の修正・保守は別契約</p></div>
       <div class="box" id="s-ask"><span class="tag">相談</span><h3>作れるかどうか知りたい</h3><p>やりたいことを書面で → 作れるか・ライセンス・進め方を文書で返します。</p></div>
+      <div class="box" id="s-solo"><span class="tag">個人伴走</span><h3>自分で作れるようになるまで付き添ってほしい</h3><p>個人の方向けです。期間を決めて、ご自身の業務のフローやエージェントを、ご本人が作り上げるところまで付き添います。</p><p class="take">質問は書面で受け、文書でお返し／期間と回数は内容をうかがってからお見積り</p></div>
     </div>
   </div>
 </section>
-
+</div>
+<div class="tabpanel" data-tab="flow" aria-label="ご依頼の流れ">
 <section id="flow">
   <div class="wrap">
     <div class="sec-h"><small>FLOW</small><h2>ご依頼の流れ</h2><p>その場で即答せず、調べが要ることは持ち帰って文書でお返しします。</p></div>
@@ -552,13 +602,15 @@ main section:nth-of-type(even) .chart-card{background:var(--bg)}
     </div>
   </div>
 </section>
-
+</div>
+<div class="tabpanel" data-tab="faq" aria-label="よくある質問">
 <section id="faq">
   <div class="wrap">
     <div class="sec-h"><small>FAQ</small><h2>よくある質問</h2></div>
     <div class="faq">
       <details><summary>研修はオンラインですか</summary><p>オンライン（Teams・Zoom など）を基本にしています。対面をご希望の場合は、内容と場所をうかがってからお返事します。</p></details>
       <details><summary>契約の形はどうなりますか</summary><p>個人事業主として、案件ごとの業務委託でお受けしています。範囲と料金は、お見積りの段階で書面にまとめます。</p></details>
+      <details><summary>個人でも依頼できますか</summary><p>できます。個人伴走として、ご自身の業務のフローやエージェントを作り上げるところまで付き添います。質問は書面で受け、文書でお返しします。期間と回数は、内容をうかがってからお見積りします。</p></details>
       <details><summary>研修会社を通しての依頼もできますか</summary><p>できます。研修会社さまの登録講師としてのご依頼も、案件ごとの業務委託でお受けしています。</p></details>
       <details><summary>生成 AI を使って作業しますか</summary><p>資料づくりや調べものに生成 AI を使うことがあります。お客さまの情報をどう扱うかは、ご契約の前にご説明し、了承をいただいてから進めます。</p></details>
       <details><summary>秘密保持契約（NDA）は結べますか</summary><p>結べます。社内の資料や業務の内容を扱う場合は、先に秘密保持契約を結びます。</p></details>
@@ -567,7 +619,8 @@ main section:nth-of-type(even) .chart-card{background:var(--bg)}
     </div>
   </div>
 </section>
-
+</div>
+<div class="tabpanel" data-tab="results" aria-label="実績">
 <section id="results">
   <div class="wrap">
     <div class="sec-h"><small>RESULTS</small><h2>これまでの実績：主催する勉強会 PA45</h2><p>毎週木曜 20:15 から45分。1テーマを、その場で1つ作り切る形で続けています。</p></div>
@@ -626,7 +679,8 @@ main section:nth-of-type(even) .chart-card{background:var(--bg)}
     <div class="more"><a href="https://haru-powerplatform.github.io/pa45/achievements/insights/voices.html" target="_blank" rel="noopener">参加者の声をすべて見る</a><a href="https://haru-powerplatform.github.io/pa45/achievements/insights/" target="_blank" rel="noopener">全33回のアンケート結果</a></div>
   </div>
 </section>
-
+</div>
+<div class="tabpanel" data-tab="blog" aria-label="ブログ・資料">
 <section id="blog">
   <div class="wrap">
     <div class="sec-h"><small>BLOG</small><h2>ブログ automate136.com</h2><p>フローの作り方、Microsoft 365 Copilot の使い方、Copilot Studio の検証の記録を、手順と画面つきで公開しています（公開記事 134 本・2026年10月30日時点）。</p></div>
@@ -646,11 +700,12 @@ main section:nth-of-type(even) .chart-card{background:var(--bg)}
     <div class="more"><a href="https://haru-powerplatform.github.io/pa45/slides/links.html" target="_blank" rel="noopener">全回のスライドと手順書</a><a href="https://haru-powerplatform.github.io/pa45/talks/" target="_blank" rel="noopener">登壇資料の一覧</a></div>
   </div>
 </section>
+</div>
 
 <section id="contact-end">
   <div class="wrap">
     <div class="endcta">
-      <p>研修・受託開発のご相談は、相談フォームから受け付けています。お返事は3営業日以内にメールでお送りします。</p>
+      <p>研修・受託開発・個人伴走のご相談は、相談フォームから受け付けています。お返事は3営業日以内にメールでお送りします。</p>
       <a class="btn primary" data-consult href="#contact">相談フォームを開く</a>
     </div>
   </div>
@@ -701,7 +756,7 @@ document.getElementById('posts').innerHTML=POSTS.map(p=>`<a class="post" href="$
   addEventListener('scroll',onScroll,{passive:true});onScroll();
   if(reduce||!('IntersectionObserver' in window))return;
   root.classList.add('js');
-  const groups=['.sec-h','.nums .num','.method','.verbs span','.m-out div','.acts .act','.pillars .pl','#service .grid3>*','.steps2 li','.scope>div','.tl li','.pl-fig span','.posts .post','.chart-card','.voice','.faq details','.contact'];
+  const groups=['.sec-h','.paths .path','.nums .num','.method','.verbs span','.m-out div','.acts .act','.pillars .pl','#service .forms4>*','.steps2 li','.scope>div','.tl li','.pl-fig span','.posts .post','.chart-card','.voice','.faq details','.contact'];
   const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{rootMargin:'0px 0px -8% 0px'});
   const mark=()=>{groups.forEach(sel=>document.querySelectorAll(sel).forEach((e,i)=>{if(!e.classList.contains('rv')){e.classList.add('rv');e.style.setProperty('--d',Math.min(i,8)*70+'ms');io.observe(e)}}))};
   mark();
@@ -757,12 +812,24 @@ document.getElementById('posts').innerHTML=POSTS.map(p=>`<a class="post" href="$
 })();
 </script>
 <script>
-(()=>{const ls=[...document.querySelectorAll('.top nav a')],ss=ls.map(a=>document.querySelector(a.getAttribute('href'))).filter(Boolean);
-if(!('IntersectionObserver' in window))return;
-const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){ls.forEach(a=>a.classList.toggle('cur',a.getAttribute('href')==='#'+e.target.id))}}),{rootMargin:'-45% 0px -50% 0px'});
-ss.forEach(s=>io.observe(s))})();
+/* タブの切り替え。#service などのリンクは、その要素を含むタブを開いてから移動する */
+(()=>{const root=document.documentElement,panels=[...document.querySelectorAll('.tabpanel')],tabs=[...document.querySelectorAll('.top nav a')];
+if(!panels.length)return;root.classList.add('tabs-on');
+const tops=new Set(['top','service','flow','faq','results','blog']);
+const go=(hash,push)=>{const id=(hash||'').replace(/^#/,'')||'top',el=document.getElementById(id),pn=el&&el.closest('.tabpanel');
+  if(!pn){if(el)el.scrollIntoView({behavior:'instant'});return}
+  const tab=pn.dataset.tab;panels.forEach(p=>p.classList.toggle('on',p===pn));root.dataset.tab=tab;
+  tabs.forEach(a=>{const on=a.dataset.tab===tab;a.classList.toggle('cur',on);if(on){a.setAttribute('aria-current','page');a.scrollIntoView({block:'nearest',inline:'nearest'})}else a.removeAttribute('aria-current')});
+  if(push)history.pushState(null,'','#'+id);
+  if(tops.has(id))window.scrollTo({top:0,behavior:'instant'});else el.scrollIntoView({behavior:'instant'});
+  if(typeof gtag==='function'&&push)gtag('event','tab_view',{tab})};
+document.addEventListener('click',e=>{const a=e.target.closest('a');if(!a)return;const h=a.getAttribute('href');
+  if(!h||h[0]!=='#'||h.length<2)return;const el=document.getElementById(h.slice(1));if(!el||!el.closest('.tabpanel'))return;
+  e.preventDefault();go(h,true)});
+addEventListener('popstate',()=>go(location.hash,false));
+go(location.hash,false)})();
 </script>
-<a class="fab" data-consult href="#contact" aria-label="ご相談はお気軽に"><svg class="ic"><use href="#i-mail"/></svg><span><small>研修・受託開発</small><b>ご相談はお気軽に</b></span></a>
+<a class="fab" data-consult href="#contact" aria-label="ご相談はお気軽に"><svg class="ic"><use href="#i-mail"/></svg><span><small>研修・受託開発・個人伴走</small><b>ご相談はお気軽に</b></span></a>
 <script>
 (()=>{const f=document.querySelector('.fab'),hero=document.querySelector('.hero'),ct=document.querySelector('#contact');let pastHero=false,atContact=false;
 const upd=()=>f.classList.toggle('show',pastHero&&!atContact);
