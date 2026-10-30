@@ -1,0 +1,286 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<!-- generated: pac-flows/vol35-meetingprep/build_vol35_handson.py（直接編集しない） -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PA45 第35回 ハンズオン手順｜「資料どこ？」と探さなくていい。会議の前にTeamsに届く</title>
+<style>
+  .card2{background:#fff;border:1px solid #e2e8f0;border-radius:18px;padding:22px 24px;margin:34px 0;box-shadow:0 4px 14px rgba(15,23,42,.06);}
+  .card2 .part-h{display:flex;align-items:center;gap:12px;}
+  .card2 .ph-ic{width:44px;height:44px;object-fit:contain;}
+  .goal2{margin:14px 0 8px;background:#f0fdf4;border:2px solid #86efac;border-radius:12px;padding:10px 14px;font-size:15px;font-weight:700;color:#14532d;}
+  .goal2 b,.why2 b{display:inline-block;background:#16a34a;color:#fff;border-radius:6px;padding:1px 8px;margin-right:10px;font-size:13px;}
+  .why2{margin:0 0 16px;font-size:14px;color:#475569;line-height:1.7;} .why2 b{background:#64748b;}
+  .blks{display:flex;flex-direction:column;gap:14px;}
+  .blk{display:flex;gap:14px;align-items:flex-start;background:#f8fafc;border-radius:14px;padding:14px 16px;}
+  .blk .bn{flex:0 0 auto;width:30px;height:30px;border-radius:50%;background:#4358c8;color:#fff;font-weight:900;display:flex;align-items:center;justify-content:center;}
+  .blk .bc{flex:1;min-width:0;font-size:15px;line-height:1.8;}
+  .blk .bc small{color:#64748b;font-size:13px;}
+  .act{display:flex;align-items:center;gap:10px;font-size:16px;margin-bottom:8px;}
+  .act img{width:30px;height:30px;object-fit:contain;}
+  table.kv{width:100%;border-collapse:separate;border-spacing:0;margin:8px 0 4px;font-size:14px;background:#fff;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;}
+  table.kv th{width:34%;text-align:left;background:#eef1fc;color:#2c3a94;padding:8px 12px;border-bottom:1px solid #e2e8f0;font-weight:800;vertical-align:top;}
+  table.kv td{padding:8px 12px;border-bottom:1px solid #e2e8f0;}
+  table.kv tr:last-child th,table.kv tr:last-child td{border-bottom:none;}
+  .dyn{background:#ede9fe;color:#6b21a8;border-radius:6px;padding:1px 8px;font-weight:800;white-space:nowrap;}
+  details.mihon{margin-top:14px;} details.mihon summary{cursor:pointer;font-weight:800;color:#2c3a94;}
+  .blk .codewrap{margin-top:8px;}
+  .shot{display:block;max-width:100%;max-height:420px;width:auto;border:1px solid #cbd5e1;border-radius:10px;margin:10px 0 6px;box-shadow:0 2px 8px rgba(15,23,42,.08);}
+  .src{font-size:12px;color:#64748b;margin-left:4px;}
+  .later{margin-top:10px;background:#fff7ed;border-left:5px solid #f97316;border-radius:8px;padding:8px 12px;font-size:14px;line-height:1.7;color:#7c2d12;}
+  .later b{display:inline-block;background:#f97316;color:#fff;border-radius:6px;padding:0 8px;margin-right:8px;font-size:13px;}
+  table.kv3 th{width:26%;} table.kv3 td.lt{width:34%;background:#fff7ed;color:#7c2d12;font-size:13px;}
+  table.kv3 tr.kvh th,table.kv3 tr.kvh td{background:#f1f5f9;color:#475569;font-size:12px;font-weight:800;padding:5px 12px;}
+  .tree{font-family:Consolas,"Meiryo UI",monospace;background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:10px 14px;line-height:1.8;font-size:14px;white-space:pre;}
+</style>
+
+<meta name="description" content="PA45 第29回のハンズオン手順書。毎朝8時に、件名にPA45が入ったメールをとってきて、件数といちばん新しい件名を式で取り出し、Teamsに1通で届けるフローを作ります。動的コンテンツの一覧に出てこない値を、自分で取り出せるようになります。">
+<style>
+  :root{
+    --pa:#3a4fb8;--pa-dark:#2c3a94;--pa-bg:#eef1fc;
+    --sp:#0f6cbd;--sp-bg:#e6f0fb;
+    --teams:#5b5fc7;--teams-dark:#4347a8;--teams-bg:#eef0fb;
+    --blue-text:#14528f;--blue-mid:#2a7dd4;--blue-bg:#eaf2fc;
+    --ink:#1f2937;--muted:#475569;--border:#e2e8f0;--amber:#b45309;--code-bg:#0f172a;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:linear-gradient(160deg,#eef1fc 0%,#f5f8fc 42%,#fff 100%);
+    font-family:"Meiryo UI","Yu Gothic UI","Segoe UI",sans-serif;color:var(--ink);
+    min-height:100vh;padding:0 16px 70px;line-height:1.7;}
+  .wrap{max-width:860px;margin:0 auto;}
+
+  .topbar{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.93);
+    -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+    border:1px solid var(--border);border-top:none;border-radius:0 0 14px 14px;
+    box-shadow:0 2px 10px rgba(20,82,143,.08);margin-bottom:18px;}
+  .topbar-in{display:flex;align-items:center;gap:10px;padding:9px 14px;flex-wrap:wrap;}
+  .brand{display:flex;flex-direction:column;text-decoration:none;color:var(--blue-text);font-weight:800;font-size:18px;line-height:1;}
+  .brand span{font-size:9px;font-weight:600;color:var(--muted);letter-spacing:.04em;margin-top:3px;}
+  .tnav{display:flex;gap:3px;flex-wrap:wrap;margin-left:auto;}
+  .tnav a{text-decoration:none;color:var(--blue-text);font-size:12.5px;font-weight:700;padding:6px 10px;border-radius:8px;white-space:nowrap;}
+  .tnav a:hover{background:var(--blue-bg);}
+  .tnav a.cur{background:var(--pa);color:#fff;}
+
+  header{text-align:center;margin-bottom:6px;}
+  .eyebrow{display:inline-block;background:var(--pa);color:#fff;font-weight:700;font-size:13px;letter-spacing:.06em;padding:5px 16px;border-radius:20px;}
+  h1{font-size:29px;font-weight:800;color:var(--pa-dark);margin:14px 0 6px;line-height:1.28;}
+  h1 small{display:block;font-size:15.5px;color:var(--muted);font-weight:600;margin-top:6px;}
+  .crumbs{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:12.5px;color:var(--muted);margin-bottom:14px;justify-content:center;}
+  .crumbs a{color:var(--blue-mid);text-decoration:none;font-weight:700;}
+  .crumbs .sep{color:#cbd5e1;}
+
+  .goal{background:#fff;border:1px solid var(--border);border-left:5px solid var(--pa);border-radius:12px;padding:14px 20px;margin-bottom:16px;box-shadow:0 2px 8px rgba(20,82,143,.05);}
+  .goal b{color:var(--pa-dark);}
+  .flowpath{display:flex;flex-wrap:wrap;align-items:center;gap:8px;justify-content:center;margin:14px 0 0;font-weight:800;color:var(--pa-dark);font-size:14.5px;}
+  .flowpath .st{background:var(--sp-bg);border:1px solid #a9cdec;border-radius:22px;padding:7px 15px;}
+  .flowpath .st.hot{background:var(--teams-bg);border-color:#c3c5ef;color:var(--teams-dark);}
+  .flowpath .st.end{background:#fff7ed;border-color:#fdba74;color:#9a3412;}
+  .flowpath .ar{color:var(--pa);font-size:18px;}
+
+  .toc{display:flex;flex-wrap:wrap;gap:8px;background:#fff;border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:22px;box-shadow:0 2px 8px rgba(20,82,143,.05);}
+  .toc-lbl{font-size:12px;font-weight:800;color:var(--pa-dark);background:var(--pa-bg);padding:4px 11px;border-radius:8px;}
+  .toc a{text-decoration:none;color:var(--blue-text);font-size:13px;font-weight:700;padding:6px 12px;border-radius:8px;border:1px solid var(--border);}
+  .toc a:hover{background:var(--blue-bg);border-color:var(--blue-mid);}
+
+  .part{scroll-margin-top:70px;margin:26px 0 0;}
+  .part-h{display:flex;align-items:center;gap:12px;margin-bottom:6px;}
+  .part-badge{flex:0 0 auto;background:var(--pa);color:#fff;font-weight:800;font-size:14px;padding:6px 14px;border-radius:20px;}
+  .part-badge.sp{background:var(--sp);}
+  .part-badge.tm{background:var(--teams);}
+  .part-h h2{font-size:20px;font-weight:800;color:var(--pa-dark);margin:0;}
+  .part-note{font-size:14px;color:var(--muted);margin:0 0 12px;}
+
+  ol.steps{list-style:none;counter-reset:st;padding:0;margin:0;}
+  ol.steps>li{position:relative;padding:14px 16px 14px 54px;background:#fff;border:1px solid var(--border);border-radius:12px;margin-bottom:10px;box-shadow:0 2px 6px rgba(20,82,143,.05);font-size:15px;}
+  ol.steps>li::before{counter-increment:st;content:counter(st);position:absolute;left:14px;top:13px;width:28px;height:28px;border-radius:50%;background:var(--pa);color:#fff;font-weight:800;font-size:15px;display:flex;align-items:center;justify-content:center;}
+  ol.steps.sp>li::before{background:var(--sp);}
+  ol.steps.tm>li::before{background:var(--teams);}
+  ol.steps>li b{color:var(--pa-dark);}
+  .k{display:inline-block;background:#f1f5f9;border:1px solid #d7dee7;border-radius:6px;padding:1px 8px;font-weight:700;font-size:13.5px;color:#334155;white-space:nowrap;}
+  .pick{display:inline-block;background:#fff7ed;border:1px solid #fdba74;border-radius:6px;padding:1px 8px;font-weight:800;font-size:13.5px;color:#c2410c;}
+  ul.sub{margin:8px 0 0;padding-left:20px;font-size:14px;color:var(--muted);}
+  ul.sub li{margin:3px 0;}
+
+  .setrow{display:flex;flex-wrap:wrap;gap:6px 10px;margin:8px 0 0;padding:10px 12px;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:10px;font-size:13.5px;}
+  .setrow .kv{display:flex;gap:6px;align-items:center;}
+  .setrow .kv .kk{font-weight:800;color:var(--pa-dark);}
+  .setrow .kv .vv{background:#fff;border:1px solid #d7dee7;border-radius:6px;padding:1px 9px;font-weight:700;color:#334155;}
+
+  .callout{border-radius:10px;padding:12px 18px;font-size:14px;margin:12px 0;line-height:1.7;}
+  .callout.tip{background:var(--sp-bg);border-left:5px solid var(--sp);color:#0b4a7a;}
+  .callout.warn{background:#fffbeb;border-left:5px solid #f59e0b;color:#78350f;}
+  .callout.info{background:var(--blue-bg);border-left:5px solid var(--blue-mid);color:#14528f;}
+  .callout.pa{background:var(--pa-bg);border-left:5px solid var(--pa);color:var(--pa-dark);}
+  .callout.tm{background:var(--teams-bg);border-left:5px solid var(--teams);color:var(--teams-dark);}
+
+  .codewrap{position:relative;margin:10px 0;}
+  .codewrap .lbl{font-size:12px;font-weight:800;color:#cbd5e1;background:#1e293b;display:inline-block;padding:4px 12px;border-radius:8px 8px 0 0;}
+  pre{margin:0;background:var(--code-bg);color:#e2e8f0;border-radius:0 10px 10px 10px;padding:16px 18px;overflow-x:auto;font-size:12.5px;line-height:1.65;
+    font-family:"Cascadia Code","Consolas","SFMono-Regular",monospace;white-space:pre-wrap;word-break:break-word;}
+  .copybtn{position:absolute;top:6px;right:8px;background:#334155;color:#e2e8f0;border:none;border-radius:7px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer;}
+  .copybtn:hover{background:#475569;}
+
+  table.fx{width:100%;border-collapse:collapse;margin:12px 0;font-size:13.5px;}
+  table.fx th{background:var(--pa-bg);color:var(--pa-dark);font-weight:800;border:1px solid #cbd5e1;padding:8px 10px;text-align:left;}
+  table.fx td{border:1px solid #cbd5e1;padding:8px 10px;vertical-align:top;}
+  table.fx code{background:#0f172a;color:#fbbf24;border-radius:5px;padding:2px 7px;font-family:"Consolas",monospace;font-size:12px;}
+  table.fx td.v{font-weight:800;color:#0b5e37;white-space:nowrap;}
+
+  .backrow{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:30px;}
+  .btn.sec{display:inline-flex;align-items:center;gap:6px;background:#fff;color:var(--blue-text);border:1px solid var(--blue-mid);text-decoration:none;font-size:14px;font-weight:700;padding:10px 20px;border-radius:9px;}
+  .btn.sec:hover{background:var(--blue-bg);}
+  figure.shot{margin:14px 0 6px;}
+  figure.shot img{display:block;width:100%;border:1px solid #cbd5e1;border-radius:10px;box-shadow:0 6px 18px rgba(20,82,143,.14);}
+  figure.shot.narrow img{max-width:420px;margin:0 auto;}
+  figure.shot figcaption{font-size:12.5px;color:var(--muted);margin-top:7px;text-align:center;}
+  footer{margin-top:26px;text-align:center;color:#94a3b8;font-size:12px;line-height:1.8;}
+  .chap{display:inline-block;font-size:12px;font-weight:900;background:#fbbf24;color:#1e293b;border-radius:6px;padding:2px 8px;margin-right:8px;white-space:nowrap;}
+  .whyline{margin:4px 0 10px;font-size:15px;font-weight:800;color:#9a3412;background:#fff7ed;border-left:5px solid #ea580c;border-radius:6px;padding:6px 12px;}
+</style>
+<style>.shot img{max-width:640px;margin:0 auto;}</style>
+</head>
+<body>
+<div class="wrap">
+
+  <nav class="topbar" aria-label="サイト内メニュー">
+    <div class="topbar-in">
+      <a class="brand" href="../../">PA45<span>Power Automate 45</span></a>
+      <div class="tnav">
+        <a href="../../">🏠 ホーム</a>
+        <a href="links.html">🗂️ 第35回の資料</a>
+        <a href="./" class="cur">🛠️ ハンズオン手順</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="crumbs">
+    <a href="../../">🏠 PA45トップ</a><span class="sep">›</span>
+    <a href="links.html">第35回 資料</a><span class="sep">›</span>
+    <span>ハンズオン手順</span>
+  </div>
+
+  <header>
+    <span class="eyebrow">PA45 第35回｜ハンズオン手順</span>
+    <h1>「資料どこ？」と探さなくていい。会議の前にTeamsに届く<small>Outlook の予定が始まる少し前に、件名・開始時刻・場所・本文（資料のリンク）を、フローが Teams に送ります。ボタンを押さなくても、予定が近づいたことをきっかけに動くフローです。</small></h1>
+  </header>
+
+  <div class="goal">
+    <b>今日つくるもの：</b> 予定の10分前に、<b>Teams の「ワークフロー」のチャットに会議の中身が届く</b>フロー。
+    <div class="flowpath">
+      <span class="st">📅 予定が間もなく始まるとき</span><span class="ar">→</span>
+      <span class="st hot">🕘 開始時刻を日本時間に（式は1本）</span><span class="ar">→</span>
+      <span class="st end">💬 Teams に届く</span>
+    </div>
+  </div>
+
+  <details class="callout tip mihon" style="margin-bottom:10px;"><summary><b>■ 今回の考え方（スライドの考え方①②）</b></summary>
+    <ul style="margin:6px 0 0;padding-left:20px;">
+      <li>事務の仕事は、受け付ける／書き写す／判断する／知らせる／まとめる／作る、の6つの動詞の組み合わせ。</li>
+      <li>今回は、予定表に入っている会議（受け付ける）を、始まる前に知らせる。</li>
+      <li>Outlook のアラームでも通知は出る。違いは、場所と資料のリンクまで Teams の1か所にそろうこと。</li>
+      <li>持ち帰る1つ＝<b>予定表に入っているものは、どれもフローのきっかけになる</b>。</li>
+    </ul>
+  </details>
+  <div class="callout tip" style="margin-bottom:10px;"><b>📖 この手順書の読み方：</b> 各アクションに表があります。表は <b>欄 ／ 入れるもの（⚡ のどのアクションから選ぶか）／ なぜ・あとでどう役立つか</b> の順です。オレンジの「次に渡るもの」は、そのアクションが終わったあと、後ろのアクションに何が渡るかです。</div>
+  <div class="callout info" style="margin-bottom:4px;"><b>🔰 初参加の方へ：</b> ここから始めて大丈夫です。Outlook と Teams が使える会社・学校のアカウントがあれば作れます（個人の Microsoft アカウントでは作れません）。</div>
+
+  <nav class="toc" aria-label="手順の目次">
+    <span class="toc-lbl">目次</span>
+    <a href="#p0">準備 予定を入れる</a>
+    <a href="#p1">1. トリガー</a>
+    <a href="#p2">2. Teams に送る</a>
+    <a href="#p3">3. 保存して確かめる</a>
+    <a href="#p4">おまけ</a>
+  </nav>
+
+  <section class="part card2" id="p0">
+    <div class="part-h"><span class="part-badge">準備</span><img class="ph-ic" src="assets/icon_outlook.png" alt=""><h2>Outlook に練習用の予定を入れる（2分）</h2></div>
+    <div class="goal2"><b>この段のゴール</b>自分の Outlook の予定表に、これから始まる練習用の予定がある（本文に資料のリンク）</div>
+    <p class="why2"><b>なぜ</b>このフローは「これから始まる予定」で動く。練習のために、数分後に始まる予定を1つ入れておく。STEP 3 で保存してから入れても大丈夫。</p>
+    <div class="blks">
+      <div class="blk"><div class="bn">1</div><div class="bc">Outlook の予定表を開き、<b>「新しいイベント」</b>を押します。<img class="shot" src="assets/real-outlook.png" alt="Outlook の新しいイベント。件名・時刻・場所・本文"><table class="kv kv3"><tr class="kvh"><th>欄</th><td>入れるもの（どこから選ぶか）</td><td class="lt">なぜ・あとでどう役立つか</td></tr><tr><th>件名</th><td><span class="k">週次の進捗共有（練習）</span></td><td class="lt">Teams の「まもなく：」のあとに出る</td></tr><tr><th>時刻</th><td>今から <b>5〜8分後</b>に開始</td><td class="lt">10分以内に始まる予定でフローが動く</td></tr><tr><th>場所</th><td><span class="k">会議室A</span></td><td class="lt">Teams の「場所：」に出る</td></tr><tr><th>本文</th><td>資料のリンク（例：PA45 のサイトの URL）</td><td class="lt">Teams にそのまま届く</td></tr></table><small>出席者は入れなくて大丈夫です（自分だけの予定で動きます）。</small><div class="later"><b>次に渡るもの</b>件名・場所・本文 → STEP 2 のメッセージ／開始時刻 → STEP 2 の式</div></div></div>
+    </div>
+
+  </section>
+
+  <section class="part card2" id="p1">
+    <div class="part-h"><span class="part-badge">STEP 1</span><img class="ph-ic" src="assets/icon_outlook.png" alt=""><h2>フローを作る（トリガー＝予定が間もなく始まるとき）</h2></div>
+    <div class="goal2"><b>この段のゴール</b>トリガーの「カレンダー ID」が予定表、「ルックアヘッド タイム」が 10 になっている</div>
+    <p class="why2"><b>なぜ</b>ボタンを押さなくても、予定が近づいたことをきっかけに動かしたい。そのための入口が「予定しているイベントが間もなく開始されるとき (V3)」。</p>
+    <div class="blks">
+      <div class="blk"><div class="bn">1</div><div class="bc"><b>「作成」→「自動化したクラウド フロー」</b>。フロー名は <span class="k">PA45 第35回 会議の前に資料</span>、トリガーの検索欄に <span class="k">間もなく</span> と打ちます。<b>2つ並ぶので、Office 365 Outlook の方</b>を選んで「作成」。<img class="shot" src="assets/real-search.png" alt="トリガーの検索結果。Office 365 Outlook と Outlook.com"><small>Outlook.com の「予定しているイベントがすぐに開始されるとき (V2)」は、個人の Microsoft アカウント用です。</small></div></div>
+      <div class="blk"><div class="bn">2</div><div class="bc"><div class="act"><img src="assets/icon_outlook.png" alt="">Office 365 Outlook の<b>「予定しているイベントが間もなく開始されるとき (V3)」</b></div><img class="shot" src="assets/real-trigger.png" alt="トリガーの設定画面。カレンダー ID に予定表、ルックアヘッド タイムに10"><table class="kv kv3"><tr class="kvh"><th>欄</th><td>入れるもの（どこから選ぶか）</td><td class="lt">なぜ・あとでどう役立つか</td></tr><tr><th>カレンダー ID</th><td>予定表</td><td class="lt">いつもの自分の予定表を見る</td></tr><tr><th>ルックアヘッド タイム</th><td>10（詳細パラメーター →「すべて表示」で欄が出る）</td><td class="lt">予定が始まる何分前に動くか。空のままだと15分前</td></tr></table><div class="later"><b>次に渡るもの</b><span class="dyn">⚡ 件名</span>・<span class="dyn">⚡ 場所</span>・<span class="dyn">⚡ 本文</span>・<span class="dyn">⚡ タイムゾーンが指定された開始時刻</span> → STEP 2 のメッセージ</div></div></div>
+    </div>
+    <div class="callout tip"><b>💡 しくみ：</b> このトリガーは予定表を1分ごとに見に行き、ルックアヘッド タイム以内に始まる予定を見つけると、予定1件につき1回動きます。</div>
+  </section>
+
+  <section class="part card2" id="p2">
+    <div class="part-h"><span class="part-badge">STEP 2</span><img class="ph-ic" src="assets/icon_teams.png" alt=""><h2>予定の中身を Teams に送る</h2></div>
+    <div class="goal2"><b>この段のゴール</b>「チャットまたはチャネルでメッセージを投稿する」のメッセージに、件名・開始（式）・場所・本文が並んでいる</div>
+    <p class="why2"><b>なぜ</b>予定の中身はトリガーの ⚡ にそろっている。選んで並べるだけで、会議の前に見たいものが1か所に届く。時刻だけは世界標準時で届くので、式で日本時間に直す。</p>
+    <div class="blks">
+      <div class="blk"><div class="bn">1</div><div class="bc">トリガーの下の<b>「＋」→「アクションの追加」</b>で、Microsoft Teams の<b>「チャットまたはチャネルでメッセージを投稿する」</b>を選びます。</div></div>
+      <div class="blk"><div class="bn">2</div><div class="bc"><div class="act"><img src="assets/icon_teams.png" alt="">Microsoft Teams の<b>「チャットまたはチャネルでメッセージを投稿する」</b></div><img class="shot" src="assets/real-teams.png" alt="チャットまたはチャネルでメッセージを投稿するの設定画面"><table class="kv kv3"><tr class="kvh"><th>欄</th><td>入れるもの（どこから選ぶか）</td><td class="lt">なぜ・あとでどう役立つか</td></tr><tr><th>投稿者</th><td>フロー ボット</td><td class="lt">フロー ボットから届く</td></tr><tr><th>投稿先</th><td>フロー ボットとチャットをする</td><td class="lt">自分あての個人チャットに届く</td></tr><tr><th>Recipient</th><td>自分のメールアドレス</td><td class="lt">自分に届く</td></tr><tr><th>メッセージ</th><td><span class="k">まもなく：</span> ＋ <span class="dyn">⚡ 件名</span><br><span class="k">開始：</span> ＋ 下の式<br><span class="k">場所：</span> ＋ <span class="dyn">⚡ 場所</span><br>1行あけて <span class="dyn">⚡ 本文</span></td><td class="lt">改行は Shift＋Enter</td></tr></table></div></div>
+      <div class="blk"><div class="bn">3</div><div class="bc"><b>開始：</b>のうしろで欄の右の <b>fx</b> を押し、下の式を貼って「追加」。<div class="codewrap"><button class="copybtn" data-code="fx">コピー</button>
+<pre id="fx">convertTimeZone(triggerOutputs()?[&#x27;body/startWithTimeZone&#x27;], &#x27;UTC&#x27;, &#x27;Tokyo Standard Time&#x27;, &#x27;HH:mm&#x27;)</pre></div><img class="shot" src="assets/real-dyn.png" alt="トリガーの動的コンテンツ。件名・開始時刻・タイムゾーンが指定された開始時刻・本文"><small>⚡ には「開始時刻」と「タイムゾーンが指定された開始時刻」が並びます。式で使うのは「タイムゾーンが指定された開始時刻」（UTC と分かる形で届く方）です。</small></div></div>
+    </div>
+    <div class="callout warn"><b>⚠️ 式なしで ⚡ の開始時刻を入れると：</b> 10:51 の会議が「2026-10-30T01:51:00…」と届きます。予定の時刻は世界標準時（日本より9時間前）で届くためです（2026-10-30 デモで確認）。<img class="shot" src="assets/real-before.png" alt="式なしで届いた通知。開始が 2026-10-30T01:51 と世界標準時"></div>
+    <details class="callout tip mihon"><summary><b>■ 式の読み方</b></summary>
+      <ul style="margin:6px 0 0;padding-left:20px;">
+        <li><b>convertTimeZone(日時, 元のタイムゾーン, 変えたいタイムゾーン, 形)</b>＝日時を別のタイムゾーンに直して、決めた形の文字にする</li>
+        <li>'UTC' → 'Tokyo Standard Time' で日本時間に、'HH:mm' で「10:55」の形になる。'M/d HH:mm' にすると「11/12 10:55」</li>
+        <li>convertFromUtc(⚡ 開始時刻, …) は、デモでは「UTC の日時ではない」というエラーで止まった（開始時刻に UTC の印が付いていないため）</li>
+      </ul>
+    </details>
+  </section>
+
+  <section class="part card2" id="p3">
+    <div class="part-h"><span class="part-badge">STEP 3</span><img class="ph-ic" src="assets/ira_computer_businesswoman4_laugh.png" alt=""><h2>保存して、予定の前に届くか確かめる</h2></div>
+    <div class="goal2"><b>この段のゴール</b>Teams の「ワークフロー」のチャットに、「まもなく：…／開始：10:55」の形で届いている</div>
+    <p class="why2"><b>なぜ</b>このフローの入口は、予定が近づくこと。保存して、準備で入れた予定の10分前になるのを待つ。</p>
+    <div class="blks">
+      <div class="blk"><div class="bn">1</div><div class="bc">右上の<b>「保存」</b>。<br><small>自動化したクラウド フローは、保存するとオンになります。</small></div></div>
+      <div class="blk"><div class="bn">2</div><div class="bc">準備の予定がまだなら、今から <b>5〜8分後</b>に始まる予定を Outlook に入れます。</div></div>
+      <div class="blk"><div class="bn">3</div><div class="bc">1〜3分待って、Teams の<b>「ワークフロー」</b>のチャットを見ます。<img class="shot" src="assets/real-after.png" alt="式で直して届いた通知。開始：10:55"><table class="kv kv3"><tr class="kvh"><th>欄</th><td>入れるもの（どこから選ぶか）</td><td class="lt">なぜ・あとでどう役立つか</td></tr><tr><th>まもなく</th><td>週次の進捗共有（練習）</td><td class="lt">⚡ 件名</td></tr><tr><th>開始</th><td>10:55 のような日本時間</td><td class="lt">STEP 2 の式</td></tr><tr><th>場所・資料</th><td>会議室A／本文の資料リンク</td><td class="lt">⚡ 場所・本文</td></tr></table></div></div>
+    </div>
+    <div class="callout warn"><b>⚠️ 動かないとき：</b> ①保存したか ②予定の開始が10分以内か ③2〜3分待ったか を確かめます。マイ フローの「実行の履歴」に、動いた記録が出ます。</div>
+    <div class="callout tip"><b>💡 使い終わったら：</b> このフローはオンのあいだ、予定のたびに届きます。予定を書き換えると、同じ予定でもう一度届くことがあります（デモで確認）。練習だけなら、マイ フローで「オフにする」を選ぶと止まります。</div>
+  </section>
+
+  <section class="part card2" id="p4">
+    <div class="part-h"><span class="part-badge">おまけ</span><img class="ph-ic" src="assets/ira_businesswoman2_idea.png" alt=""><h2>時間に余裕がある人向け</h2></div>
+    <div class="goal2"><b>この段のゴール</b>（任意）</div>
+    <p class="why2"><b>なぜ</b>当日の45分では扱わない。持ち帰って試す人向け。</p>
+    <div class="blks">
+      <div class="blk"><div class="bn">1</div><div class="bc"><b>大事な会議だけ知らせる：</b> トリガーの下に「条件」を入れ、<span class="dyn">⚡ 件名</span> に <span class="k">商談</span> が含まれるときだけ Teams に送ります。</div></div>
+      <div class="blk"><div class="bn">2</div><div class="bc"><b>チームに知らせる：</b> 投稿先を「チャネル」にすると、チームのチャネルに投稿されます。</div></div>
+      <div class="blk"><div class="bn">3</div><div class="bc"><b>日付も入れる：</b> 式の 'HH:mm' を 'M/d HH:mm' にすると「11/12 10:55」の形になります。<small>（当日のデモではまだ試していません）</small></div></div>
+    </div>
+
+  </section>
+
+  <div class="backrow">
+    <a class="btn sec" href="links.html">← 第35回の資料にもどる</a>
+    <a class="btn sec" href="../../">🏠 サイトのトップへ</a>
+  </div>
+
+  <footer>
+    PA45 第35回 ハンズオン手順 ／ Office 365 Outlook 予定しているイベントが間もなく開始されるとき (V3) × Teams<br>
+    人名・社名・予定はすべて架空のサンプルです。画面や手順は公開日時点のもので、今後変わる可能性があります。
+  </footer>
+</div>
+
+<script>
+  document.querySelectorAll('.copybtn').forEach(function(b){
+    b.addEventListener('click', function(){
+      var el = document.getElementById(b.dataset.code);
+      var text = el.innerText;
+      navigator.clipboard.writeText(text).then(function(){
+        var o = b.textContent; b.textContent = 'コピーしました'; setTimeout(function(){ b.textContent = o; }, 1400);
+      });
+    });
+  });
+</script>
+</body>
+</html>
