@@ -6,6 +6,8 @@ Power Automate の「ソリューション」形式なので、展開せずに�
 
 | 回 | テーマ | ZIP | 講座スライド |
 |---:|---|---|:---:|
+| 36 |  | [PA45-Vol36-ExcelImport.zip](vol-36/PA45-Vol36-ExcelImport.zip) | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-36/) |
+| 35 |  | [PA45-Vol35-MeetingNotice.zip](vol-35/PA45-Vol35-MeetingNotice.zip) | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-35/) |
 | 33 | 内部名で困らない。内部名はフローが自動で調べる | [PA45-Vol33-InternalNames.zip](vol-33/PA45-Vol33-InternalNames.zip) | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-33/) |
 | 31 | ファイルを選んで1クリックでPDFにして送る | [PA45-Vol31-PdfSend.zip](vol-31/PA45-Vol31-PdfSend.zip) | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-31/) |
 | 28 | Copilotと通知カード1枚でまとめて完了にする | [PA45-Vol28-CardBulk.zip](vol-28/PA45-Vol28-CardBulk.zip) | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-28/) |

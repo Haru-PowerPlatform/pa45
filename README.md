@@ -32,11 +32,11 @@ Power Automate を初めて触る人が、45分で1本のフローを作り終�
 | 延べ参加者 | 1,568名 |
 | 1回あたりの参加者 | 平均 47.5名／最多 76名 |
 | 参加者の推移 | 第1〜5回の平均 31.0名 → 直近5回の平均 68.4名 |
-| アンケート回答 | 401件 |
-| 理解度スコア（全回平均） | 88.7% |
-| 役立ち度スコア（全回平均） | 92.1% |
-| 録画を公開した回 | 29回 |
-| 公開しているフローZIP | 21本 |
+| アンケート回答 | 415件 |
+| 理解度スコア（全回平均） | 88.3% |
+| 役立ち度スコア（全回平均） | 91.9% |
+| 録画を公開した回 | 30回 |
+| 公開しているフローZIP | 23本 |
 | 技術Tipsスライド | 177本 |
 
 - 参加者数は connpass の参加者数、スコアは各回のアンケートから集計しています（`data/insights.json`）。
@@ -61,7 +61,7 @@ Power Automate を初めて触る人が、45分で1本のフローを作り終�
 
 | 回 | 開催日 | テーマ | 参加 | スライド・資料 | フロー | 録画 | アンケート | レポート |
 |---:|---|---|---:|:---:|:---:|:---:|:---:|:---:|
-| 33 | 2026/10/29 | 内部名で困らない。内部名はフローが自動で調べる | 71名 | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-33/) | [ZIP](https://haru-powerplatform.github.io/pa45/flows/vol-33/PA45-Vol33-InternalNames.zip) | ― | ― | ― |
+| 33 | 2026/10/29 | 内部名で困らない。内部名はフローが自動で調べる | 71名 | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-33/) | [ZIP](https://haru-powerplatform.github.io/pa45/flows/vol-33/PA45-Vol33-InternalNames.zip) | [見る](https://www.youtube.com/watch?v=eahDKL1qc98) | ― | ― |
 | 32 | 2026/10/22 | 置くだけで月別フォルダに片付くファイル整理 | 67名 | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-32/) | ― | [見る](https://www.youtube.com/watch?v=JvyOqWzQt-U) | [結果](https://haru-powerplatform.github.io/pa45/achievements/insights/vol-32.html) | ― |
 | 31 | 2026/10/15 | ファイルを選んで1クリックでPDFにして送る | 56名 | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-31/) | [ZIP](https://haru-powerplatform.github.io/pa45/flows/vol-31/PA45-Vol31-PdfSend.zip) | [見る](https://www.youtube.com/watch?v=-BgrN1pSsyo) | [結果](https://haru-powerplatform.github.io/pa45/achievements/insights/vol-31.html) | ― |
 | 30 | 2026/10/08 | Teamsの頼まれごとを1クリックでTo Doに入れる | 76名 | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-30/) | ― | [見る](https://www.youtube.com/watch?v=wSEYs5TMeZY) | [結果](https://haru-powerplatform.github.io/pa45/achievements/insights/vol-30.html) | ― |
