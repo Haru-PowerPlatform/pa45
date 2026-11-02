@@ -1,0 +1,307 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<!-- generated: pac-flows/vol34-statusnotify/build_vol34_handson.py（直接編集しない） -->
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PA45 第34回 ハンズオン手順｜ステータスが変わったときだけ Teams に届くリスト通知</title>
+<style>
+  .card2{background:#fff;border:1px solid #e2e8f0;border-radius:18px;padding:22px 24px;margin:34px 0;box-shadow:0 4px 14px rgba(15,23,42,.06);}
+  .card2 .part-h{display:flex;align-items:center;gap:12px;}
+  .card2 .ph-ic{width:44px;height:44px;object-fit:contain;}
+  .goal2{margin:14px 0 8px;background:#f0fdf4;border:2px solid #86efac;border-radius:12px;padding:10px 14px;font-size:15px;font-weight:700;color:#14532d;}
+  .goal2 b,.why2 b{display:inline-block;background:#16a34a;color:#fff;border-radius:6px;padding:1px 8px;margin-right:10px;font-size:13px;}
+  .why2{margin:0 0 16px;font-size:14px;color:#475569;line-height:1.7;} .why2 b{background:#64748b;}
+  .blks{display:flex;flex-direction:column;gap:14px;}
+  .blk{display:flex;gap:14px;align-items:flex-start;background:#f8fafc;border-radius:14px;padding:14px 16px;}
+  .blk .bn{flex:0 0 auto;width:30px;height:30px;border-radius:50%;background:#4358c8;color:#fff;font-weight:900;display:flex;align-items:center;justify-content:center;}
+  .blk .bc{flex:1;min-width:0;font-size:15px;line-height:1.8;}
+  .blk .bc small{color:#64748b;font-size:13px;}
+  .act{display:flex;align-items:center;gap:10px;font-size:16px;margin-bottom:8px;}
+  .act img{width:30px;height:30px;object-fit:contain;}
+  table.kv{width:100%;border-collapse:separate;border-spacing:0;margin:8px 0 4px;font-size:14px;background:#fff;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;}
+  table.kv th{width:34%;text-align:left;background:#eef1fc;color:#2c3a94;padding:8px 12px;border-bottom:1px solid #e2e8f0;font-weight:800;vertical-align:top;}
+  table.kv td{padding:8px 12px;border-bottom:1px solid #e2e8f0;}
+  table.kv tr:last-child th,table.kv tr:last-child td{border-bottom:none;}
+  .dyn{background:#ede9fe;color:#6b21a8;border-radius:6px;padding:1px 8px;font-weight:800;white-space:nowrap;}
+  details.mihon{margin-top:14px;} details.mihon summary{cursor:pointer;font-weight:800;color:#2c3a94;}
+  .blk .codewrap{margin-top:8px;}
+  .shot{display:block;max-width:100%;max-height:420px;width:auto;border:1px solid #cbd5e1;border-radius:10px;margin:10px 0 6px;box-shadow:0 2px 8px rgba(15,23,42,.08);}
+  .src{font-size:12px;color:#64748b;margin-left:4px;}
+  .later{margin-top:10px;background:#fff7ed;border-left:5px solid #f97316;border-radius:8px;padding:8px 12px;font-size:14px;line-height:1.7;color:#7c2d12;}
+  .later b{display:inline-block;background:#f97316;color:#fff;border-radius:6px;padding:0 8px;margin-right:8px;font-size:13px;}
+  table.kv3 th{width:26%;} table.kv3 td.lt{width:34%;background:#fff7ed;color:#7c2d12;font-size:13px;}
+  table.kv3 tr.kvh th,table.kv3 tr.kvh td{background:#f1f5f9;color:#475569;font-size:12px;font-weight:800;padding:5px 12px;}
+  .tree{font-family:Consolas,"Meiryo UI",monospace;background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:10px 14px;line-height:1.8;font-size:14px;white-space:pre;}
+</style>
+
+<meta name="description" content="PA45 第29回のハンズオン手順書。毎朝8時に、件名にPA45が入ったメールをとってきて、件数といちばん新しい件名を式で取り出し、Teamsに1通で届けるフローを作ります。動的コンテンツの一覧に出てこない値を、自分で取り出せるようになります。">
+<style>
+  :root{
+    --pa:#3a4fb8;--pa-dark:#2c3a94;--pa-bg:#eef1fc;
+    --sp:#0f6cbd;--sp-bg:#e6f0fb;
+    --teams:#5b5fc7;--teams-dark:#4347a8;--teams-bg:#eef0fb;
+    --blue-text:#14528f;--blue-mid:#2a7dd4;--blue-bg:#eaf2fc;
+    --ink:#1f2937;--muted:#475569;--border:#e2e8f0;--amber:#b45309;--code-bg:#0f172a;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:linear-gradient(160deg,#eef1fc 0%,#f5f8fc 42%,#fff 100%);
+    font-family:"Meiryo UI","Yu Gothic UI","Segoe UI",sans-serif;color:var(--ink);
+    min-height:100vh;padding:0 16px 70px;line-height:1.7;}
+  .wrap{max-width:860px;margin:0 auto;}
+
+  .topbar{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.93);
+    -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+    border:1px solid var(--border);border-top:none;border-radius:0 0 14px 14px;
+    box-shadow:0 2px 10px rgba(20,82,143,.08);margin-bottom:18px;}
+  .topbar-in{display:flex;align-items:center;gap:10px;padding:9px 14px;flex-wrap:wrap;}
+  .brand{display:flex;flex-direction:column;text-decoration:none;color:var(--blue-text);font-weight:800;font-size:18px;line-height:1;}
+  .brand span{font-size:9px;font-weight:600;color:var(--muted);letter-spacing:.04em;margin-top:3px;}
+  .tnav{display:flex;gap:3px;flex-wrap:wrap;margin-left:auto;}
+  .tnav a{text-decoration:none;color:var(--blue-text);font-size:12.5px;font-weight:700;padding:6px 10px;border-radius:8px;white-space:nowrap;}
+  .tnav a:hover{background:var(--blue-bg);}
+  .tnav a.cur{background:var(--pa);color:#fff;}
+
+  header{text-align:center;margin-bottom:6px;}
+  .eyebrow{display:inline-block;background:var(--pa);color:#fff;font-weight:700;font-size:13px;letter-spacing:.06em;padding:5px 16px;border-radius:20px;}
+  h1{font-size:29px;font-weight:800;color:var(--pa-dark);margin:14px 0 6px;line-height:1.28;}
+  h1 small{display:block;font-size:15.5px;color:var(--muted);font-weight:600;margin-top:6px;}
+  .crumbs{display:flex;flex-wrap:wrap;align-items:center;gap:6px;font-size:12.5px;color:var(--muted);margin-bottom:14px;justify-content:center;}
+  .crumbs a{color:var(--blue-mid);text-decoration:none;font-weight:700;}
+  .crumbs .sep{color:#cbd5e1;}
+
+  .goal{background:#fff;border:1px solid var(--border);border-left:5px solid var(--pa);border-radius:12px;padding:14px 20px;margin-bottom:16px;box-shadow:0 2px 8px rgba(20,82,143,.05);}
+  .goal b{color:var(--pa-dark);}
+  .flowpath{display:flex;flex-wrap:wrap;align-items:center;gap:8px;justify-content:center;margin:14px 0 0;font-weight:800;color:var(--pa-dark);font-size:14.5px;}
+  .flowpath .st{background:var(--sp-bg);border:1px solid #a9cdec;border-radius:22px;padding:7px 15px;}
+  .flowpath .st.hot{background:var(--teams-bg);border-color:#c3c5ef;color:var(--teams-dark);}
+  .flowpath .st.end{background:#fff7ed;border-color:#fdba74;color:#9a3412;}
+  .flowpath .ar{color:var(--pa);font-size:18px;}
+
+  .toc{display:flex;flex-wrap:wrap;gap:8px;background:#fff;border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:22px;box-shadow:0 2px 8px rgba(20,82,143,.05);}
+  .toc-lbl{font-size:12px;font-weight:800;color:var(--pa-dark);background:var(--pa-bg);padding:4px 11px;border-radius:8px;}
+  .toc a{text-decoration:none;color:var(--blue-text);font-size:13px;font-weight:700;padding:6px 12px;border-radius:8px;border:1px solid var(--border);}
+  .toc a:hover{background:var(--blue-bg);border-color:var(--blue-mid);}
+
+  .part{scroll-margin-top:70px;margin:26px 0 0;}
+  .part-h{display:flex;align-items:center;gap:12px;margin-bottom:6px;}
+  .part-badge{flex:0 0 auto;background:var(--pa);color:#fff;font-weight:800;font-size:14px;padding:6px 14px;border-radius:20px;}
+  .part-badge.sp{background:var(--sp);}
+  .part-badge.tm{background:var(--teams);}
+  .part-h h2{font-size:20px;font-weight:800;color:var(--pa-dark);margin:0;}
+  .part-note{font-size:14px;color:var(--muted);margin:0 0 12px;}
+
+  ol.steps{list-style:none;counter-reset:st;padding:0;margin:0;}
+  ol.steps>li{position:relative;padding:14px 16px 14px 54px;background:#fff;border:1px solid var(--border);border-radius:12px;margin-bottom:10px;box-shadow:0 2px 6px rgba(20,82,143,.05);font-size:15px;}
+  ol.steps>li::before{counter-increment:st;content:counter(st);position:absolute;left:14px;top:13px;width:28px;height:28px;border-radius:50%;background:var(--pa);color:#fff;font-weight:800;font-size:15px;display:flex;align-items:center;justify-content:center;}
+  ol.steps.sp>li::before{background:var(--sp);}
+  ol.steps.tm>li::before{background:var(--teams);}
+  ol.steps>li b{color:var(--pa-dark);}
+  .k{display:inline-block;background:#f1f5f9;border:1px solid #d7dee7;border-radius:6px;padding:1px 8px;font-weight:700;font-size:13.5px;color:#334155;white-space:nowrap;}
+  .pick{display:inline-block;background:#fff7ed;border:1px solid #fdba74;border-radius:6px;padding:1px 8px;font-weight:800;font-size:13.5px;color:#c2410c;}
+  ul.sub{margin:8px 0 0;padding-left:20px;font-size:14px;color:var(--muted);}
+  ul.sub li{margin:3px 0;}
+
+  .setrow{display:flex;flex-wrap:wrap;gap:6px 10px;margin:8px 0 0;padding:10px 12px;background:#f8fafc;border:1px dashed #cbd5e1;border-radius:10px;font-size:13.5px;}
+  .setrow .kv{display:flex;gap:6px;align-items:center;}
+  .setrow .kv .kk{font-weight:800;color:var(--pa-dark);}
+  .setrow .kv .vv{background:#fff;border:1px solid #d7dee7;border-radius:6px;padding:1px 9px;font-weight:700;color:#334155;}
+
+  .callout{border-radius:10px;padding:12px 18px;font-size:14px;margin:12px 0;line-height:1.7;}
+  .callout.tip{background:var(--sp-bg);border-left:5px solid var(--sp);color:#0b4a7a;}
+  .callout.warn{background:#fffbeb;border-left:5px solid #f59e0b;color:#78350f;}
+  .callout.info{background:var(--blue-bg);border-left:5px solid var(--blue-mid);color:#14528f;}
+  .callout.pa{background:var(--pa-bg);border-left:5px solid var(--pa);color:var(--pa-dark);}
+  .callout.tm{background:var(--teams-bg);border-left:5px solid var(--teams);color:var(--teams-dark);}
+
+  .codewrap{position:relative;margin:10px 0;}
+  .codewrap .lbl{font-size:12px;font-weight:800;color:#cbd5e1;background:#1e293b;display:inline-block;padding:4px 12px;border-radius:8px 8px 0 0;}
+  pre{margin:0;background:var(--code-bg);color:#e2e8f0;border-radius:0 10px 10px 10px;padding:16px 18px;overflow-x:auto;font-size:12.5px;line-height:1.65;
+    font-family:"Cascadia Code","Consolas","SFMono-Regular",monospace;white-space:pre-wrap;word-break:break-word;}
+  .copybtn{position:absolute;top:6px;right:8px;background:#334155;color:#e2e8f0;border:none;border-radius:7px;padding:5px 12px;font-size:12px;font-weight:700;cursor:pointer;}
+  .copybtn:hover{background:#475569;}
+
+  table.fx{width:100%;border-collapse:collapse;margin:12px 0;font-size:13.5px;}
+  table.fx th{background:var(--pa-bg);color:var(--pa-dark);font-weight:800;border:1px solid #cbd5e1;padding:8px 10px;text-align:left;}
+  table.fx td{border:1px solid #cbd5e1;padding:8px 10px;vertical-align:top;}
+  table.fx code{background:#0f172a;color:#fbbf24;border-radius:5px;padding:2px 7px;font-family:"Consolas",monospace;font-size:12px;}
+  table.fx td.v{font-weight:800;color:#0b5e37;white-space:nowrap;}
+
+  .backrow{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:30px;}
+  .btn.sec{display:inline-flex;align-items:center;gap:6px;background:#fff;color:var(--blue-text);border:1px solid var(--blue-mid);text-decoration:none;font-size:14px;font-weight:700;padding:10px 20px;border-radius:9px;}
+  .btn.sec:hover{background:var(--blue-bg);}
+  figure.shot{margin:14px 0 6px;}
+  figure.shot img{display:block;width:100%;border:1px solid #cbd5e1;border-radius:10px;box-shadow:0 6px 18px rgba(20,82,143,.14);}
+  figure.shot.narrow img{max-width:420px;margin:0 auto;}
+  figure.shot figcaption{font-size:12.5px;color:var(--muted);margin-top:7px;text-align:center;}
+  footer{margin-top:26px;text-align:center;color:#94a3b8;font-size:12px;line-height:1.8;}
+  .chap{display:inline-block;font-size:12px;font-weight:900;background:#fbbf24;color:#1e293b;border-radius:6px;padding:2px 8px;margin-right:8px;white-space:nowrap;}
+  .whyline{margin:4px 0 10px;font-size:15px;font-weight:800;color:#9a3412;background:#fff7ed;border-left:5px solid #ea580c;border-radius:6px;padding:6px 12px;}
+</style>
+<style>.shot img{max-width:640px;margin:0 auto;}</style>
+</head>
+<body>
+<div class="wrap">
+
+  <nav class="topbar" aria-label="サイト内メニュー">
+    <div class="topbar-in">
+      <a class="brand" href="../../">PA45<span>Power Automate 45</span></a>
+      <div class="tnav">
+        <a href="../../">🏠 ホーム</a>
+        <a href="links.html">🗂️ 第34回の資料</a>
+        <a href="./" class="cur">🛠️ ハンズオン手順</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="crumbs">
+    <a href="../../">🏠 PA45トップ</a><span class="sep">›</span>
+    <a href="links.html">第34回 資料</a><span class="sep">›</span>
+    <span>ハンズオン手順</span>
+  </div>
+
+  <header>
+    <span class="eyebrow">PA45 第34回｜ハンズオン手順</span>
+    <h1>「完了した？」と聞かなくていい。ステータスが変わったときだけ Teams に届くリスト通知<small>SharePoint の「問い合わせ管理」リストで、どの列が変わったかをフローが見分けます。メモを書き足しても静かなまま、ステータスが変わったときだけ Teams に届きます。</small></h1>
+  </header>
+
+  <div class="goal">
+    <b>今日つくるもの：</b> リストの行が書き換わったら、<b>ステータスが変わったときだけ</b> Teams に投稿するフロー。
+    <div class="flowpath">
+      <span class="st">✏️ アイテムまたはファイルが修正されたとき</span><span class="ar">→</span>
+      <span class="st">🔍 アイテムやファイルの変更を取得する</span><span class="ar">→</span>
+      <span class="st hot">⚖️ 条件（ステータスが変わった？）</span><span class="ar">→</span>
+      <span class="st end">💬 Teams に投稿</span>
+    </div>
+  </div>
+
+  <details class="callout tip mihon" style="margin-bottom:10px;"><summary><b>■ 今回の考え方（スライドの考え方①②）</b></summary>
+    <ul style="margin:6px 0 0;padding-left:20px;">
+      <li>事務の仕事は、受け付ける／書き写す／判断する／知らせる／まとめる／作る、の6つの動詞の組み合わせ。</li>
+      <li>今回は「知らせる」の前に「判断する」を置く。何でも知らせる通知は数が多く、読まれなくなる。</li>
+      <li>メールで届けばよいなら、リストの「ルール」でも列の変更を知らせられる。Teams に出したい・文面を決めたいときにフローが効く。</li>
+      <li>持ち帰る1つ＝<b>フローが「どの列が変わったか」を見分けて、決めた列の変更だけ知らせる</b>。</li>
+    </ul>
+  </details>
+  <div class="callout tip" style="margin-bottom:10px;"><b>📖 この手順書の読み方：</b> 各アクションに表があります。表は <b>欄 ／ 入れるもの（⚡ のどのアクションから選ぶか）／ なぜ・あとでどう役立つか</b> の順です。オレンジの「次に渡るもの」は、そのアクションが終わったあと、後ろのアクションに何が渡るかです。</div>
+  <div class="callout info" style="margin-bottom:4px;"><b>🔰 初参加の方へ：</b> ここから始めて大丈夫です。SharePoint と Teams が使える会社・学校のアカウントがあれば作れます（個人の Microsoft アカウントでは作れません）。</div>
+
+  <nav class="toc" aria-label="手順の目次">
+    <span class="toc-lbl">目次</span>
+    <a href="#p0">準備 リストを作る</a>
+    <a href="#p1">1. トリガー</a>
+    <a href="#p2">2. 変更を取得</a>
+    <a href="#p3">3. 条件</a>
+    <a href="#p4">4. Teams に投稿</a>
+    <a href="#p5">5. 試す</a>
+    <a href="#p6">おまけ</a>
+  </nav>
+
+  <section class="part card2" id="p0">
+    <div class="part-h"><span class="part-badge">準備</span><img class="ph-ic" src="assets/icon_sharepoint.png" alt=""><h2>SharePoint に「問い合わせ管理」リストを作る（5分）</h2></div>
+    <div class="goal2"><b>この段のゴール</b>SharePoint のサイトに、タイトル・担当・ステータス・メモの4列を持つ「問い合わせ管理」リストがあり、3行入っている</div>
+    <p class="why2"><b>なぜ</b>フローが見張るリストを先に作る。ステータスは選択肢の列にしておくと、STEP 4 の文面で「完了」などの値がそのまま使える。</p>
+    <div class="blks">
+      <div class="blk"><div class="bn">1</div><div class="bc">リストを作ってよい SharePoint のサイト（チームのサイトなど）を開き、<b>「＋ 新規」→「リスト」→「空白のリスト」</b>。名前は <span class="k">問い合わせ管理</span>。</div></div>
+      <div class="blk"><div class="bn">2</div><div class="bc"><b>「＋ 列の追加」</b>で次の3つを作ります。<br><span class="k">担当</span>（1 行テキスト）／<span class="k">ステータス</span>（選択肢：未対応・対応中・完了）／<span class="k">メモ</span>（複数行テキスト）<br><small>最初からある「タイトル」列は、問い合わせの件名を入れる列として使います。</small></div></div>
+      <div class="blk"><div class="bn">3</div><div class="bc">練習用に3行入れます（タイトル／担当／ステータス／メモ）。<div class="codewrap"><button class="copybtn" data-code="rows">コピー</button>
+<pre id="rows">請求書の再発行をお願いしたい／佐藤／対応中／10/28 電話で受付
+ログインできない／鈴木／未対応／
+見積の有効期限を知りたい／山田／完了／メールで回答済み</pre></div><div class="later"><b>次に渡るもの</b>リスト → STEP 1・2 のリスト名／ステータス列 → STEP 3 の ⚡</div></div></div>
+    </div>
+    <div class="callout warn"><b>⚠️ バージョン管理：</b> どの列が変わったかを調べるアクションは、リストのバージョン管理がオンのときに使えます（Microsoft Learn のコネクタの説明に記載）。デモで作った新しいリストは最初からオンでした。古いリストで試すときは、リストの設定でバージョン管理がオンかを確かめます。</div>
+  </section>
+
+  <section class="part card2" id="p1">
+    <div class="part-h"><span class="part-badge">STEP 1</span><img class="ph-ic" src="assets/icon_sharepoint.png" alt=""><h2>フローを作る（トリガー＝アイテムまたはファイルが修正されたとき）</h2></div>
+    <div class="goal2"><b>この段のゴール</b>トリガー「アイテムまたはファイルが修正されたとき」に、準備のサイトとリストが入っている</div>
+    <p class="why2"><b>なぜ</b>リストの行が書き換わったら動く入口。この時点では、メモでもステータスでも、どの列の書き換えでも動く。見分けるのは STEP 2・3。</p>
+    <div class="blks">
+      <div class="blk"><div class="bn">1</div><div class="bc"><b>「作成」→「自動化したクラウド フロー」</b>。フロー名は <span class="k">PA45 第34回 ステータス通知</span>。トリガーの検索欄に <b>SharePoint</b> と入れ、<b>「アイテムまたはファイルが修正されたとき」</b>を選んで「作成」。<br><small>デモでは「修正されたとき」と入れて検索すると0件でした。「SharePoint」で探すと一覧に出ます。よく似た「項目が作成されたとき」「ファイルが作成または変更されたとき (プロパティのみ)」と取り違えないようにします。</small></div></div>
+      <div class="blk"><div class="bn">2</div><div class="bc"><div class="act"><img src="assets/icon_sharepoint.png" alt="">SharePoint の<b>「アイテムまたはファイルが修正されたとき」</b></div><table class="kv kv3"><tr class="kvh"><th>欄</th><td>入れるもの（どこから選ぶか）</td><td class="lt">なぜ・あとでどう役立つか</td></tr><tr><th>サイトのアドレス</th><td>準備でリストを作ったサイト</td><td class="lt">STEP 2 でも同じサイトを選ぶ</td></tr><tr><th>リスト名</th><td>問い合わせ管理</td><td class="lt">STEP 2 でも同じリスト</td></tr></table><small>欄の名前は 11/4 のリハーサルで画面に合わせて確定します（Learn の英語名は Site Address／List or Library Name）。</small><div class="later"><b>次に渡るもの</b><span class="dyn">⚡ ID</span>（書き換わった行）と、トリガーが見た時間のはじめ／おわりの印（開始トークン・終了トークン）→ STEP 2 の欄。<span class="dyn">⚡ タイトル</span>・<span class="dyn">⚡ ステータス Value</span> → STEP 4 の文面</div></div></div>
+    </div>
+
+  </section>
+
+  <section class="part card2" id="p2">
+    <div class="part-h"><span class="part-badge">STEP 2</span><img class="ph-ic" src="assets/icon_sharepoint.png" alt=""><h2>どの列が変わったかを調べる</h2></div>
+    <div class="goal2"><b>この段のゴール</b>「アイテムやファイルの変更を取得する (プロパティのみ)」に、サイト・リスト・ID・はじめ・おわりが入っている</div>
+    <p class="why2"><b>なぜ</b>リストは書き換えのたびに版（1.0 → 2.0 → 3.0）を残している。このアクションは、トリガーが見た前の版と今の版を比べて、列ごとに「変わった（true）／変わっていない（false）」を返す。</p>
+    <div class="blks">
+      <div class="blk"><div class="bn">1</div><div class="bc">トリガーの下の<b>「＋」→「アクションの追加」</b>で、SharePoint の<b>「アイテムやファイルの変更を取得する (プロパティのみ)」</b>を選びます。</div></div>
+      <div class="blk"><div class="bn">2</div><div class="bc"><div class="act"><img src="assets/icon_sharepoint.png" alt="">SharePoint の<b>「アイテムやファイルの変更を取得する (プロパティのみ)」</b></div><table class="kv kv3"><tr class="kvh"><th>欄</th><td>入れるもの（どこから選ぶか）</td><td class="lt">なぜ・あとでどう役立つか</td></tr><tr><th>サイトのアドレス・リスト名</th><td>STEP 1 と同じ</td><td class="lt">同じリストの変化を見る</td></tr><tr><th>ID</th><td><span class="dyn">⚡ ID</span><span class="src">（アイテムまたはファイルが修正されたとき）</span></td><td class="lt">書き換わった行</td></tr><tr><th>Since（比べるはじめ）</th><td>⚡ トリガーの開始トークン</td><td class="lt">前の版。ここから</td></tr><tr><th>Until（比べるおわり）</th><td>⚡ トリガーの終了トークン</td><td class="lt">今の版。ここまで</td></tr></table><small>Since・Until の日本語の欄名と、⚡ 一覧での開始・終了トークンの表示名は 11/4 のリハーサルで画面に合わせて確定します（Learn の説明：Trigger Window Start token／End token）。</small><div class="later"><b>次に渡るもの</b>⚡ 「列が変更されています。 ステータス」（true／false）→ STEP 3 の条件。ほかに「開始バージョン番号」「終了バージョン番号」と、列ごとの「列が変更されています。 ○○」が出てくる（デモでは16件）</div></div></div>
+    </div>
+
+  </section>
+
+  <section class="part card2" id="p3">
+    <div class="part-h"><span class="part-badge">STEP 3</span><img class="ph-ic" src="assets/pa_logo.png" alt=""><h2>ステータスが変わったかで分ける（条件）</h2></div>
+    <div class="goal2"><b>この段のゴール</b>条件の左に ⚡ 列が変更されています。 ステータス、真ん中が「等しい」、右が true</div>
+    <p class="why2"><b>なぜ</b>ここで「知らせるか」を決める。メモだけの書き換えは false になり、いいえ側に進んで何もしない。</p>
+    <div class="blks">
+      <div class="blk"><div class="bn">1</div><div class="bc"><b>「＋」→「アクションの追加」→ コントロール「条件」</b>。</div></div>
+      <div class="blk"><div class="bn">2</div><div class="bc"><table class="kv kv3"><tr class="kvh"><th>欄</th><td>入れるもの（どこから選ぶか）</td><td class="lt">なぜ・あとでどう役立つか</td></tr><tr><th>左の値</th><td><span class="dyn">⚡ 列が変更されています。 ステータス</span><span class="src">（アイテムやファイルの変更を取得する）</span></td><td class="lt">ステータスが変わったか</td></tr><tr><th>演算子</th><td>等しい</td><td class="lt">そのまま</td></tr><tr><th>右の値</th><td>true（手で入力）</td><td class="lt">変わった＝はい</td></tr></table><small>⚡ 一覧では「列が変更されています。 タイトル／担当／ステータス／メモ」のように、列の数だけ並びます。説明はどれも「このフィールドが変更の有無を示すブール値」です。</small><div class="later"><b>次に渡るもの</b>はい（True）のとき → STEP 4。いいえ（False）のときは何もしない</div></div></div>
+    </div>
+
+  </section>
+
+  <section class="part card2" id="p4">
+    <div class="part-h"><span class="part-badge">STEP 4</span><img class="ph-ic" src="assets/icon_teams.png" alt=""><h2>はいのときだけ Teams に投稿する</h2></div>
+    <div class="goal2"><b>この段のゴール</b>条件の True の中に「チャットまたはチャネルでメッセージを投稿する」があり、文面に件名とステータスが入っている</div>
+    <p class="why2"><b>なぜ</b>知らせるのは、変わったときだけ。文面には、何が・どうなったかを入れて、リストを開かなくても分かるようにする。</p>
+    <div class="blks">
+      <div class="blk"><div class="bn">1</div><div class="bc">条件の <b>True</b> の中の「＋」→ Teams の<b>「チャットまたはチャネルでメッセージを投稿する」</b>。</div></div>
+      <div class="blk"><div class="bn">2</div><div class="bc"><div class="act"><img src="assets/icon_teams.png" alt="">Microsoft Teams の<b>「チャットまたはチャネルでメッセージを投稿する」</b></div><img class="shot" src="assets/real-teams.png" alt="チャットまたはチャネルでメッセージを投稿する の設定画面（第35回のデモの画面）"><table class="kv kv3"><tr class="kvh"><th>欄</th><td>入れるもの（どこから選ぶか）</td><td class="lt">なぜ・あとでどう役立つか</td></tr><tr><th>投稿者</th><td>フロー ボット</td><td class="lt">Teams での送り主</td></tr><tr><th>投稿先</th><td>フロー ボットとチャットをする</td><td class="lt">練習は自分あて</td></tr><tr><th>Recipient</th><td>自分のメール アドレス</td><td class="lt">届く人</td></tr><tr><th>メッセージ</th><td>問い合わせのステータスが変わりました／件名：<span class="dyn">⚡ タイトル</span>／ステータス：<span class="dyn">⚡ ステータス Value</span></td><td class="lt">← どれも STEP 1 のトリガーの ⚡</td></tr></table><div class="later"><b>次に渡るもの</b>ここで全部1つにまとまる：件名 ← STEP 1 のタイトル／ステータス ← STEP 1 のステータス Value</div></div></div>
+    </div>
+
+  </section>
+
+  <section class="part card2" id="p5">
+    <div class="part-h"><span class="part-badge">STEP 5</span><img class="ph-ic" src="assets/ira_computer_businesswoman4_laugh.png" alt=""><h2>保存して、2通り試す</h2></div>
+    <div class="goal2"><b>この段のゴール</b>メモの書き足しでは届かず、ステータスを完了にすると Teams に届く</div>
+    <p class="why2"><b>なぜ</b>どちらの書き換えでもフローは動く（実行履歴に残る）。Teams に出すかを、STEP 3 の条件で分けていることを確かめる。</p>
+    <div class="blks">
+      <div class="blk"><div class="bn">1</div><div class="bc">右上の<b>「保存」</b>。リストに戻り、「請求書の再発行をお願いしたい」の<b>メモだけ</b>を書き足して保存します。</div></div>
+      <div class="blk"><div class="bn">2</div><div class="bc">フローの実行履歴を開くと、新しい実行があります。条件まで緑で、Teams には何も届きません。<img class="shot" src="assets/real-run-memo.png" alt="メモを書き足したときの実行。条件まで緑で、Teams への投稿はなし"></div></div>
+      <div class="blk"><div class="bn">3</div><div class="bc">次に同じ行の<b>ステータスを「対応中」→「完了」</b>にして保存します。1分ほどで Teams に届きます（デモでは書き換えて1分以内に動いた）。<img class="shot" src="assets/real-run-status.png" alt="ステータスを完了にしたときの実行。True 側で Teams に投稿"><table class="kv kv3"><tr class="kvh"><th>欄</th><td>入れるもの（どこから選ぶか）</td><td class="lt">なぜ・あとでどう役立つか</td></tr><tr><th>届いた本文（デモ）</th><td>問い合わせのステータスが変わりました／件名：請求書の再発行をお願いしたい／ステータス：完了</td><td class="lt">STEP 4 の文面どおり</td></tr></table></div></div>
+    </div>
+    <div class="callout warn"><b>⚠️ 試し終わったら：</b> このトリガーはリストを見張り続けます。練習が終わったら、フローの詳細画面で「オフにする」にしておくと止まります。</div>
+  </section>
+
+  <section class="part card2" id="p6">
+    <div class="part-h"><span class="part-badge">おまけ</span><img class="ph-ic" src="assets/ira_businesswoman2_idea.png" alt=""><h2>時間に余裕がある人向け</h2></div>
+    <div class="goal2"><b>この段のゴール</b>（任意）</div>
+    <p class="why2"><b>なぜ</b>当日の45分では扱わない。持ち帰って試す人向け。</p>
+    <div class="blks">
+      <div class="blk"><div class="bn">1</div><div class="bc"><b>「完了」になったときだけにする：</b> STEP 3 の条件に行を追加して「かつ」で、<span class="dyn">⚡ ステータス Value</span> 等しい 完了 を足します。対応中に戻したときは知らせなくなります。<small>（デモではまだ試していません）</small></div></div>
+      <div class="blk"><div class="bn">2</div><div class="bc"><b>チームのチャネルに出す：</b> STEP 4 の投稿先を「チャネル」にして、チームとチャネルを選びます。窓口のみんなに届きます。<small>（デモではまだ試していません）</small></div></div>
+      <div class="blk"><div class="bn">3</div><div class="bc"><b>リストの「ルール」との違い：</b> メールで届けばよいなら、リストのルールでも「列が変更されたとき」に人へ知らせられます（Microsoft サポートの説明では、ルールが送るのはメールの通知）。Teams に出したい・文面や条件を自分で決めたいときはフロー。SharePoint の従来の通知（アラート）は 2026年7月で廃止と案内されています。</div></div>
+      <div class="blk"><div class="bn">4</div><div class="bc"><b>第9回からの続き：</b> 第9回は「変更されたら知らせる」でした。今回はその間に STEP 2・3 を挟んで、どの列が変わったかで分けています。</div></div>
+    </div>
+
+  </section>
+
+  <div class="backrow">
+    <a class="btn sec" href="links.html">← 第34回の資料にもどる</a>
+    <a class="btn sec" href="../../">🏠 サイトのトップへ</a>
+  </div>
+
+  <footer>
+    PA45 第34回 ハンズオン手順 ／ SharePoint アイテムやファイルの変更を取得する × 条件 × Teams 投稿<br>
+    人名・社名・問い合わせの中身はすべて架空のサンプルです。画面や手順は公開日時点のもので、今後変わる可能性があります。
+  </footer>
+</div>
+
+<script>
+  document.querySelectorAll('.copybtn').forEach(function(b){
+    b.addEventListener('click', function(){
+      var el = document.getElementById(b.dataset.code);
+      var text = el.innerText;
+      navigator.clipboard.writeText(text).then(function(){
+        var o = b.textContent; b.textContent = 'コピーしました'; setTimeout(function(){ b.textContent = o; }, 1400);
+      });
+    });
+  });
+</script>
+</body>
+</html>
