@@ -1104,7 +1104,11 @@
   #smap .build3 .bk{padding:10px 18px;} #smap .build3 .bk b{font-size:24px;} #smap .build3 .bk span{font-size:18px;} #smap .build3 .bp{font-size:19px;padding:8px 14px;} #smap .build3 .mi2{width:42px;height:42px;} #smap .build3 .bv{font-size:15px;}
   #smap .stepgrid{grid-template-columns:1.45fr 0.55fr;align-items:center;} #smap .realshot{max-height:380px;}
   #t1 .realrow,#t2 .realrow,#t3 .realrow,#t4 .realrow{grid-template-columns:1fr 1fr;align-items:center;}
-  #t4 .realrow .rs{max-height:360px;object-fit:contain;} #t1 .realrow .rs{max-height:330px !important;} #t2 .realrow .rs{max-height:300px !important;} #t2 .realrow{align-items:start;} #t2 .rws{gap:6px;} #t2 .rws .rw{padding:6px 12px;}
+  #t4 .realrow .rs{max-height:360px;object-fit:contain;} #t1 .realrow .rs{max-height:330px !important;} #t2 .realrow .rs{max-height:300px !important;} #t2 .realrow{align-items:start;} #t2 .rws{gap:6px;} #t2 .rws .rw{padding:6px 12px;} #t2 .s2r{grid-template-columns:1.05fr 1fr;align-items:start;} #t2 .s2r .rs{max-height:322px !important;width:auto;max-width:100%;object-fit:contain;} #t2 .s2r .rws .rw{padding:5px 12px;} #t2 .tsugi{margin-top:6px;}
+  #t2 .s2side{display:flex;flex-direction:column;gap:8px;} #t2 .s2card{display:flex;gap:12px;align-items:center;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px;padding:6px 10px;}
+  #t2 .s2card img{width:150px;height:auto;border:1px solid #cbd5e1;border-radius:8px;background:#fff;} #t2 .s2cap{font-size:17px;line-height:1.5;color:#334155;} #t2 .s2cap b{color:#1e293b;font-size:18px;}
+  #t2 .s2line{margin-top:6px;font-size:20px;font-weight:800;color:#1e293b;background:#eef2ff;border-radius:12px;padding:7px 14px;} #t2 .s2line b{color:#c2410c;}
+  #t2 .talk{margin-bottom:4px;}
   #t5 .pair{grid-template-columns:0.62fr 1.38fr;} #t5 .pair .rs2{max-height:380px;object-fit:contain;}
   #t5 .rs2{border:1px solid #cbd5e1;border-radius:10px;}
   #t1 .rws,#t2 .rws{gap:8px;} #t2 .rw{padding:6px 12px;} #t2 .rw .rv{font-size:19px;}
@@ -1399,10 +1403,14 @@
 <div class="slide-body">
 <div class="talk"><div class="tlk auto"><img src="assets/ira_businesswoman2_idea.png" alt=""><div class="tlb"><span class="tlw">オートさん</span>次に<b>どの列が変わったか</b>を調べる。欄は全部 ⚡ から</div></div></div>
 
-    <div class="realrow">
-      <img class="rs" src="assets/real-s2-fields.png" alt="アイテムやファイルの変更を取得する (プロパティのみ) の設定。ID・以降・期限に ⚡ が入っている">
-      <div class="rws"><div class="rw"><div class="rf">サイト・リスト</div><div class="rv"><small>STEP 1 と同じ</small></div><div class="ru">→ 同じリストを見る</div></div><div class="rw"><div class="rf">ID</div><div class="rv"><span class="ch">⚡ ID</span><small>アイテムまたはファイルが修正されたとき</small></div><div class="ru">→ 書き換わった行</div></div><div class="rw"><div class="rf">以降</div><div class="rv"><span class="ch">⚡ ウィンドウ開始のトークンのトリガー</span><small>トリガーの ⚡</small></div><div class="ru">→ 前の版から</div></div><div class="rw"><div class="rf">期限（詳細パラメーター）</div><div class="rv"><span class="ch">⚡ ウィンドウ終了のトークンのトリガー</span><small>トリガーの ⚡</small></div><div class="ru">→ 今の版まで</div></div></div>
+    <div class="realrow s2r">
+      <img class="rs" src="assets/real-s2-panel.png" alt="アイテムやファイルの変更を取得する (プロパティのみ) の設定画面。サイト・リスト・ID・以降・期限">
+      <div class="s2side">
+        <div class="s2card"><img src="assets/real-s2-card.png" alt="キャンバスのカード。トリガーの下に、アイテムやファイルの変更を取得する (プロパティのみ)"><div class="s2cap">SharePoint のアクション（トリガーのすぐ下）<br><b>アイテムやファイルの変更を取得する (プロパティのみ)</b></div></div>
+        <div class="rws"><div class="rw"><div class="rf">以降</div><div class="rv"><span class="ch">⚡ ウィンドウ開始のトークンのトリガー</span></div><div class="ru">→ 前回の版</div></div><div class="rw"><div class="rf">期限</div><div class="rv"><span class="ch">⚡ ウィンドウ終了のトークンのトリガー</span></div><div class="ru">→ 今回の版（空なら最新の版）</div></div></div>
+      </div>
     </div>
+    <div class="s2line">以降＝前回の版、期限＝今回の版 → この間に<b>変わった列を true／false</b> で返す</div>
     <div class="tsugi"><b>次に渡るもの</b>⚡ 列が変更されています。 ステータス（true／false）→ STEP 3 の条件</div>
 </div><div class="slide-footer"><span class="dobadge do"><b>🖐 いま手を動かす</b>＋ →「アイテムやファイルの変更」で検索 → 期限は「すべて表示」で出す</span><span class="chat-reminder">💬 気づいたことを #PA45 で気軽に投稿しよう！スクショOK！</span></div>
 </section>
