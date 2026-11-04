@@ -59,6 +59,8 @@ Power Automate を初めて触る人が、45分で1本のフローを作り終�
 
 ## 全回の一覧
 
+次回は **第34回 リストのステータスが変わったときだけTeamsに通知**（11月5日（木） 20:15〜21:00）です。申込は [connpass](https://powerautomate-create.connpass.com/event/410848/) から。
+
 | 回 | 開催日 | テーマ | 参加 | スライド・資料 | フロー | 録画 | アンケート | レポート |
 |---:|---|---|---:|:---:|:---:|:---:|:---:|:---:|
 | 33 | 2026/10/29 | 内部名で困らない。内部名はフローが自動で調べる | 71名 | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-33/) | [ZIP](https://haru-powerplatform.github.io/pa45/flows/vol-33/PA45-Vol33-InternalNames.zip) | [見る](https://www.youtube.com/watch?v=eahDKL1qc98) | ― | ― |

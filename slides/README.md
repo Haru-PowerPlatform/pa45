@@ -8,7 +8,7 @@ PA45 の各回で使ったスライドです。\
 |---:|---|---|:---:|
 | 36 |  |  | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-36/) |
 | 35 |  |  | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-35/) |
-| 34 |  |  | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-34/) |
+| 34 | 2026/11/05（予定） | リストのステータスが変わったときだけTeamsに通知 | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-34/) |
 | 33 | 2026/10/29 | 内部名で困らない。内部名はフローが自動で調べる | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-33/) |
 | 32 | 2026/10/22 | 置くだけで月別フォルダに片付くファイル整理 | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-32/) |
 | 31 | 2026/10/15 | ファイルを選んで1クリックでPDFにして送る | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-31/) |
