@@ -175,14 +175,6 @@
     </div>
   </div>
 
-  <details class="callout tip mihon" style="margin-bottom:10px;"><summary><b>■ 今回の考え方（スライドの考え方①②）</b></summary>
-    <ul style="margin:6px 0 0;padding-left:20px;">
-      <li>事務の仕事は、受け付ける／書き写す／判断する／知らせる／まとめる／作る、の6つの動詞の組み合わせ。</li>
-      <li>今回は「知らせる」の前に「判断する」を置く。何でも知らせる通知は数が多く、読まれなくなる。</li>
-      <li>メールで届けばよいなら、リストの「ルール」でも列の変更を知らせられる。Teams に出したい・文面を決めたいときにフローが効く。</li>
-      <li>持ち帰る1つ＝<b>フローが「どの列が変わったか」を見分けて、決めた列の変更だけ知らせる</b>。</li>
-    </ul>
-  </details>
   <div class="callout tip" style="margin-bottom:10px;"><b>📖 この手順書の読み方：</b> 各アクションに表があります。表は <b>欄 ／ 入れるもの（⚡ のどのアクションから選ぶか）／ なぜ・あとでどう役立つか</b> の順です。オレンジの「次に渡るもの」は、そのアクションが終わったあと、後ろのアクションに何が渡るかです。</div>
   <div class="callout info" style="margin-bottom:4px;"><b>🔰 初参加の方へ：</b> ここから始めて大丈夫です。SharePoint と Teams が使える会社・学校のアカウントがあれば作れます（個人の Microsoft アカウントでは作れません）。</div>
 
@@ -226,10 +218,10 @@
   <section class="part card2" id="p2">
     <div class="part-h"><span class="part-badge">STEP 2</span><img class="ph-ic" src="assets/icon_sharepoint.png" alt=""><h2>どの列が変わったかを調べる</h2></div>
     <div class="goal2"><b>この段のゴール</b>「アイテムやファイルの変更を取得する (プロパティのみ)」に、サイト・リスト・ID・はじめ・おわりが入っている</div>
-    <p class="why2"><b>なぜ</b>リストは書き換えのたびに版（1.0 → 2.0 → 3.0）を残している。このアクションは、トリガーが見た前の版と今の版を比べて、列ごとに「変わった（true）／変わっていない（false）」を返す。</p>
+    <p class="why2"><b>なぜ</b>リストは書き換えのたびにバージョン（1.0 → 2.0 → 3.0）を残している。このアクションは、トリガーが見た前のバージョンと今のバージョンを比べて、列ごとに「変わった（true）／変わっていない（false）」を返す。</p>
     <div class="blks">
       <div class="blk"><div class="bn">1</div><div class="bc">トリガーの下の<b>「＋」</b>を押し、検索欄に <b>アイテムやファイルの変更</b> と入れて、SharePoint の<b>「アイテムやファイルの変更を取得する (プロパティのみ)」</b>を選びます。<br><small>「変更を取得」と入れると、このアクションは出てきませんでした。</small></div></div>
-      <div class="blk"><div class="bn">2</div><div class="bc"><div class="act"><img src="assets/icon_sharepoint.png" alt="">SharePoint の<b>「アイテムやファイルの変更を取得する (プロパティのみ)」</b></div><table class="kv kv3"><tr class="kvh"><th>欄</th><td>入れるもの（どこから選ぶか）</td><td class="lt">なぜ・あとでどう役立つか</td></tr><tr><th>サイトのアドレス・リスト名</th><td>STEP 1 と同じ</td><td class="lt">同じリストの変化を見る</td></tr><tr><th>ID</th><td><span class="dyn">⚡ ID</span><span class="src">（アイテムまたはファイルが修正されたとき）</span></td><td class="lt">書き換わった行</td></tr><tr><th>以降</th><td><span class="dyn">⚡ ウィンドウ開始のトークンのトリガー</span><span class="src">（アイテムまたはファイルが修正されたとき）</span></td><td class="lt">前の版。ここから</td></tr><tr><th>期限</th><td><span class="dyn">⚡ ウィンドウ終了のトークンのトリガー</span><span class="src">（アイテムまたはファイルが修正されたとき）</span></td><td class="lt">今の版。ここまで</td></tr></table><small>「期限」は最初は出ていません。詳細パラメーターの「すべて表示」を押すと出てきます。⚡ の一覧で <b>トークン</b> と入れて探すと、開始・終了の2つだけに絞れます。保存すると、欄の ⚡ の表示が英語の内部名（{TriggerWindow…）に変わりますが、中身は同じです。</small><p style="margin:10px 0 4px;font-weight:800;">以降＝前回の版（トリガーのウィンドウ開始トークン）、期限＝今回の版（ウィンドウ終了トークン）→ この間に変わった列を true／false で返します。期限を空にすると、最新の版まで比べます（画面の説明「空白の場合は最新バージョンを既定として設定します」）。</p><small>キャンバスでは、トリガーのすぐ下にこのカードが入ります。</small><img class="shot" src="assets/real-s2-card.png" alt="キャンバスのカード。トリガーのすぐ下に、アイテムやファイルの変更を取得する (プロパティのみ)"><img class="shot" src="assets/real-s2-panel.png" alt="アイテムやファイルの変更を取得する (プロパティのみ) の設定画面。サイト・リスト・ID・以降・期限"><div class="later"><b>次に渡るもの</b>⚡ 「列が変更されています。 ステータス」（true／false）→ STEP 3 の条件。ほかに「開始バージョン番号」「終了バージョン番号」と、列ごとの「列が変更されています。 ○○」が出てくる（デモでは16件）</div></div></div>
+      <div class="blk"><div class="bn">2</div><div class="bc"><div class="act"><img src="assets/icon_sharepoint.png" alt="">SharePoint の<b>「アイテムやファイルの変更を取得する (プロパティのみ)」</b></div><table class="kv kv3"><tr class="kvh"><th>欄</th><td>入れるもの（どこから選ぶか）</td><td class="lt">なぜ・あとでどう役立つか</td></tr><tr><th>サイトのアドレス・リスト名</th><td>STEP 1 と同じ</td><td class="lt">同じリストの変化を見る</td></tr><tr><th>ID</th><td><span class="dyn">⚡ ID</span><span class="src">（アイテムまたはファイルが修正されたとき）</span></td><td class="lt">書き換わった行</td></tr><tr><th>以降</th><td><span class="dyn">⚡ ウィンドウ開始のトークンのトリガー</span><span class="src">（アイテムまたはファイルが修正されたとき）</span></td><td class="lt">前のバージョン。ここから</td></tr><tr><th>期限</th><td><span class="dyn">⚡ ウィンドウ終了のトークンのトリガー</span><span class="src">（アイテムまたはファイルが修正されたとき）</span></td><td class="lt">今のバージョン。ここまで</td></tr></table><small>「期限」は最初は出ていません。詳細パラメーターの「すべて表示」を押すと出てきます。⚡ の一覧で <b>トークン</b> と入れて探すと、開始・終了の2つだけに絞れます。保存すると、欄の ⚡ の表示が英語の内部名（{TriggerWindow…）に変わりますが、中身は同じです。</small><p style="margin:10px 0 4px;font-weight:800;">以降＝前回のバージョン（トリガーのウィンドウ開始トークン）、期限＝今回のバージョン（ウィンドウ終了トークン）→ この間に変わった列を true／false で返します。期限を空にすると、最新のバージョンまで比べます（画面の説明「空白の場合は最新バージョンを既定として設定します」）。</p><small>キャンバスでは、トリガーのすぐ下にこのカードが入ります。</small><img class="shot" src="assets/real-s2-card.png" alt="キャンバスのカード。トリガーのすぐ下に、アイテムやファイルの変更を取得する (プロパティのみ)"><img class="shot" src="assets/real-s2-panel.png" alt="アイテムやファイルの変更を取得する (プロパティのみ) の設定画面。サイト・リスト・ID・以降・期限"><div class="later"><b>次に渡るもの</b>⚡ 「列が変更されています。 ステータス」（true／false）→ STEP 3 の条件。ほかに「開始バージョン番号」「終了バージョン番号」と、列ごとの「列が変更されています。 ○○」が出てくる（デモでは16件）</div></div></div>
     </div>
 
   </section>
@@ -240,7 +232,7 @@
     <p class="why2"><b>なぜ</b>ここで「知らせるか」を決める。メモだけの書き換えは false になり、いいえ側に進んで何もしない。</p>
     <div class="blks">
       <div class="blk"><div class="bn">1</div><div class="bc"><b>「＋」→ コントロール →「条件」</b>。</div></div>
-      <div class="blk"><div class="bn">2</div><div class="bc"><table class="kv kv3"><tr class="kvh"><th>欄</th><td>入れるもの（どこから選ぶか）</td><td class="lt">なぜ・あとでどう役立つか</td></tr><tr><th>左の値</th><td><span class="dyn">⚡ 列が変更されています。 ステータス</span><span class="src">（アイテムやファイルの変更を取得する）</span></td><td class="lt">ステータスが変わったか</td></tr><tr><th>演算子</th><td>等しい</td><td class="lt">そのまま</td></tr><tr><th>右の値</th><td>true（手で入力）</td><td class="lt">変わった＝はい</td></tr></table><img class="shot" src="assets/real-s2-dyn-status.png" alt="⚡ を「ステータス」で探すと、列が変更されています。 ステータス が出る"><img class="shot" src="assets/real-s3-condition.png" alt="条件の1行目。左に ⚡、真ん中が等しい、右が true"><small>左の値の ⚡ は、一覧の検索で <b>ステータス</b> と入れると見つけやすい。条件には空の2行目がいつも出ていますが、保存されるのは1行目だけです（消さなくてよい）。⚡ 一覧では「列が変更されています。 タイトル／担当／ステータス／メモ」のように、列の数だけ並びます。説明はどれも「このフィールドが変更の有無を示すブール値」です。</small><div class="later"><b>次に渡るもの</b>はい（True）のとき → STEP 4。いいえ（False）のときは何もしない</div></div></div>
+      <div class="blk"><div class="bn">2</div><div class="bc"><table class="kv kv3"><tr class="kvh"><th>欄</th><td>入れるもの（どこから選ぶか）</td><td class="lt">なぜ・あとでどう役立つか</td></tr><tr><th>左の値</th><td><span class="dyn">⚡ 列が変更されています。 ステータス</span><span class="src">（アイテムやファイルの変更を取得する）</span></td><td class="lt">ステータスが変わったか</td></tr><tr><th>演算子</th><td>等しい</td><td class="lt">そのまま</td></tr><tr><th>右の値</th><td>true（手で入力）</td><td class="lt">変わった＝はい</td></tr></table><img class="shot" src="assets/real-s2-dyn-status.png" alt="⚡ を「ステータス」で探すと、列が変更されています。 ステータス が出る"><img class="shot" src="assets/real-s3-condition.png" alt="条件の1行目。左に ⚡、真ん中が等しい、右が true"><small>左の値の ⚡ は、一覧の検索で <b>ステータス</b> と入れると見つけやすい。条件には空の2行目がいつも出ていますが、保存されるのは1行目だけです（消さなくてよい）。保存して開き直すと、左の値は <b>body/ColumnH…</b> という表示に変わります。中身は同じなので、選び直さなくてよいです。⚡ 一覧では「列が変更されています。 タイトル／担当／ステータス／メモ」のように、列の数だけ並びます。説明はどれも「このフィールドが変更の有無を示すブール値」です。</small><div class="later"><b>次に渡るもの</b>はい（True）のとき → STEP 4。いいえ（False）のときは何もしない</div></div></div>
     </div>
 
   </section>
