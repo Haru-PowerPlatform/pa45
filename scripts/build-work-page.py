@@ -68,6 +68,51 @@ def blog_total():
         return None
 
 
+# ブログのカテゴリ名 → ページ上の data-k
+CATS = {"Power Automate 実践Tips": "cat-pa", "Copilot Studio": "cat-cs",
+        "PA45 各回レポート": "cat-pa45", "社内DX推進・人材育成": "cat-dx"}
+
+
+def blog_categories():
+    try:
+        req = urllib.request.Request(
+            "https://www.automate136.com/wp-json/wp/v2/categories?per_page=100&_fields=name,count",
+            headers={"User-Agent": "pa45-build-work-page"},
+        )
+        with urllib.request.urlopen(req, timeout=20) as r:
+            return {CATS[c["name"]]: c["count"] for c in json.load(r) if c["name"] in CATS}
+    except Exception as e:
+        print("blog categories: skip", e)
+        return None
+
+
+def video_total():
+    """videos/index.html の VIDEOS 配列にある動画の数（YouTube で公開中の PA45 の回）"""
+    try:
+        t = (ROOT / "videos" / "index.html").read_text(encoding="utf-8")
+        m = re.search(r"VIDEOS\s*=\s*\[(.*?)\n\s*\];", t, re.S)
+        return len(set(re.findall(r'id:"([\w-]{11})"', m.group(1)))) or None
+    except Exception as e:
+        print("videos: skip", e)
+        return None
+
+
+def xtips_total():
+    """slides/index.html（X の図解の一覧）に出ている「全N本」"""
+    try:
+        t = (ROOT / "slides" / "index.html").read_text(encoding="utf-8")
+        return int(re.search(r"全(\d+)本", t).group(1))
+    except Exception as e:
+        print("xtips: skip", e)
+        return None
+
+
+def set_k(s, key, val):
+    if val is None:
+        return s
+    return re.sub(rf'(data-k="{key}">)[\d,]+(<)', rf"\g<1>{val}\2", s)
+
+
 def sub1(pat, rep, s, label):
     s2, n = re.subn(pat, rep, s, count=1, flags=re.S)
     if n == 0:
@@ -119,6 +164,18 @@ def main():
     if bt:
         s = sub1(r"（公開記事 \d+ 本・\d{4}年\d+月\d+日時点）", f"（公開記事 {bt} 本・{JP_DATE}時点）", s, "ブログ本数") \
             if not re.search(rf"（公開記事 {bt} 本・", s) else s
+
+    # 「情報発信の実績」の数字（data-k）。どれかが変わったときだけ「◯年◯月◯日時点」も今日にする
+    before = s
+    s = set_k(s, "blog", bt)
+    s = set_k(s, "pa45", N)
+    s = set_k(s, "talks", n_talks)
+    s = set_k(s, "videos", video_total())
+    s = set_k(s, "xtips", xtips_total())
+    for k, v in (blog_categories() or {}).items():
+        s = set_k(s, k, v)
+    if s != before:
+        s = re.sub(r'(<span data-k="asof">)[^<]*(</span>)', rf"\g<1>{JP_DATE}\2", s)
 
     if s != src:
         s = re.sub(r"更新日：\d{4}年\d+月\d+日", f"更新日：{JP_DATE}", s)

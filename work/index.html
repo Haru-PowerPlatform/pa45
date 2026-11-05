@@ -327,6 +327,37 @@ main section:nth-of-type(even) .chart-card{background:var(--bg)}
 .top.scrolled{box-shadow:0 6px 24px rgba(0,0,0,.3)}
 .prog{position:fixed;top:0;left:0;height:3px;width:100%;transform-origin:0 50%;transform:scaleX(0);background:linear-gradient(90deg,#0b6bcb,#5cc5b4);z-index:30}
 
+/* 情報発信の実績 */
+.feed{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:10px}
+.fs{display:flex;flex-direction:column;gap:2px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;text-decoration:none;color:var(--ink);box-shadow:var(--sh-1);transition:transform .3s,box-shadow .3s}
+.fs:hover{transform:translateY(-3px);box-shadow:var(--sh-2)}
+.fs .fi{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;margin-bottom:6px;color:#fff}
+.fs .fi .ic,.fs .fi .brand{width:22px;height:22px}
+.fs .fi.blog{background:#0b6bcb}.fs .fi.x{background:#0b0b0b}.fs .fi.yt{background:#fff;border:1px solid var(--line)}.fs .fi.pa{background:#0f7a6b}.fs .fi.tk{background:#7a4cc2}
+.fs b{font-family:var(--f-display);font-size:34px;font-weight:900;line-height:1.1;font-variant-numeric:tabular-nums}
+.fs b small{font-size:.45em;margin-left:2px}
+.fs .fl{font-weight:700;font-size:14px}
+.fs .fd{font-size:12px;color:var(--muted)}
+.cats{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 16px}
+.cats span{font-size:13px;background:var(--blue-soft);color:var(--blue);border-radius:999px;padding:4px 12px;font-weight:700}
+.cats span b{margin-left:6px;color:var(--ink)}
+.ecs{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.ec{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;text-decoration:none;color:var(--ink);box-shadow:var(--sh-1);transition:transform .3s,box-shadow .3s}
+.ec:hover{transform:translateY(-4px);box-shadow:var(--sh-2)}
+.ec .th{position:relative;aspect-ratio:16/9;background:var(--bg);overflow:hidden}
+.ec .th img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s}
+.ec:hover .th img{transform:scale(1.04)}
+.ec .bd{padding:12px 14px 14px;display:flex;flex-direction:column;gap:4px;flex:1}
+.ec .pkt{font-size:12px;color:var(--blue);font-weight:700}
+.ec .pt{font-weight:700;line-height:1.55;font-size:15px}
+.ec .dt{font-size:12px;color:var(--muted);margin-top:auto;padding-top:4px}
+.ec .pf{position:absolute;left:10px;bottom:10px;display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;padding:4px 10px 4px 8px;border-radius:999px;background:rgba(255,255,255,.95);color:var(--ink);box-shadow:0 2px 8px rgba(0,0,0,.18)}
+.ec .pf .brand,.ec .pf .ic{width:16px;height:16px}
+.ec .pf.x{background:#0b0b0b;color:#fff}
+.ec .pf.sl{background:#0b6bcb;color:#fff}.ec .pf.hd{background:#0f7a6b;color:#fff}.ec .pf.tk{background:#7a4cc2;color:#fff}.ec .pf.vc{background:#b7650b;color:#fff}
+@media (max-width:900px){.feed{grid-template-columns:repeat(2,1fr)}.ecs{grid-template-columns:1fr 1fr}}
+@media (max-width:560px){.ecs{grid-template-columns:1fr}.fs b{font-size:28px}}
+
 /* 図解の動き */
 .m-arrow{background:linear-gradient(90deg,var(--blue) 50%,transparent 50%) 0 0/10px 2px repeat-x;animation:flowx .8s linear infinite}
 @keyframes flowx{to{background-position:10px 0}}
@@ -700,21 +731,43 @@ main section:nth-of-type(even) .chart-card{background:var(--bg)}
 <div class="tabpanel" data-tab="blog" aria-label="ブログ・資料">
 <section id="blog">
   <div class="wrap">
-    <div class="sec-h"><small>BLOG</small><h2>ブログ automate136.com</h2><p>フローの作り方、Microsoft 365 Copilot の使い方、Copilot Studio の検証の記録を、手順と画面つきで公開しています（公開記事 137 本・2026年11月5日時点）。</p></div>
-    <div class="posts posts3" id="posts"></div>
-    <div class="more"><a href="https://www.automate136.com/" target="_blank" rel="noopener">ブログをすべて見る</a><a href="https://haru-powerplatform.github.io/pa45/slides/links.html" target="_blank" rel="noopener">講座スライドの一覧</a></div>
+    <div class="sec-h"><small>OUTPUT</small><h2>情報発信の実績</h2><p>作り方と検証の記録を、ブログ・図解・録画・登壇で続けて公開しています。</p></div>
+    <div class="feed">
+      <a class="fs" href="https://www.automate136.com/" target="_blank" rel="noopener"><span class="fi blog"><svg class="ic"><use href="#i-pen"/></svg></span><b><span data-k="blog">137</span><small>本</small></b><span class="fl">ブログ記事</span><span class="fd">2025年7月から公開</span></a>
+      <a class="fs" href="https://haru-powerplatform.github.io/pa45/slides/" target="_blank" rel="noopener"><span class="fi x"><svg class="brand" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg></span><b><span data-k="xtips">177</span><small>本</small></b><span class="fl">X の図解</span><span class="fd">1テーマ2枚・一覧で公開</span></a>
+      <a class="fs" href="https://haru-powerplatform.github.io/pa45/videos/" target="_blank" rel="noopener"><span class="fi yt"><svg class="brand" viewBox="0 0 24 24" aria-hidden="true"><rect x="1" y="4.5" width="22" height="15" rx="4" fill="#ff0033"/><path d="M10 8.6v6.8l5.8-3.4z" fill="#fff"/></svg></span><b><span data-k="videos">30</span><small>本</small></b><span class="fl">YouTube の録画</span><span class="fd">2026年3月から毎週</span></a>
+      <a class="fs" href="https://haru-powerplatform.github.io/pa45/sessions/" target="_blank" rel="noopener"><span class="fi pa"><svg class="ic"><use href="#i-cal"/></svg></span><b><span data-k="pa45">33</span><small>回</small></b><span class="fl">PA45 の講座</span><span class="fd">毎週木曜・資料も公開</span></a>
+      <a class="fs" href="#talks"><span class="fi tk"><svg class="ic"><use href="#i-users"/></svg></span><b><span data-k="talks">13</span><small>件</small></b><span class="fl">登壇・運営</span><span class="fd">社外のコミュニティで</span></a>
+    </div>
+    <p class="src" style="margin:0 0 34px"><span data-k="asof">2026年11月5日</span>時点。ブログは公開中の記事数、図解は一覧ページの掲載数、録画は YouTube で公開している PA45 の回数。</p>
+
+    <h3 class="sub">ブログ automate136.com</h3>
+    <p style="color:var(--muted);margin:-4px 0 12px">フローの作り方、Microsoft 365 Copilot の使い方、Copilot Studio の検証の記録を、手順と画面つきで公開しています（公開記事 137 本・2026年11月5日時点）。</p>
+    <div class="cats" aria-label="カテゴリ別の記事数"><span>Power Automate 実践Tips<b data-k="cat-pa">71</b></span><span>Copilot Studio<b data-k="cat-cs">24</b></span><span>PA45 各回レポート<b data-k="cat-pa45">23</b></span><span>社内DX推進・人材育成<b data-k="cat-dx">13</b></span></div>
+    <div class="ecs" id="posts">
+      <a class="ec" href="https://www.automate136.com/pa45-vol16-copilot/" target="_blank" rel="noopener"><span class="th"><img src="../assets/img/work/blog-pa45-vol16-copilot.jpg" alt="" loading="lazy" width="640" height="360"></span><span class="bd"><span class="pkt">Power Automate</span><span class="pt">Copilotに式とJSONを書かせる｜PA45 第16回</span><span class="dt">2026年8月24日</span></span></a>
+      <a class="ec" href="https://www.automate136.com/receipt-kakeibo-ai-builder/" target="_blank" rel="noopener"><span class="th"><img src="../assets/img/work/blog-receipt-kakeibo-ai-builder.jpg" alt="" loading="lazy" width="640" height="360"></span><span class="bd"><span class="pkt">Power Automate</span><span class="pt">レシートを撮るだけで家計簿が埋まる｜AI Builder 領収書処理の作り方</span><span class="dt">2026年9月17日</span></span></a>
+      <a class="ec" href="https://www.automate136.com/cowork-vs-automate-divide/" target="_blank" rel="noopener"><span class="th"><img src="../assets/img/work/blog-cowork-vs-automate-divide.jpg" alt="" loading="lazy" width="640" height="360"></span><span class="bd"><span class="pkt">Microsoft 365 Copilot</span><span class="pt">Copilot CoworkでPower Automateは消える？ 3つの判断で見極める使い分け</span><span class="dt">2026年5月23日</span></span></a>
+      <a class="ec" href="https://www.automate136.com/teams-workflow-copilot-meeting-summary/" target="_blank" rel="noopener"><span class="th"><img src="../assets/img/work/blog-teams-workflow-copilot-meeting-summary.jpg" alt="" loading="lazy" width="640" height="360"></span><span class="bd"><span class="pkt">Microsoft 365 Copilot</span><span class="pt">Teams ワークフローとCopilotで会議を自動要約する</span><span class="dt">2026年3月31日</span></span></a>
+      <a class="ec" href="https://www.automate136.com/copilot-studio-vs-power-automate/" target="_blank" rel="noopener"><span class="th"><img src="../assets/img/work/blog-copilot-studio-vs-power-automate.jpg" alt="" loading="lazy" width="640" height="360"></span><span class="bd"><span class="pkt">Copilot Studio</span><span class="pt">Copilot Studio って何？ Power Automate と何が違うの？</span><span class="dt">2026年8月25日</span></span></a>
+      <a class="ec" href="https://www.automate136.com/copilot-studio-first-agent/" target="_blank" rel="noopener"><span class="th"><img src="../assets/img/work/blog-copilot-studio-first-agent.jpg" alt="" loading="lazy" width="640" height="360"></span><span class="bd"><span class="pkt">Copilot Studio</span><span class="pt">Copilot Studioで質問に答えるAIを作る｜はじめてのエージェントの作り方</span><span class="dt">2026年8月25日</span></span></a>
+    </div>
+    <div class="more"><a href="https://www.automate136.com/" target="_blank" rel="noopener">ブログをすべて見る</a></div>
   </div>
 </section>
 
 <section id="samples">
   <div class="wrap">
-    <div class="sec-h"><small>SAMPLES</small><h2>資料のサンプル</h2><p>講座と登壇で使っている資料を、そのまま公開しています。</p></div>
-    <div class="grid3">
-      <a class="post" href="https://haru-powerplatform.github.io/pa45/slides/vol-30/" target="_blank" rel="noopener"><span class="pkt">講座スライド</span><div class="pt">PA45 第30回：Teamsの頼まれごとを1クリックでTo Doに入れる</div></a>
-      <a class="post" href="https://haru-powerplatform.github.io/pa45/slides/vol-30/handson.html" target="_blank" rel="noopener"><span class="pkt">手順書</span><div class="pt">PA45 第30回のハンズオン手順書</div></a>
-      <a class="post" href="https://haru-powerplatform.github.io/pa45/talks/2026-osaka-copilot/slides.html" target="_blank" rel="noopener"><span class="pkt">登壇資料</span><div class="pt">なんでもCopilot 大阪：学びを、成果に変える</div></a>
+    <div class="sec-h"><small>SAMPLES</small><h2>講座・動画・図解のサンプル</h2><p>講座と登壇で使った資料と録画を、そのまま公開しています。</p></div>
+    <div class="ecs">
+      <a class="ec" href="https://haru-powerplatform.github.io/pa45/videos/" target="_blank" rel="noopener"><span class="th"><img src="../assets/img/work/pa45-vol33-thumb.jpg" alt="" loading="lazy" width="640" height="360"><span class="pf"><svg class="brand" viewBox="0 0 24 24" aria-hidden="true"><rect x="1" y="4.5" width="22" height="15" rx="4" fill="#ff0033"/><path d="M10 8.6v6.8l5.8-3.4z" fill="#fff"/></svg>YouTube</span></span><span class="bd"><span class="pkt">講座の録画</span><span class="pt">PA45 第33回：リストの列の本当の名前（内部名）をフローで一覧にする</span><span class="dt">録画は第1回から YouTube で公開</span></span></a>
+      <a class="ec" href="https://haru-powerplatform.github.io/pa45/slides/vol-30/" target="_blank" rel="noopener"><span class="th"><img src="../assets/img/work/pa45-vol30-thumb.jpg" alt="" loading="lazy" width="640" height="360"><span class="pf sl"><svg class="ic"><use href="#i-learn"/></svg>講座スライド</span></span><span class="bd"><span class="pkt">講座スライド</span><span class="pt">PA45 第30回：Teamsの頼まれごとを1クリックでTo Doに入れる</span><span class="dt">全回のスライドを公開</span></span></a>
+      <a class="ec" href="https://haru-powerplatform.github.io/pa45/slides/vol-30/handson.html" target="_blank" rel="noopener"><span class="th"><img src="../assets/img/work/vol30-handson.jpg" alt="" loading="lazy" width="640" height="360"><span class="pf hd"><svg class="ic"><use href="#i-make"/></svg>手順書</span></span><span class="bd"><span class="pkt">ハンズオン手順書</span><span class="pt">PA45 第30回のハンズオン手順書</span><span class="dt">参加者が当日そのまま使う手順</span></span></a>
+      <a class="ec" href="https://haru-powerplatform.github.io/pa45/slides/" target="_blank" rel="noopener"><span class="th"><img src="../assets/img/work/x-vol159.jpg" alt="" loading="lazy" width="640" height="360"><span class="pf x"><svg class="brand" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/></svg>図解</span></span><span class="bd"><span class="pkt">X の図解</span><span class="pt">今日オフィスに来る人の一覧を、毎朝8時にチームのチャネルへ自動で出す</span><span class="dt">1テーマを2枚で。一覧ページで全部見られます</span></span></a>
+      <a class="ec" href="https://haru-powerplatform.github.io/pa45/talks/2026-osaka-copilot/slides.html" target="_blank" rel="noopener"><span class="th"><img src="../assets/img/work/osaka-talk.jpg" alt="" loading="lazy" width="640" height="360"><span class="pf tk"><svg class="ic"><use href="#i-users"/></svg>登壇資料</span></span><span class="bd"><span class="pkt">登壇資料</span><span class="pt">なんでもCopilot 大阪：学びを、成果に変える</span><span class="dt">登壇資料は一覧で公開</span></span></a>
+      <a class="ec" href="https://haru-powerplatform.github.io/pa45/achievements/insights/voices.html" target="_blank" rel="noopener"><span class="th"><img src="../assets/ogp/insights-voices.png" alt="" loading="lazy" width="640" height="336"><span class="pf vc"><svg class="ic"><use href="#i-chart"/></svg>アンケート</span></span><span class="bd"><span class="pkt">参加者の声</span><span class="pt">PA45 のアンケート原文と、回ごとの集計</span><span class="dt">毎回集計して公開</span></span></a>
     </div>
-    <div class="more"><a href="https://haru-powerplatform.github.io/pa45/slides/links.html" target="_blank" rel="noopener">全回のスライドと手順書</a><a href="https://haru-powerplatform.github.io/pa45/talks/" target="_blank" rel="noopener">登壇資料の一覧</a></div>
+    <div class="more"><a href="https://haru-powerplatform.github.io/pa45/slides/links.html" target="_blank" rel="noopener">全回のスライドと手順書</a><a href="https://haru-powerplatform.github.io/pa45/videos/" target="_blank" rel="noopener">録画の一覧</a><a href="https://haru-powerplatform.github.io/pa45/talks/" target="_blank" rel="noopener">登壇資料の一覧</a></div>
   </div>
 </section>
 </div>
@@ -753,18 +806,6 @@ const TALKS=[
 document.getElementById('tl').innerHTML=TALKS.map(t=>`<li><div class="d">${t[0]}</div><div class="t">${t[4]?`<a href="${t[4]}" target="_blank" rel="noopener">${t[1]}</a>`:t[1]}<span class="r${/運営|主催/.test(t[2])?' org':''}">${t[2]}</span></div>${t[3]?`<div class="m">${t[3]}</div>`:''}</li>`).join('');
 
 
-const POSTS=[
- ['Power Automate','Copilotに式とJSONを書かせる｜PA45 第16回','https://www.automate136.com/pa45-vol16-copilot/'],
- ['Power Automate','承認フローの作り方｜Forms×Approvals｜PA45 第8回','https://www.automate136.com/pa45-vol8-approvals/'],
- ['Power Automate','レシートを撮るだけで家計簿が埋まる｜AI Builder 領収書処理の作り方','https://www.automate136.com/receipt-kakeibo-ai-builder/'],
- ['Microsoft 365 Copilot','Copilot CoworkでPower Automateは消える？ 3つの判断で見極める使い分け','https://www.automate136.com/cowork-vs-automate-divide/'],
- ['Microsoft 365 Copilot','Copilot Coworkの始め方｜Frontierの有効化と設定を管理者向けに','https://www.automate136.com/copilot-cowork-frontier/'],
- ['Microsoft 365 Copilot','Teams ワークフローとCopilotで会議を自動要約する','https://www.automate136.com/teams-workflow-copilot-meeting-summary/'],
- ['Copilot Studio','Copilot Studio って何？ Power Automate と何が違うの？','https://www.automate136.com/copilot-studio-vs-power-automate/'],
- ['Copilot Studio','Copilot Studioで質問に答えるAIを作る｜はじめてのエージェントの作り方','https://www.automate136.com/copilot-studio-first-agent/'],
- ['Copilot Studio','Copilot Studioで社内FAQに答えるAIを作る｜ナレッジの追加手順','https://www.automate136.com/copilot-studio-knowledge-add/'],
-];
-document.getElementById('posts').innerHTML=POSTS.map(p=>`<a class="post" href="${p[2]}" target="_blank" rel="noopener"><span class="pkt">${p[0]}</span><div class="pt">${p[1]}</div></a>`).join('');
 </script>
 <script>
 (()=>{
@@ -774,7 +815,7 @@ document.getElementById('posts').innerHTML=POSTS.map(p=>`<a class="post" href="$
   addEventListener('scroll',onScroll,{passive:true});onScroll();
   if(reduce||!('IntersectionObserver' in window))return;
   root.classList.add('js');
-  const groups=['.sec-h','.paths .path','.nums .num','.method','.verbs span','.m-out div','.acts .act','.pillars .pl','#service .forms4>*','.steps2 li','.scope>div','.tl li','.pl-fig span','.posts .post','.chart-card','.voice','.faq details','.contact'];
+  const groups=['.sec-h','.paths .path','.nums .num','.method','.verbs span','.m-out div','.acts .act','.pillars .pl','#service .forms4>*','.steps2 li','.scope>div','.tl li','.pl-fig span','.posts .post','.feed .fs','.ecs .ec','.chart-card','.voice','.faq details','.contact'];
   const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{rootMargin:'0px 0px -8% 0px'});
   const mark=()=>{groups.forEach(sel=>document.querySelectorAll(sel).forEach((e,i)=>{if(!e.classList.contains('rv')){e.classList.add('rv');e.style.setProperty('--d',Math.min(i,8)*70+'ms');io.observe(e)}}))};
   mark();
