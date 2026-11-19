@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>Vol.180-3 異動の前に確かめる5点</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/tips-base.css">
+<link rel="stylesheet" href="../vol-180/kit.css">
+<style>
+  .stage{gap:12px;}
+  /* 左：フローの詳細画面 */
+  .det{flex:0 0 500px;display:flex;flex-direction:column;background:#fff;border:2.5px solid #A9C6F5;border-radius:12px;overflow:hidden;box-shadow:0 4px 10px rgba(20,40,90,.13);font-family:'Segoe UI','Noto Sans JP',sans-serif;}
+  .det .bar{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:6px 10px;background:#F3F2F1;border-bottom:1px solid #E1DFDD;font-size:15.5px;font-weight:900;color:#242424;white-space:nowrap;}
+  .det .cmd{flex:0 0 auto;display:flex;gap:6px;padding:6px 10px;border-bottom:1px solid #EDEBE9;}
+  .det .body{flex:1;min-height:0;display:flex;flex-direction:column;gap:6px;padding:7px 10px;}
+  .sec{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;gap:4px;border:1.4px solid #E1DFDD;border-radius:8px;padding:5px 9px;position:relative;}
+  .sec .st{display:flex;align-items:center;gap:7px;font-size:15.5px;font-weight:900;color:#242424;}
+  .sec .st .ed{margin-left:auto;font-size:15px;font-weight:700;color:#0F6CBD;}
+  .sec .ln{display:flex;align-items:center;gap:7px;font-size:15.5px;font-weight:700;color:#323130;white-space:nowrap;}
+  .sec .ln .r{margin-left:auto;}
+  .sec.hot{border:2.4px solid #EA580C;background:#FFF7ED;}
+  .av{flex:0 0 auto;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13.5px;font-weight:900;background:#2563EB;}
+  .badge{position:absolute;left:-13px;top:50%;transform:translateY(-50%);width:28px;height:28px;border-radius:50%;background:linear-gradient(180deg,#FB923C,#EA580C);color:#fff;font-size:16px;font-weight:900;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 4px rgba(0,0,0,.3);border:2px solid #fff;z-index:2;}
+  .det .body{padding-left:20px;}
+  /* 右：早見表 */
+  .tb{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px;}
+  .tb .th{flex:0 0 auto;display:flex;gap:10px;font-size:15.5px;font-weight:900;color:#fff;background:linear-gradient(180deg,#3B82F6,#2563EB);border-radius:8px;padding:5px 12px;}
+  .tr{flex:1;min-height:0;display:flex;align-items:center;gap:10px;background:#F7F9FC;border:1.8px solid #DCE6F3;border-radius:10px;padding:4px 10px;}
+  .tr .n{flex:0 0 auto;width:30px;height:30px;border-radius:50%;background:linear-gradient(180deg,#FB923C,#EA580C);color:#fff;font-weight:900;font-size:17px;display:flex;align-items:center;justify-content:center;}
+  .tr .mi{flex:0 0 74px;height:58px;}
+  .tr .k{flex:1.15;min-width:0;font-size:18px;font-weight:900;color:#1B2A44;line-height:1.28;}
+  .tr .k small{display:block;font-size:15px;font-weight:700;color:#4B5563;line-height:1.3;}
+  .tr .v{flex:1;min-width:0;font-size:15.5px;font-weight:900;color:#1E40AF;background:#EAF1FE;border-radius:7px;padding:5px 9px;line-height:1.32;}
+  .tr.hot{background:#FFF7ED;border-color:#FDBA74;}
+  .tr.hot .v{background:#FFEDD5;color:#9A3412;}
+  .th .c1{flex:0 0 30px;} .th .c2{flex:0 0 74px;} .th .c3{flex:1.15;} .th .c4{flex:1;}
+  .chs{position:absolute;right:12px;bottom:64px;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script src="../vol-180/kit.js"></script>
+<script>
+const M=(inner)=>SV(74,58,inner);
+const mini=[
+  M(`<g transform="translate(0,2) scale(.4)">${tagG(0,0,'','','blue')}</g><g transform="translate(30,2) scale(.4)">${tagG(0,0,'','','green',{badge:'ok'})}</g>`),
+  M(`${keyG(2,10,{s:.62,rot:-10})}<circle cx="58" cy="40" r="13" fill="url(#gBlue)" stroke="#fff" stroke-width="2"/><text x="58" y="45.5" text-anchor="middle" font-size="15" font-weight="900" fill="#fff">?</text>`),
+  M(`${keyG(0,4,{gray:true,s:.5,rot:-10})}<path d="M30 30h14" stroke="#16A34A" stroke-width="4" stroke-linecap="round"/><path d="M40 24l6 6-6 6" stroke="#16A34A" stroke-width="4" fill="none" stroke-linecap="round"/>${keyG(20,28,{s:.5,rot:-10})}`),
+  M(`<g filter="url(#fSh)"><rect x="4" y="8" width="66" height="44" rx="6" fill="url(#gCard)" stroke="#64748B" stroke-width="1.6"/><rect x="4" y="8" width="66" height="11" rx="5" fill="url(#gViolet)"/></g><g fill="#7C3AED"><rect x="11" y="25" width="16" height="11" rx="2"/><rect x="29" y="25" width="16" height="11" rx="2"/><rect x="47" y="25" width="16" height="11" rx="2"/></g><path d="M16 45h42" stroke="#94A3B8" stroke-width="3" stroke-linecap="round"/>`),
+  M(`${keyG(0,2,{s:.48,rot:0})}<path d="M28 26v24M28 32h20M28 42h20M28 50h20" stroke="#64748B" stroke-width="2.4" fill="none"/><g fill="url(#gBlue)"><rect x="48" y="27" width="22" height="9" rx="3"/><rect x="48" y="37" width="22" height="9" rx="3"/><rect x="48" y="47" width="22" height="9" rx="3"/></g>`)
+];
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.180-3</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">異動・退職の前に、<br><span class="hl">フローの詳細画面で確かめる5点</span></div>
+    <img class="title-chara" src="${A}chara/chara_confident.png" alt="">
+  </div>
+  <div class="concl">
+    <div class="chip">${svgw(P.bulb,2.2)}</div>
+    <div class="txt">見るのはフローの<b>詳細画面</b>と、左のメニューの<b>データ ＞ 接続</b>の2か所です</div>
+  </div>
+  <div class="stage">
+    <div class="det">
+      <div class="bar">${PA(22)}マイ フロー ＞ 請求リマインド<span class="repro">画面は説明用の再現</span></div>
+      <div class="cmd"><span class="btn">編集</span><span class="btn">共有</span><span class="btn">コピーを送る</span></div>
+      <div class="body">
+        <div class="sec hot"><span class="badge">1</span><div class="st">所有者<span class="ed">編集</span></div>
+          <div class="ln"><span class="av">佐</span>佐藤 花子<span class="pilltag gy r">作成者</span></div>
+          <div class="ln"><span class="av" style="background:#16A34A">鈴</span>鈴木 一郎<span class="pilltag ok r">所有者</span></div></div>
+        <div class="sec hot"><span class="badge">2</span><div class="st">接続</div>
+          <div class="ln">${MS('sharepoint.svg',24)}SharePoint<span class="r" style="color:#B91C1C;font-weight:900">sato@example.com</span></div>
+          <div class="ln">${MS('outlook.svg',24)}Office 365 Outlook<span class="r" style="color:#B91C1C;font-weight:900">sato@example.com</span></div></div>
+        <div class="sec"><div class="st">実行専用ユーザー<span class="ed">編集</span></div>
+          <div class="ln" style="color:#605E5C">手動で動かすフローのときだけ使う</div></div>
+        <div class="sec"><div class="st">実行履歴</div>
+          <div class="ln">11月18日 9:00<span class="pilltag ok r">成功</span></div></div>
+      </div>
+    </div>
+    <div class="tb">
+      <div class="th"><span class="c1"></span><span class="c2"></span><span class="c3">確かめること</span><span class="c4">見る場所・やること</span></div>
+      <div class="tr hot"><span class="n">1</span><span class="mi">${mini[0]}</span><div class="k">所有者が自分のほかにいるか<small>グループも所有者にできる</small></div><div class="v">詳細画面の「所有者」<br>⋮ →「共有」で足す</div></div>
+      <div class="tr hot"><span class="n">2</span><span class="mi">${mini[1]}</span><div class="k">接続はだれのアカウントか<small>所有者を足しても変わらない</small></div><div class="v">詳細画面の「接続」<br>所有者の一覧の下にある</div></div>
+      <div class="tr"><span class="n">3</span><span class="mi">${mini[2]}</span><div class="k">残る人の接続に選び直したか<small>ステップごとに選ぶ</small></div><div class="v">「編集」→ ステップの …<br>→ 接続を選ぶ／新しく追加</div></div>
+      <div class="tr"><span class="n">4</span><span class="mi">${mini[3]}</span><div class="k">ソリューションに入っているか<small>入っていれば所有者を変更できる</small></div><div class="v">詳細 →「編集」→<br>「プライマリ所有者」</div></div>
+      <div class="tr"><span class="n">5</span><span class="mi">${mini[4]}</span><div class="k">同じ接続を使うほかのフロー<small>1本直しても残りが止まる</small></div><div class="v">データ ＞ 接続 → … → 詳細<br>→「この接続を使用するフロー」</div></div>
+    </div>
+  </div>
+  <div class="warnbar">
+    <span class="na" style="width:30px;height:30px;color:#C2410C">${svgw(P.warn,2.4)}</span>
+    <span class="wl">退職後に気づいたら</span>
+    <span class="ws"><span>管理者が Power Platform 管理センター ＞ 環境 ＞ リソース ＞ フロー で<b>所有者が空</b>のフローを探し、「共有」で所有者を足せる</span></span>
+  </div>
+  <div class="src">出典：Microsoft Learn「クラウド フローを共有する」「Power Automate での接続の管理」「クラウド フローの所有者を変更する」「所有者が組織を離れたときに孤立したフローを管理する」／人名は架空、画面は説明用の再現（実画面は未確認）</div>
+`;
+</script>
+</body>
+</html>

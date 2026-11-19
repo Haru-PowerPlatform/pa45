@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>Vol.185-1 承認フローを3人の画面から設計する</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/tips-base.css">
+<style>
+  :root{--s1:#2563EB;--s1b:#EEF4FF;--s1l:#A9C6F5;--s1d:#1E3A8A;
+        --s2:#D97706;--s2b:#FFF8EB;--s2l:#F5CF8E;--s2d:#92400E;
+        --s3:#16A34A;--s3b:#ECFDF5;--s3l:#8FD6B2;--s3d:#065F46;}
+  .s1{--c:var(--s1);--cb:var(--s1b);--cl:var(--s1l);--cd:var(--s1d);}
+  .s2{--c:var(--s2);--cb:var(--s2b);--cl:var(--s2l);--cd:var(--s2d);}
+  .s3{--c:var(--s3);--cb:var(--s3b);--cl:var(--s3l);--cd:var(--s3d);}
+  .msi{flex:0 0 auto;object-fit:contain;}
+  .repro{font-size:12.5px;font-weight:700;color:#8A8886;margin-left:auto;white-space:nowrap;}
+  .win{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:2px solid var(--cl,#A9C6F5);border-radius:10px;overflow:hidden;box-shadow:0 3px 8px rgba(0,0,0,.10);}
+  .win .wh{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:5px 10px;background:#F3F2F1;border-bottom:1px solid #E1DFDD;font-size:15.5px;font-weight:900;color:#242424;white-space:nowrap;}
+  .win .wb{flex:1;min-height:0;display:flex;flex-direction:column;padding:7px 10px;}
+  .tag{flex:0 0 auto;display:inline-block;font-size:14px;font-weight:900;color:#fff;background:var(--c,#2563EB);border-radius:6px;padding:1px 8px;white-space:nowrap;}
+  .tag.gy{background:#6B7280;} .tag.gr{background:#16A34A;} .tag.rd{background:#DC2626;} .tag.am{background:#D97706;} .tag.bl{background:#2563EB;}
+  .btn{display:inline-flex;align-items:center;justify-content:center;font-size:15.5px;font-weight:900;border-radius:6px;padding:4px 20px;border:1.5px solid #C8C6C4;color:#242424;background:#fff;}
+  .btn.pri{background:#4F52B2;border-color:#4F52B2;color:#fff;}
+  .lnk{color:#0F6CBD;text-decoration:underline;font-weight:900;}
+  .next .sub{margin-left:auto;font-size:15.5px;font-weight:900;color:#1E40AF;}
+  .wl{font-size:17px;font-weight:900;white-space:nowrap;}
+
+  .stage{flex-direction:column;gap:6px;}
+  .one{flex:0 0 auto;display:flex;align-items:center;gap:10px;background:#1E3A8A;color:#fff;border-radius:10px;padding:5px 14px;font-size:17.5px;font-weight:900;}
+  .one .tk{background:#FFE08A;color:#1E3A8A;border-radius:6px;padding:1px 10px;font-size:15.5px;}
+  .one .r{margin-left:auto;font-size:15px;font-weight:700;color:#DBEAFE;}
+  .seats{flex:1;min-height:0;display:flex;gap:10px;}
+  .seat{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px;background:var(--cb);border:2.5px solid var(--cl);border-radius:14px;padding:7px 9px 9px;}
+  .sh{flex:0 0 104px;display:flex;align-items:center;gap:8px;position:relative;}
+  .sh .chara{flex:0 0 auto;height:112px;margin:-4px 0 -4px -2px;filter:drop-shadow(0 3px 4px rgba(0,0,0,.22));}
+  .sh .tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px;}
+  .who{font-size:25px;font-weight:900;color:var(--cd);line-height:1.1;display:flex;align-items:center;gap:8px;}
+  .who .n{flex:0 0 auto;width:32px;height:32px;border-radius:9px;background:var(--c);color:#fff;font-size:19px;display:flex;align-items:center;justify-content:center;}
+  .want{position:relative;background:#fff;border:2px solid var(--c);border-radius:11px;padding:4px 10px;font-size:17px;font-weight:900;color:#1B2A44;line-height:1.3;}
+  .want::before{content:"";position:absolute;left:-9px;top:50%;margin-top:-7px;border:7px solid transparent;border-right-color:var(--c);border-left:0;}
+  .want small{display:block;font-size:14px;font-weight:900;color:var(--c);}
+  /* メール */
+  .ml{flex:0 0 auto;display:flex;flex-direction:column;gap:2px;padding:4px 0;}
+  .ml .t{display:flex;align-items:center;gap:7px;font-size:16px;font-weight:900;color:#1B2A44;line-height:1.3;}
+  .ml .t .tm{font-size:14.5px;font-weight:700;color:#605E5C;margin-left:auto;}
+  .ml .b{font-size:15.5px;font-weight:700;color:#4B5563;line-height:1.38;}
+  .ml .b b{color:#B45309;}
+  .wait{flex:1;min-height:20px;display:flex;align-items:center;gap:8px;font-size:14.5px;font-weight:900;color:#6B7280;}
+  .wait::before,.wait::after{content:"";flex:1;border-top:2px dashed #C7D6EE;}
+  /* 承認の依頼 */
+  .ap-t{font-size:17px;font-weight:900;color:#242424;line-height:1.28;}
+  .ap-r{font-size:15.5px;font-weight:700;color:#605E5C;margin-top:1px;}
+  .ap-r b{color:#242424;}
+  .ap-d{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:space-evenly;background:#FFF8EB;border:1.5px solid #F5CF8E;border-radius:8px;padding:3px 9px;margin:4px 0;}
+  .kv{display:flex;gap:8px;font-size:15.5px;font-weight:700;color:#1B2A44;line-height:1.32;}
+  .kv .k{flex:0 0 76px;font-weight:900;color:#92400E;}
+  .ap-b{flex:0 0 auto;display:flex;align-items:center;gap:8px;margin-top:5px;}
+  .ap-l{font-size:15.5px;}
+  /* 台帳 */
+  .lr{flex:1;min-height:0;display:flex;align-items:center;gap:8px;border-bottom:1.2px solid #EDEBE9;font-size:15.5px;font-weight:700;color:#1B2A44;line-height:1.25;padding:0 4px;}
+  .lr:last-child{border-bottom:none;}
+  .lr .k{flex:0 0 86px;font-weight:900;color:#605E5C;}
+  .lr.w{background:#E9F9F0;}
+  .lr.w .k{color:#065F46;}
+  .lr .zap{margin-left:auto;font-size:13.5px;font-weight:900;color:#fff;background:#16A34A;border-radius:5px;padding:0 6px;white-space:nowrap;}
+  .pill-ok{background:#16A34A;color:#fff;border-radius:999px;padding:0 12px;font-weight:900;}
+
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={x:'<path d="M6 6l12 12M18 6L6 18"/>',ok:'<path d="M5 12l5 5 9-10"/>',arrow:'<path d="M4 12h15M13 6l6 6-6 6"/>',down:'<path d="M12 4v15M6 13l6 6 6-6"/>',
+  warn:'<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18v.5"/>',bulb:'<path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0 0 12 3z"/>'};
+const MS=(n,w)=>`<img class="msi" src="${A}icons/ms/${n}" alt="" style="width:${w||24}px;height:${w||24}px">`;
+const IC=(n,w)=>`<img class="msi" src="${A}icons/${n}" alt="" style="width:${w||26}px;height:${w||26}px">`;
+const APV=(w)=>`<svg class="msi" viewBox="0 0 28 28" style="width:${w||26}px;height:${w||26}px;flex:0 0 auto"><rect width="28" height="28" rx="6" fill="#486991"/><circle cx="14" cy="14" r="8" fill="none" stroke="#fff" stroke-width="2.2"/><path d="M10 14.2l3 3 5.2-6" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const CH=(e,h,st)=>`<img class="chara" src="${A}chara/chara_${e}.png" alt="" style="height:${h||112}px;${st||''}">`;
+document.getElementById('slide').innerHTML=`
+
+  <div class="titlebar">
+    <div class="vol-pill">Vol.185-1</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">備品購入の承認フローを、<br><span class="hl">3人の画面に届くもの</span>から設計する</div>
+    <img class="title-chara" src="${A}chara/chara_smile.png" alt="">
+  </div>
+  <div class="concl">
+    <div class="chip">${svgw(P.bulb,2.2)}</div>
+    <div class="txt">フローを作る人が見ているのは、デザイナーの画面だけです。<br><b>申請する人・承認する人・あとで調べる人</b>に何が届くかを先に決めると、足すアクションが決まります</div>
+  </div>
+  <div class="stage">
+    <div class="one"><span class="tk">同じ1件</span>備品購入 No.118　モニター 2台　59,600円<span class="r">申請 11/19（木）10:12　佐藤 花子 → 山田課長</span></div>
+    <div class="seats">
+      <div class="seat s1">
+        <div class="sh">${CH('think')}<div class="tx"><div class="who"><span class="n">1</span>申請する人</div><div class="want"><small>知りたいこと</small>出したあと、いま誰の所か</div></div></div>
+        <div class="win"><div class="wh">${MS('outlook.svg',24)}受信トレイ（佐藤）<span class="repro">再現</span></div><div class="wb">
+          <div class="ml"><div class="t"><span class="tag bl">受付</span>受け付けました：モニター 2台<span class="tm">10:12</span></div><div class="b">山田課長に承認を依頼しました。<br>結果はこのアドレスに届きます。</div></div>
+          <div class="wait">山田課長の応答待ち</div>
+          <div class="ml"><div class="t"><span class="tag gr">結果</span>承認されました：モニター 2台<span class="tm">14:05</span></div><div class="b">承認者：山田 太郎<br>コメント：<b>年度内の納品で進めてください</b></div></div>
+        </div></div>
+      </div>
+      <div class="seat s2">
+        <div class="sh">${CH('point')}<div class="tx"><div class="who"><span class="n">2</span>承認する人</div><div class="want"><small>知りたいこと</small>金額と理由。その場で判断</div></div></div>
+        <div class="win"><div class="wh">${MS('teams.svg',24)}承認の依頼（山田）<span class="repro">再現</span></div><div class="wb">
+          <div class="ap-t">備品購入：モニター 2台 59,600円</div>
+          <div class="ap-r">要求者 <b>佐藤 花子</b></div>
+          <div class="ap-d"><div class="kv"><span class="k">金額</span><span>59,600円（29,800円×2台）</span></div><div class="kv"><span class="k">理由</span><span>11月着任の2名の席に増設</span></div><div class="kv"><span class="k">希望納期</span><span>12/4（金）</span></div></div>
+          <div class="ap-l"><span class="lnk">申請の明細と見積書を開く</span></div>
+          <div class="ap-b"><span class="btn pri">承認</span><span class="btn">拒否</span></div>
+        </div></div>
+      </div>
+      <div class="seat s3">
+        <div class="sh">${CH('laptop')}<div class="tx"><div class="who"><span class="n">3</span>あとで調べる人</div><div class="want"><small>知りたいこと</small>誰がいつ承認したか</div></div></div>
+        <div class="win"><div class="wh">${MS('sharepoint.svg',24)}備品購入申請 No.118<span class="repro">再現</span></div><div class="wb" style="padding:2px 6px;">
+          <div class="lr"><span class="k">品名</span>モニター 2台</div>
+          <div class="lr"><span class="k">金額</span>59,600</div>
+          <div class="lr w"><span class="k">結果</span><span class="pill-ok">承認</span><span class="zap">フローが記入</span></div>
+          <div class="lr w"><span class="k">承認した人</span>山田 太郎</div>
+          <div class="lr w"><span class="k">コメント</span>年度内の納品で進めてください</div>
+          <div class="lr w"><span class="k">承認日時</span>2026/11/19 14:05</div>
+        </div></div>
+      </div>
+    </div>
+  </div>
+  <div class="next">
+    <span class="na">${svgw(P.arrow,2.6)}</span>
+    <span><b>席ごとに足すアクションは2枚目へ</b></span>
+    <span class="sub">依頼文の書き方は3枚目・早見表は4枚目</span>
+  </div>
+  <div class="src">出典：Microsoft Learn「Power Automate の承認を始めましょう」「承認ワークフローを作成し、テストします」「承認要求を表示、承認、または拒否する」「標準承認」コネクタ／人名・品名・金額・日付は架空・画面は説明用の再現</div>
+
+`;
+</script>
+</body>
+</html>

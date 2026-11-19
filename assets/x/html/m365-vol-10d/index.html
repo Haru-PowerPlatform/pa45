@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>M365 Copilot Vol.10-4 送る前に自分で確かめる場所</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/mc-base.css">
+<style>
+  .stage{gap:5px;}
+  .k4{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px;border-radius:13px;padding:8px 9px 9px;background:var(--mc-bg);border:2.5px solid var(--mc-line);position:relative;}
+  .k4.last{background:#FFFBEB;border-color:#F59E0B;}
+  .k4 .tm{flex:0 0 auto;align-self:flex-start;display:flex;align-items:center;gap:7px;font-size:17px;font-weight:900;color:#fff;background:var(--mc-dark);border-radius:999px;padding:2px 13px 2px 4px;}
+  .k4 .tm i{font-style:normal;width:26px;height:26px;border-radius:50%;background:#fff;color:var(--mc-dark);display:flex;align-items:center;justify-content:center;font-size:17px;}
+  .k4.last .tm{background:#B45309;} .k4.last .tm i{color:#B45309;}
+  .k4 .h{flex:0 0 auto;font-size:22px;font-weight:900;color:var(--navy);line-height:1.2;}
+  .k4 .fig{flex:1;min-height:0;display:flex;flex-direction:column;gap:5px;background:#fff;border:2px solid #CDEDE7;border-radius:10px;padding:7px 8px;box-shadow:0 3px 8px rgba(15,60,55,.10);}
+  .k4.last .fig{border-color:#FCD34D;}
+  .k4 .cp{flex:0 0 auto;font-size:16px;font-weight:900;color:var(--mc-dark);line-height:1.32;background:#D5F3EE;border-radius:8px;padding:5px 9px;}
+  .k4.last .cp{background:#FDE68A;color:#78350F;}
+  .cg{flex:0 0 auto;align-self:center;height:112px;filter:drop-shadow(0 3px 4px rgba(0,0,0,.25));}
+  .k4 .cp b{color:#C2410C;}
+  .k4 .chs{position:absolute;right:0;bottom:0;height:118px;z-index:3;filter:drop-shadow(0 3px 4px rgba(0,0,0,.25));}
+  .arrowc{flex:0 0 18px;display:flex;align-items:center;justify-content:center;color:var(--mc);}
+  .arrowc svg{width:20px;height:20px;}
+  /* 1 候補 */
+  .inp{flex:0 0 auto;display:flex;align-items:center;gap:6px;border:1.5px solid #D1D1D1;border-bottom:2.5px solid #0F766E;border-radius:6px;padding:3px 8px;font-size:16px;font-weight:700;color:#605E5C;}
+  .inp b{font-size:20px;color:#0F766E;}
+  .cand{flex:1;min-height:0;display:flex;align-items:center;gap:7px;border-radius:6px;padding:0 7px;font-size:15.5px;font-weight:700;color:#242424;background:#F5F5F5;}
+  .cand.no{background:#FEF2F2;border:2px dashed #DC2626;color:#991B1B;font-weight:900;}
+  .cand.no svg{flex:0 0 22px;width:22px;height:22px;}
+  .wait{flex:0 0 auto;display:flex;align-items:center;gap:7px;font-size:15.5px;font-weight:900;color:#065F46;background:#ECFDF5;border:1.5px solid #7FCEA9;border-radius:7px;padding:2px 7px;line-height:1.2;}
+  .wait svg{flex:0 0 30px;width:30px;height:30px;}
+  /* 2 カレンダー */
+  .mo{flex:0 0 auto;font-size:15.5px;font-weight:900;color:#fff;background:#DC2626;border-radius:6px 6px 0 0;padding:1px 9px;margin:-1px -1px 0;text-align:center;}
+  .wk{flex:1;min-height:0;display:grid;grid-template-columns:repeat(7,1fr);gap:2px;}
+  .wk span{display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:13.5px;font-weight:900;color:#6B7280;border-radius:6px;line-height:1.15;background:#F8FAFC;}
+  .wk span b{font-size:19px;color:#1B2A44;}
+  .wk span.on{background:#16A34A;color:#fff;box-shadow:0 0 0 2px #065F46;} .wk span.on b{color:#fff;}
+  .fx{flex:0 0 auto;display:flex;align-items:center;justify-content:center;gap:7px;font-size:19px;font-weight:900;}
+  .fx .ng{color:#B91C1C;text-decoration:line-through;text-decoration-thickness:3px;}
+  .fx .ok{color:#fff;background:#16A34A;border-radius:7px;padding:0 8px;}
+  .fx svg{width:22px;height:22px;color:#94A3B8;}
+  /* 3 照合 */
+  .cmp{flex:1;min-height:0;display:flex;align-items:stretch;gap:5px;}
+  .cmp .cd{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;border:1.5px solid #CBD5E1;border-radius:7px;padding:4px 6px;background:#F8FAFC;}
+  .cmp .cd .t{display:flex;align-items:center;gap:5px;font-size:14.5px;font-weight:900;color:#374151;}
+  .cmp .cd .v{flex:1;display:flex;align-items:center;font-size:16px;font-weight:900;color:#1B2A44;line-height:1.25;}
+  .cmp .eq{flex:0 0 26px;align-self:center;}
+  .cmp .eq svg{width:26px;height:26px;}
+  .tgs{flex:0 0 auto;display:flex;gap:5px;flex-wrap:wrap;}
+  .tgs span{font-size:15.5px;font-weight:900;color:#0F766E;background:#EFFAF8;border:1.5px solid #A7E3D8;border-radius:999px;padding:1px 10px;}
+  /* 4 コーチング */
+  .mt{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;gap:3px;}
+  .mt .ml2{display:flex;justify-content:space-between;font-size:15.5px;font-weight:900;color:#374151;}
+  .mt .ml2 em{font-style:normal;color:#B91C1C;} .mt .ml2 em.ok{color:#15803D;}
+  .bar{position:relative;height:17px;border-radius:9px;background:#E5E7EB;}
+  .bar i{position:absolute;left:0;top:0;bottom:0;border-radius:9px;background:#9CA3AF;}
+  .bar i.ok{background:linear-gradient(90deg,#14B8A6,#16A34A);}
+  .bar u{position:absolute;left:50%;top:-4px;bottom:-4px;width:3px;background:#B45309;border-radius:2px;}
+  .th100{flex:0 0 auto;text-align:center;font-size:14.5px;font-weight:900;color:#B45309;line-height:1;}
+  .btn{flex:0 0 auto;display:flex;align-items:center;justify-content:center;gap:6px;font-size:16px;font-weight:900;border-radius:7px;padding:4px 6px;color:#fff;background:#0F6CBD;box-shadow:0 2px 4px rgba(0,0,0,.2);}
+  .warnbar{margin-top:8px;padding:7px 14px;}
+  .warnbar .ws{font-size:15.5px;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={arrow:'<path d="M4 12h15M13 6l6 6-6 6"/>'};
+const CPI=(w)=>`<img class="msi" src="${A}icons/ms/copilot.png" alt="" style="width:${w||24}px;height:${w||24}px">`;
+const MS=(n,w)=>`<img class="msi" src="${A}icons/ms/${n}" alt="" style="width:${w||24}px;height:${w||24}px">`;
+const AR=`<div class="arrowc">${svgw(P.arrow,3.2)}</div>`;
+const EQ=`<svg viewBox="0 0 26 26" xmlns="http://www.w3.org/2000/svg"><circle cx="13" cy="13" r="12" fill="#16A34A"/><path d="M7 13.5l4 4 8-9" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="pills"><div class="vol-pill"><small>M365 Copilot</small>Vol.10-4</div><div class="lic-pill paid">M365 Copilot ライセンスが要る</div></div>
+    <div class="title-text">Copilot の下書きを送るまでに、<br><span class="hl">自分で確かめる4つの場所</span></div>
+    <div class="title-apps"><img class="msi" src="${A}icons/ms/copilot.png" alt=""><span class="pl">＋</span><img class="msi" src="${A}icons/ms/outlook.svg" alt=""></div>
+    <img class="title-chara" src="${A}chara/chara_laptop.png" alt="">
+  </div>
+  <div class="concl">
+    <div class="chip app">${CPI(34)}</div>
+    <div class="txt">下書きの保存までは Copilot、<b>日付・曜日・数字の照合は自分</b>という分担にしています。<br>頼む前から送る直前まで、確かめる場所を順に並べました</div>
+  </div>
+  <div class="stage">
+    <div class="k4">
+      <span class="tm"><i>1</i>頼む前</span>
+      <div class="h">ファイルが<br>候補に出るか</div>
+      <div class="fig seg">
+        <div class="inp"><b>/</b>ファイル名を入力</div>
+        <div class="cand">${MS('excel.svg',24)}参加者一覧.xlsx</div>
+        <div class="cand">${MS('word.svg',24)}前回の議事録.docx</div>
+        <div class="cand no"><svg viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg"><circle cx="11" cy="11" r="10" fill="#DC2626"/><path d="M7 7l8 8M15 7l-8 8" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/></svg>作ったばかりの文書</div>
+        <div class="wait"><svg viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg"><circle cx="15" cy="16" r="11" fill="#fff" stroke="#16A34A" stroke-width="2.6"/><path d="M15 9v7l5 3" fill="none" stroke="#065F46" stroke-width="2.6" stroke-linecap="round"/><path d="M12 2h6" stroke="#16A34A" stroke-width="2.6" stroke-linecap="round"/></svg>公式の説明では<br>操作の数分後に出る</div>
+      </div>
+      <div class="cp">作った直後は候補に<br>出ませんでした</div>
+    </div>
+    ${AR}
+    <div class="k4">
+      <span class="tm"><i>2</i>下書きの直後</span>
+      <div class="h">日付と曜日を<br>予定表で照合</div>
+      <div class="fig">
+        <div class="mo">2026年 11月</div>
+        <div class="wk"><span>日<b>1</b></span><span>月<b>2</b></span><span>火<b>3</b></span><span>水<b>4</b></span><span class="on">木<b>5</b></span><span>金<b>6</b></span><span>土<b>7</b></span></div>
+        <div class="fx"><span class="ng">11/5（水）</span>${svgw(P.arrow,3)}<span class="ok">11/5（木）</span></div>
+      </div>
+      <div class="cp">元の文書の誤りは<br><b>そのまま写ります</b></div>
+    </div>
+    ${AR}
+    <div class="k4">
+      <span class="tm"><i>3</i>送る前</span>
+      <div class="h">数字と名前を<br>元のファイルと</div>
+      <div class="fig">
+        <div class="cmp">
+          <div class="cd"><div class="t">${MS('excel.svg',22)}元の表</div><div class="v">山田 太郎<br>総務<br>11/5（木）</div></div>
+          <div class="eq">${EQ}</div>
+          <div class="cd"><div class="t">${MS('outlook.svg',22)}下書き</div><div class="v">山田 太郎<br>総務<br>11/5（木）</div></div>
+        </div>
+        <div class="tgs"><span>宛先</span><span>人数</span><span>金額</span><span>期日</span></div>
+      </div>
+      <div class="cp">保存された下書きを<br>開いて読みます</div>
+    </div>
+    ${AR}
+    <div class="k4 last">
+      <span class="tm"><i>4</i>送る直前</span>
+      <div class="h">文面は<br>コーチングで見直す</div>
+      <div class="fig">
+        <img class="cg chara" src="${A}chara/chara_guts.png" alt="">
+        <div class="mt">
+          <div class="ml2"><span>短い本文</span><em>使えない</em></div>
+          <div class="bar"><i style="width:28%"></i><u></u></div>
+          <div class="th100">▲ 100文字</div>
+          <div class="ml2"><span>長い本文</span><em class="ok">使える</em></div>
+          <div class="bar"><i class="ok" style="width:78%"></i><u></u></div>
+        </div>
+        <div class="btn">${CPI(22)}コーチングを受ける</div>
+      </div>
+      <div class="cp">本文が<b>100文字以上</b><br>ないと使えません</div>
+    </div>
+  </div>
+  <div class="warnbar">
+    <span class="wl">使う前に確認</span>
+    <div class="ws"><span>自動応答は、期間と本文を先に書いて頼む（聞き返されたため）</span><span>人物の評価にあたる依頼は断られた</span><span>送信は自分で行う</span></div>
+  </div>
+  <div class="src">出典：Microsoft サポート「Microsoft Copilot で特定のファイルなどを参照する」「Outlook で Copilot を使用してメール メッセージを下書きする」／実画面で確認（2026年10〜11月）・人名は架空・画面は説明用の再現</div>
+`;
+</script>
+</body>
+</html>

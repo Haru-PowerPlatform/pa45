@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>M365 Copilot Vol.11-1 ぼやける頼み方を直す</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/mc-base.css">
+<style>
+
+  .tg{display:inline-flex;align-items:center;justify-content:center;font-weight:900;color:#fff;border-radius:6px;padding:1px 9px;font-size:15px;white-space:nowrap;line-height:1.45;}
+  .tg.g{background:#2563EB;} .tg.c{background:#EA580C;} .tg.s{background:#7C3AED;} .tg.e{background:#16A34A;} .tg.n{background:#6B7280;}
+  .sg{padding:1px 3px;border-radius:4px;border-bottom:4px solid;-webkit-box-decoration-break:clone;box-decoration-break:clone;}
+  .sg.g{background:#DBEAFE;border-color:#2563EB;} .sg.c{background:#FFEDD5;border-color:#EA580C;}
+  .sg.s{background:#EDE9FE;border-color:#7C3AED;} .sg.e{background:#DCFCE7;border-color:#16A34A;}
+  .repro{font-size:12.5px;font-weight:700;color:#8A8886;margin-left:auto;white-space:nowrap;}
+  .concl .txt b{color:var(--mc);}
+  .concl .txt .tg{font-size:16.5px;vertical-align:2px;margin:0 1px;}
+  .bot2{flex:0 0 auto;display:flex;gap:10px;align-items:stretch;margin:8px 16px 0;}
+  .bot2 .metric{flex:0 0 auto;margin:0;}
+
+
+  .stage{gap:8px;}
+  .col.bad{flex:0 0 440px;}
+  .col.good{flex:1;min-width:0;}
+  .pr{flex:0 0 auto;background:#fff;border:2px solid #D1D1D1;border-radius:12px 12px 12px 3px;padding:7px 12px 9px;box-shadow:0 2px 6px rgba(0,0,0,.08);}
+  .pr .pl{font-size:13.5px;font-weight:900;color:#6B7280;margin-bottom:2px;}
+  .pr .pt{font-size:21px;font-weight:900;color:#1B2A44;line-height:1.75;}
+  .col.good .pr .pt{font-size:18px;line-height:1.78;white-space:nowrap;}
+  .slots{flex:0 0 auto;display:flex;gap:6px;align-items:center;}
+  .slot{flex:1 1 auto;display:flex;align-items:center;justify-content:center;gap:3px;font-size:14.5px;font-weight:900;border-radius:7px;padding:3px 4px;white-space:nowrap;}
+  .slot.on{background:#2563EB;color:#fff;}
+  .slot.off{background:#fff;color:#9CA3AF;border:2px dashed #F0AEAE;}
+  .slot svg{flex:0 0 auto;}
+  .rep{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:2px solid var(--red-line);border-radius:10px;overflow:hidden;position:relative;}
+  .col.good .rep{border-color:var(--green-line);box-shadow:0 3px 8px rgba(20,90,60,.12);}
+  .rep .rh{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:5px 11px;background:#F3F2F1;border-bottom:1px solid #E1DFDD;font-size:15.5px;font-weight:700;color:#242424;}
+  .rep .rb{flex:1;min-height:0;display:flex;flex-direction:column;padding:4px 12px 6px;}
+  .gr{flex:1;min-height:0;display:flex;align-items:center;gap:10px;border-bottom:1.2px dashed #E5E7EB;font-size:16.5px;font-weight:700;color:#6B7280;padding-right:112px;}
+  .gr:last-child{border-bottom:none;}
+  .gr .sk{flex:1;height:10px;border-radius:5px;background:#E5E7EB;}
+  .rep .chara{position:absolute;right:2px;bottom:-4px;height:118px;z-index:2;filter:drop-shadow(0 3px 4px rgba(0,0,0,.25));}
+  .li{flex:1;min-height:0;display:flex;align-items:center;gap:9px;border-bottom:1.2px dashed #E5E7EB;}
+  .li:last-child{border-bottom:none;}
+  .li .tx{flex:1;font-size:17px;font-weight:900;color:#1B2A44;line-height:1.25;}
+  .li .by{flex:0 0 auto;font-size:14.5px;font-weight:900;border-radius:999px;padding:2px 10px;border:2px solid;background:#fff;white-space:nowrap;}
+  .li .by.c{color:#9A3412;border-color:#EA580C;} .li .by.s{color:#5B21B6;border-color:#7C3AED;} .li .by.e{color:#166534;border-color:#16A34A;}
+  .badline{flex:0 0 auto;background:#DC2626;color:#fff;border-radius:8px;padding:6px 10px;font-size:16px;font-weight:900;line-height:1.3;text-align:center;}
+  .eng{flex:0 0 150px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;}
+  .eng .lb{font-size:19px;font-weight:900;color:#991B1B;text-align:center;line-height:1.3;}
+  .eng .st{width:144px;display:flex;align-items:center;justify-content:center;gap:4px;font-size:15.5px;font-weight:900;border-radius:4px 10px 10px 4px;padding:6px 4px;border-left:7px solid;box-shadow:2px 3px 5px rgba(0,0,0,.18);white-space:nowrap;}
+  .eng .st.c{background:#FFEDD5;color:#9A3412;border-color:#EA580C;transform:rotate(-2deg);}
+  .eng .st.s{background:#EDE9FE;color:#5B21B6;border-color:#7C3AED;transform:rotate(1.5deg);}
+  .eng .st.e{background:#DCFCE7;color:#166534;border-color:#16A34A;transform:rotate(-1.5deg);}
+  .eng .ar{color:#DC2626;height:34px;}
+  .bot{flex:0 0 auto;display:flex;flex-direction:column;gap:6px;}
+  .metric .mv{font-size:23px;}
+  .bot .uses{background:#fff;border:1.5px solid #CFEFE0;border-radius:10px;padding:4px 9px;}
+
+</style>
+</head>
+<body>
+<div id="slide">
+  <div class="titlebar">
+    <div class="pills"><div class="vol-pill"><small>M365 Copilot</small>Vol.11-1</div><div class="lic-pill free">無料の Copilot Chat でできる</div></div>
+    <div class="title-text">返事がぼやける1行の頼み方は、<br><span class="hl">足りない3つ</span>を足して直す</div>
+    <div class="title-apps"><img class="msi" src="../../pptx/_assets/icons/ms/copilot.png" alt="" style="width:44px;height:44px"></div>
+    <img class="title-chara" src="../../pptx/_assets/chara/chara_point.png" alt="">
+  </div>
+  <div class="concl">
+    <div class="chip app"><img class="msi" src="../../pptx/_assets/icons/ms/copilot.png" alt="" style="width:34px;height:34px"></div>
+    <div class="txt">Microsoft 公式が挙げるプロンプトの部品は4つ：<span class="tg g">目的</span> <span class="tg c">コンテキスト</span> <span class="tg s">ソース</span> <span class="tg e">期待する項目</span><br>1行の頼み方に入っているのは、<b>目的だけ</b>です</div>
+  </div>
+  <div class="stage">
+    <div class="col bad">
+      <div class="ph"><span class="mk"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></span>1行で頼むと</div>
+      <div class="pr"><div class="pl">頼み方</div><div class="pt"><span class="sg g">来週の会議の資料を作って</span></div></div>
+      <div class="slots">
+        <span class="slot on"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>目的</span>
+        <span class="slot off">コンテキスト</span>
+        <span class="slot off">ソース</span>
+        <span class="slot off">期待する項目</span>
+      </div>
+      <div class="rep">
+        <div class="rh"><img class="msi" src="../../pptx/_assets/icons/ms/copilot.png" alt="" style="width:22px;height:22px">返ってくる内容（例）</div>
+        <div class="rb">
+          <div class="gr"><span>1. はじめに</span><span class="sk"></span></div>
+          <div class="gr"><span>2. 議題について</span><span class="sk"></span></div>
+          <div class="gr"><span>3. 今後の進め方</span><span class="sk"></span></div>
+          <div class="gr"><span>4. まとめ</span><span class="sk"></span></div>
+        </div>
+        <img class="chara" src="../../pptx/_assets/chara/chara_tired.png" alt="">
+      </div>
+      <div class="badline">どの会議にも当てはまる目次が返る</div>
+    </div>
+    <div class="eng">
+      <svg viewBox="0 0 90 90" width="74" height="74" xmlns="http://www.w3.org/2000/svg">
+<defs><linearGradient id="pb" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F87171"/><stop offset=".5" stop-color="#DC2626"/><stop offset="1" stop-color="#991B1B"/></linearGradient>
+<filter id="ps" x="-20%" y="-20%" width="150%" height="150%"><feDropShadow dx="1.5" dy="2.5" stdDeviation="2" flood-color="#7F1D1D" flood-opacity=".35"/></filter></defs>
+<g transform="rotate(45 45 45)" filter="url(#ps)">
+<rect x="36" y="2" width="18" height="12" rx="4" fill="#7F1D1D"/>
+<rect x="36" y="12" width="18" height="50" rx="2" fill="url(#pb)"/>
+<rect x="39" y="14" width="4" height="46" rx="2" fill="#fff" opacity=".35"/>
+<rect x="36" y="56" width="18" height="6" fill="#E5E7EB"/>
+<path d="M36 62h18l-7 17h-4z" fill="#F3F4F6" stroke="#CBD5E1" stroke-width="1"/>
+<path d="M43 79h4l-2 7z" fill="#DC2626"/>
+</g></svg>
+      <div class="lb">足すのは<br>この3つ</div>
+      <span class="st c">＋ コンテキスト</span>
+      <span class="st s">＋ ソース</span>
+      <span class="st e">＋ 期待する項目</span>
+      <span class="ar"><svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></span>
+    </div>
+    <div class="col good">
+      <div class="ph"><span class="mk"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></span>足りない3つを足すと</div>
+      <div class="pr"><div class="pl">頼み方（4色＝4つの部品）</div><div class="pt"><span class="sg g">来週の定例会議で配る資料の構成案を作ってください。</span><br><span class="sg c">出るのは営業部の課長5人、議題は来期の訪問計画の見直しです。</span><br><span class="sg s">添付した先月の訪問件数の表を使ってください。</span><br><span class="sg e">見出し3つ、それぞれ要点を3行の箇条書きで。</span></div></div>
+      <div class="rep">
+        <div class="rh"><img class="msi" src="../../pptx/_assets/icons/ms/copilot.png" alt="" style="width:22px;height:22px">返ってくる内容（例）<span class="repro">画面は説明用の再現</span></div>
+        <div class="rb">
+          <div class="li"><span class="tg n">見出し1</span><span class="tx">先月の訪問件数のふり返り</span><span class="by s">表の数字をもとに</span></div>
+          <div class="li"><span class="tg n">見出し2</span><span class="tx">来期の訪問計画の見直し案</span><span class="by c">課長5人が話す議題</span></div>
+          <div class="li"><span class="tg n">見出し3</span><span class="tx">次の会議までに決めること</span><span class="by e">各3行の箇条書き</span></div>
+        </div>
+      </div>
+      <div class="bot">
+        <div class="metric"><span class="ml">頼み方に入れる部品</span><span class="mv">目的だけ</span><span class="ar"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></span><span class="mv to">4つそろえる</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="next">
+    <span class="na"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></span>
+    <span><b>部品ごとの書き方は2枚目、直し方の早見表は3枚目、ひな形は4枚目へ</b></span>
+  </div>
+  <div class="src">出典：Microsoft サポート「Microsoft Copilot でプロンプトの記述を開始する」／Microsoft Learn「Microsoft Copilot とは?」／人名・社名は架空・画面は説明用の再現・返ってくる内容は例</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>M365 Copilot Vol.14-2 カスタム指示の入力欄</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/mc-base.css">
+<style>
+  .stage{gap:12px;}
+  /* 主役モック：Chat 設定のウィンドウ */
+  .big{flex:1;min-width:0;display:flex;flex-direction:column;background:#fff;border:2.5px solid var(--mc);border-radius:12px;overflow:hidden;box-shadow:0 8px 20px rgba(15,60,55,.22);font-family:"Segoe UI","Noto Sans JP",sans-serif;color:#242424;}
+  .big .wh{flex:0 0 auto;display:flex;align-items:center;gap:9px;padding:7px 14px;background:#F3F2F1;border-bottom:1px solid #E1DFDD;font-size:18px;font-weight:700;}
+  .big .wbody{flex:1;min-height:0;display:flex;}
+  .nav{flex:0 0 172px;background:#FAF9F8;border-right:1px solid #E1DFDD;padding:12px 10px;display:flex;flex-direction:column;gap:9px;}
+  .nav .ph0{height:30px;border-radius:6px;background:#EDEBE9;}
+  .nav .sel{position:relative;display:flex;align-items:center;gap:7px;height:38px;border-radius:6px;background:#E6F6F3;border-left:4px solid var(--mc);padding:0 8px;font-size:17px;font-weight:700;color:#134E4A;}
+  .nav .sel svg{width:20px;height:20px;color:var(--mc);flex:0 0 auto;}
+  .main{flex:1;min-width:0;display:flex;flex-direction:column;gap:7px;padding:10px 16px 11px;}
+  .main .h1{flex:0 0 auto;font-size:21px;font-weight:700;}
+  .tile{flex:1;min-height:0;display:flex;flex-direction:column;gap:6px;border:1.5px solid #D1D1D1;border-radius:10px;padding:8px 12px 9px;background:#fff;position:relative;}
+  .tile .th{flex:0 0 auto;display:flex;align-items:center;gap:10px;font-size:18.5px;font-weight:700;}
+  .tog{margin-left:auto;width:46px;height:24px;border-radius:999px;background:var(--mc);position:relative;flex:0 0 auto;}
+  .tog::after{content:"";position:absolute;right:3px;top:3px;width:18px;height:18px;border-radius:50%;background:#fff;}
+  .tile .lab{flex:0 0 auto;font-size:16px;font-weight:700;color:#424242;display:flex;align-items:center;gap:8px;}
+  .ta{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:space-evenly;border:1.5px solid #8A8886;border-bottom:3px solid var(--mc);border-radius:6px;padding:3px 12px;background:#FCFFFE;}
+  .ta .ln{display:flex;align-items:center;gap:9px;font-size:17.5px;font-weight:700;color:#1B2A44;line-height:1.3;white-space:nowrap;}
+  .ta .ln .k{flex:0 0 auto;min-width:74px;text-align:center;font-family:"Noto Sans JP",sans-serif;font-size:14px;font-weight:900;color:#fff;background:var(--mc);border-radius:6px;padding:1px 6px;}
+  .ta .ln mark{background:linear-gradient(transparent 55%,#FDE68A 55%);color:inherit;}
+  .tile .fr{flex:0 0 auto;display:flex;align-items:center;justify-content:flex-end;gap:10px;}
+  .btn{font-size:16.5px;font-weight:700;color:#fff;background:var(--mc);border-radius:6px;padding:5px 18px;box-shadow:0 2px 4px rgba(0,0,0,.2);}
+  .nb{flex:0 0 auto;width:28px;height:28px;border-radius:50%;background:var(--orange);color:#fff;display:flex;align-items:center;justify-content:center;font-family:"Noto Sans JP",sans-serif;font-size:16px;font-weight:900;box-shadow:0 2px 4px rgba(0,0,0,.3);}
+  .repro{font-size:12.5px;}
+  /* 右：開く順 */
+  .side{flex:0 0 372px;display:flex;flex-direction:column;gap:7px;}
+  .side .sh{flex:0 0 auto;font-size:22px;font-weight:900;color:var(--mc-dark);display:flex;align-items:center;gap:8px;}
+  .pt{flex:1;min-height:0;display:flex;gap:10px;align-items:center;background:#fff;border:2.5px solid var(--mc-line);border-radius:12px;padding:5px 10px;}
+  .pt .fig{flex:0 0 96px;height:62px;border-radius:8px;background:#F0FDFA;border:1.5px solid #CDEDE7;overflow:hidden;}
+  .pt .fig svg{display:block;width:96px;height:62px;}
+  .pt .t{font-size:18.5px;font-weight:900;color:#1B2A44;line-height:1.3;}
+  .pt .t small{display:block;font-size:15.5px;font-weight:700;color:#4B5563;margin-top:1px;line-height:1.3;}
+  .pt .t b{color:var(--orange);}
+  .bot2{flex:0 0 auto;display:flex;gap:10px;align-items:stretch;margin:8px 16px 0;}
+  .bot2 .metric{flex:0 0 auto;margin:0;}
+  .bot2 .metric .mv{font-size:23px;}
+  .bot2 .uses{flex:1;background:#fff;border:1.5px solid var(--mc-line);border-radius:10px;padding:4px 10px;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={arrow:'<path d="M4 12h15M13 6l6 6-6 6"/>',
+  person:'<circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c1-4 4-5.6 7.5-5.6s6.500 1.600 7.500 5.600"/>'};
+const CPI=(w)=>`<img class="msi" src="${A}icons/ms/copilot.png" alt="" style="width:${w||24}px;height:${w||24}px">`;
+// ミニ図解（文字なし・その操作の場所だけを描く）
+const F1=`<svg viewBox="0 0 96 62" xmlns="http://www.w3.org/2000/svg"><rect x="6" y="8" width="84" height="48" rx="6" fill="#fff" stroke="#B6C2CF"/><rect x="6" y="8" width="84" height="15" rx="6" fill="#E7ECF2"/><rect x="12" y="29" width="44" height="6" rx="3" fill="#D5DDE6"/><rect x="12" y="40" width="34" height="6" rx="3" fill="#D5DDE6"/><rect x="62" y="9.500" width="25" height="12" rx="6" fill="#EA580C"/><circle cx="68.500" cy="15.500" r="2" fill="#fff"/><circle cx="74.500" cy="15.500" r="2" fill="#fff"/><circle cx="80.500" cy="15.500" r="2" fill="#fff"/></svg>`;
+const F2=`<svg viewBox="0 0 96 62" xmlns="http://www.w3.org/2000/svg"><rect x="14" y="5" width="68" height="52" rx="6" fill="#fff" stroke="#B6C2CF"/><rect x="21" y="12" width="40" height="6" rx="3" fill="#D5DDE6"/><rect x="18" y="23" width="60" height="15" rx="4" fill="#FFEDD5" stroke="#EA580C" stroke-width="1.6"/><circle cx="27" cy="30.500" r="4" fill="none" stroke="#EA580C" stroke-width="2"/><rect x="35" y="27.500" width="34" height="6" rx="3" fill="#EA580C"/><rect x="21" y="44" width="46" height="6" rx="3" fill="#D5DDE6"/></svg>`;
+const F3=`<svg viewBox="0 0 96 62" xmlns="http://www.w3.org/2000/svg"><rect x="5" y="6" width="86" height="50" rx="6" fill="#fff" stroke="#B6C2CF"/><rect x="5" y="6" width="30" height="50" rx="6" fill="#EEF2F6"/><rect x="10" y="13" width="20" height="5" rx="2.500" fill="#CBD5E1"/><rect x="8" y="22" width="24" height="10" rx="3" fill="#EA580C"/><rect x="10" y="37" width="20" height="5" rx="2.500" fill="#CBD5E1"/><rect x="41" y="13" width="44" height="18" rx="4" fill="#CCFBF1" stroke="#0F766E" stroke-width="1.6"/><rect x="46" y="19" width="22" height="5" rx="2.500" fill="#0F766E"/><rect x="72" y="18" width="10" height="7" rx="3.500" fill="#0F766E"/><rect x="41" y="36" width="44" height="14" rx="4" fill="#F1F5F9" stroke="#CBD5E1"/></svg>`;
+const F4=`<svg viewBox="0 0 96 62" xmlns="http://www.w3.org/2000/svg"><rect x="6" y="5" width="84" height="34" rx="5" fill="#fff" stroke="#8A8886"/><rect x="6" y="36" width="84" height="3" fill="#0F766E"/><rect x="12" y="11" width="56" height="5" rx="2.500" fill="#1B2A44"/><rect x="12" y="20" width="66" height="5" rx="2.500" fill="#1B2A44"/><rect x="12" y="29" width="40" height="5" rx="2.500" fill="#1B2A44"/><rect x="46" y="44" width="44" height="14" rx="4" fill="#EA580C"/><path d="M60 51l4 4 8-8" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const ln=(k,t)=>`<div class="ln"><span class="k">${k}</span><span>${t}</span></div>`;
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="pills"><div class="vol-pill"><small>M365 Copilot</small>Vol.14-2</div><div class="lic-pill free">無料の Copilot Chat でできる</div></div>
+    <div class="title-text">カスタム指示の入力欄に、<br><span class="hl">いつもの前置きをそのまま</span>入れる</div>
+    <div class="title-apps"><img class="msi" src="${A}icons/ms/copilot.png" alt=""></div>
+    <img class="title-chara" src="${A}chara/chara_laptop.png" alt="">
+  </div>
+  <div class="concl">
+    <div class="chip app">${CPI(34)}</div>
+    <div class="txt">開く順は<b>右上の「…」→「Chat 設定」→「個人用設定」→「カスタム指示」</b>。<br>「指示の編集」に文面を入れて<b>「指示を保存」</b>。Copilot への頼み方を、ここに書いておきます</div>
+  </div>
+  <div class="stage">
+    <div class="big">
+      <div class="wh">${CPI(24)}Chat 設定<span class="repro">画面は説明用の再現</span></div>
+      <div class="wbody">
+        <div class="nav"><div class="ph0"></div><div class="sel">${svgw(P.person,2.2)}個人用設定</div><div class="ph0"></div><div class="ph0" style="width:70%"></div></div>
+        <div class="main">
+          <div class="h1">個人用設定</div>
+          <div class="tile">
+            <div class="th">カスタム指示<span class="tog"></span></div>
+            <div class="lab"><span class="nb">3</span>指示の編集</div>
+            <div class="ta">
+              ${ln('職種','私は<mark>総務の担当</mark>。読み手は社内の全社員。')}
+              ${ln('形','<mark>結論を先に</mark>書き、そのあとは箇条書きにする。')}
+              ${ln('文体','社外あての文は<mark>敬体（です・ます）</mark>で書く。')}
+              ${ln('長さ','1回の回答は<mark>300字まで</mark>にする。')}
+              ${ln('日付','日付は <mark>2026/11/19（木）</mark>の形で書く。')}
+              ${ln('確認','数字と日付は<mark>元の資料と照らし</mark>、不明な点は不明と書く。')}
+            </div>
+            <div class="fr"><span class="nb">4</span><span class="btn">指示を保存</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="side">
+      <div class="sh">開く順と、押すところ</div>
+      <div class="pt"><div class="fig">${F1}</div><div class="t"><b>①</b> 右上の「…」を開く<small>Copilot Chat の画面右上</small></div></div>
+      <div class="pt"><div class="fig">${F2}</div><div class="t"><b>②</b>「Chat 設定」を選ぶ<small>設定のウィンドウが開く</small></div></div>
+      <div class="pt"><div class="fig">${F3}</div><div class="t"><b>③</b>「個人用設定」の<br>「カスタム指示」<small>「指示の編集」を押す</small></div></div>
+      <div class="pt"><div class="fig">${F4}</div><div class="t"><b>④</b> 文面を入れて<br>「指示を保存」</div></div>
+    </div>
+  </div>
+  <div class="bot2">
+    <div class="metric"><span class="ml">入れる回数</span><span class="mv">頼むたび</span><span class="ar">${svgw(P.arrow,3)}</span><span class="mv to">最初の1回</span></div>
+    <div class="uses"><span class="ul">左の色つきの札は説明用</span><span class="u">入力欄に入れるのは文面だけ</span><span class="u">スイッチを切ると使われなくなる（文面は残る）</span></div>
+  </div>
+  <div class="next">
+    <span class="na">${svgw(P.arrow,2.6)}</span>
+    <span><b>入れておく指示6つの早見表は3枚目へ</b></span>
+  </div>
+  <div class="src">出典：Microsoft サポート「Microsoft Copilot の応答方法をカスタマイズする」／画面は説明用の再現（メニュー名・ボタン名はサポート日本語版の表記。実画面は未確認）</div>
+`;
+</script>
+</body>
+</html>

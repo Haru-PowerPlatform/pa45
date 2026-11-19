@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>Vol.181-3 メールの送信 (V2) のどの欄に何を書くか</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/tips-base.css">
+<style>
+  .stage{gap:6px;}
+  .col{min-width:0;padding:7px 9px 8px;gap:6px;}
+  .ch2{font-size:22px;}
+  .arrowc{flex:0 0 22px;display:flex;align-items:center;justify-content:center;color:#2563EB;}
+  .arrowc svg{width:24px;height:24px;}
+  .scene{height:84px;background:#DCE9FB;}
+  .scene .chara{height:100px;bottom:-14px;right:4px;}
+  .card{font-family:'Segoe UI','Noto Sans JP',sans-serif;border-color:#C2C9D2;min-width:0;}
+  .col.info .cardh{background:#fff;border-bottom:1px solid #E1DFDD;color:#242424;font-size:16px;padding:5px 9px;}
+  .cardh .dots{margin-left:auto;color:#605E5C;font-size:20px;line-height:1;}
+  .cardb{padding:6px 9px 7px;gap:4px;justify-content:space-evenly;}
+  .fl{font-size:15.5px;font-weight:700;color:#242424;line-height:1.2;}
+  .fl i{color:#D13438;font-style:normal;}
+  .fl small{font-size:13.5px;color:#605E5C;font-weight:700;}
+  .fi{border:1.5px solid #C8C6C4;border-radius:5px;padding:4px 7px;font-size:15.5px;font-weight:700;color:#242424;line-height:1.55;background:#fff;min-height:32px;}
+  .fi.hot{border:2.5px solid #DC2626;background:#FFF7F7;}
+  .fi .ph2{color:#A19F9D;}
+  .fi a{color:#0F6CBD;text-decoration:underline;font-weight:900;}
+  .fx{display:inline-flex;align-items:center;gap:3px;background:#F3E8FF;border:1.5px solid #C4B5FD;border-radius:6px;padding:0 6px;font-size:14.5px;font-weight:900;color:#6D28D9;line-height:1.4;}
+  .fx::before{content:"fx";font-style:italic;font-family:Georgia,serif;font-size:13.5px;}
+  .dyn{line-height:1.4;padding:0 6px;}
+  .code{font-size:15.5px;padding:5px 8px;line-height:1.35;}
+  .code small{display:block;font-family:"Noto Sans JP",sans-serif;font-size:13.5px;color:#CBD5E1;font-weight:700;}
+  .adv{font-size:14px;font-weight:900;color:#0F6CBD;}
+  .cap{padding:5px 9px;line-height:1.34;}
+  .warnbar{margin-top:7px;padding:6px 14px;}
+  .warnbar .wl{flex:0 0 auto;font-size:16px;font-weight:900;white-space:nowrap;}
+  .warnbar .ws span b{color:#B91C1C;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={arrow:'<path d="M4 12h15M13 6l6 6-6 6"/>',warn:'<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18v.5"/>',bulb:'<path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0 0 12 3z"/>'};
+const MS=(n,w)=>`<img class="msi" src="${A}icons/ms/${n}" alt="" style="width:${w||24}px;height:${w||24}px">`;
+const head=`<div class="cardh">${MS('outlook.svg',28)}メールの送信 (V2)<span class="dots">⋮</span></div>`;
+const F=`font-family="Noto Sans JP" font-weight="900"`;
+// ① 一覧の1行：件名の頭だけ色がつく
+const sc1=`<svg viewBox="0 0 366 84"><rect x="12" y="9" width="342" height="66" rx="8" fill="#fff" stroke="#A9C6F5" stroke-width="2"/>
+  <circle cx="38" cy="42" r="15" fill="#C2410C"/><text x="38" y="48" text-anchor="middle" font-size="15" fill="#fff" ${F}>佐</text>
+  <rect x="62" y="18" width="80" height="9" rx="4.5" fill="#CBD5E1"/>
+  <rect x="62" y="33" width="176" height="24" rx="6" fill="#EA580C"/><text x="150" y="51" text-anchor="middle" font-size="16" fill="#fff" ${F}>【期限・やること】</text>
+  <rect x="244" y="39" width="98" height="12" rx="6" fill="#94A3B8"/>
+  <rect x="62" y="63" width="230" height="7" rx="3.5" fill="#E2E8F0"/>
+  <path d="M150 4v8M144 8l6 6 6-6" fill="none" stroke="#DC2626" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+// ② 本文：1行目が太く、ボタン1つ
+const sc2=`<svg viewBox="0 0 366 84"><rect x="3" y="5" width="2" height="2" fill="none"/>
+  <rect x="64" y="6" width="238" height="74" rx="7" fill="#fff" stroke="#A9C6F5" stroke-width="2"/>
+  <rect x="76" y="14" width="214" height="22" rx="5" fill="#FEE2E2" stroke="#DC2626" stroke-width="2" stroke-dasharray="5 3"/>
+  <text x="183" y="31" text-anchor="middle" font-size="15" fill="#991B1B" ${F}>誰が・何を・いつまでに</text>
+  <rect x="76" y="44" width="112" height="26" rx="6" fill="#0F6CBD"/><text x="132" y="62" text-anchor="middle" font-size="14.5" fill="#fff" ${F}>フォームを開く</text>
+  <rect x="198" y="48" width="92" height="7" rx="3.5" fill="#E2E8F0"/><rect x="198" y="60" width="64" height="7" rx="3.5" fill="#E2E8F0"/>
+  <text x="32" y="33" text-anchor="middle" font-size="15" fill="#B91C1C" ${F}>1行目</text><path d="M52 27h9" stroke="#B91C1C" stroke-width="2.5"/>
+  <text x="334" y="62" text-anchor="middle" font-size="15" fill="#0F548C" ${F}>1つ</text><path d="M305 57h-9" stroke="#0F548C" stroke-width="2.5"/></svg>`;
+// ③ 返信が担当者に届く
+const sc3=`<svg viewBox="0 0 366 84"><defs><linearGradient id="eg3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#E5E7EB"/></linearGradient></defs>
+  <g transform="translate(18 20)"><rect x="2" y="3" width="84" height="52" rx="5" fill="rgba(0,0,0,.15)"/><rect width="84" height="52" rx="5" fill="url(#eg3)" stroke="#64748B" stroke-width="1.8"/><path d="M0 4L42 30L84 4" fill="none" stroke="#64748B" stroke-width="1.8"/>
+  <rect x="14" y="34" width="56" height="15" rx="4" fill="#0F6CBD"/><text x="42" y="46" text-anchor="middle" font-size="11.5" fill="#fff" ${F}>返信</text></g>
+  <path d="M112 46 C150 18, 196 18, 236 40" fill="none" stroke="#16A34A" stroke-width="4" stroke-linecap="round" stroke-dasharray="2 9"/>
+  <path d="M226 28l12 13-17 4" fill="none" stroke="#16A34A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="128" y="50" width="104" height="24" rx="12" fill="#16A34A"/><text x="180" y="67" text-anchor="middle" font-size="14.5" fill="#fff" ${F}>担当者に届く</text></svg>`;
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.181-3</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">書く場所は「メールの送信 (V2)」の<br><span class="hl">件名・本文・返信先</span>の3つの欄</div>
+    <img class="title-chara" src="${A}chara/chara_laptop.png" alt="">
+  </div>
+  <div class="concl">
+    <div class="chip">${svgw(P.bulb,2.2)}</div>
+    <div class="txt">アクションは増やしません。いまある「メールの送信 (V2)」を開いて、<b>3つの欄の中身</b>を書き換えるだけです</div>
+  </div>
+  <div class="stage">
+    <div class="col info">
+      <div class="ch2"><span class="n">1</span>件名の頭に期限とやること</div>
+      <div class="scene">${sc1}</div>
+      <div class="card">${head}<div class="cardb">
+        <div class="fl">件名 <i>*</i></div>
+        <div class="fi hot">【<span class="fx">formatDateTime(…)</span>まで・要回答】<span class="dyn">タイトル</span></div>
+        <div class="code">formatDateTime(<span class="y">期限</span>,'M/d')<small>期限＝リストの日付の列。11/27 の形で出る</small></div>
+      </div></div>
+      <div class="cap">式は<b>「式を挿入する」</b>から入れます</div>
+    </div>
+    <div class="arrowc">${svgw(P.arrow,3)}</div>
+    <div class="col info">
+      <div class="ch2"><span class="n">2</span>本文は1行目とリンク1つ</div>
+      <div class="scene">${sc2}</div>
+      <div class="card">${head}<div class="cardb">
+        <div class="fl">本文 <i>*</i></div>
+        <div class="fi hot"><span class="dyn">担当者 DisplayName</span>さん、<br><span class="dyn">タイトル</span>の回答を、<br><span class="fx">formatDateTime(…)</span>までに<br>送ってください。</div>
+        <div class="fi"><a>回答フォームを開く</a>　<span class="ph2">← リンクは1つ</span><br><span class="ph2">自動送信です。問い合わせ：総務 佐藤</span></div>
+      </div></div>
+      <div class="cap"><b>宛名・対象・期限</b>の1文を先頭に置きます</div>
+    </div>
+    <div class="arrowc">${svgw(P.arrow,3)}</div>
+    <div class="col info">
+      <div class="ch2"><span class="n">3</span>返信先に担当者を入れる</div>
+      <div class="scene">${sc3}<img class="chara" src="${A}chara/chara_smile.png" alt=""></div>
+      <div class="card">${head}<div class="cardb">
+        <div class="adv">詳細パラメーター</div>
+        <div class="fl">返信先 <small>返信時に使用するメール アドレス</small></div>
+        <div class="fi hot">soumu@example.com</div>
+        <div class="fl">差出人 <small>(メールボックス所有者として送信する)</small></div>
+        <div class="fi"><span class="ph2">空欄＝フローの接続に使ったアカウント</span></div>
+      </div></div>
+      <div class="cap">返信が<b>担当者に届く</b>ようになります</div>
+    </div>
+  </div>
+  <div class="warnbar">
+    <span class="na" style="width:30px;height:30px;color:#C2410C">${svgw(P.warn,2.4)}</span>
+    <span class="wl">使う前に確認</span>
+    <span class="ws"><span>「差出人」に共有メールボックスを入れるには、<b>そのメールボックスで送信する権限</b>が必要</span><span>曜日つきの日付は、formatDateTime の第3引数（ロケール）を<b>実機で確かめてから</b></span></span>
+  </div>
+  <div class="src">出典：Microsoft Learn「Office 365 Outlook」コネクタ（Send an email (V2)：To／Subject／Body／From (Send as)／Reply To）・「式関数のリファレンス」formatDateTime／人名・アドレスは架空・画面は説明用の再現・実画面は未確認</div>
+`;
+</script>
+</body>
+</html>

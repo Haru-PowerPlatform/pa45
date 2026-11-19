@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>M365 Copilot Vol.12-3 開いたページへの聞き方5つ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/mc-base.css">
+<style>
+  .stage{gap:12px;}
+  /* 左：実画面モック（PDF＋サイド ペイン） */
+  .lm{flex:0 0 470px;display:flex;flex-direction:column;background:#fff;border:2px solid #AEB8C6;border-radius:12px;overflow:hidden;box-shadow:0 5px 14px rgba(0,0,0,.16);font-family:"Segoe UI","Noto Sans JP",sans-serif;color:#242424;}
+  .lm .tb{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:5px 10px;background:#DCE1E8;font-size:15.5px;font-weight:700;color:#424242;white-space:nowrap;}
+  .lm .tb .pf{flex:0 0 auto;font-size:13.5px;font-weight:900;color:#fff;background:#DC2626;border-radius:4px;padding:0 5px;}
+  .lm .tb .cp{margin-left:auto;flex:0 0 auto;width:30px;height:30px;border-radius:8px;border:2px solid #EA580C;background:#FFF7ED;display:flex;align-items:center;justify-content:center;}
+  .lm .bd{flex:1;min-height:0;display:flex;}
+  .lm .doc{flex:0 0 150px;background:#E5E7EB;padding:8px 7px;display:flex;flex-direction:column;gap:6px;}
+  .lm .doc .pg{flex:1;min-height:0;background:#fff;border-radius:3px;box-shadow:0 1px 3px rgba(0,0,0,.18);padding:7px 7px;display:flex;flex-direction:column;gap:4px;}
+  .lm .doc .pg .t{font-family:"Noto Sans JP",sans-serif;font-size:15.5px;font-weight:900;color:#111827;line-height:1.2;}
+  .lm .doc .pg .l{flex:1;min-height:0;background:repeating-linear-gradient(180deg,#CFD5DD 0,#CFD5DD 4px,transparent 4px,transparent 11px);}
+  .lm .doc .pg .l.hl{background:repeating-linear-gradient(180deg,#FCD34D 0,#FCD34D 4px,transparent 4px,transparent 11px);flex:0 0 26px;}
+  .lm .doc .pn{flex:0 0 auto;text-align:center;font-size:15.5px;font-weight:700;color:#4B5563;}
+  .lm .sp{flex:1;min-width:0;display:flex;flex-direction:column;background:#F7F8FA;border-left:2px solid #C9CED6;}
+  .lm .sp .ph{flex:0 0 auto;display:flex;align-items:center;gap:7px;padding:5px 10px;background:#fff;border-bottom:1px solid #E1DFDD;font-size:16px;font-weight:700;}
+  .lm .sp .ph .shd{width:19px;height:19px;flex:0 0 auto;}
+  .lm .sp .pb{flex:1;min-height:0;display:flex;flex-direction:column;gap:7px;padding:8px 9px;}
+  .ask{align-self:flex-end;max-width:96%;background:#DDF3EF;border:1.5px solid #8FD9CC;border-radius:12px 12px 3px 12px;padding:5px 11px;font-size:16.5px;font-weight:700;color:#1B2A44;line-height:1.35;}
+  .ans{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:1.5px solid #E1DFDD;border-radius:12px 12px 12px 3px;overflow:hidden;}
+  .ans .ah{flex:0 0 auto;font-size:15.5px;font-weight:900;color:var(--mc-dark);padding:5px 9px 3px;}
+  .ans table{flex:1;width:100%;border-collapse:collapse;font-size:15.5px;}
+  .ans th{background:#0F766E;color:#fff;font-weight:900;padding:4px 6px;text-align:left;}
+  .ans td{padding:4px 6px;border-bottom:1px solid #E5E7EB;font-weight:700;color:#1B2A44;line-height:1.25;}
+  .ans td b{color:#B91C1C;}
+  .ans tr:nth-child(even) td{background:#F7FBFA;}
+  .inp{flex:0 0 30px;display:flex;align-items:center;justify-content:flex-end;background:#fff;border:1.5px solid #C8CCD2;border-radius:15px;padding:0 5px;}
+  .inp span{width:22px;height:22px;border-radius:50%;background:var(--mc);color:#fff;display:flex;align-items:center;justify-content:center;padding:4px;}
+  .lm .rp{flex:0 0 auto;font-family:"Noto Sans JP",sans-serif;font-size:13px;font-weight:700;color:#8A8886;text-align:right;padding:2px 9px;background:#fff;border-top:1px solid #EEE;}
+  /* 右：早見表 */
+  .tb5{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px;}
+  .tb5 .th{flex:0 0 auto;display:flex;gap:10px;font-size:15.5px;font-weight:900;color:#fff;background:var(--mc);border-radius:8px;padding:5px 12px;}
+  .tb5 .th .a{flex:0 0 86px;} .tb5 .th .b{flex:0 0 266px;} .tb5 .th .c{flex:1;}
+  .r5{flex:1;min-height:0;display:flex;align-items:center;gap:10px;background:#F7FBFA;border:1.5px solid #D8EFEA;border-radius:10px;padding:4px 10px;}
+  .r5 svg.mi{flex:0 0 86px;width:86px;height:62px;}
+  .r5 .k{flex:0 0 266px;font-size:18.5px;font-weight:900;color:var(--navy);line-height:1.25;}
+  .r5 .k small{display:block;font-size:15.5px;font-weight:700;color:var(--mc-dark);margin-top:1px;}
+  .r5 .v{flex:1;min-width:0;font-size:17px;font-weight:700;color:#1B2A44;background:#fff;border:1.5px dashed #9ED9CE;border-radius:8px;padding:5px 10px;line-height:1.3;font-family:"Segoe UI","Noto Sans JP",sans-serif;}
+  .r5.hot{background:#FFF7ED;border-color:#FDBA74;}
+  .r5.hot .v{border-color:#FDBA74;}
+  .bot2{flex:0 0 auto;display:flex;gap:10px;align-items:stretch;margin:8px 16px 0;}
+  .bot2 .metric{flex:0 0 auto;margin:0;padding:5px 14px;}
+  .bot2 .metric .mv{font-size:23px;}
+  .bot2 .uses{flex:1;background:#fff;border:1.5px solid var(--mc-line);border-radius:10px;padding:4px 10px;}
+  .next{margin-top:8px;padding:7px 18px;}
+  .chs{position:absolute;right:20px;bottom:46px;height:112px;z-index:40;filter:drop-shadow(0 3px 4px rgba(0,0,0,.22));}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={arrow:'<path d="M4 12h15M13 6l6 6-6 6"/>',up:'<path d="M12 19V5M6 11l6-6 6 6"/>'};
+const CPI=(w)=>`<img class="msi" src="${A}icons/ms/copilot.png" alt="" style="width:${w||24}px;height:${w||24}px">`;
+const SHD=`<svg class="shd" viewBox="0 0 24 24"><path d="M12 2l8 3v6c0 5-3.4 9.3-8 11-4.600-1.700-8-6-8-11V5z" fill="#16A34A"/><path d="M8 12l3 3 5-6" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const DOC=`<rect x="3" y="4" width="34" height="50" rx="3" fill="#fff" stroke="#94A3B8" stroke-width="1.6"/><path d="M9 14h22M9 21h22M9 28h22M9 35h22M9 42h16" stroke="#CBD5E1" stroke-width="3" stroke-linecap="round"/>`;
+const M1=`<svg class="mi" viewBox="0 0 86 62">${DOC}<path d="M42 30h10" stroke="#0F766E" stroke-width="3" stroke-linecap="round"/><path d="M49 25l5 5-5 5" fill="none" stroke="#0F766E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+ <g font-family="Segoe UI,sans-serif" font-size="10" font-weight="900" fill="#fff" text-anchor="middle"><circle cx="63" cy="14" r="7" fill="#0F766E"/><text x="63" y="17.500">1</text><circle cx="63" cy="31" r="7" fill="#0F766E"/><text x="63" y="34.500">2</text><circle cx="63" cy="48" r="7" fill="#0F766E"/><text x="63" y="51.500">3</text></g><path d="M73 14h10M73 31h10M73 48h7" stroke="#7DD3C4" stroke-width="4" stroke-linecap="round"/></svg>`;
+const M2=`<svg class="mi" viewBox="0 0 86 62">${DOC}<rect x="6" y="25" width="28" height="7" rx="2" fill="#FCD34D" opacity=".9"/><path d="M9 28.500h22" stroke="#B45309" stroke-width="3" stroke-linecap="round"/>
+ <path d="M58 52V36h24v16" fill="#E0F2FE" stroke="#0369A1" stroke-width="2"/><path d="M54 37l16-12 16 12" fill="#0EA5E9" stroke="#0369A1" stroke-width="2" stroke-linejoin="round"/><rect x="66" y="42" width="8" height="10" fill="#0369A1"/><path d="M36 29q14-4 22 6" fill="none" stroke="#EA580C" stroke-width="2.600" stroke-dasharray="3 3"/></svg>`;
+const M3=`<svg class="mi" viewBox="0 0 86 62"><rect x="4" y="8" width="38" height="44" rx="5" fill="#fff" stroke="#DC2626" stroke-width="2"/><rect x="4" y="8" width="38" height="12" rx="5" fill="#DC2626"/><text x="23" y="44" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="20" font-weight="900" fill="#991B1B">18</text><path d="M14 4v8M32 4v8" stroke="#7F1D1D" stroke-width="3" stroke-linecap="round"/>
+ <circle cx="66" cy="31" r="17" fill="#FDE68A" stroke="#B45309" stroke-width="2.500"/><circle cx="66" cy="31" r="12" fill="none" stroke="#D97706" stroke-width="1.500"/><text x="66" y="37" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="17" font-weight="900" fill="#92400E">¥</text></svg>`;
+const M4=`<svg class="mi" viewBox="0 0 86 62"><rect x="4" y="10" width="44" height="40" rx="5" fill="#fff" stroke="#94A3B8" stroke-width="1.600"/><path d="M10 20h32M10 28h12M34 28h8M10 36h32M10 44h22" stroke="#CBD5E1" stroke-width="3" stroke-linecap="round"/><rect x="21" y="23" width="13" height="10" rx="2" fill="none" stroke="#EA580C" stroke-width="2.400"/>
+ <path d="M34 28L56 18" stroke="#EA580C" stroke-width="2" stroke-dasharray="3 2"/><rect x="54" y="6" width="30" height="26" rx="6" fill="#CCFBF1" stroke="#0F766E" stroke-width="2"/><text x="69" y="25" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="17" font-weight="900" fill="#0F766E">?</text><path d="M60 40h22M60 47h16" stroke="#7DD3C4" stroke-width="4" stroke-linecap="round"/></svg>`;
+const M5=`<svg class="mi" viewBox="0 0 86 62">${DOC}<path d="M41 30h8" stroke="#0F766E" stroke-width="3" stroke-linecap="round"/><path d="M46 25l5 5-5 5" fill="none" stroke="#0F766E" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+ <rect x="54" y="10" width="30" height="42" rx="3" fill="#fff" stroke="#0F766E" stroke-width="2"/><rect x="54" y="10" width="30" height="9" fill="#0F766E"/><path d="M54 29h30M54 38h30M54 47h30M68 19v33" stroke="#7DD3C4" stroke-width="1.800"/></svg>`;
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="pills"><div class="vol-pill"><small>M365 Copilot</small>Vol.12-3</div><div class="lic-pill free">無料の Copilot Chat でできる</div></div>
+    <div class="title-text">開いたページへの<span class="hl">聞き方5つ</span>。<br>要約のあとに、期限・金額・用語を聞き足す</div>
+    <div class="title-apps"><img class="msi" src="${A}icons/ms/copilot.png" alt=""></div>
+    <img class="title-chara" src="${A}chara/chara_smile.png" alt="">
+  </div>
+  <div class="concl">
+    <div class="chip app">${CPI(34)}</div>
+    <div class="txt">頭に<b>このページの</b>・<b>この PDF の</b>と付けて聞くと、表示中のタブが材料になります。<br>要約で全体をつかみ、そのあと知りたい所だけを聞き足していきます</div>
+  </div>
+  <div class="stage">
+    <div class="lm">
+      <div class="tb"><span class="pf">PDF</span>保守サービス約款.pdf<span class="cp">${CPI(20)}</span></div>
+      <div class="bd">
+        <div class="doc"><div class="pg"><div class="t">保守サービス<br>約款</div><div class="l"></div><div class="l hl"></div><div class="l"></div></div><div class="pn">1 / 18</div></div>
+        <div class="sp">
+          <div class="ph">${CPI(20)}Copilot${SHD}</div>
+          <div class="pb">
+            <div class="ask">この PDF の期限と金額が書かれた箇所を、表にして</div>
+            <div class="ans">
+              <div class="ah">期限と金額の一覧です</div>
+              <table><tr><th>項目</th><th>内容</th></tr>
+                <tr><td>解約の申し出</td><td>満了の<b>3か月前</b>まで</td></tr>
+                <tr><td>自動更新</td><td><b>1年ごと</b></td></tr>
+                <tr><td>出張費</td><td>1回 <b>8,800円</b></td></tr>
+                <tr><td>支払期限</td><td>請求月の<b>翌月末</b></td></tr></table>
+            </div>
+            <div class="inp"><span>${svgw(P.up,3)}</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="rp">画面と文面は説明用の再現</div>
+    </div>
+    <div class="tb5">
+      <div class="th"><span class="a">図</span><span class="b">知りたいこと</span><span class="c">入力する文（例）</span></div>
+      <div class="r5">${M1}<div class="k">要点を3つ<small>まず全体をつかむ</small></div><div class="v">このページの要点を3つにまとめて</div></div>
+      <div class="r5 hot">${M2}<div class="k">自社に関係する箇所<small>条件を伝えて絞る</small></div><div class="v">従業員30人の製造業に<br>関係する部分だけ教えて</div></div>
+      <div class="r5 hot">${M3}<div class="k">期限と金額<small>見落とすと困る数字</small></div><div class="v">この PDF の期限と金額を全部抜き出して</div></div>
+      <div class="r5">${M4}<div class="k">用語の説明<small>知らない言葉だけ</small></div><div class="v">このページの補助対象経費とは<br>何か、短く説明して</div></div>
+      <div class="r5">${M5}<div class="k">表にする<small>比べやすくする</small></div><div class="v">このページの製品3種を、<br>価格と保証で表にして</div></div>
+    </div>
+  </div>
+  <div class="bot2">
+    <div class="metric"><span class="ml">読み方</span><span class="mv">頭から全部読む</span><span class="ar">${svgw(P.arrow,3)}</span><span class="mv to">要点→知りたい所だけ</span></div>
+    <div class="uses"><span class="ul">使いどころ</span><span class="u">公募要領</span><span class="u">製品仕様のページ</span><span class="u">約款・規約</span></div>
+  </div>
+  <div class="next">
+    <span class="na">${svgw(P.arrow,2.6)}</span>
+    <span><b>コピーして貼る方法との違いと、使えない場面は4枚目へ</b></span>
+  </div>
+  <div class="src">出典：Microsoft Learn「Copilot in Edge Web ページの概要作成の動作」（このドキュメントの概要・このページの内容 のようなプロンプトに適用）／入力例と画面は説明用の再現（実画面は未確認）・社名と人名は架空</div>
+`;
+</script>
+</body>
+</html>

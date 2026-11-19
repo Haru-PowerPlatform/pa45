@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>M365 Copilot Vol.10-2 ％を断られた依頼の頼み直し</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/mc-base.css">
+<style>
+  .stage{gap:9px;}
+  .col.bad{flex:0 0 392px;}
+  .col.good{flex:1;min-width:0;}
+  .box{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:2px solid var(--red-line);border-radius:10px;overflow:hidden;}
+  .col.good .box{border-color:var(--green-line);box-shadow:0 3px 8px rgba(20,90,60,.12);}
+  .box .ih{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:5px 10px;background:#F3F2F1;border-bottom:1px solid #E1DFDD;font-size:15.5px;font-weight:700;color:#242424;}
+  .box .bd{flex:1;min-height:0;display:flex;flex-direction:column;gap:7px;padding:8px 10px;}
+  .ask{align-self:flex-end;max-width:94%;background:#E8F4F2;border:1.5px solid #A7E3D8;border-radius:12px 12px 3px 12px;padding:6px 11px;font-size:16.5px;font-weight:700;color:#1B2A44;line-height:1.4;}
+  .ask .pj{background:linear-gradient(transparent 55%,#FDE68A 55%);font-weight:900;}
+  .gz{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;background:#FAFAFA;border:1.5px solid #E1DFDD;border-radius:12px 12px 12px 3px;padding:6px 10px;}
+  .gz .g{flex:0 0 auto;width:220px;height:152px;position:relative;}
+  .gz .g svg{position:absolute;inset:0;width:100%;height:100%;}
+  .gz .t{flex:0 0 auto;text-align:center;font-size:18px;font-weight:700;color:#1B2A44;line-height:1.4;}
+  .gz .t b{display:block;font-size:24px;line-height:1.3;font-weight:900;color:#B91C1C;}
+  .badline{flex:0 0 auto;display:flex;align-items:center;gap:8px;background:#DC2626;color:#fff;border-radius:8px;padding:6px 10px;font-size:16px;font-weight:900;line-height:1.3;position:relative;padding-right:104px;}
+  .badline .ch{position:absolute;right:0;bottom:-2px;height:112px;filter:drop-shadow(0 3px 4px rgba(0,0,0,.3));}
+  .eng{flex:0 0 132px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;}
+  .eng .lb{font-size:17px;font-weight:900;color:var(--mc-dark);text-align:center;line-height:1.3;}
+  .eng .pc{width:124px;display:flex;align-items:center;gap:6px;background:#FFFBEB;border:2px solid var(--amber);border-radius:10px;padding:5px 7px;font-size:15.5px;font-weight:900;color:#92400E;line-height:1.2;}
+  .eng .pc svg{flex:0 0 30px;width:30px;height:30px;}
+  .eng .pl{font-size:20px;font-weight:900;color:var(--amber);line-height:1.2;margin:-6px 0;}
+  .eng .ar{width:92px;height:30px;color:var(--mc);}
+  .res{flex:1;min-height:0;display:flex;gap:9px;background:#FAFAFA;border:1.5px solid #E1DFDD;border-radius:12px 12px 12px 3px;padding:6px 9px;}
+  .res .g{flex:0 0 196px;position:relative;align-self:center;height:136px;}
+  .res .g svg{position:absolute;inset:0;width:100%;height:100%;}
+  .res .rows{flex:1;min-width:0;display:flex;flex-direction:column;}
+  .li{flex:1;display:flex;align-items:center;gap:8px;border-bottom:1.2px dashed #E5E7EB;}
+  .li:last-child{border-bottom:none;}
+  .li .tg{flex:0 0 104px;text-align:center;font-size:14.5px;font-weight:900;border-radius:6px;padding:3px 0;color:#fff;background:#16A34A;}
+  .li .tg.w{background:#D97706;} .li .tg.n{background:#5B6474;}
+  .li .tx{flex:1;font-size:16px;font-weight:700;color:#1B2A44;line-height:1.28;}
+  .bot{flex:0 0 auto;display:flex;flex-direction:column;gap:5px;}
+  .bot .uses{background:#fff;border:1.5px solid #CFEFE0;border-radius:10px;padding:4px 9px;}
+  .metric{padding:5px 12px;}
+  .metric .mv{font-size:23px;}
+  .next{font-size:18.5px;padding:8px 18px;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={x:'<path d="M6 6l12 12M18 6L6 18"/>',ok:'<path d="M5 12l5 5 9-10"/>',arrow:'<path d="M4 12h15M13 6l6 6-6 6"/>'};
+const CPI=(w)=>`<img class="msi" src="${A}icons/ms/copilot.png" alt="" style="width:${w||24}px;height:${w||24}px">`;
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="pills"><div class="vol-pill"><small>M365 Copilot</small>Vol.10-2</div><div class="lic-pill paid">M365 Copilot ライセンスが要る</div></div>
+    <div class="title-text">％を聞いて断られた依頼は、<br><span class="hl">前提を付けて頼み直す</span></div>
+    <div class="title-apps"><img class="msi" src="${A}icons/ms/copilot.png" alt=""></div>
+    <img class="title-chara" src="${A}chara/chara_point.png" alt="">
+  </div>
+  <div class="concl">
+    <div class="chip app">${CPI(34)}</div>
+    <div class="txt">確率だけを聞くと<b>％での推定は控えます</b>と返りました。<br>残りの作業と日数を前提に付けると、<b>75%</b>と根拠、足りない材料が返っています</div>
+  </div>
+  <div class="stage">
+    <div class="col bad">
+      <div class="ph"><span class="mk">${svgw(P.x,3.2)}</span>確率だけを聞いた</div>
+      <div class="box">
+        <div class="ih">${CPI(22)}Copilot Chat<span class="repro">画面は説明用の再現</span></div>
+        <div class="bd">
+          <div class="ask">間に合うか、<span class="pj">確率を％で</span>教えて</div>
+          <div class="gz">
+            <div class="g"><svg viewBox="0 0 150 104" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+              <path d="M17 88 A58 58 0 0 1 133 88" fill="none" stroke="#E5E7EB" stroke-width="15" stroke-linecap="round" stroke-dasharray="7 9"/>
+              <circle cx="75" cy="88" r="7" fill="#9CA3AF"/>
+              <text x="75" y="72" text-anchor="middle" font-size="44" font-weight="900" fill="#DC2626" font-family="Noto Sans JP">?</text>
+              <text x="17" y="103" text-anchor="middle" font-size="12" font-weight="700" fill="#9CA3AF">0</text>
+              <text x="133" y="103" text-anchor="middle" font-size="12" font-weight="700" fill="#9CA3AF">100</text>
+            </svg></div>
+            <div class="t"><b>％での推定は控えます</b>根拠が不足、という返事</div>
+          </div>
+        </div>
+      </div>
+      <div class="badline"><span>数字が出ないので、<br>報告に書けない</span><img class="ch chara" src="${A}chara/chara_trouble.png" alt=""></div>
+    </div>
+    <div class="eng">
+      <div class="lb">前提を<br>付けて<br>頼み直す</div>
+      <div class="pc"><svg viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="3" width="22" height="25" rx="3" fill="#fff" stroke="#B45309" stroke-width="2"/><path d="M8 10l2 2 3-4M8 17l2 2 3-4" fill="none" stroke="#16A34A" stroke-width="2" stroke-linecap="round"/><rect x="8" y="22" width="5" height="3" rx="1" fill="#FCD34D"/><path d="M16 10h7M16 17h7M16 23h7" stroke="#B45309" stroke-width="2" stroke-linecap="round"/></svg>残りの<br>作業</div>
+      <div class="pl">＋</div>
+      <div class="pc"><svg viewBox="0 0 30 30" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="5" width="24" height="22" rx="3" fill="#fff" stroke="#B45309" stroke-width="2"/><rect x="3" y="5" width="24" height="7" rx="3" fill="#F59E0B"/><path d="M9 3v5M21 3v5" stroke="#B45309" stroke-width="2" stroke-linecap="round"/><text x="15" y="24" text-anchor="middle" font-size="11" font-weight="900" fill="#B45309">5日</text></svg>残りの<br>日数</div>
+      <span class="ar">${svgw(P.arrow,3)}</span>
+    </div>
+    <div class="col good">
+      <div class="ph"><span class="mk">${svgw(P.ok,3.2)}</span>前提を付けて頼み直した</div>
+      <div class="box">
+        <div class="ih">${CPI(22)}Copilot Chat<span class="repro">頼み方は一例・画面は説明用の再現</span></div>
+        <div class="bd">
+          <div class="ask"><span class="pj">残りの作業は3つ、期日まで5日</span>。この前提で、間に合う確率と<span class="pj">根拠・足りない材料</span>を分けて</div>
+          <div class="res">
+            <div class="g"><svg viewBox="0 0 196 136" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+              <defs><linearGradient id="gg" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#14B8A6"/><stop offset="1" stop-color="#16A34A"/></linearGradient></defs>
+              <path d="M22 112 A76 76 0 0 1 174 112" fill="none" stroke="#E5E7EB" stroke-width="20" stroke-linecap="round"/>
+              <path d="M22 112 A76 76 0 0 1 151.7 58.3" fill="none" stroke="url(#gg)" stroke-width="20" stroke-linecap="round"/>
+                            <text x="98" y="112" text-anchor="middle" font-size="44" font-weight="900" fill="#065F46" font-family="Noto Sans JP" stroke="#fff" stroke-width="5" paint-order="stroke">75%</text>
+              <text x="22" y="133" text-anchor="middle" font-size="13" font-weight="700" fill="#6B7280">0</text>
+              <text x="174" y="133" text-anchor="middle" font-size="13" font-weight="700" fill="#6B7280">100</text>
+            </svg></div>
+            <div class="rows">
+              <div class="li"><span class="tg">根拠</span><span class="tx">日程と手順が、文書とスライドで具体的</span></div>
+              <div class="li"><span class="tg w">足りない材料</span><span class="tx">作業が終わったという実績の報告</span></div>
+              <div class="li"><span class="tg n">数字の性質</span><span class="tx">統計の予測ではなく、判断用の目安</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="bot">
+        <div class="metric"><span class="ml">返ってきた答え</span><span class="mv">推定は控えます</span><span class="ar">${svgw(P.arrow,3)}</span><span class="mv to">75%＋根拠＋足りない材料</span></div>
+        <div class="uses"><span class="ul">使いどころ</span><span class="u">切り替えの前週</span><span class="u">週次の報告前</span><span class="u">引き継いだ案件</span><span class="u">上司への説明</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="next">
+    <span class="na">${svgw(P.arrow,2.6)}</span>
+    <span><b>誤りがそのまま下書きに写る流れは3枚目へ</b>（75% は社内の情報を材料にした目安。確かめるのは足りない材料の欄）</span>
+  </div>
+  <div class="src">出典：Microsoft Learn「アプリケーション カード: Microsoft Copilot (組織向け)」／実画面で確認（2026年10〜11月）・頼み方の数字は例・画面は説明用の再現</div>
+`;
+</script>
+</body>
+</html>

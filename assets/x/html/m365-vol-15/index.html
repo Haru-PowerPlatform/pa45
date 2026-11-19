@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>M365 Copilot Vol.15-1 同じ質問に答えるエージェント</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/mc-base.css">
+<style>
+  .stage{gap:10px;}
+  .col.bad{flex:0 0 418px;}
+  .col.good{flex:1;min-width:0;}
+  .sc{flex:0 0 104px;position:relative;border-radius:10px;overflow:hidden;background:#FCE4E4;}
+  .sc svg{position:absolute;inset:0;width:100%;height:100%;}
+  .sc .ch{position:absolute;right:4px;bottom:0;height:104px;z-index:2;filter:drop-shadow(0 3px 4px rgba(0,0,0,.25));}
+  .tm{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:2px solid var(--red-line);border-radius:10px;overflow:hidden;}
+  .tm .ih{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:5px 10px;background:#F3F2F1;border-bottom:1px solid #E1DFDD;font-size:15.5px;font-weight:700;color:#424242;}
+  .tm .ih .cnt{margin-left:auto;font-size:14px;font-weight:900;color:#fff;background:#DC2626;border-radius:999px;padding:1px 10px;}
+  .tm .tb{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:space-around;padding:4px 10px;}
+  .mg{display:flex;gap:9px;align-items:flex-start;}
+  .mg .av{flex:0 0 auto;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:15px;}
+  .mg .bb{flex:1;min-width:0;background:#F4F6FA;border-radius:10px;padding:4px 10px;}
+  .mg .nm{font-size:13.5px;font-weight:900;color:#6B7280;}
+  .mg .nm i{font-style:normal;font-weight:700;margin-left:6px;color:#9CA3AF;}
+  .mg .tx{font-size:16px;font-weight:700;color:#1B2A44;line-height:1.35;}
+  .mg .tx b{color:#B91C1C;}
+  .badline{flex:0 0 auto;background:#DC2626;color:#fff;border-radius:8px;padding:6px 10px;font-size:16.5px;font-weight:900;line-height:1.3;text-align:center;}
+  .eng{flex:0 0 132px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;}
+  .eng .ai{width:78px;height:78px;border-radius:20px;background:#fff;box-shadow:0 3px 10px rgba(0,0,0,.15);display:flex;align-items:center;justify-content:center;}
+  .eng .pill{font-size:15px;font-weight:900;color:#fff;background:var(--mc);border-radius:999px;padding:3px 12px;white-space:nowrap;}
+  .eng .lb{font-size:15.5px;font-weight:900;color:var(--mc-dark);text-align:center;line-height:1.35;}
+  .eng .docs{width:128px;height:150px;}
+  .eng .docs svg{width:100%;height:100%;display:block;}
+  .eng .ar{width:60px;height:26px;color:var(--mc);}
+  .pane{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:2px solid var(--green-line);border-radius:10px;overflow:hidden;box-shadow:0 3px 8px rgba(20,90,60,.12);}
+  .pane .phd{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:6px 11px;background:#F3F2F1;border-bottom:1px solid #E1DFDD;font-size:16px;font-weight:700;color:#242424;}
+  .pane .phd .ag{width:26px;height:26px;border-radius:7px;background:var(--mc-grad);display:flex;align-items:center;justify-content:center;color:#fff;font-size:13.5px;font-weight:900;}
+  .pane .pb{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:space-around;gap:6px;padding:7px 12px;}
+  .ask{align-self:flex-end;max-width:84%;background:#E8F4F2;border:1.5px solid #A7E3D8;border-radius:12px 12px 3px 12px;padding:5px 12px;font-size:16px;font-weight:700;color:#1B2A44;line-height:1.35;}
+  .ask small{display:block;font-size:13.5px;color:#6B7280;font-weight:900;}
+  .ans{background:#FAFAFA;border:1.5px solid #E1DFDD;border-radius:12px 12px 12px 3px;padding:6px 12px;font-size:16px;font-weight:700;color:#1B2A44;line-height:1.4;}
+  .ans b{color:#B91C1C;}
+  .ans.no{background:#FFFBEB;border-color:#FCD34D;}
+  .cite{display:inline-flex;align-items:center;gap:6px;margin-top:4px;background:#EFF6FF;border:1.5px solid #BFDBFE;border-radius:7px;padding:1px 9px;font-size:14.5px;font-weight:900;color:#1D4ED8;}
+  .cite svg{width:16px;height:18px;flex:0 0 auto;}
+  .bot{flex:0 0 auto;display:flex;flex-direction:column;gap:6px;}
+  .bot .uses{background:#fff;border:1.5px solid #CFEFE0;border-radius:10px;padding:4px 9px;}
+  .metric .mv{font-size:23px;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={x:'<path d="M6 6l12 12M18 6L6 18"/>',ok:'<path d="M5 12l5 5 9-10"/>',arrow:'<path d="M4 12h15M13 6l6 6-6 6"/>'};
+const CPI=(w)=>`<img class="msi" src="${A}icons/ms/copilot.png" alt="" style="width:${w||24}px;height:${w||24}px">`;
+const MS=(n,w)=>`<img class="msi" src="${A}icons/ms/${n}" alt="" style="width:${w||24}px;height:${w||24}px">`;
+const DOC='<svg viewBox="0 0 16 18"><path d="M2 1h8l4 4v12H2z" fill="#fff" stroke="#1D4ED8" stroke-width="1.6"/><path d="M10 1v4h4" fill="none" stroke="#1D4ED8" stroke-width="1.6"/><path d="M5 9h6M5 12h6" stroke="#1D4ED8" stroke-width="1.4"/></svg>';
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="pills"><div class="vol-pill"><small>M365 Copilot</small>Vol.15-1</div><div class="lic-pill paid">社内資料はライセンスか従量課金</div></div>
+    <div class="title-text">何度も来る質問は、<br><span class="hl">資料だけで答えるエージェント</span>に渡す</div>
+    <div class="title-apps"><img class="msi" src="${A}icons/ms/copilot.png" alt=""></div>
+    <img class="title-chara" src="${A}chara/chara_point.png" alt="">
+  </div>
+  <div class="concl">
+    <div class="chip app">${CPI(34)}</div>
+    <div class="txt">Copilot Chat の<b>[新しいエージェント]</b>で、就業規則・経費精算の手引き・備品の貸出ルール<br>だけを読む専用エージェントをコードなしで作り、<b>共有リンクで同僚に渡します</b></div>
+  </div>
+  <div class="stage">
+    <div class="col bad">
+      <div class="ph"><span class="mk">${svgw(P.x,3.2)}</span>同じ質問が総務に届く</div>
+      <div class="sc"><svg viewBox="0 0 392 104" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><defs><filter id="s1" x="-20%" y="-20%" width="140%" height="160%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#7F1D1D" flood-opacity=".25"/></filter></defs><rect width="392" height="104" fill="#FCE4E4"/>
+        <g filter="url(#s1)"><rect x="18" y="14" width="120" height="34" rx="12" fill="#fff" stroke="#F0AEAE"/><path d="M34 48l-6 10 16-10z" fill="#fff"/><text x="78" y="37" font-size="15" font-weight="900" fill="#991B1B" text-anchor="middle" font-family="Noto Sans JP">日当は？</text></g>
+        <g filter="url(#s1)"><rect x="150" y="8" width="104" height="34" rx="12" fill="#fff" stroke="#F0AEAE"/><text x="202" y="31" font-size="15" font-weight="900" fill="#991B1B" text-anchor="middle" font-family="Noto Sans JP">日当は？</text></g>
+        <g filter="url(#s1)"><rect x="56" y="58" width="152" height="34" rx="12" fill="#fff" stroke="#F0AEAE"/><text x="132" y="81" font-size="15" font-weight="900" fill="#991B1B" text-anchor="middle" font-family="Noto Sans JP">PC何日借りられる？</text></g>
+        <g filter="url(#s1)"><rect x="212" y="52" width="70" height="34" rx="12" fill="#fff" stroke="#F0AEAE"/><text x="247" y="75" font-size="15" font-weight="900" fill="#991B1B" text-anchor="middle" font-family="Noto Sans JP">日当…</text></g>
+        <circle cx="262" cy="16" r="12" fill="#DC2626"/><text x="262" y="21" font-size="14" font-weight="900" fill="#fff" text-anchor="middle" font-family="Noto Sans JP">12</text>
+      </svg><img class="ch" src="${A}chara/chara_tired.png" alt=""></div>
+      <div class="tm"><div class="ih">${MS('teams.svg',22)}総務への問い合わせ<span class="cnt">同じ質問</span></div><div class="tb">
+        <div class="mg"><span class="av" style="background:#2563EB">佐</span><div class="bb"><div class="nm">佐藤<i>月 9:12</i></div><div class="tx">出張の<b>日当</b>っていくらでしたっけ</div></div></div>
+        <div class="mg"><span class="av" style="background:#7C3AED">鈴</span><div class="bb"><div class="nm">鈴木<i>水 14:05</i></div><div class="tx">日帰り出張でも<b>日当</b>は出ますか</div></div></div>
+        <div class="mg"><span class="av" style="background:#0891B2">田</span><div class="bb"><div class="nm">田中<i>金 10:30</i></div><div class="tx"><b>日当</b>の決まり、どこに書いてありますか</div></div></div>
+      </div></div>
+      <div class="badline">そのたびに手引きを開いて、同じ返事を書く</div>
+    </div>
+    <div class="eng">
+      <div class="ai">${CPI(50)}</div>
+      <span class="pill">総務Q&amp;A</span>
+      <div class="lb">この3つの資料<br>だけを読む</div>
+      <div class="docs"><svg viewBox="0 0 128 150" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="dg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#EEF2F7"/></linearGradient></defs>
+        <g><rect x="8" y="4" width="112" height="40" rx="6" fill="url(#dg)" stroke="#94A3B8"/><rect x="8" y="4" width="8" height="40" rx="3" fill="#2563EB"/><text x="68" y="30" font-size="15" font-weight="900" fill="#1B2A44" text-anchor="middle" font-family="Noto Sans JP">就業規則</text></g>
+        <g><rect x="8" y="54" width="112" height="40" rx="6" fill="url(#dg)" stroke="#94A3B8"/><rect x="8" y="54" width="8" height="40" rx="3" fill="#D97706"/><text x="68" y="80" font-size="15" font-weight="900" fill="#1B2A44" text-anchor="middle" font-family="Noto Sans JP">経費の手引き</text></g>
+        <g><rect x="8" y="104" width="112" height="40" rx="6" fill="url(#dg)" stroke="#94A3B8"/><rect x="8" y="104" width="8" height="40" rx="3" fill="#16A34A"/><text x="68" y="130" font-size="15" font-weight="900" fill="#1B2A44" text-anchor="middle" font-family="Noto Sans JP">備品の貸出</text></g>
+      </svg></div>
+      <span class="ar">${svgw(P.arrow,3)}</span>
+    </div>
+    <div class="col good">
+      <div class="ph"><span class="mk">${svgw(P.ok,3.2)}</span>専用エージェントが出典つきで返す</div>
+      <div class="pane">
+        <div class="phd"><span class="ag">総</span>総務Q&amp;A<span class="repro">画面は説明用の再現・資料と回答は架空の例</span></div>
+        <div class="pb">
+          <div class="ask"><small>鈴木</small>日帰り出張でも日当は出ますか</div>
+          <div class="ans">片道100km以上の日帰り出張は、<b>日当1,000円</b>が出ます。<br><span class="cite">${DOC}経費精算の手引き 4章</span></div>
+          <div class="ask"><small>田中</small>在宅勤務の手当はありますか</div>
+          <div class="ans no">3つの資料には記載がありません。<br><b>総務の山田さん</b>に確認してください。</div>
+        </div>
+      </div>
+      <div class="bot">
+        <div class="metric"><span class="ml">同じ質問への返事</span><span class="mv">担当者が毎回書く</span><span class="ar">${svgw(P.arrow,3)}</span><span class="mv to">エージェントが資料から</span></div>
+        <div class="uses"><span class="ul">向く資料</span><span class="u">就業規則</span><span class="u">経費精算の手引き</span><span class="u">備品の貸出ルール</span><span class="u">新人向けの社内ルール</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="next">
+    <span class="na">${svgw(P.arrow,2.6)}</span>
+    <span><b>作り方は2枚目、回答画面は3枚目、作る前に決める5つは4枚目へ</b></span>
+  </div>
+  <div class="src">出典：Microsoft Learn「エージェント ビルダーの概要」「エージェント ビルダーでエージェントを構築する」／人名・資料は架空・画面は説明用の再現</div>
+`;
+</script>
+</body>
+</html>

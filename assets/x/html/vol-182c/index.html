@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>Vol.182-3 作る順で戻る時間が変わる</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/tips-base.css">
+<style>
+  .stage{gap:10px;}
+  .col{gap:7px;}
+  .scene{height:112px;}
+  .scene .chara{height:112px;}
+  .lst{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:2.5px solid;border-radius:11px;overflow:hidden;box-shadow:0 4px 10px rgba(20,40,90,.12);}
+  .col.bad .lst{border-color:var(--red-line);} .col.good .lst{border-color:var(--green-line);}
+  .lst .hd{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:5px 10px;font-size:15.5px;font-weight:900;}
+  .col.bad .lst .hd{background:#FDECEC;color:#991B1B;} .col.good .lst .hd{background:#EAF9F1;color:#065F46;}
+  .lst .hd .ex{margin-left:auto;font-size:14.5px;color:#B45309;background:#FEF3C7;border-radius:999px;padding:0 10px;}
+  .it{flex:1;min-height:0;display:flex;align-items:center;gap:9px;padding:0 10px;border-top:1.2px solid #EEF1F5;}
+  .it .k{flex:0 0 auto;font-size:14.5px;font-weight:900;color:#fff;border-radius:6px;padding:1px 7px;}
+  .col.bad .it .k{background:#DC2626;} .col.good .it .k{background:#16A34A;}
+  .it .nm{flex:1;min-width:0;white-space:nowrap;font-size:17px;font-weight:900;color:#1B2A44;line-height:1.25;}
+  .it .nm small{display:block;font-size:14.5px;font-weight:700;color:#6B7280;}
+  .it .bw{flex:0 0 84px;height:15px;background:#EEF2F7;border-radius:5px;overflow:hidden;}
+  .it .bw i{display:block;height:100%;border-radius:5px;}
+  .col.bad .it .bw i{background:linear-gradient(180deg,#F87171,#DC2626);} .col.good .it .bw i{background:linear-gradient(180deg,#34D399,#16A34A);}
+  .it .v{flex:0 0 74px;text-align:right;font-size:18px;font-weight:900;white-space:nowrap;}
+  .col.bad .it .v{color:#B91C1C;} .col.good .it .v{color:#047857;}
+  .tot{flex:0 0 auto;display:flex;align-items:baseline;justify-content:center;gap:10px;border-radius:10px;padding:3px 10px;font-weight:900;}
+  .tot .l{font-size:17px;} .tot .n{font-size:38px;line-height:1.2;} .tot .n small{font-size:18px;}
+  .col.bad .tot{background:#FBD9D9;color:#991B1B;} .col.good .tot{background:#CFEFE0;color:#065F46;}
+  /* 中央 */
+  .mid{flex:0 0 330px;display:flex;flex-direction:column;gap:7px;background:#F8FAFC;border:2.5px solid #A9C6F5;border-radius:14px;padding:8px 10px 9px;}
+  .mid .mh{flex:0 0 auto;font-size:21px;font-weight:900;color:#1E3A8A;text-align:center;line-height:1.2;}
+  .ck{flex:1;min-height:0;display:flex;align-items:center;gap:9px;background:#fff;border:2px solid #C7D6EE;border-radius:11px;padding:4px 9px;}
+  .ck svg{flex:0 0 96px;width:96px;height:74px;}
+  .ck .t{flex:1;min-width:0;font-size:18.5px;font-weight:900;color:#1B2A44;line-height:1.28;}
+  .ck .t small{display:block;font-size:15.5px;font-weight:700;color:#4B5563;line-height:1.32;margin-top:2px;}
+  .ck .t b{color:#EA580C;}
+  .bot2{flex:0 0 auto;display:flex;gap:10px;align-items:stretch;margin:8px 16px 0;}
+  .bot2 .metric{flex:0 0 auto;margin:0;}
+  .bot2 .uses{flex:1;background:#fff;border:1.5px solid #A9C6F5;border-radius:10px;padding:4px 10px;}
+  .next small{font-size:15px;font-weight:700;color:#475569;margin-left:auto;}
+</style>
+</head>
+<body>
+<div id="slide">
+  <svg width="0" height="0" style="position:absolute">
+    <defs>
+      <linearGradient id="gPp" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#EEF2F7"/></linearGradient>
+      <linearGradient id="gRed" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F87171"/><stop offset="1" stop-color="#DC2626"/></linearGradient>
+      <linearGradient id="gGrn" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#34D399"/><stop offset="1" stop-color="#16A34A"/></linearGradient>
+      <linearGradient id="gBl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#60A5FA"/><stop offset="1" stop-color="#2563EB"/></linearGradient>
+      <linearGradient id="gEnv" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF9E8"/><stop offset="1" stop-color="#F5D98E"/></linearGradient>
+      <linearGradient id="gStamp" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8B5E3C"/><stop offset="1" stop-color="#5B3A22"/></linearGradient>
+      <filter id="sh" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="2" stdDeviation="1.8" flood-color="#1B2A44" flood-opacity=".28"/></filter>
+    </defs>
+  </svg>
+
+  <div class="titlebar">
+    <div class="vol-pill">Vol.182-3</div>
+    <img class="vol-logo" src="../../pptx/_assets/icons/pa_logo.png" alt="">
+    <div class="title-text">同じ3本を作るなら、<br><span class="hl">戻る時間の大きい順</span>に作る</div>
+    <img class="title-chara" src="../../pptx/_assets/chara/chara_point.png" alt="">
+  </div>
+  <div class="concl">
+    <div class="chip"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0 0 12 3z"/></svg></div>
+    <div class="txt">作る本数は同じ3本。<b>どの3本を選ぶか</b>で、月に戻る時間が3倍以上ちがいます（計算例）</div>
+  </div>
+
+  <div class="stage">
+    <!-- Before -->
+    <div class="col bad">
+      <div class="ph"><span class="mk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></span>思いついた順に作る</div>
+      <div class="scene">
+        <svg viewBox="0 0 425 112" preserveAspectRatio="xMidYMid slice">
+          <!-- 年1回のカレンダー -->
+          <g filter="url(#sh)">
+            <rect x="20" y="18" width="92" height="84" rx="7" fill="url(#gPp)" stroke="#C99" stroke-width="1.6"/>
+            <path d="M20 25 a7 7 0 0 1 7 -7 h78 a7 7 0 0 1 7 7 v12 h-92z" fill="url(#gRed)"/>
+          </g>
+          <g fill="#fff" stroke="#7F1D1D" stroke-width="1.4"><rect x="38" y="11" width="6" height="14" rx="3"/><rect x="88" y="11" width="6" height="14" rx="3"/></g>
+          <text x="66" y="34" text-anchor="middle" font-size="12" font-weight="900" fill="#fff" font-family="Noto Sans JP">年1回</text>
+          <g fill="#F3E1E1"><rect x="28" y="44" width="16" height="14" rx="3"/><rect x="48" y="44" width="16" height="14" rx="3"/><rect x="68" y="44" width="16" height="14" rx="3"/><rect x="88" y="44" width="16" height="14" rx="3"/>
+          <rect x="28" y="62" width="16" height="14" rx="3"/><rect x="48" y="62" width="16" height="14" rx="3"/><rect x="68" y="62" width="16" height="14" rx="3"/><rect x="88" y="62" width="16" height="14" rx="3"/>
+          <rect x="28" y="80" width="16" height="14" rx="3"/><rect x="48" y="80" width="16" height="14" rx="3"/><rect x="68" y="80" width="16" height="14" rx="3"/></g>
+          <rect x="88" y="80" width="16" height="14" rx="3" fill="#FCA5A5" stroke="#DC2626" stroke-width="2"/>
+          <!-- 作る2日 → 戻る月10分 -->
+          <g filter="url(#sh)"><rect x="124" y="22" width="132" height="30" rx="8" fill="#fff" stroke="#DC2626" stroke-width="2"/></g>
+          <text x="190" y="43" text-anchor="middle" font-size="16" font-weight="900" fill="#991B1B" font-family="Noto Sans JP">作るのに2日</text>
+          <path d="M190 56 v10" stroke="#DC2626" stroke-width="3" stroke-linecap="round"/>
+          <path d="M183 62 l7 8 l7 -8" fill="none" stroke="#DC2626" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          <g filter="url(#sh)"><rect x="124" y="74" width="132" height="30" rx="8" fill="#FEE2E2" stroke="#DC2626" stroke-width="2"/></g>
+          <text x="190" y="95" text-anchor="middle" font-size="15.5" font-weight="900" fill="#991B1B" font-family="Noto Sans JP">戻るのは月10分</text>
+        </svg>
+        <img class="chara" src="../../pptx/_assets/chara/chara_trouble.png" alt="">
+      </div>
+      <div class="lst">
+        <div class="hd">作ったフロー 3本<span class="ex">計算例</span></div>
+        <div class="it"><span class="k">1本目</span><span class="nm">年1回の集計<small>120分 × 1/12</small></span><span class="bw"><i style="width:6.3%"></i></span><span class="v">10分</span></div>
+        <div class="it"><span class="k">2本目</span><span class="nm">たまの問い合わせ<small>5分 × 月1回</small></span><span class="bw"><i style="width:3.1%"></i></span><span class="v">5分</span></div>
+        <div class="it"><span class="k">3本目</span><span class="nm">添付の振り分け<small>2分 × 月40回</small></span><span class="bw"><i style="width:50%"></i></span><span class="v">80分</span></div>
+      </div>
+      <div class="tot"><span class="l">月に戻る時間</span><span class="n">95<small>分</small></span></div>
+    </div>
+
+    <!-- 中央 -->
+    <div class="mid">
+      <div class="mh">並べるときに見る3点</div>
+      <div class="ck">
+        <svg viewBox="0 0 96 74">
+          <rect x="6" y="46" width="18" height="22" rx="3" fill="#CBD5E1"/>
+          <rect x="30" y="30" width="18" height="38" rx="3" fill="url(#gBl)"/>
+          <rect x="54" y="14" width="18" height="54" rx="3" fill="url(#gGrn)"/>
+          <path d="M4 68h86" stroke="#64748B" stroke-width="2"/>
+          <path d="M76 22 l8 -12 l8 12" fill="none" stroke="#16A34A" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M84 12 v20" stroke="#16A34A" stroke-width="3.4" stroke-linecap="round"/>
+        </svg>
+        <div class="t">月に戻る時間<small>回数 × 分数が大きい順</small></div>
+      </div>
+      <div class="ck">
+        <svg viewBox="0 0 96 74">
+          <g filter="url(#sh)"><rect x="6" y="18" width="62" height="44" rx="5" fill="url(#gEnv)" stroke="#C99A2E" stroke-width="1.8"/></g>
+          <path d="M7 21 L37 43 L67 21" fill="none" stroke="#C99A2E" stroke-width="1.8" stroke-linejoin="round"/>
+          <g filter="url(#sh)"><path d="M72 8 L94 48 H50z" fill="url(#gRed)" stroke="#fff" stroke-width="2" stroke-linejoin="round"/></g>
+          <path d="M72 22 v13" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+          <circle cx="72" cy="41.5" r="2.4" fill="#fff"/>
+        </svg>
+        <div class="t">間違えたときの影響<small>お金が動く・社外に出る<br>なら<b>確認の手順</b>を残す</small></div>
+      </div>
+      <div class="ck">
+        <svg viewBox="0 0 96 74">
+          <rect x="2" y="22" width="22" height="22" rx="5" fill="url(#gBl)"/>
+          <path d="M15 26 l-5 9 h5 l-3 7 l8 -10 h-5 l3 -6z" fill="#FDE047"/>
+          <path d="M26 33 h6" stroke="#94A3B8" stroke-width="2.6" stroke-linecap="round"/>
+          <rect x="34" y="22" width="22" height="22" rx="5" fill="url(#gBl)"/>
+          <path d="M47 26 l-5 9 h5 l-3 7 l8 -10 h-5 l3 -6z" fill="#FDE047"/>
+          <path d="M58 33 h6" stroke="#94A3B8" stroke-width="2.6" stroke-linecap="round"/>
+          <!-- はんこ -->
+          <g filter="url(#sh)">
+            <rect x="72" y="6" width="14" height="22" rx="4" fill="url(#gStamp)"/>
+            <ellipse cx="79" cy="8" rx="9" ry="5" fill="#A0714C"/>
+            <rect x="69" y="27" width="20" height="9" rx="2" fill="#5B3A22"/>
+          </g>
+          <circle cx="81" cy="56" r="13" fill="none" stroke="#DC2626" stroke-width="2.6"/>
+          <text x="81" y="60.5" text-anchor="middle" font-size="12" font-weight="900" fill="#DC2626" font-family="Noto Sans JP">判断</text>
+          <path d="M63 18 v26" stroke="#F59E0B" stroke-width="2.4" stroke-dasharray="4 3"/>
+        </svg>
+        <div class="t">毎回判断が要るか<small>要るなら<b>判断の手前まで</b><br>自動にする</small></div>
+      </div>
+    </div>
+
+    <!-- After -->
+    <div class="col good">
+      <div class="ph"><span class="mk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></span>戻る時間の大きい順に作る</div>
+      <div class="scene">
+        <svg viewBox="0 0 425 112" preserveAspectRatio="xMidYMid slice">
+          <!-- 毎日のカレンダー（全マスに✓） -->
+          <g filter="url(#sh)">
+            <rect x="20" y="18" width="92" height="84" rx="7" fill="url(#gPp)" stroke="#8CC9A8" stroke-width="1.6"/>
+            <path d="M20 25 a7 7 0 0 1 7 -7 h78 a7 7 0 0 1 7 7 v12 h-92z" fill="url(#gGrn)"/>
+          </g>
+          <g fill="#fff" stroke="#14532D" stroke-width="1.4"><rect x="38" y="11" width="6" height="14" rx="3"/><rect x="88" y="11" width="6" height="14" rx="3"/></g>
+          <text x="66" y="34" text-anchor="middle" font-size="12" font-weight="900" fill="#fff" font-family="Noto Sans JP">毎日</text>
+          <g fill="#D1F2E0" stroke="#16A34A" stroke-width="1.2">
+            <rect x="28" y="44" width="16" height="14" rx="3"/><rect x="48" y="44" width="16" height="14" rx="3"/><rect x="68" y="44" width="16" height="14" rx="3"/><rect x="88" y="44" width="16" height="14" rx="3"/>
+            <rect x="28" y="62" width="16" height="14" rx="3"/><rect x="48" y="62" width="16" height="14" rx="3"/><rect x="68" y="62" width="16" height="14" rx="3"/><rect x="88" y="62" width="16" height="14" rx="3"/>
+            <rect x="28" y="80" width="16" height="14" rx="3"/><rect x="48" y="80" width="16" height="14" rx="3"/><rect x="68" y="80" width="16" height="14" rx="3"/><rect x="88" y="80" width="16" height="14" rx="3"/>
+          </g>
+          <g fill="none" stroke="#15803D" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M32 51 l3 3 l6 -6M52 51 l3 3 l6 -6M72 51 l3 3 l6 -6M92 51 l3 3 l6 -6M32 69 l3 3 l6 -6M52 69 l3 3 l6 -6M72 69 l3 3 l6 -6M92 69 l3 3 l6 -6M32 87 l3 3 l6 -6M52 87 l3 3 l6 -6M72 87 l3 3 l6 -6M92 87 l3 3 l6 -6"/>
+          </g>
+          <!-- 積み上がる時間 -->
+          <g filter="url(#sh)">
+            <rect x="132" y="80" width="98" height="20" rx="5" fill="url(#gGrn)"/>
+            <rect x="140" y="58" width="82" height="20" rx="5" fill="url(#gGrn)" opacity=".85"/>
+            <rect x="148" y="36" width="66" height="20" rx="5" fill="url(#gGrn)" opacity=".7"/>
+          </g>
+          <text x="181" y="95" text-anchor="middle" font-size="13.5" font-weight="900" fill="#fff" font-family="Noto Sans JP">160分</text>
+          <text x="181" y="73" text-anchor="middle" font-size="13.5" font-weight="900" fill="#fff" font-family="Noto Sans JP">100分</text>
+          <text x="181" y="51" text-anchor="middle" font-size="13.5" font-weight="900" fill="#fff" font-family="Noto Sans JP">90分</text>
+          <path d="M181 30 v-18" stroke="#16A34A" stroke-width="3.4" stroke-linecap="round"/>
+          <path d="M173 19 l8 -9 l8 9" fill="none" stroke="#16A34A" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <img class="chara" src="../../pptx/_assets/chara/chara_guts.png" alt="">
+      </div>
+      <div class="lst">
+        <div class="hd">作ったフロー 3本<span class="ex">計算例</span></div>
+        <div class="it"><span class="k">1本目</span><span class="nm">報告の数字集め<small>20分 × 月8回</small></span><span class="bw"><i style="width:100%"></i></span><span class="v">160分</span></div>
+        <div class="it"><span class="k">2本目</span><span class="nm">台帳へ転記<small>5分 × 月20回</small></span><span class="bw"><i style="width:62.5%"></i></span><span class="v">100分</span></div>
+        <div class="it"><span class="k">3本目</span><span class="nm">リマインド<small>3分 × 月30回</small></span><span class="bw"><i style="width:56.3%"></i></span><span class="v">90分</span></div>
+      </div>
+      <div class="tot"><span class="l">月に戻る時間</span><span class="n">350<small>分</small></span></div>
+    </div>
+  </div>
+
+  <div class="bot2">
+    <div class="metric"><span class="ml">同じ3本で</span><span class="mv">月95分</span><span class="ar"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></span><span class="mv to">月350分</span></div>
+    <div class="uses"><span class="ul">向く例と使うアクション</span><span class="u">転記＝項目の作成</span><span class="u">リマインド＝繰り返し</span><span class="u">振り分け＝メールを移動する (V2)</span></div>
+  </div>
+  <div class="next">
+    <span class="na"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></span>
+    <span><b>自分の仕事を書き込む棚卸し表は4枚目へ</b></span>
+    <small>回数・分数・作る日数は計算例（目安）</small>
+  </div>
+  <div class="src">出典：Microsoft Learn「オートメーションの実装に関するレコメンデーション」（Power Platform Well-Architected）／数字は計算例で実測ではない・仕事の例は架空</div>
+</div>
+</body>
+</html>

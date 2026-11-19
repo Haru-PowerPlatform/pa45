@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>Vol.180-4 1人だけのフローと2人以上のフロー</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/tips-base.css">
+<link rel="stylesheet" href="../vol-180/kit.css">
+<style>
+  .stage{gap:10px;}
+  .col{gap:7px;}
+  .scn{flex:1;min-height:0;border-radius:11px;position:relative;overflow:hidden;}
+  .col.bad .scn{background:#FCE4E4;} .col.good .scn{background:#DCF3E7;}
+  .scn svg{position:absolute;inset:0;width:100%;height:100%;}
+  .scn .chara{right:4px;bottom:0;}
+  .fw .fwb{padding:6px 9px;gap:5px;}
+  .kv .k{min-width:60px;}
+  .big{flex:0 0 auto;display:flex;align-items:center;justify-content:center;gap:12px;border-radius:11px;padding:5px 10px;font-weight:900;}
+  .col.bad .big{background:#fff;border:2px solid #F0AEAE;color:#991B1B;}
+  .col.good .big{background:#fff;border:2px solid #7FCEA9;color:#065F46;}
+  .big .l{font-size:17px;}
+  .big .num{font-size:40px;line-height:1.25;}
+  .big .u{font-size:19px;}
+  .mid{flex:0 0 200px;display:flex;flex-direction:column;gap:8px;justify-content:center;}
+  .eng{flex:0 0 auto;background:linear-gradient(180deg,#FFFFFF,#EEF2F7);border:2px solid #C2C9D2;border-radius:12px;padding:9px 10px;box-shadow:0 4px 10px rgba(0,0,0,.12);display:flex;flex-direction:column;gap:7px;}
+  .eng .et{font-size:16.5px;font-weight:900;color:#1E40AF;text-align:center;}
+  .eng .es{display:flex;align-items:center;gap:7px;font-size:16px;font-weight:900;color:#1B2A44;line-height:1.3;}
+  .eng .es .n{flex:0 0 auto;width:26px;height:26px;border-radius:7px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;font-size:15px;display:flex;align-items:center;justify-content:center;}
+  .mid .ar{align-self:center;width:54px;height:40px;color:#16A34A;}
+  .mid .ar svg{width:54px;height:40px;max-width:none;max-height:none;}
+  .cap{font-size:16px;}
+  .bot2{flex:0 0 auto;display:flex;gap:10px;align-items:stretch;margin:8px 16px 0;}
+  .bot2 .metric{flex:0 0 auto;margin:0;}
+  .bot2 .uses{flex:1;background:#fff;border:1.5px solid #A9C6F5;border-radius:10px;padding:4px 10px;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script src="../vol-180/kit.js"></script>
+<script>
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.180-4</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">所有者1人のフローと2人以上のフロー：<br><span class="hl">止まったときに直せる人の数</span></div>
+    <img class="title-chara" src="${A}chara/chara_guts.png" alt="">
+  </div>
+  <div class="concl">
+    <div class="chip">${svgw(P.bulb,2.2)}</div>
+    <div class="txt">違いは詳細画面の<b>所有者と接続の2か所</b>だけ。<br>佐藤さんが異動したあとに開ける人が、0人か、残った部署のメンバーか、に分かれます</div>
+  </div>
+  <div class="stage">
+    <div class="col bad">
+      <div class="ph"><span class="mk">${svgw(P.x,3)}</span>所有者が1人だけのフロー</div>
+      <div class="fw"><div class="fwh">${PA(22)}請求リマインド<span class="ng">失敗</span></div><div class="fwb">
+        <div class="kv"><span class="k">所有者</span>佐藤 花子 <span class="pilltag gy">異動済み</span></div>
+        <div class="kv"><span class="k">接続</span>${MS('sharepoint.svg',22)}${MS('outlook.svg',22)} <b>佐藤 花子</b></div>
+      </div></div>
+      <div class="scn">${SV(490,134,`
+        <g transform="translate(8,0)">${tagG(0,0,'佐藤','異動済み','gray',{badge:'x'})}</g>
+        <g transform="translate(126,36)">${lockG(0,0,{c:'red'})}</g>
+        <g transform="translate(196,8) scale(.92)">${tagG(0,0,'鈴木','開けない','gray',{badge:'lock',dim:true})}</g>
+        <g transform="translate(300,8) scale(.92)">${tagG(0,0,'山田','開けない','gray',{badge:'lock',dim:true})}</g>
+      `)}${CH('trouble',118)}</div>
+      <div class="big"><span class="l">止まったときに<br>直せる部署の人</span><span class="num">0</span><span class="u">人</span></div>
+      <div class="cap">管理者に所有者を足してもらうまで、<b>だれも編集できない</b></div>
+    </div>
+    <div class="mid">
+      <div class="eng">
+        <div class="et">異動の前にやること</div>
+        <div class="es"><span class="n">1</span>所有者を足す</div>
+        <div class="es"><span class="n">2</span>接続を選び直す</div>
+        <div class="es"><span class="n">3</span>メモを残す</div>
+      </div>
+      <div class="ar">${svgw(P.arrow,3)}</div>
+      <div class="eng" style="border-color:#7FCEA9">
+        <div class="et" style="color:#065F46">足しただけでは</div>
+        <div class="es" style="font-size:16px;justify-content:center;text-align:center">接続は<br>作った人のまま。<br>②まで行う</div>
+      </div>
+    </div>
+    <div class="col good">
+      <div class="ph"><span class="mk">${svgw(P.ok,3)}</span>所有者が2人以上のフロー</div>
+      <div class="fw"><div class="fwh">${PA(22)}請求リマインド<span class="on">オン</span></div><div class="fwb">
+        <div class="kv"><span class="k">所有者</span>佐藤 花子・鈴木 一郎・営業部 <span class="pilltag ok">3</span></div>
+        <div class="kv"><span class="k">接続</span>${MS('sharepoint.svg',22)}${MS('outlook.svg',22)} <span style="color:#065F46;font-weight:900">鈴木 一郎</span></div>
+      </div></div>
+      <div class="scn">${SV(490,134,`
+        <g transform="translate(4,14) scale(.86)">${tagG(0,0,'佐藤','異動済み','gray',{dim:true})}</g>
+        <g transform="translate(110,0)">${tagG(0,0,'鈴木','所有者','green',{badge:'ok'})}</g>
+        <g transform="translate(232,0)">${tagG(0,0,'営業部','グループ','violet',{grp:true,badge:'ok'})}</g>
+        ${wrenchG(100,96,1.1)}${wrenchG(222,96,1.1)}
+      `)}${CH('guts',118)}</div>
+      <div class="big"><span class="l">止まったときに<br>直せる部署の人</span><span class="num">2</span><span class="u">人以上</span></div>
+      <div class="cap">鈴木さんと<b>営業部グループのメンバー</b>が、開いて直せる</div>
+    </div>
+  </div>
+  <div class="bot2">
+    <div class="metric"><span class="ml">直せる人</span><span class="mv">0人</span><span class="ar">${svgw(P.arrow,3)}</span><span class="mv to">2人以上</span></div>
+    <div class="uses"><span class="ul">見直す人</span><span class="u">フローを作った担当者</span><span class="u">その上司</span><span class="u">情報システム</span></div>
+  </div>
+  <div class="warnbar">
+    <span class="na" style="width:30px;height:30px;color:#C2410C">${svgw(P.warn,2.4)}</span>
+    <span class="wl">使う前に確認</span>
+    <span class="ws"><span>接続先のリストやメールボックスに、残る人の権限があるか</span><span>ソリューション外のフローは<b>所有者の変更ができない</b>（共同所有者の追加はできる）</span></span>
+  </div>
+  <div class="src">出典：Microsoft Learn「クラウド フローを共有する」「クラウド フローの所有者を変更する」「所有者が組織を離れたときに孤立したフローを管理する」／人名は架空、画面は説明用の再現（実画面は未確認）</div>
+`;
+</script>
+</body>
+</html>

@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>Vol.182-2 書き出す→掛ける→上から3つ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/tips-base.css">
+<style>
+  .stage{gap:6px;}
+  .c3{flex:1;min-width:0;display:flex;flex-direction:column;gap:7px;border-radius:14px;padding:8px 10px 9px;background:#EEF4FF;border:2.5px solid #A9C6F5;position:relative;}
+  .c3 .h{flex:0 0 auto;display:flex;align-items:center;gap:9px;font-weight:900;font-size:23px;line-height:1.2;color:#1E3A8A;}
+  .c3 .h .n{flex:0 0 auto;width:36px;height:36px;border-radius:9px;color:#fff;display:flex;align-items:center;justify-content:center;font-size:21px;background:linear-gradient(180deg,#3B82F6,#2563EB);box-shadow:0 2px 4px rgba(0,0,0,.22);}
+  .sn{flex:0 0 96px;border-radius:11px;background:#DDE9FB;position:relative;display:flex;align-items:center;gap:8px;padding:0 10px;}
+  .sn svg{flex:0 0 auto;}
+  .sn .chara{position:absolute;right:2px;bottom:0;height:116px;z-index:4;filter:drop-shadow(0 3px 5px rgba(0,0,0,.25));}
+  .sn .f{display:flex;align-items:center;gap:5px;font-weight:900;color:#1B2A44;}
+  .sn .f .tk{background:#fff;border:2px solid #7DA8F0;border-radius:8px;padding:2px 8px;font-size:21px;white-space:nowrap;}
+  .sn .f .op{font-size:22px;color:#EA580C;}
+  .sn .f .rs{background:linear-gradient(180deg,#34D399,#16A34A);color:#fff;border-radius:8px;padding:2px 9px;font-size:23px;white-space:nowrap;box-shadow:0 2px 4px rgba(0,0,0,.2);}
+  .sn .dt{display:flex;flex-direction:column;gap:1px;font-weight:900;color:#1B2A44;line-height:1.25;}
+  .sn .dt .s{font-size:16px;color:#475569;}
+  .sn .dt .l{font-size:25px;color:#047857;white-space:nowrap;}
+  .sn .dt .l small{font-size:16px;color:#1B2A44;}
+  .cd{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:2px solid #A9C6F5;border-radius:11px;overflow:hidden;box-shadow:0 4px 10px rgba(20,40,90,.12);}
+  .cd .hd{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:6px 10px;background:#F2F7FD;border-bottom:1.5px solid #D8E4F5;font-size:16px;font-weight:900;color:#1B2A44;}
+  .cd .hd .ex{margin-left:auto;font-size:14.5px;font-weight:900;color:#B45309;background:#FEF3C7;border-radius:999px;padding:1px 10px;}
+  .cd .rows{flex:1;min-height:0;display:flex;flex-direction:column;}
+  .r{flex:1;min-height:0;display:flex;align-items:center;gap:8px;padding:0 10px;border-bottom:1.2px solid #E7ECF3;font-size:16.5px;font-weight:700;color:#1B2A44;white-space:nowrap;}
+  .r:last-child{border-bottom:none;}
+  .r .bx{flex:0 0 auto;width:19px;height:19px;border:2.2px solid #94A3B8;border-radius:4px;background:#fff;}
+  /* 表 */
+  .r.th{flex:0 0 30px;background:#1E3A8A;color:#fff;font-size:15.5px;font-weight:900;border-bottom:none;}
+  .r .c1{flex:1;min-width:0;} .r .c2{flex:0 0 52px;text-align:right;} .r .c3x{flex:0 0 46px;text-align:right;} .r .c4{flex:0 0 78px;text-align:right;font-weight:900;color:#1D4ED8;font-size:18px;}
+  .r.th .c4{color:#fff;font-size:15.5px;}
+  .r .m{font-family:'Roboto Mono','Noto Sans JP',monospace;}
+  .r.yr{background:#FFF8E6;} .r.yr .c2{color:#B45309;font-weight:900;}
+  /* ランキング */
+  .r .rk{flex:0 0 26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:900;color:#fff;background:#94A3B8;}
+  .r .nm{flex:0 0 122px;font-weight:900;}
+  .r .bw{flex:1;min-width:0;height:17px;background:#EEF2F7;border-radius:5px;overflow:hidden;}
+  .r .bw i{display:block;height:100%;border-radius:5px;background:#B6C0CE;}
+  .r .vl{flex:0 0 58px;text-align:right;font-weight:900;font-size:18px;color:#64748B;}
+  .r.top{background:#ECFDF5;} .r.top .rk{background:linear-gradient(180deg,#34D399,#16A34A);box-shadow:0 2px 3px rgba(0,0,0,.2);}
+  .r.top .bw i{background:linear-gradient(180deg,#34D399,#16A34A);} .r.top .vl{color:#047857;}
+  .r.cut{border-top:2.5px dashed #F59E0B;}
+  .cp{flex:0 0 auto;font-size:16px;font-weight:900;line-height:1.3;border-radius:9px;padding:6px 10px;color:#1E3A8A;background:#fff;border:1.5px solid #A9C6F5;}
+  .cp b{color:#EA580C;}
+  .arrowc{flex:0 0 24px;display:flex;align-items:center;justify-content:center;color:#2563EB;}
+  .arrowc svg{width:26px;height:26px;}
+  .next small{font-size:15px;font-weight:700;color:#475569;margin-left:auto;}
+</style>
+</head>
+<body>
+<div id="slide">
+  <svg width="0" height="0" style="position:absolute">
+    <defs>
+      <linearGradient id="gCalc" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#56637A"/><stop offset="1" stop-color="#27324A"/></linearGradient>
+      <linearGradient id="gPen" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FCD34D"/><stop offset="1" stop-color="#F59E0B"/></linearGradient>
+      <linearGradient id="nY" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FEF3B4"/><stop offset="1" stop-color="#FCD95B"/></linearGradient>
+      <linearGradient id="nP" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FDE2EF"/><stop offset="1" stop-color="#F9A8D4"/></linearGradient>
+      <linearGradient id="nB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#DCEBFF"/><stop offset="1" stop-color="#93C5FD"/></linearGradient>
+      <linearGradient id="nG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#DCFCE7"/><stop offset="1" stop-color="#86EFAC"/></linearGradient>
+      <linearGradient id="nO" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFEAD5"/><stop offset="1" stop-color="#FDBA74"/></linearGradient>
+      <filter id="sh" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="2" stdDeviation="1.8" flood-color="#1B2A44" flood-opacity=".28"/></filter>
+    </defs>
+  </svg>
+
+  <div class="titlebar">
+    <div class="vol-pill">Vol.182-2</div>
+    <img class="vol-logo" src="../../pptx/_assets/icons/pa_logo.png" alt="">
+    <div class="title-text">選び方：手作業を書き出して掛け算し、<br><span class="hl">上から3つ</span>だけ作る</div>
+    <img class="title-chara" src="../../pptx/_assets/chara/chara_laptop.png" alt="">
+  </div>
+  <div class="concl">
+    <div class="chip"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0 0 12 3z"/></svg></div>
+    <div class="txt">フローを開く前の紙の作業です。<b>月の合計が大きい順</b>に並べると、作る順番が決まります</div>
+  </div>
+
+  <div class="stage">
+    <!-- ① -->
+    <div class="c3">
+      <div class="h"><span class="n">1</span>手作業を書き出す</div>
+      <div class="sn">
+        <svg width="250" height="92" viewBox="0 0 250 92">
+          <g filter="url(#sh)">
+            <g transform="rotate(-7 30 46)"><path d="M6 20h48v40l-10 10h-38z" fill="url(#nY)"/><path d="M54 60l-10 10v-10z" fill="#E0B93A"/><g stroke="#7A6520" stroke-width="2.4" stroke-linecap="round"><path d="M13 32h32M13 42h26M13 52h18"/></g></g>
+            <g transform="rotate(5 80 40)"><path d="M56 12h48v40l-10 10h-38z" fill="url(#nP)"/><path d="M104 52l-10 10v-10z" fill="#E879B4"/><g stroke="#8A2C5C" stroke-width="2.4" stroke-linecap="round"><path d="M63 24h30M63 34h34M63 44h20"/></g></g>
+            <g transform="rotate(-4 128 50)"><path d="M104 26h48v40l-10 10h-38z" fill="url(#nB)"/><path d="M152 66l-10 10v-10z" fill="#5B9BEF"/><g stroke="#1E3A8A" stroke-width="2.4" stroke-linecap="round"><path d="M111 38h34M111 48h24M111 58h28"/></g></g>
+            <g transform="rotate(8 176 38)"><path d="M152 10h48v40l-10 10h-38z" fill="url(#nG)"/><path d="M200 50l-10 10v-10z" fill="#4ADE80"/><g stroke="#14532D" stroke-width="2.4" stroke-linecap="round"><path d="M159 22h28M159 32h34M159 42h16"/></g></g>
+            <g transform="rotate(-6 216 56)"><path d="M194 32h48v40l-10 10h-38z" fill="url(#nO)"/><path d="M242 72l-10 10v-10z" fill="#F59E4B"/><g stroke="#7C2D12" stroke-width="2.4" stroke-linecap="round"><path d="M201 44h32M201 54h22M201 64h28"/></g></g>
+          </g>
+        </svg>
+        <img class="chara" src="../../pptx/_assets/chara/chara_think.png" alt="">
+      </div>
+      <div class="cd">
+        <div class="hd">1か月の手作業メモ<span class="ex">例</span></div>
+        <div class="rows">
+          <div class="r"><span class="bx"></span>受注メールを台帳へ転記</div>
+          <div class="r"><span class="bx"></span>月次報告（8店舗分）</div>
+          <div class="r"><span class="bx"></span>期限前のリマインド連絡</div>
+          <div class="r"><span class="bx"></span>添付ファイルの保存と振り分け</div>
+          <div class="r"><span class="bx"></span>年1回の集計</div>
+          <div class="r"><span class="bx"></span>たまの問い合わせ対応</div>
+        </div>
+      </div>
+      <div class="cp">手を動かした作業を、<b>1行ずつ</b>そのまま書く</div>
+    </div>
+    <div class="arrowc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+
+    <!-- ② -->
+    <div class="c3">
+      <div class="h"><span class="n">2</span>回数と分数を掛ける</div>
+      <div class="sn">
+        <svg width="62" height="84" viewBox="0 0 62 84">
+          <g filter="url(#sh)"><rect x="3" y="2" width="56" height="78" rx="7" fill="url(#gCalc)" stroke="#1B2437" stroke-width="1.4"/>
+          <rect x="9" y="9" width="44" height="17" rx="3" fill="#D9F2C4" stroke="#7C9A5E" stroke-width="1"/></g>
+          <rect x="29" y="14.5" width="20" height="6" rx="2" fill="#3F5B2A"/>
+          <g fill="#E5EAF2"><rect x="9" y="32" width="11" height="10" rx="2.5"/><rect x="25" y="32" width="11" height="10" rx="2.5"/>
+          <rect x="9" y="47" width="11" height="10" rx="2.5"/><rect x="25" y="47" width="11" height="10" rx="2.5"/>
+          <rect x="9" y="62" width="11" height="10" rx="2.5"/><rect x="25" y="62" width="11" height="10" rx="2.5"/></g>
+          <rect x="41" y="32" width="12" height="10" rx="2.5" fill="#94A3B8"/><rect x="41" y="47" width="12" height="25" rx="2.5" fill="#F59E0B"/>
+        </svg>
+        <div class="f"><span class="tk">20回</span><span class="op">×</span><span class="tk">5分</span><span class="op">＝</span><span class="rs">100分</span></div>
+      </div>
+      <div class="cd">
+        <div class="rows">
+          <div class="r th"><span class="c1">仕事</span><span class="c2">月の回数</span><span class="c3x">分</span><span class="c4">月の合計</span></div>
+          <div class="r"><span class="c1">台帳へ転記</span><span class="c2 m">20</span><span class="c3x m">5</span><span class="c4 m">100分</span></div>
+          <div class="r"><span class="c1">報告の数字集め</span><span class="c2 m">8</span><span class="c3x m">20</span><span class="c4 m">160分</span></div>
+          <div class="r"><span class="c1">リマインド</span><span class="c2 m">30</span><span class="c3x m">3</span><span class="c4 m">90分</span></div>
+          <div class="r"><span class="c1">添付の振り分け</span><span class="c2 m">40</span><span class="c3x m">2</span><span class="c4 m">80分</span></div>
+          <div class="r yr"><span class="c1">年1回の集計</span><span class="c2 m">1/12</span><span class="c3x m">120</span><span class="c4 m">10分</span></div>
+          <div class="r"><span class="c1">問い合わせ</span><span class="c2 m">1</span><span class="c3x m">5</span><span class="c4 m">5分</span></div>
+        </div>
+      </div>
+      <div class="cp">年1回は回数を <b>1/12</b> に。<br>長い仕事は<b>自動にする部分</b>の分数で</div>
+    </div>
+    <div class="arrowc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></div>
+
+    <!-- ③ -->
+    <div class="c3">
+      <div class="h"><span class="n">3</span>上から3つを選ぶ</div>
+      <div class="sn">
+        <svg width="84" height="84" viewBox="0 0 84 84">
+          <circle cx="42" cy="42" r="31" fill="none" stroke="#C3CEDC" stroke-width="15"/>
+          <circle cx="42" cy="42" r="31" fill="none" stroke="#16A34A" stroke-width="15" stroke-dasharray="153.3 194.8" transform="rotate(-90 42 42)"/>
+          <circle cx="42" cy="42" r="23" fill="#fff"/>
+          <text x="42" y="48" text-anchor="middle" font-size="17" font-weight="900" fill="#047857" font-family="Noto Sans JP">8割</text>
+        </svg>
+        <div class="dt"><span class="s">合計 445分のうち</span><span class="l">350分<small> が上位3つ</small></span></div>
+      </div>
+      <div class="cd">
+        <div class="hd">月の合計が大きい順<span class="ex">例</span></div>
+        <div class="rows">
+          <div class="r top"><span class="rk">1</span><span class="nm">報告の数字集め</span><span class="bw"><i style="width:100%"></i></span><span class="vl m">160</span></div>
+          <div class="r top"><span class="rk">2</span><span class="nm">台帳へ転記</span><span class="bw"><i style="width:62.5%"></i></span><span class="vl m">100</span></div>
+          <div class="r top"><span class="rk">3</span><span class="nm">リマインド</span><span class="bw"><i style="width:56.3%"></i></span><span class="vl m">90</span></div>
+          <div class="r cut"><span class="rk">4</span><span class="nm">添付の振り分け</span><span class="bw"><i style="width:50%"></i></span><span class="vl m">80</span></div>
+          <div class="r"><span class="rk">5</span><span class="nm">年1回の集計</span><span class="bw"><i style="width:6.3%"></i></span><span class="vl m">10</span></div>
+          <div class="r"><span class="rk">6</span><span class="nm">問い合わせ</span><span class="bw"><i style="width:3.1%"></i></span><span class="vl m">5</span></div>
+        </div>
+      </div>
+      <div class="cp">4つ目からは、<b>3つが動いてから</b>考える</div>
+    </div>
+  </div>
+
+  <div class="next">
+    <span class="na"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></span>
+    <span><b>作る順でどれだけ変わるかは3枚目へ</b></span>
+    <small>表の回数・分数は計算例（目安）／月次報告は30分のうち数字集めの20分だけ数えた</small>
+  </div>
+  <div class="src">出典：Microsoft Learn「オートメーションの実装に関するレコメンデーション」（Power Platform Well-Architected）／数字は計算例で実測ではない・仕事の例は架空</div>
+</div>
+</body>
+</html>

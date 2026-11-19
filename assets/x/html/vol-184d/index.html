@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>Vol.184-4 フローの月1回点検</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/tips-base.css">
+<style>
+  .stage{gap:8px;}
+  .col.info{padding:8px 10px 9px;}
+  .scene{height:118px;}
+  .ch2{font-size:22px;}
+  .mk{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:2.5px solid #C7D6EE;border-radius:11px;overflow:hidden;box-shadow:0 4px 10px rgba(20,40,90,.10);font-family:'Segoe UI','Noto Sans JP',sans-serif;}
+  .mk .mh{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:6px 10px;background:#F3F2F1;border-bottom:1px solid #E1DFDD;font-size:15.5px;font-weight:700;color:#242424;}
+  .mk .mh img{width:24px;height:24px;}
+  .mk .mb{flex:1;min-height:0;display:flex;flex-direction:column;padding:2px 10px;}
+  .mk .r{flex:1;min-height:0;display:flex;align-items:center;gap:8px;border-bottom:1px solid #EDEBE9;font-size:15.5px;font-weight:700;color:#242424;}
+  .mk .r:last-child{border-bottom:none;}
+  .mk .r .s{margin-left:auto;font-weight:900;white-space:nowrap;}
+  .mk .r .s.ok{color:#107C10;} .mk .r .s.ng{color:#C50F1F;} .mk .r .s.off{color:#6B7280;}
+  .mk .r.hot{background:#FDF3F4;margin:0 -10px;padding:0 10px;}
+  .mk .r.offr{background:#F3F4F6;margin:0 -10px;padding:0 10px;}
+  .mk .tbl{display:grid;grid-template-columns:1.15fr .85fr .8fr;}
+  .mk .r.g{display:grid;grid-template-columns:1.15fr .85fr .8fr;gap:6px;}
+  .mk .r.g.th{font-size:15.5px;color:#fff;background:#1F7A4D;margin:0 -10px;padding:0 10px;font-weight:900;flex:0 0 30px;}
+  .mk .r.g.new{background:#ECFDF5;margin:0 -10px;padding:0 10px;}
+  .cap{font-size:15.5px;}
+  .chk{flex:0 0 auto;display:flex;flex-direction:column;gap:4px;}
+  .chk span{display:flex;align-items:center;gap:7px;font-size:16px;font-weight:900;color:#1E3A8A;background:#fff;border:1.5px solid #C7D6EE;border-radius:8px;padding:3px 8px;}
+  .chk span i{flex:0 0 auto;width:20px;height:20px;border-radius:5px;border:2px solid #2563EB;display:inline-flex;align-items:center;justify-content:center;color:#2563EB;}
+  .chk span i svg{width:14px;height:14px;}
+  .arrowc{flex:0 0 22px;display:flex;align-items:center;justify-content:center;color:#2563EB;}
+  .arrowc svg{width:24px;height:24px;}
+  .warnbar .wl{font-weight:900;font-size:16px;white-space:nowrap;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={ok:'<path d="M5 12l5 5 9-10"/>',arrow:'<path d="M4 12h15M13 6l6 6-6 6"/>',warn:'<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18v.5"/>',bulb:'<path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0 0 12 3z"/>'};
+const ck=`<i>${svgw(P.ok,3.4)}</i>`;
+/* ① 虫めがねで履歴を見る */
+const s1=`<svg viewBox="0 0 388 118" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+  <g transform="translate(24 14)"><rect x="0" y="0" width="160" height="90" rx="8" fill="#fff" stroke="#2563EB" stroke-width="2"/>
+  <rect x="10" y="12" width="140" height="13" rx="3" fill="#DCF3E7"/><rect x="10" y="31" width="140" height="13" rx="3" fill="#DCF3E7"/><rect x="10" y="50" width="140" height="13" rx="3" fill="#FDE2E2"/><rect x="10" y="69" width="140" height="13" rx="3" fill="#DCF3E7"/>
+  <circle cx="20" cy="18.5" r="4" fill="#16A34A"/><circle cx="20" cy="37.5" r="4" fill="#16A34A"/><circle cx="20" cy="56.5" r="4" fill="#DC2626"/><circle cx="20" cy="75.5" r="4" fill="#16A34A"/></g>
+  <circle cx="160" cy="70" r="26" fill="rgba(255,255,255,.35)" stroke="#1E3A8A" stroke-width="6"/><path d="M180 90l22 22" stroke="#1E3A8A" stroke-width="9" stroke-linecap="round"/>
+  <g transform="translate(232 22)"><rect x="0" y="0" width="64" height="70" rx="6" fill="#fff" stroke="#64748B" stroke-width="2"/><rect x="0" y="0" width="64" height="17" rx="6" fill="#2563EB"/><rect x="0" y="10" width="64" height="7" fill="#2563EB"/>
+  <text x="32" y="52" font-size="24" font-weight="900" fill="#1F2937" text-anchor="middle" font-family="Noto Sans JP">1</text></g></svg>`;
+/* ② オフのスイッチを探す */
+const s2=`<svg viewBox="0 0 388 118" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+  <g><rect x="22" y="12" width="74" height="34" rx="17" fill="#2563EB"/><circle cx="79" cy="29" r="13" fill="#fff"/>
+  <rect x="22" y="70" width="74" height="34" rx="17" fill="#2563EB"/><circle cx="79" cy="87" r="13" fill="#fff"/>
+  <rect x="122" y="40" width="74" height="34" rx="17" fill="#9CA3AF" stroke="#DC2626" stroke-width="3"/><circle cx="139" cy="57" r="13" fill="#fff"/>
+  <rect x="222" y="12" width="74" height="34" rx="17" fill="#2563EB"/><circle cx="279" cy="29" r="13" fill="#fff"/>
+  <rect x="222" y="70" width="74" height="34" rx="17" fill="#2563EB"/><circle cx="279" cy="87" r="13" fill="#fff"/></g>
+  <circle cx="159" cy="57" r="44" fill="none" stroke="#DC2626" stroke-width="3" stroke-dasharray="7 5"/></svg>`;
+/* ③ 台帳に書き出す */
+const s3=`<svg viewBox="0 0 388 118" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+  <defs><linearGradient id="xl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#22A06B"/><stop offset="1" stop-color="#107C41"/></linearGradient></defs>
+  <g transform="translate(22 22)"><rect x="0" y="0" width="74" height="74" rx="8" fill="#fff" stroke="#64748B" stroke-width="2"/>
+  <rect x="10" y="12" width="54" height="8" rx="2" fill="#CBD5E1"/><rect x="10" y="28" width="54" height="8" rx="2" fill="#CBD5E1"/><rect x="10" y="44" width="54" height="8" rx="2" fill="#CBD5E1"/><text x="37" y="68" font-size="12" font-weight="900" fill="#64748B" text-anchor="middle" font-family="Roboto Mono">CSV</text></g>
+  <path d="M112 59h52" stroke="#16A34A" stroke-width="4" stroke-dasharray="8 5"/><path d="M158 50l10 9-10 9" fill="none" stroke="#16A34A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <g transform="translate(182 12)"><rect x="0" y="0" width="120" height="94" rx="8" fill="#fff" stroke="#107C41" stroke-width="2"/><rect x="0" y="0" width="120" height="18" rx="8" fill="url(#xl)"/><rect x="0" y="10" width="120" height="8" fill="url(#xl)"/>
+  <g stroke="#D1D5DB" stroke-width="1.2"><path d="M0 36h120M0 54h120M0 72h120M42 18v76M82 18v76"/></g>
+  <rect x="1" y="73" width="118" height="20" fill="#ECFDF5"/><circle cx="108" cy="83" r="9" fill="#16A34A"/><path d="M103.5 83l3 3 6-6" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g></svg>`;
+const arr=`<div class="arrowc">${svgw(P.arrow,3)}</div>`;
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.184-4</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">動いているフローを、<br><span class="hl">月に1回・3つだけ</span>点検する</div>
+    <img class="title-chara" src="${A}chara/chara_laptop.png" alt="">
+  </div>
+  <div class="concl">
+    <div class="chip">${svgw(P.bulb,2.2)}</div>
+    <div class="txt">履歴が画面に出るのは28日間。<b>月に1回</b>見れば、失敗もオフも記録も取りこぼしません。<br>カレンダーに毎月の予定として入れておく</div>
+  </div>
+  <div class="stage">
+    <div class="col info">
+      <div class="ch2"><span class="n">1</span>実行履歴で失敗を探す</div>
+      <div class="scene">${s1}</div>
+      <div class="mk"><div class="mh"><img src="${A}icons/pa_logo.png" alt="">28 日間の実行履歴 ＞ すべての実行</div><div class="mb">
+        <div class="r">12月1日 08:00<span class="s ok">成功</span></div>
+        <div class="r hot">11月30日 08:00<span class="s ng">失敗</span></div>
+        <div class="r">11月29日 08:00<span class="s ok">成功</span></div>
+        <div class="r hot">11月26日 08:00<span class="s ng">失敗</span></div></div></div>
+      <div class="chk"><span>${ck}失敗が続いていないか</span><span>${ck}止まったままの実行はないか</span></div>
+      <div class="cap">失敗が<b>14日</b>続くとオフになる。<br>その前に見つける</div>
+    </div>${arr}
+    <div class="col info">
+      <div class="ch2"><span class="n">2</span>オフになったフローを探す</div>
+      <div class="scene">${s2}</div>
+      <div class="mk"><div class="mh"><img src="${A}icons/pa_logo.png" alt="">マイ フロー</div><div class="mb">
+        <div class="r">毎朝の在庫チェック<span class="s ok">オン</span></div>
+        <div class="r offr">月末の請求書取り込み<span class="s off">オフ</span></div>
+        <div class="r">休暇申請の承認<span class="s ok">オン</span></div>
+        <div class="r offr">四半期の棚卸し通知<span class="s off">オフ</span></div></div></div>
+      <div class="chk"><span>${ck}失敗続きでオフになっていないか</span><span>${ck}停止予告のメールが来ていないか</span></div>
+      <div class="cap">動かないフローは<b>90日</b>でオフの対象。<br>年1回のフローは特に注意</div>
+    </div>${arr}
+    <div class="col info">
+      <div class="ch2"><span class="n">3</span>残す記録は台帳に書き出す</div>
+      <div class="scene">${s3}</div>
+      <div class="mk"><div class="mh"><img src="${A}icons/ms/excel.svg" alt="">フロー点検台帳.xlsx</div><div class="mb">
+        <div class="r g th"><span>点検日</span><span>失敗</span><span>対応</span></div>
+        <div class="r g"><span>10月1日</span><span>0件</span><span>なし</span></div>
+        <div class="r g"><span>11月4日</span><span>1件</span><span>接続を修正</span></div>
+        <div class="r g new"><span>12月1日</span><span>2件</span><span>再実行済み</span></div></div></div>
+      <div class="chk"><span>${ck}すべての実行から CSV で保存</span><span>${ck}失敗と対応を1行で残す</span></div>
+      <div class="cap">28日を過ぎた履歴は<b>自分で残す</b>しかない</div>
+    </div>
+  </div>
+  <div class="warnbar">
+    <span class="na" style="width:30px;height:30px;color:#C2410C">${svgw(P.warn,2.4)}</span>
+    <span class="wl">使う前に確認</span>
+    <span class="ws"><span>日数・件数はライセンスと時期で変わる。公式の制限の表で確かめる</span><span>CSV の書き出しボタンの名前は画面で確認</span></span>
+  </div>
+  <div class="src">出典：Microsoft Learn「フローの制限事項」「フロー実行を一括でキャンセルまたは再送信する」「Missing runs or triggers history for a flow」（2026-11-19 確認）／名前・日付は架空・画面は説明用の再現</div>
+`;
+</script>
+</body>
+</html>

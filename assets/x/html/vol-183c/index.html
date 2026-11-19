@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>Vol.183-3 カードで答えを選んで台帳へ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/tips-base.css">
+<style>
+
+  :root{--m:#0F6CBD;--m-bg:#EEF5FD;--m-ln:#A9CBEF; --p:#5B5FC7;--p-bg:#F1F1FC;--p-ln:#BFC1EE;
+        --g:#0E7C66;--g-bg:#EAF7F3;--g-ln:#9FD6C8; --o:#C2410C;--o-bg:#FFF4EA;--o-ln:#F6BE8F;}
+  .msi{flex:0 0 auto;object-fit:contain;}
+  .k-m{--c:var(--m);--bg:var(--m-bg);--ln:var(--m-ln);} .k-p{--c:var(--p);--bg:var(--p-bg);--ln:var(--p-ln);}
+  .k-g{--c:var(--g);--bg:var(--g-bg);--ln:var(--g-ln);} .k-o{--c:var(--o);--bg:var(--o-bg);--ln:var(--o-ln);}
+  .repro{font-size:13.5px;font-weight:700;color:#8A8886;margin-left:auto;white-space:nowrap;}
+  .win{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:2px solid #C8D3E3;border-radius:10px;
+    overflow:hidden;box-shadow:0 3px 8px rgba(0,0,0,.10);font-family:'Segoe UI','Noto Sans JP',sans-serif;}
+  .wh{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:4px 10px;background:#F3F2F1;border-bottom:1px solid #E1DFDD;
+    font-size:15.5px;font-weight:700;color:#242424;white-space:nowrap;}
+  .wb{flex:1;min-height:0;display:flex;flex-direction:column;padding:7px 10px;gap:6px;justify-content:space-evenly;}
+  /* メール一覧 */
+  .ml{flex:1;min-height:0;display:flex;align-items:center;gap:9px;padding:0 6px;border-bottom:1px solid #EDEBE9;
+    font-size:15.5px;color:#605E5C;font-weight:500;line-height:1.3;}
+  .ml:last-child{border-bottom:none;}
+  .ml.un{flex:1.9;background:#EBF3FC;border-left:5px solid #0F6CBD;color:#242424;font-weight:800;}
+  .ml .who{flex:0 0 78px;white-space:nowrap;}
+  .ml .sb{flex:1;min-width:0;}
+  .ml .sb small{display:block;font-size:15.5px;font-weight:500;color:#605E5C;white-space:nowrap;overflow:hidden;}
+  .ml .dt{flex:0 0 auto;font-size:14px;color:#605E5C;font-weight:600;}
+  .ml.un .dt{color:#0F6CBD;font-weight:800;}
+  /* Teams のメッセージ */
+  .tm{display:flex;gap:8px;align-items:flex-start;}
+  .tm .av{flex:0 0 34px;height:34px;border-radius:8px;background:#fff;border:1px solid #D1D1D1;display:flex;align-items:center;justify-content:center;}
+  .tm .av.h{border-radius:50%;border:none;background:#B45309;color:#fff;font-weight:900;font-size:15.5px;}
+  .tm .av.h.s2{background:#0E7C66;}
+  .tm .bb{flex:1;min-width:0;background:#F5F5F5;border-radius:8px;padding:4px 10px 6px;}
+  .tm .nm{font-size:14px;font-weight:700;color:#616161;display:flex;align-items:center;gap:6px;}
+  .tm .nm .bt{background:#E8EBFA;color:#444791;border-radius:4px;padding:0 6px;font-size:13.5px;}
+  .tm .tx{font-size:15.5px;font-weight:600;color:#242424;line-height:1.36;}
+  .tm .tx b{color:#B91C1C;}
+  .tm.rep{margin-left:26px;}
+  /* アダプティブ カード */
+  .ac{background:#fff;border:1px solid #D1D1D1;border-left:5px solid #5B5FC7;border-radius:6px;padding:6px 10px 8px;
+    display:flex;flex-direction:column;gap:5px;box-shadow:0 1px 3px rgba(0,0,0,.08);}
+  .ac .t{font-size:17px;font-weight:800;color:#242424;line-height:1.25;}
+  .ac .d{font-size:15.5px;font-weight:600;color:#424242;line-height:1.3;}
+  .ac .d b{color:#B91C1C;}
+  .ac .bs{display:flex;gap:7px;}
+  .ac .b{flex:1;text-align:center;border:1.5px solid #5B5FC7;color:#444791;background:#fff;border-radius:5px;padding:4px 0;
+    font-size:15.5px;font-weight:700;white-space:nowrap;}
+  .ac .b.on{background:#5B5FC7;color:#fff;box-shadow:0 0 0 3px #C7C9F3;}
+  .warnbar .wl{flex:0 0 auto;font-weight:900;font-size:17px;white-space:nowrap;}
+
+
+  .stage{gap:9px;}
+  .lcol{flex:0 0 384px;display:flex;flex-direction:column;gap:6px;min-height:0;}
+  .ttl{flex:0 0 auto;display:flex;align-items:center;gap:9px;font-size:22px;font-weight:900;color:#1B2A44;line-height:1.15;}
+  .ttl .n{flex:0 0 auto;width:34px;height:34px;border-radius:9px;color:#fff;display:flex;align-items:center;justify-content:center;font-size:19px;
+    background:linear-gradient(180deg,#3B82F6,#2563EB);box-shadow:0 2px 4px rgba(0,0,0,.22);}
+  .press{align-self:center;display:flex;align-items:center;gap:8px;font-size:16px;font-weight:900;color:#fff;background:#C2410C;border-radius:999px;padding:3px 14px;
+    font-family:"Noto Sans JP",sans-serif;}
+  .press svg{width:22px;height:22px;}
+  .eng{flex:0 0 284px;display:flex;flex-direction:column;gap:7px;min-height:0;background:#EEF4FF;border:2.5px solid #A9C6F5;border-radius:14px;padding:8px 9px;}
+  .eng .eh{flex:0 0 auto;display:flex;align-items:center;gap:9px;font-size:19px;font-weight:900;color:#1E3A8A;}
+  .eng .eh .lg{width:44px;height:44px;border-radius:11px;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 6px rgba(0,0,0,.18);}
+  .es{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:center;gap:3px;background:#fff;border:1.5px solid #C7D6EE;border-left:6px solid var(--c,#2563EB);
+    border-radius:9px;padding:4px 9px;}
+  .es .v{display:flex;align-items:center;gap:7px;font-size:18.5px;font-weight:900;color:#1B2A44;line-height:1.2;}
+  .es .v .n{flex:0 0 auto;width:26px;height:26px;border-radius:50%;background:var(--c,#2563EB);color:#fff;font-size:15.5px;display:flex;align-items:center;justify-content:center;}
+  .es .a{font-size:15.5px;font-weight:700;color:#4B5563;line-height:1.28;}
+  .cn{flex:0 0 auto;align-self:center;color:#2563EB;height:16px;}
+  .cn svg{width:18px;height:18px;}
+  .rcol{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px;min-height:0;}
+  .lst{flex:1.15;}
+  .lst .wb{padding:0;gap:0;justify-content:flex-start;}
+  .lr{flex:1;min-height:0;display:flex;align-items:center;gap:6px;padding:0 10px;border-bottom:1px solid #EDEBE9;font-size:15.5px;font-weight:600;color:#242424;position:relative;}
+  .lr:last-child{border-bottom:none;}
+  .lr.hd{flex:0 0 28px;background:#FAF9F8;color:#605E5C;font-weight:700;}
+  .lr span:nth-child(1){flex:1.35;} .lr span:nth-child(2){flex:.55;} .lr span:nth-child(3){flex:.6;} .lr span:nth-child(4){flex:1.9;display:flex;align-items:center;gap:6px;}
+  .lr.new{background:#DCFCE7;box-shadow:inset 5px 0 0 #16A34A;font-weight:800;}
+  .lr.new span:nth-child(4){color:#166534;font-weight:900;}
+  .lr .auto{display:inline-flex;align-items:center;gap:4px;background:#16A34A;color:#fff;border-radius:999px;
+    padding:1px 10px;font-size:14px;font-weight:900;font-family:"Noto Sans JP",sans-serif;flex:none !important;}
+  .lr .auto svg{width:16px;height:16px;}
+  .lr .em{color:#A19F9D;font-weight:600;}
+
+</style>
+</head>
+<body>
+<div id="slide">
+  <div class="titlebar">
+    <div class="vol-pill">Vol.183-3</div>
+    <img class="vol-logo" src="../../pptx/_assets/icons/pa_logo.png" alt="">
+    <div class="title-text">カードで答えを選んでもらい、<br><span class="hl">結果を台帳に入れる</span></div>
+    <img class="title-chara" src="../../pptx/_assets/chara/chara_smile.png" alt="">
+  </div>
+  <div class="concl">
+    <div class="chip"><svg class="ic" style="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0 0 12 3z"/></svg></div>
+    <div class="txt">ボタンを押すと、答えがフローに戻ります。<br><b>台帳への記入と総務への連絡</b>まで進み、返信を読んで書き写す作業はありません</div>
+  </div>
+  <div class="stage">
+    <div class="lcol">
+      <div class="ttl"><span class="n">1</span>鈴木さんがカードで答える</div>
+      <div class="win"><div class="wh"><img class="msi" src="../../pptx/_assets/icons/ms/teams.svg" alt="" style="width:24px;height:24px">チャット（鈴木さんの画面）<span class="repro">説明用の再現</span></div>
+        <div class="wb">
+          <div class="tm"><span class="av"><img class="msi" src="../../pptx/_assets/icons/pa_logo.png" alt="" style="width:24px;height:24px"></span><div class="bb" style="background:none;padding:0"><div class="nm">ワークフロー<span class="bt">ボット</span>9:00</div>
+            <div class="ac"><div class="t">返却期限のお知らせ</div><div class="d">ノートPC（No.12）<br>期限：<b>明日 11/20（金）</b></div>
+            <div class="bs"><span class="b">今日返す</span><span class="b">明日返す</span><span class="b on">延長したい</span></div></div>
+          </div></div>
+          <div class="press"><svg class="ic" style="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11V5a2 2 0 0 1 4 0v6l5 1.5a2 2 0 0 1 1.4 2.3L18.5 20h-8L6 14.5a1.6 1.6 0 0 1 2.4-2z"/></svg>鈴木さんが「延長したい」を押す</div>
+          <div class="tm"><span class="av"><img class="msi" src="../../pptx/_assets/icons/pa_logo.png" alt="" style="width:24px;height:24px"></span><div class="bb"><div class="nm">ワークフロー<span class="bt">ボット</span>9:12</div><div class="tx">延長の希望を受け付けました。<br>総務部に伝えました。</div></div></div>
+        </div></div>
+    </div>
+    <div class="eng">
+      <div class="eh"><span class="lg"><img class="msi" src="../../pptx/_assets/icons/pa_logo.png" alt="" style="width:32px;height:32px"></span>Power Automate<br>がすること</div>
+      <div class="es" style="--c:#5B5FC7"><div class="v"><span class="n">1</span>カードを出して待つ</div><div class="a">アダプティブ カードを投稿して<br>応答を待機する</div></div>
+      <div class="cn"><svg class="ic" style="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v15M6 13l6 6 6-6"/></svg></div>
+      <div class="es" style="--c:#0E7C66"><div class="v"><span class="n">2</span>答えを台帳に書く</div><div class="a">項目の更新（SharePoint）</div></div>
+      <div class="cn"><svg class="ic" style="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v15M6 13l6 6 6-6"/></svg></div>
+      <div class="es" style="--c:#C2410C"><div class="v"><span class="n">3</span>総務に知らせる</div><div class="a">チャットまたはチャネルで<br>メッセージを投稿する</div></div>
+    </div>
+    <div class="rcol">
+      <div class="ttl"><span class="n">2</span>台帳とチャネルに結果が入る</div>
+      <div class="win lst"><div class="wh"><img class="msi" src="../../pptx/_assets/icons/ms/lists.svg" alt="" style="width:24px;height:24px">備品貸出台帳（リスト）<span class="repro">説明用の再現</span></div>
+        <div class="wb">
+          <div class="lr hd"><span>備品</span><span>借りた人</span><span>返却期限</span><span>回答</span></div>
+          <div class="lr new"><span>ノートPC（No.12）</span><span>鈴木</span><span>11/20</span><span>延長したい<i class="auto"><svg class="ic" style="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>自動で記入</i></span></div>
+          <div class="lr"><span>モニター（No.3）</span><span>山田</span><span>11/20</span><span>明日返す</span></div>
+          <div class="lr"><span>タブレット（No.7）</span><span>高橋</span><span>11/24</span><span class="em">（まだ）</span></div>
+        </div></div>
+      <div class="win"><div class="wh"><img class="msi" src="../../pptx/_assets/icons/ms/teams.svg" alt="" style="width:24px;height:24px">総務部 ＞ 備品の貸出</div>
+        <div class="wb">
+          <div class="tm"><span class="av"><img class="msi" src="../../pptx/_assets/icons/pa_logo.png" alt="" style="width:24px;height:24px"></span><div class="bb"><div class="nm">ワークフロー<span class="bt">ボット</span>9:12</div><div class="tx">鈴木さん：ノートPC（No.12）<b>延長したい</b></div></div></div>
+          <div class="tm rep"><span class="av h s2">佐</span><div class="bb"><div class="nm">佐藤 花子　9:20</div><div class="tx">予約なしを確認。11/27（金）まで延長にします</div></div></div>
+        </div></div>
+    </div>
+  </div>
+  <div class="warnbar">
+    <span class="na" style="width:30px;height:30px;color:#C2410C"><svg class="ic" style="" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18v.5"/></svg></span>
+    <span class="wl">使う前に確認</span>
+    <span class="ws"><span>カードの送信は1回だけ。2回目からは無視される</span><span>ボタン付きのカードは、名前に「応答を待機する」が付くアクションで出す</span></span>
+  </div>
+  <div class="src">出典：Microsoft Learn「Power Automate を使用して Teams でメッセージを送信する」「Microsoft Teams にアダプティブ カードを投稿するフローを作成する」・Microsoft Teams／Office 365 Outlook コネクタ ／ 人名・日付は架空・画面は説明用の再現</div>
+</div>
+</body>
+</html>

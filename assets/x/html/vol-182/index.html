@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>Vol.182-1 自動化する仕事は回数×分数で選ぶ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/tips-base.css">
+<style>
+  .stage{gap:10px;}
+  /* マトリクス */
+  .mx{flex:0 0 846px;display:grid;grid-template-columns:42px 1fr 1fr;grid-template-rows:32px 1fr 1fr;gap:6px;min-height:0;}
+  .mx .cn{display:flex;align-items:center;justify-content:center;font-size:13.5px;font-weight:900;color:#64748B;line-height:1.1;text-align:center;}
+  .mx .hx{display:flex;align-items:center;justify-content:center;gap:8px;background:#1E3A8A;color:#fff;border-radius:9px;font-size:18px;font-weight:900;}
+  .mx .hx small{font-size:14.5px;font-weight:700;color:#C7D9FF;}
+  .mx .hy{display:flex;align-items:center;justify-content:center;gap:5px;background:#1E3A8A;color:#fff;border-radius:9px;font-size:18px;font-weight:900;writing-mode:vertical-rl;letter-spacing:.06em;}
+  .mx .hy small{font-size:14.5px;font-weight:700;color:#C7D9FF;} .mx .hy i{font-style:normal;text-combine-upright:all;}
+  .cell{border-radius:13px;border:2.5px solid;padding:7px 9px 8px;display:flex;flex-direction:column;gap:5px;min-height:0;min-width:0;box-shadow:0 4px 10px rgba(20,40,90,.10);}
+  .cell .vh{flex:0 0 auto;display:flex;align-items:center;gap:8px;font-size:25px;font-weight:900;line-height:1.12;}
+  .cell .vh .q{margin-left:auto;font-size:14.5px;font-weight:900;border-radius:999px;padding:2px 10px;background:#fff;border:1.5px solid currentColor;white-space:nowrap;}
+  .cell .bd{flex:1;min-height:0;display:flex;gap:10px;align-items:center;}
+  .cell .bd svg{flex:0 0 168px;width:168px;height:110px;}
+  .cell .tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;}
+  .cell .nm{font-size:17.5px;font-weight:900;color:#1B2A44;line-height:1.25;}
+  .cell .cl{font-size:16px;font-weight:700;color:#475569;line-height:1.25;}
+  .cell .big{font-size:40px;font-weight:900;line-height:1.25;white-space:nowrap;margin-top:-4px;}
+  .cell .big small{font-size:19px;font-weight:900;margin-left:2px;}
+  .cell .cp{flex:0 0 auto;font-size:15.5px;font-weight:900;border-radius:8px;padding:4px 10px;background:#fff;line-height:1.3;}
+  .cell.g{background:#ECFDF5;border-color:#34B67A;} .cell.g .vh,.cell.g .big{color:#047857;} .cell.g .cp{color:#065F46;border:1.5px solid #A7E3C6;}
+  .cell.b{background:#EEF4FF;border-color:#7DA8F0;} .cell.b .vh,.cell.b .big{color:#1D4ED8;} .cell.b .cp{color:#1E3A8A;border:1.5px solid #B9CFF7;}
+  .cell.n{background:#F4F6F9;border-color:#C3CBD6;} .cell.n .vh,.cell.n .big{color:#475569;} .cell.n .cp{color:#334155;border:1.5px solid #D5DBE4;}
+  .cell.a{background:#FFF8E6;border-color:#F0B13C;} .cell.a .vh,.cell.a .big{color:#B45309;} .cell.a .cp{color:#92400E;border:1.5px solid #F5D48E;}
+  /* 右の列 */
+  .side{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px;position:relative;}
+  .sc{background:#fff;border:2.5px solid #A9C6F5;border-radius:13px;padding:8px 12px 9px;display:flex;flex-direction:column;gap:6px;box-shadow:0 4px 10px rgba(20,40,90,.10);}
+  .sc .st{font-size:17px;font-weight:900;color:#1E3A8A;display:flex;align-items:center;gap:8px;}
+  .sc .st .ex{margin-left:auto;font-size:14.5px;font-weight:900;color:#B45309;background:#FEF3C7;border-radius:999px;padding:1px 10px;}
+  .fm{display:flex;align-items:center;gap:6px;justify-content:center;}
+  .fm .tk{background:#EEF4FF;border:2px solid #7DA8F0;border-radius:9px;padding:4px 9px;font-size:19px;font-weight:900;color:#1E3A8A;white-space:nowrap;}
+  .fm .op{font-size:24px;font-weight:900;color:#EA580C;}
+  .fmr{text-align:center;font-size:27px;font-weight:900;color:#1B2A44;line-height:1.15;}
+  .fmr b{color:#EA580C;}
+  .sc.show{flex:1;min-height:0;background:#FFFBEB;border-color:#F59E0B;justify-content:space-between;}
+  .br{display:flex;flex-direction:column;gap:3px;}
+  .br .lb{font-size:16.5px;font-weight:900;color:#1B2A44;display:flex;align-items:baseline;gap:8px;}
+  .br .lb small{font-size:14.5px;font-weight:700;color:#6B7280;}
+  .br .ln{display:flex;align-items:center;gap:9px;}
+  .br .bar{height:24px;border-radius:6px;box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 2px 4px rgba(0,0,0,.15);}
+  .br .bar.g{width:170px;background:linear-gradient(180deg,#34D399,#16A34A);}
+  .br .bar.a{width:17px;background:linear-gradient(180deg,#FCD34D,#F59E0B);}
+  .br .num{font-size:34px;font-weight:900;line-height:1.25;white-space:nowrap;}
+  .br .num small{font-size:18px;}
+  .br .num.g{color:#047857;} .br .num.a{color:#B45309;}
+  .diff{font-size:18.5px;font-weight:900;color:#7C2D12;text-align:center;background:#fff;border:1.5px solid #FDBA74;border-radius:8px;padding:3px 8px;}
+  .diff b{color:#DC2626;font-size:22px;}
+  .sc.fit{padding-right:118px;min-height:96px;justify-content:center;}
+  .fit .chips{display:flex;gap:6px;flex-wrap:nowrap;}
+  .fit .chips span{background:#EEF4FF;border:1.5px solid #C7D6EE;border-radius:999px;padding:3px 9px;font-size:15.5px;font-weight:900;color:#1E3A8A;white-space:nowrap;}
+  .side .chara{position:absolute;right:-4px;bottom:-4px;height:116px;z-index:6;filter:drop-shadow(0 3px 5px rgba(0,0,0,.25));}
+  .next small{font-size:15px;font-weight:700;color:#475569;margin-left:auto;}
+</style>
+</head>
+<body>
+<div id="slide">
+  <svg width="0" height="0" style="position:absolute">
+    <defs>
+      <linearGradient id="gEnv" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF9E8"/><stop offset="1" stop-color="#F5D98E"/></linearGradient>
+      <linearGradient id="gXl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2FB673"/><stop offset="1" stop-color="#107C41"/></linearGradient>
+      <linearGradient id="gBl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#60A5FA"/><stop offset="1" stop-color="#2563EB"/></linearGradient>
+      <linearGradient id="gPp" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#EEF2F7"/></linearGradient>
+      <linearGradient id="gCalc" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#56637A"/><stop offset="1" stop-color="#27324A"/></linearGradient>
+      <linearGradient id="gRed" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F87171"/><stop offset="1" stop-color="#DC2626"/></linearGradient>
+      <linearGradient id="gPen" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#FCD34D"/><stop offset="1" stop-color="#F59E0B"/></linearGradient>
+      <filter id="sh" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#1B2A44" flood-opacity=".25"/></filter>
+    </defs>
+  </svg>
+
+  <div class="titlebar">
+    <div class="vol-pill">Vol.182-1</div>
+    <img class="vol-logo" src="../../pptx/_assets/icons/pa_logo.png" alt="">
+    <div class="title-text">自動化する仕事は、作る前に<br><span class="hl">月の回数 × 1回の分数</span>で選ぶ</div>
+    <img class="title-chara" src="../../pptx/_assets/chara/chara_think.png" alt="">
+  </div>
+  <div class="concl">
+    <div class="chip"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0 0 12 3z"/></svg></div>
+    <div class="txt">掛け算すると<b>月に戻る時間</b>が出ます。同じ1本を作っても、仕事によって<b>10倍</b>の差がつきます</div>
+  </div>
+
+  <div class="stage">
+    <div class="mx">
+      <div class="cn"></div>
+      <div class="hx">1回が短い<small>目安：15分未満</small></div>
+      <div class="hx">1回が長い<small>目安：15分以上</small></div>
+
+      <div class="hy">回数が多い<small>週<i>1</i>回以上</small></div>
+      <!-- 多い×短い：転記 -->
+      <div class="cell g">
+        <div class="vh">まず自動化<span class="q">多い × 短い</span></div>
+        <div class="bd">
+          <svg viewBox="0 0 168 110">
+            <!-- 封筒の束 -->
+            <g filter="url(#sh)">
+              <rect x="14" y="20" width="54" height="36" rx="4" fill="#F1E3B4" stroke="#D2A63C" stroke-width="1.5"/>
+              <rect x="10" y="30" width="54" height="36" rx="4" fill="#F7EBC4" stroke="#D2A63C" stroke-width="1.5"/>
+              <rect x="6" y="40" width="56" height="40" rx="4" fill="url(#gEnv)" stroke="#C99A2E" stroke-width="1.8"/>
+              <path d="M7 43 L34 62 L61 43" fill="none" stroke="#C99A2E" stroke-width="1.8" stroke-linejoin="round"/>
+              <path d="M7 78 L26 60 M61 78 L42 60" stroke="#E0BE6A" stroke-width="1.2"/>
+            </g>
+            <!-- 矢印 -->
+            <path d="M70 60 H88" stroke="#16A34A" stroke-width="4" stroke-linecap="round"/>
+            <path d="M84 52 L93 60 L84 68" fill="none" stroke="#16A34A" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+            <!-- 台帳 -->
+            <g filter="url(#sh)">
+              <rect x="98" y="8" width="64" height="96" rx="5" fill="url(#gPp)" stroke="#9FB0C4" stroke-width="1.5"/>
+              <path d="M98 13 a5 5 0 0 1 5 -5 h54 a5 5 0 0 1 5 5 v9 h-64z" fill="url(#gXl)"/>
+              <rect x="104" y="13" width="20" height="4" rx="2" fill="#fff" opacity=".9"/>
+              <g stroke="#C9D4E2" stroke-width="1"><path d="M98 36h64M98 50h64M98 64h64M98 78h64M98 92h64M120 22v82M142 22v82"/></g>
+              <g fill="#A6B4C6"><rect x="102" y="27" width="13" height="4" rx="2"/><rect x="124" y="27" width="13" height="4" rx="2"/><rect x="146" y="27" width="11" height="4" rx="2"/>
+                <rect x="102" y="41" width="13" height="4" rx="2"/><rect x="124" y="41" width="10" height="4" rx="2"/><rect x="146" y="41" width="11" height="4" rx="2"/>
+                <rect x="102" y="55" width="11" height="4" rx="2"/><rect x="124" y="55" width="13" height="4" rx="2"/><rect x="146" y="55" width="9" height="4" rx="2"/></g>
+              <rect x="99" y="65" width="62" height="13" fill="#BBF7D0" stroke="#16A34A" stroke-width="1.6"/>
+              <g fill="#15803D"><rect x="102" y="69.5" width="13" height="4" rx="2"/><rect x="124" y="69.5" width="12" height="4" rx="2"/><rect x="146" y="69.5" width="6" height="4" rx="2"/></g>
+            </g>
+            <circle cx="160" cy="71" r="9" fill="#16A34A" stroke="#fff" stroke-width="2"/>
+            <path d="M155.5 71 l3.2 3.4 l5.6 -6.6" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <div class="tx">
+            <div class="nm">受注メールを台帳へ転記</div>
+            <div class="cl">5分 × 月20回</div>
+            <div class="big">100<small>分／月</small></div>
+          </div>
+        </div>
+        <div class="cp">毎日の5分が、月では100分になる</div>
+      </div>
+      <!-- 多い×長い：月次報告 -->
+      <div class="cell b">
+        <div class="vh">分けて一部だけ<span class="q">多い × 長い</span></div>
+        <div class="bd">
+          <svg viewBox="0 0 168 110">
+            <g filter="url(#sh)">
+              <rect x="34" y="4" width="84" height="98" rx="5" fill="#DDE6F3" stroke="#9FB0C4" stroke-width="1.3"/>
+              <rect x="26" y="8" width="84" height="98" rx="5" fill="#EBF0F8" stroke="#9FB0C4" stroke-width="1.3"/>
+              <rect x="18" y="6" width="86" height="100" rx="5" fill="url(#gPp)" stroke="#8FA2BA" stroke-width="1.6"/>
+            </g>
+            <rect x="26" y="14" width="46" height="6" rx="3" fill="#1E3A8A"/>
+            <!-- グラフ（数字集め＝自動） -->
+            <rect x="24" y="26" width="74" height="40" rx="4" fill="#E0EBFF" stroke="#2563EB" stroke-width="1.4" stroke-dasharray="4 3"/>
+            <path d="M30 60h62" stroke="#64748B" stroke-width="1.5"/>
+            <rect x="34" y="46" width="10" height="14" rx="1.5" fill="url(#gBl)"/>
+            <rect x="49" y="38" width="10" height="22" rx="1.5" fill="url(#gBl)"/>
+            <rect x="64" y="42" width="10" height="18" rx="1.5" fill="url(#gBl)"/>
+            <rect x="79" y="31" width="10" height="29" rx="1.5" fill="url(#gBl)"/>
+            <!-- コメント（人が書く） -->
+            <g fill="#9AA8BA"><rect x="26" y="74" width="62" height="4.5" rx="2"/><rect x="26" y="83" width="54" height="4.5" rx="2"/><rect x="26" y="92" width="34" height="4.5" rx="2"/></g>
+            <!-- ペン -->
+            <g transform="translate(92 98) rotate(-42)" filter="url(#sh)">
+              <rect x="0" y="-5" width="40" height="10" rx="2" fill="url(#gPen)" stroke="#B45309" stroke-width="1"/>
+              <path d="M0 -5 L-11 0 L0 5z" fill="#F3E3C3" stroke="#B45309" stroke-width="1"/>
+              <path d="M-11 0 L-6 -2.3 V2.3z" fill="#1F2937"/>
+              <rect x="33" y="-5" width="7" height="10" rx="2" fill="#EF4444"/>
+            </g>
+            <!-- ×8 -->
+            <circle cx="142" cy="24" r="19" fill="url(#gBl)" stroke="#fff" stroke-width="2.5" filter="url(#sh)"/>
+            <text x="142" y="30.5" text-anchor="middle" font-size="18" font-weight="900" fill="#fff" font-family="Noto Sans JP">×8</text>
+          </svg>
+          <div class="tx">
+            <div class="nm">月次報告（8店舗分）</div>
+            <div class="cl">30分 × 月8回</div>
+            <div class="big">240<small>分／月</small></div>
+          </div>
+        </div>
+        <div class="cp">数字集めは自動、コメントは人が書く</div>
+      </div>
+
+      <div class="hy">回数が少ない<small>月<i>1</i>回以下</small></div>
+      <!-- 少ない×短い：問い合わせ -->
+      <div class="cell n">
+        <div class="vh">そのまま手で<span class="q">少ない × 短い</span></div>
+        <div class="bd">
+          <svg viewBox="0 0 168 110">
+            <g filter="url(#sh)">
+              <path d="M10 10 h84 a8 8 0 0 1 8 8 v26 a8 8 0 0 1 -8 8 h-52 l-14 13 v-13 h-18 a8 8 0 0 1 -8 -8 v-26 a8 8 0 0 1 8 -8z" fill="url(#gPp)" stroke="#94A3B8" stroke-width="1.8"/>
+            </g>
+            <g fill="#9AA8BA"><rect x="16" y="22" width="52" height="5" rx="2.5"/><rect x="16" y="34" width="38" height="5" rx="2.5"/></g>
+            <circle cx="84" cy="31" r="12" fill="#64748B"/>
+            <text x="84" y="38" text-anchor="middle" font-size="19" font-weight="900" fill="#fff" font-family="Noto Sans JP">?</text>
+            <g filter="url(#sh)">
+              <path d="M70 60 h82 a8 8 0 0 1 8 8 v20 a8 8 0 0 1 -8 8 h-12 v11 l-13 -11 h-57 a8 8 0 0 1 -8 -8 v-20 a8 8 0 0 1 8 -8z" fill="#64748B" stroke="#475569" stroke-width="1.5"/>
+            </g>
+            <g fill="#fff" opacity=".92"><rect x="72" y="70" width="62" height="5" rx="2.5"/><rect x="72" y="81" width="44" height="5" rx="2.5"/></g>
+            <!-- 時計 5分 -->
+            <g filter="url(#sh)"><circle cx="30" cy="84" r="17" fill="#fff" stroke="#64748B" stroke-width="3"/></g>
+            <path d="M30 84 V72" stroke="#1F2937" stroke-width="3" stroke-linecap="round"/>
+            <path d="M30 84 L39 79" stroke="#DC2626" stroke-width="3" stroke-linecap="round"/>
+            <path d="M30 84 L30 67 A17 17 0 0 1 44.7 75.5z" fill="#FCA5A5" opacity=".6"/>
+            <circle cx="30" cy="84" r="2.6" fill="#1F2937"/>
+          </svg>
+          <div class="tx">
+            <div class="nm">たまの問い合わせ対応</div>
+            <div class="cl">5分 × 月1回</div>
+            <div class="big">5<small>分／月</small></div>
+          </div>
+        </div>
+        <div class="cp">作る時間のほうが長くなりやすい</div>
+      </div>
+      <!-- 少ない×長い：年次集計 -->
+      <div class="cell a">
+        <div class="vh">手順書・ひな形が先<span class="q">少ない × 長い</span></div>
+        <div class="bd">
+          <svg viewBox="0 0 168 110">
+            <!-- 年間カレンダー -->
+            <g filter="url(#sh)">
+              <rect x="6" y="12" width="88" height="92" rx="6" fill="url(#gPp)" stroke="#9FB0C4" stroke-width="1.6"/>
+              <path d="M6 18 a6 6 0 0 1 6 -6 h76 a6 6 0 0 1 6 6 v12 h-88z" fill="url(#gRed)"/>
+            </g>
+            <g fill="#fff" stroke="#7F1D1D" stroke-width="1.4"><rect x="24" y="6" width="6" height="13" rx="3"/><rect x="70" y="6" width="6" height="13" rx="3"/></g>
+            <rect x="38" y="19" width="24" height="5" rx="2.5" fill="#fff" opacity=".9"/>
+            <g fill="#E3E9F1" stroke="#C3CDDA" stroke-width="1">
+              <rect x="12" y="36" width="16" height="18" rx="3"/><rect x="32" y="36" width="16" height="18" rx="3"/><rect x="52" y="36" width="16" height="18" rx="3"/><rect x="72" y="36" width="16" height="18" rx="3"/>
+              <rect x="12" y="58" width="16" height="18" rx="3"/><rect x="32" y="58" width="16" height="18" rx="3"/><rect x="52" y="58" width="16" height="18" rx="3"/><rect x="72" y="58" width="16" height="18" rx="3"/>
+              <rect x="12" y="80" width="16" height="18" rx="3"/><rect x="32" y="80" width="16" height="18" rx="3"/><rect x="52" y="80" width="16" height="18" rx="3"/>
+            </g>
+            <rect x="72" y="80" width="16" height="18" rx="3" fill="#FDE68A" stroke="#D97706" stroke-width="2"/>
+            <circle cx="80" cy="89" r="13" fill="none" stroke="#DC2626" stroke-width="2.6"/>
+            <!-- 電卓 -->
+            <g filter="url(#sh)">
+              <rect x="104" y="22" width="58" height="82" rx="7" fill="url(#gCalc)" stroke="#1B2437" stroke-width="1.4"/>
+              <rect x="110" y="29" width="46" height="18" rx="3" fill="#D9F2C4" stroke="#7C9A5E" stroke-width="1"/>
+            </g>
+            <rect x="130" y="35" width="22" height="6" rx="2" fill="#3F5B2A"/>
+            <g fill="#E5EAF2">
+              <rect x="110" y="53" width="12" height="10" rx="2.5"/><rect x="127" y="53" width="12" height="10" rx="2.5"/>
+              <rect x="110" y="68" width="12" height="10" rx="2.5"/><rect x="127" y="68" width="12" height="10" rx="2.5"/>
+              <rect x="110" y="83" width="12" height="10" rx="2.5"/><rect x="127" y="83" width="12" height="10" rx="2.5"/>
+            </g>
+            <rect x="144" y="53" width="12" height="10" rx="2.5" fill="#94A3B8"/>
+            <rect x="144" y="68" width="12" height="25" rx="2.5" fill="#F59E0B"/>
+          </svg>
+          <div class="tx">
+            <div class="nm">年1回の集計</div>
+            <div class="cl">120分 × 1/12（年1回）</div>
+            <div class="big">10<small>分／月</small></div>
+          </div>
+        </div>
+        <div class="cp">次の担当も迷わない手順書を先に</div>
+      </div>
+    </div>
+
+    <div class="side">
+      <div class="sc">
+        <div class="st">戻る時間の出し方</div>
+        <div class="fm"><span class="tk">月の回数</span><span class="op">×</span><span class="tk">1回の分数</span></div>
+        <div class="fmr">＝ <b>月に戻る時間</b></div>
+      </div>
+      <div class="sc show">
+        <div class="st">同じ1本を作るなら<span class="ex">計算例</span></div>
+        <div class="br">
+          <div class="lb">毎日の転記<small>5分 × 20回</small></div>
+          <div class="ln"><span class="bar g"></span><span class="num g">100<small>分／月</small></span></div>
+        </div>
+        <div class="br">
+          <div class="lb">年1回の集計<small>120分 × 1/12</small></div>
+          <div class="ln"><span class="bar a"></span><span class="num a">10<small>分／月</small></span></div>
+        </div>
+        <div class="diff">戻る時間は <b>10倍</b> ちがう</div>
+      </div>
+      <div class="sc fit">
+        <div class="st">回数が多くて向く仕事</div>
+        <div class="chips"><span>転記</span><span>リマインド</span><span>振り分け</span></div>
+      </div>
+      <img class="chara" src="../../pptx/_assets/chara/chara_point.png" alt="">
+    </div>
+  </div>
+
+  <div class="next">
+    <span class="na"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12h15M13 6l6 6-6 6"/></svg></span>
+    <span><b>選び方の3手順は2枚目へ</b></span>
+    <small>回数・分数・戻る時間はすべて計算例（目安）</small>
+  </div>
+  <div class="src">出典：Microsoft Learn「オートメーションの実装に関するレコメンデーション」（Power Platform Well-Architected）／数字は計算例で実測ではない・仕事の例は架空</div>
+</div>
+</body>
+</html>

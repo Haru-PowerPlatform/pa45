@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>M365 Copilot Vol.14-1 前置きを一度だけ設定する</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/mc-base.css">
+<style>
+  .stage{gap:10px;}
+  .col.bad{flex:0 0 432px;}
+  .col.good{flex:1;min-width:0;}
+  .sc{flex:0 0 100px;position:relative;border-radius:10px;overflow:hidden;background:#FCE4E4;}
+  .sc svg{position:absolute;inset:0;width:100%;height:100%;}
+  .sc .chara{position:absolute;right:2px;bottom:-6px;height:112px;z-index:2;filter:drop-shadow(0 3px 4px rgba(0,0,0,.25));}
+  .stack{flex:1;min-height:0;display:flex;flex-direction:column;gap:6px;}
+  .pm{flex:1;min-height:0;display:flex;align-items:stretch;gap:8px;background:#fff;border:2px solid var(--red-line);border-radius:10px;padding:5px 8px;box-shadow:0 2px 5px rgba(127,29,29,.12);}
+  .pm .day{flex:0 0 46px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#7F1D1D;color:#fff;border-radius:7px;font-weight:900;font-size:17px;line-height:1.15;}
+  .pm .day small{font-size:12.5px;font-weight:700;opacity:.9;}
+  .pm .tx{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:3px;}
+  .pm .pre{font-size:15.5px;font-weight:700;color:#991B1B;line-height:1.3;background:#FDE2E2;border-radius:6px;padding:2px 7px;}
+  .pm .req{font-size:15.5px;font-weight:900;color:#1B2A44;line-height:1.3;padding:0 7px;white-space:nowrap;overflow:hidden;}
+  .badline{flex:0 0 auto;background:#DC2626;color:#fff;border-radius:8px;padding:6px 10px;font-size:17px;font-weight:900;line-height:1.3;text-align:center;}
+  .eng{flex:0 0 116px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;}
+  .eng .ai{width:80px;height:80px;border-radius:20px;background:#fff;box-shadow:0 3px 10px rgba(0,0,0,.15);display:flex;align-items:center;justify-content:center;}
+  .eng .pill{font-size:15px;font-weight:900;color:#fff;background:var(--mc);border-radius:999px;padding:3px 11px;white-space:nowrap;}
+  .eng .lb{font-size:17px;font-weight:900;color:var(--mc-dark);text-align:center;line-height:1.35;}
+  .eng .one{font-size:30px;font-weight:900;color:var(--orange);line-height:1.3;}
+  .eng .ar{width:90px;height:30px;color:var(--mc);display:flex;justify-content:center;}
+  .eng .ar svg{width:34px;height:30px;}
+  .pane{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:2px solid var(--green-line);border-radius:10px;overflow:hidden;box-shadow:0 3px 8px rgba(20,90,60,.12);}
+  .pane .phd{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:5px 11px;background:#F3F2F1;border-bottom:1px solid #E1DFDD;font-size:16px;font-weight:700;color:#242424;}
+  .pane .pb{flex:1;min-height:0;display:flex;flex-direction:column;gap:7px;padding:8px 12px;}
+  .saved{flex:0 0 auto;display:flex;align-items:center;gap:7px;background:#F0FDFA;border:1.5px dashed var(--mc);border-radius:9px;padding:5px 9px;}
+  .saved .gl{flex:0 0 auto;display:flex;align-items:center;gap:5px;font-size:15.5px;font-weight:900;color:var(--mc-dark);white-space:nowrap;}
+  .saved .gl svg{width:22px;height:22px;color:var(--mc);}
+  .saved .c{font-size:15.5px;font-weight:900;color:#134E4A;background:#CCFBF1;border-radius:999px;padding:1px 9px;white-space:nowrap;}
+  .saved .once{margin-left:auto;font-size:14.5px;font-weight:900;color:#fff;background:var(--orange);border-radius:999px;padding:2px 10px;white-space:nowrap;}
+  .askrow{flex:0 0 auto;display:flex;align-items:center;justify-content:flex-end;gap:8px;}
+  .askrow .l1{font-size:15px;font-weight:900;color:#fff;background:#16A34A;border-radius:999px;padding:2px 11px;white-space:nowrap;}
+  .ask{background:#E8F4F2;border:1.5px solid #A7E3D8;border-radius:12px 12px 3px 12px;padding:6px 14px;font-size:19px;font-weight:900;color:#1B2A44;line-height:1.35;}
+  .ans{flex:1;min-height:0;display:flex;flex-direction:column;background:#FAFAFA;border:1.5px solid #E1DFDD;border-radius:12px 12px 12px 3px;padding:5px 12px;}
+  .li{flex:1;display:flex;align-items:center;gap:9px;border-bottom:1.2px dashed #E5E7EB;}
+  .li:last-child{border-bottom:none;}
+  .li .tg{flex:0 0 96px;text-align:center;font-size:14.5px;font-weight:900;border-radius:6px;padding:2px 0;color:#fff;background:var(--mc);}
+  .li .tg.o{background:#EA580C;} .li .tg.e{background:transparent;}
+  .li .tx{flex:1;font-size:16.5px;font-weight:700;color:#1B2A44;line-height:1.3;}
+  .li .tx b{color:#B91C1C;}
+  .bot{flex:0 0 auto;display:flex;flex-direction:column;gap:6px;}
+  .bot .uses{background:#fff;border:1.5px solid #CFEFE0;border-radius:10px;padding:4px 9px;}
+  .metric .mv{font-size:24px;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={x:'<path d="M6 6l12 12M18 6L6 18"/>',ok:'<path d="M5 12l5 5 9-10"/>',arrow:'<path d="M4 12h15M13 6l6 6-6 6"/>',
+  gear:'<circle cx="12" cy="12" r="3.2"/><path d="M12 2.8v2.6M12 18.6v2.6M2.8 12h2.6M18.6 12h2.6M5.5 5.5l1.8 1.8M16.7 16.7l1.8 1.8M5.5 18.5l1.8-1.8M16.7 7.3l1.8-1.8"/>'};
+const CPI=(w)=>`<img class="msi" src="${A}icons/ms/copilot.png" alt="" style="width:${w||24}px;height:${w||24}px">`;
+// 左の情景：月〜金、毎日おなじ3行の前置きが付いた依頼メモ
+const days=['月','火','水','木','金'];
+const sheets=days.map((d,i)=>{const x=12+i*56;return `
+  <g filter="url(#sh)"><rect x="${x}" y="24" width="48" height="66" rx="5" fill="url(#pg)" stroke="#E7B4B4"/></g>
+  <rect x="${x}" y="24" width="48" height="6" rx="3" fill="#DC2626"/>
+  <rect x="${x+6}" y="36" width="36" height="6" rx="3" fill="#EF4444"/>
+  <rect x="${x+6}" y="46" width="30" height="6" rx="3" fill="#EF4444"/>
+  <rect x="${x+6}" y="56" width="34" height="6" rx="3" fill="#EF4444"/>
+  <rect x="${x+6}" y="70" width="26" height="6" rx="3" fill="#64748B"/>
+  <text x="${x+24}" y="17" text-anchor="middle" font-size="14" font-weight="900" fill="#7F1D1D" font-family="Noto Sans JP">${d}</text>`}).join('');
+const pm=(d,t,req)=>`<div class="pm"><span class="day">${d}<small>${t}</small></span><div class="tx"><div class="pre">私は総務の担当です。結論から。<br>箇条書きで。社外向けは敬体で。</div><div class="req">${req}</div></div></div>`;
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="pills"><div class="vol-pill"><small>M365 Copilot</small>Vol.14-1</div><div class="lic-pill free">無料の Copilot Chat でできる</div></div>
+    <div class="title-text">毎回打っていた前置きを、<br><span class="hl">Copilot に一度だけ設定</span>しておく</div>
+    <div class="title-apps"><img class="msi" src="${A}icons/ms/copilot.png" alt=""></div>
+    <img class="title-chara" src="${A}chara/chara_point.png" alt="">
+  </div>
+  <div class="concl">
+    <div class="chip app">${CPI(34)}</div>
+    <div class="txt">Copilot Chat の「Chat 設定」→「個人用設定」にある<b>「カスタム指示」</b>に、いつもの前置きを保存。<br>そのあとの会話は、<b>用件の1行だけ</b>で頼みます</div>
+  </div>
+  <div class="stage">
+    <div class="col bad">
+      <div class="ph"><span class="mk">${svgw(P.x,3.2)}</span>毎回、同じ前置きを打つ</div>
+      <div class="sc"><svg viewBox="0 0 407 100" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="pg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#F8EDED"/></linearGradient><filter id="sh" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="2" stdDeviation="1.6" flood-color="#7F1D1D" flood-opacity=".28"/></filter></defs>${sheets}</svg><img class="chara" src="${A}chara/chara_tired.png" alt=""></div>
+      <div class="stack">
+        ${pm('月','9:10','＋ 避難訓練の案内文を作って')}
+        ${pm('火','13:40','＋ 備品の発注メールを書いて')}
+        ${pm('水','16:05','＋ 会議のメモを要約して')}
+      </div>
+      <div class="badline">前置き2〜3行 × 頼むたび</div>
+    </div>
+    <div class="eng">
+      <div class="ai">${CPI(52)}</div>
+      <span class="pill">カスタム指示</span>
+      <div class="lb">前置きを<br>入れるのは</div>
+      <div class="one">1回</div>
+      <span class="ar">${svgw(P.arrow,3)}</span>
+    </div>
+    <div class="col good">
+      <div class="ph"><span class="mk">${svgw(P.ok,3.2)}</span>用件の1行だけで頼む</div>
+      <div class="pane">
+        <div class="phd">${CPI(24)}Copilot Chat<span class="repro">画面は説明用の再現</span></div>
+        <div class="pb">
+          <div class="saved"><span class="gl">${svgw(P.gear,2.2)}カスタム指示</span><span class="c">総務の担当</span><span class="c">結論から・箇条書き</span><span class="c">社外は敬体</span><span class="once">保存済み</span></div>
+          <div class="askrow"><span class="l1">打つのは1行</span><div class="ask">避難訓練の案内文を作って</div></div>
+          <div class="ans">
+            <div class="li"><span class="tg o">結論から</span><span class="tx"><b>11/26（木）10:00</b> から避難訓練を行います</span></div>
+            <div class="li"><span class="tg">箇条書き</span><span class="tx">・集合：1階ロビー</span></div>
+            <div class="li"><span class="tg e"></span><span class="tx">・所要：30分ほど</span></div>
+            <div class="li"><span class="tg e"></span><span class="tx">・雨天のときは 12/3（木）に延期</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="bot">
+        <div class="metric"><span class="ml">頼むたびに打つ量</span><span class="mv">前置き＋用件</span><span class="ar">${svgw(P.arrow,3)}</span><span class="mv to">用件の1行だけ</span></div>
+        <div class="uses"><span class="ul">使いどころ</span><span class="u">案内文</span><span class="u">メールの返信</span><span class="u">会議メモの要約</span><span class="u">手順書の下書き</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="next">
+    <span class="na">${svgw(P.arrow,2.6)}</span>
+    <span><b>入力欄に入れる文面は2枚目</b>、入れておく指示6つの早見表は3枚目へ</span>
+  </div>
+  <div class="src">出典：Microsoft サポート「Microsoft Copilot の応答方法をカスタマイズする」／人名は架空・画面は説明用の再現（メニュー名はサポート日本語版の表記）</div>
+`;
+</script>
+</body>
+</html>

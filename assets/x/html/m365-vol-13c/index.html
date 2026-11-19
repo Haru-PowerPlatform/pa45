@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>M365 Copilot Vol.13-3 読む場合と聞く場合</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/mc-base.css">
+<style>
+  .stage{gap:10px;}
+  .col{gap:8px;}
+  .sc{flex:0 0 118px;position:relative;border-radius:10px;overflow:hidden;}
+  .col.bad .sc{background:#FCE4E4;} .col.good .sc{background:#DCF3E7;}
+  .sc svg{position:absolute;inset:0;width:100%;height:100%;}
+  .sc .chara{position:absolute;right:6px;bottom:-4px;height:122px;z-index:2;filter:drop-shadow(0 3px 4px rgba(0,0,0,.25));}
+  .tl{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:2px solid var(--red-line);border-radius:10px;overflow:hidden;}
+  .col.good .tl{border-color:var(--green-line);}
+  .tl .th{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:5px 11px;background:#F3F2F1;border-bottom:1px solid #E1DFDD;font-size:15.5px;font-weight:900;color:#424242;}
+  .tr{flex:1;min-height:0;display:flex;align-items:center;gap:10px;padding:0 11px;border-bottom:1px solid #EFEDEB;}
+  .tr:last-child{border-bottom:none;}
+  .tr .t{flex:0 0 92px;font-size:16.5px;font-weight:900;color:#475569;font-family:"Segoe UI","Noto Sans JP";}
+  .tr .w{flex:1;min-width:0;font-size:16.5px;font-weight:800;color:#1B2A44;line-height:1.3;}
+  .tr .w small{font-size:15px;font-weight:700;color:#64748B;}
+  .tr .bd{flex:0 0 auto;font-size:14.5px;font-weight:900;border-radius:999px;padding:2px 10px;color:#fff;}
+  .tr.r{background:#FEF2F2;} .tr.r .w{color:#991B1B;} .tr.r .bd{background:#DC2626;}
+  .tr.g{background:#ECFDF5;} .tr.g .w{color:#065F46;} .tr.g .bd{background:#16A34A;}
+  .tr.n .bd{background:#94A3B8;}
+  .badline{flex:0 0 auto;background:#DC2626;color:#fff;border-radius:9px;padding:7px 12px;font-size:17px;font-weight:900;line-height:1.3;}
+  .goodline{flex:0 0 auto;background:#16A34A;color:#fff;border-radius:9px;padding:7px 12px;font-size:17px;font-weight:900;line-height:1.3;}
+  .eng{flex:0 0 120px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;}
+  .eng .ai{width:84px;height:84px;border-radius:20px;background:#fff;box-shadow:0 3px 10px rgba(0,0,0,.15);display:flex;align-items:center;justify-content:center;}
+  .eng .pill{font-size:15px;font-weight:900;color:#fff;background:var(--mc);border-radius:999px;padding:3px 10px;white-space:nowrap;}
+  .eng .lb{font-size:16.5px;font-weight:900;color:var(--mc-dark);text-align:center;line-height:1.38;}
+  .eng .ar{width:60px;height:30px;color:var(--mc);}
+  .eng .ar svg{max-width:60px;}
+  .bot2{flex:0 0 auto;display:flex;gap:10px;align-items:stretch;margin:8px 16px 0;}
+  .bot2 .metric{flex:1;margin:0;}
+  .bot2 .metric .ml{font-size:15.5px;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={x:'<path d="M6 6l12 12M18 6L6 18"/>',ok:'<path d="M5 12l5 5 9-10"/>',arrow:'<path d="M4 12h15M13 6l6 6-6 6"/>'};
+const CPI=(w)=>`<img class="msi" src="${A}icons/ms/copilot.png" alt="" style="width:${w||24}px;height:${w||24}px">`;
+const MS=(n,w)=>`<img class="msi" src="${A}icons/ms/${n}" alt="" style="width:${w||24}px;height:${w||24}px">`;
+
+/* 左：夜の机。紙を広げ、辞書を引きながら読む */
+const SL=`<svg viewBox="0 0 533 118" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"><defs>
+  <linearGradient id="ld" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C08A55"/><stop offset="1" stop-color="#8A5E34"/></linearGradient>
+  <linearGradient id="lp" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#EEF2F7"/></linearGradient>
+  <linearGradient id="lb" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#1E3A8A"/><stop offset="1" stop-color="#3B82F6"/></linearGradient>
+  <filter id="ls" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#7F1D1D" flood-opacity=".25"/></filter></defs>
+  <rect width="533" height="118" fill="#FCE4E4"/>
+  <rect x="0" y="80" width="533" height="38" fill="url(#ld)"/><rect x="0" y="76" width="533" height="6" fill="#D9A46D"/>
+  <path d="M40 76V30l-14-10" fill="none" stroke="#475569" stroke-width="5" stroke-linecap="round"/><path d="M6 22l30-14 14 22z" fill="#F59E0B"/><path d="M12 30l34 30H0z" fill="#FDE68A" opacity=".45"/>
+  <g filter="url(#ls)">
+    <rect x="70" y="26" width="76" height="58" rx="3" fill="url(#lp)" stroke="#CBD5E1" transform="rotate(-8 108 55)"/>
+    <rect x="130" y="22" width="76" height="58" rx="3" fill="url(#lp)" stroke="#CBD5E1" transform="rotate(5 168 51)"/>
+    <rect x="196" y="26" width="76" height="58" rx="3" fill="url(#lp)" stroke="#CBD5E1" transform="rotate(-3 234 55)"/>
+  </g>
+  <g fill="#CBD5E1"><rect x="80" y="40" width="52" height="4" rx="2" transform="rotate(-8 108 55)"/><rect x="80" y="50" width="46" height="4" rx="2" transform="rotate(-8 108 55)"/><rect x="80" y="60" width="52" height="4" rx="2" transform="rotate(-8 108 55)"/>
+    <rect x="140" y="36" width="54" height="4" rx="2" transform="rotate(5 168 51)"/><rect x="140" y="46" width="40" height="4" rx="2" transform="rotate(5 168 51)"/><rect x="140" y="56" width="54" height="4" rx="2" transform="rotate(5 168 51)"/>
+    <rect x="206" y="40" width="54" height="4" rx="2" transform="rotate(-3 234 55)"/><rect x="206" y="50" width="48" height="4" rx="2" transform="rotate(-3 234 55)"/></g>
+  <g fill="#F59E0B" opacity=".75"><rect x="140" y="56" width="38" height="5" transform="rotate(5 168 51)"/></g>
+  <g filter="url(#ls)"><rect x="288" y="38" width="62" height="42" rx="4" fill="url(#lb)"/><rect x="292" y="74" width="54" height="5" fill="#F8FAFC"/></g>
+  <text x="319" y="64" text-anchor="middle" font-family="Segoe UI,Arial" font-size="15" font-weight="800" fill="#fff">A-Z</text>
+  <circle cx="400" cy="38" r="26" fill="#fff" stroke="#CBD5E1" stroke-width="4"/>
+  <path d="M400 38l-11.3 6.5M400 38V20" stroke="#1F2937" stroke-width="3.5" stroke-linecap="round"/><circle cx="400" cy="38" r="3" fill="#DC2626"/>
+</svg>`;
+
+/* 右：朝の電車。スマホとイヤホン */
+const SR=`<svg viewBox="0 0 533 118" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg"><defs>
+  <linearGradient id="rs" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7DD3FC"/><stop offset="1" stop-color="#E0F2FE"/></linearGradient>
+  <linearGradient id="rp" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#EEF7F5"/></linearGradient>
+  <linearGradient id="rb" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#CBD5E1"/></linearGradient>
+  <filter id="rsh" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#064E3B" flood-opacity=".3"/></filter></defs>
+  <rect width="533" height="118" fill="#DCF3E7"/>
+  <rect x="0" y="4" width="533" height="4" fill="#94A3B8"/>
+  <g fill="none" stroke="#64748B" stroke-width="3"><path d="M30 8v10"/><circle cx="30" cy="24" r="6"/><path d="M380 8v10"/><circle cx="380" cy="24" r="6"/></g>
+  <rect x="10" y="34" width="150" height="54" rx="8" fill="url(#rs)" stroke="#94A3B8" stroke-width="3"/>
+  <rect x="270" y="34" width="150" height="54" rx="8" fill="url(#rs)" stroke="#94A3B8" stroke-width="3"/>
+  <g stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M24 54h50M60 72h70M286 52h60M310 74h50"/></g>
+  <rect x="0" y="100" width="533" height="18" fill="#0F766E"/>
+  <g filter="url(#rsh)"><rect x="180" y="14" width="70" height="100" rx="11" fill="#111827"/><rect x="185" y="21" width="60" height="86" rx="6" fill="url(#rp)"/></g>
+  <g fill="#14B8A6"><rect x="192" y="44" width="5" height="12" rx="2"/><rect x="200" y="38" width="5" height="24" rx="2"/><rect x="208" y="34" width="5" height="32" rx="2"/><rect x="216" y="40" width="5" height="20" rx="2"/><rect x="224" y="36" width="5" height="28" rx="2"/><rect x="232" y="42" width="5" height="16" rx="2"/></g>
+  <circle cx="215" cy="86" r="11" fill="#0F766E"/><rect x="210" y="81" width="3.5" height="10" fill="#fff"/><rect x="216.5" y="81" width="3.5" height="10" fill="#fff"/>
+  <g filter="url(#rsh)"><ellipse cx="282" cy="62" rx="11" ry="13" fill="url(#rb)"/><rect x="277" y="69" width="8" height="26" rx="4" fill="url(#rb)"/>
+    <ellipse cx="306" cy="74" rx="11" ry="13" fill="url(#rb)"/><rect x="301" y="81" width="8" height="26" rx="4" fill="url(#rb)"/></g>
+  <g fill="none" stroke="#0F766E" stroke-width="3" stroke-linecap="round"><path d="M268 46q-7 8 0 16"/><path d="M260 40q-12 14 0 28"/></g>
+</svg>`;
+
+const row=(c,t,w,bd)=>`<div class="tr ${c}"><span class="t">${t}</span><span class="w">${w}</span>${bd?`<span class="bd">${bd}</span>`:''}</div>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="pills"><div class="vol-pill"><small>M365 Copilot</small>Vol.13-3</div><div class="lic-pill paid">M365 Copilot ライセンスが要る</div></div>
+    <div class="title-text">英文30ページの報告書：<br><span class="hl">読む場合と聞く場合</span></div>
+    <div class="title-apps">${MS('onedrive.svg',44)}<span class="pl">+</span><img class="msi" src="${A}icons/ms/copilot.png" alt=""></div>
+    <img class="title-chara" src="${A}chara/chara_think.png" alt="">
+  </div>
+  <div class="concl">
+    <div class="chip app">${CPI(34)}</div>
+    <div class="txt">変わるのは<b>読む時間の置き場所</b>。机で通読する時間を、<b>移動中に聞く</b>時間に移し、<br>原本は気になった所だけ開く。同じ資料・同じ会議で、前日の夜が空きます</div>
+  </div>
+  <div class="stage">
+    <div class="col bad">
+      <div class="ph"><span class="mk">${svgw(P.x,3.2)}</span>机で読む場合</div>
+      <div class="sc">${SL}<img class="chara" src="${A}chara/chara_tired.png" alt=""></div>
+      <div class="tl"><div class="th">会議までの流れ（例）</div>
+        ${row('n','17:30','報告書が届く <small>英文30ページ</small>')}
+        ${row('r','21:00','机で最初から読む <small>辞書を引きながら</small>','例 60分')}
+        ${row('n','8:10','電車ではスマホを眺めるだけ')}
+        ${row('r','10:00','後半の章があいまいなまま会議へ')}
+      </div>
+      <div class="badline">夜の60分（例）が必要。移動時間は空いたまま</div>
+    </div>
+    <div class="eng">
+      <div class="ai">${CPI(54)}</div>
+      <span class="pill">オーディオの概要</span>
+      <div class="lb">資料を<br>音声の要約に</div>
+      <span class="ar">${svgw(P.arrow,3)}</span>
+    </div>
+    <div class="col good">
+      <div class="ph"><span class="mk">${svgw(P.ok,3.2)}</span>耳で聞く場合</div>
+      <div class="sc">${SR}<img class="chara" src="${A}chara/chara_smile.png" alt=""></div>
+      <div class="tl"><div class="th">会議までの流れ（例）</div>
+        ${row('n','17:30','報告書が届く <small>英文30ページ</small>')}
+        ${row('g','22:00','オーディオの概要の作成 <small>生成は数分</small>','押すだけ')}
+        ${row('g','8:10','電車で聞く <small>要約スタイル</small>','移動中')}
+        ${row('g','9:45','気になった所だけ原本を開く','例 10分')}
+      </div>
+      <div class="goodline">机に向かうのは、原本で確かめる時間だけ</div>
+    </div>
+  </div>
+  <div class="bot2">
+    <div class="metric"><span class="ml">机に向かう時間</span><span class="mv">例 60分</span><span class="ar">${svgw(P.arrow,3)}</span><span class="mv to">例 10分</span><span class="ml">（残りは移動中に聞く）</span></div>
+  </div>
+  <div class="next">
+    <span class="na">${svgw(P.arrow,2.6)}</span>
+    <span><b>向く資料・向かない資料の早見表は4枚目へ</b></span>
+  </div>
+  <div class="src">出典：Microsoft サポート「OneDrive で Copilot でオーディオの概要を生成する」（生成は数分）／時間は例で実測ではない・絵は説明用</div>
+`;
+</script>
+</body>
+</html>

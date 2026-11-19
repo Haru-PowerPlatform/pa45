@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>Vol.185-3 判断できる承認依頼</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/tips-base.css">
+<style>
+  :root{--s1:#2563EB;--s1b:#EEF4FF;--s1l:#A9C6F5;--s1d:#1E3A8A;
+        --s2:#D97706;--s2b:#FFF8EB;--s2l:#F5CF8E;--s2d:#92400E;
+        --s3:#16A34A;--s3b:#ECFDF5;--s3l:#8FD6B2;--s3d:#065F46;}
+  .s1{--c:var(--s1);--cb:var(--s1b);--cl:var(--s1l);--cd:var(--s1d);}
+  .s2{--c:var(--s2);--cb:var(--s2b);--cl:var(--s2l);--cd:var(--s2d);}
+  .s3{--c:var(--s3);--cb:var(--s3b);--cl:var(--s3l);--cd:var(--s3d);}
+  .msi{flex:0 0 auto;object-fit:contain;}
+  .repro{font-size:12.5px;font-weight:700;color:#8A8886;margin-left:auto;white-space:nowrap;}
+  .win{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:2px solid var(--cl,#A9C6F5);border-radius:10px;overflow:hidden;box-shadow:0 3px 8px rgba(0,0,0,.10);}
+  .win .wh{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:5px 10px;background:#F3F2F1;border-bottom:1px solid #E1DFDD;font-size:15.5px;font-weight:900;color:#242424;white-space:nowrap;}
+  .win .wb{flex:1;min-height:0;display:flex;flex-direction:column;padding:7px 10px;}
+  .tag{flex:0 0 auto;display:inline-block;font-size:14px;font-weight:900;color:#fff;background:var(--c,#2563EB);border-radius:6px;padding:1px 8px;white-space:nowrap;}
+  .tag.gy{background:#6B7280;} .tag.gr{background:#16A34A;} .tag.rd{background:#DC2626;} .tag.am{background:#D97706;} .tag.bl{background:#2563EB;}
+  .btn{display:inline-flex;align-items:center;justify-content:center;font-size:15.5px;font-weight:900;border-radius:6px;padding:4px 20px;border:1.5px solid #C8C6C4;color:#242424;background:#fff;}
+  .btn.pri{background:#4F52B2;border-color:#4F52B2;color:#fff;}
+  .lnk{color:#0F6CBD;text-decoration:underline;font-weight:900;}
+  .next .sub{margin-left:auto;font-size:15.5px;font-weight:900;color:#1E40AF;}
+  .wl{font-size:17px;font-weight:900;white-space:nowrap;}
+
+  .stage{gap:0;}
+  .grid{flex:1;min-height:0;display:grid;grid-template-columns:690px 54px 1fr;grid-template-rows:38px 54px 50px 150px 50px 1fr;}
+  .m{background:#fff;border-left:2.5px solid #F5CF8E;border-right:2.5px solid #F5CF8E;padding:0 16px;display:flex;align-items:center;min-width:0;}
+  .m.top{border-top:2.5px solid #F5CF8E;border-radius:12px 12px 0 0;background:#F3F2F1;border-bottom:1px solid #E1DFDD;gap:9px;font-size:15.5px;font-weight:900;color:#242424;}
+  .m.end{border-bottom:2.5px solid #F5CF8E;border-radius:0 0 12px 12px;}
+  .m.hl{background:linear-gradient(90deg,#FFF8EB,#fff 85%);}
+  .ti{font-size:21px;font-weight:900;color:#242424;}
+  .rq{font-size:16px;font-weight:700;color:#605E5C;}
+  .rq b{color:#242424;font-size:17px;}
+  .dt{flex:1;display:flex;flex-direction:column;gap:5px;background:#FFFDF7;border:2px solid #F59E0B;border-radius:9px;padding:8px 14px;}
+  .dt .kv{display:flex;gap:12px;font-size:19px;font-weight:700;color:#1B2A44;line-height:1.36;}
+  .dt .kv .k{flex:0 0 88px;font-weight:900;color:#92400E;}
+  .dt .kv b{color:#B91C1C;font-size:19px;}
+  .lk{font-size:17px;}
+  .act{flex:1;display:flex;flex-direction:column;gap:7px;}
+  .act .cm{display:flex;align-items:center;border:1.5px solid #C8C6C4;border-bottom:2.5px solid #4F52B2;border-radius:6px;padding:5px 11px;font-size:16.5px;font-weight:700;color:#242424;}
+  .act .cm small{font-size:14px;font-weight:900;color:#605E5C;margin-right:10px;}
+  .act .bs{display:flex;align-items:center;gap:9px;}
+  .act .bs .btn{font-size:17px;padding:5px 26px;white-space:nowrap;flex:0 0 auto;}
+  .act .bs .nt{font-size:14.5px;font-weight:700;color:#605E5C;margin-left:4px;}
+  .cn{display:flex;align-items:center;}
+  .cn i{flex:1;border-top:3px solid #EA580C;position:relative;}
+  .cn i::before{content:"";position:absolute;left:-5px;top:-7px;width:11px;height:11px;border-radius:50%;background:#EA580C;}
+  .nt2{display:flex;flex-direction:column;justify-content:center;gap:2px;padding:2px 0 2px 10px;border-left:4px solid #EA580C;min-width:0;margin:3px 0;}
+  .nt2 .fn{font-size:18.5px;font-weight:900;color:#9A3412;line-height:1.25;white-space:nowrap;}
+  .nt2 .fn .q{font-size:14px;font-weight:900;color:#fff;background:#EA580C;border-radius:5px;padding:0 7px;margin-right:6px;}
+  .nt2 .ds{font-size:15.5px;font-weight:700;color:#374151;line-height:1.36;}
+  .nt2 .ds b{color:#1E40AF;}
+  .nt2 .code{font-size:15.5px;padding:6px 9px;line-height:1.5;word-break:normal;white-space:nowrap;margin-top:2px;}
+  .nt2 .code .dyn{font-family:"Noto Sans JP",sans-serif;font-size:14.5px;}
+  .hd{grid-column:3;display:flex;align-items:center;gap:9px;font-size:19px;font-weight:900;color:#1E3A8A;padding-left:10px;}
+  .grid .chara{position:absolute;}
+
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={x:'<path d="M6 6l12 12M18 6L6 18"/>',ok:'<path d="M5 12l5 5 9-10"/>',arrow:'<path d="M4 12h15M13 6l6 6-6 6"/>',down:'<path d="M12 4v15M6 13l6 6 6-6"/>',
+  warn:'<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18v.5"/>',bulb:'<path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0 0 12 3z"/>'};
+const MS=(n,w)=>`<img class="msi" src="${A}icons/ms/${n}" alt="" style="width:${w||24}px;height:${w||24}px">`;
+const IC=(n,w)=>`<img class="msi" src="${A}icons/${n}" alt="" style="width:${w||26}px;height:${w||26}px">`;
+const APV=(w)=>`<svg class="msi" viewBox="0 0 28 28" style="width:${w||26}px;height:${w||26}px;flex:0 0 auto"><rect width="28" height="28" rx="6" fill="#486991"/><circle cx="14" cy="14" r="8" fill="none" stroke="#fff" stroke-width="2.2"/><path d="M10 14.2l3 3 5.2-6" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const CH=(e,h,st)=>`<img class="chara" src="${A}chara/chara_${e}.png" alt="" style="height:${h||112}px;${st||''}">`;
+document.getElementById('slide').innerHTML=`
+
+  <div class="titlebar">
+    <div class="vol-pill">Vol.185-3</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">承認する人の画面：<br><span class="hl">開いた1画面で</span>判断できる依頼にする</div>
+    <img class="title-chara" src="${A}chara/chara_point.png" alt="">
+  </div>
+  <div class="concl">
+    <div class="chip">${svgw(P.bulb,2.2)}</div>
+    <div class="txt">「開始して承認を待機」の欄に書いた内容が、そのまま承認者の画面に並びます。<br><b>「詳細」に金額・理由・期限</b>を1行ずつ入れると、申請を探しに行く手間がなくなります</div>
+  </div>
+  <div class="stage">
+    <div class="grid">
+      <div class="m top">${MS('outlook.svg',24)}承認の依頼（山田課長に届くメール）<span class="repro">画面は説明用の再現</span></div><div></div><div class="hd">${IC('pa_logo.png',26)}「開始して承認を待機」のどの欄か</div>
+
+      <div class="m"><span class="ti">備品購入：モニター 2台 59,600円（佐藤）</span></div><div class="cn"><i></i></div>
+      <div class="nt2"><div class="fn"><span class="q">欄</span>タイトル</div><div class="ds">品名・金額・申請者。件名だけで中身が分かる</div></div>
+
+      <div class="m"><span class="rq">要求者　<b>佐藤 花子</b>　営業部</span></div><div class="cn"><i></i></div>
+      <div class="nt2"><div class="fn"><span class="q">欄</span>要求者</div><div class="ds">申請者のメール。誰の申請かが出る</div></div>
+
+      <div class="m hl"><div class="dt">
+        <div class="kv"><span class="k">金額</span><span><b>59,600円</b>（29,800円 × 2台・税込）</span></div>
+        <div class="kv"><span class="k">理由</span><span>11月着任の2名の席にモニターがないため</span></div>
+        <div class="kv"><span class="k">希望納期</span><span>12/4（金）まで</span></div>
+              </div></div><div class="cn"><i></i></div>
+      <div class="nt2"><div class="fn"><span class="q">欄</span>詳細　<span style="font-size:15px;color:#B45309">ここが判断材料</span></div>
+        <div class="code">金額：<span class="dyn">金額</span> 円（<span class="dyn">単価</span> 円 × <span class="dyn">数量</span> 台）<br>理由：<span class="dyn">理由</span><br>希望納期：<span class="dyn">希望納期</span></div>
+        <div class="ds">判断に使う順に1行ずつ。Markdown の表や太字も使える</div></div>
+
+      <div class="m"><span class="lk"><span class="lnk">申請の明細と見積書を開く</span></span></div><div class="cn"><i></i></div>
+      <div class="nt2"><div class="fn"><span class="q">欄</span>アイテム リンク／アイテム リンクの説明</div><div class="ds">申請の項目のURLと、リンクに出す文字</div></div>
+
+      <div class="m end"><div class="act">
+        <div class="cm"><small>コメント</small>年度内の納品で進めてください</div>
+        <div class="bs"><span class="btn pri">承認</span><span class="btn">拒否</span><span class="nt">メール・Teams・Power Automate の<br>「承認」のどこからでも応答できる</span></div>
+      </div></div><div class="cn"><i></i></div>
+      <div class="nt2"><div class="fn"><span class="q">戻る値</span>結果・承認者名・コメント</div><div class="ds">押した結果とコメントはフローに戻る。<br><b>申請者への通知と台帳</b>にそのまま使う</div></div>
+    </div>
+  </div>
+  <div class="warnbar">
+    <span class="na" style="width:28px;height:28px;color:#C2410C">${svgw(P.warn,2.4)}</span>
+    <span class="wl">使う前に確認</span>
+    <span class="ws"><span>Markdown は Teams の「承認」アプリでは効かない。承認者が開く場所で表示を確かめる</span><span>フローの作成者の名前は必ず表示される</span></span>
+  </div>
+  <div class="src">出典：Microsoft Learn「承認ワークフローを作成し、テストします」「標準承認」コネクタ「Markdown 言語を使用して Power Automate の承認の書式設定を行う」／人名・品名・金額は架空・画面は説明用の再現</div>
+
+`;
+</script>
+</body>
+</html>

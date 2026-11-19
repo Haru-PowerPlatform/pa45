@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>M365 Copilot Vol.15-2 エージェントの作り方</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/mc-base.css">
+<style>
+  .stage{gap:8px;}
+  .c3{flex:1;min-width:0;display:flex;flex-direction:column;gap:7px;border-radius:14px;padding:8px 10px 9px;background:var(--mc-bg);border:2.5px solid var(--mc-line);}
+  .c3 .h{flex:0 0 auto;display:flex;align-items:center;gap:9px;font-weight:900;font-size:22px;line-height:1.2;color:var(--mc-dark);}
+  .c3 .h .n{flex:0 0 auto;width:34px;height:34px;border-radius:9px;color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;background:var(--mc);}
+  .scn{flex:0 0 100px;position:relative;border-radius:10px;overflow:hidden;background:#DDF4EF;}
+  .scn svg{position:absolute;inset:0;width:100%;height:100%;}
+  .win{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:1.5px solid var(--segline);border-radius:9px;overflow:hidden;box-shadow:0 3px 8px rgba(0,0,0,.10);}
+  .win .wh{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:5px 10px;background:#F3F2F1;border-bottom:1px solid #E1DFDD;font-size:15.5px;font-weight:700;color:#242424;}
+  .win .wb{flex:1;min-height:0;display:flex;flex-direction:column;gap:5px;padding:7px 9px;}
+  .tabs{flex:0 0 auto;display:flex;gap:4px;border-bottom:1.5px solid #E1DFDD;}
+  .tabs span{font-size:15.5px;font-weight:700;color:#616161;padding:2px 10px;}
+  .tabs span.on{color:var(--mc-dark);border-bottom:3px solid var(--mc);font-weight:900;}
+  .fld{flex:0 0 auto;display:flex;flex-direction:column;gap:2px;}
+  .fld .lb{display:flex;align-items:center;gap:6px;font-size:15.5px;font-weight:900;color:#242424;}
+  .fld .lb em{font-style:normal;margin-left:auto;font-size:13.5px;font-weight:900;color:#B45309;background:#FEF3C7;border-radius:999px;padding:0 8px;}
+  .fld .in{border:1.5px solid #D1D1D1;border-radius:6px;padding:3px 8px;font-size:15.5px;font-weight:700;color:#1B2A44;line-height:1.38;}
+  .fld.big{flex:1;min-height:0;}
+  .fld.big .in{flex:1;min-height:0;background:#FAFFFE;border-color:var(--mc-line);}
+  .fld .in b{color:#B91C1C;}
+  .rw{flex:1;min-height:0;display:flex;align-items:center;gap:8px;border-bottom:1.2px dashed #E5E7EB;font-size:15.5px;font-weight:700;color:#1B2A44;line-height:1.3;}
+  .rw:last-child{border-bottom:none;}
+  .rw .tg{flex:0 0 auto;min-width:70px;text-align:center;font-size:14px;font-weight:900;border-radius:6px;padding:2px 6px;color:#fff;background:var(--mc);}
+  .rw .tg.w{background:#D97706;} .rw .tg.g{background:#16A34A;} .rw .tg.t{background:#2563EB;} .rw .tg.n{background:#6B7280;}
+  .rw .lim{margin-left:auto;font-size:14.5px;font-weight:900;color:#B45309;white-space:nowrap;}
+  .rw b{color:#B91C1C;}
+  .btn{display:inline-block;border:1.5px solid #8A8886;border-radius:5px;padding:0 7px;font-size:14.5px;font-weight:900;color:#242424;background:#fff;white-space:nowrap;}
+  .btn.p{background:var(--mc);border-color:var(--mc);color:#fff;}
+  .tgl{flex:0 0 auto;display:inline-block;width:38px;height:20px;border-radius:999px;background:var(--mc);position:relative;}
+  .tgl:after{content:"";position:absolute;right:3px;top:3px;width:14px;height:14px;border-radius:50%;background:#fff;}
+  .c3 .cp{flex:0 0 auto;font-size:15.5px;font-weight:900;line-height:1.35;border-radius:9px;padding:6px 10px;color:var(--mc-dark);background:#fff;border:1.5px solid var(--mc-line);}
+  .c3 .cp b{color:#EA580C;}
+  .arrowc{flex:0 0 22px;display:flex;align-items:center;justify-content:center;color:var(--mc);}
+  .arrowc svg{width:22px;height:22px;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={arrow:'<path d="M4 12h15M13 6l6 6-6 6"/>',warn:'<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18v.5"/>'};
+const CPI=(w)=>`<img class="msi" src="${A}icons/ms/copilot.png" alt="" style="width:${w||24}px;height:${w||24}px">`;
+const MS=(n,w)=>`<img class="msi" src="${A}icons/ms/${n}" alt="" style="width:${w||24}px;height:${w||24}px">`;
+const VB='0 0 360 100';
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="pills"><div class="vol-pill"><small>M365 Copilot</small>Vol.15-2</div><div class="lic-pill paid">社内資料はライセンスか従量課金</div></div>
+    <div class="title-text">作り方は3つだけ：<br><span class="hl">開く・答え方を書く・資料を指す</span></div>
+    <div class="title-apps"><img class="msi" src="${A}icons/ms/copilot.png" alt=""></div>
+    <img class="title-chara" src="${A}chara/chara_laptop.png" alt="">
+  </div>
+  <div class="concl">
+    <div class="chip app">${CPI(34)}</div>
+    <div class="txt">コードは書きません。<b>[構成]タブの欄を埋めて資料を指す</b>だけで、<br>[試してみる]で確かめてから<b>[作成]→[共有]</b>で同僚に渡せます</div>
+  </div>
+  <div class="stage">
+    <div class="c3">
+      <div class="h"><span class="n">1</span>[新しいエージェント]を開く</div>
+      <div class="scn"><svg viewBox="${VB}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><defs><filter id="a1" x="-10%" y="-10%" width="120%" height="140%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-opacity=".18"/></filter></defs><rect width="360" height="100" fill="#DDF4EF"/>
+        <g filter="url(#a1)"><rect x="20" y="10" width="320" height="84" rx="8" fill="#fff" stroke="#CBD5E1"/></g>
+        <rect x="20" y="10" width="320" height="16" rx="8" fill="#E2E8F0"/><circle cx="32" cy="18" r="3" fill="#F87171"/><circle cx="42" cy="18" r="3" fill="#FBBF24"/><circle cx="52" cy="18" r="3" fill="#34D399"/>
+        <rect x="20" y="26" width="110" height="68" fill="#F3F2F1"/>
+        <text x="30" y="46" font-size="13.5" font-weight="900" fill="#616161" font-family="Noto Sans JP">エージェント</text>
+        <rect x="26" y="54" width="100" height="24" rx="6" fill="#CCFBF1" stroke="#0F766E" stroke-width="2"/>
+        <text x="34" y="71" font-size="14" font-weight="900" fill="#134E4A" font-family="Noto Sans JP">＋新しい…</text>
+        <path d="M112 70l0 20 5-5 4 9 4-2-4-9 7 0z" fill="#1B2A44" stroke="#fff" stroke-width="1.2"/>
+        <rect x="146" y="36" width="180" height="20" rx="10" fill="#F1F5F9" stroke="#CBD5E1"/>
+        <rect x="158" y="43" width="120" height="6" rx="3" fill="#CBD5E1"/>
+        <rect x="146" y="64" width="84" height="20" rx="5" fill="#fff" stroke="#94A3B8"/><text x="188" y="79" font-size="13.5" font-weight="900" fill="#334155" text-anchor="middle" font-family="Noto Sans JP">テンプレート</text>
+      </svg></div>
+      <div class="win"><div class="wh">${CPI(22)}新しいエージェント<span class="repro">画面は説明用の再現</span></div><div class="wb">
+        <div class="rw"><span class="tg t">場所</span><span>microsoft365.com/chat<br>Teams（デスクトップ・Web）</span></div>
+        <div class="rw"><span class="tg">書いて</span><span>[説明]タブに、作りたいものを書く</span></div>
+        <div class="rw"><span class="tg g">手で</span><span><span class="btn">スキップして構成</span> を押す</span></div>
+        <div class="rw"><span class="tg n">型から</span><span>テンプレートを選んで直す</span></div>
+      </div></div>
+      <div class="cp">左の[エージェント]の下。<b>モバイル版は不可</b></div>
+    </div>
+    <div class="arrowc">${svgw(P.arrow,3)}</div>
+    <div class="c3">
+      <div class="h"><span class="n">2</span>役割と答え方を書く</div>
+      <div class="scn"><svg viewBox="${VB}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="pp" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#F1F5F9"/></linearGradient><filter id="a2" x="-10%" y="-10%" width="120%" height="140%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-opacity=".18"/></filter></defs><rect width="360" height="100" fill="#DDF4EF"/>
+        <g filter="url(#a2)"><rect x="40" y="8" width="210" height="86" rx="6" fill="url(#pp)" stroke="#CBD5E1"/></g>
+        <text x="54" y="30" font-size="14" font-weight="900" fill="#134E4A" font-family="Noto Sans JP">指示</text>
+        <rect x="54" y="38" width="10" height="10" rx="2" fill="#16A34A"/><rect x="70" y="40" width="160" height="6" rx="3" fill="#94A3B8"/>
+        <rect x="54" y="55" width="10" height="10" rx="2" fill="#16A34A"/><rect x="70" y="57" width="140" height="6" rx="3" fill="#94A3B8"/>
+        <rect x="54" y="72" width="10" height="10" rx="2" fill="#DC2626"/><rect x="70" y="74" width="120" height="6" rx="3" fill="#94A3B8"/>
+        <g transform="translate(232 18) rotate(35)"><rect x="0" y="0" width="12" height="70" rx="2" fill="#F59E0B"/><path d="M0 70l6 14 6-14z" fill="#FDE68A"/><path d="M4 79l2 5 2-5z" fill="#1F2937"/><rect x="0" y="0" width="12" height="9" fill="#F472B6"/></g>
+        <rect x="270" y="20" width="76" height="26" rx="13" fill="#0F766E"/><text x="308" y="38" font-size="13.5" font-weight="900" fill="#fff" text-anchor="middle" font-family="Noto Sans JP">何に答える</text>
+        <rect x="270" y="56" width="76" height="26" rx="13" fill="#DC2626"/><text x="308" y="74" font-size="13.5" font-weight="900" fill="#fff" text-anchor="middle" font-family="Noto Sans JP">何は断る</text>
+      </svg></div>
+      <div class="win"><div class="wh">${CPI(22)}[構成] タブ<span class="repro">画面は説明用の再現</span></div><div class="wb">
+        <div class="fld"><div class="lb">名前<em>30文字まで</em></div><div class="in">総務Q&amp;A</div></div>
+        
+        <div class="fld big"><div class="lb">指示<em>8,000文字まで</em></div><div class="in">3つの資料にあることだけで答え、<b>資料名と章</b>を付ける。資料にないことは<b>総務の山田さんへ</b>案内する</div></div>
+      </div></div>
+      <div class="cp">[説明]タブで話すと<b>Copilot が下書き</b></div>
+    </div>
+    <div class="arrowc">${svgw(P.arrow,3)}</div>
+    <div class="c3">
+      <div class="h"><span class="n">3</span>答えの元になる資料を指す</div>
+      <div class="scn"><svg viewBox="${VB}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><defs><filter id="a3" x="-10%" y="-10%" width="120%" height="140%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-opacity=".18"/></filter></defs><rect width="360" height="100" fill="#DDF4EF"/>
+        <g filter="url(#a3)"><path d="M20 12h34l12 12v62H20z" fill="#fff" stroke="#2563EB" stroke-width="2"/><path d="M54 12v12h12" fill="none" stroke="#2563EB" stroke-width="2"/><rect x="28" y="40" width="30" height="5" rx="2" fill="#93C5FD"/><rect x="28" y="52" width="30" height="5" rx="2" fill="#93C5FD"/></g>
+        <g filter="url(#a3)"><path d="M84 12h34l12 12v62H84z" fill="#fff" stroke="#D97706" stroke-width="2"/><path d="M118 12v12h12" fill="none" stroke="#D97706" stroke-width="2"/><rect x="92" y="40" width="30" height="5" rx="2" fill="#FCD34D"/><rect x="92" y="52" width="30" height="5" rx="2" fill="#FCD34D"/></g>
+        <g filter="url(#a3)"><path d="M148 12h34l12 12v62h-46z" fill="#fff" stroke="#16A34A" stroke-width="2"/><path d="M182 12v12h12" fill="none" stroke="#16A34A" stroke-width="2"/><rect x="156" y="40" width="30" height="5" rx="2" fill="#86EFAC"/><rect x="156" y="52" width="30" height="5" rx="2" fill="#86EFAC"/></g>
+        <path d="M204 50h40" stroke="#0F766E" stroke-width="4" stroke-linecap="round"/><path d="M236 40l12 10-12 10z" fill="#0F766E"/>
+        <g filter="url(#a3)"><rect x="258" y="14" width="88" height="72" rx="16" fill="#fff" stroke="#0F766E" stroke-width="2.5"/></g>
+        <text x="302" y="46" font-size="15" font-weight="900" fill="#134E4A" text-anchor="middle" font-family="Noto Sans JP">総務Q&amp;A</text>
+        <text x="302" y="68" font-size="13.5" font-weight="900" fill="#0F766E" text-anchor="middle" font-family="Noto Sans JP">資料3つ</text>
+      </svg></div>
+      <div class="win"><div class="wh">${CPI(22)}ナレッジ<span class="repro">画面は説明用の再現</span></div><div class="wb">
+        <div class="rw"><span class="tg t">SharePoint</span><span>ファイルを選ぶ</span><span class="lim">100ファイル</span></div>
+        <div class="rw"><span class="tg w">アップロード</span><span>PC から追加</span><span class="lim">20ファイル</span></div>
+        <div class="rw"><span class="tg n">Web</span><span>公開サイトの URL</span><span class="lim">4つ</span></div>
+        <div class="rw"><span class="tgl"></span><span>指定したソースのみを使用する</span></div>
+      </div></div>
+      <div class="cp"><span class="btn">試してみる</span> で質問して確かめ、<br><span class="btn p">作成</span> → <span class="btn">共有</span> で渡す</div>
+    </div>
+  </div>
+  <div class="warnbar">
+    <span class="wl">⚠ 使う前に確認</span>
+    <div class="ws"><span>SharePoint・アップロードした資料を読ませるには M365 Copilot ライセンスか従量課金</span><span>[指定したソースのみを使用する]は資料を優先する設定。一般知識は止めない</span></div>
+  </div>
+  <div class="src">出典：Microsoft Learn「エージェント ビルダーでエージェントを構築する」「ナレッジ ソースを追加する」／画面は説明用の再現（公式ページで確認・実画面は未確認）</div>
+`;
+</script>
+</body>
+</html>

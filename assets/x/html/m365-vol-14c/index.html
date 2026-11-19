@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>M365 Copilot Vol.14-3 入れておく指示6つの早見表</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/mc-base.css">
+<style>
+  .stage{gap:11px;}
+  .left{flex:0 0 366px;display:flex;flex-direction:column;gap:7px;border-radius:14px;padding:8px 10px 9px;background:var(--mc-bg);border:2.5px solid var(--mc-line);position:relative;}
+  .left .ph{color:var(--mc-dark);font-size:23px;}
+  .left .ph .mk{background:linear-gradient(180deg,#14B8A6,#0F766E);}
+  .mock{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:2px solid var(--mc);border-radius:10px;overflow:hidden;box-shadow:0 4px 10px rgba(15,60,55,.16);font-family:"Segoe UI","Noto Sans JP",sans-serif;color:#242424;}
+  .mock .wh{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:5px 10px;background:#F3F2F1;border-bottom:1px solid #E1DFDD;font-size:16px;font-weight:700;}
+  .mock .lab{flex:0 0 auto;padding:6px 11px 0;font-size:15.5px;font-weight:700;color:#424242;}
+  .mock .ta{flex:1;min-height:0;margin:5px 10px 0;display:flex;flex-direction:column;justify-content:space-evenly;border:1.5px solid #8A8886;border-bottom:3px solid var(--mc);border-radius:6px;padding:2px 8px;}
+  .mock .ln{display:flex;align-items:center;gap:7px;font-size:15.5px;font-weight:700;color:#1B2A44;white-space:nowrap;line-height:1.25;}
+  .nb{flex:0 0 auto;width:24px;height:24px;border-radius:50%;background:var(--mc);color:#fff;display:flex;align-items:center;justify-content:center;font-family:"Noto Sans JP",sans-serif;font-size:14.5px;font-weight:900;}
+  .mock .fr{flex:0 0 auto;display:flex;justify-content:flex-end;padding:6px 10px 7px;}
+  .btn{font-size:15.5px;font-weight:700;color:#fff;background:var(--mc);border-radius:6px;padding:4px 16px;}
+  .lfoot{flex:0 0 86px;display:flex;align-items:center;}
+  .lfoot .say{flex:1;font-size:18px;font-weight:900;color:var(--mc-dark);line-height:1.35;background:#fff;border:2px solid var(--mc-line);border-radius:12px;padding:7px 12px;margin-right:104px;position:relative;}
+  .lfoot .say b{color:var(--orange);}
+  .left .chara{position:absolute;right:4px;bottom:0;height:116px;z-index:2;filter:drop-shadow(0 3px 5px rgba(0,0,0,.22));}
+  .grid{flex:1;min-width:0;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(3,1fr);gap:8px;}
+  .cd{min-height:0;min-width:0;display:flex;gap:9px;align-items:stretch;background:#fff;border:2.5px solid var(--mc-line);border-radius:12px;padding:6px 9px 6px 6px;box-shadow:0 3px 8px rgba(15,60,55,.10);}
+  .cd.hot{background:#FFF7ED;border-color:#FDBA74;}
+  .cd .fig{flex:0 0 118px;border-radius:9px;background:#EAF8F5;overflow:hidden;display:flex;align-items:center;justify-content:center;}
+  .cd.hot .fig{background:#FFEDD5;}
+  .cd .fig svg{display:block;width:118px;height:112px;}
+  .cd .bd{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:4px;}
+  .cd .k{display:flex;align-items:center;gap:7px;font-size:20px;font-weight:900;color:var(--navy);line-height:1.2;}
+  .cd .k .nb{width:28px;height:28px;font-size:16px;}
+  .cd .q{font-size:16px;font-weight:700;color:#134E4A;background:#E3F7F3;border-left:4px solid var(--mc);border-radius:6px;padding:4px 8px;line-height:1.32;}
+  .cd.hot .q{background:#FFEDD5;border-left-color:var(--orange);color:#7C2D12;}
+  .cd .aim{font-size:15.5px;font-weight:900;color:#4B5563;line-height:1.25;display:flex;align-items:center;gap:6px;}
+  .cd .aim i{font-style:normal;font-size:13.5px;font-weight:900;color:#fff;background:#64748B;border-radius:5px;padding:1px 7px;flex:0 0 auto;}
+  .warnbar .ws{font-size:15.5px;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={ok:'<path d="M5 12l5 5 9-10"/>',warn:'<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18v.5"/>'};
+const CPI=(w)=>`<img class="msi" src="${A}icons/ms/copilot.png" alt="" style="width:${w||24}px;height:${w||24}px">`;
+const D=`<defs><linearGradient id="pp" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#EEF2F6"/></linearGradient><filter id="ds" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="2" stdDeviation="1.8" flood-color="#0F3C37" flood-opacity=".25"/></filter></defs>`;
+const S=(b)=>`<svg viewBox="0 0 118 112" xmlns="http://www.w3.org/2000/svg" font-family="Noto Sans JP">${D}${b}</svg>`;
+// 1 職種と読み手：名札 → 社屋（社内の読み手）
+const G1=S(`<path d="M26 8l10 20M46 8L36 28" stroke="#EA580C" stroke-width="3" fill="none" stroke-linecap="round"/>
+ <g filter="url(#ds)"><rect x="10" y="26" width="52" height="64" rx="7" fill="url(#pp)" stroke="#F0B27A" stroke-width="1.5"/></g>
+ <rect x="10" y="26" width="52" height="16" rx="7" fill="#EA580C"/><rect x="29" y="22" width="14" height="8" rx="3" fill="#9A3412"/>
+ <text x="36" y="63" text-anchor="middle" font-size="19" font-weight="900" fill="#7C2D12">総務</text>
+ <rect x="19" y="72" width="34" height="5" rx="2.500" fill="#F3C9A5"/><rect x="24" y="81" width="24" height="4" rx="2" fill="#F3C9A5"/>
+ <path d="M66 58h9M71 53l5 5-5 5" stroke="#9A3412" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+ <g filter="url(#ds)"><rect x="80" y="30" width="30" height="62" rx="3" fill="#64748B"/></g>
+ <rect x="85" y="37" width="7" height="8" fill="#FDE68A"/><rect x="97" y="37" width="7" height="8" fill="#FDE68A"/><rect x="85" y="50" width="7" height="8" fill="#FDE68A"/><rect x="97" y="50" width="7" height="8" fill="#E2E8F0"/><rect x="85" y="63" width="7" height="8" fill="#E2E8F0"/><rect x="97" y="63" width="7" height="8" fill="#FDE68A"/><rect x="91" y="78" width="8" height="14" fill="#1F2937"/>
+ <rect x="74" y="92" width="42" height="4" rx="2" fill="#94A3B8"/>`);
+// 2 文体：社外＝封筒に「です・ます」／社内＝付せんに簡潔
+const G2=S(`<text x="45" y="14" text-anchor="middle" font-size="14" font-weight="900" fill="#0F766E">社外あて</text>
+ <g filter="url(#ds)"><rect x="8" y="20" width="74" height="46" rx="5" fill="url(#pp)" stroke="#7DD3C4" stroke-width="1.5"/></g>
+ <path d="M8 24l37 16 37-16" fill="none" stroke="#0F766E" stroke-width="2.200" stroke-linejoin="round"/>
+ <rect x="11" y="44" width="68" height="19" rx="9.500" fill="#0F766E"/><text x="45" y="58" text-anchor="middle" font-size="13" font-weight="900" fill="#fff">です・ます</text>
+ <g filter="url(#ds)"><path d="M52 70h56v32l-8 8H52z" fill="#FEF08A" stroke="#EAB308" stroke-width="1.4"/></g><path d="M108 98h-8v8z" fill="#EAB308"/>
+ <text x="78" y="84" text-anchor="middle" font-size="14" font-weight="900" fill="#713F12">社内は</text><text x="78" y="100" text-anchor="middle" font-size="14" font-weight="900" fill="#713F12">簡潔に</text>
+`);
+// 3 長さ：長い巻紙を300字のところで切る
+const G3=S(`<g filter="url(#ds)"><rect x="18" y="8" width="56" height="52" rx="4" fill="url(#pp)" stroke="#7DD3C4" stroke-width="1.5"/></g>
+ <rect x="25" y="16" width="42" height="5" rx="2.500" fill="#0F766E"/><rect x="25" y="26" width="38" height="5" rx="2.500" fill="#14B8A6"/><rect x="25" y="36" width="42" height="5" rx="2.500" fill="#14B8A6"/><rect x="25" y="46" width="30" height="5" rx="2.500" fill="#14B8A6"/>
+ <path d="M8 66h102" stroke="#EA580C" stroke-width="2.400" stroke-dasharray="6 5" stroke-linecap="round"/>
+ <rect x="18" y="72" width="56" height="34" rx="4" fill="#F1F5F9" stroke="#CBD5E1" stroke-dasharray="4 3"/><rect x="25" y="79" width="42" height="4" rx="2" fill="#CBD5E1"/><rect x="25" y="88" width="36" height="4" rx="2" fill="#CBD5E1"/><rect x="25" y="97" width="40" height="4" rx="2" fill="#CBD5E1"/>
+ <g transform="translate(94 66)"><circle cx="-4" cy="-13" r="5.500" fill="none" stroke="#9A3412" stroke-width="2.600"/><circle cx="-4" cy="13" r="5.500" fill="none" stroke="#9A3412" stroke-width="2.600"/><path d="M-1-9L-22 6M-1 9L-22-6" stroke="#475569" stroke-width="3" stroke-linecap="round"/></g>
+ <rect x="78" y="22" width="36" height="22" rx="6" fill="#EA580C"/><text x="96" y="38" text-anchor="middle" font-size="14" font-weight="900" fill="#fff">300字</text>`);
+// 4 出力の形：結論の帯＋箇条書き3行
+const G4=S(`<g filter="url(#ds)"><rect x="12" y="8" width="94" height="96" rx="7" fill="url(#pp)" stroke="#7DD3C4" stroke-width="1.5"/></g>
+ <rect x="19" y="16" width="80" height="24" rx="5" fill="#EA580C"/><text x="59" y="33" text-anchor="middle" font-size="15" font-weight="900" fill="#fff">結論</text>
+ <circle cx="26" cy="54" r="4" fill="#0F766E"/><rect x="36" y="50.500" width="60" height="7" rx="3.500" fill="#14B8A6"/>
+ <circle cx="26" cy="72" r="4" fill="#0F766E"/><rect x="36" y="68.500" width="48" height="7" rx="3.500" fill="#14B8A6"/>
+ <circle cx="26" cy="90" r="4" fill="#0F766E"/><rect x="36" y="86.500" width="55" height="7" rx="3.500" fill="#14B8A6"/>`);
+// 5 日付の書き方：日めくりに年月日と曜日
+const G5=S(`<g filter="url(#ds)"><rect x="14" y="14" width="90" height="88" rx="8" fill="url(#pp)" stroke="#CBD5E1" stroke-width="1.5"/></g>
+ <path d="M14 22a8 8 0 0 1 8-8h74a8 8 0 0 1 8 8v16H14z" fill="#DC2626"/>
+ <rect x="32" y="7" width="7" height="16" rx="3.500" fill="#475569"/><rect x="79" y="7" width="7" height="16" rx="3.500" fill="#475569"/>
+ <text x="59" y="34" text-anchor="middle" font-size="14" font-weight="900" fill="#fff">2026</text>
+ <text x="59" y="72" text-anchor="middle" font-size="29" font-weight="900" fill="#1B2A44">11/19</text>
+ <rect x="38" y="79" width="42" height="19" rx="9.500" fill="#0F766E"/><text x="59" y="93" text-anchor="middle" font-size="14" font-weight="900" fill="#fff">（木）</text>`);
+// 6 確かめてほしいこと：資料の数字を虫めがねで照らす
+const G6=S(`<g filter="url(#ds)"><rect x="10" y="10" width="72" height="92" rx="6" fill="url(#pp)" stroke="#7DD3C4" stroke-width="1.5"/></g>
+ <rect x="18" y="19" width="44" height="5" rx="2.500" fill="#94A3B8"/><rect x="18" y="30" width="56" height="5" rx="2.500" fill="#CBD5E1"/>
+ <rect x="15" y="42" width="50" height="22" rx="4" fill="#FEF3C7" stroke="#F59E0B" stroke-width="1.4"/><text x="40" y="58" text-anchor="middle" font-size="14" font-weight="900" fill="#92400E">12,000</text>
+ <rect x="18" y="72" width="52" height="5" rx="2.500" fill="#CBD5E1"/><rect x="18" y="83" width="40" height="5" rx="2.500" fill="#CBD5E1"/>
+ <circle cx="90" cy="70" r="16" fill="rgba(255,255,255,.85)" stroke="#0F766E" stroke-width="4.500"/><path d="M101 82l10 12" stroke="#134E4A" stroke-width="6.500" stroke-linecap="round"/>
+ <path d="M83 70l5 5 9-11" fill="none" stroke="#16A34A" stroke-width="4.500" stroke-linecap="round" stroke-linejoin="round"/>`);
+const cd=(n,k,q,aim,fig,hot)=>`<div class="cd${hot?' hot':''}"><div class="fig">${fig}</div><div class="bd"><div class="k"><span class="nb">${n}</span>${k}</div><div class="q">${q}</div><div class="aim"><i>ねらい</i>${aim}</div></div></div>`;
+const ln=(n,t)=>`<div class="ln"><span class="nb">${n}</span><span>${t}</span></div>`;
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="pills"><div class="vol-pill"><small>M365 Copilot</small>Vol.14-3</div><div class="lic-pill free">無料の Copilot Chat でできる</div></div>
+    <div class="title-text">カスタム指示に<br><span class="hl">入れておく指示6つ</span>の早見表</div>
+    <div class="title-apps"><img class="msi" src="${A}icons/ms/copilot.png" alt=""></div>
+    <img class="title-chara" src="${A}chara/chara_smile.png" alt="">
+  </div>
+  <div class="concl">
+    <div class="chip app">${CPI(34)}</div>
+    <div class="txt">毎回打っていた前置きを、<b>1行に1つずつ</b>並べます。総務の担当の例で6行。<br>会話の途中で足したくなった内容は、4枚目の<b>覚えておいて</b>で追加</div>
+  </div>
+  <div class="stage">
+    <div class="left">
+      <div class="ph"><span class="mk">${svgw(P.ok,3.2)}</span>入れる場所はここ</div>
+      <div class="mock">
+        <div class="wh">${CPI(22)}カスタム指示<span class="repro">画面は説明用の再現</span></div>
+        <div class="lab">指示の編集</div>
+        <div class="ta">
+          ${ln(1,'私は総務の担当。読み手は全社員。')}
+          ${ln(2,'社外あては敬体、社内は簡潔に。')}
+          ${ln(3,'1回の回答は300字まで。')}
+          ${ln(4,'結論を先に、あとは箇条書き。')}
+          ${ln(5,'日付は 2026/11/19（木）の形。')}
+          ${ln(6,'数字と日付は元の資料と照らす。')}
+        </div>
+        <div class="fr"><span class="btn">指示を保存</span></div>
+      </div>
+      <div class="lfoot"><div class="say">番号は右の表と対応。<br><b>自分の仕事の言葉</b>で書く</div></div>
+      <img class="chara" src="${A}chara/chara_confident.png" alt="">
+    </div>
+    <div class="grid">
+      ${cd(1,'職種と読み手','私は総務の担当。<br>読み手は社内の全社員。','説明の前提と言葉をそろえる',G1,true)}
+      ${cd(2,'文体','社外あては敬体、<br>社内あては簡潔に書く。','あて先ごとに語尾をそろえる',G2)}
+      ${cd(3,'長さ','1回の回答は300字まで。<br>長いときは要点3つを先に。','読み切れる量にする',G3)}
+      ${cd(4,'出力の形','結論を先に書き、<br>あとは箇条書きにする。','そのまま貼れる形にする',G4)}
+      ${cd(5,'日付の書き方','日付の形は<br>2026/11/19（木）にする。','月日だけの表記をなくす',G5)}
+      ${cd(6,'確かめてほしいこと','数字と日付は元の資料と照らす。<br>不明な点は不明と書く。','見直す箇所を分かるようにする',G6)}
+    </div>
+  </div>
+  <div class="warnbar">
+    <span class="wl">使う前に確認</span>
+    <div class="ws"><span>会社名・取引先名・個人情報は入れない（社内のきまりを先に見る）</span><span>指示どおりにならない回もある。出力は読んで確かめる</span></div>
+  </div>
+  <div class="src">出典：Microsoft サポート「Microsoft Copilot の応答方法をカスタマイズする」／指示の文面は作例・画面は説明用の再現（実画面は未確認）</div>
+`;
+</script>
+</body>
+</html>
