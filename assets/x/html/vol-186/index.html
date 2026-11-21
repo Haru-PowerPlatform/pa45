@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>Vol.186-1 フローの台帳は Excel かリストか</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/tips-base.css">
+<style>
+  .msi{flex:0 0 auto;object-fit:contain;}
+  .repro{font-size:12.5px;font-weight:700;color:#8A8886;margin-left:auto;white-space:nowrap;}
+  .col.bad .repro{color:#FECACA;}
+  .stage{gap:10px;}
+  .mid{flex:0 0 172px;display:flex;flex-direction:column;align-items:stretch;justify-content:center;gap:8px;}
+  .mid .mt{font-size:17px;font-weight:900;color:#1E40AF;text-align:center;line-height:1.25;}
+  .mid .q{display:flex;flex-direction:column;align-items:center;gap:3px;background:#fff;border:2.5px solid #A9C6F5;border-radius:12px;padding:6px 6px 7px;
+    font-size:15.5px;font-weight:900;color:#1B2A44;text-align:center;line-height:1.28;box-shadow:0 3px 7px rgba(20,40,90,.10);}
+  .mid .q svg{width:62px;height:40px;}
+  .mid .go{display:flex;align-items:center;justify-content:center;gap:4px;font-size:16px;font-weight:900;color:#16A34A;}
+  .mid .go svg{width:34px;height:34px;}
+  /* Excel モック */
+  .xl{flex:1;min-height:0;display:flex;flex-direction:column;}
+  .xl .lock{flex:0 0 auto;display:flex;align-items:center;gap:7px;background:#FFF4CE;border-bottom:1.5px solid #F2D27A;padding:3px 9px;font-size:15px;font-weight:900;color:#7A5B00;}
+  .xl .lock svg{width:20px;height:20px;}
+  .xr{flex:1;min-height:0;display:flex;align-items:center;border-bottom:1px solid #E1E1E1;font-size:15.5px;font-weight:700;color:#1B2A44;}
+  .xr span{padding:0 7px;white-space:nowrap;overflow:hidden;}
+  .xr .rn{flex:0 0 44px;align-self:stretch;display:flex;align-items:center;justify-content:center;background:#F3F3F3;color:#616161;font-size:14px;border-right:1px solid #D6D6D6;}
+  .xr .a{flex:0 0 92px;} .xr .b{flex:1;} .xr .c{flex:0 0 84px;} .xr .d{flex:0 0 96px;text-align:right;}
+  .xr.hd{background:#217346;color:#fff;font-weight:900;flex:0 0 28px;}
+  .xr.hd .rn{background:#1B5E3A;color:#fff;}
+  .xr.off{color:#B8B8B8;background:repeating-linear-gradient(135deg,#fff 0 7px,#F7F7F7 7px 14px);}
+  .xr.off .rn{color:#C8C8C8;}
+  .cut{flex:0 0 auto;display:flex;align-items:center;gap:7px;padding:2px 8px;font-size:14.5px;font-weight:900;color:#DC2626;}
+  .cut::before,.cut::after{content:"";flex:1;border-top:2.5px dashed #DC2626;}
+  .xr .miss{margin-left:auto;font-size:13.5px;font-weight:900;color:#fff;background:#DC2626;border-radius:5px;padding:0 6px;}
+  /* リスト モック */
+  .lr{flex:1;min-height:0;display:flex;align-items:center;gap:0;border-bottom:1.2px solid #EDEBE9;font-size:15.5px;font-weight:700;color:#1B2A44;}
+  .lr span{padding:0 8px;white-space:nowrap;}
+  .lr .a{flex:0 0 60px;color:#605E5C;} .lr .b{flex:1;} .lr .c{flex:0 0 84px;} .lr .d{flex:0 0 96px;text-align:right;}
+  .lr.hd{flex:0 0 28px;font-size:14.5px;font-weight:900;color:#605E5C;background:#FAF9F8;}
+  .lr.new{background:#E9F9F0;border:2px solid #16A34A;border-radius:6px;}
+  .fire{flex:0 0 auto;display:flex;align-items:center;gap:8px;margin:5px 2px 2px;background:#EEF2FF;border:2px solid #A5B4FC;border-radius:8px;padding:4px 9px;font-size:15.5px;font-weight:900;color:#3730A3;}
+  .fire .z{font-size:18px;}
+  .fire .t{margin-left:auto;font-size:14px;color:#4338CA;font-weight:700;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={x:'<path d="M6 6l12 12M18 6L6 18"/>',ok:'<path d="M5 12l5 5 9-10"/>',arrow:'<path d="M4 12h15M13 6l6 6-6 6"/>',
+  bulb:'<path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0 0 12 3z"/>',
+  lock:'<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/>'};
+const MS=(n,w)=>`<img class="msi" src="${A}icons/ms/${n}" alt="" style="width:${w||24}px;height:${w||24}px">`;
+const CH=(e,h,st)=>`<img class="chara" src="${A}chara/chara_${e}.png" alt="" style="height:${h||112}px;${st||''}">`;
+
+/* 情景：Excel の行が積み上がり、256行目で切れる。鍵のかかったブック */
+const sceneBad=`<svg viewBox="0 0 504 120" preserveAspectRatio="xMidYMid slice">
+ <defs><linearGradient id="sh1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#EAF4EE"/></linearGradient>
+ <linearGradient id="lk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FCD34D"/><stop offset="1" stop-color="#D97706"/></linearGradient></defs>
+ <g transform="translate(14,10)">
+  <rect x="8" y="8" width="170" height="104" rx="6" fill="#000" opacity=".10"/>
+  <rect x="0" y="0" width="170" height="104" rx="6" fill="url(#sh1)" stroke="#217346" stroke-width="2"/>
+  <rect x="0" y="0" width="170" height="16" rx="6" fill="#217346"/><text x="10" y="12" font-size="10.5" font-weight="900" fill="#fff">備品貸出台帳.xlsx</text>
+  ${Array.from({length:7},(_,i)=>`<line x1="0" y1="${26+i*11}" x2="170" y2="${26+i*11}" stroke="#CFE3D6"/>`).join('')}
+  <line x1="30" y1="16" x2="30" y2="104" stroke="#CFE3D6"/><line x1="100" y1="16" x2="100" y2="104" stroke="#CFE3D6"/>
+  <text x="5" y="80" font-size="9" font-weight="900" fill="#217346">256</text>
+  <line x1="-6" y1="84" x2="176" y2="84" stroke="#DC2626" stroke-width="3" stroke-dasharray="6 4"/>
+  <rect x="0" y="85" width="170" height="19" fill="#9CA3AF" opacity=".35"/>
+  <text x="38" y="99" font-size="10.5" font-weight="900" fill="#991B1B">257行目〜 届かない</text>
+ </g>
+ <g transform="translate(204,22)">
+  <rect x="6" y="20" width="58" height="46" rx="8" fill="#000" opacity=".12"/>
+  <path d="M14 22v-8a17 17 0 0 1 34 0v8" fill="none" stroke="#92400E" stroke-width="7"/>
+  <rect x="2" y="20" width="58" height="46" rx="8" fill="url(#lk)" stroke="#92400E" stroke-width="2"/>
+  <circle cx="31" cy="38" r="6" fill="#78350F"/><rect x="28.5" y="40" width="5" height="12" rx="2" fill="#78350F"/>
+  <text x="-10" y="88" font-size="12" font-weight="900" fill="#991B1B">最大6分ロック</text>
+ </g>
+ <g transform="translate(308,30)">
+  <circle cx="30" cy="30" r="27" fill="#fff" stroke="#DC2626" stroke-width="3"/>
+  <path d="M30 13v18l11 7" fill="none" stroke="#DC2626" stroke-width="4" stroke-linecap="round"/>
+  <text x="-16" y="80" font-size="11.5" font-weight="900" fill="#991B1B">反映が最大30秒遅れ</text>
+ </g>
+</svg>`;
+/* 情景：リストに1件増える → 稲妻 → フローが動く */
+const sceneGood=`<svg viewBox="0 0 504 120" preserveAspectRatio="xMidYMid slice">
+ <defs><linearGradient id="lg1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#E8F1FB"/></linearGradient>
+ <linearGradient id="fl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3B82F6"/><stop offset="1" stop-color="#1D4ED8"/></linearGradient></defs>
+ <g transform="translate(14,10)">
+  <rect x="8" y="8" width="170" height="104" rx="6" fill="#000" opacity=".10"/>
+  <rect x="0" y="0" width="170" height="104" rx="6" fill="url(#lg1)" stroke="#038387" stroke-width="2"/>
+  <rect x="0" y="0" width="170" height="16" rx="6" fill="#038387"/><text x="10" y="12" font-size="10.5" font-weight="900" fill="#fff">備品貸出（リスト）</text>
+  ${Array.from({length:4},(_,i)=>`<rect x="8" y="${22+i*14}" width="154" height="10" rx="3" fill="#DCE8F5"/>`).join('')}
+  <rect x="4" y="80" width="162" height="18" rx="4" fill="#BBF7D0" stroke="#16A34A" stroke-width="2"/>
+  <text x="12" y="93" font-size="10.5" font-weight="900" fill="#065F46">＋ 新しい項目</text>
+ </g>
+ <path d="M200 70 h44" stroke="#16A34A" stroke-width="4" stroke-dasharray="7 5"/>
+ <path d="M240 60 l12 10 -12 10" fill="none" stroke="#16A34A" stroke-width="4"/>
+ <path d="M226 38 l-10 20 h10 l-6 18 18-24 h-10 l6-14z" fill="#FACC15" stroke="#B45309" stroke-width="1.5"/>
+ <g transform="translate(262,26)">
+  <rect x="5" y="6" width="96" height="70" rx="12" fill="#000" opacity=".12"/>
+  <rect x="0" y="0" width="96" height="70" rx="12" fill="url(#fl)"/>
+  <path d="M26 18 h20 l14 17 -14 17 h-20 l14 -17z" fill="#fff" opacity=".95"/>
+  <path d="M50 18 h14 l14 17 -14 17 h-14 l14 -17z" fill="#BFDBFE"/>
+  <text x="-6" y="88" font-size="12" font-weight="900" fill="#065F46">すぐフローが動く</text>
+ </g>
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.186-1</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">フローの台帳を Excel に置くか、<br><span class="hl">SharePoint リストに移すか</span>を数字で決める</div>
+    <img class="title-chara" src="${A}chara/chara_think.png" alt="">
+  </div>
+  <div class="concl">
+    <div class="chip">${svgw(P.bulb,2.2)}</div>
+    <div class="txt">小さく始めるなら Excel で足ります。<br><b>行が256を超えそう・人が開いて直す・追加されたら動かしたい</b>のどれかが出たら、リストに移す時期です</div>
+  </div>
+  <div class="stage">
+    <div class="col bad">
+      <div class="ph"><span class="mk">${svgw(P.x,3)}</span>Excel の台帳のまま</div>
+      <div class="scene">${sceneBad}${CH('trouble',114)}</div>
+      <div class="card">
+        <div class="cardh">${MS('excel.svg',28)}備品貸出台帳.xlsx ｜ 表「貸出」<span class="repro">再現</span></div>
+        <div class="xl">
+          <div class="lock">${svgw(P.lock,2.4)}佐藤 花子 さんが編集中</div>
+          <div class="xr hd"><span class="rn"></span><span class="a">備品</span><span class="b">借りた人</span><span class="c">状態</span><span class="d">返却期限</span></div>
+          <div class="xr"><span class="rn">255</span><span class="a">PC-031</span><span class="b">山田 太郎</span><span class="c">貸出中</span><span class="d">11/27</span></div>
+          <div class="xr"><span class="rn">256</span><span class="a">PJ-004</span><span class="b">鈴木 一郎</span><span class="c">貸出中</span><span class="d">11/25</span></div>
+          <div class="cut">既定で読むのはここまで</div>
+          <div class="xr off"><span class="rn">257</span><span class="a">PC-018</span><span class="b">高橋 美咲</span><span class="c">貸出中</span><span class="d">11/20</span><span class="miss">期限切れ</span></div>
+        </div>
+      </div>
+      <div class="cap">「表内に存在する行を一覧表示」は既定で256行まで。<br>257行目の期限切れは、知らせが出ないまま残ります</div>
+    </div>
+    <div class="mid">
+      <div class="mt">移す目安<br>（1つでも）</div>
+      <div class="q"><svg viewBox="0 0 62 40"><rect x="4" y="3" width="54" height="34" rx="4" fill="#fff" stroke="#217346" stroke-width="2"/>${[11,18,25].map(y=>`<line x1="8" y1="${y}" x2="54" y2="${y}" stroke="#9BC7AE" stroke-width="2"/>`).join('')}<line x1="2" y1="31" x2="60" y2="31" stroke="#DC2626" stroke-width="3" stroke-dasharray="4 3"/></svg>行が256を<br>超えそう</div>
+      <div class="q"><svg viewBox="0 0 62 40"><rect x="10" y="3" width="42" height="30" rx="3" fill="#E5E7EB" stroke="#4B5563" stroke-width="2"/><rect x="4" y="33" width="54" height="5" rx="2" fill="#4B5563"/><path d="M22 22l14-12 4 4-14 12h-4z" fill="#F59E0B" stroke="#92400E" stroke-width="1.2"/></svg>人が開いて<br>手で直す</div>
+      <div class="q"><svg viewBox="0 0 62 40"><rect x="3" y="10" width="24" height="20" rx="3" fill="#BBF7D0" stroke="#16A34A" stroke-width="2"/><text x="10" y="25" font-size="14" font-weight="900" fill="#065F46">＋</text><path d="M38 6l-7 15h7l-4 13 13-18h-7l4-10z" fill="#FACC15" stroke="#B45309" stroke-width="1.3"/></svg>追加されたら<br>すぐ動かしたい</div>
+      <div class="go">${svgw(P.arrow,3)}</div>
+    </div>
+    <div class="col good">
+      <div class="ph"><span class="mk">${svgw(P.ok,3)}</span>SharePoint リストに移すと</div>
+      <div class="scene">${sceneGood}${CH('smile',114)}</div>
+      <div class="card">
+        <div class="cardh">${MS('lists.svg',28)}備品貸出（リスト）<span class="repro" style="color:#065F46">再現</span></div>
+        <div class="cardb" style="padding:4px 8px;gap:0;">
+          <div class="lr hd"><span class="a">ID</span><span class="b">備品 ／ 借りた人</span><span class="c">状態</span><span class="d">返却期限</span></div>
+          <div class="lr"><span class="a">311</span><span class="b">PC-031　山田 太郎</span><span class="c">貸出中</span><span class="d">11/27</span></div>
+          <div class="lr"><span class="a">312</span><span class="b">PJ-004　鈴木 一郎</span><span class="c">貸出中</span><span class="d">11/25</span></div>
+          <div class="lr new"><span class="a">313</span><span class="b">PC-022　佐藤 花子</span><span class="c">貸出中</span><span class="d">12/4</span></div>
+          <div class="fire"><span class="z">⚡</span>項目が作成されたとき<span class="t">→ 貸出の確認メール</span></div>
+        </div>
+      </div>
+      <div class="cap">1件増えるたびに、その1件だけでフローが動きます。<br>毎朝、台帳を全部読み直す作りがいらなくなります</div>
+    </div>
+  </div>
+  <div class="next">
+    <span class="na">${svgw(P.arrow,2.6)}</span>
+    <span><b>Excel 台帳でずれる4つの場面は2枚目へ</b></span>
+    <span style="margin-left:auto;font-size:15.5px;">数字の早見表は3枚目・移し方は4枚目</span>
+  </div>
+  <div class="src">出典：Microsoft Learn「Excel Online (Business) コネクタ」「SharePoint コネクタ」「アイテムの取得とファイルの取得の操作」／人名・備品・日付は架空・画面は説明用の再現</div>
+`;
+</script>
+</body>
+</html>
