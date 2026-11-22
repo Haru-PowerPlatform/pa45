@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>コパスタ Vol.21-4 運んだあとにやること</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/cs-base.css">
+<style>
+  .body{gap:14px;}
+  .tbl{flex:1.25;min-width:0;min-height:0;display:flex;flex-direction:column;border-radius:14px;overflow:hidden;border:2px solid var(--cs-line);
+    box-shadow:0 6px 14px rgba(0,0,0,.12);background:#fff;}
+  .cap{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:7px 12px;background:var(--green-bg);border-bottom:2px solid var(--green-line);font-size:19px;font-weight:900;color:var(--navy);}
+  .tr{flex:1;min-height:0;display:flex;align-items:center;border-bottom:1.5px solid #E5E7EB;}
+  .tr:last-child{border-bottom:none;}
+  .tr.h{flex:0 0 32px;background:#FAFAFA;}
+  .tc{padding:3px 12px;font-size:16.5px;font-weight:700;color:#374151;line-height:1.35;}
+  .tc.k{flex:0 0 220px;font-size:17.5px;font-weight:900;color:#065F46;display:flex;align-items:center;gap:8px;}
+  .tc.k svg{flex:0 0 30px;width:30px;height:30px;}
+  .tc.w{flex:1;min-width:0;}
+  .tc.w b{color:var(--cs);}
+  .tr.h .tc{font-size:14px;font-weight:800;color:#6B7280;}
+  .tr.opt .tc.k{color:#6B7280;}
+  .right{flex:1;min-width:0;min-height:0;display:flex;flex-direction:column;gap:8px;}
+  .box{flex:0 0 auto;border-radius:12px;padding:8px 12px;background:#fff;border:2px solid var(--cs-line);}
+  .box .bh{display:flex;align-items:center;gap:8px;font-size:18px;font-weight:900;color:var(--navy);margin-bottom:5px;}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;}
+  .chips span{font-size:15px;font-weight:800;border-radius:999px;padding:2px 11px;}
+  .yes span{background:#F5F3FF;border:1.5px solid #A78BFA;color:#5B21B6;}
+  .no span{background:#FEF2F2;border:1.5px solid #FCA5A5;color:#991B1B;}
+  .box.ng{border-color:#FCA5A5;background:#FFF7F7;}
+  .box .sm{font-size:14px;font-weight:700;color:#4B5563;margin-top:4px;line-height:1.4;}
+  .cond{flex:1;min-height:0;display:flex;flex-direction:column;gap:6px;}
+  .ci{flex:1;min-height:0;display:flex;align-items:center;gap:10px;background:#FFFBEB;border:2px solid #F59E0B;border-radius:12px;padding:4px 12px;}
+  .ci .n{flex:0 0 28px;height:28px;border-radius:8px;background:linear-gradient(180deg,#FBBF24,#D97706);color:#fff;font-weight:900;font-size:16px;display:flex;align-items:center;justify-content:center;}
+  .ci .t{font-size:16.5px;font-weight:900;color:var(--navy);line-height:1.3;}
+  .ci .t small{display:block;font-size:13.5px;font-weight:700;color:#4B5563;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const ok=`<svg viewBox="0 0 30 30"><rect x="3" y="3" width="24" height="24" rx="6" fill="#ECFDF5" stroke="#16A34A" stroke-width="2"/><path d="M9 15 l4 5 l8 -10" stroke="#16A34A" stroke-width="3.2" fill="none" stroke-linecap="round"/></svg>`;
+const opt=`<svg viewBox="0 0 30 30"><rect x="3" y="3" width="24" height="24" rx="6" fill="#F3F4F6" stroke="#9CA3AF" stroke-width="2" stroke-dasharray="4 3"/><path d="M10 15 h10" stroke="#9CA3AF" stroke-width="3" stroke-linecap="round"/></svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">コパスタ Vol.21</div>
+    <div class="part-pill">早見表 <b>(4/4)</b></div>
+    <div class="title-text">運んだら終わりじゃない。<br><span class="q">行き先でやること</span>の一覧</div>
+    <div class="ibadge"><img src="${A}icons/cs_logo.png" alt=""><span class="pl">+</span><img src="${A}icons/ms/teams.svg" alt=""></div>
+    <img class="title-chara" src="${A}chara/chara_point_g.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">早見表</div>
+    <div class="txt">パイプラインが運ぶのは<b>ソリューションの中身</b>まで。<br>
+      公開・認証・チャネルは<em>行き先の環境でやり直す</em>。チェック表にして毎回確かめる。</div>
+  </div>
+
+  <div class="body">
+    <div class="tbl">
+      <div class="cap"><img class="msi" src="${A}icons/cs_logo.png" alt="">運んだあと、行き先の環境でやること</div>
+      <div class="tr h"><div class="tc k">やること</div><div class="tc w">理由・ポイント</div></div>
+      <div class="tr"><div class="tc k">${ok}公開し直す</div><div class="tc w">公開するまで<b>共有できない</b>。運んだら最初にやる</div></div>
+      <div class="tr"><div class="tc k">${ok}認証の設定</div><div class="tc w">手動で入れた認証は運ばれない。<b>行き先で設定し直す</b></div></div>
+      <div class="tr"><div class="tc k">${ok}チャネルと共有</div><div class="tc w">Teams などへの配置と、<b>使う人への共有</b>を確認</div></div>
+      <div class="tr"><div class="tc k">${ok}接続を確かめる</div><div class="tc w">接続参照に<b>行き先の接続</b>がつながっているか</div></div>
+      <div class="tr opt"><div class="tc k">${opt}使っていれば</div><div class="tc w">Direct Line・Web チャネルのセキュリティ、Application Insights も設定し直す</div></div>
+      <div class="tr opt"><div class="tc k">${opt}アイコン</div><div class="tc w">行き先で出るまで<b>最大24時間</b>かかることがある</div></div>
+    </div>
+    <div class="right">
+      <div class="box">
+        <div class="bh"><img class="msi" src="${A}icons/ms/agent.png" alt="">パイプラインで一緒に運ばれる</div>
+        <div class="chips yes"><span>エージェント</span><span>フロー</span><span>接続参照</span><span>環境変数</span></div>
+        <div class="sm">接続参照と環境変数は、展開のときに行き先の値を選ぶ</div>
+      </div>
+      <div class="box ng">
+        <div class="bh">⚠ 運ばれない</div>
+        <div class="chips no"><span>テーブルのデータ</span><span>手動の認証設定</span><span>公開の状態</span></div>
+      </div>
+      <div class="cond">
+        <div class="ci"><span class="n">1</span><span class="t">既定のソリューションからは運べない<small>自分で作ったソリューションに入れる</small></span></div>
+        <div class="ci"><span class="n">2</span><span class="t">行き先はマネージド環境<small>テスト・本番の環境で有効にしておく</small></span></div>
+        <div class="ci"><span class="n">3</span><span class="t">本番へはマネージドで運ぶ<small>本番で中身を直接さわらない形</small></span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="darkband">
+    <div class="nf">
+      <div class="label">回し方のコツ</div>
+      <div class="grid">
+        <div class="fc"><div class="ft">直すのは開発だけ</div><div class="fd">本番で気づいた不具合も<br>開発で直して運び直す</div></div>
+        <div class="fc"><div class="ft">チェック表を共有</div><div class="fd">左の表をチームで持ち、<br>運ぶたびに確かめる</div></div>
+        <div class="fc"><div class="ft">履歴で戻せる</div><div class="fd">パイプラインは<br>運んだ版を記録している</div></div>
+      </div>
+    </div>
+    <div class="note">
+      <div class="label">⚠ 使う前に確認</div>
+      <div class="txt">パイプラインを作るには<br><b>管理者側の権限</b>が要る。情シスと相談。</div>
+    </div>
+    <div class="src">出典：Microsoft Learn（ソリューションでエージェントを管理する／Power Platform のパイプライン）／表は説明用にまとめたもの</div>
+  </div>
+  <img class="band-chara" src="${A}chara/chara_confident_g.png" alt="">
+`;
+</script>
+</body>
+</html>
