@@ -72,6 +72,10 @@ CSS = CSS.replace("</style>", NAV_CSS + "</style>")
 CSS = re.sub(r"\s*\n\s*", "", CSS)   # WP が <style> 内の改行を <br> に変えるので1行にまとめる
 
 
+# 2026-11-22 はる「段落の前に空白を・詰まりすぎ」→ 全記事に展開した余白（wp-design/apply-spacing-v1.py と同じ指定）。
+# /*pa45:spacing-v1*/ の目印があると、apply-spacing-v1.py はその記事を二重に触らない。
+from _spacing import CSS as _SPACING_CSS
+CSS = CSS.replace("</style>", "/*pa45:spacing-v1*/" + _SPACING_CSS + "</style>")
 def jp(t):
     return re.sub(r'。(?![」）】、\s<]|$)', '。<br>', t)
 
