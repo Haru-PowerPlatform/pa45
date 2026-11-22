@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>コパスタ Vol.19-4 子エージェントと接続されたエージェントの使い分け</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/cs-base.css">
+<style>
+  /* E型：早見表＋実画面モック */
+  .body{gap:14px;}
+  .tbl{flex:1.28;min-width:0;min-height:0;display:flex;flex-direction:column;border-radius:14px;overflow:hidden;border:2px solid var(--cs-line);
+    box-shadow:0 6px 14px rgba(0,0,0,.12);background:#fff;}
+  .tr{display:flex;flex:1;min-height:0;border-bottom:1.5px solid #EDE9FE;}
+  .tr:last-child{border-bottom:none;}
+  .tr.hd{flex:0 0 auto;border-bottom:2px solid var(--cs-line);}
+  .tc{display:flex;align-items:center;padding:4px 12px;font-size:16.5px;font-weight:700;color:#374151;line-height:1.36;}
+  .tc.k{flex:0 0 136px;font-size:17px;font-weight:900;color:var(--cs-dark);background:var(--cs-bg);}
+  .tc.a,.tc.b{flex:1;min-width:0;}
+  .tc.b{border-left:1.5px dashed #DDD6FE;}
+  .tc b{color:var(--cs);}
+  .hd .tc{flex-direction:column;align-items:center;gap:2px;padding:6px 8px;}
+  .hd .tc.k{justify-content:center;}
+  .hd .nm{font-size:20px;font-weight:900;color:var(--navy);}
+  .hd .en{font-size:12.5px;font-weight:700;color:var(--weak);}
+  .hd svg{width:150px;height:62px;display:block;}
+  .yes{color:var(--green);font-weight:900;} .no{color:var(--red);font-weight:900;}
+  .right{flex:1;min-width:0;min-height:0;display:flex;flex-direction:column;gap:9px;}
+  .win{flex:1;min-height:0;display:flex;flex-direction:column;}
+  .wh .tt{font-size:15.5px;}
+  .wh .addb{margin-left:auto;font-size:14px;font-weight:700;color:#fff;background:#7C3AED;border-radius:5px;padding:1px 10px;}
+  .lst{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:space-around;padding:6px 10px;}
+  .li{display:flex;align-items:center;gap:9px;font-size:15.5px;font-weight:700;padding:4px 4px;border-bottom:1px solid #F3F2F1;}
+  .li:last-child{border-bottom:none;}
+  .li .ty{margin-left:auto;font-size:12.5px;font-weight:800;border-radius:6px;padding:2px 8px;white-space:nowrap;}
+  .ty.c{background:#EDE9FE;color:#5B21B6;} .ty.x{background:#E0F2FE;color:#075985;}
+  .li .sw{width:32px;height:17px;border-radius:999px;background:#7C3AED;position:relative;flex:0 0 auto;}
+  .li .sw:after{content:"";position:absolute;right:2px;top:2px;width:13px;height:13px;border-radius:50%;background:#fff;}
+  .ext{flex:0 0 auto;background:var(--cs-bg);border:2px solid var(--cs-line);border-radius:12px;padding:7px 11px;}
+  .ext .h{font-size:16px;font-weight:900;color:var(--cs-dark);margin-bottom:5px;}
+  .ext .g{display:flex;flex-wrap:wrap;gap:5px;}
+  .ext .g span{font-size:14px;font-weight:800;background:#fff;border:1px solid #C9B4F4;border-radius:7px;padding:2px 8px;color:#374151;}
+  .ext .g span i{font-style:normal;font-size:12px;color:#B45309;font-weight:800;}
+  .darkband .fc{display:flex;gap:7px;align-items:center;}
+  .darkband .fc svg{flex:0 0 52px;width:52px;height:52px;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+/* 見出しの図：受付の中にいる担当 */
+const HC=`<svg viewBox="0 0 150 62"><rect x="4" y="3" width="142" height="56" rx="10" fill="#F5F3FF" stroke="#7C3AED" stroke-width="2"/>
+  <text x="12" y="19" font-size="11.5" font-weight="900" fill="#5B21B6" font-family="Noto Sans JP">受付</text>
+  ${[0,1,2].map(i=>`<rect x="${14+i*44}" y="25" width="38" height="26" rx="6" fill="#fff" stroke="#A78BFA" stroke-width="1.6"/><text x="${33+i*44}" y="43" text-anchor="middle" font-size="11" font-weight="800" fill="#374151" font-family="Noto Sans JP">担当</text>`).join('')}</svg>`;
+/* 見出しの図：別のエージェントを線でつなぐ */
+const HX=`<svg viewBox="0 0 150 62"><rect x="4" y="14" width="54" height="36" rx="9" fill="#F5F3FF" stroke="#7C3AED" stroke-width="2"/>
+  <text x="31" y="37" text-anchor="middle" font-size="11.5" font-weight="900" fill="#5B21B6" font-family="Noto Sans JP">受付</text>
+  <path d="M60 32 h30" stroke="#0284C7" stroke-width="2.5" stroke-dasharray="5 3"/><circle cx="75" cy="32" r="6" fill="#fff" stroke="#0284C7" stroke-width="2"/>
+  <rect x="92" y="6" width="54" height="50" rx="9" fill="#F0F9FF" stroke="#0284C7" stroke-width="2"/>
+  <text x="119" y="28" text-anchor="middle" font-size="11" font-weight="900" fill="#075985" font-family="Noto Sans JP">別の</text>
+  <text x="119" y="43" text-anchor="middle" font-size="11" font-weight="900" fill="#075985" font-family="Noto Sans JP">エージェント</text></svg>`;
+/* コツの小さい図 */
+const T1=`<svg viewBox="0 0 52 52">${[0,1,2].map(i=>`<rect x="${2+i*17}" y="8" width="14" height="36" rx="4" fill="${['#107C41','#0F6CBD','#0284C7'][i]}"/>`).join('')}</svg>`;
+const T2=`<svg viewBox="0 0 52 52"><rect x="10" y="6" width="32" height="40" rx="4" fill="#fff"/><rect x="16" y="14" width="20" height="3" fill="#CBD5E1"/><rect x="16" y="22" width="16" height="3" fill="#CBD5E1"/>
+  <path d="M8 46 L44 6" stroke="#F87171" stroke-width="4" stroke-linecap="round"/></svg>`;
+const T3=`<svg viewBox="0 0 52 52"><path d="M6 40 A20 20 0 0 1 46 40" fill="none" stroke="#6B7280" stroke-width="6"/>
+  <path d="M6 40 A20 20 0 0 1 36 23" fill="none" stroke="#FBBF24" stroke-width="6"/><path d="M36 23 A20 20 0 0 1 46 40" fill="none" stroke="#F87171" stroke-width="6"/>
+  <path d="M26 40 L40 24" stroke="#fff" stroke-width="3" stroke-linecap="round"/><circle cx="26" cy="40" r="3.5" fill="#fff"/></svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">コパスタ Vol.19</div>
+    <div class="part-pill">使い分け <b>(4/4)</b></div>
+    <div class="title-text">中に作るか、<span class="q">別のAIをつなぐか</span></div>
+    <div class="ibadge"><img src="${A}icons/cs_logo.png" alt=""><span class="pl">+</span><img src="${A}icons/ms/agent.png" alt=""></div>
+    <img class="title-chara" src="${A}chara/chara_think_g.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">早見表</div>
+    <div class="txt">自分の部署だけで使う担当は<b>子エージェント</b>。ほかのチームのAIを借りるなら<b>接続されたエージェント</b>。<br>
+      <em>両方を混ぜて使ってもいい</em>（公式）。</div>
+  </div>
+
+  <div class="body">
+    <div class="tbl">
+      <div class="tr hd">
+        <div class="tc k">比べる点</div>
+        <div class="tc a"><span class="nm">子エージェント</span><span class="en">New child agent</span>${HC}</div>
+        <div class="tc b"><span class="nm">接続されたエージェント</span><span class="en">Connected agent</span>${HX}</div>
+      </div>
+      <div class="tr"><div class="tc k">置き場所</div><div class="tc a">受付のエージェントの<b>中</b></div><div class="tc b">同じ環境にある<b>別</b>のエージェント</div></div>
+      <div class="tr"><div class="tc k">公開</div><div class="tc a"><span class="yes">別に公開しなくていい</span></div><div class="tc b">相手が<span class="no">公開済み</span>であること</div></div>
+      <div class="tr"><div class="tc k">使い回し</div><div class="tc a">その受付の中だけ</div><div class="tc b">ほかの受付からも呼べる</div></div>
+      <div class="tr"><div class="tc k">向いている</div><div class="tc a">Excel担当など<br>1つの用途の小さな担当</div><div class="tc b">人事・情シスなど<br>別チームが育てているAI</div></div>
+    </div>
+    <div class="right">
+      <div class="win seg">
+        <div class="wh"><img class="msi" src="${A}icons/cs_logo.png" alt="" style="width:22px;height:22px"><span class="tt">受付のエージェント ＞ エージェント</span><span class="addb">＋ 追加</span></div>
+        <div class="lst">
+          <div class="li"><img class="msi" src="${A}icons/ms/excel.svg" alt="">Excel担当<span class="ty c">子</span><span class="sw"></span></div>
+          <div class="li"><img class="msi" src="${A}icons/ms/sharepoint.svg" alt="">社内資料担当<span class="ty c">子</span><span class="sw"></span></div>
+          <div class="li"><span style="font-size:20px;width:26px;text-align:center">🌐</span>Web担当<span class="ty c">子</span><span class="sw"></span></div>
+          <div class="li"><img class="msi" src="${A}icons/ms/agent.png" alt="">人事のエージェント<span class="ty x">接続</span><span class="sw"></span></div>
+        </div>
+      </div>
+      <div class="ext">
+        <div class="h">Copilot Studio の外のAIもつなげる</div>
+        <div class="g"><span>Fabric データ エージェント <i>プレビュー</i></span><span>Microsoft Foundry <i>プレビュー</i></span><span>Microsoft 365 Agents SDK <i>プレビュー</i></span><span>A2A で話せるエージェント</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="darkband">
+    <div class="nf">
+      <div class="label">分けるときのコツ（公式のガイダンスから）</div>
+      <div class="grid">
+        <div class="fc">${T1}<div><div class="ft">1担当に資料1つ</div><div class="fd">担当どうしで<br>資料を重ねない</div></div></div>
+        <div class="fc">${T2}<div><div class="ft">資料が1つなら分けない</div><div class="fd">1体にナレッジを<br>入れるだけで十分</div></div></div>
+        <div class="fc">${T3}<div><div class="ft">選択肢30〜40が目安</div><div class="fd">道具・担当が<br>増えたら分けどき</div></div></div>
+      </div>
+    </div>
+    <div class="note">
+      <div class="label">⚠ 使う前に確認</div>
+      <div class="txt">接続先の説明を書き換えても、<br><b>受付側には自動で反映されない</b>。</div>
+    </div>
+    <div class="src">出典：Microsoft Learn（ほかのエージェントを追加する・2026-11-12 更新／マルチエージェントのパターン）／画面は説明用の再現</div>
+  </div>
+  <img class="band-chara" src="${A}chara/chara_guts_g.png" alt="">
+`;
+</script>
+</body>
+</html>

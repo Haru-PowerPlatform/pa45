@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>コパスタ Vol.19-3 作り方：新しい子エージェント</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/cs-base.css">
+<style>
+  .body{gap:14px;padding-bottom:0;}
+  .mock{flex:0 0 790px;max-width:790px;min-width:0;min-height:0;display:flex;flex-direction:column;}
+  .win{flex:1;min-height:0;display:flex;flex-direction:column;}
+  .wh .crumb{font-size:15px;font-weight:600;color:#616161;}
+  .wh .crumb b{color:#242424;}
+  .wh .tag{margin-left:auto;font-size:12.5px;font-weight:700;color:#5B21B6;background:#EDE9FE;border-radius:6px;padding:2px 8px;}
+  .wb{flex:1;min-height:0;display:flex;gap:12px;padding:10px 14px !important;}
+  .fcol{flex:1;min-width:0;display:flex;flex-direction:column;gap:7px;}
+  .fl{font-size:15.5px;font-weight:700;color:#242424;display:flex;align-items:center;gap:7px;}
+  .fl small{font-size:12.5px;font-weight:600;color:#8A8886;}
+  .inp{border:1.5px solid #8A8886;border-radius:5px;padding:5px 10px;font-size:15.5px;font-weight:600;background:#fff;}
+  .dd{display:flex;align-items:center;justify-content:space-between;}
+  .dd:after{content:"⌄";font-size:16px;color:#616161;}
+  .ta{border:1.5px solid #8A8886;border-radius:5px;padding:6px 10px;font-size:15.5px;font-weight:600;line-height:1.42;background:#fff;}
+  .hot{position:relative;border:2.5px solid #E11D48;border-radius:9px;padding:6px 8px 8px;background:#FFF1F2;}
+  .hot .bdg{position:absolute;right:8px;top:-13px;font-size:13.5px;font-weight:900;color:#fff;background:#E11D48;border-radius:999px;padding:1px 10px;
+    font-family:"Noto Sans JP",sans-serif;}
+  .num{display:inline-flex;width:24px;height:24px;border-radius:50%;background:linear-gradient(135deg,#7C3AED,#C026D3);color:#fff;font-size:13.5px;font-weight:900;
+    align-items:center;justify-content:center;font-family:"Noto Sans JP",sans-serif;flex:0 0 auto;}
+  .sec{border:1px solid #E1DFDD;border-radius:8px;padding:7px 10px;background:#FAFAFA;display:flex;flex-direction:column;gap:6px;}
+  .sec .sh{display:flex;align-items:center;gap:8px;font-size:15.5px;font-weight:700;}
+  .sec .add{margin-left:auto;font-size:14px;font-weight:700;color:#5B21B6;border:1px solid #C9B4F4;border-radius:5px;padding:1px 9px;background:#fff;}
+  .chipf{display:flex;align-items:center;gap:7px;font-size:15px;font-weight:600;background:#fff;border:1px solid #E1DFDD;border-radius:6px;padding:4px 9px;}
+  .chipf .x{margin-left:auto;color:#8A8886;}
+  .empty{font-size:14px;font-weight:600;color:#8A8886;}
+  .foot{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:8px 14px;border-top:1px solid #E1DFDD;}
+  .tog{width:40px;height:20px;border-radius:999px;background:#7C3AED;position:relative;}
+  .tog:after{content:"";position:absolute;right:3px;top:3px;width:14px;height:14px;border-radius:50%;background:#fff;}
+  .foot .lb{font-size:15px;font-weight:700;}
+  .save{margin-left:auto;font-size:15.5px;font-weight:700;color:#fff;background:#7C3AED;border-radius:5px;padding:5px 18px;}
+  .judge{flex:1;min-height:0;display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:nowrap;background:#F5F3FF;border:1.5px dashed #A78BFA;border-radius:9px;padding:6px 8px;
+    font-family:"Noto Sans JP",sans-serif;}
+  .judge span{display:flex;align-items:center;gap:5px;font-size:14px;font-weight:800;white-space:nowrap;}
+  .jq{background:#EDE9FE;border:1px solid #C9B4F4;border-radius:10px 10px 3px 10px;padding:4px 9px;}
+  .jm{background:#fff;border:1px solid #C9B4F4;border-radius:8px;padding:3px 8px;color:#5B21B6;}
+  .jr{background:#ECFDF5;border:1.5px solid #16A34A;border-radius:8px;padding:3px 8px;color:#065F46;}
+  .ja{color:#7C3AED;font-size:18px !important;font-weight:900;}
+  .steps{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px;}
+  .st{flex:1;min-height:0;display:flex;gap:11px;align-items:center;background:#fff;border:2.5px solid var(--cs-line);border-radius:12px;padding:6px 12px;}
+  .st .n{flex:0 0 auto;width:36px;height:36px;border-radius:10px;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:20px;
+    background:linear-gradient(135deg,#7C3AED,#C026D3);}
+  .st .t{font-size:18.5px;font-weight:900;color:var(--navy);line-height:1.3;}
+  .st .t b{color:var(--cs);}
+  .st .t small{display:block;font-size:15px;font-weight:700;color:#4B5563;line-height:1.36;margin-top:1px;}
+  .st.hint{background:#FFFBEB;border-color:#F59E0B;}
+  .st.hint .n{background:linear-gradient(180deg,#FBBF24,#D97706);}
+  .nextbar{flex:0 0 auto;margin:10px 18px 22px;display:flex;align-items:center;gap:12px;background:var(--cs-bg);border:2px solid var(--cs-line);
+    border-radius:12px;padding:8px 18px;font-size:19px;font-weight:900;color:var(--cs-dark);}
+  .nextbar .msi{width:28px;height:28px;}
+  .src2{position:absolute;left:20px;bottom:5px;font-size:11.5px;font-weight:500;color:#9CA3AF;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">コパスタ Vol.19</div>
+    <div class="part-pill">作り方 <b>(3/4)</b></div>
+    <div class="title-text">エージェント ページの「追加」→<br><span class="q">新しい子エージェント</span></div>
+    <div class="ibadge"><img src="${A}icons/cs_logo.png" alt=""><span class="pl">+</span><img src="${A}icons/ms/excel.svg" alt=""></div>
+    <img class="title-chara" src="${A}chara/chara_laptop_g.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">作り方</div>
+    <div class="txt">受付のエージェントの中に、担当を1人ずつ足していく。<br>
+      肝心なのは<b>「使用されるタイミング」の説明</b>。受付は<em>ここを読んで担当を選ぶ</em>。</div>
+  </div>
+
+  <div class="body">
+    <div class="mock">
+      <div class="win seg">
+        <div class="wh"><img class="msi" src="${A}icons/cs_logo.png" alt="" style="width:22px;height:22px">
+          <span class="crumb">受付のエージェント ＞ エージェント ＞ <b>新しい子エージェント</b></span><span class="tag">英語表示：New child agent</span></div>
+        <div class="wb">
+          <div class="fcol">
+            <div class="fl"><span class="num">1</span>名前</div>
+            <div class="inp">Excel担当</div>
+            <div class="hot">
+              <span class="bdg">ここが肝心</span>
+              <div class="fl"><span class="num">2</span>使用されるタイミング <small>When will this be used?</small></div>
+              <div class="inp dd" style="margin:5px 0">エージェントが選択 - 説明に基づく</div>
+              <div class="ta">売上・件数・前年比など、<b>数字の質問</b>のときに使う。売上実績の表を集計して答える。</div>
+            </div>
+            <div class="fl"><span class="num">3</span>指示 <small>Instructions</small></div>
+            <div class="ta">売上実績_2026.xlsx の表だけを使う。<br>金額は万円単位で、前年同月と比べて答える。</div>
+            <div class="judge">
+              <span class="jq">売上の前年比は？</span>
+              <span class="ja">→</span>
+              <span class="jm"><img class="msi" src="${A}icons/cs_logo.png" alt="" style="width:22px;height:22px">説明に合う</span>
+              <span class="ja">→</span>
+              <span class="jr"><img class="msi" src="${A}icons/ms/excel.svg" alt="" style="width:22px;height:22px">Excel担当へ</span>
+            </div>
+          </div>
+          <div class="fcol" style="flex:0 0 300px">
+            <div class="sec">
+              <div class="sh"><span class="num">4</span>ナレッジ<span class="add">＋ 追加</span></div>
+              <div class="chipf"><img class="msi" src="${A}icons/ms/excel.svg" alt="" style="width:22px;height:22px">売上実績_2026.xlsx<span class="x">✕</span></div>
+              <div class="empty">この担当だけが使う資料</div>
+            </div>
+            <div class="sec">
+              <div class="sh">ツール<span class="add">＋ 追加</span></div>
+              <div class="empty">要らなければ空のままでいい</div>
+            </div>
+            <div class="sec" style="flex:1;justify-content:center;background:#F5F3FF;border-color:#C9B4F4">
+              <div class="sh" style="color:#5B21B6">ほかの担当も同じ手順で</div>
+              <div class="chipf"><img class="msi" src="${A}icons/ms/sharepoint.svg" alt="" style="width:22px;height:22px">社内資料担当</div>
+              <div class="chipf"><span style="font-size:18px">🌐</span>Web担当</div>
+            </div>
+          </div>
+        </div>
+        <div class="foot"><span class="tog"></span><span class="lb">有効</span><span class="save">保存</span></div>
+      </div>
+    </div>
+    <div class="steps">
+      <div class="st"><span class="n">1</span><span class="t">エージェント ページで<b>「追加」</b><small>受付のエージェントを開いて</small></span></div>
+      <div class="st"><span class="n">2</span><span class="t"><b>新しい子エージェント</b>を選ぶ<small>名前は役割が分かるものに</small></span></div>
+      <div class="st"><span class="n">3</span><span class="t">いつ使うかを<b>1〜2文</b>で<small>ほかの担当と重ならない書き方で</small></span></div>
+      <div class="st"><span class="n">4</span><span class="t">ナレッジに<b>その担当の資料だけ</b><small>入れたら「保存」</small></span></div>
+      <div class="st hint"><span class="n">!</span><span class="t">別に公開しなくていい<small>担当は受付の中にいる</small></span></div>
+    </div>
+  </div>
+
+  <div class="nextbar"><img class="msi" src="${A}icons/ms/agent.png" alt="">→ 子エージェントと「接続されたエージェント」の使い分けは4枚目へ</div>
+  <div class="src2">出典：Microsoft Learn（子エージェントを追加する・2026-11-02 更新）／画面は説明用の再現・日本語表示は Learn の日本語版に合わせた</div>
+`;
+</script>
+</body>
+</html>

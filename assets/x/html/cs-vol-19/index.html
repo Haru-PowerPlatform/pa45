@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>コパスタ Vol.19-1 資料ごとに担当AIを分ける</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/cs-base.css">
+<style>
+  /* A型：Before/After 2パネル（右を主役に広く） */
+  .body{gap:0;position:relative;}
+  .panel{position:relative;}
+  .pL{flex:1;}
+  .pR{flex:1.22;}
+  .ph{flex:0 0 auto;display:flex;align-items:center;gap:10px;margin-bottom:6px;}
+  .ph .tag{flex:0 0 auto;font-size:15px;font-weight:900;color:#fff;border-radius:8px;padding:3px 11px;}
+  .p-ng .tag{background:var(--red);} .p-cs .tag{background:var(--cs);}
+  .ph .h{font-size:25px;font-weight:900;color:var(--navy);line-height:1.2;}
+  .scene{flex:1;min-height:0;position:relative;}
+  .scene svg{width:100%;height:100%;display:block;}
+  .ans{flex:0 0 auto;display:flex;flex-direction:column;gap:5px;margin-top:6px;}
+  .uq{align-self:flex-end;background:#EDE9FE;border:1px solid #C9B4F4;border-radius:12px 12px 3px 12px;padding:5px 12px;font-size:15.5px;font-weight:700;}
+  .a{align-self:flex-start;background:#fff;border:1px solid #E1DFDD;border-radius:12px 12px 12px 3px;padding:6px 12px;font-size:15.5px;font-weight:700;line-height:1.42;box-shadow:0 1px 3px rgba(0,0,0,.08);}
+  .p-ng .a{border-color:var(--red-line);}
+  .a .bad{color:var(--red-dark);background:linear-gradient(transparent 55%,#FECACA 55%);}
+  .a mark{background:linear-gradient(transparent 55%,#FDE68A 55%);color:inherit;font-weight:800;}
+  .refs{display:flex;gap:6px;margin-top:4px;flex-wrap:wrap;}
+  .ref{display:flex;align-items:center;gap:5px;font-size:13.5px;font-weight:700;color:#424242;background:#F5F5F5;border:1px solid #E1DFDD;border-radius:6px;padding:1px 7px;}
+  .vs{position:relative;flex:0 0 64px;display:flex;align-items:center;justify-content:center;z-index:5;}
+  .vs .b{width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#7C3AED,#EC4899);color:#fff;
+    font-weight:900;font-size:17px;display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.1;
+    box-shadow:0 4px 10px rgba(124,58,237,.45);border:3px solid #fff;}
+  .pill26{position:absolute;right:12px;top:10px;display:flex;align-items:center;gap:7px;background:#fff;border:2.5px solid var(--green);
+    border-radius:12px;padding:4px 12px;box-shadow:0 3px 8px rgba(0,0,0,.14);}
+  .pill26 .n{font-size:30px;font-weight:900;color:var(--green);line-height:1.2;}
+  .pill26 .l{font-size:13.5px;font-weight:800;color:var(--green-dark);line-height:1.25;}
+  .chara-in{position:absolute;left:-4px;bottom:0;height:120px;z-index:6;filter:drop-shadow(0 3px 5px rgba(0,0,0,.3));}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+
+/* 左：1体のAIに資料が全部なだれ込む */
+const SL=`<svg viewBox="0 0 470 250" preserveAspectRatio="xMidYMid meet">
+  <defs>
+    <linearGradient id="doc" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#E5E7EB"/></linearGradient>
+    <linearGradient id="bot" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#A78BFA"/><stop offset="1" stop-color="#6D28D9"/></linearGradient>
+    <filter id="sh" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-opacity=".25"/></filter>
+  </defs>
+  <!-- 降ってくる資料の山 -->
+  <g filter="url(#sh)" font-family="Segoe UI,Noto Sans JP" font-weight="800">
+    ${[[150,6,-12],[196,0,8],[244,10,-4],[290,2,14],[176,40,6],[226,34,-10],[272,42,4],[318,30,-8],[130,46,10],[340,64,6],[200,70,-6],[252,74,10]].map(([x,y,r],i)=>{
+      const k=i%4;
+      const col=k===0?'#107C41':k===1?'#0F6CBD':k===2?'#185ABD':'#64748B';
+      const lab=k===0?'X':k===1?'S':k===2?'W':'🌐';
+      return `<g transform="translate(${x},${y}) rotate(${r} 18 22)"><rect width="36" height="44" rx="4" fill="url(#doc)" stroke="#94A3B8" stroke-width="1.2"/>
+      <rect x="4" y="4" width="16" height="14" rx="3" fill="${col}"/><text x="12" y="15" text-anchor="middle" font-size="10" fill="#fff">${lab}</text>
+      <rect x="5" y="24" width="26" height="3" fill="#CBD5E1"/><rect x="5" y="31" width="20" height="3" fill="#CBD5E1"/></g>`}).join('')}
+  </g>
+  <text x="246" y="128" text-anchor="middle" font-size="15" font-weight="900" fill="#991B1B" font-family="Noto Sans JP">資料 300件＋Excel＋Web</text>
+  <!-- 漏斗 -->
+  <path d="M168 134 h156 l-52 38 v14 h-52 v-14z" fill="#FEE2E2" stroke="#F0AEAE" stroke-width="2.5"/>
+  <!-- AI 1体（目を回す） -->
+  <g transform="translate(206,186)">
+    <rect x="0" y="0" width="80" height="56" rx="14" fill="url(#bot)" stroke="#5B21B6" stroke-width="2"/>
+    <rect x="34" y="-10" width="12" height="10" rx="3" fill="#6D28D9"/>
+    <g stroke="#fff" stroke-width="3.5" stroke-linecap="round"><path d="M18 20 l10 10 M28 20 l-10 10"/><path d="M52 20 l10 10 M62 20 l-10 10"/></g>
+    <path d="M26 46 q14 -8 28 0" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+  </g>
+  <g font-family="Noto Sans JP" font-weight="900" fill="#DC2626"><text x="314" y="206" font-size="24">?</text><text x="330" y="228" font-size="18">?</text><text x="172" y="214" font-size="22">?</text></g>
+  <text x="380" y="200" font-size="14" font-weight="800" fill="#991B1B" font-family="Noto Sans JP">どれが最新？</text>
+  <text x="372" y="222" font-size="14" font-weight="800" fill="#991B1B" font-family="Noto Sans JP">表の計算は？</text>
+</svg>`;
+
+/* 右：受付のAIが3人の担当に振り分ける */
+function card(x,ic,name,src,col,bg){
+  return `<g transform="translate(${x},132)" filter="url(#sh2)">
+    <rect width="168" height="112" rx="13" fill="${bg}" stroke="${col}" stroke-width="2.5"/>
+    <image href="${A}icons/ms/agent.png" x="10" y="10" width="30" height="30"/>
+    <text x="48" y="32" font-size="17" font-weight="900" fill="#1B2A44" font-family="Noto Sans JP">${name}</text>
+    <rect x="10" y="50" width="148" height="50" rx="9" fill="#fff" stroke="${col}" stroke-width="1.5" stroke-dasharray="4 3"/>
+    ${ic}
+    <text x="58" y="72" font-size="13.5" font-weight="800" fill="#374151" font-family="Noto Sans JP">${src[0]}</text>
+    <text x="58" y="91" font-size="13.5" font-weight="800" fill="#374151" font-family="Noto Sans JP">${src[1]}</text>
+  </g>`;
+}
+const SR=`<svg viewBox="0 0 560 250" preserveAspectRatio="xMidYMid meet">
+  <defs>
+    <linearGradient id="par" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7C3AED"/><stop offset=".6" stop-color="#C026D3"/><stop offset="1" stop-color="#EC4899"/></linearGradient>
+    <filter id="sh2" x="-10%" y="-10%" width="120%" height="130%"><feDropShadow dx="0" dy="3" stdDeviation="3" flood-opacity=".18"/></filter>
+    <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#7C3AED"/></marker>
+  </defs>
+  <!-- 親（受付） -->
+  <g filter="url(#sh2)">
+    <rect x="150" y="4" width="260" height="64" rx="16" fill="url(#par)"/>
+    <image href="${A}icons/cs_logo.png" x="162" y="14" width="44" height="44"/>
+    <text x="216" y="32" font-size="18" font-weight="900" fill="#fff" font-family="Noto Sans JP">受付のエージェント</text>
+    <text x="216" y="54" font-size="14" font-weight="800" fill="#FDE68A" font-family="Noto Sans JP">質問を読んで振り分ける</text>
+  </g>
+  <g stroke="#7C3AED" stroke-width="3" fill="none" marker-end="url(#ar)">
+    <path d="M230 70 C 200 96, 110 100, 92 126"/><path d="M280 70 V 124"/><path d="M330 70 C 360 96, 450 100, 468 126"/>
+  </g>
+  <rect x="226" y="88" width="108" height="24" rx="12" fill="#fff" stroke="#C9B4F4" stroke-width="1.5"/>
+  <text x="280" y="105" text-anchor="middle" font-size="13.5" font-weight="900" fill="#5B21B6" font-family="Noto Sans JP">子エージェント</text>
+  ${card(8,`<image href="${A}icons/ms/excel.svg" x="18" y="58" width="34" height="34"/>`,'Excel担当',['売上実績.xlsx','表の集計だけ'],'#107C41','#ECFDF5')}
+  ${card(196,`<image href="${A}icons/ms/sharepoint.svg" x="18" y="58" width="34" height="34"/>`,'社内資料担当',['SharePoint','報告資料だけ'],'#0F6CBD','#EFF6FF')}
+  ${card(384,`<g transform="translate(18,58)"><circle cx="17" cy="17" r="15" fill="#E0F2FE" stroke="#0284C7" stroke-width="2.2"/><ellipse cx="17" cy="17" rx="6.5" ry="15" fill="none" stroke="#0284C7" stroke-width="2"/><path d="M3 12 h28 M3 22 h28" stroke="#0284C7" stroke-width="2"/></g>`,'Web担当',['公開ニュース','業界の動きだけ'],'#0284C7','#F0F9FF')}
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">コパスタ Vol.19</div>
+    <div class="part-pill">前編 <b>(1/4)</b></div>
+    <div class="title-text">1体に全部読ませない。<br><span class="q">資料ごとに"担当AI"</span>を分ける</div>
+    <div class="ibadge"><img src="${A}icons/cs_logo.png" alt=""><span class="pl">+</span><img src="${A}icons/ms/sharepoint.svg" alt=""><span class="pl">+</span><img src="${A}icons/ms/excel.svg" alt=""></div>
+    <img class="title-chara" src="${A}chara/chara_point_g.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">結論</div>
+    <div class="txt">受付のエージェントが質問を読み、<b>Excel担当・社内資料担当・Web担当</b>の子エージェントに振り分ける。<br>
+      担当は<em>自分の資料だけ</em>を見るので、数字の取り違えが減る。</div>
+  </div>
+
+  <div class="body">
+    <div class="panel p-ng pL">
+      <div class="ph"><span class="tag">いま</span><span class="h">1体に全部入れた</span></div>
+      <div class="scene">${SL}<img class="chara-in" src="${A}chara/chara_trouble_g.png" alt=""></div>
+      <div class="ans seg">
+        <div class="uq">今月の売上、前年比で何％？</div>
+        <div class="a">資料によって<span class="bad">12％ または 8％</span>です…<br>どちらが新しいか判断できません</div>
+      </div>
+    </div>
+    <div class="vs"><div class="b">担当<br>分け</div></div>
+    <div class="panel p-cs pR">
+      <div class="ph"><span class="tag">分けたあと</span><span class="h">担当ごとに見る</span></div>
+      <div class="pill26"><span class="n">26%</span><span class="l">ServiceNow の事例<br>1体のときより性能向上</span></div>
+      <div class="scene">${SR}</div>
+      <div class="ans seg">
+        <div class="uq">今月の売上、前年比で何％？</div>
+        <div class="a">前年同月比 <mark>＋12.4％</mark>（4億2,180万円）です。Excel担当が表から計算しました。
+          <div class="refs"><span class="ref"><img class="msi" src="${A}icons/ms/excel.svg" alt="" style="width:18px;height:18px">売上実績_2026.xlsx</span><span class="ref"><img class="msi" src="${A}icons/ms/agent.png" alt="" style="width:18px;height:18px">Excel担当</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="darkband">
+    <div class="nf">
+      <div class="label">担当の分け方（例）</div>
+      <div class="grid">
+        <div class="fc"><div class="ft"><img class="msi" src="${A}icons/ms/excel.svg" alt="" style="width:18px;height:18px"> Excel担当</div><div class="fd">売上・件数など数字の質問。<br>表を集計して答える</div></div>
+        <div class="fc"><div class="ft"><img class="msi" src="${A}icons/ms/sharepoint.svg" alt="" style="width:18px;height:18px"> 社内資料担当</div><div class="fd">報告書・議事録の中身。<br>SharePoint の資料だけ</div></div>
+        <div class="fc"><div class="ft">🌐 Web担当</div><div class="fd">業界ニュース・競合の動き。<br>公開サイトだけ</div></div>
+      </div>
+    </div>
+    <div class="note">
+      <div class="label">⚠ 使う前に確認</div>
+      <div class="txt">担当を挟むぶん、<b>返事は少し遅くなる</b>。<br>資料が1種類なら、分けずに1体で十分。</div>
+    </div>
+    <div class="src">出典：Microsoft 顧客事例（ServiceNow・2026-11-16）／Microsoft Learn（子エージェントを追加する）／画面・数値は説明用の再現</div>
+  </div>
+  <img class="band-chara" src="${A}chara/chara_confident_g.png" alt="">
+`;
+</script>
+</body>
+</html>

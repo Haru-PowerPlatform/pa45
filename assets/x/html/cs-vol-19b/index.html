@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>コパスタ Vol.19-2 質問1つが担当に分かれて戻ってくる</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/cs-base.css">
+<style>
+  /* B型：流れ3列 */
+  .body{gap:12px;}
+  .col{flex:1;min-height:0;display:flex;flex-direction:column;border-radius:14px;padding:10px 13px 11px;position:relative;
+    box-shadow:0 6px 14px rgba(0,0,0,.12);background:var(--cs-bg);border:2px solid var(--cs-line);}
+  .col.c3{flex:1.18;background:var(--green-bg);border-color:var(--green-line);}
+  .kh{flex:0 0 auto;display:flex;align-items:center;gap:9px;margin-bottom:7px;}
+  .kn{flex:0 0 34px;height:34px;border-radius:50%;color:#fff;font-weight:900;font-size:19px;display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(135deg,#7C3AED,#C026D3);box-shadow:0 2px 4px rgba(0,0,0,.25);}
+  .c3 .kn{background:linear-gradient(135deg,#22C55E,#15803D);}
+  .kt{font-weight:900;font-size:22px;color:var(--navy);line-height:1.2;}
+  .scene{flex:1;min-height:0;position:relative;}
+  .scene svg{width:100%;height:100%;display:block;}
+  .kcap{flex:0 0 auto;font-weight:700;font-size:15.5px;color:#374151;line-height:1.42;border-top:1.5px dashed #C9B4F4;padding-top:7px;margin-top:6px;}
+  .c3 .kcap{border-color:var(--green-line);}
+  .kcap b{color:var(--cs-dark);}
+  .arrow{position:absolute;top:46%;right:-21px;z-index:20;width:30px;height:30px;border-radius:50%;background:#fff;border:2px solid var(--cs);
+    color:var(--cs);font-weight:900;font-size:17px;display:flex;align-items:center;justify-content:center;}
+  /* 3列目：まとめたレポート */
+  .rep{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:1.5px solid var(--segline);border-radius:10px;overflow:hidden;
+    box-shadow:0 4px 12px rgba(0,0,0,.14);}
+  .rep .rh{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:6px 11px;background:#F5F3FF;border-bottom:1px solid #E1DFDD;font-size:15.5px;font-weight:800;}
+  .rep .rb{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:space-around;padding:6px 12px;}
+  .row{display:flex;gap:8px;align-items:flex-start;font-size:15.5px;font-weight:700;line-height:1.38;}
+  .row .who{flex:0 0 auto;font-size:12.5px;font-weight:900;color:#fff;border-radius:6px;padding:2px 7px;margin-top:2px;}
+  .w1{background:#107C41;} .w2{background:#0F6CBD;} .w3{background:#0284C7;}
+  .row mark{background:linear-gradient(transparent 55%,#FDE68A 55%);color:inherit;font-weight:900;}
+  .refs{flex:0 0 auto;display:flex;gap:6px;flex-wrap:wrap;padding:6px 11px;border-top:1px solid #EDEBE9;background:#FAFAFA;}
+  .ref{display:flex;align-items:center;gap:5px;font-size:13.5px;font-weight:700;color:#424242;background:#fff;border:1px solid #E1DFDD;border-radius:6px;padding:1px 7px;}
+  .ref .nb{width:17px;height:17px;border-radius:50%;background:var(--cs);color:#fff;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;}
+  .timer{flex:0 0 auto;display:flex;align-items:center;justify-content:center;gap:12px;margin-top:7px;}
+  .tp{font-size:16px;font-weight:900;border-radius:999px;padding:4px 14px;}
+  .tp.b{background:#FEE2E2;color:var(--red-dark);text-decoration:line-through;}
+  .tp.a{background:var(--green);color:#fff;font-size:18px;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+
+/* ① 質問を読んで、3つの仕事に分ける */
+const S1=`<svg viewBox="0 0 360 290" preserveAspectRatio="xMidYMid meet">
+  <defs>
+    <linearGradient id="par" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7C3AED"/><stop offset=".6" stop-color="#C026D3"/><stop offset="1" stop-color="#EC4899"/></linearGradient>
+    <filter id="sh" x="-10%" y="-10%" width="120%" height="140%"><feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-opacity=".2"/></filter>
+  </defs>
+  <!-- 依頼の吹き出し -->
+  <g filter="url(#sh)">
+    <rect x="20" y="4" width="320" height="58" rx="14" fill="#EDE9FE" stroke="#A78BFA" stroke-width="2"/>
+    <path d="M296 62 l10 14 l4 -14z" fill="#EDE9FE" stroke="#A78BFA" stroke-width="2"/><rect x="294" y="58" width="18" height="6" fill="#EDE9FE"/>
+  </g>
+  <text x="180" y="28" text-anchor="middle" font-size="15.5" font-weight="800" fill="#1F2937" font-family="Noto Sans JP">今月の売上ハイライトを</text>
+  <text x="180" y="50" text-anchor="middle" font-size="15.5" font-weight="800" fill="#1F2937" font-family="Noto Sans JP">部長向けにまとめて</text>
+  <!-- 受付 -->
+  <g filter="url(#sh)">
+    <rect x="62" y="86" width="236" height="58" rx="14" fill="url(#par)"/>
+    <image href="${A}icons/cs_logo.png" x="74" y="94" width="42" height="42"/>
+    <text x="126" y="112" font-size="16" font-weight="900" fill="#fff" font-family="Noto Sans JP">受付のエージェント</text>
+    <text x="126" y="132" font-size="13.5" font-weight="800" fill="#FDE68A" font-family="Noto Sans JP">何が要るか考える</text>
+  </g>
+  <!-- 分けた3枚のメモ -->
+  ${[[8,'#107C41','数字','売上と前年比'],[124,'#0F6CBD','中身','今月の報告書'],[240,'#0284C7','外の動き','業界ニュース']].map(([x,c,t,d],i)=>`
+    <path d="M180 146 C ${180+(x-124)*0.5} 160, ${x+56} 160, ${x+56} 176" stroke="${c}" stroke-width="2.5" fill="none" stroke-dasharray="5 4"/>
+    <g transform="translate(${x},178) rotate(${[-3,0,3][i]} 56 50)" filter="url(#sh)">
+      <rect width="112" height="98" rx="6" fill="#FFFBEB" stroke="#D97706" stroke-width="1.5"/>
+      <rect x="40" y="-6" width="32" height="12" rx="2" fill="#FDE68A" opacity=".9"/>
+      <rect x="10" y="14" width="92" height="26" rx="13" fill="${c}"/>
+      <text x="56" y="32" text-anchor="middle" font-size="14" font-weight="900" fill="#fff" font-family="Noto Sans JP">${t}</text>
+      <text x="56" y="64" text-anchor="middle" font-size="14" font-weight="800" fill="#374151" font-family="Noto Sans JP">${d}</text>
+      <rect x="18" y="76" width="76" height="3" fill="#E5E7EB"/><rect x="26" y="84" width="60" height="3" fill="#E5E7EB"/>
+    </g>`).join('')}
+</svg>`;
+
+/* ② 担当が、自分の資料だけ探す */
+function lane(y,c,bg,icon,name,doing){
+  return `<g transform="translate(0,${y})" filter="url(#sh2)">
+    <rect x="4" y="0" width="352" height="84" rx="12" fill="${bg}" stroke="${c}" stroke-width="2"/>
+    <image href="${A}icons/ms/agent.png" x="14" y="10" width="28" height="28"/>
+    <text x="48" y="31" font-size="16" font-weight="900" fill="#1B2A44" font-family="Noto Sans JP">${name}</text>
+    ${icon}
+    <text x="14" y="66" font-size="14" font-weight="800" fill="#374151" font-family="Noto Sans JP">${doing}</text>
+    <g transform="translate(318,50)"><circle r="14" fill="${c}"/><path d="M-6 0 l4 5 l8 -9" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/></g>
+  </g>`;
+}
+const S2=`<svg viewBox="0 0 360 290" preserveAspectRatio="xMidYMid meet">
+  <defs><filter id="sh2" x="-5%" y="-10%" width="110%" height="140%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-opacity=".16"/></filter></defs>
+  ${lane(2,'#107C41','#ECFDF5',`<g transform="translate(190,8)"><rect width="120" height="34" rx="4" fill="#fff" stroke="#107C41" stroke-width="1.2"/>
+     ${[0,1,2].map(r=>[0,1,2].map(k=>`<rect x="${4+k*39}" y="${4+r*10}" width="36" height="8" fill="${r===0?'#C6EFCE':(r===2&&k===2?'#FDE68A':'#F3F4F6')}"/>`).join('')).join('')}</g>`,
+     'Excel担当','表を集計：4億2,180万円／＋12.4％')}
+  ${lane(102,'#0F6CBD','#EFF6FF',`<g transform="translate(190,8)">${[0,1,2].map(k=>`<g transform="translate(${k*40},0)"><rect width="32" height="36" rx="3" fill="#fff" stroke="#0F6CBD" stroke-width="1.2"/><rect x="5" y="7" width="22" height="3" fill="#BFDBFE"/><rect x="5" y="14" width="18" height="3" fill="#BFDBFE"/><rect x="5" y="21" width="22" height="3" fill="#BFDBFE"/></g>`).join('')}</g>`,
+     '社内資料担当','11月の営業報告から要点を3つ')}
+  ${lane(202,'#0284C7','#F0F9FF',`<g transform="translate(196,6)"><rect width="110" height="38" rx="5" fill="#fff" stroke="#0284C7" stroke-width="1.2"/><rect width="110" height="9" rx="3" fill="#BAE6FD"/>
+     <circle cx="6" cy="4.5" r="2" fill="#0284C7"/><rect x="8" y="15" width="60" height="4" fill="#CBD5E1"/><rect x="8" y="24" width="88" height="3" fill="#E5E7EB"/><rect x="8" y="31" width="70" height="3" fill="#E5E7EB"/></g>`,
+     'Web担当','業界ニュース：競合の値上げ')}
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">コパスタ Vol.19</div>
+    <div class="part-pill">ながれ <b>(2/4)</b></div>
+    <div class="title-text">質問1つが<span class="q">3人の担当</span>に分かれて、<br>出典つきで戻ってくる</div>
+    <div class="ibadge"><img src="${A}icons/cs_logo.png" alt=""><span class="pl">+</span><img src="${A}icons/ms/agent.png" alt=""></div>
+    <img class="title-chara" src="${A}chara/chara_smile_g.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">ながれ</div>
+    <div class="txt">受付が質問を<b>仕事ごとに分けて</b>担当へ渡し、返ってきた答えを1つにまとめる。<br>
+      聞く人は<em>1回頼むだけ</em>。誰が何を調べたかは出典で分かる。</div>
+  </div>
+
+  <div class="body">
+    <div class="col">
+      <div class="kh"><span class="kn">1</span><span class="kt">受付が質問を分ける</span></div>
+      <div class="scene">${S1}</div>
+      <div class="kcap">「まとめて」の中身を<b>数字・中身・外の動き</b>の<br>3つの仕事に分ける。</div>
+      <div class="arrow">▶</div>
+    </div>
+    <div class="col">
+      <div class="kh"><span class="kn">2</span><span class="kt">担当が自分の資料を探す</span></div>
+      <div class="scene">${S2}</div>
+      <div class="kcap">Excel担当は表だけ、社内資料担当は報告書だけ。<br><b>ほかの資料は見ない</b>ので迷わない。</div>
+      <div class="arrow">▶</div>
+    </div>
+    <div class="col c3">
+      <div class="kh"><span class="kn">3</span><span class="kt">1つにまとめて返す</span></div>
+      <div class="rep seg">
+        <div class="rh"><img class="msi" src="${A}icons/cs_logo.png" alt="">11月 売上ハイライト（部長向け）</div>
+        <div class="rb">
+          <div class="row"><span class="who w1">数字</span><span>売上 4億2,180万円、前年同月比 <mark>＋12.4％</mark></span></div>
+          <div class="row"><span class="who w2">中身</span><span>伸びの中心は関西の新規3社。<mark>保守契約</mark>の更新も好調</span></div>
+          <div class="row"><span class="who w3">外</span><span>競合A社が12月に値上げ予定。<br>乗り換え相談が増える見込み</span></div>
+        </div>
+        <div class="refs">
+          <span class="ref"><img class="msi" src="${A}icons/ms/excel.svg" alt="" style="width:17px;height:17px">売上実績_2026.xlsx</span>
+          <span class="ref"><img class="msi" src="${A}icons/ms/sharepoint.svg" alt="" style="width:17px;height:17px">11月営業報告</span>
+          <span class="ref"><span class="nb">3</span>業界ニュース</span>
+        </div>
+      </div>
+      <div class="timer"><span class="tp b">資料を3つ自分で開く</span><span style="font-size:20px;font-weight:900;color:var(--green)">→</span><span class="tp a">1回頼むだけ</span></div>
+    </div>
+  </div>
+
+  <div class="darkband">
+    <div class="nf">
+      <div class="label">受付が担当を選ぶ手がかり</div>
+      <div class="grid">
+        <div class="fc"><div class="ft">担当の「説明」</div><div class="fd">「数字の質問のとき」など、<br>いつ使うかを書いた1〜2文</div></div>
+        <div class="fc"><div class="ft">説明が重なると迷う</div><div class="fd">担当どうしの説明は<br>はっきり書き分ける</div></div>
+        <div class="fc"><div class="ft">1担当に資料1種類</div><div class="fd">同じ資料を2人に<br>持たせない</div></div>
+      </div>
+    </div>
+    <div class="note">
+      <div class="label">⚠ 使う前に確認</div>
+      <div class="txt">担当を経由すると<b>出典が欠けることがある</b>。<br>数字は元の資料を開いて確かめる。</div>
+    </div>
+    <div class="src">出典：Microsoft Learn（子エージェントを追加する／マルチエージェントのパターン）／画面・数値・社名は説明用の再現</div>
+  </div>
+  <img class="band-chara" src="${A}chara/chara_think_g.png" alt="">
+`;
+</script>
+</body>
+</html>
