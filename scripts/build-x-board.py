@@ -533,6 +533,17 @@ def group_announce(ev):
 #   link {title, url}  … ブログ紹介。本文の最後にURLを入れてあるので、貼るとリンクカードが出る
 #   tips_folder "vol-151" … Tips紹介。X技術Tipsと同じ画像を添付する
 # 本文の {{N}} {{PTC}} {{UND}} などは data/insights.json の最新値に置き換わる。
+# 集客の優先度（data/linkedin-board.json の lead：A/B/C と lead_why）。ブログ紹介はこの順に並べる。
+LEAD_LABEL = {"A": "集客 優先A", "B": "集客 B", "C": "集客 C"}
+def lead_badge(p):
+    l = p.get("lead")
+    return f'<span class="lead-b lead-{l}">{LEAD_LABEL[l]}</span>' if l in LEAD_LABEL else ""
+def lead_why(p):
+    w = p.get("lead_why")
+    return f'<div class="leadwhy">{html.escape(w)}</div>' if w else ""
+def lead_key(p):
+    return ({"A": 0, "B": 1, "C": 2}.get(p.get("lead"), 3), -p.get("no", 0))
+
 def card_linkedin(p, tokens):
     body = _apply_tokens(p["body"], tokens)
     n = len(body)
@@ -583,8 +594,9 @@ def card_linkedin(p, tokens):
     return f'''
 <article class="card">
   <div class="head"><span class="no">LI-{p['no']:02d}</span><h2>{html.escape(p['title'])}</h2>
-    <span class="ser ser-li">{html.escape(p.get('angle', ''))}</span>
+    <span class="ser ser-li">{html.escape(p.get('angle', ''))}</span>{lead_badge(p)}
     <span class="len len3000"{over}>{n}</span></div>
+  {lead_why(p)}
   {sub}
   {shots}
   {link_box}
@@ -710,6 +722,9 @@ body.hide-posted .card.posted{display:none}
 .ser-tips{background:#e8f1fb;color:#0b3e72}
 .ser-cs{background:#efeafd;color:#4b31a8}
 .ser-li{background:#e5eff9;color:#0a66c2}
+.lead-b{font-size:10px;font-weight:800;padding:1px 7px;border-radius:5px;margin-right:6px}
+.lead-A{background:#0a66c2;color:#fff}.lead-B{background:#e5eff9;color:#0a66c2}.lead-C{background:#eee;color:#666}
+.leadwhy{font-size:12px;color:#0a66c2;background:#f3f8fd;border-left:3px solid #0a66c2;padding:4px 8px;margin:4px 0 6px}
 .st-li{background:#e5eff9;color:#0a66c2}
 .libody{background:#f2f7fc;border-color:#cfe0f2}
 .libody::before{content:"LinkedIn用（作り方くわしめ）";display:block;font-size:10.5px;font-weight:800;
@@ -925,6 +940,8 @@ def main():
     for gi, g in enumerate(li_groups):
         rows = [p for p in linkedin
                 if p.get("group") == g["id"] or (g["id"] == "other" and p.get("group") not in known)]
+        if any(p.get("lead") for p in rows):
+            rows.sort(key=lead_key)
         on = " on" if gi == 0 else ""
         li_subtabs += (f'<button class="subtab{on}" data-sub="lp-{g["id"]}">{html.escape(g["label"])}'
                        f'<span class="c">{len(rows)}本</span></button>')
