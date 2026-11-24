@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>コパスタ Vol.26-2 ワークフローを道具にする手順</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/cs-base.css">
+<style>
+  .body{gap:12px;}
+  .col{flex:1;min-height:0;display:flex;flex-direction:column;border-radius:14px;padding:10px 13px 11px;position:relative;
+    box-shadow:0 6px 14px rgba(0,0,0,.12);background:var(--cs-bg);border:2px solid var(--cs-line);}
+  .col.c3{background:var(--green-bg);border-color:var(--green-line);}
+  .kh{flex:0 0 auto;display:flex;align-items:center;gap:9px;margin-bottom:5px;}
+  .kn{flex:0 0 34px;height:34px;border-radius:50%;color:#fff;font-weight:900;font-size:19px;display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(135deg,#7C3AED,#C026D3);box-shadow:0 2px 4px rgba(0,0,0,.25);}
+  .c3 .kn{background:linear-gradient(135deg,#22C55E,#15803D);}
+  .kt{font-weight:900;font-size:22px;color:var(--navy);line-height:1.2;}
+  .kt small{display:block;font-size:14.5px;font-weight:700;color:var(--weak);}
+  .scene{flex:1;min-height:0;position:relative;}
+  .scene svg{width:100%;height:100%;display:block;}
+  .kcap{flex:0 0 auto;font-weight:700;font-size:15.5px;color:#374151;line-height:1.42;border-top:1.5px dashed #C9B4F4;padding-top:7px;margin-top:4px;}
+  .c3 .kcap{border-color:var(--green-line);}
+  .kcap b{color:var(--cs-dark);}
+  .arrow{position:absolute;top:46%;right:-21px;z-index:20;width:30px;height:30px;border-radius:50%;background:#fff;border:2px solid var(--cs);
+    color:var(--cs);font-weight:900;font-size:17px;display:flex;align-items:center;justify-content:center;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const T=(x,y,s,t,c='#1B2A44',w=800,a='middle')=>`<text x="${x}" y="${y}" text-anchor="${a}" font-size="${s}" font-weight="${w}" fill="${c}" font-family="Noto Sans JP">${t}</text>`;
+const D=`<defs><filter id="sh" x="-10%" y="-10%" width="120%" height="140%"><feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-opacity=".2"/></filter></defs>`;
+const card=(y,h,ico,t1,t2,col,bg)=>`<g transform="translate(20,${y})" filter="url(#sh)"><rect width="320" height="${h}" rx="10" fill="${bg}" stroke="${col}" stroke-width="2"/>
+  <image href="${A}icons/${ico}" x="12" y="${h/2-14}" width="28" height="28"/>${T(50,h/2-3,13.5,t1,'#1B2A44',900,'start')}${T(50,h/2+16,12,t2,'#4B5563',700,'start')}</g>`;
+const DN=`<path d="M180 0 v14" stroke="#9CA3AF" stroke-width="2.5"/>`;
+/* ① トリガー */
+const S1=`<svg viewBox="0 0 360 290" preserveAspectRatio="xMidYMid meet">${D}
+  ${T(20,22,13,'ワークフロー（新規作成）','#6B7280',900,'start')}
+  <g transform="translate(20,34)" filter="url(#sh)"><rect width="320" height="86" rx="10" fill="#F5F3FF" stroke="#7C3AED" stroke-width="2.4"/>
+   <image href="${A}icons/cs_logo.png" x="12" y="12" width="28" height="28"/>${T(50,26,12,'トリガー','#5B21B6',900,'start')}
+   ${T(50,48,13.5,'エージェントがワークフローを','#1B2A44',900,'start')}${T(50,68,13.5,'呼び出したとき','#1B2A44',900,'start')}</g>
+  <g transform="translate(0,126)">${DN}</g>
+  <g transform="translate(20,146)" filter="url(#sh)"><rect width="320" height="120" rx="10" fill="#fff" stroke="#D1D5DB" stroke-width="1.6"/>
+   ${T(14,24,12.5,'エージェントから受け取る値','#1B2A44',900,'start')}
+   ${[['申請者','テキスト'],['金額','数値'],['用途','テキスト']].map(([a,b],k)=>`<rect x="14" y="${36+k*26}" width="292" height="22" rx="5" fill="#F9FAFB" stroke="#E5E7EB"/>${T(24,52+k*26,12,a,'#1B2A44',800,'start')}${T(296,52+k*26,11.5,b,'#6B7280',700,'end')}`).join('')}</g>
+</svg>`;
+/* ② 中身と応答 */
+const S2=`<svg viewBox="0 0 360 290" preserveAspectRatio="xMidYMid meet">${D}
+  ${card(6,58,'ms/lists.svg','項目を作成する','いつものコネクタを使える','#D1D5DB','#fff')}
+  <g transform="translate(0,66)">${DN}</g>
+  ${card(82,58,'ms/teams.svg','メッセージを投稿する','承認者に知らせる','#D1D5DB','#fff')}
+  <g transform="translate(0,142)">${DN}</g>
+  <g transform="translate(20,158)" filter="url(#sh)"><rect width="320" height="74" rx="10" fill="#ECFDF5" stroke="#16A34A" stroke-width="2.6"/>
+   <image href="${A}icons/cs_logo.png" x="12" y="12" width="28" height="28"/>${T(50,30,13.5,'エージェントに応答する','#065F46',900,'start')}
+   ${T(50,54,12,'受付番号を返す（最後に置く）','#065F46',700,'start')}</g>
+  <g transform="translate(20,244)"><rect width="150" height="36" rx="18" fill="#FEF3C7" stroke="#D97706" stroke-width="1.8"/>${T(75,23,13,'100秒以内に返す','#92400E',900)}
+   <rect x="170" width="150" height="36" rx="18" fill="#FEF3C7" stroke="#D97706" stroke-width="1.8"/>${T(245,23,13,'非同期の応答はオフ','#92400E',900)}</g>
+</svg>`;
+/* ③ 公開して追加 */
+const S3=`<svg viewBox="0 0 400 290" preserveAspectRatio="xMidYMid meet">${D}
+  <g transform="translate(14,6)" filter="url(#sh)"><rect width="110" height="40" rx="20" fill="#7C3AED"/>${T(55,26,14,'公開','#fff',900)}</g>
+  <path d="M130 26 H170" stroke="#16A34A" stroke-width="3" fill="none"/>
+  <g transform="translate(176,6)" filter="url(#sh)"><rect width="210" height="40" rx="10" fill="#fff" stroke="#D1D5DB"/>${T(105,26,13.5,'ツールの追加 → ワークフロー','#1B2A44',900)}</g>
+  <g transform="translate(14,62)" filter="url(#sh)"><rect width="372" height="148" rx="12" fill="#fff" stroke="#16A34A" stroke-width="2.4"/>
+   ${T(16,26,13,'名前','#1B2A44',900,'start')}<rect x="16" y="34" width="340" height="28" rx="6" fill="#fff" stroke="#C9B4F4"/>${T(26,53,13,'経費申請を回す','#1B2A44',800,'start')}
+   ${T(16,84,13,'説明','#1B2A44',900,'start')}<rect x="16" y="92" width="340" height="46" rx="6" fill="#FEF9C3" stroke="#E5D27A"/>
+   ${T(26,111,12.5,'経費の申請を受け付けて承認者に回す。','#713F12',800,'start')}${T(26,130,12.5,'申請したいと言われたときに使う。','#713F12',800,'start')}</g>
+  <g transform="translate(14,224)"><rect width="372" height="54" rx="10" fill="#ECFDF5"/>
+   <image href="${A}icons/cs_logo.png" x="12" y="13" width="28" height="28"/>${T(50,24,13,'「経費を申請したい」と言われたら','#065F46',900,'start')}${T(50,44,13,'AIがこのワークフローを呼ぶ','#065F46',900,'start')}</g>
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">コパスタ Vol.26</div>
+    <div class="part-pill">ながれ <b>(2/4)</b></div>
+    <div class="title-text">道具にするワークフローは<br><span class="q">始まりと終わり</span>が決まっている</div>
+    <div class="ibadge"><img src="${A}icons/cs_logo.png" alt=""><span class="pl">+</span><img src="${A}icons/pa_logo.png" alt=""></div>
+    <img class="title-chara" src="${A}chara/chara_laptop_g.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">ながれ</div>
+    <div class="txt">専用のトリガーで始めて、最後に<b>「エージェントに応答する」</b>で返す。間はいつものコネクタで組める。<br>
+      公開してから「ツールの追加」で選び、<em>名前と説明に「いつ使うか」</em>を書く。</div>
+  </div>
+
+  <div class="body">
+    <div class="col">
+      <div class="kh"><span class="kn">1</span><span class="kt">専用のトリガー<small>受け取る値を決める</small></span></div>
+      <div class="scene">${S1}</div>
+      <div class="kcap">エージェントが会話から<b>値を集めて渡す</b>。<br>受け取る項目はここで決める。</div>
+      <div class="arrow">▶</div>
+    </div>
+    <div class="col">
+      <div class="kh"><span class="kn">2</span><span class="kt">最後に応答を置く<small>間はいつものアクション</small></span></div>
+      <div class="scene">${S2}</div>
+      <div class="kcap">返した値を使って、<b>エージェントが返事を書く</b>。<br>長い処理は応答のあとに回す。</div>
+      <div class="arrow">▶</div>
+    </div>
+    <div class="col c3">
+      <div class="kh"><span class="kn">3</span><span class="kt">公開して追加<small>名前と説明が決め手</small></span></div>
+      <div class="scene">${S3}</div>
+      <div class="kcap">分岐は組まない。<b>説明を見てAIが呼ぶ</b>。<br>説明の書き方は Vol.25 と同じ。</div>
+    </div>
+  </div>
+
+  <div class="darkband">
+    <div class="nf">
+      <div class="label">ツールに出てこないとき</div>
+      <div class="grid">
+        <div class="fc"><div class="ft">トリガーがちがう</div><div class="fd">クラウドフローの<br>トリガーは対象外</div></div>
+        <div class="fc"><div class="ft">公開していない</div><div class="fd">下書きのままでは<br>選べない</div></div>
+        <div class="fc"><div class="ft">応答がない</div><div class="fd">「エージェントに<br>応答する」が必要</div></div>
+      </div>
+    </div>
+    <div class="note">
+      <div class="label">⚠ 使う前に確認</div>
+      <div class="txt">コネクタは<b>使う人の接続と権限</b>で動く。<br>接続がないと会話の中で求められる。</div>
+    </div>
+    <div class="src">出典：Microsoft Learn（ワークフローをツールとして追加する／エージェントのワークフロー）／中身の項目は説明用の再現</div>
+  </div>
+  <img class="band-chara" src="${A}chara/chara_point_g.png" alt="">
+`;
+</script>
+</body>
+</html>
