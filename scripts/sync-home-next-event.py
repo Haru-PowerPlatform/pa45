@@ -201,6 +201,8 @@ def sync_hero_stats(html: str) -> str:
     for label, v in vals.items():
         html = re.sub(rf'(<div class="hero-stat-n">)[^<]*(</div>\s*<div class="hero-stat-l">{label}</div>)',
                       lambda m: m.group(1) + v + m.group(2), html, count=1)
+    # 共有カード・検索用の説明文（og:description / twitter:description / description）の「N回でのべP名が参加」も合わせる
+    html = re.sub(r"\d+回でのべ[\d,]+名が参加", f"{s['sessions']}回でのべ{s['participants_total']:,}名が参加", html)
     return html
 
 
