@@ -182,7 +182,7 @@ def sync_post_image(img: Path, post_dir: Path) -> bool:
 # LinkedIn用の本文（li_body）には、最後のハッシュタグの前に MCT としての一言と受注ページを足す。
 # x-tips-board.json 側は変えず、ボードに出すときだけ付ける（MCTを外すときはここを空にする）。
 LI_MCT_FOOTER = ("Microsoft 認定トレーナー（MCT）として、Power Automate・Copilot Studio の研修とハンズオンをしています。\n"
-                 "研修のご相談：https://haru-powerplatform.github.io/pa45/work/")
+                 "研修・開発のご依頼：https://haru-powerplatform.github.io/pa45/work/")
 
 
 def li_with_mct(body):
