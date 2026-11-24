@@ -105,6 +105,20 @@ Power Automateを45分で学ぶハンズオン勉強会です。
 
 ---
 
+## 主催者の発信先
+
+- ブログ：https://automate136.com/
+- X：[@isamu_Automate](https://x.com/isamu_Automate)
+- YouTube：https://www.youtube.com/@hu3663
+- PA45 サイト：https://haru-powerplatform.github.io/pa45/
+- 研修・開発のご依頼：https://haru-powerplatform.github.io/pa45/work/
+
+ご相談は無料です。メール（[ixa_mct@plug136.onmicrosoft.com](mailto:ixa_mct@plug136.onmicrosoft.com?subject=%E7%A0%94%E4%BF%AE%E3%81%AE%E3%81%94%E7%9B%B8%E8%AB%87)）か、X の DM（[@isamu_Automate](https://x.com/isamu_Automate)）で受け付けています。
+
+研修は新しく始める取り組みで、今はデモ価格でご案内します。
+
+---
+
 主催：はる（Power Automate コミュニティ PowerAutomate-create）
 """
 
