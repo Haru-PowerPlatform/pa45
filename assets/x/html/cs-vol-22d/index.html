@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>コパスタ Vol.22-4 資料の置き方の早見表</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/cs-base.css">
+<style>
+  .body{gap:14px;}
+  .tbl{flex:1.3;min-width:0;min-height:0;display:flex;flex-direction:column;border-radius:14px;overflow:hidden;border:2px solid var(--cs-line);
+    box-shadow:0 6px 14px rgba(0,0,0,.12);background:#fff;}
+  .cap{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:7px 12px;background:var(--cs-bg);border-bottom:2px solid var(--cs-line);font-size:19px;font-weight:900;color:var(--navy);}
+  .tr{flex:1;min-height:0;display:flex;align-items:center;border-bottom:1.5px solid #EDE9FE;}
+  .tr:last-child{border-bottom:none;}
+  .tr.h{flex:0 0 32px;background:#FAFAFA;}
+  .tc{padding:4px 12px;font-size:16px;font-weight:700;color:#374151;line-height:1.38;}
+  .tc.k{flex:0 0 200px;font-size:17.5px;font-weight:900;color:var(--navy);display:flex;align-items:center;gap:9px;}
+  .tc.k svg,.tc.k img{flex:0 0 30px;width:30px;height:30px;}
+  .tc.k small{display:block;font-size:13px;font-weight:700;color:#6B7280;}
+  .tc.m{flex:0 0 230px;display:flex;align-items:center;gap:8px;align-self:stretch;}
+  .tc.m .mk{flex:0 0 34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;color:#fff;}
+  .tc.m.y{background:#F0FDF4;} .tc.m.y .mk{background:#16A34A;}
+  .tc.m.n{background:#F8FAFC;} .tc.m.n .mk{background:#94A3B8;}
+  .tc.m b{color:#065F46;} .tc.m.n b{color:#334155;}
+  .tc.w{flex:1;min-width:0;}
+  .tr.h .tc{font-size:14px;font-weight:800;color:#6B7280;background:none;}
+  .right{flex:1;min-width:0;min-height:0;display:flex;flex-direction:column;gap:8px;}
+  .mock{flex:0 0 auto;background:#fff;border:2px solid #F59E0B;border-radius:12px;padding:8px 12px;}
+  .mock .mh{display:flex;align-items:center;gap:8px;font-size:16.5px;font-weight:900;color:var(--navy);}
+  .mock .mh img{width:26px;height:26px;}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 5px;}
+  .chips span{display:flex;align-items:center;gap:5px;font-size:14.5px;font-weight:700;background:#F9FAFB;border:1px solid #D1D5DB;border-radius:7px;padding:2px 9px;}
+  .chips img{width:18px;height:18px;}
+  .mock .mn{font-size:14.5px;font-weight:800;color:#92400E;line-height:1.4;}
+  .fact{flex:1;min-height:0;display:flex;align-items:center;gap:11px;background:#fff;border:2px solid var(--cs-line);border-radius:12px;padding:5px 12px;}
+  .fact svg{flex:0 0 70px;width:70px;height:52px;}
+  .fact .t{font-size:17px;font-weight:900;color:var(--navy);line-height:1.3;}
+  .fact .t small{display:block;font-size:14px;font-weight:700;color:#4B5563;line-height:1.36;}
+  .fact.warn{background:#FFFBEB;border-color:#F59E0B;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const up=`<svg viewBox="0 0 30 30"><rect x="4" y="16" width="22" height="10" rx="3" fill="#EDE9FE" stroke="#7C3AED" stroke-width="2"/><path d="M15 20 V5 M9 10 l6 -6 l6 6" stroke="#7C3AED" stroke-width="2.6" fill="none" stroke-linecap="round"/></svg>`;
+const web=`<svg viewBox="0 0 30 30"><circle cx="15" cy="15" r="12" fill="#E0F2FE" stroke="#0284C7" stroke-width="2"/><ellipse cx="15" cy="15" rx="5" ry="12" fill="none" stroke="#0284C7" stroke-width="1.8"/><path d="M3 15 h24" stroke="#0284C7" stroke-width="1.8"/></svg>`;
+const F1=`<svg viewBox="0 0 70 52"><rect x="4" y="6" width="36" height="42" rx="4" fill="#fff" stroke="#0F766E" stroke-width="2"/>${[0,1,2].map(i=>`<rect x="10" y="${14+i*9}" width="24" height="4" fill="#99F6E4"/>`).join('')}
+  <circle cx="52" cy="30" r="14" fill="#E6F4F1" stroke="#0F766E" stroke-width="2"/><circle cx="52" cy="30" r="5" fill="#0F766E"/><path d="M40 30 q12 -12 24 0 q-12 12 -24 0z" fill="none" stroke="#0F766E" stroke-width="1.8"/></svg>`;
+const F2=`<svg viewBox="0 0 70 52"><path d="M6 8 H64 L42 30 V46 L28 46 V30z" fill="#EDE9FE" stroke="#7C3AED" stroke-width="2"/><path d="M10 4 L60 4" stroke="#DC2626" stroke-width="0"/>
+  <path d="M8 46 L62 10" stroke="#DC2626" stroke-width="4" stroke-linecap="round"/></svg>`;
+const F3=`<svg viewBox="0 0 70 52">${[0,1,2,3,4].map(i=>`<rect x="${4+i*13}" y="10" width="10" height="13" rx="2" fill="#fff" stroke="#7C3AED" stroke-width="1.5"/>`).join('')}${[0,1,2,3,4].map(i=>`<rect x="${4+i*13}" y="28" width="10" height="13" rx="2" fill="#fff" stroke="#7C3AED" stroke-width="1.5"/>`).join('')}
+  <text x="35" y="51" text-anchor="middle" font-size="9.5" font-weight="900" fill="#5B21B6" font-family="Noto Sans JP">URLは25まで</text></svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">コパスタ Vol.22</div>
+    <div class="part-pill">早見表 <b>(4/4)</b></div>
+    <div class="title-text">絞りたい資料は<br><span class="q">アップロードせず SharePoint</span>に</div>
+    <div class="ibadge"><img src="${A}icons/cs_logo.png" alt=""><span class="pl">+</span><img src="${A}icons/ms/sharepoint.svg" alt=""></div>
+    <img class="title-chara" src="${A}chara/chara_point_g.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">早見表</div>
+    <div class="txt">人ごとに絞れるのは <b>SharePoint</b> から読ませたときだけ。<br>
+      エージェントに<b>直接アップロード</b>した資料は、<em>話しかけた人の権限では絞られない</em>。</div>
+  </div>
+
+  <div class="body">
+    <div class="tbl">
+      <div class="cap"><img class="msi" src="${A}icons/cs_logo.png" alt="">資料の置き方で、だれに答えるかが変わる</div>
+      <div class="tr h"><div class="tc k">置き方</div><div class="tc m">人ごとの絞り込み</div><div class="tc w">向いている資料</div></div>
+      <div class="tr"><div class="tc k"><img src="${A}icons/ms/sharepoint.svg" alt=""><span>SharePoint<small>サイトの URL を追加</small></span></div>
+        <div class="tc m y"><span class="mk">◯</span><span><b>読める人だけ</b><br>Microsoft で認証</span></div>
+        <div class="tc w">部署限定の規程・人事の資料・<br>よく更新する手順書</div></div>
+      <div class="tr"><div class="tc k">${up}<span>アップロード<small>ファイルを直接入れる</small></span></div>
+        <div class="tc m n"><span class="mk">✕</span><span><b>絞られない</b><br>人ごとの確認なし</span></div>
+        <div class="tc w">全員に見せてよいマニュアル・<br>FAQ・用語集</div></div>
+      <div class="tr"><div class="tc k">${web}<span>公開 Web サイト<small>URL を追加</small></span></div>
+        <div class="tc m n"><span class="mk">✕</span><span><b>だれでも見られる</b><br>公開されている情報</span></div>
+        <div class="tc w">自社の公式サイト・<br>製品の公開情報</div></div>
+    </div>
+    <div class="right">
+      <div class="mock">
+        <div class="mh"><img src="${A}icons/cs_logo.png" alt="">Vol.18 の「経理の引き継ぎ係」のナレッジ</div>
+        <div class="chips"><span><img src="${A}icons/ms/excel.svg" alt="">例外対応の記録_2025.xlsx</span><span>取引先メモ.txt</span><span><img src="${A}icons/ms/word.svg" alt="">経理手順書_v3.docx</span></div>
+        <div class="mn">3つともアップロード。共有した相手には、権限に関係なくこの中身を使う。</div>
+      </div>
+      <div class="fact">${F1}<span class="t">最低ラインは「読み取り」<small>サイトかリストを読める人に答える</small></span></div>
+      <div class="fact">${F3}<span class="t">SharePoint の URL は25まで<small>生成オーケストレーションのとき</small></span></div>
+      <div class="fact warn">${F2}<span class="t">制限付き SharePoint 検索<small>有効な組織では SharePoint が使えない</small></span></div>
+    </div>
+  </div>
+
+  <div class="darkband">
+    <div class="nf">
+      <div class="label">置き場所の決め方</div>
+      <div class="grid">
+        <div class="fc"><div class="ft">全員に見せてよい</div><div class="fd">アップロードでも<br>SharePoint でもいい</div></div>
+        <div class="fc"><div class="ft">一部の人だけ</div><div class="fd">SharePoint に置いて<br>URL で読ませる</div></div>
+        <div class="fc"><div class="ft">迷ったら</div><div class="fd">SharePoint。<br>あとから権限で絞れる</div></div>
+      </div>
+    </div>
+    <div class="note">
+      <div class="label">⚠ 使う前に確認</div>
+      <div class="txt">「全員」に共有したフォルダは、<br>AIも<b>全員に答える</b>。共有を見直す。</div>
+    </div>
+    <div class="src">出典：Microsoft Learn（SharePoint をナレッジとして追加する／ナレッジ ソースの概要／ファイルをアップロードする）</div>
+  </div>
+  <img class="band-chara" src="${A}chara/chara_guts_g.png" alt="">
+`;
+</script>
+</body>
+</html>

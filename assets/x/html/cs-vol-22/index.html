@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>コパスタ Vol.22-1 見られる人にだけ答える</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/cs-base.css">
+<style>
+  /* 2人の会話を並べ、真ん中に鍵つきの SharePoint サイト */
+  .body{gap:12px;}
+  .chat{flex:1;min-width:0;min-height:0;display:flex;flex-direction:column;background:#fff;border-radius:12px;overflow:hidden;
+    box-shadow:0 6px 14px rgba(0,0,0,.14);}
+  .chat.ok{border:2.5px solid #16A34A;} .chat.ng{border:2.5px solid #94A3B8;}
+  .th{flex:0 0 auto;display:flex;align-items:center;gap:9px;padding:6px 12px;background:#F5F5F5;border-bottom:1px solid #E1DFDD;}
+  .th img.chara{width:40px;height:40px;border-radius:50%;background:#fff;border:2px solid #E5E7EB;object-fit:cover;object-position:top;}
+  .th .nm{font-size:17px;font-weight:900;color:var(--navy);line-height:1.2;}
+  .th .nm small{display:block;font-size:13.5px;font-weight:700;color:#616161;}
+  .th .tag{margin-left:auto;font-size:14px;font-weight:900;color:#fff;border-radius:8px;padding:3px 10px;}
+  .ok .tag{background:#16A34A;} .ng .tag{background:#64748B;}
+  .tb{flex:1;min-height:0;display:flex;flex-direction:column;gap:6px;padding:7px 12px;background:#FAFAFA;}
+  .uq{align-self:flex-end;max-width:84%;background:#E8EBFA;border-radius:10px 10px 3px 10px;padding:6px 12px;font-size:16px;font-weight:700;line-height:1.42;}
+  .a{align-self:flex-start;max-width:96%;background:#fff;border:1px solid #E1DFDD;border-radius:10px 10px 10px 3px;padding:7px 12px;font-size:15.5px;
+    font-weight:600;line-height:1.5;box-shadow:0 1px 3px rgba(0,0,0,.08);}
+  .a .who{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:800;color:#616161;margin-bottom:2px;}
+  .a .who img{width:20px;height:20px;}
+  .a ul{margin:3px 0 0 20px;}
+  .cite{display:flex;align-items:center;gap:6px;margin-top:6px;font-size:14px;font-weight:800;color:#0F6CBD;background:#EFF6FF;border:1px solid #BFDBFE;border-radius:7px;padding:3px 8px;}
+  .cite img{width:20px;height:20px;}
+  .none{color:#475569;}
+  .none b{color:#334155;}
+  .res{flex:0 0 auto;margin-top:auto;border-radius:9px;padding:4px 10px;font-size:15.5px;font-weight:900;line-height:1.35;display:flex;align-items:center;gap:8px;}
+  .ok .res{background:#ECFDF5;color:#065F46;border:1.5px solid #16A34A;}
+  .ng .res{background:#F1F5F9;color:#334155;border:1.5px solid #94A3B8;}
+  .res svg{flex:0 0 30px;width:30px;height:30px;}
+  .mid{flex:0 0 250px;min-height:0;display:flex;flex-direction:column;align-items:center;}
+  .mid svg{flex:1;min-height:0;width:100%;}
+  .scope{flex:0 0 auto;border:1.5px dashed #CBD5E1;border-radius:9px;padding:5px 10px;background:#fff;}
+  .scope .sh{font-size:13px;font-weight:900;color:#6B7280;margin-bottom:2px;}
+  .scope .row{display:flex;align-items:center;gap:7px;font-size:15px;font-weight:800;color:#1B2A44;line-height:1.5;}
+  .scope .row img{width:20px;height:20px;}
+  .scope .row .st{margin-left:auto;font-size:13.5px;font-weight:900;border-radius:6px;padding:0 8px;}
+  .st.y{background:#DCFCE7;color:#065F46;} .st.n{background:#E2E8F0;color:#475569;}
+  .scope .row.off{color:#94A3B8;text-decoration:line-through;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const T=(x,y,s,t,c='#1B2A44',w=800,a='middle')=>`<text x="${x}" y="${y}" text-anchor="${a}" font-size="${s}" font-weight="${w}" fill="${c}" font-family="Noto Sans JP">${t}</text>`;
+/* 真ん中：鍵つきの人事部サイトと、同じAI */
+const M=`<svg viewBox="0 0 250 400" preserveAspectRatio="xMidYMid meet">
+  <defs><filter id="sh" x="-15%" y="-15%" width="130%" height="140%"><feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-opacity=".22"/></filter>
+  <marker id="ag" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#16A34A"/></marker>
+  <marker id="ax" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#94A3B8"/></marker></defs>
+  <!-- 同じAI -->
+  <g filter="url(#sh)"><rect x="35" y="6" width="180" height="96" rx="16" fill="#fff" stroke="#7C3AED" stroke-width="2.5"/>
+  <image href="${A}icons/cs_logo.png" x="103" y="14" width="44" height="44"/>
+  ${T(125,78,15,'社内の質問窓口','#1B2A44',900)}${T(125,95,12.5,'2人とも同じAI','#6B7280',800)}</g>
+  <path d="M125 104 v26" stroke="#7C3AED" stroke-width="3" stroke-dasharray="5 4"/>
+  ${T(125,146,13,'話しかけた人の権限で探す','#5B21B6',900)}
+  <!-- SharePoint サイト -->
+  <g filter="url(#sh)"><rect x="20" y="158" width="210" height="160" rx="14" fill="#fff" stroke="#0F766E" stroke-width="2.5"/>
+  <rect x="20" y="158" width="210" height="34" rx="14" fill="#E6F4F1"/><rect x="20" y="178" width="210" height="14" fill="#E6F4F1"/>
+  <image href="${A}icons/ms/sharepoint.svg" x="30" y="163" width="24" height="24"/>${T(60,181,14,'人事部サイト','#0F5132',900,'start')}
+  <g transform="translate(44,204)"><rect width="78" height="96" rx="6" fill="#fff" stroke="#2B579A" stroke-width="2"/>
+  <image href="${A}icons/ms/word.svg" x="25" y="12" width="28" height="28"/>${[0,1,2].map(i=>`<rect x="12" y="${50+i*10}" width="54" height="5" rx="2" fill="#C7D7EE"/>`).join('')}</g>
+  ${T(83,314,11.5,'昇給基準_2027.docx','#1B2A44',800)}
+  <!-- 鍵 -->
+  <g transform="translate(146,214)"><rect x="0" y="26" width="64" height="50" rx="9" fill="#F59E0B"/><path d="M12 26 v-10 a20 20 0 0 1 40 0 v10" fill="none" stroke="#B45309" stroke-width="6"/>
+  <circle cx="32" cy="46" r="7" fill="#78350F"/><rect x="29" y="48" width="6" height="14" rx="2" fill="#78350F"/></g>
+  ${T(178,306,12,'人事部だけ閲覧','#92400E',900)}</g>
+  <!-- 左右へ -->
+  <path d="M60 330 Q30 360 8 382" stroke="#16A34A" stroke-width="4" fill="none" marker-end="url(#ag)"/>
+  <path d="M190 330 Q220 360 242 382" stroke="#94A3B8" stroke-width="4" fill="none" stroke-dasharray="7 5" marker-end="url(#ax)"/>
+  ${T(36,398,12.5,'読める','#065F46',900)}${T(214,398,12.5,'読めない','#475569',900)}
+</svg>`;
+const chk=`<svg viewBox="0 0 30 30"><circle cx="15" cy="15" r="13" fill="#16A34A"/><path d="M8 15 l5 5 l9 -10" stroke="#fff" stroke-width="3.2" fill="none" stroke-linecap="round"/></svg>`;
+const lock=`<svg viewBox="0 0 30 30"><rect x="6" y="13" width="18" height="14" rx="3" fill="#64748B"/><path d="M10 13 v-3 a5 5 0 0 1 10 0 v3" fill="none" stroke="#64748B" stroke-width="3"/></svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">コパスタ Vol.22</div>
+    <div class="part-pill">前編 <b>(1/4)</b></div>
+    <div class="title-text">同じAIに同じ質問。<br><span class="q">見られる人にだけ</span>答えが出る</div>
+    <div class="ibadge"><img src="${A}icons/cs_logo.png" alt=""><span class="pl">+</span><img src="${A}icons/ms/sharepoint.svg" alt=""></div>
+    <img class="title-chara" src="${A}chara/chara_point_g.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">結論</div>
+    <div class="txt">ナレッジに <b>SharePoint</b> を入れると、AIは<b>話しかけた人の権限</b>で資料を探す。<br>
+      部署ごとにAIを分けなくても、<em>見られない資料の中身は答えに出ない</em>。</div>
+  </div>
+
+  <div class="body">
+    <div class="chat ok">
+      <div class="th"><img class="chara" src="${A}chara/chara_smile_g.png" alt=""><span class="nm">小林 智子<small>人事部・サイトを読める</small></span><span class="tag">見られる人</span></div>
+      <div class="tb">
+        <div class="uq">来期の昇給の基準を教えて</div>
+        <div class="a"><span class="who"><img src="${A}icons/cs_logo.png" alt="">社内の質問窓口</span>来期の基準は次のとおりです。
+          <ul><li>評価Aは基本給の3％、評価Bは2％</li><li>等級が上がる人は別表で決める</li></ul>
+          <div class="cite"><img src="${A}icons/ms/word.svg" alt="">昇給基準_2027.docx（人事部サイト）</div></div>
+        <div class="scope"><div class="sh">AIが探した範囲</div>
+          <div class="row"><img src="${A}icons/ms/sharepoint.svg" alt="">全社ポータル<span class="st y">探した</span></div>
+          <div class="row"><img src="${A}icons/ms/sharepoint.svg" alt="">人事部サイト<span class="st y">探した</span></div></div>
+        <div class="res">${chk}資料の中身と出典つきで答える</div>
+      </div>
+    </div>
+    <div class="mid">${M}</div>
+    <div class="chat ng">
+      <div class="th"><img class="chara" src="${A}chara/chara_think_g.png" alt=""><span class="nm">高橋 由佳<small>営業部・サイトを読めない</small></span><span class="tag">見られない人</span></div>
+      <div class="tb">
+        <div class="uq">来期の昇給の基準を教えて</div>
+        <div class="a none"><span class="who"><img src="${A}icons/cs_logo.png" alt="">社内の質問窓口</span>
+          この質問に答えられる資料が見つかりませんでした。<br><b>人事部の担当者に確認してください。</b></div>
+        <div class="scope"><div class="sh">AIが探した範囲</div>
+          <div class="row"><img src="${A}icons/ms/sharepoint.svg" alt="">全社ポータル<span class="st y">探した</span></div>
+          <div class="row off"><img src="${A}icons/ms/sharepoint.svg" alt="">人事部サイト<span class="st n">対象外</span></div></div>
+        <div class="res">${lock}読めない資料の中身は答えに出ない</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="darkband">
+    <div class="nf">
+      <div class="label">これでラクになること</div>
+      <div class="grid">
+        <div class="fc"><div class="ft">AIは1体でいい</div><div class="fd">人事用・全社用と<br>分けて作らなくていい</div></div>
+        <div class="fc"><div class="ft">権限はいつもの場所</div><div class="fd">SharePoint の<br>サイトの権限がそのまま効く</div></div>
+        <div class="fc"><div class="ft">異動も1か所</div><div class="fd">サイトの権限を変えれば<br>AIの答えも変わる</div></div>
+      </div>
+    </div>
+    <div class="note">
+      <div class="label">⚠ 使う前に確認</div>
+      <div class="txt">サイトの共有が広すぎると、<br>AIも<b>そのまま答えてしまう</b>。</div>
+    </div>
+    <div class="src">出典：Microsoft Learn（SharePoint をナレッジとして追加する）／画面・人名・資料は説明用の再現</div>
+  </div>
+  <img class="band-chara" src="${A}chara/chara_confident_g.png" alt="">
+`;
+</script>
+</body>
+</html>
