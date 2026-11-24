@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>コパスタ Vol.24-4 指示・ナレッジ・ツール・スキルの使い分け</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/cs-base.css">
+<style>
+  .body{gap:14px;}
+  .tbl{flex:1.35;min-width:0;min-height:0;display:flex;flex-direction:column;border-radius:14px;overflow:hidden;border:2px solid var(--cs-line);
+    box-shadow:0 6px 14px rgba(0,0,0,.12);background:#fff;}
+  .cap{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:7px 12px;background:var(--cs-bg);border-bottom:2px solid var(--cs-line);font-size:19px;font-weight:900;color:var(--navy);}
+  .tr{flex:1;min-height:0;display:flex;align-items:center;border-bottom:1.5px solid #EDE9FE;}
+  .tr:last-child{border-bottom:none;}
+  .tr.h{flex:0 0 30px;background:#FAFAFA;}
+  .tr.sk{background:#F5F3FF;}
+  .tc{padding:3px 11px;font-size:15.5px;font-weight:700;color:#374151;line-height:1.36;}
+  .tc.k{flex:0 0 150px;font-size:18px;font-weight:900;color:var(--navy);display:flex;align-items:center;gap:8px;}
+  .tc.k svg{flex:0 0 32px;width:32px;height:32px;}
+  .tc.r{flex:0 0 185px;}
+  .tc.r b{color:var(--cs-dark);}
+  .tc.w{flex:1;min-width:0;}
+  .tc.ex{flex:0 0 165px;font-size:14.5px;color:#4B5563;}
+  .tr.h .tc{font-size:13.5px;font-weight:800;color:#6B7280;}
+  .right{flex:1;min-width:0;min-height:0;display:flex;flex-direction:column;gap:8px;}
+  .file{flex:1;min-height:0;display:flex;flex-direction:column;background:#1E1B2E;border-radius:12px;overflow:hidden;box-shadow:0 6px 14px rgba(0,0,0,.2);}
+  .file .fh{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:6px 12px;background:#2D2A45;color:#E9E5FF;font-size:15px;font-weight:800;
+    font-family:"Segoe UI","Noto Sans JP",sans-serif;}
+  .file .fh .z{margin-left:auto;font-size:12.5px;color:#C4B5FD;}
+  .file pre{flex:1;min-height:0;margin:0;padding:8px 14px;font-family:Consolas,"Noto Sans JP",monospace;font-size:14px;line-height:1.42;color:#E5E7EB;white-space:pre-wrap;}
+  .file .y{color:#FDE68A;} .file .g{color:#86EFAC;} .file .c{color:#C4B5FD;font-weight:700;}
+  .fact{flex:0 0 auto;display:flex;align-items:center;gap:10px;background:#FFFBEB;border:2px solid #F59E0B;border-radius:12px;padding:6px 12px;}
+  .fact .t{font-size:16px;font-weight:900;color:var(--navy);line-height:1.3;}
+  .fact .t small{display:block;font-size:13.5px;font-weight:700;color:#4B5563;}
+  .fact svg{flex:0 0 46px;width:46px;height:46px;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const ic={
+ ins:`<svg viewBox="0 0 32 32"><rect x="5" y="3" width="22" height="26" rx="3" fill="#fff" stroke="#6B7280" stroke-width="2"/>${[0,1,2].map(i=>`<rect x="9" y="${9+i*6}" width="14" height="3" fill="#9CA3AF"/>`).join('')}</svg>`,
+ kn:`<svg viewBox="0 0 32 32"><path d="M4 7 h10 a3 3 0 0 1 3 3 v18 a3 3 0 0 0 -3 -3 h-10z" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/><path d="M28 7 h-10 a3 3 0 0 0 -3 3 v18 a3 3 0 0 1 3 -3 h10z" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/></svg>`,
+ tl:`<svg viewBox="0 0 32 32"><path d="M20 4 a7 7 0 0 0 -6 10 l-10 10 l4 4 l10 -10 a7 7 0 0 0 10 -6 l-4 4 l-4 -1 l-1 -4z" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/></svg>`,
+ sk:`<svg viewBox="0 0 32 32"><rect x="4" y="5" width="24" height="23" rx="4" fill="#7C3AED"/><text x="16" y="22" text-anchor="middle" font-size="12" font-weight="900" fill="#fff" font-family="Segoe UI">MD</text></svg>`};
+const zip=`<svg viewBox="0 0 46 46"><rect x="8" y="4" width="30" height="38" rx="4" fill="#FDE68A" stroke="#B45309" stroke-width="2"/>${[0,1,2,3].map(i=>`<rect x="20" y="${8+i*6}" width="6" height="3" fill="#B45309"/>`).join('')}<text x="23" y="38" text-anchor="middle" font-size="9" font-weight="900" fill="#92400E" font-family="Segoe UI">ZIP</text></svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">コパスタ Vol.24</div>
+    <div class="part-pill">早見表 <b>(4/4)</b></div>
+    <div class="title-text">指示・ナレッジ・ツール・<span class="q">スキル</span>、<br>どこに何を書くか</div>
+    <div class="ibadge"><img src="${A}icons/cs_logo.png" alt=""><span class="pl">+</span><img src="${A}icons/ms/agent.png" alt=""></div>
+    <img class="title-chara" src="${A}chara/chara_point_g.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">早見表</div>
+    <div class="txt">いつも守らせることは<b>指示</b>、読ませる資料は<b>ナレッジ</b>、外の仕組みを動かすのは<b>ツール</b>。<br>
+      特定の仕事の<em>やり方</em>をまとめて持たせるのが<b>スキル</b>。</div>
+  </div>
+
+  <div class="body">
+    <div class="tbl">
+      <div class="cap"><img class="msi" src="${A}icons/cs_logo.png" alt="">4つの使い分け（公式の表より）</div>
+      <div class="tr h"><div class="tc k">置き場所</div><div class="tc r">役目</div><div class="tc w">書くもの</div><div class="tc ex">経理の例</div></div>
+      <div class="tr"><div class="tc k">${ic.ins}指示</div><div class="tc r">AIの<b>ふるまい・性格</b></div><div class="tc w">いつも守る決まり</div><div class="tc ex">根拠を添える</div></div>
+      <div class="tr"><div class="tc k">${ic.kn}ナレッジ</div><div class="tc r">AIが<b>読める資料</b></div><div class="tc w">規程・手順書・記録</div><div class="tc ex">経費規程.pdf</div></div>
+      <div class="tr"><div class="tc k">${ic.tl}ツール</div><div class="tc r">外の仕組みを<b>動かす</b></div><div class="tc w">コネクタ・API・MCP</div><div class="tc ex">差し戻しメール</div></div>
+      <div class="tr sk"><div class="tc k">${ic.sk}スキル</div><div class="tc r">仕事ごとの<b>やり方</b></div><div class="tc w">手順・例を Markdown で</div><div class="tc ex">経費の9項目チェック</div></div>
+    </div>
+    <div class="right">
+      <div class="file">
+        <div class="fh"><img src="${A}icons/ms/agent.png" alt="" style="width:20px;height:20px">keihi-check / SKILL.md<span class="z">アップロードでも入れられる</span></div>
+<pre><span class="c">---</span>
+<span class="y">name</span>: keihi-check
+<span class="y">description</span>: 経費精算の申請を規程に沿って
+  確認するときに使う。
+<span class="c">---</span>
+<span class="g">## 手順</span>
+1. 日付が申請月と合うか
+2. 金額が上限以内か
+<span class="g">## 例</span>
+- 「この申請OK？」→ 9項目で確認</pre>
+      </div>
+      <div class="fact">${zip}<span class="t">ZIP なら補助ファイルも同梱<small>SKILL.md ＋ テンプレート・参考資料・スクリプト</small></span></div>
+      <div class="fact"><svg viewBox="0 0 46 46"><rect x="6" y="6" width="34" height="34" rx="6" fill="#fff" stroke="#D97706" stroke-width="2"/><text x="23" y="28" text-anchor="middle" font-size="11" font-weight="900" fill="#92400E" font-family="Segoe UI">UTF-8</text></svg><span class="t">文字コードは UTF-8（BOMなし）<small>読めないとスキップされる</small></span></div>
+    </div>
+  </div>
+
+  <div class="darkband">
+    <div class="nf">
+      <div class="label">スキルにすると楽になること</div>
+      <div class="grid">
+        <div class="fc"><div class="ft">指示が短いまま</div><div class="fd">手順を足しても<br>指示は書き換えない</div></div>
+        <div class="fc"><div class="ft">使い回せる</div><div class="fd">1つ作って<br>複数のエージェントへ</div></div>
+        <div class="fc"><div class="ft">ファイルで渡せる</div><div class="fd">ダウンロードして<br>直して入れ替える</div></div>
+      </div>
+    </div>
+    <div class="note">
+      <div class="label">⚠ 使う前に確認</div>
+      <div class="txt">スキルの共有と Browse skills は<br><b>プレビュー</b>。動かすとクレジットを使う。</div>
+    </div>
+    <div class="src">出典：Microsoft Learn（スキルの概要／既存のスキルを追加する／スキルを管理する）／ファイルの中身は説明用の再現</div>
+  </div>
+  <img class="band-chara" src="${A}chara/chara_guts_g.png" alt="">
+`;
+</script>
+</body>
+</html>
