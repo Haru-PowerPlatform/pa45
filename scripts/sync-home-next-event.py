@@ -238,8 +238,25 @@ def sync_insights_meta() -> None:
         print(f"数字で見るPA45 meta: {n}回・{p}名・理解度{u}% に更新")
 
 
+def sync_about_meta() -> None:
+    """About の共有カード・検索用説明文の「N回でのべP名が参加」を insights.json の集計に合わせる。"""
+    try:
+        s = json.loads(INSIGHTS.read_text(encoding="utf-8"))["summary"]
+    except (FileNotFoundError, KeyError, json.JSONDecodeError):
+        return
+    about = ROOT / "about" / "index.html"
+    if not about.exists():
+        return
+    html = about.read_bytes().decode("utf-8")
+    new = re.sub(r"\d+回でのべ[\d,]+名が参加", f"{s['sessions']}回でのべ{s['participants_total']:,}名が参加", html)
+    if new != html:
+        about.write_bytes(new.encode("utf-8"))
+        print(f"About meta: {s['sessions']}回・のべ{s['participants_total']:,}名 に更新")
+
+
 def main():
     sync_insights_meta()
+    sync_about_meta()
     ev = load_upcoming()
     past = past_sessions(ev)
     raw = INDEX.read_bytes()

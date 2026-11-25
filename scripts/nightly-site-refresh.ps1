@@ -111,6 +111,7 @@ try {
       "data\config\links-index.json",
       "sessions\index.html",
       "index.html",
+      "about\index.html",
       "work\index.html",
       "achievements\insights\index.html",
       "README.md",
