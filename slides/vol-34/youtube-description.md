@@ -54,7 +54,7 @@ https://haru-powerplatform.github.io/pa45/
 📅 次回のPA45に参加する（connpass）
 https://powerautomate-create.connpass.com/
 
-💼 研修・開発のご依頼
+💼 研修のご相談
 https://haru-powerplatform.github.io/pa45/work/
 
 💬 ご相談は無料です。メールか X の DM で受け付けています
