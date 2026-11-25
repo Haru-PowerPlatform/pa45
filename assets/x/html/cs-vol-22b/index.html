@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>コパスタ Vol.22-2 置く・つなぐ・人ごとに探す</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/cs-base.css">
+<style>
+  .body{gap:12px;}
+  .col{flex:1;min-height:0;display:flex;flex-direction:column;border-radius:14px;padding:10px 13px 11px;position:relative;
+    box-shadow:0 6px 14px rgba(0,0,0,.12);background:var(--cs-bg);border:2px solid var(--cs-line);}
+  .col.c3{background:var(--green-bg);border-color:var(--green-line);}
+  .kh{flex:0 0 auto;display:flex;align-items:center;gap:9px;margin-bottom:5px;}
+  .kn{flex:0 0 34px;height:34px;border-radius:50%;color:#fff;font-weight:900;font-size:19px;display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(135deg,#7C3AED,#C026D3);box-shadow:0 2px 4px rgba(0,0,0,.25);}
+  .c3 .kn{background:linear-gradient(135deg,#22C55E,#15803D);}
+  .kt{font-weight:900;font-size:22px;color:var(--navy);line-height:1.2;}
+  .kt small{display:block;font-size:14.5px;font-weight:700;color:var(--weak);}
+  .scene{flex:1;min-height:0;position:relative;}
+  .scene svg{width:100%;height:100%;display:block;}
+  .kcap{flex:0 0 auto;font-weight:700;font-size:15.5px;color:#374151;line-height:1.42;border-top:1.5px dashed #C9B4F4;padding-top:7px;margin-top:4px;}
+  .c3 .kcap{border-color:var(--green-line);}
+  .kcap b{color:var(--cs-dark);}
+  .arrow{position:absolute;top:46%;right:-21px;z-index:20;width:30px;height:30px;border-radius:50%;background:#fff;border:2px solid var(--cs);
+    color:var(--cs);font-weight:900;font-size:17px;display:flex;align-items:center;justify-content:center;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const T=(x,y,s,t,c='#1B2A44',w=800,a='middle')=>`<text x="${x}" y="${y}" text-anchor="${a}" font-size="${s}" font-weight="${w}" fill="${c}" font-family="Noto Sans JP">${t}</text>`;
+const person=(x,y,c)=>`<g transform="translate(${x},${y})"><circle cx="11" cy="8" r="7" fill="${c}"/><path d="M0 30 q11 -22 22 0z" fill="${c}"/></g>`;
+const lock=(x,y,s=1)=>`<g transform="translate(${x},${y}) scale(${s})"><rect x="0" y="12" width="30" height="24" rx="5" fill="#F59E0B"/><path d="M6 12 v-5 a9 9 0 0 1 18 0 v5" fill="none" stroke="#B45309" stroke-width="3.5"/><circle cx="15" cy="23" r="3.5" fill="#78350F"/></g>`;
+/* ① サイトに置く */
+const S1=`<svg viewBox="0 0 360 290" preserveAspectRatio="xMidYMid meet">
+  <defs><filter id="sh" x="-10%" y="-10%" width="120%" height="140%"><feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-opacity=".22"/></filter></defs>
+  ${[[6,'全社ポータル','就業規則.pdf','#16A34A','全員が読める',false],[6+178,'人事部サイト','昇給基準.docx','#D97706','人事部だけ',true]].map(([x,n,f,c,who,lk])=>`
+  <g transform="translate(${x},8)" filter="url(#sh)"><rect width="170" height="190" rx="14" fill="#fff" stroke="#0F766E" stroke-width="2.2"/>
+    <rect width="170" height="34" rx="14" fill="#E6F4F1"/><rect y="20" width="170" height="14" fill="#E6F4F1"/>
+    <image href="${A}icons/ms/sharepoint.svg" x="10" y="6" width="22" height="22"/>${T(38,24,13.5,n,'#0F5132',900,'start')}
+    <rect x="22" y="48" width="70" height="86" rx="6" fill="#fff" stroke="#94A3B8" stroke-width="1.8"/>
+    ${[0,1,2,3].map(i=>`<rect x="32" y="${62+i*14}" width="50" height="6" rx="2" fill="#CBD5E1"/>`).join('')}
+    ${T(57,152,12,f,'#1B2A44',800)}
+    ${lk?lock(116,74,1.2):`<circle cx="132" cy="94" r="20" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/><path d="M122 94 l7 7 l13 -14" stroke="#16A34A" stroke-width="3.5" fill="none" stroke-linecap="round"/>`}
+    <rect x="12" y="162" width="146" height="22" rx="11" fill="${c}"/>${T(85,178,12.5,who,'#fff',900)}</g>`).join('')}
+  ${person(40,232,'#16A34A')}${person(68,232,'#16A34A')}${person(96,232,'#16A34A')}${person(124,232,'#16A34A')}
+  ${person(230,232,'#D97706')}${person(258,232,'#D97706')}
+  ${T(180,284,14,'権限はサイトで決める（いつもどおり）','#5B21B6',900)}
+</svg>`;
+/* ② ナレッジに URL を貼る */
+const S2=`<svg viewBox="0 0 360 290" preserveAspectRatio="xMidYMid meet">
+  <defs><filter id="sh2" x="-10%" y="-10%" width="120%" height="140%"><feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-opacity=".22"/></filter></defs>
+  <g filter="url(#sh2)"><rect x="6" y="6" width="348" height="160" rx="12" fill="#fff" stroke="#E1DFDD" stroke-width="1.5"/>
+  <image href="${A}icons/ms/sharepoint.svg" x="20" y="18" width="24" height="24"/>${T(52,36,16,'SharePoint','#1B2A44',900,'start')}
+  ${T(20,62,11.5,'利用できるのは認証済みのエンドユーザーのみ','#6B7280',700,'start')}
+  <rect x="20" y="76" width="244" height="34" rx="6" fill="#fff" stroke="#7C3AED" stroke-width="2"/>
+  ${T(30,98,12,'…sharepoint.com/sites/jinji','#1B2A44',700,'start')}
+  <rect x="272" y="76" width="68" height="34" rx="6" fill="#7C3AED"/>${T(306,98,14,'追加','#fff',900)}
+  <rect x="20" y="122" width="320" height="32" rx="8" fill="#F5F3FF" stroke="#C9B4F4" stroke-width="1.5"/>
+  <image href="${A}icons/ms/sharepoint.svg" x="30" y="128" width="20" height="20"/>${T(58,143,12.5,'人事部サイト','#1B2A44',800,'start')}${T(328,143,12,'追加済み','#16A34A',900,'end')}</g>
+  <!-- 認証の設定 -->
+  <g filter="url(#sh2)"><rect x="6" y="182" width="348" height="96" rx="12" fill="#fff" stroke="#E1DFDD" stroke-width="1.5"/>
+  ${T(20,206,14,'設定 → 安全性とアクセス → 認証','#1B2A44',900,'start')}
+  <rect x="20" y="220" width="200" height="32" rx="6" fill="#fff" stroke="#16A34A" stroke-width="2.2"/>${T(32,241,13.5,'Microsoft で認証','#1B2A44',800,'start')}
+  <path d="M202 232 l6 6 l6 -6" stroke="#6B7280" stroke-width="2" fill="none"/>
+  ${T(232,234,12,'新しく作ると','#065F46',800,'start')}${T(232,252,12,'最初からこれ','#065F46',800,'start')}
+  ${T(20,272,11.5,'「認証なし」だと SharePoint から取らない','#B91C1C',800,'start')}</g>
+</svg>`;
+/* ③ 話しかけた人の権限で探す */
+const S3=`<svg viewBox="0 0 400 290" preserveAspectRatio="xMidYMid meet">
+  <defs><filter id="sh3" x="-10%" y="-10%" width="120%" height="140%"><feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-opacity=".22"/></filter></defs>
+  <!-- AI -->
+  <g filter="url(#sh3)"><rect x="140" y="6" width="120" height="70" rx="14" fill="#fff" stroke="#7C3AED" stroke-width="2.2"/>
+  <image href="${A}icons/cs_logo.png" x="182" y="12" width="36" height="36"/>${T(200,66,12.5,'同じ質問','#1B2A44',900)}</g>
+  <!-- 2人 -->
+  ${[[20,'人事部','#D97706','読める'],[300,'営業部','#475569','読めない']].map(([x,d,c,t])=>`
+   <g transform="translate(${x},18)">${person(18,0,c)}${T(29,48,12.5,d,'#1B2A44',900)}</g>`).join('')}
+  <path d="M80 40 H136" stroke="#94A3B8" stroke-width="2.5" stroke-dasharray="5 4"/><path d="M264 40 H318" stroke="#94A3B8" stroke-width="2.5" stroke-dasharray="5 4"/>
+  <!-- ふるい -->
+  <path d="M120 96 H280 L232 150 V176 L168 176 V150z" fill="#EDE9FE" stroke="#7C3AED" stroke-width="2.2"/>
+  ${T(200,124,13,'その人が読める資料だけ','#5B21B6',900)}
+  <!-- 結果 -->
+  ${[[10,'人事部の人','資料の中身と出典つき','#16A34A','#ECFDF5',true],[205,'営業部の人','読めない資料は使わない','#64748B','#F8FAFC',false]].map(([x,a,b,c,bg,ok])=>`
+   <g transform="translate(${x},192)" filter="url(#sh3)"><rect width="185" height="84" rx="12" fill="${bg}" stroke="${c}" stroke-width="2"/>
+   ${ok?`<circle cx="28" cy="30" r="15" fill="#16A34A"/><path d="M20 30 l6 6 l10 -11" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/>`:lock(14,12,1)}
+   ${T(52,36,14.5,a,'#1B2A44',900,'start')}${T(14,68,13,b,c==='#64748B'?'#334155':'#065F46',800,'start')}</g>`).join('')}
+  <path d="M180 178 L110 190" stroke="#16A34A" stroke-width="3"/><path d="M220 178 L290 190" stroke="#94A3B8" stroke-width="3" stroke-dasharray="5 4"/>
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">コパスタ Vol.22</div>
+    <div class="part-pill">ながれ <b>(2/4)</b></div>
+    <div class="title-text">資料はサイトに置いたまま。<br><span class="q">URLを貼るだけ</span>で人ごとに絞れる</div>
+    <div class="ibadge"><img src="${A}icons/cs_logo.png" alt=""><span class="pl">+</span><img src="${A}icons/ms/sharepoint.svg" alt=""></div>
+    <img class="title-chara" src="${A}chara/chara_smile_g.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">ながれ</div>
+    <div class="txt">権限は<b>SharePoint のサイト</b>で決め、エージェントには<b>サイトの URL</b>を渡すだけ。<br>
+      あとは話しかけた人の<em>サインイン</em>で、読める資料だけが答えに使われる。</div>
+  </div>
+
+  <div class="body">
+    <div class="col">
+      <div class="kh"><span class="kn">1</span><span class="kt">SharePoint に置く<small>だれが読めるかはサイトで決める</small></span></div>
+      <div class="scene">${S1}</div>
+      <div class="kcap">全社向けと部署限定で<b>サイトを分けて置く</b>。<br>AIのために権限を作り直さない。</div>
+      <div class="arrow">▶</div>
+    </div>
+    <div class="col">
+      <div class="kh"><span class="kn">2</span><span class="kt">ナレッジに URL を貼る<small>ナレッジの追加 → SharePoint</small></span></div>
+      <div class="scene">${S2}</div>
+      <div class="kcap">サイトの URL を貼って<b>追加</b>。<br>認証は「Microsoft で認証」のまま。</div>
+      <div class="arrow">▶</div>
+    </div>
+    <div class="col c3">
+      <div class="kh"><span class="kn">3</span><span class="kt">人ごとに探す<small>話しかけた人の権限で</small></span></div>
+      <div class="scene">${S3}</div>
+      <div class="kcap">同じ質問でも<b>読める資料が違えば答えも違う</b>。<br>読めない人には「応答なし」になる。</div>
+    </div>
+  </div>
+
+  <div class="darkband">
+    <div class="nf">
+      <div class="label">決まりごと（公式）</div>
+      <div class="grid">
+        <div class="fc"><div class="ft">最低ラインは「読み取り」</div><div class="fd">サイトかリストを<br>読める人に答える</div></div>
+        <div class="fc"><div class="ft">Teams ならサインイン不要</div><div class="fd">いつもの Microsoft アカウントで<br>そのまま使える</div></div>
+        <div class="fc"><div class="ft">検索を絞った組織は不可</div><div class="fd">制限付き SharePoint 検索が<br>有効だと使えない</div></div>
+      </div>
+    </div>
+    <div class="note">
+      <div class="label">⚠ 使う前に確認</div>
+      <div class="txt">ファイルを<b>直接アップロード</b>すると、<br>この絞り込みは効かない（4枚目）。</div>
+    </div>
+    <div class="src">出典：Microsoft Learn（SharePoint をナレッジとして追加する／エンドユーザー認証の構成）／画面は説明用の再現</div>
+  </div>
+  <img class="band-chara" src="${A}chara/chara_think_g.png" alt="">
+`;
+</script>
+</body>
+</html>

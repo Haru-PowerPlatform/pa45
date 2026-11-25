@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>コパスタ Vol.26-1 Power Automate に慣れた人ほど戸惑う3つ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/cs-base.css">
+<style>
+  .body{gap:12px;}
+  .col{flex:1;min-height:0;display:flex;flex-direction:column;border-radius:14px;padding:10px 13px 11px;position:relative;
+    box-shadow:0 6px 14px rgba(0,0,0,.12);background:var(--cs-bg);border:2px solid var(--cs-line);}
+  .kh{flex:0 0 auto;display:flex;align-items:center;gap:9px;margin-bottom:6px;}
+  .kn{flex:0 0 34px;height:34px;border-radius:50%;color:#fff;font-weight:900;font-size:19px;display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(135deg,#7C3AED,#C026D3);box-shadow:0 2px 4px rgba(0,0,0,.25);}
+  .kt{font-weight:900;font-size:22px;color:var(--navy);line-height:1.2;}
+  .kt small{display:block;font-size:14.5px;font-weight:700;color:var(--weak);}
+  .scene{flex:1;min-height:0;}
+  .scene svg{width:100%;height:100%;display:block;}
+  .ba{flex:0 0 auto;min-height:0;display:flex;flex-direction:column;gap:6px;margin-top:6px;}
+  .bx{flex:0 0 auto;min-height:0;border-radius:10px;padding:6px 11px;font-size:15px;font-weight:700;line-height:1.45;display:block;}
+  .bx .l{display:block;font-size:13px;font-weight:900;margin-bottom:2px;}
+  .bx.ng{background:#fff;border:1.8px dashed #F87171;color:#6B7280;} .bx.ng .l{color:#B91C1C;}
+  .bx.ok{background:#fff;border:2.2px solid #16A34A;color:#1B2A44;} .bx.ok .l{color:#15803D;}
+  .bx.ok b{background:linear-gradient(transparent 55%,#FDE68A 55%);color:inherit;font-weight:900;}
+  .kcap{flex:0 0 auto;font-weight:700;font-size:15px;color:#374151;line-height:1.42;border-top:1.5px dashed #C9B4F4;padding-top:6px;margin-top:6px;}
+  .kcap b{color:var(--cs-dark);}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const T=(x,y,s,t,c='#1B2A44',w=800,a='middle')=>`<text x="${x}" y="${y}" text-anchor="${a}" font-size="${s}" font-weight="${w}" fill="${c}" font-family="Noto Sans JP">${t}</text>`;
+const D=`<defs><filter id="sh" x="-10%" y="-10%" width="120%" height="140%"><feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-opacity=".2"/></filter>
+ <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#16A34A"/></marker></defs>`;
+/* ① クラウドフローは出てこない */
+const S1=`<svg viewBox="0 0 360 170" preserveAspectRatio="xMidYMid meet">${D}
+  <g transform="translate(8,10)" filter="url(#sh)"><rect width="150" height="58" rx="10" fill="#fff" stroke="#9CA3AF" stroke-width="1.8"/>
+   <image href="${A}icons/pa_logo.png" x="10" y="10" width="38" height="38"/>${T(100,28,12.5,'いつもの','#4B5563',800)}${T(100,46,12.5,'クラウドフロー','#4B5563',900)}</g>
+  <path d="M164 39 H198" stroke="#9CA3AF" stroke-width="2.5" stroke-dasharray="5 4"/>
+  <path d="M173 30 l16 16 M189 30 l-16 16" stroke="#DC2626" stroke-width="3.5" stroke-linecap="round"/>
+  <g transform="translate(204,6)" filter="url(#sh)"><rect width="148" height="66" rx="10" fill="#fff" stroke="#D1D5DB"/>${T(74,24,12.5,'ツールの追加','#1B2A44',900)}
+   <rect x="10" y="34" width="128" height="24" rx="12" fill="#F5F3FF" stroke="#C9B4F4"/>${T(74,51,12,'ワークフロー','#5B21B6',900)}</g>
+  <g transform="translate(8,88)" filter="url(#sh)"><rect width="344" height="74" rx="10" fill="#ECFDF5" stroke="#16A34A" stroke-width="2.2"/>
+   <image href="${A}icons/cs_logo.png" x="12" y="20" width="32" height="32"/>${T(54,24,12,'並ぶのはこのトリガーで始まるものだけ','#065F46',800,'start')}${T(54,46,13.5,'「エージェントがワークフローを','#065F46',900,'start')}${T(54,64,13.5,' 呼び出したとき」','#065F46',900,'start')}</g>
+</svg>`;
+/* ② 分岐を組まない */
+const S2=`<svg viewBox="0 0 360 170" preserveAspectRatio="xMidYMid meet">${D}
+  <g transform="translate(4,6)"><rect width="134" height="156" rx="10" fill="#fff" stroke="#9CA3AF" stroke-width="1.6" stroke-dasharray="5 4"/>
+   <image href="${A}icons/pa_logo.png" x="10" y="8" width="22" height="22"/>${T(78,25,12,'PAの感覚','#6B7280',900)}
+   <rect x="39" y="38" width="56" height="24" rx="5" fill="#E5E7EB"/>${T(67,55,11.5,'条件','#4B5563',800)}
+   <path d="M55 62 L34 84 M79 62 L100 84" stroke="#9CA3AF" stroke-width="2"/>
+   <rect x="6" y="84" width="58" height="24" rx="5" fill="#E5E7EB"/>${T(35,101,11,'経費なら','#4B5563',800)}<rect x="70" y="84" width="58" height="24" rx="5" fill="#E5E7EB"/>${T(99,101,11,'問合せなら','#4B5563',800)}
+   ${T(67,138,12,'分岐を自分で組む','#B91C1C',900)}</g>
+  <g transform="translate(146,6)" filter="url(#sh)"><rect width="210" height="156" rx="10" fill="#ECFDF5" stroke="#16A34A" stroke-width="2.2"/>
+   <image href="${A}icons/cs_logo.png" x="88" y="8" width="34" height="34"/>
+   <path d="M105 46 L55 70 M105 46 L155 70" stroke="#16A34A" stroke-width="2.5" marker-end="url(#ar)"/>
+   <rect x="6" y="74" width="96" height="44" rx="7" fill="#fff" stroke="#16A34A"/>${T(54,92,11.5,'経費申請を回す','#065F46',900)}${T(54,110,10.5,'説明：申請のとき','#065F46',700)}
+   <rect x="108" y="74" width="96" height="44" rx="7" fill="#fff" stroke="#16A34A"/>${T(156,92,11.5,'問合せを記録','#065F46',900)}${T(156,110,10.5,'説明：質問のとき','#065F46',700)}
+   ${T(105,142,12,'AIが説明を見て選ぶ','#065F46',900)}</g>
+</svg>`;
+/* ③ テスト中からクレジット */
+const S3=`<svg viewBox="0 0 360 170" preserveAspectRatio="xMidYMid meet">${D}
+  <g transform="translate(8,6)" filter="url(#sh)"><rect width="200" height="156" rx="10" fill="#fff" stroke="#D1D5DB"/>
+   ${T(14,24,12.5,'プレビュー（テスト）','#1B2A44',900,'start')}
+   <rect x="66" y="36" width="124" height="26" rx="8" fill="#E8EBFA"/>${T(180,54,11.5,'今月の締め日は？','#1B2A44',800,'end')}
+   <rect x="10" y="70" width="150" height="26" rx="8" fill="#F5F3FF"/>${T(18,88,11.5,'月末の3営業日前です','#1B2A44',800,'start')}
+   <rect x="66" y="104" width="124" height="26" rx="8" fill="#E8EBFA"/>${T(180,122,11.5,'振込日は？','#1B2A44',800,'end')}
+   ${T(14,148,11.5,'試すたびに…','#6B7280',800,'start')}</g>
+  ${[0,1,2].map(i=>`<g transform="translate(${236+i*30},${22+i*26})"><circle r="17" cx="17" cy="17" fill="#FDE68A" stroke="#B45309" stroke-width="2"/>${T(17,22,12,'C','#92400E',900)}</g>`).join('')}
+  ${T(290,132,12.5,'作っている間から','#92400E',900)}${T(290,152,12.5,'クレジットを使う','#92400E',900)}
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">コパスタ Vol.26</div>
+    <div class="part-pill">前編 <b>(1/4)</b></div>
+    <div class="title-text"><span class="q">Power Automate に慣れた人</span>ほど<br>戸惑う3つ</div>
+    <div class="ibadge"><img src="${A}icons/cs_logo.png" alt=""><span class="pl">+</span><img src="${A}icons/pa_logo.png" alt=""></div>
+    <img class="title-chara" src="${A}chara/chara_think_g.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">結論</div>
+    <div class="txt">いつものフローは<b>そのまま道具にならない</b>。分岐は組まず、<b>名前と説明</b>で任せる。<br>
+      そして<em>作っている間のテストからクレジットを使う</em>。この3つで手が止まりやすい。</div>
+  </div>
+
+  <div class="body">
+    <div class="col">
+      <div class="kh"><span class="kn">1</span><span class="kt">フローが出てこない<small>ツールの追加 → ワークフロー</small></span></div>
+      <div class="scene">${S1}</div>
+      <div class="ba">
+        <div class="bx ng"><span class="l">✕ PAの感覚</span>作ってあるクラウドフローを選べばいい</div>
+        <div class="bx ok"><span class="l">◯ Copilot Studio では</span><b>専用のトリガー</b>で始まるワークフローだけ</div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="kh"><span class="kn">2</span><span class="kt">分岐を組まない<small>どれを使うかはAIが決める</small></span></div>
+      <div class="scene">${S2}</div>
+      <div class="ba">
+        <div class="bx ng"><span class="l">✕ PAの感覚</span>条件やトピックで行き先を決める</div>
+        <div class="bx ok"><span class="l">◯ Copilot Studio では</span><b>名前と説明</b>で「いつ使うか」を伝える</div>
+      </div>
+    </div>
+    <div class="col">
+      <div class="kh"><span class="kn">3</span><span class="kt">テストでも減る<small>お金の数え方がちがう</small></span></div>
+      <div class="scene">${S3}</div>
+      <div class="ba">
+        <div class="bx ng"><span class="l">✕ PAの感覚</span>ライセンスがあれば何回でも試せる</div>
+        <div class="bx ok"><span class="l">◯ Copilot Studio では</span><b>プレビューの会話</b>もクレジットを使う</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="darkband">
+    <div class="nf">
+      <div class="label">対象（公式）</div>
+      <div class="grid">
+        <div class="fc"><div class="ft">新しいエージェント</div><div class="fd">Microsoft Copilot の<br>土台で作るもの</div></div>
+        <div class="fc"><div class="ft">トピックはない</div><div class="fd">オーケストレーターが<br>道具と資料を選ぶ</div></div>
+        <div class="fc"><div class="ft">ワークフロー</div><div class="fd">Copilot Studio の中で<br>作る自動化</div></div>
+      </div>
+    </div>
+    <div class="note">
+      <div class="label">⚠ 使う前に確認</div>
+      <div class="txt">ワークフローは<b>アクションごと</b>に<br>容量を使う。残りを見ながら試す。</div>
+    </div>
+    <div class="src">出典：Microsoft Learn（Microsoft Copilot の土台で作るエージェント／ワークフローをツールとして追加する／課金）／画面は説明用の再現</div>
+  </div>
+  <img class="band-chara" src="${A}chara/chara_confident_g.png" alt="">
+`;
+</script>
+</body>
+</html>

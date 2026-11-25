@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>コパスタ Vol.26-4 Power Automate との違い早見表</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/cs-base.css">
+<style>
+  .body{gap:14px;}
+  .tbl{flex:1.35;min-width:0;min-height:0;display:flex;flex-direction:column;border-radius:14px;overflow:hidden;border:2px solid var(--cs-line);
+    box-shadow:0 6px 14px rgba(0,0,0,.12);background:#fff;}
+  .cap{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:7px 12px;background:var(--cs-bg);border-bottom:2px solid var(--cs-line);font-size:19px;font-weight:900;color:var(--navy);}
+  .tr{flex:1;min-height:0;display:flex;align-items:center;border-bottom:1.5px solid #EDE9FE;}
+  .tr:last-child{border-bottom:none;}
+  .tr.h{flex:0 0 30px;background:#FAFAFA;}
+  .tr.sk{background:#F5F3FF;}
+  .tc{padding:3px 11px;font-size:15.5px;font-weight:700;color:#374151;line-height:1.36;}
+  .tc.k{flex:0 0 128px;font-size:18px;font-weight:900;color:var(--navy);display:flex;align-items:center;gap:8px;}
+  .tc.k svg{flex:0 0 32px;width:32px;height:32px;}
+  .tc.r{flex:1;min-width:0;color:#6B7280;}
+  .tc.r b{color:var(--cs-dark);}
+  .tc.w{flex:1.15;min-width:0;color:#1B2A44;} .tc.w b{color:var(--cs-dark);}
+  .tr.h .tc img{width:20px;height:20px;vertical-align:-4px;margin-right:5px;}
+  .tr.h .tc{font-size:13.5px;font-weight:800;color:#6B7280;}
+  .right{flex:1;min-width:0;min-height:0;display:flex;flex-direction:column;gap:8px;}
+  .file{flex:1;min-height:0;display:flex;flex-direction:column;background:#1E1B2E;border-radius:12px;overflow:hidden;box-shadow:0 6px 14px rgba(0,0,0,.2);}
+  .file .fh{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:6px 12px;background:#2D2A45;color:#E9E5FF;font-size:15px;font-weight:800;
+    font-family:"Segoe UI","Noto Sans JP",sans-serif;}
+  .file .fh .z{margin-left:auto;font-size:12.5px;color:#C4B5FD;}
+  .file pre{flex:1;min-height:0;margin:0;padding:8px 14px;font-family:Consolas,"Noto Sans JP",monospace;font-size:14px;line-height:1.42;color:#E5E7EB;white-space:pre-wrap;}
+  .file .y{color:#FDE68A;} .file .g{color:#86EFAC;} .file .c{color:#C4B5FD;font-weight:700;}
+  .fact{flex:0 0 auto;display:flex;align-items:center;gap:10px;background:#FFFBEB;border:2px solid #F59E0B;border-radius:12px;padding:6px 12px;}
+  .fact .t{font-size:16px;font-weight:900;color:var(--navy);line-height:1.3;}
+  .fact .t small{display:block;font-size:13.5px;font-weight:700;color:#4B5563;}
+  .fact svg{flex:0 0 46px;width:46px;height:46px;}
+  .chat{flex:1;min-height:0;display:flex;flex-direction:column;gap:7px;background:#fff;border:2px solid #E1DFDD;border-radius:12px;padding:9px 12px;box-shadow:0 6px 14px rgba(0,0,0,.12);}
+  .chat .mh{flex:0 0 auto;font-size:14.5px;font-weight:900;color:var(--navy);display:flex;align-items:center;gap:7px;}
+  .chat .mh img{width:22px;height:22px;}
+  .bu{flex:0 0 auto;align-self:flex-end;background:#E8EBFA;border-radius:10px;padding:5px 11px;font-size:15.5px;font-weight:800;color:#1B2A44;}
+  .cn{flex:0 0 auto;border:2px solid #7C3AED;border-radius:10px;padding:7px 11px;background:#F5F3FF;display:flex;flex-direction:column;gap:4px;}
+  .cn .t{font-size:16px;font-weight:900;color:var(--navy);display:flex;align-items:center;gap:7px;}
+  .cn .t img{width:24px;height:24px;}
+  .cn .d{font-size:14px;font-weight:700;color:#4B5563;line-height:1.4;}
+  .cn .btn{align-self:flex-start;background:#7C3AED;color:#fff;font-size:14px;font-weight:900;border-radius:8px;padding:3px 14px;}
+  .ai{flex:0 0 auto;display:flex;gap:8px;align-items:flex-start;font-size:15.5px;font-weight:800;color:#1B2A44;line-height:1.42;background:#F9FAFB;border:1.5px solid #E5E7EB;border-radius:10px;padding:6px 10px;}
+  .ai img{width:26px;height:26px;flex:0 0 26px;} .ai b{color:var(--cs-dark);}
+  .who{flex:0 0 auto;margin-top:auto;font-size:14px;font-weight:800;color:#065F46;background:#ECFDF5;border-radius:8px;padding:4px 10px;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const ic={
+ ins:`<svg viewBox="0 0 32 32"><path d="M18 3 L7 18 h8 l-2 11 L25 13 h-8z" fill="#FDE68A" stroke="#B45309" stroke-width="2" stroke-linejoin="round"/></svg>`,
+ kn:`<svg viewBox="0 0 32 32"><path d="M16 4 v8 M16 12 L7 22 M16 12 L25 22" fill="none" stroke="#7C3AED" stroke-width="2.6" stroke-linecap="round"/><circle cx="7" cy="25" r="4" fill="#EDE9FE" stroke="#7C3AED" stroke-width="2"/><circle cx="25" cy="25" r="4" fill="#EDE9FE" stroke="#7C3AED" stroke-width="2"/></svg>`,
+ tl:`<svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="12" fill="#ECFDF5" stroke="#16A34A" stroke-width="2"/><path d="M13 10 L22 16 L13 22z" fill="#16A34A"/></svg>`,
+ sk:`<svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="12" fill="#FDE68A" stroke="#B45309" stroke-width="2"/><text x="16" y="21" text-anchor="middle" font-size="13" font-weight="900" fill="#92400E" font-family="Segoe UI">C</text></svg>`,
+ cv:`<svg viewBox="0 0 46 46"><rect x="4" y="10" width="16" height="22" rx="4" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/><rect x="26" y="10" width="16" height="22" rx="4" fill="#EDE9FE" stroke="#7C3AED" stroke-width="2"/><path d="M20 21 h6" stroke="#374151" stroke-width="2.5"/><text x="23" y="44" text-anchor="middle" font-size="9" font-weight="900" fill="#B91C1C" font-family="Noto Sans JP">一方通行</text></svg>`};
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">コパスタ Vol.26</div>
+    <div class="part-pill">早見表 <b>(4/4)</b></div>
+    <div class="title-text">Power Automate と<br><span class="q">ここが違う</span>早見表</div>
+    <div class="ibadge"><img src="${A}icons/cs_logo.png" alt=""><span class="pl">+</span><img src="${A}icons/pa_logo.png" alt=""></div>
+    <img class="title-chara" src="${A}chara/chara_point_g.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">早見表</div>
+    <div class="txt">組み方は似ていても、<b>動かすきっかけ・試し方・お金の数え方</b>が違う。<br>
+      いちばん効くのは、<em>テストでもクレジットを使う</em>こと。</div>
+  </div>
+
+  <div class="body">
+    <div class="tbl">
+      <div class="cap"><img class="msi" src="${A}icons/cs_logo.png" alt="">クラウドフローとエージェントのワークフロー</div>
+      <div class="tr h"><div class="tc k">項目</div><div class="tc r"><img src="${A}icons/pa_logo.png" alt="">Power Automate</div><div class="tc w"><img src="${A}icons/cs_logo.png" alt="">Copilot Studio</div></div>
+      <div class="tr"><div class="tc k">${ic.ins}動かす</div><div class="tc r">トリガーが来たら</div><div class="tc w">AIが<b>説明を見て呼ぶ</b></div></div>
+      <div class="tr"><div class="tc k">${ic.kn}行き先</div><div class="tc r">条件で分岐を組む</div><div class="tc w"><b>名前と説明</b>で伝える</div></div>
+      <div class="tr"><div class="tc k">${ic.tl}試す</div><div class="tc r">フローのテスト</div><div class="tc w"><b>プレビュー</b>とアクティビティ</div></div>
+      <div class="tr sk"><div class="tc k">${ic.sk}お金</div><div class="tc r">ライセンスで動く</div><div class="tc w"><b>クレジット</b>を使う（テストも）</div></div>
+    </div>
+    <div class="right">
+      <div class="chat">
+        <div class="mh"><img src="${A}icons/cs_logo.png" alt="">接続は使う人のもの（会話の中で求められる例）</div>
+        <div class="bu">経費を申請したい</div>
+        <div class="cn"><div class="t"><img src="${A}icons/ms/lists.svg" alt="">接続が必要です</div>
+          <div class="d">このワークフローは、あなたのアカウントで<br>リストに書き込みます。</div><div class="btn">接続する</div></div>
+        <div class="ai"><img src="${A}icons/cs_logo.png" alt=""><span>申請を受け付けました。<br>受付番号は <b>K-0123</b> です。承認者に知らせました。</span></div>
+        <div class="who">田中さんの接続で書き込む → 田中さんの権限で動く</div>
+      </div>
+      <div class="fact">${ic.cv}<span class="t">クラウドフローを変換すると戻せない<small>エージェント用にする変換は一方通行</small></span></div>
+    </div>
+  </div>
+
+  <div class="darkband">
+    <div class="nf">
+      <div class="label">クレジットを減らす試し方</div>
+      <div class="grid">
+        <div class="fc"><div class="ft">先に単体で</div><div class="fd">ワークフローは<br>アクション単位で試せる</div></div>
+        <div class="fc"><div class="ft">会話はまとめて</div><div class="fd">確かめたいことを<br>決めてから話しかける</div></div>
+        <div class="fc"><div class="ft">流れを見る</div><div class="fd">アクティビティで<br>どの道具を呼んだか</div></div>
+      </div>
+    </div>
+    <div class="note">
+      <div class="label">⚠ 使う前に確認</div>
+      <div class="txt">ワークフローは<b>アクションごと</b>に容量を使う。<br>Power Automate のフローはライセンス側。</div>
+    </div>
+    <div class="src">出典：Microsoft Learn（課金とクレジット／ワークフローをツールとして追加する／エージェントをテストする）／会話の画面と名前は説明用の再現</div>
+  </div>
+  <img class="band-chara" src="${A}chara/chara_guts_g.png" alt="">
+`;
+</script>
+</body>
+</html>

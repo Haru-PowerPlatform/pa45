@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>コパスタ Vol.25-2 説明の書き方3つ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/cs-base.css">
+<style>
+  .body{gap:12px;}
+  .col{flex:1;min-height:0;display:flex;flex-direction:column;border-radius:14px;padding:10px 13px 11px;position:relative;
+    box-shadow:0 6px 14px rgba(0,0,0,.12);background:var(--cs-bg);border:2px solid var(--cs-line);}
+  .kh{flex:0 0 auto;display:flex;align-items:center;gap:9px;margin-bottom:6px;}
+  .kn{flex:0 0 34px;height:34px;border-radius:50%;color:#fff;font-weight:900;font-size:19px;display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(135deg,#7C3AED,#C026D3);box-shadow:0 2px 4px rgba(0,0,0,.25);}
+  .kt{font-weight:900;font-size:22px;color:var(--navy);line-height:1.2;}
+  .kt small{display:block;font-size:14.5px;font-weight:700;color:var(--weak);}
+  .scene{flex:0 0 96px;min-height:0;}
+  .scene svg{width:100%;height:100%;display:block;}
+  .ba{flex:1;min-height:0;display:flex;flex-direction:column;gap:6px;margin-top:6px;}
+  .bx{flex:1;min-height:0;border-radius:10px;padding:6px 11px;font-size:15px;font-weight:700;line-height:1.45;display:block;}
+  .bx .l{display:block;font-size:13px;font-weight:900;margin-bottom:2px;}
+  .bx.ng{background:#fff;border:1.8px dashed #F87171;color:#6B7280;} .bx.ng .l{color:#B91C1C;}
+  .bx.ok{background:#fff;border:2.2px solid #16A34A;color:#1B2A44;} .bx.ok .l{color:#15803D;}
+  .bx.ok mark{background:linear-gradient(transparent 55%,#FDE68A 55%);color:inherit;font-weight:900;}
+  .kcap{flex:0 0 auto;font-weight:700;font-size:15px;color:#374151;line-height:1.42;border-top:1.5px dashed #C9B4F4;padding-top:6px;margin-top:6px;}
+  .kcap b{color:var(--cs-dark);}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const T=(x,y,s,t,c='#1B2A44',w=800,a='middle')=>`<text x="${x}" y="${y}" text-anchor="${a}" font-size="${s}" font-weight="${w}" fill="${c}" font-family="Noto Sans JP">${t}</text>`;
+/* ① 何の資料か：ファイルにラベル */
+const S1=`<svg viewBox="0 0 360 96" preserveAspectRatio="xMidYMid meet">
+  <g transform="translate(40,6)"><rect width="64" height="82" rx="6" fill="#fff" stroke="#2B579A" stroke-width="2"/><image href="${A}icons/ms/word.svg" x="18" y="10" width="28" height="28"/>${[0,1,2].map(i=>`<rect x="12" y="${48+i*9}" width="40" height="4" fill="#C7D7EE"/>`).join('')}</g>
+  <path d="M112 46 H150" stroke="#7C3AED" stroke-width="3"/>
+  <rect x="152" y="22" width="190" height="48" rx="24" fill="#7C3AED"/>${T(247,44,13.5,'月次の締めの手順書','#fff',900)}${T(247,61,11.5,'2026年4月改訂','#EDE9FE',800)}
+</svg>`;
+/* ② いつ使うか：質問→資料 */
+const S2=`<svg viewBox="0 0 360 96" preserveAspectRatio="xMidYMid meet">
+  ${['締め日は？','振込日は？','差し戻しは？'].map((t,i)=>`<g transform="translate(6,${4+i*30})"><rect width="120" height="26" rx="8" fill="#E8EBFA"/>${T(60,18,12.5,t,'#1B2A44',800)}</g>`).join('')}
+  ${[0,1,2].map(i=>`<path d="M128 ${17+i*30} C190 ${17+i*30} 200 48 236 48" stroke="#16A34A" stroke-width="2.5" fill="none"/>`).join('')}
+  <g transform="translate(240,14)"><rect width="110" height="68" rx="10" fill="#ECFDF5" stroke="#16A34A" stroke-width="2"/><image href="${A}icons/ms/word.svg" x="12" y="10" width="26" height="26"/>${T(72,28,12,'手順書','#065F46',900)}${T(55,56,11.5,'この資料を使う','#065F46',800)}</g>
+</svg>`;
+/* ③ 使わない場面 */
+const S3=`<svg viewBox="0 0 360 96" preserveAspectRatio="xMidYMid meet">
+  <g transform="translate(6,8)"><rect width="150" height="34" rx="8" fill="#E8EBFA"/>${T(75,22,12.5,'有給は何日残ってる？','#1B2A44',800)}</g>
+  <path d="M160 25 H214" stroke="#9CA3AF" stroke-width="2.5" stroke-dasharray="5 4"/>
+  <g transform="translate(218,6)"><rect width="134" height="40" rx="9" fill="#fff" stroke="#D1D5DB"/><image href="${A}icons/ms/word.svg" x="10" y="8" width="24" height="24"/>${T(84,26,12,'手順書','#6B7280',900)}</g>
+  <path d="M206 18 l16 16 M222 18 l-16 16" stroke="#DC2626" stroke-width="3.5" stroke-linecap="round"/>
+  <g transform="translate(6,58)"><rect width="346" height="32" rx="8" fill="#FEF2F2" stroke="#FCA5A5"/>${T(173,21,12.5,'勤怠・有給は対象外 → 人事の資料へ','#991B1B',900)}</g>
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">コパスタ Vol.25</div>
+    <div class="part-pill">書き方 <b>(2/4)</b></div>
+    <div class="title-text">説明は<span class="q">1〜2文</span>で、<br>何の資料・いつ使う・使わない場面</div>
+    <div class="ibadge"><img src="${A}icons/cs_logo.png" alt=""><span class="pl">+</span><img src="${A}icons/ms/word.svg" alt=""></div>
+    <img class="title-chara" src="${A}chara/chara_smile_g.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">書き方</div>
+    <div class="txt">公式のコツは<b>シンプルで直接的な言葉</b>、<b>1〜2文</b>、<b>できないことも書く</b>の3つ。<br>
+      ナレッジの説明も同じ考え方で、<em>資料どうしの説明を重ねない</em>。</div>
+  </div>
+
+  <div class="body">
+    <div class="col">
+      <div class="kh"><span class="kn">1</span><span class="kt">何の資料か<small>ファイル名ではなく中身で</small></span></div>
+      <div class="scene">${S1}</div>
+      <div class="ba">
+        <div class="bx ng"><span class="l">✕ 既定のまま</span>このナレッジ ソースは 経理手順書_v3.docx に含まれる情報を検索します</div>
+        <div class="bx ok"><span class="l">◯ 書き直す</span><mark>月次の締め作業と経費精算の手順書</mark>（2026年4月改訂）。</div>
+      </div>
+      <div class="kcap">改訂日や版を入れると、<br><b>どれが最新か</b>も伝わる。</div>
+    </div>
+    <div class="col">
+      <div class="kh"><span class="kn">2</span><span class="kt">いつ使うか<small>聞かれそうなことを並べる</small></span></div>
+      <div class="scene">${S2}</div>
+      <div class="ba">
+        <div class="bx ng"><span class="l">✕ あいまい</span>経理に関する情報を検索します</div>
+        <div class="bx ok"><span class="l">◯ 具体的に</span><mark>締め日・振込日・差し戻し</mark>の手順を聞かれたときに使う。</div>
+      </div>
+      <div class="kcap">実際の質問で使う言葉を入れると、<br><b>質問と説明が結びつく</b>。</div>
+    </div>
+    <div class="col">
+      <div class="kh"><span class="kn">3</span><span class="kt">使わない場面<small>ほかの資料との境目</small></span></div>
+      <div class="scene">${S3}</div>
+      <div class="ba">
+        <div class="bx ng"><span class="l">✕ 書いていない</span>勤怠の質問でも手順書を読みにいく</div>
+        <div class="bx ok"><span class="l">◯ 境目を書く</span><mark>勤怠・有給は対象外</mark>。人事の規程を使う。</div>
+      </div>
+      <div class="kcap">似た資料が多いほど、<br><b>境目の1文</b>が効く。</div>
+    </div>
+  </div>
+
+  <div class="darkband">
+    <div class="nf">
+      <div class="label">決まりごと（公式）</div>
+      <div class="grid">
+        <div class="fc"><div class="ft">名前は重ならない</div><div class="fd">ナレッジの名前は<br>エージェントの中で1つずつ</div></div>
+        <div class="fc"><div class="ft">25個を超えると</div><div class="fd">AIが先に絞り込む<br>（アップロードは数えない）</div></div>
+        <div class="fc"><div class="ft">名前を変えても</div><div class="fd">元のファイル名は<br>変わらない</div></div>
+      </div>
+    </div>
+    <div class="note">
+      <div class="label">⚠ 使う前に確認</div>
+      <div class="txt">説明を直したら<b>保存</b>して公開し直す。<br>直すだけでは使う人に届かない。</div>
+    </div>
+    <div class="src">出典：Microsoft Learn（生成オーケストレーション／ナレッジ ソースの概要／既存のナレッジを追加する）／例文は説明用の再現</div>
+  </div>
+  <img class="band-chara" src="${A}chara/chara_think_g.png" alt="">
+`;
+</script>
+</body>
+</html>

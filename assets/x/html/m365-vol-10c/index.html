@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>M365 Copilot Vol.10-3 元の文書の誤りが下書きに写る</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/mc-base.css">
+<style>
+  .stage{gap:6px;}
+  .zone{min-height:0;display:flex;flex-direction:column;gap:6px;border-radius:14px;padding:7px 9px 8px;}
+  .zone .zh{flex:0 0 auto;display:flex;align-items:center;gap:8px;font-weight:900;font-size:21px;line-height:1.15;color:var(--navy);}
+  .zone .zh .n{flex:0 0 32px;height:32px;border-radius:9px;color:#fff;display:flex;align-items:center;justify-content:center;font-size:19px;background:linear-gradient(180deg,#14B8A6,#0F766E);box-shadow:0 2px 4px rgba(0,0,0,.22);}
+  .z1{flex:0 0 268px;background:#F8FAFC;border:2.5px solid #DCE3EE;}
+  .z2{flex:1;min-width:0;background:var(--mc-bg);border:2.5px solid var(--mc-line);}
+  .z3{flex:0 0 420px;background:#FFF7ED;border:2.5px solid #FDBA74;}
+  .z3 .zh .n{background:linear-gradient(180deg,#FB923C,#EA580C);}
+  .arrowc{flex:0 0 22px;display:flex;align-items:center;justify-content:center;color:var(--mc);}
+  .arrowc svg{width:24px;height:24px;}
+  /* 元の文書 */
+  .doc{flex:1.25;min-height:0;position:relative;background:linear-gradient(180deg,#fff,#F8FAFC);border:1.5px solid #CBD5E1;border-radius:6px 16px 6px 6px;box-shadow:0 4px 9px rgba(30,41,59,.18);padding:8px 10px 6px;display:flex;flex-direction:column;gap:5px;}
+  .doc::after{content:"";position:absolute;right:-1.5px;top:-1.5px;width:18px;height:18px;background:linear-gradient(225deg,#E2E8F0 50%,#CBD5E1 50%);border-radius:0 14px 0 6px;}
+  .doc .fn{display:flex;align-items:center;gap:6px;font-size:15.5px;font-weight:900;color:#1E3A8A;}
+  .doc .ln{height:7px;border-radius:4px;background:#E2E8F0;}
+  .doc .dt{align-self:flex-start;font-size:17px;font-weight:900;color:#1B2A44;line-height:1.3;}
+  .doc .dt mark{background:#FECACA;color:#B91C1C;border-radius:4px;padding:0 3px;box-shadow:0 0 0 2px #DC2626;}
+  .doc .er{align-self:flex-start;font-size:15.5px;font-weight:900;color:#fff;background:#DC2626;border-radius:6px;padding:1px 8px;}
+  .xl{flex:1;min-height:0;background:#fff;border:1.5px solid #CBD5E1;border-radius:6px;box-shadow:0 4px 9px rgba(30,41,59,.18);padding:6px 8px;display:flex;flex-direction:column;gap:4px;}
+  .xl .fn{display:flex;align-items:center;gap:6px;font-size:15.5px;font-weight:900;color:#14532D;}
+  .xl .gr{flex:1;min-height:0;display:grid;grid-template-columns:1.3fr 1fr;grid-auto-rows:1fr;border:1px solid #A7D7B8;border-radius:3px;overflow:hidden;}
+  .xl .gr span{border-right:1px solid #D1E7DA;border-bottom:1px solid #D1E7DA;font-size:15.5px;font-weight:700;color:#1B2A44;padding:0 6px;display:flex;align-items:center;}
+  .xl .gr span.h{background:#DCFCE7;font-weight:900;color:#14532D;}
+  /* 会話 */
+  .win{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:2px solid var(--mc-line);border-radius:10px;overflow:hidden;box-shadow:0 3px 8px rgba(0,0,0,.08);}
+  .win .wh{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:5px 10px;background:#F3F2F1;border-bottom:1px solid #E1DFDD;font-size:15.5px;font-weight:700;color:#242424;}
+  .win .wb{flex:1;min-height:0;display:flex;flex-direction:column;gap:7px;padding:8px 9px;justify-content:space-between;}
+  .mg{display:flex;gap:8px;align-items:flex-start;}
+  .mg .av{flex:0 0 34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:15px;background:#2563EB;}
+  .mg.bot .av{background:none;}
+  .mg .bb{flex:1;min-width:0;background:#F4F6FA;border-radius:10px;padding:5px 9px;}
+  .mg.bot .bb{background:var(--mc-bg);border:1.5px solid var(--mc-line);}
+  .mg .nm{font-size:13.5px;font-weight:900;color:#6B7280;}
+  .mg .tx{font-size:17.5px;font-weight:700;color:#1B2A44;line-height:1.36;}
+  .fc{display:inline-flex;align-items:center;gap:5px;background:#fff;border:1.5px solid #C7D2E0;border-radius:7px;padding:1px 7px;font-size:15.5px;font-weight:900;color:#1B2A44;margin:2px 0;}
+  .fc i{font-style:normal;color:#0F766E;font-weight:900;}
+  .nt{align-self:stretch;display:flex;align-items:center;gap:8px;background:#FEF2F2;border:2px dashed #DC2626;border-radius:9px;padding:4px 9px;font-size:16px;font-weight:900;color:#991B1B;line-height:1.3;}
+  .nt svg{flex:0 0 26px;width:26px;height:26px;}
+  /* 下書き */
+  .ol{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:2px solid #FDBA74;border-radius:10px;overflow:hidden;box-shadow:0 3px 8px rgba(120,60,10,.14);}
+  .ol .oh{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:5px 10px;background:#0F6CBD;color:#fff;font-size:15.5px;font-weight:700;}
+  .ol .oh .fd{margin-left:auto;background:#fff;color:#0F6CBD;border-radius:999px;padding:0 10px;font-size:14.5px;font-weight:900;}
+  .ol .of{flex:0 0 auto;display:flex;gap:8px;padding:4px 10px;border-bottom:1px solid #EDEBE9;font-size:15.5px;font-weight:700;color:#242424;}
+  .ol .of em{font-style:normal;color:#605E5C;flex:0 0 40px;}
+  .ol .ob{flex:1;min-height:0;padding:6px 10px;font-size:16px;font-weight:700;color:#242424;line-height:1.45;}
+  .ol .ob mark{background:#FECACA;color:#B91C1C;font-weight:900;border-radius:4px;padding:0 3px;box-shadow:0 0 0 2px #DC2626;}
+  .cal{flex:0 0 auto;display:flex;align-items:center;gap:8px;background:#fff;border:2px solid #16A34A;border-radius:10px;padding:5px 8px;}
+  .cal .cm{flex:0 0 auto;font-size:14.5px;font-weight:900;color:#065F46;line-height:1.2;text-align:center;}
+  .cal .wk{flex:1;display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
+  .cal .wk span{display:flex;flex-direction:column;align-items:center;font-size:13.5px;font-weight:900;color:#6B7280;line-height:1.15;border-radius:6px;padding:1px 0;}
+  .cal .wk span b{font-size:17px;color:#1B2A44;}
+  .cal .wk span.on{background:#16A34A;color:#fff;box-shadow:0 0 0 2px #065F46;} .cal .wk span.on b{color:#fff;}
+  .cal .wk span.ng{background:#FEE2E2;color:#B91C1C;} .cal .wk span.ng b{color:#B91C1C;}
+  /* 確かめる場所 */
+  .chk{flex:0 0 auto;margin:7px 16px 0;display:flex;gap:8px;align-items:stretch;position:relative;}
+  .chk .cl{flex:0 0 auto;display:flex;align-items:center;font-size:17px;font-weight:900;color:#fff;background:var(--navy);border-radius:10px;padding:0 12px;line-height:1.2;text-align:center;}
+  .chk .cp{flex:1;display:flex;align-items:center;gap:8px;background:#fff;border:2.5px solid var(--mc-line);border-radius:10px;padding:5px 10px;font-size:17.5px;font-weight:900;color:#1B2A44;line-height:1.25;}
+  .chk .cp svg{flex:0 0 32px;width:32px;height:32px;}
+  .chk .cp small{display:block;font-size:15px;font-weight:700;color:#4B5563;}
+  .chk .ch{position:absolute;right:0;bottom:-8px;height:116px;z-index:6;filter:drop-shadow(0 3px 4px rgba(0,0,0,.25));}
+  .warnbar{margin-top:7px;padding:6px 14px;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={arrow:'<path d="M4 12h15M13 6l6 6-6 6"/>',warn:'<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18v.5"/>'};
+const CPI=(w)=>`<img class="msi" src="${A}icons/ms/copilot.png" alt="" style="width:${w||24}px;height:${w||24}px">`;
+const MS=(n,w)=>`<img class="msi" src="${A}icons/ms/${n}" alt="" style="width:${w||24}px;height:${w||24}px">`;
+const LOUPE=`<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><circle cx="13" cy="13" r="9" fill="#E0F2FE" stroke="#0F766E" stroke-width="3"/><path d="M9 13l3 3 5-6" fill="none" stroke="#16A34A" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M20 20l8 8" stroke="#134E4A" stroke-width="4.5" stroke-linecap="round"/></svg>`;
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="pills"><div class="vol-pill"><small>M365 Copilot</small>Vol.10-3</div><div class="lic-pill paid">M365 Copilot ライセンスが要る</div></div>
+    <div class="title-text">2ファイルから作った案内メール。<br><span class="hl">元の文書の誤りも、下書きに写る</span></div>
+    <div class="title-apps"><img class="msi" src="${A}icons/ms/word.svg" alt=""><img class="msi" src="${A}icons/ms/excel.svg" alt=""><span class="pl">→</span><img class="msi" src="${A}icons/ms/outlook.svg" alt=""></div>
+    <img class="title-chara" src="${A}chara/chara_surprise.png" alt="">
+  </div>
+  <div class="concl">
+    <div class="chip app">${CPI(34)}</div>
+    <div class="txt">「/」で Word と Excel を指定して頼むと、<b>Outlook の下書きフォルダーに保存</b>されました。<br>ただし元の文書の <b>11/5（水）</b>は、木曜の誤りのまま写っています</div>
+  </div>
+  <div class="stage">
+    <div class="zone z1">
+      <div class="zh"><span class="n">1</span>元の文書</div>
+      <div class="doc">
+        <div class="fn">${MS('word.svg',26)}説明会のご案内.docx</div>
+        <div class="ln" style="width:92%"></div><div class="ln" style="width:70%"></div>
+        <div class="dt">日時：<mark>11/5（水）</mark></div>
+        <div class="er">正しくは木曜</div>
+        <div class="dt">場所：本社 3階 会議室A</div>
+        <div class="ln" style="width:84%"></div><div class="ln" style="width:60%"></div>
+      </div>
+      <div class="xl">
+        <div class="fn">${MS('excel.svg',26)}参加者一覧.xlsx</div>
+        <div class="gr"><span class="h">氏名</span><span class="h">部署</span><span>山田 太郎</span><span>総務</span><span>佐藤 花子</span><span>経理</span></div>
+      </div>
+    </div>
+    <div class="arrowc">${svgw(P.arrow,3)}</div>
+    <div class="zone z2">
+      <div class="zh"><span class="n">2</span>Copilot Chat で頼む</div>
+      <div class="win">
+        <div class="wh">${CPI(22)}Copilot Chat<span class="repro">画面は説明用の再現</span></div>
+        <div class="wb">
+          <div class="mg"><span class="av">自</span><div class="bb"><div class="nm">自分</div><div class="tx"><span class="fc"><i>/</i>${MS('word.svg',20)}説明会のご案内</span> <span class="fc"><i>/</i>${MS('excel.svg',20)}参加者一覧</span><br>この2つをもとに、案内メールを作って</div></div></div>
+          <div class="mg bot"><span class="av">${CPI(34)}</span><div class="bb"><div class="nm">Copilot</div><div class="tx">案内メールを作成し、Outlook の下書きフォルダーに保存しました</div></div></div>
+          <div class="nt"><svg viewBox="0 0 26 26" xmlns="http://www.w3.org/2000/svg"><path d="M13 2l11 20H2z" fill="#FEE2E2" stroke="#DC2626" stroke-width="2.2" stroke-linejoin="round"/><path d="M13 9v6M13 18.5v.5" stroke="#DC2626" stroke-width="2.6" stroke-linecap="round"/></svg>曜日の誤りの指摘は、返事になかった</div>
+        </div>
+      </div>
+    </div>
+    <div class="arrowc">${svgw(P.arrow,3)}</div>
+    <div class="zone z3">
+      <div class="zh"><span class="n">3</span>下書きに誤りが残る</div>
+      <div class="ol">
+        <div class="oh">${MS('outlook.svg',22)}Outlook<span class="fd">下書き</span></div>
+        <div class="of"><em>件名</em>説明会のご案内</div>
+        <div class="ob">各位<br>説明会を次の日程で開きます。<br>日時：<mark>11/5（水）</mark><br>場所：本社 3階 会議室A<br>対象：山田さん、佐藤さん ほか<br>出欠は前日までにご返信ください。</div>
+      </div>
+      <div class="cal">
+        <div class="cm">2026年<br>11月</div>
+        <div class="wk"><span>日<b>1</b></span><span>月<b>2</b></span><span>火<b>3</b></span><span class="ng">水<b>4</b></span><span class="on">木<b>5</b></span><span>金<b>6</b></span><span>土<b>7</b></span></div>
+      </div>
+    </div>
+  </div>
+  <div class="chk">
+    <div class="cl">人が<br>確かめる</div>
+    <div class="cp">${LOUPE}<span>頼む前：元の文書<small>日付と曜日を予定表で照合</small></span></div>
+    <div class="cp">${LOUPE}<span>送る前：下書き<small>日付・曜日・宛先・数字を読む</small></span></div>
+    </div>
+  <div class="warnbar">
+    <span class="wl">使う前に確認</span>
+    <div class="ws"><span>下書きは保存まで。送信は自分で行う</span><span>Copilot の応答は、確認してから使う（Microsoft Learn）</span></div>
+  </div>
+  <div class="src">出典：Microsoft サポート「Microsoft Copilot で特定のファイルなどを参照する」・Microsoft Learn「アプリケーション カード: Microsoft Copilot (組織向け)」／実画面で確認（2026年10〜11月）・ファイル名、人名、文面は架空・画面は説明用の再現</div>
+`;
+</script>
+</body>
+</html>

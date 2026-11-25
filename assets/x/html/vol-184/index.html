@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>Vol.184-1 フローが止まる前に知っておく6つの数字</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/tips-base.css">
+<style>
+  .stage{gap:11px;}
+  /* 左：実行履歴の再現 */
+  .lm{flex:0 0 368px;display:flex;flex-direction:column;gap:6px;min-height:0;}
+  .win{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:2.5px solid #A9C6F5;border-radius:11px;overflow:hidden;box-shadow:0 4px 10px rgba(20,40,90,.13);font-family:'Segoe UI','Noto Sans JP',sans-serif;}
+  .win .wh{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:6px 10px;background:#F3F2F1;border-bottom:1px solid #E1DFDD;font-size:15.5px;font-weight:700;color:#242424;}
+  .win .wh img{width:24px;height:24px;}
+  .win .sec{flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;padding:7px 10px 5px;font-size:17px;font-weight:900;color:#242424;}
+  .win .sec .all{font-size:15.5px;font-weight:700;color:#0F6CBD;}
+  .win .hd{flex:0 0 auto;display:flex;padding:3px 10px;font-size:15.5px;font-weight:700;color:#605E5C;border-bottom:1.5px solid #E1DFDD;}
+  .win .hd span:nth-child(1),.rr span:nth-child(1){flex:1.5;}
+  .win .hd span:nth-child(2),.rr span:nth-child(2){flex:1;}
+  .win .hd span:nth-child(3),.rr span:nth-child(3){flex:0 0 66px;}
+  .rr{flex:1;min-height:0;display:flex;align-items:center;padding:0 10px;font-size:15.5px;font-weight:700;color:#242424;border-bottom:1px solid #EDEBE9;}
+  .rr .ok,.rr .ng{display:inline-flex;align-items:center;gap:4px;font-weight:900;}
+  .rr .ok{color:#107C10;} .rr .ng{color:#C50F1F;}
+  .rr .ok i,.rr .ng i{width:18px;height:18px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-style:normal;font-size:12px;font-weight:900;}
+  .rr .ok i{background:#107C10;} .rr .ng i{background:#C50F1F;}
+  .rr.ng-row{background:#FDF3F4;}
+  .rr.dots{flex:0 0 20px;justify-content:center;color:#8A8886;font-size:15.5px;letter-spacing:4px;border-bottom:none;}
+  .rr.edge{border-bottom:2.5px dashed #DC2626;}
+  .rr.gone{color:#B8B6B4;background:repeating-linear-gradient(135deg,#FAFAFA 0 8px,#F1F1F1 8px 16px);border-bottom:1px dashed #D6D6D6;}
+  .rr.gone span{text-decoration:line-through;}
+  .rr.gone span:nth-child(3){text-decoration:none;color:#B91C1C;font-weight:900;font-size:15.5px;}
+  .lcap{flex:0 0 auto;font-size:15.5px;font-weight:900;line-height:1.3;border-radius:9px;padding:6px 10px;color:#991B1B;background:#FDE2E2;}
+  .lcap small{display:block;font-size:13.5px;font-weight:700;color:#6B7280;margin-top:1px;}
+  /* 右：数字カード */
+  .grid{flex:1;min-width:0;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:1fr 1fr;gap:9px;min-height:0;}
+  .nc{min-width:0;min-height:0;display:flex;flex-direction:column;gap:4px;background:linear-gradient(180deg,#FFFFFF,#F4F8FF);border:2.5px solid #A9C6F5;border-radius:13px;padding:8px 10px 8px;box-shadow:0 4px 10px rgba(20,40,90,.12),inset 0 1px 0 rgba(255,255,255,.8);}
+  .nc .top{flex:0 0 auto;display:flex;align-items:center;gap:8px;}
+  .nc .top .pic{flex:0 0 116px;height:92px;border-radius:9px;background:#EAF1FB;overflow:hidden;}
+  .nc .num{flex:1;min-width:0;font-size:45px;font-weight:900;line-height:1.3;color:var(--c,#1D4ED8);letter-spacing:-1px;white-space:nowrap;text-align:center;}
+  .nc .num.w{font-size:40px;}
+  .nc .num small{font-size:21px;font-weight:900;margin-left:2px;letter-spacing:0;}
+  .nc .sc{flex:0 0 auto;font-size:18px;font-weight:900;line-height:1.3;color:#1B2A44;}
+  .nc .nt{flex:1;min-height:0;display:flex;align-items:center;font-size:15.5px;font-weight:700;line-height:1.32;color:#374151;background:#EEF2F7;border-radius:8px;padding:3px 8px;}
+  .nc .nt b{color:#B45309;}
+  .nc.red{border-color:#F0AEAE;background:linear-gradient(180deg,#FFFFFF,#FFF5F5);} .nc.red .top .pic{background:#FCE4E4;}
+  .nc.amb{border-color:#F6C56B;background:linear-gradient(180deg,#FFFFFF,#FFFAEC);} .nc.amb .top .pic{background:#FDF0CF;}
+  .nc.vio{border-color:#CDB9F5;background:linear-gradient(180deg,#FFFFFF,#F7F3FF);} .nc.vio .top .pic{background:#EDE5FC;}
+  .next{font-size:18px;padding:8px 18px;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={arrow:'<path d="M4 12h15M13 6l6 6-6 6"/>',bulb:'<path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0 0 12 3z"/>'};
+const S=(inner)=>`<svg width="116" height="92" viewBox="0 0 106 84" xmlns="http://www.w3.org/2000/svg">${inner}</svg>`;
+/* 1 消えた履歴の棚 */
+const figShelf=S(`
+  <defs><linearGradient id="b1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#60A5FA"/><stop offset="1" stop-color="#2563EB"/></linearGradient></defs>
+  <rect x="6" y="68" width="94" height="7" rx="2" fill="#8B5E34"/><rect x="6" y="75" width="94" height="3" fill="#6B4423" opacity=".5"/>
+  <g stroke="#DC2626" stroke-width="1.8" stroke-dasharray="4 3" fill="#fff" opacity=".9">
+    <rect x="10" y="24" width="15" height="44" rx="2"/><rect x="28" y="20" width="15" height="48" rx="2"/></g>
+  <path d="M14 40l7 9M21 40l-7 9M32 38l7 9M39 38l-7 9" stroke="#DC2626" stroke-width="2.2" stroke-linecap="round"/>
+  <g><rect x="48" y="20" width="15" height="48" rx="2" fill="url(#b1)"/><rect x="66" y="24" width="15" height="44" rx="2" fill="url(#b1)"/><rect x="84" y="18" width="15" height="50" rx="2" fill="url(#b1)"/>
+  <rect x="51" y="27" width="9" height="12" rx="1.5" fill="#fff"/><rect x="69" y="31" width="9" height="12" rx="1.5" fill="#fff"/><rect x="87" y="25" width="9" height="12" rx="1.5" fill="#fff"/>
+  <circle cx="55.5" cy="56" r="3" fill="#DBEAFE"/><circle cx="73.5" cy="57" r="3" fill="#DBEAFE"/><circle cx="91.5" cy="56" r="3" fill="#DBEAFE"/></g>
+  <text x="26" y="14" font-size="13" font-weight="900" fill="#B91C1C" text-anchor="middle" font-family="Noto Sans JP">先月</text>
+  <text x="74" y="13" font-size="13" font-weight="900" fill="#1E40AF" text-anchor="middle" font-family="Noto Sans JP">今月</text>`);
+/* 2 待ちくたびれた承認 */
+const figWait=S(`
+  <defs><linearGradient id="g2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FDE68A"/><stop offset="1" stop-color="#F59E0B"/></linearGradient></defs>
+  <rect x="5" y="12" width="56" height="62" rx="6" fill="#fff" stroke="#C9A24A" stroke-width="2"/>
+  <rect x="5" y="12" width="56" height="13" rx="6" fill="#0F6CBD"/><rect x="5" y="19" width="56" height="6" fill="#0F6CBD"/>
+  <rect x="11" y="31" width="40" height="4.5" rx="2" fill="#94A3B8"/><rect x="11" y="40" width="30" height="4.5" rx="2" fill="#CBD5E1"/>
+  <rect x="11" y="54" width="20" height="13" rx="3" fill="#E5E7EB" stroke="#9CA3AF" stroke-width="1.3"/><rect x="35" y="54" width="20" height="13" rx="3" fill="#E5E7EB" stroke="#9CA3AF" stroke-width="1.3"/>
+  <path d="M16 60.5l3.5 3.5 6-7" stroke="#9CA3AF" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M41 57l8 7M49 57l-8 7" stroke="#9CA3AF" stroke-width="2.2" stroke-linecap="round"/>
+  <g transform="translate(70 10)"><rect x="0" y="0" width="30" height="5" rx="2" fill="#92400E"/><rect x="0" y="59" width="30" height="5" rx="2" fill="#92400E"/>
+    <path d="M3 5h24c0 14-9 18-9 27s9 13 9 27H3c0-14 9-18 9-27S3 19 3 5z" fill="#FFFBEB" stroke="#B45309" stroke-width="2"/>
+    <path d="M6 59c0-9 5-12 9-14 4 2 9 5 9 14z" fill="url(#g2)"/><path d="M15 33v10" stroke="#F59E0B" stroke-width="1.6" stroke-dasharray="2 2"/></g>`);
+/* 3 オフになったスイッチ（失敗続き） */
+const figOff=S(`
+  <g font-family="Noto Sans JP" font-weight="900">
+  <circle cx="18" cy="17" r="10" fill="#DC2626"/><circle cx="42" cy="17" r="10" fill="#DC2626"/><circle cx="66" cy="17" r="10" fill="#DC2626"/><circle cx="90" cy="17" r="10" fill="#DC2626" opacity=".45"/>
+  <g fill="#fff" font-size="15" text-anchor="middle"><text x="18" y="22.5">!</text><text x="42" y="22.5">!</text><text x="66" y="22.5">!</text><text x="90" y="22.5">!</text></g></g>
+  <rect x="15" y="40" width="76" height="36" rx="18" fill="#9CA3AF"/><rect x="15" y="40" width="76" height="36" rx="18" fill="none" stroke="#6B7280" stroke-width="2"/>
+  <circle cx="34" cy="58" r="14" fill="#fff" stroke="#6B7280" stroke-width="1.5"/>
+  <text x="68" y="64" font-size="15" font-weight="900" fill="#fff" text-anchor="middle" font-family="Noto Sans JP">オフ</text>`);
+/* 4 動かないままのフロー */
+const figSleep=S(`
+  <rect x="6" y="14" width="56" height="60" rx="6" fill="#fff" stroke="#B45309" stroke-width="2"/><rect x="6" y="14" width="56" height="15" rx="6" fill="#DC2626"/><rect x="6" y="23" width="56" height="6" fill="#DC2626"/>
+  <rect x="17" y="8" width="5" height="13" rx="2.5" fill="#6B7280"/><rect x="46" y="8" width="5" height="13" rx="2.5" fill="#6B7280"/>
+  <g fill="#E5E7EB"><rect x="12" y="35" width="9" height="8" rx="1.5"/><rect x="24" y="35" width="9" height="8" rx="1.5"/><rect x="36" y="35" width="9" height="8" rx="1.5"/><rect x="48" y="35" width="9" height="8" rx="1.5"/>
+  <rect x="12" y="47" width="9" height="8" rx="1.5"/><rect x="24" y="47" width="9" height="8" rx="1.5"/><rect x="36" y="47" width="9" height="8" rx="1.5"/><rect x="48" y="47" width="9" height="8" rx="1.5"/>
+  <rect x="12" y="59" width="9" height="8" rx="1.5"/><rect x="24" y="59" width="9" height="8" rx="1.5"/><rect x="36" y="59" width="9" height="8" rx="1.5"/><rect x="48" y="59" width="9" height="8" rx="1.5"/></g>
+  <g font-family="Noto Sans JP" font-weight="900" fill="#6B7280"><text x="70" y="30" font-size="14">z</text><text x="80" y="21" font-size="17">z</text><text x="92" y="13" font-size="13">z</text></g>
+  <rect x="66" y="48" width="36" height="20" rx="10" fill="#9CA3AF" stroke="#6B7280" stroke-width="1.5"/><circle cx="77" cy="58" r="7.5" fill="#fff" stroke="#6B7280" stroke-width="1.2"/>`);
+/* 5 あふれた行 */
+const figRows=S(`
+  <rect x="6" y="6" width="62" height="54" rx="5" fill="#fff" stroke="#7C3AED" stroke-width="2"/><rect x="6" y="6" width="62" height="12" rx="5" fill="#7C3AED"/><rect x="6" y="13" width="62" height="5" fill="#7C3AED"/>
+  <g fill="#DDD6FE"><rect x="11" y="23" width="52" height="6" rx="2"/><rect x="11" y="32" width="52" height="6" rx="2"/><rect x="11" y="41" width="52" height="6" rx="2"/><rect x="11" y="50" width="52" height="6" rx="2"/></g>
+  <g fill="#FDBA74" stroke="#EA580C" stroke-width="1.3"><rect x="30" y="63" width="50" height="7" rx="2" transform="rotate(8 55 66)"/><rect x="44" y="72" width="50" height="7" rx="2" transform="rotate(-6 69 75)"/><rect x="60" y="54" width="42" height="7" rx="2" transform="rotate(18 81 57)"/></g>
+  <circle cx="90" cy="26" r="12" fill="#DC2626"/><path d="M84.5 20.5l11 11M95.5 20.5l-11 11" stroke="#fff" stroke-width="3" stroke-linecap="round"/>`);
+/* 6 途中で切れる式 */
+const figExpr=S(`
+  <rect x="4" y="10" width="98" height="28" rx="6" fill="#1E293B"/>
+  <text x="10" y="29" font-size="14" font-weight="700" fill="#FDE68A" font-family="Roboto Mono,monospace">fx</text>
+  <text x="32" y="29" font-size="13" font-weight="700" fill="#93C5FD" font-family="Roboto Mono,monospace">if(equa</text>
+  <rect x="4" y="46" width="98" height="28" rx="6" fill="#1E293B"/>
+  <text x="10" y="65" font-size="13" font-weight="700" fill="#93C5FD" font-family="Roboto Mono,monospace">,concat(</text>
+  <rect x="74" y="46" width="28" height="28" rx="0" fill="#475569"/><rect x="96" y="46" width="6" height="28" rx="3" fill="#475569"/>
+  <path d="M74 42v36" stroke="#F87171" stroke-width="3" stroke-dasharray="5 3"/>
+  <path d="M82 54l12 12M94 54L82 66" stroke="#FCA5A5" stroke-width="3" stroke-linecap="round"/>`);
+const ok='<span class="ok"><i>✓</i>成功</span>', ng='<span class="ng"><i>!</i>失敗</span>';
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.184-1</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">動いているフローが黙って止まる前に、<br><span class="hl">知っておく6つの数字</span></div>
+    <img class="title-chara" src="${A}chara/chara_point.png" alt="">
+  </div>
+  <div class="concl">
+    <div class="chip">${svgw(P.bulb,2.2)}</div>
+    <div class="txt">実行履歴の画面に出るのは<b>28日間</b>。返事待ちは開始から<b>30日</b>で時間切れ。<br>失敗が<b>14日</b>続いたフローは、自動でオフになります</div>
+  </div>
+  <div class="stage">
+    <div class="lm">
+      <div class="win">
+        <div class="wh"><img src="${A}icons/pa_logo.png" alt="">マイ フロー ＞ 毎朝の在庫チェック</div>
+        <div class="sec"><span>28 日間の実行履歴</span><span class="all">すべての実行</span></div>
+        <div class="hd"><span>開始</span><span>期間</span><span>状態</span></div>
+        <div class="rr"><span>11月19日 08:00</span><span>00:00:07</span><span>${ok}</span></div>
+        <div class="rr"><span>11月18日 08:00</span><span>00:00:06</span><span>${ok}</span></div>
+        <div class="rr ng-row"><span>11月17日 08:00</span><span>00:00:03</span><span>${ng}</span></div>
+        <div class="rr dots">・・・</div>
+        <div class="rr edge"><span>10月22日 08:00</span><span>00:00:08</span><span>${ok}</span></div>
+        <div class="rr gone"><span>10月21日 08:00</span><span>00:00:03</span><span>出ない</span></div>
+        <div class="rr gone"><span>10月20日 08:00</span><span>00:00:07</span><span>出ない</span></div>
+      </div>
+      <div class="lcap">11月19日に開くと、10月21日より前は出ない<small>画面は説明用の再現・フロー名と日付は架空</small></div>
+    </div>
+    <div class="grid">
+      <div class="nc" style="--c:#1D4ED8"><div class="top"><div class="pic">${figShelf}</div><div class="num">28<small>日</small></div></div>
+        <div class="sc">先月の失敗を調べたいのに、<br>履歴がもう画面に出ない</div><div class="nt"><span>見出しも「28 日間の実行履歴」。<br>制限の表の保持期間は 30日</span></div></div>
+      <div class="nc amb" style="--c:#B45309"><div class="top"><div class="pic">${figWait}</div><div class="num">30<small>日</small></div></div>
+        <div class="sc">承認の返事を待てるのは、<br>実行の開始から30日まで</div><div class="nt"><span>承認待ちも実行時間に数える。<br>過ぎると返事待ちは時間切れ</span></div></div>
+      <div class="nc red" style="--c:#B91C1C"><div class="top"><div class="pic">${figOff}</div><div class="num">14<small>日</small></div></div>
+        <div class="sc">失敗が続いたフローは、<br>自動でオフになる</div><div class="nt"><span>トリガーやアクションの<br>失敗が続く場合が対象</span></div></div>
+      <div class="nc red" style="--c:#B91C1C"><div class="top"><div class="pic">${figSleep}</div><div class="num">90<small>日</small></div></div>
+        <div class="sc">一度も動かないフローも、<br>オフになることがある</div><div class="nt"><span><b>Premium の所有者などは除外</b>。<br>止まる30日前に知らせが届く</span></div></div>
+      <div class="nc vio" style="--c:#6D28D9"><div class="top"><div class="pic">${figRows}</div><div class="num w">5,000<small>件</small></div></div>
+        <div class="sc">「それぞれに適用する」で<br>回せる件数の上限</div><div class="nt"><span><b>Microsoft 365 付属・無料など</b>。<br>それ以外は 100,000件</span></div></div>
+      <div class="nc" style="--c:#0F766E"><div class="top"><div class="pic">${figExpr}</div><div class="num w">8,192<small>字</small></div></div>
+        <div class="sc">1つの式に書ける長さ。<br>超えるとオンにできない</div><div class="nt"><span>公式の表の値。<br>2026年9月に実機でも確認</span></div></div>
+    </div>
+  </div>
+  <div class="next">
+    <span class="na">${svgw(P.arrow,2.6)}</span>
+    <span>承認が時間切れになる流れは<b>2枚目</b>、先に入れる対策は<b>3枚目</b>、月1回の点検は<b>4枚目</b>へ</span>
+  </div>
+  <div class="src">出典：Microsoft Learn「自動化フロー、スケジュールされたフロー、インスタント フローの制限事項」「クラウド フローのトラブルシューティング」（2026-11-19 確認）／値はライセンスと時期で変わる・画面は説明用の再現・実画面は未確認</div>
+`;
+</script>
+</body>
+</html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>Vol.185-2 席ごとに足すアクション</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/tips-base.css">
+<style>
+  :root{--s1:#2563EB;--s1b:#EEF4FF;--s1l:#A9C6F5;--s1d:#1E3A8A;
+        --s2:#D97706;--s2b:#FFF8EB;--s2l:#F5CF8E;--s2d:#92400E;
+        --s3:#16A34A;--s3b:#ECFDF5;--s3l:#8FD6B2;--s3d:#065F46;}
+  .s1{--c:var(--s1);--cb:var(--s1b);--cl:var(--s1l);--cd:var(--s1d);}
+  .s2{--c:var(--s2);--cb:var(--s2b);--cl:var(--s2l);--cd:var(--s2d);}
+  .s3{--c:var(--s3);--cb:var(--s3b);--cl:var(--s3l);--cd:var(--s3d);}
+  .msi{flex:0 0 auto;object-fit:contain;}
+  .repro{font-size:12.5px;font-weight:700;color:#8A8886;margin-left:auto;white-space:nowrap;}
+  .win{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:2px solid var(--cl,#A9C6F5);border-radius:10px;overflow:hidden;box-shadow:0 3px 8px rgba(0,0,0,.10);}
+  .win .wh{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:5px 10px;background:#F3F2F1;border-bottom:1px solid #E1DFDD;font-size:15.5px;font-weight:900;color:#242424;white-space:nowrap;}
+  .win .wb{flex:1;min-height:0;display:flex;flex-direction:column;padding:7px 10px;}
+  .tag{flex:0 0 auto;display:inline-block;font-size:14px;font-weight:900;color:#fff;background:var(--c,#2563EB);border-radius:6px;padding:1px 8px;white-space:nowrap;}
+  .tag.gy{background:#6B7280;} .tag.gr{background:#16A34A;} .tag.rd{background:#DC2626;} .tag.am{background:#D97706;} .tag.bl{background:#2563EB;}
+  .btn{display:inline-flex;align-items:center;justify-content:center;font-size:15.5px;font-weight:900;border-radius:6px;padding:4px 20px;border:1.5px solid #C8C6C4;color:#242424;background:#fff;}
+  .btn.pri{background:#4F52B2;border-color:#4F52B2;color:#fff;}
+  .lnk{color:#0F6CBD;text-decoration:underline;font-weight:900;}
+  .next .sub{margin-left:auto;font-size:15.5px;font-weight:900;color:#1E40AF;}
+  .wl{font-size:17px;font-weight:900;white-space:nowrap;}
+
+  .stage{gap:8px;}
+  .c3{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px;border-radius:14px;padding:8px 10px 9px;background:var(--cb);border:2.5px solid var(--cl);}
+  .c3 .h{flex:0 0 auto;display:flex;align-items:center;gap:9px;font-weight:900;font-size:22px;line-height:1.2;color:var(--cd);}
+  .c3 .h .n{flex:0 0 auto;width:34px;height:34px;border-radius:9px;color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;background:var(--c);}
+  .bf{flex:0 0 112px;display:flex;gap:9px;align-items:stretch;background:#FEF2F2;border:2px solid #F0AEAE;border-radius:10px;padding:6px 9px;}
+  .bf .l{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:3px;}
+  .bf .lb{align-self:flex-start;font-size:14px;font-weight:900;color:#fff;background:#DC2626;border-radius:6px;padding:0 8px;}
+  .bf .tx{font-size:16.5px;font-weight:900;color:#991B1B;line-height:1.3;}
+  .bf svg{flex:0 0 132px;width:132px;height:96px;}
+  .dn{flex:0 0 22px;display:flex;align-items:center;justify-content:center;gap:8px;color:var(--c);font-size:15.5px;font-weight:900;}
+  .dn svg{width:22px;height:22px;max-width:22px;}
+  .pa{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:2px solid #C2C9D2;border-radius:10px;overflow:hidden;box-shadow:0 3px 8px rgba(0,0,0,.10);}
+  .pa .ah{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:5px 9px;border-bottom:1.5px solid #E5E7EB;font-size:17px;font-weight:900;color:#1F2937;white-space:nowrap;}
+  .pa .ab{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:space-evenly;padding:3px 9px;}
+  .f{display:flex;align-items:baseline;gap:7px;font-size:15.5px;font-weight:700;color:#1B2A44;line-height:1.35;}
+  .f .k{flex:0 0 auto;font-weight:900;color:#605E5C;white-space:nowrap;}
+  .f .v{flex:1;min-width:0;}
+  .f.hot{background:#FFF7ED;border-radius:6px;margin:0 -5px;padding:1px 5px;}
+  .f.hot .k{color:#C2410C;}
+  .sep{border-top:1.5px dashed #D1D5DB;margin:1px 0;}
+  .pos{font-size:14.5px;font-weight:900;color:#fff;background:var(--c);border-radius:6px;padding:0 8px;margin-left:auto;}
+  .cp{flex:0 0 auto;font-size:16px;font-weight:900;line-height:1.32;border-radius:9px;padding:5px 10px;color:var(--cd);background:#fff;border:1.5px solid var(--cl);}
+  .cp b{color:#EA580C;}
+
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={x:'<path d="M6 6l12 12M18 6L6 18"/>',ok:'<path d="M5 12l5 5 9-10"/>',arrow:'<path d="M4 12h15M13 6l6 6-6 6"/>',down:'<path d="M12 4v15M6 13l6 6 6-6"/>',
+  warn:'<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18v.5"/>',bulb:'<path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0 0 12 3z"/>'};
+const MS=(n,w)=>`<img class="msi" src="${A}icons/ms/${n}" alt="" style="width:${w||24}px;height:${w||24}px">`;
+const IC=(n,w)=>`<img class="msi" src="${A}icons/${n}" alt="" style="width:${w||26}px;height:${w||26}px">`;
+const APV=(w)=>`<svg class="msi" viewBox="0 0 28 28" style="width:${w||26}px;height:${w||26}px;flex:0 0 auto"><rect width="28" height="28" rx="6" fill="#486991"/><circle cx="14" cy="14" r="8" fill="none" stroke="#fff" stroke-width="2.2"/><path d="M10 14.2l3 3 5.2-6" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const CH=(e,h,st)=>`<img class="chara" src="${A}chara/chara_${e}.png" alt="" style="height:${h||112}px;${st||''}">`;
+document.getElementById('slide').innerHTML=`
+
+  <div class="titlebar">
+    <div class="vol-pill">Vol.185-2</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">席ごとに足すのは、<br><span class="hl">アクション1つ</span>か欄の書き足しだけ</div>
+    <img class="title-chara" src="${A}chara/chara_laptop.png" alt="">
+  </div>
+  <div class="concl">
+    <div class="chip">${svgw(P.bulb,2.2)}</div>
+    <div class="txt">土台は「項目が作成されたとき」と「開始して承認を待機」の2つ。<br>ここに<b>受付と結果のメール・詳細の書き足し・台帳への記入</b>を足します</div>
+  </div>
+  <div class="stage">
+    <div class="c3 s1">
+      <div class="h"><span class="n">1</span>申請する人へ：受付と結果</div>
+      <div class="bf"><div class="l"><span class="lb">足す前</span><div class="tx">出したあと、<br>何も届かない</div></div><svg viewBox="0 0 132 96"><defs><linearGradient id="g1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#F3F4F6"/></linearGradient></defs>
+<rect x="6" y="8" width="120" height="80" rx="8" fill="url(#g1)" stroke="#D1D5DB" stroke-width="2"/>
+<rect x="6" y="8" width="120" height="18" rx="8" fill="#E5E7EB"/><rect x="14" y="14" width="46" height="6" rx="3" fill="#9CA3AF"/>
+<rect x="16" y="36" width="100" height="14" rx="4" fill="none" stroke="#D1D5DB" stroke-width="1.6" stroke-dasharray="5 4"/>
+<rect x="16" y="58" width="100" height="14" rx="4" fill="none" stroke="#D1D5DB" stroke-width="1.6" stroke-dasharray="5 4"/>
+<circle cx="104" cy="66" r="19" fill="#DC2626"/><text x="104" y="75" text-anchor="middle" font-size="26" font-weight="900" fill="#fff" font-family="Noto Sans JP">?</text></svg></div>
+      <div class="dn">${svgw(P.down,3)}承認の前と後に足す</div>
+      <div class="pa"><div class="ah">${IC('pa_outlook.png',28)}メールの送信 (V2)<span class="pos">2か所</span></div><div class="ab">
+        <div class="f"><span class="k">承認の前</span><span class="v">宛先＝申請者</span></div>
+        <div class="f hot"><span class="k">件名</span><span class="v">受け付けました：<span class="dyn">品名</span></span></div>
+        <div class="sep"></div>
+        <div class="f"><span class="k">承認の後</span><span class="v">宛先＝申請者</span></div>
+        <div class="f hot"><span class="k">本文</span><span class="v"><span class="dyn">結果</span> と承認者のコメント</span></div>
+      </div></div>
+      <div class="cp">受付の文面に<b>承認者の名前</b>を書くと、<br>いま誰の所にあるかが伝わります</div>
+    </div>
+    <div class="c3 s2">
+      <div class="h"><span class="n">2</span>承認する人へ：判断材料</div>
+      <div class="bf"><div class="l"><span class="lb">足す前</span><div class="tx">タイトルだけで、<br>金額も理由もない</div></div><svg viewBox="0 0 132 96"><rect x="6" y="6" width="120" height="84" rx="8" fill="#fff" stroke="#D1D5DB" stroke-width="2"/>
+<rect x="14" y="14" width="78" height="9" rx="4" fill="#4B5563"/>
+<rect x="14" y="31" width="104" height="26" rx="5" fill="none" stroke="#F0AEAE" stroke-width="1.8" stroke-dasharray="5 4"/>
+<text x="66" y="50" text-anchor="middle" font-size="15" font-weight="900" fill="#DC2626" font-family="Noto Sans JP">空欄</text>
+<rect x="14" y="66" width="44" height="17" rx="4" fill="#4F52B2"/><rect x="64" y="66" width="44" height="17" rx="4" fill="#fff" stroke="#9CA3AF" stroke-width="1.5"/></svg></div>
+      <div class="dn">${svgw(P.down,3)}同じアクションの欄を埋める</div>
+      <div class="pa"><div class="ah">${APV(28)}開始して承認を待機<span class="pos">欄を埋める</span></div><div class="ab">
+        <div class="f"><span class="k">タイトル</span><span class="v">備品購入：<span class="dyn">品名</span> <span class="dyn">金額</span>円</span></div>
+        <div class="f hot"><span class="k">詳細</span><span class="v">金額・理由・希望納期を1行ずつ</span></div>
+        <div class="f hot"><span class="k">アイテム リンク</span><span class="v">申請の項目のURL</span></div>
+        <div class="f"><span class="k">要求者</span><span class="v">申請者のメール</span></div>
+      </div></div>
+      <div class="cp">承認の種類は<b>「承認/拒否 - 最初に応答」</b>。<br>届く先はメール・Teams・Power Automate</div>
+    </div>
+    <div class="c3 s3">
+      <div class="h"><span class="n">3</span>調べる人へ：台帳に記録</div>
+      <div class="bf"><div class="l"><span class="lb">足す前</span><div class="tx">誰がいつ承認したか、<br>リストに残っていない</div></div><svg viewBox="0 0 132 96"><rect x="6" y="8" width="120" height="80" rx="6" fill="#fff" stroke="#D1D5DB" stroke-width="2"/>
+<rect x="6" y="8" width="120" height="18" rx="6" fill="#E5E7EB"/>
+<path d="M6 46h120M6 66h120M52 8v80M90 8v80" stroke="#D1D5DB" stroke-width="1.6"/>
+<rect x="12" y="32" width="32" height="7" rx="3" fill="#6B7280"/><rect x="12" y="52" width="28" height="7" rx="3" fill="#6B7280"/><rect x="12" y="73" width="32" height="7" rx="3" fill="#6B7280"/>
+<rect x="58" y="32" width="24" height="7" rx="3" fill="#9CA3AF"/><rect x="58" y="52" width="24" height="7" rx="3" fill="#9CA3AF"/><rect x="58" y="73" width="24" height="7" rx="3" fill="#9CA3AF"/>
+<rect x="92" y="28" width="32" height="58" fill="#FEF2F2"/><text x="108" y="64" text-anchor="middle" font-size="22" font-weight="900" fill="#DC2626" font-family="Noto Sans JP">?</text></svg></div>
+      <div class="dn">${svgw(P.down,3)}承認のすぐ後に足す</div>
+      <div class="pa"><div class="ah">${IC('pa_sharepoint.png',28)}項目の更新<span class="pos">1つ</span></div><div class="ab">
+        <div class="f hot"><span class="k">結果（列）</span><span class="v"><span class="dyn">結果</span></span></div>
+        <div class="f"><span class="k">承認した人（列）</span><span class="v">応答承認者名</span></div>
+        <div class="f"><span class="k">コメント（列）</span><span class="v">応答のコメント</span></div>
+        <div class="f hot"><span class="k">承認日時（列）</span><span class="v"><span class="dyn">完了日</span> を日本時間に</span></div>
+      </div></div>
+      <div class="cp">申請のリストに<b>4列足すだけ</b>で、<br>申請と承認の記録が1行にそろいます</div>
+    </div>
+  </div>
+  <div class="warnbar">
+    <span class="na" style="width:28px;height:28px;color:#C2410C">${svgw(P.warn,2.4)}</span>
+    <span class="wl">使う前に確認</span>
+    <span class="ws"><span>承認の日時は UTC で返る。「タイム ゾーンの変換」で日本時間に直してから記入</span><span>承認者名とコメントは応答ごとの値</span></span>
+  </div>
+  <div class="src">出典：Microsoft Learn「Power Automate の承認を始めましょう」「承認ワークフローを作成し、テストします」「承認要求を表示、承認、または拒否する」「標準承認」コネクタ／人名・品名・金額・日付は架空・画面は説明用の再現</div>
+
+`;
+</script>
+</body>
+</html>

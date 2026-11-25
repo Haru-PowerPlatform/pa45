@@ -160,7 +160,16 @@ SERIES = {
     "copasta": ("コパスタ #", "cs", "コパスタ入門"),
     # Microsoft 365 Copilot 技術Tips（別ライン・ティール）。フォルダは mc-vol-NN / mc-vol-NNb
     "m365copilot": ("M365 #", "mc", "M365 Copilot 時短ワザ"),
+    # 旧在庫（2026-11-19 に別タブへ退避）。投稿済みチェックの保存キーは DONE_KEY で元のまま引き継ぐ。
+    "tips_old": ("旧 #", "tipso", "時短ワザ（旧在庫）"),
+    "m365copilot_old": ("旧 M365 #", "mco", "M365 Copilot 時短ワザ（旧在庫）"),
 }
+
+# 「投稿済みにする」チェックの保存キー（ブラウザの localStorage）。
+# 旧在庫は退避前と同じキー（tips-NN / mc-NN）のままにして、付けたチェックを消さない。
+# 新しい M365 Copilot は番号を10から振り直したので、旧 mc-NN とぶつからないよう mcn-NN にする。
+DONE_KEY = {"tips": "tips", "copasta": "cs", "m365copilot": "mcn",
+            "tips_old": "tips", "m365copilot_old": "mc"}
 
 
 # 投稿用の画像まとめフォルダ（リポジトリの外。公開サイトには載らない）
@@ -228,6 +237,7 @@ def tip_images(f):
 
 def card_tips(it):
     prefix, key, sname = SERIES.get(it.get("series", "tips"), SERIES["tips"])
+    dkey = DONE_KEY.get(it.get("series", "tips"), key)
     f = it["folder"]
     img1, rel1, img2, rel2, extras = tip_images(f)
     # 投稿用に、その回の画像を全部 Documents\pa45-x-images\<フォルダ名>\ にまとめる。
@@ -285,7 +295,7 @@ def card_tips(it):
     <a class="btn go" href="{html.escape(intent(it['body']))}" target="_blank" rel="noopener">Xの下書きを開く →</a>
     {li_copy}<a class="btn li" href="{LI_COMPOSE}" target="_blank" rel="noopener">LinkedInを開く →</a>
   </div>
-  <label class="done-row"><input type="checkbox" class="donebox" data-k="{key}-{it['vol']}"> 投稿済みにする</label>
+  <label class="done-row"><input type="checkbox" class="donebox" data-k="{dkey}-{it['vol']}"> 投稿済みにする</label>
 </article>'''
 
 
@@ -321,6 +331,26 @@ def blog_series(b):
     return "pa"
 
 
+def blog_x_intent(post_id):
+    """ブログタブのカード用。記事IDから「ブログ紹介」タブと同じX本文を作り、Xの投稿画面を開くURLを返す。
+    2026-11-13 はる依頼「ブログのタブにも Xに投稿ボタンをいれて」。押すのは投稿画面を開くところまで（投稿は本人）。"""
+    if not hasattr(blog_x_intent, "_c"):
+        items, site, ov = {}, "https://www.automate136.com", {}
+        if BX_LIST.exists():
+            data = json.loads(BX_LIST.read_text(encoding="utf-8"))
+            site = data.get("site", site).rstrip("/")
+            items = {it["id"]: it for it in data.get("items", [])}
+        if BX_OVERRIDES.exists():
+            ov = {k: v for k, v in json.loads(BX_OVERRIDES.read_text(encoding="utf-8")).items()
+                  if not k.startswith("_")}
+        blog_x_intent._c = (items, site, ov)
+    items, site, ov = blog_x_intent._c
+    it = items.get(post_id)
+    if not it or not bx_url(it, site):
+        return ""
+    return intent(bx_body(it, site, ov))
+
+
 def card_blog(b):
     label, cls = BSTATUS.get(b["status"], (b["status"], "st-posted"))
     meta = []
@@ -344,6 +374,12 @@ def card_blog(b):
     if b["status"] == "publish" and b.get("public_url"):
         acts.append(f'<a class="btn" href="{html.escape(b["public_url"])}" target="_blank" '
                     f'rel="noopener">公開ページ</a>')
+    x_url = blog_x_intent(b.get("post_id")) if b.get("post_id") else ""
+    if x_url:
+        # 公開済み＝そのまま投稿できる。公開前＝URLがまだ開けないので、Xでは下書き保存まで。
+        x_label = "Xに投稿" if b["status"] == "publish" else "Xに投稿（公開前）"
+        acts.append(f'<a class="btn xpost" href="{html.escape(x_url)}" target="_blank" '
+                    f'rel="noopener">{x_label} →</a>')
     if not acts:
         acts.append('<span class="btn" style="opacity:.5;cursor:default;">WordPress未作成</span>')
     if b.get("folder"):
@@ -377,6 +413,175 @@ def card_blog(b):
   <div class="acts">{"".join(acts)}</div>
   <div class="slug">{html.escape(b["slug"])}</div>
 </article>'''
+
+
+# ── タブ：ブログ紹介（ブログ記事を X で紹介する。カテゴリで切り替え）────────────
+# 2026-11-12 はる依頼「ブログ記事を、投稿したいタイミングでいつでも X に投稿できるように並べて。
+#   M365 Copilot・Copilot Studio・Power Automate・PA45 で切り替えられるように。未投稿でも投稿済みでもいい」。
+# 元データ＝Documents\\pa45-local\\blog-x-list.json（fetch-blog-status.py が WordPress から書き出す）。
+# 本文は「タイトル → 抜粋の1文目 → URL → タグ」を140字に収めて自動で作る。
+# 書き直したい記事は data/blog-x-overrides.json に {"スラッグ": "本文"} を置くと、そちらが優先される。
+BX_LIST = ROOT.parent / "pa45-local" / "blog-x-list.json"
+BX_OVERRIDES = ROOT / "data" / "blog-x-overrides.json"
+# 2026-11-13 はる依頼「投稿文をもう少し充実させて」。タイトルとURLだけだった本文に、記事の中身が分かる一文を足す。
+# data/blog-x-blurbs.json ＝ {"記事ID": {"title": 目印用, "blurb": "紹介の一文"}}。あれば抜粋の1文目より優先する。
+# 一文は記事の抜粋・見出しに書いてあることだけで作る（140字に収まらない長さだと自動で外れる）。
+BX_BLURBS = ROOT / "data" / "blog-x-blurbs.json"
+BX_LABEL = "【ブログ記事】"   # ブログ紹介の投稿文の1行目。何の投稿かを最初に伝える。
+
+
+def bx_blurbs():
+    if not hasattr(bx_blurbs, "_c"):
+        bx_blurbs._c = json.loads(BX_BLURBS.read_text(encoding="utf-8")) if BX_BLURBS.exists() else {}
+    return bx_blurbs._c
+# (id, タブ名, WordPressのカテゴリID, タグ)。上から順に当てはめる（複数カテゴリの記事は先に当たったほう）。
+BX_GROUPS = [
+    ("cs", "Copilot Studio", {92}, "#CopilotStudio #PA45"),
+    ("mc", "M365 Copilot", {96}, "#M365Copilot #PA45"),
+    ("pa", "Power Automate", {76}, "#PowerAutomate #PA45"),
+    ("pa45", "PA45", {93, 77, 94}, "#PA45"),
+    ("etc", "登壇・社内DX ほか", set(), "#PA45"),
+]
+BX_STATUS = {
+    "publish": ("公開済み", "st-done"),
+    "future": ("予約投稿ずみ", "st-posted"),
+    "draft": ("下書き", "st-todo"),
+    "pending": ("下書き", "st-todo"),
+}
+
+
+# カテゴリだけでは分けきれない（2026-11-12 時点で M365 Copilot のカテゴリ96が付いた記事は0本、
+# Copilot Studio の記事の一部は Power Automate のカテゴリ76に入っている）ので、タイトルでも見る。
+#   ・Copilot Studio／コパスタ がタイトルにあれば Copilot Studio
+#   ・Cowork／M365 Copilot／Copilot Chat／AB-730・AB-900、または Studio ではない Copilot の記事は M365 Copilot
+#     （PA45各回・登壇・書評〔Power Automate for desktop〕・PowerApps の記事は除く）
+# 振り分けを直したい記事は data/blog-x-overrides.json の "_group" に {"スラッグ": "cs|mc|pa|pa45|etc"} を書く。
+BX_CS_RE = re.compile(r"copilot\s*studio|コパスタ", re.I)
+BX_MC_RE = re.compile(r"cowork|m365\s*copilot|microsoft\s*365\s*copilot|copilot\s*chat|ab-?730|ab-?900", re.I)
+BX_MC_NOT_RE = re.compile(r"studio|power\s*automate\s*for\s*desktop|powerapps|pa45|なんでもcopilot", re.I)
+BX_GROUP_FIX = {}
+
+
+def bx_group(it):
+    if it.get("slug") in BX_GROUP_FIX:
+        return BX_GROUP_FIX[it["slug"]]
+    cats = set(it.get("categories") or [])
+    title = it.get("title") or ""
+    if 92 in cats or BX_CS_RE.search(title):
+        return "cs"
+    if 96 in cats or BX_MC_RE.search(title):
+        return "mc"
+    if "copilot" in title.lower() and not BX_MC_NOT_RE.search(title) and not cats & {93, 95, 77}:
+        return "mc"
+    for gid, _, ids, _ in BX_GROUPS:
+        if ids & cats:
+            return gid
+    return "etc"
+
+
+def bx_url(it, site):
+    """公開済みは実URL。予約・下書きは公開後のURL（サイト直下のスラッグ）を入れておく。"""
+    if it["status"] == "publish" and it.get("link"):
+        return it["link"]
+    return f'{site}/{it["slug"]}/' if it.get("slug") else ""
+
+
+def bx_body(it, site, overrides):
+    if it.get("slug") in overrides:
+        return overrides[it["slug"]]
+    tags = next(g[3] for g in BX_GROUPS if g[0] == bx_group(it))
+    url = bx_url(it, site)
+    title = it["title"]
+    lead = ""
+    m = re.match(r"(.+?。)", (it.get("excerpt") or "").replace("\n", ""))
+    if m:
+        lead = m.group(1)
+    ent = bx_blurbs().get(str(it.get("id"))) or {}
+    blurb = ent.get("blurb")
+    if blurb:
+        # 2026-11-13 はる「もう少し分かりやすく説明して。文字数制限は超えてよい」「読みやすく、分かりやすく」
+        # ＝説明つきの本文は140字で切らない。【短い見出し】／短い文＋箇条書き／URL＋タグ を空行で区切る。
+        # 見出し(head)は記事タイトルを短く言い直したもの。長いタイトルはURLのカードに出るので本文では繰り返さない。
+        # 2026-11-13 はる「見出しから始まると、読む人は何の投稿か分からない。最初に『ブログ記事』と入れて」
+        # ＝1行目は必ず【ブログ記事】。2行目に見出し（かっこなし）。
+        head = ent.get("head") or title
+        return f"{BX_LABEL}\n{head}\n\n{blurb}\n\n{url}\n{tags}"
+    title = f"{BX_LABEL}\n{title}"
+    # 140字に収まる形を、情報の多い順に試す
+    for parts in ([title, lead, url, tags], [title, lead, url, "#PA45"], [title, url, tags], [title, url, "#PA45"], [title, url]):
+        body = "\n".join(x for x in parts if x)
+        if c140(body) <= 140:
+            return body
+    return body
+
+
+def card_blogx(it, site, overrides):
+    label, cls = BX_STATUS.get(it["status"], (it["status"], "st-posted"))
+    body = bx_body(it, site, overrides)
+    n = c140(body)
+    bid = f'bx{it["id"]}'
+    when = {"publish": "公開", "future": "公開予定"}.get(it["status"], "作成")
+    acts = [f'<button class="btn copy" data-t="{bid}">X用をコピー</button>']
+    if it["status"] == "publish":
+        acts.append(f'<a class="btn go" href="{html.escape(intent(body))}" target="_blank" rel="noopener">Xの下書きを開く →</a>')
+        acts.append(f'<a class="btn" href="{html.escape(it["link"])}" target="_blank" rel="noopener">公開ページ</a>')
+    else:
+        acts.append('<span class="btn" style="opacity:.5;cursor:default;">公開されたら投稿できます</span>')
+        acts.append(f'<a class="btn" href="{site}/wp-admin/post.php?post={it["id"]}&amp;action=edit" target="_blank" rel="noopener">WordPressで開く</a>')
+    over = ' <span class="badge st-li">本文は手書き</span>' if it.get("slug") in overrides else ""
+    if it.get("slug") not in overrides and str(it.get("id")) in bx_blurbs():
+        # 説明つきの本文はXの重み付き文字数（上限280）で表示。超えたものは長文投稿の印を付ける。
+        xn = x_len(body)
+        if xn > 280:
+            over += ' <span class="badge st-li">長文（280超）</span>'
+        len_html = f'<span class="len">{xn}</span>'
+    else:
+        len_html = f'<span class="len len140{" over" if n > 140 else ""}">{n}</span>'
+    return f'''
+<article class="card bxcard" data-date="{it.get("date") or ""}">
+  <div class="head"><span class="badge {cls}">{label}</span><h2>{html.escape(it["title"])}</h2>{over}
+    {len_html}</div>
+  <div class="sub">{when} {html.escape(it.get("date") or "")} ／ ID {it["id"]}</div>
+  <pre class="body" id="{bid}">{html.escape(body)}</pre>
+  <div class="acts">{"".join(acts)}</div>
+  <label class="done-row"><input type="checkbox" class="donebox nocount" data-k="blogx-{it["id"]}"> Xに投稿済みにする</label>
+</article>'''
+
+
+def build_blogx():
+    """ブログ紹介タブの (サブタブHTML, 中身HTML, 公開済み本数) を返す。元データが無ければ空。"""
+    if not BX_LIST.exists():
+        return "", '<p class="lead">記事一覧がまだありません。<code>python scripts/fetch-blog-status.py</code> を実行してください。</p>', 0
+    data = json.loads(BX_LIST.read_text(encoding="utf-8"))
+    site = data.get("site", "https://www.automate136.com").rstrip("/")
+    items = data.get("items", [])
+    overrides = json.loads(BX_OVERRIDES.read_text(encoding="utf-8")) if BX_OVERRIDES.exists() else {}
+    BX_GROUP_FIX.clear()
+    BX_GROUP_FIX.update(overrides.get("_group") or {})
+    overrides = {k: v for k, v in overrides.items() if not k.startswith("_")}
+    subtabs = panes = ""
+    for gi, (gid, gname, _, _) in enumerate(BX_GROUPS):
+        rows = [it for it in items if bx_group(it) == gid]
+        if gid == "etc" and not rows:
+            continue
+        pub = sorted((r for r in rows if r["status"] == "publish"), key=lambda r: r["date"], reverse=True)
+        fut = sorted((r for r in rows if r["status"] == "future"), key=lambda r: r["date"])
+        dra = sorted((r for r in rows if r["status"] in ("draft", "pending")), key=lambda r: r["date"], reverse=True)
+
+        def grp(title, note, rs):
+            if not rs:
+                return ""
+            return (f'<div class="bgroup"><div class="bhead"><b>{title}</b><span class="th">{note}</span>'
+                    f'<span class="th">{len(rs)}本</span></div>'
+                    f'<div class="grid">{"".join(card_blogx(r, site, overrides) for r in rs)}</div></div>')
+        on = " on" if gi == 0 else ""
+        subtabs += (f'<button class="subtab{on}" data-sub="bx-{gid}">{gname}'
+                    f'<span class="c">公開{len(pub)}本</span></button>')
+        inner = (grp("公開済み", "新しい順。いつでも投稿できる", pub)
+                 + grp("予約投稿ずみ", "公開予定の早い順。公開されたら投稿", fut)
+                 + grp("下書き", "まだ公開していない。本文の準備だけ", dra))
+        panes += f'<div class="subpane{on}" id="bx-{gid}">{inner or "<p class=lead>この区分の記事はありません。</p>"}</div>'
+    return subtabs, panes, sum(1 for it in items if it["status"] == "publish")
 
 
 # ── タブ：PA45 開催告知（1回につき4本を自動生成）──────────────
@@ -714,6 +919,7 @@ h1{font-size:24px;font-weight:900;margin-bottom:4px}
 .filter label{display:flex;align-items:center;gap:6px;cursor:pointer;user-select:none}
 .filter .cnt{font-family:ui-monospace,monospace}
 body.hide-posted .card.posted{display:none}
+.btn.xpost{background:#111;color:#fff;border-color:#111}
 .blogcard .head{align-items:flex-start}
 .blogcard .head h2{font-size:13.5px;line-height:1.5}
 .blogcard .body{font-size:12px;color:var(--mu);max-height:150px;overflow:auto}
@@ -750,7 +956,7 @@ function show(pane){
   document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on', x.dataset.pane===pane));
   document.querySelectorAll('.pane').forEach(x=>x.classList.toggle('on', x.id===pane));
 }
-const HASH={'pane-pa45':'#pa45','pane-announce':'#announce','pane-tips':'#tips','pane-cs':'#cs','pane-mc':'#mc','pane-blog':'#blog','pane-linkedin':'#linkedin','pane-insight':'#insight'};
+const HASH={'pane-pa45':'#pa45','pane-announce':'#announce','pane-tips':'#tips','pane-cs':'#cs','pane-mc':'#mc','pane-old':'#old','pane-blog':'#blog','pane-linkedin':'#linkedin','pane-insight':'#insight'};
 document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
   show(t.dataset.pane);
   history.replaceState(null,'', HASH[t.dataset.pane]||'#pa45');
@@ -824,7 +1030,7 @@ document.querySelectorAll('a.copyf').forEach(a=>a.addEventListener('click',async
 const KEY='pa45-x-posted';
 const posted=new Set(JSON.parse(lsGet(KEY)||'[]'));
 function count(){
-  const n=[...document.querySelectorAll('.donebox')].filter(c=>!c.checked).length;
+  const n=[...document.querySelectorAll('.donebox:not(.nocount)')].filter(c=>!c.checked).length;
   document.getElementById('remain').textContent=n;
 }
 document.querySelectorAll('.donebox').forEach(cb=>{
@@ -855,6 +1061,11 @@ def main():
     pa_tips.sort(key=lambda t: (t.get("order", 10000), -t["vol"]))
     cs = [t for t in tips if t.get("series") == "copasta"]
     mc = [t for t in tips if t.get("series") == "m365copilot"]
+    mc.sort(key=lambda t: t["vol"])
+    # 旧在庫（別タブ）。並びは退避前と同じ
+    pa_old = [t for t in tips if t.get("series") == "tips_old"]
+    pa_old.sort(key=lambda t: (t.get("order", 10000), -t["vol"]))
+    mc_old = [t for t in tips if t.get("series") == "m365copilot_old"]
 
     bf = ROOT / "data" / "blog-board.json"
     blog = json.loads(bf.read_text(encoding="utf-8"))["items"] if bf.exists() else []
@@ -919,7 +1130,11 @@ def main():
         ann = [manual] if manual else [derive_announce_from_upcoming(up)]
         # 前回の開催後処理が済む前に次の回を告知したいとき（upcomingはまだ進められない）は、
         # announce-events.json にある「upcomingより先の回」を優先して出す。
-        ahead = sorted((e for e in ann_manual if int(e.get("vol", -1)) > uv), key=lambda e: e["vol"])
+        # 開催日を過ぎた回は出さない（開催後処理が遅れても、告知は次の回だけになるように）。
+        import datetime as _dt
+        _today = _dt.date.today().isoformat()
+        ahead = sorted((e for e in ann_manual if int(e.get("vol", -1)) > uv
+                        and e.get("date", "9999") >= _today), key=lambda e: e["vol"])
         if ahead:
             ann = ahead
     else:
@@ -950,6 +1165,7 @@ def main():
                      f'<div class="grid">{"".join(card_linkedin(p, li_tokens) for p in rows)}</div></div>')
 
     extra = load_extra_tab()
+    bx_subtabs, bx_panes, bx_pub = build_blogx()
 
     inf = ROOT / "data" / "insight-posts.json"
     insdata = json.loads(inf.read_text(encoding="utf-8")) if inf.exists() else {}
@@ -977,7 +1193,9 @@ def main():
   <button class="tab" data-pane="pane-tips">X技術Tips<span class="c">{len(pa_tips)}本</span></button>
   <button class="tab" data-pane="pane-cs">コパスタ<span class="c">{len(cs)}本</span></button>
   <button class="tab" data-pane="pane-mc">M365 Copilot<span class="c">{len(mc)}本</span></button>
+  <button class="tab" data-pane="pane-old">旧在庫<span class="c">PA {len(pa_old)}／M365 {len(mc_old)}</span></button>
   <button class="tab" data-pane="pane-blog">ブログ<span class="c">PA {pa_ready + pa_fix}／コパスタ {cs_ready + cs_fix}</span></button>
+  <button class="tab" data-pane="pane-blogx">ブログ紹介<span class="c">公開{bx_pub}本</span></button>
   <button class="tab" data-pane="pane-linkedin">LinkedIn<span class="c">{len(linkedin)}本</span></button>
   <button class="tab" data-pane="pane-insight">考察<span class="c">{len(ins_posts)}本</span></button>
   {extra.get("tab", "")}
@@ -1007,9 +1225,9 @@ def main():
 
 <section class="pane" id="pane-tips">
   <div class="note">
-    Power Automateの時短ワザ（#PowerAutomate）。画像2枚を1ツイートに添付します。<br>
+    Power Automateの時短ワザ（#PowerAutomate）。Vol.180 からは切り口を作り直した<b>4枚組</b>です（4枚とも1ツイートに添付）。それまでの在庫は「旧在庫」タブにあります。<br>
     各回の画像は <code>Documents\\pa45-x-images\\フォルダ名\\</code> に1か所にまとめてあります。<b>画像をクリック（または「画像フォルダをコピー」）でそのフォルダのパスがコピーされます</b>。<br>
-    <b>「Xの下書きを開く」→ 画像ボタン → ファイル選択のアドレス欄にフォルダのパスを貼り付け → Ctrl+A</b>で2枚同時に選べます。<br>
+    <b>「Xの下書きを開く」→ 画像ボタン → ファイル選択のアドレス欄にフォルダのパスを貼り付け → Ctrl+A</b>で全部まとめて選べます。<br>
     <b>LinkedInにも同じ内容を出せます</b>（自分の投稿の再利用はOK）。<b>本文をコピー →「LinkedInを開く」→ 貼り付け → 画像で同じ2枚を添付</b>。<br>
     Vol番号＝フォルダ番号（Vol.69以降が一致）。
   </div>
@@ -1026,6 +1244,17 @@ def main():
   <div class="grid">{"".join(card_tips(m) for m in mc)}</div>
 </section>
 
+<section class="pane" id="pane-old">
+  <div class="note">2026-11-19 に切り口を作り直したため、それまでの未投稿の在庫をここへ移しました。消してはいません。本文・画像・投稿済みのチェックはそのままです。<br>
+    X技術Tips は Vol.180 から、M365 Copilot は #10 から、新しい切り口の4枚組で作り直しています。</div>
+  <div class="subtabs">
+    <button class="subtab on" data-sub="old-pa">Power Automate（旧）<span class="c">{len(pa_old)}本</span></button>
+    <button class="subtab" data-sub="old-mc">M365 Copilot（旧）<span class="c">{len(mc_old)}本</span></button>
+  </div>
+  <div class="subpane on" id="old-pa"><div class="grid">{"".join(card_tips(t) for t in pa_old)}</div></div>
+  <div class="subpane" id="old-mc"><div class="grid">{"".join(card_tips(m) for m in mc_old)}</div></div>
+</section>
+
 <section class="pane" id="pane-blog">
   <div class="note">
     automate136.com の投稿状況。<b>状態はWordPressから直接取得</b>しているので、ここが今の実態です。<br>
@@ -1034,7 +1263,9 @@ def main():
     対象は<b>直近1か月に書いた下書き</b>。それより古いものは各タブの「旧い下書き」にまとめてあります。
     <span style="color:#b3261e">赤い項目＝直さないと出せないもの</span>（アイキャッチ・スラッグ・免責・禁止語など）、グレー＝できれば直したいもの。<br>
     最新にするには <code>python scripts/fetch-blog-status.py</code> → <code>python scripts/build-x-board.py</code>。
-    <b>予約投稿の設定は必ずプレビュー確認のうえ自分で。</b>
+    <b>予約投稿の設定は必ずプレビュー確認のうえ自分で。</b><br>
+    黒い<b>「Xに投稿」</b>を押すと、ブログ紹介タブと同じ本文が入ったXの投稿画面が開きます（投稿ボタンを押すのは自分）。
+    <b>「公開前」</b>と付いた記事はURLがまだ開けないので、Xでは <b>Escape →「保存」</b>で下書きに置くところまで。
     振り分けが違うときは <code>data/blog-board.json</code> のその記事に <code>"series": "pa"</code> か <code>"cs"</code> を書けば固定できます。
   </div>
 
@@ -1058,6 +1289,21 @@ def main():
 
   <div class="subpane on" id="bp-pa">{pa_html}</div>
   <div class="subpane" id="bp-cs">{cs_html}</div>
+</section>
+
+<section class="pane" id="pane-blogx">
+  <div class="note">
+    <b>ブログ記事を X で紹介する用。</b>automate136.com の記事を、カテゴリごとに並べています。<b>公開済みの記事は、いつでも「Xの下書きを開く」から投稿できます。</b><br>
+    本文は<b>【ブログ記事】 → 短い見出し → 短い説明と箇条書き → 記事のURL → タグ</b>です。記事の正式なタイトルは、URLを貼ると出るカード（アイキャッチ）に表示されます。<br>
+    説明は <code>data/blog-x-blurbs.json</code> に記事IDごとに置いてあります。直したいときはそこを書き換えます。説明がない記事は、タイトルとURLを140字に収めた短い形です。<br>
+    説明つきの本文は文字数で切っていません。右上の数字はXの重み付き文字数で、<b>「長文（280超）」の印が付いたものは長文投稿（Xプレミアム）が必要</b>です。<br>
+    予約投稿ずみ・下書きの記事は、本文だけ先に用意してあります（公開されるまでURLは開けません）。<br>
+    投稿したら<b>「Xに投稿済みにする」</b>にチェック。上の「投稿済みを隠す」で、まだ紹介していない記事だけにできます。<br>
+    本文を書き直したい記事は <code>data/blog-x-overrides.json</code> に <code>{{"スラッグ": "本文"}}</code> を足すと、そちらが優先されます。
+    最新にするには <code>python scripts/fetch-blog-status.py</code> → <code>python scripts/build-x-board.py</code>（毎晩の自動更新でも反映されます）。
+  </div>
+  <div class="subtabs">{bx_subtabs}</div>
+  {bx_panes}
 </section>
 
 <section class="pane" id="pane-linkedin">

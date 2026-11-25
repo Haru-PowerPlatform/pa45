@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>Vol.186-2 Excel 台帳でずれる4つの場面</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/tips-base.css">
+<style>
+  .msi{flex:0 0 auto;object-fit:contain;}
+  .stage{gap:9px;}
+  .koma{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px;background:#F8FAFC;border:2.5px solid #DCE3EE;border-radius:14px;padding:7px 8px 8px;position:relative;}
+  .kh{flex:0 0 auto;display:flex;align-items:center;gap:8px;}
+  .kh .n{flex:0 0 auto;width:32px;height:32px;border-radius:9px;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;font-size:19px;font-weight:900;display:flex;align-items:center;justify-content:center;}
+  .kh .tm{font-family:'Roboto Mono',monospace;font-size:25px;font-weight:700;color:#1E3A8A;line-height:1;}
+  .kh .dy{font-size:15px;font-weight:900;color:#6B7280;}
+  .kt{flex:0 0 auto;font-size:19px;font-weight:900;color:#1B2A44;line-height:1.28;}
+  .kt b{color:#DC2626;}
+  .pic{flex:1;min-height:0;position:relative;background:#fff;border:2px solid #DCE3EE;border-radius:10px;overflow:hidden;display:flex;flex-direction:column;}
+  .pic .chara{position:absolute;right:-6px;bottom:-4px;z-index:2;filter:drop-shadow(0 3px 4px rgba(0,0,0,.22));}
+  .fact{flex:0 0 auto;background:#FEF2F2;border:1.8px solid #F0AEAE;border-radius:9px;padding:5px 8px;font-size:15.5px;font-weight:900;color:#991B1B;line-height:1.34;}
+  .fact .lb{display:inline-block;font-size:13.5px;background:#DC2626;color:#fff;border-radius:5px;padding:0 6px;margin-right:4px;}
+  .fix{flex:0 0 auto;background:#ECFDF5;border:1.8px solid #7FCEA9;border-radius:9px;padding:5px 8px;font-size:15.5px;font-weight:900;color:#065F46;line-height:1.34;}
+  .fix .lb{display:inline-block;font-size:13.5px;background:#16A34A;color:#fff;border-radius:5px;padding:0 6px;margin-right:4px;}
+  /* モック部品 */
+  .fc{margin:7px 8px 0;border:1.8px solid #C7D6EE;border-radius:8px;background:#fff;box-shadow:0 2px 5px rgba(20,40,90,.10);}
+  .fc .h{display:flex;align-items:center;gap:7px;padding:4px 7px;font-size:15.5px;font-weight:900;color:#1B2A44;border-bottom:1.2px solid #E5E7EB;line-height:1.2;}
+  .fc .b{padding:4px 8px;font-size:15.5px;font-weight:700;color:#374151;line-height:1.35;}
+  .big{font-family:'Roboto Mono',monospace;font-size:30px;font-weight:700;color:#DC2626;line-height:1;}
+  .xr{display:flex;align-items:center;font-size:15.5px;font-weight:700;color:#1B2A44;border-bottom:1px solid #E5E7EB;height:29px;}
+  .xr span{padding:0 6px;white-space:nowrap;}
+  .xr .rn{flex:0 0 38px;align-self:stretch;display:flex;align-items:center;justify-content:center;background:#F3F3F3;color:#616161;font-size:14px;}
+  .xr.hd{background:#217346;color:#fff;font-weight:900;}
+  .xr.hd .rn{background:#1B5E3A;color:#fff;}
+  .xr.hit{background:#DCFCE7;}
+  .xr.miss{background:#FEE2E2;}
+  .tagz{font-size:13.5px;font-weight:900;color:#fff;border-radius:5px;padding:0 5px;margin-left:auto;margin-right:4px;}
+  .note{position:absolute;left:8px;bottom:8px;z-index:3;background:#1E293B;color:#fff;border-radius:8px;padding:3px 8px;font-size:15px;font-weight:900;line-height:1.3;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={arrow:'<path d="M4 12h15M13 6l6 6-6 6"/>',
+  bulb:'<path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0 0 12 3z"/>'};
+const MS=(n,w)=>`<img class="msi" src="${A}icons/ms/${n}" alt="" style="width:${w||24}px;height:${w||24}px">`;
+const PA=(w)=>`<img class="msi" src="${A}icons/pa_logo.png" alt="" style="width:${w||24}px;height:${w||24}px">`;
+const CH=(e,h)=>`<img class="chara" src="${A}chara/chara_${e}.png" alt="" style="height:${h||112}px">`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.186-2</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">Excel 台帳で、<span class="hl">フローと人の手がぶつかる</span><br>月曜の朝の4コマ</div>
+    <img class="title-chara" src="${A}chara/chara_surprise.png" alt="">
+  </div>
+  <div class="concl">
+    <div class="chip">${svgw(P.bulb,2.2)}</div>
+    <div class="txt">どれも Excel コネクタの仕様どおりの動きです。<br><b>①と③はエラーにならずに進む</b>ので、台帳のずれに気づくのが遅れます</div>
+  </div>
+  <div class="stage">
+    <div class="koma">
+      <div class="kh"><span class="n">1</span><span class="tm">9:00</span><span class="dy">毎朝の返却チェック</span></div>
+      <div class="kt">300行あるのに、<br><b>256行</b>しか読まれない</div>
+      <div class="pic">
+        <div class="fc"><div class="h">${MS('excel.svg',26)}表内に存在する行を一覧表示</div>
+          <div class="b">表：貸出<br>返ってきた行 <span class="big">256</span></div></div>
+        <div class="fc" style="opacity:.55"><div class="h">${MS('outlook.svg',26)}メールの送信 (V2)</div><div class="b">期限切れの人へ</div></div>
+        <div class="note">実行は「成功」<br>エラーは出ない</div>${CH('think',112)}
+      </div>
+      <div class="fact"><span class="lb">仕様</span>既定で最大256行を返す。<br>残りの44行は読まない</div>
+      <div class="fix"><span class="lb">手</span>設定の「改ページ位置」を<br>オンにして全件を読む</div>
+    </div>
+    <div class="koma">
+      <div class="kh"><span class="n">2</span><span class="tm">10:15</span><span class="dy">台帳を手で修正中</span></div>
+      <div class="kt">佐藤さんが開いている間に、<br><b>フローも同じ表へ書く</b></div>
+      <div class="pic">
+        <div class="fc"><div class="h">${MS('excel.svg',26)}編集中：佐藤 花子</div>
+          <div class="xr hd"><span class="rn"></span><span>備品</span><span>状態</span></div>
+          <div class="xr miss"><span class="rn">88</span><span>PC-018</span><span>返却済み</span><span class="tagz" style="background:#DC2626">手で入力</span></div>
+          <div class="xr miss"><span class="rn">88</span><span>PC-018</span><span>貸出中</span><span class="tagz" style="background:#2563EB">フロー</span></div>
+        </div>
+        <div class="note">どちらの値が残るか<br>読めなくなる</div>
+        ${CH('trouble',112)}
+      </div>
+      <div class="fact"><span class="lb">仕様</span>手での同時編集は不可。<br>競合や不整合のおそれ</div>
+      <div class="fix"><span class="lb">手</span>人の修正も<br>フォームかフロー経由に寄せる</div>
+    </div>
+    <div class="koma">
+      <div class="kh"><span class="n">3</span><span class="tm">10:16</span><span class="dy">返却の記録</span></div>
+      <div class="kt">同じ備品番号が2行。<br><b>上の1行だけ</b>が返却済みに</div>
+      <div class="pic">
+        <div class="fc"><div class="h">${MS('excel.svg',26)}行の更新</div>
+          <div class="b">キー列：備品　キー値：PC-022</div></div>
+        <div class="fc">
+          <div class="xr hd"><span class="rn"></span><span>備品</span><span>借りた人</span></div>
+          <div class="xr hit"><span class="rn">41</span><span>PC-022</span><span>山田</span><span class="tagz" style="background:#16A34A">更新</span></div>
+          <div class="xr miss"><span class="rn">203</span><span>PC-022</span><span>佐藤</span><span class="tagz" style="background:#DC2626">そのまま</span></div>
+        </div>
+        <div class="note">実行は「成功」<br>203行目は貸出中のまま</div>
+      </div>
+      <div class="fact"><span class="lb">仕様</span>一致が複数なら<br>最初の行だけ更新・削除</div>
+      <div class="fix"><span class="lb">手</span>キー列は貸出番号など<br>重複しない列にする</div>
+    </div>
+    <div class="koma">
+      <div class="kh"><span class="n">4</span><span class="tm">10:20</span><span class="dy">ファイルの整理</span></div>
+      <div class="kt">台帳を別フォルダーへ<br>移そうとすると<b>ロック中</b></div>
+      <div class="pic">
+        <div class="fc"><div class="h">${MS('onedrive.svg',26)}備品貸出台帳.xlsx</div>
+          <div class="b" style="display:flex;align-items:center;gap:8px;"><svg viewBox="0 0 40 44" style="width:40px;height:44px;flex:0 0 auto"><path d="M10 20v-7a10 10 0 0 1 20 0v7" fill="none" stroke="#92400E" stroke-width="5"/><rect x="3" y="19" width="34" height="23" rx="5" fill="#F59E0B" stroke="#92400E" stroke-width="2"/><circle cx="20" cy="29" r="3.5" fill="#78350F"/></svg>最後にフローが使ってから<br>しばらく変更できない</div></div>
+        <div class="fc"><div class="h">反映の遅れ</div><div class="b">書いた値が<br>出るまで最大 <span class="big" style="font-size:24px">30</span>秒</div></div>
+        ${CH('tired',112)}
+      </div>
+      <div class="fact"><span class="lb">仕様</span>最大6分ロック。<br>書き込みは最大30秒遅れる</div>
+      <div class="fix"><span class="lb">手</span>移動・差し替えは<br>フローを止めてから</div>
+    </div>
+  </div>
+  <div class="next">
+    <span class="na">${svgw(P.arrow,2.6)}</span>
+    <span><b>Excel と リストの数字を並べた早見表は3枚目へ</b></span>
+    <span style="margin-left:auto;font-size:15.5px;">移し方は4枚目</span>
+  </div>
+  <div class="src">出典：Microsoft Learn「Excel Online (Business) コネクタ」既知の問題と制限事項／人名・備品・時刻は架空・画面は説明用の再現</div>
+`;
+</script>
+</body>
+</html>

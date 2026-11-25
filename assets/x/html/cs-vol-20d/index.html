@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>コパスタ Vol.20-4 一覧リストの列と注意</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/cs-base.css">
+<style>
+  .body{gap:14px;}
+  .tbl{flex:1.15;min-width:0;min-height:0;display:flex;flex-direction:column;border-radius:14px;overflow:hidden;border:2px solid var(--cs-line);
+    box-shadow:0 6px 14px rgba(0,0,0,.12);background:#fff;}
+  .cap{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:7px 12px;background:var(--cs-bg);border-bottom:2px solid var(--cs-line);font-size:19px;font-weight:900;color:var(--navy);}
+  .tr{flex:1;min-height:0;display:flex;align-items:center;border-bottom:1.5px solid #EDE9FE;}
+  .tr:last-child{border-bottom:none;}
+  .tr.h{flex:0 0 32px;background:#FAFAFA;}
+  .tc{padding:3px 12px;font-size:16.5px;font-weight:700;color:#374151;line-height:1.35;}
+  .tc.k{flex:0 0 170px;font-size:17.5px;font-weight:900;color:var(--cs-dark);display:flex;align-items:center;gap:8px;}
+  .tc.k svg{flex:0 0 30px;width:30px;height:30px;}
+  .tc.ex{flex:0 0 170px;font-size:15.5px;font-family:"Segoe UI","Noto Sans JP",sans-serif;background:#F9FAFB;align-self:stretch;display:flex;align-items:center;}
+  .tc.w{flex:1;min-width:0;}
+  .tc.w b{color:var(--cs);}
+  .tr.h .tc{font-size:14px;font-weight:800;color:#6B7280;}
+  .right{flex:1;min-width:0;min-height:0;display:flex;flex-direction:column;gap:8px;}
+  .rh{flex:0 0 auto;display:flex;align-items:center;gap:8px;font-size:19px;font-weight:900;color:var(--navy);}
+  .fact{flex:1;min-height:0;display:flex;align-items:center;gap:11px;background:#fff;border:2px solid var(--cs-line);border-radius:12px;padding:6px 12px;}
+  .fact svg{flex:0 0 74px;width:74px;height:58px;}
+  .fact .t{font-size:17.5px;font-weight:900;color:var(--navy);line-height:1.3;}
+  .fact .t small{display:block;font-size:14.5px;font-weight:700;color:#4B5563;line-height:1.38;}
+  .fact.warn{background:#FFFBEB;border-color:#F59E0B;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const ic={
+ name:`<svg viewBox="0 0 30 30"><rect x="3" y="6" width="24" height="18" rx="4" fill="#EDE9FE" stroke="#7C3AED" stroke-width="2"/><rect x="7" y="13" width="16" height="4" rx="2" fill="#7C3AED"/></svg>`,
+ use:`<svg viewBox="0 0 30 30"><circle cx="15" cy="15" r="11" fill="#FEF3C7" stroke="#D97706" stroke-width="2"/><circle cx="15" cy="15" r="5" fill="#D97706"/></svg>`,
+ dept:`<svg viewBox="0 0 30 30"><circle cx="15" cy="10" r="5" fill="#0F6CBD"/><path d="M5 26 q10 -14 20 0z" fill="#0F6CBD"/></svg>`,
+ pub:`<svg viewBox="0 0 30 30"><circle cx="15" cy="15" r="11" fill="#DCFCE7" stroke="#16A34A" stroke-width="2"/><ellipse cx="15" cy="15" rx="5" ry="11" fill="none" stroke="#16A34A" stroke-width="1.8"/><path d="M4 15 h22" stroke="#16A34A" stroke-width="1.8"/></svg>`,
+ src:`<svg viewBox="0 0 30 30"><rect x="6" y="3" width="18" height="24" rx="3" fill="#fff" stroke="#DC2626" stroke-width="2"/><rect x="10" y="10" width="10" height="3" fill="#FCA5A5"/><rect x="10" y="16" width="8" height="3" fill="#FCA5A5"/></svg>`};
+const F1=`<svg viewBox="0 0 74 58">${[0,1,2,3,4,5,6,7,8,9].map(i=>`<rect x="${4+(i%5)*14}" y="${8+Math.floor(i/5)*22}" width="11" height="16" rx="2" fill="#fff" stroke="#7C3AED" stroke-width="1.6"/>`).join('')}<text x="37" y="56" text-anchor="middle" font-size="10" font-weight="900" fill="#5B21B6" font-family="Noto Sans JP">10個まで</text></svg>`;
+const F2=`<svg viewBox="0 0 74 58"><rect x="6" y="8" width="44" height="40" rx="4" fill="#fff" stroke="#0F6CBD" stroke-width="2"/>${[0,1,2].map(i=>`<rect x="11" y="${15+i*10}" width="34" height="5" fill="#BFDBFE"/>`).join('')}
+  <rect x="44" y="28" width="24" height="22" rx="4" fill="#F59E0B"/><path d="M49 28 v-6 a7 7 0 0 1 14 0 v6" fill="none" stroke="#B45309" stroke-width="3"/></svg>`;
+const F3=`<svg viewBox="0 0 74 58"><rect x="6" y="4" width="50" height="50" rx="4" fill="#fff" stroke="#9CA3AF" stroke-width="2"/>${[0,1,2,3].map(i=>`<rect x="11" y="${10+i*7}" width="40" height="4" fill="#D1D5DB"/>`).join('')}
+  <path d="M4 40 H62" stroke="#DC2626" stroke-width="2.5" stroke-dasharray="4 3"/><rect x="11" y="44" width="40" height="4" fill="#F3F4F6"/></svg>`;
+const F4=`<svg viewBox="0 0 74 58"><path d="M8 16 h22 l5 6 h31 v30 h-58z" fill="#FDE68A" stroke="#B45309" stroke-width="2"/><path d="M14 50 L60 20" stroke="#DC2626" stroke-width="4" stroke-linecap="round"/></svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">コパスタ Vol.20</div>
+    <div class="part-pill">早見表 <b>(4/4)</b></div>
+    <div class="title-text">紹介の精度は<br><span class="q">一覧リストの列</span>で決まる</div>
+    <div class="ibadge"><img src="${A}icons/ms/lists.svg" alt=""><span class="pl">+</span><img src="${A}icons/cs_logo.png" alt=""></div>
+    <img class="title-chara" src="${A}chara/chara_point_g.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">早見表</div>
+    <div class="txt">受付が「似ているか」を判断できるのは、一覧に<b>用途</b>が書いてあるときだけ。<br>
+      列は5つで十分。<em>作ったら登録</em>を社内のルールにする。</div>
+  </div>
+
+  <div class="body">
+    <div class="tbl">
+      <div class="cap"><img class="msi" src="${A}icons/ms/lists.svg" alt="">社内エージェント一覧に入れる列</div>
+      <div class="tr h"><div class="tc k">列</div><div class="tc ex">入れる例</div><div class="tc w">受付がどう使うか</div></div>
+      <div class="tr"><div class="tc k">${ic.use}用途</div><div class="tc ex">経費規程に答える</div><div class="tc w"><b>似ているか</b>をここで判断する</div></div>
+      <div class="tr"><div class="tc k">${ic.name}名前</div><div class="tc ex">経費の質問窓口</div><div class="tc w">紹介するときに<b>名前で案内</b>する</div></div>
+      <div class="tr"><div class="tc k">${ic.dept}部署・担当</div><div class="tc ex">経理部 斉藤</div><div class="tc w">足りないとき<b>だれに相談するか</b></div></div>
+      <div class="tr"><div class="tc k">${ic.pub}公開範囲</div><div class="tc ex">全社</div><div class="tc w">相談した人が<b>使えるかどうか</b></div></div>
+      <div class="tr"><div class="tc k">${ic.src}使う資料</div><div class="tc ex">経費規程.pdf</div><div class="tc w">同じ資料なら<b>使い回し</b>をすすめる</div></div>
+    </div>
+    <div class="right">
+      <div class="rh"><img class="msi" src="${A}icons/ms/sharepoint.svg" alt="">リストをナレッジにするとき</div>
+      <div class="fact">${F1}<span class="t">一度に選べるのは10個まで<small>ナレッジの追加 → SharePoint →<br>アイテムの参照</small></span></div>
+      <div class="fact">${F2}<span class="t">見られる人にだけ答える<small>使う人の SharePoint の権限で<br>読みに行く</small></span></div>
+      <div class="fact warn">${F3}<span class="t">検索は先頭の2,048行まで<small>一覧は使っているものだけに<br>絞っておく</small></span></div>
+      <div class="fact warn">${F4}<span class="t">ドキュメント ライブラリは不可<small>リストとしては選べない</small></span></div>
+    </div>
+  </div>
+
+  <div class="darkband">
+    <div class="nf">
+      <div class="label">一覧を育てる運用</div>
+      <div class="grid">
+        <div class="fc"><div class="ft">作ったら登録</div><div class="fd">公開と同時に<br>一覧へ1行足す</div></div>
+        <div class="fc"><div class="ft">更新の担当を決める</div><div class="fd">情シスか<br>推進チームが持つ</div></div>
+        <div class="fc"><div class="ft">使われないAIは整理</div><div class="fd">古い行が残ると<br>紹介がずれる</div></div>
+      </div>
+    </div>
+    <div class="note">
+      <div class="label">⚠ 使う前に確認</div>
+      <div class="txt">一覧リストを見る権限がない人には、<br><b>紹介できない</b>。閲覧の範囲を決めておく。</div>
+    </div>
+    <div class="src">出典：Microsoft Learn（SharePoint をナレッジとして追加する／クォータと制限）／データは説明用の再現</div>
+  </div>
+  <img class="band-chara" src="${A}chara/chara_guts_g.png" alt="">
+`;
+</script>
+</body>
+</html>

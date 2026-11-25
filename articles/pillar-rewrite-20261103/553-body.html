@@ -1,0 +1,117 @@
+<div style="margin:0 0 24px;padding:14px 18px;border-radius:12px;background:#f4f7fb;border:1px solid #d6e2f0;"><p style="margin:0 0 6px;font-weight:700;color:#14528f;">変数の初期化の基本</p><p style="margin:0;">変数の初期化そのものの説明は <a href="https://www.automate136.com/pa45-vol1-initialize-variable/">変数の初期化（Initialize variable）の使い方</a> にまとめています。この記事は、空欄チェックに使う応用例です。</p></div>
+
+<p class="mb-lead">Power Automate の変数は、使う前に「変数を初期化する」アクションで用意しておく必要があります。<br>この記事では、Excel の金額欄が空欄の行を見つけて Teams に知らせるフローを作りながら、初期化の役割と「変数の設定」との違いを整理します。</p>
+
+<div class="mb-note"><p class="nt-ttl">この記事で分かること</p>
+<ul class="mb-ul">
+<li>変数を初期化しておく理由</li>
+<li>「変数を初期化する」と「変数の設定」の違い</li>
+<li>空欄の判定に使う <code>empty()</code> の書き方</li>
+<li>判定の結果を変数に入れて、Teams に送る流れ</li>
+</ul></div>
+
+<h2>変数を初期化しておく理由</h2>
+
+<p>変数は、フローの途中で値を一時的に入れておく入れ物です。<br>Power Automate では、入れ物の名前と型を先に決めておかないと、あとのアクションで値を入れられません。<br>名前・型・最初の値を決めるのが「変数を初期化する」アクションです。</p>
+
+<p>最初の値を空文字にしておくと、どの行を処理したあとでも変数の中身が決まった状態になります。<br>Power Automate では null（値がない状態）と空文字（長さ0の文字列）が別物として扱われます。<br>最初の値を決めておけば、条件分岐で null の場合を考えずに済みます。</p>
+
+<h2>初期化と値の設定の違い</h2>
+
+<figure class="mb-fig"><img loading="lazy" decoding="async" src="https://www.automate136.com/wp-content/uploads/2025/12/Designer-1-1024x683.png" alt="初期化は箱を作る操作で一度だけ、値の設定は箱に中身を入れる操作で何度でもできる" width="1024" height="683" style="width:100%;max-width:720px;height:auto;border-radius:10px;" /><figcaption>初期化は入れ物を作る操作、値の設定は中身を入れ替える操作</figcaption></figure>
+
+<table>
+<tbody>
+<tr><th>アクション</th><th>やること</th><th>置ける場所</th><th>回数</th></tr>
+<tr><th scope="row">変数を初期化する</th><td>名前・型・最初の値を決める</td><td>フローの一番外側だけ。ループや条件の中には置けない</td><td>1つの変数につき1回</td></tr>
+<tr><th scope="row">変数の設定</th><td>用意した変数の値を入れ替える</td><td>ループや条件の中にも置ける</td><td>何度でも</td></tr>
+</tbody>
+</table>
+
+<h2>今回作るフロー</h2>
+
+<p>Excel の表を1行ずつ確認し、金額が空欄なら警告、入力済みなら確認済みのメッセージを Teams に送ります。</p>
+
+<ol class="mb-ul">
+<li>フローを手動でトリガーする</li>
+<li>表内に存在する行を一覧表示（Excel の行を取得）</li>
+<li>変数を初期化する（varMessage を用意）</li>
+<li>Apply to each（1行ずつ処理）</li>
+<li>条件（金額が空欄か）</li>
+<li>変数の設定（送る文面を入れる）</li>
+<li>チャットまたはチャネルでメッセージを投稿する（Teams に送る）</li>
+</ol>
+
+<p>使うコネクタは Excel Online (Business) と Microsoft Teams で、どちらも標準コネクタです。<br>プレミアムのライセンスは要りません。</p>
+
+<h3>サンプルの Excel</h3>
+
+<p>OneDrive か SharePoint に置いた Excel に、次の表を作ります。<br>「表内に存在する行を一覧表示」はテーブルしか読めないので、範囲を選んで「テーブルとして書式設定」をしておきます。</p>
+
+<table>
+<tbody>
+<tr><th>名前</th><th>金額</th></tr>
+<tr><td>佐藤</td><td>12000</td></tr>
+<tr><td>鈴木</td><td>（空欄）</td></tr>
+<tr><td>高橋</td><td>5000</td></tr>
+</tbody>
+</table>
+
+<h2>作り方</h2>
+
+<div class="mb-step"><div class="st-ttl"><span class="st-no">1</span>フローを作る</div>
+<p>「インスタント クラウド フロー」を選び、トリガーに「フローを手動でトリガーする」を選びます。<br>試しているあいだは、好きなときにボタンで動かせるトリガーにしておくと確認が早くなります。</p></div>
+
+<div class="mb-step"><div class="st-ttl"><span class="st-no">2</span>Excel の行を取得する</div>
+<p>「Excel Online (Business)」の「表内に存在する行を一覧表示」を追加します。<br>場所・ドキュメント ライブラリ・ファイル・テーブルの順に、サンプルの Excel を指定します。</p></div>
+
+{{shot:excel-list-rows}}
+
+<div class="mb-step"><div class="st-ttl"><span class="st-no">3</span>変数を初期化する</div>
+<p>「変数を初期化する」を追加し、名前を <code>varMessage</code>、種類を文字列にします。<br>値は空のままにします。<br>このアクションはループの中に置けないので、次の Apply to each より前に置きます。</p></div>
+
+{{shot:init-variable}}
+
+<div class="mb-step"><div class="st-ttl"><span class="st-no">4</span>1行ずつ処理する</div>
+<p>「Apply to each」を追加し、「表内に存在する行を一覧表示」の動的コンテンツ value を渡します。<br>ここから先のアクションは、すべてこのループの中に置きます。<br>新しいデザイナーではループの名前が「For each」と表示されることがあります。<br>そのときは、次の式の Apply_to_each を For_each に置き換えます。</p></div>
+
+<div class="mb-step"><div class="st-ttl"><span class="st-no">5</span>金額が空欄かを判定する</div>
+<p>ループの中に「条件」を追加し、左の欄に次の式を入れます。<br>中央は「次の値に等しい」、右の欄は式で <code>true</code> と入れます。</p>
+<p class="mb-copy">empty(items(&#39;Apply_to_each&#39;)?[&#39;金額&#39;])</p>
+<p><code>empty()</code> は、値が空文字でも null でも true を返します。<br>Excel の空欄がどちらで届いても、同じ式で判定できます。</p></div>
+
+<div class="mb-step"><div class="st-ttl"><span class="st-no">6</span>送る文面を変数に入れる</div>
+<p>条件の「はい」と「いいえ」に、それぞれ「変数の設定」を追加します。<br>名前は varMessage を選び、値に次の文面を入れます。</p>
+<p>はい（空欄）の場合</p>
+<pre style="background:#0f172a;color:#e2e8f0;border-radius:10px;padding:14px 16px;font-size:.9em;line-height:1.7;white-space:pre-wrap;word-break:break-all;margin:12px 0 20px;">【未入力】金額が空欄です。値を入力してください。
+名前：@{items(&#39;Apply_to_each&#39;)?[&#39;名前&#39;]}</pre>
+<p>いいえ（入力済み）の場合</p>
+<pre style="background:#0f172a;color:#e2e8f0;border-radius:10px;padding:14px 16px;font-size:.9em;line-height:1.7;white-space:pre-wrap;word-break:break-all;margin:12px 0 20px;">【入力済み】
+名前：@{items(&#39;Apply_to_each&#39;)?[&#39;名前&#39;]}
+金額：@{items(&#39;Apply_to_each&#39;)?[&#39;金額&#39;]}</pre></div>
+
+<div class="mb-step"><div class="st-ttl"><span class="st-no">7</span>Teams に送る</div>
+<p>条件のあと（ループの中）に、「Microsoft Teams」の「チャットまたはチャネルでメッセージを投稿する」を追加します。<br>投稿者はフローボット、投稿先はフローボットとのチャットにして、Recipient に自分のメールアドレスを入れます。<br>メッセージには動的コンテンツの varMessage を入れます。</p></div>
+
+<h2>動かしてみる</h2>
+
+<p>保存して「テスト」から手動で実行します。<br>サンプルの3行なら Teams に3通届き、鈴木さんの行だけが【未入力】の文面になります。<br>実行履歴を開くと、行ごとに条件がどちらに進んだかを確認できます。</p>
+
+<h2>確認ポイント</h2>
+
+<ul class="mb-ul">
+<li>「変数を初期化する」はループや条件の中に置けません。<br>変数が必要になったら、フローの一番外側に足します。</li>
+<li>種類を整数にした変数に文字列を入れると、「変数の設定」が失敗します。<br>入れる値と変数の種類をそろえます。</li>
+<li>金額が 0 の行は空欄ではないので、<code>empty()</code> では拾いません。<br>0 も未入力として扱いたい場合は、条件を別に足します。</li>
+<li>この形だと、行の数だけ Teams に通知が届きます。<br>まとめて1通にしたい場合は、配列の変数に溜めて最後に1回送る形にします。<br>配列の扱いは <a href="{{link:1330}}">配列のフィルター処理のまとめ</a>で整理しています。</li>
+</ul>
+
+<h2>まとめ</h2>
+
+<div class="mb-check"><p class="ck-ttl">この記事のまとめ</p>
+<ul class="mb-ul">
+<li>変数は「変数を初期化する」で名前・型・最初の値を決めてから使う</li>
+<li>初期化はフローの一番外側で1回、「変数の設定」はループの中でも何度でも</li>
+<li>空欄の判定は <code>empty()</code>。空文字と null の両方を拾う</li>
+<li>行ごとの判定結果を変数に入れておくと、通知の文面を1つのアクションで送れる</li>
+</ul></div>

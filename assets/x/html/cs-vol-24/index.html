@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>コパスタ Vol.24-1 長い手順はスキルに</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/cs-base.css">
+<style>
+  .body{gap:0;}
+  .panel{position:relative;}
+  .pL{flex:1;} .pR{flex:1.25;}
+  .ph{flex:0 0 auto;display:flex;align-items:center;gap:10px;margin-bottom:4px;}
+  .ph .tag{flex:0 0 auto;font-size:15px;font-weight:900;color:#fff;border-radius:8px;padding:3px 11px;}
+  .p-ng .tag{background:var(--red);} .p-cs .tag{background:var(--cs);}
+  .ph .h{font-size:25px;font-weight:900;color:var(--navy);line-height:1.2;}
+  .scene{flex:1;min-height:0;position:relative;}
+  .scene svg{width:100%;height:100%;display:block;}
+  .cap{flex:0 0 auto;font-size:15.5px;font-weight:700;color:#374151;line-height:1.42;border-top:1.5px dashed #CBD5E1;padding-top:6px;}
+  .p-ng .cap b{color:var(--red-dark);} .p-cs .cap b{color:var(--cs-dark);}
+  .vs{flex:0 0 64px;display:flex;align-items:center;justify-content:center;z-index:5;}
+  .vs .b{width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#7C3AED,#EC4899);color:#fff;font-weight:900;font-size:15px;
+    display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.1;box-shadow:0 4px 10px rgba(124,58,237,.45);border:3px solid #fff;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const T=(x,y,s,t,c='#1B2A44',w=800,a='middle')=>`<text x="${x}" y="${y}" text-anchor="${a}" font-size="${s}" font-weight="${w}" fill="${c}" font-family="Noto Sans JP">${t}</text>`;
+/* 左：指示欄が手順書で埋まる */
+const SL=`<svg viewBox="0 0 440 290" preserveAspectRatio="xMidYMid meet">
+  <defs><filter id="sh" x="-10%" y="-10%" width="120%" height="140%"><feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-opacity=".22"/></filter></defs>
+  <g filter="url(#sh)"><rect x="10" y="4" width="290" height="276" rx="10" fill="#fff" stroke="#F87171" stroke-width="2.2"/>
+  ${T(24,28,14.5,'指示','#1B2A44',900,'start')}
+  ${T(24,52,12.5,'あなたは経理の引き継ぎ係です。','#1B2A44',700,'start')}
+  ${T(24,72,12.5,'■ 経費チェックの手順','#B91C1C',900,'start')}
+  ${['1. 領収書の日付が申請月と合うか','2. 金額が規程の上限以内か','3. 勘定科目が正しいか','4. 交際費は参加者名があるか','5. 出張は旅費規程の別表で…','6. 立替が3万円を超えたら…','7. 例外は課長承認の記録を…','8. 差し戻しの文面は…','9. …'].map((t,i)=>T(24,94+i*19,12,t,'#6B7280',700,'start')).join('')}
+  <rect x="284" y="40" width="8" height="228" rx="4" fill="#F3F4F6"/><rect x="284" y="40" width="8" height="54" rx="4" fill="#9CA3AF"/></g>
+  <!-- 吹き出し -->
+  <g transform="translate(306,30)" filter="url(#sh)"><rect width="128" height="70" rx="10" fill="#FEF2F2" stroke="#F87171" stroke-width="1.8"/>
+  ${T(64,28,12.5,'有給の質問でも','#991B1B',900)}${T(64,50,12.5,'毎回これを読む','#991B1B',900)}</g>
+  <g transform="translate(306,124)" filter="url(#sh)"><rect width="128" height="88" rx="10" fill="#FEF2F2" stroke="#F87171" stroke-width="1.8"/>
+  ${T(64,26,12.5,'別のAIでも','#991B1B',900)}${T(64,46,12.5,'使いたいので','#991B1B',900)}${T(64,68,12.5,'コピペで複製','#991B1B',900)}</g>
+  <image href="${A}chara/chara_think_g.png" x="318" y="214" width="76" height="76"/>
+</svg>`;
+/* 右：指示は短く、手順はスキルに */
+const SR=`<svg viewBox="0 0 560 290" preserveAspectRatio="xMidYMid meet">
+  <defs><filter id="sh2" x="-10%" y="-10%" width="120%" height="140%"><feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-opacity=".2"/></filter>
+  <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#7C3AED"/></marker></defs>
+  <!-- 短い指示 -->
+  <g filter="url(#sh2)"><rect x="6" y="6" width="230" height="110" rx="10" fill="#fff" stroke="#7C3AED" stroke-width="2"/>
+  ${T(20,30,14.5,'指示','#1B2A44',900,'start')}
+  ${T(20,56,12.5,'あなたは経理の引き継ぎ係です。','#1B2A44',700,'start')}
+  ${T(20,78,12.5,'資料を根拠に答える。','#1B2A44',700,'start')}${T(20,100,12,'（3行だけ）','#16A34A',900,'start')}</g>
+  <!-- スキル -->
+  <g filter="url(#sh2)"><rect x="6" y="134" width="230" height="146" rx="12" fill="#F5F3FF" stroke="#7C3AED" stroke-width="2.4"/>
+  <rect x="18" y="146" width="62" height="24" rx="12" fill="#7C3AED"/>${T(49,163,12.5,'スキル','#fff',900)}
+  ${T(90,164,14.5,'keihi-check','#1B2A44',900,'start')}
+  <rect x="18" y="180" width="206" height="40" rx="7" fill="#fff" stroke="#C9B4F4"/>${T(28,197,11.5,'説明：経費精算の申請を','#5B21B6',800,'start')}${T(28,213,11.5,'規程に沿って確認するときに使う','#5B21B6',800,'start')}
+  ${['1. 日付 2. 金額 3. 勘定科目','4. 交際費 5. 出張 … 9.'].map((t,i)=>T(22,242+i*18,11.5,t,'#6B7280',700,'start')).join('')}</g>
+  <!-- 質問2つ -->
+  <g transform="translate(300,10)" filter="url(#sh2)"><rect width="250" height="50" rx="10" fill="#E8EBFA"/>${T(14,31,13.5,'この申請、規程どおり？','#1B2A44',800,'start')}</g>
+  <path d="M296 40 C260 60 260 190 242 200" stroke="#7C3AED" stroke-width="3.5" fill="none" marker-end="url(#ar)"/>
+  ${T(330,92,13,'→ スキルを開いて','#5B21B6',900,'start')}${T(346,112,13,'9項目で確認','#5B21B6',900,'start')}
+  <g transform="translate(300,150)" filter="url(#sh2)"><rect width="250" height="50" rx="10" fill="#E8EBFA"/>${T(14,31,13.5,'有給は何日残ってる？','#1B2A44',800,'start')}</g>
+  ${T(320,226,13,'→ スキルは開かない','#6B7280',900,'start')}
+  <!-- 使い回し -->
+  <g transform="translate(300,240)">${[0,1,2].map(i=>`<g transform="translate(${i*56},0)"><rect width="46" height="40" rx="9" fill="#fff" stroke="#A78BFA" stroke-width="1.8"/><image href="${A}icons/cs_logo.png" x="11" y="8" width="24" height="24"/></g>`).join('')}
+  ${T(222,26,12.5,'ほかのAIにも','#5B21B6',900,'start')}</g>
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">コパスタ Vol.24</div>
+    <div class="part-pill">前編 <b>(1/4)</b></div>
+    <div class="title-text">長い手順は"指示"に書かない。<br><span class="q">スキルにして必要なときだけ</span></div>
+    <div class="ibadge"><img src="${A}icons/cs_logo.png" alt=""><span class="pl">+</span><img src="${A}icons/ms/agent.png" alt=""></div>
+    <img class="title-chara" src="${A}chara/chara_point_g.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">結論</div>
+    <div class="txt">特定の仕事の手順は<b>スキル</b>に分けると、AIは<b>説明を見て必要なときだけ</b>読みに行く。<br>
+      指示は短いまま、同じ手順を<em>ほかのエージェントにも追加</em>できる。</div>
+  </div>
+
+  <div class="body">
+    <div class="panel p-ng pL">
+      <div class="ph"><span class="tag">いま</span><span class="h">指示に全部書く</span></div>
+      <div class="scene">${SL}</div>
+      <div class="cap">指示が手順書で埋まり、<b>関係ない質問でも毎回読む</b>。<br>直すときは、コピーした先も全部直す。</div>
+    </div>
+    <div class="vs"><div class="b">分ける</div></div>
+    <div class="panel p-cs pR">
+      <div class="ph"><span class="tag">これから</span><span class="h">手順はスキルに分ける</span></div>
+      <div class="scene">${SR}</div>
+      <div class="cap">経費のチェックを頼まれたときだけ<b>スキルを開く</b>。<br>1つ作れば、<b>複数のエージェントに追加</b>できる。</div>
+    </div>
+  </div>
+
+  <div class="darkband">
+    <div class="nf">
+      <div class="label">スキルに向いている手順</div>
+      <div class="grid">
+        <div class="fc"><div class="ft">チェックの手順</div><div class="fd">経費精算・契約書の<br>確認項目</div></div>
+        <div class="fc"><div class="ft">決まった書式</div><div class="fd">報告書・差し戻し文の<br>書き方</div></div>
+        <div class="fc"><div class="ft">部署の作法</div><div class="fd">法務・人事の<br>進め方</div></div>
+      </div>
+    </div>
+    <div class="note">
+      <div class="label">⚠ 使う前に確認</div>
+      <div class="txt">呼ばれるかどうかは<b>説明の書き方</b>しだい。<br>「いつ使うか」まで書く。</div>
+    </div>
+    <div class="src">出典：Microsoft Learn（Copilot Studio のスキルの概要）／画面・手順の中身は説明用の再現</div>
+  </div>
+  <img class="band-chara" src="${A}chara/chara_confident_g.png" alt="">
+`;
+</script>
+</body>
+</html>

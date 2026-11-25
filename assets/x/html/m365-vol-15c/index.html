@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>M365 Copilot Vol.15-3 エージェントの回答画面</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/mc-base.css">
+<style>
+  .stage{gap:12px;}
+  .big{flex:0 0 770px;min-height:0;display:flex;flex-direction:column;background:#fff;border:2.5px solid var(--mc);border-radius:12px;overflow:hidden;box-shadow:0 6px 16px rgba(15,60,55,.18);}
+  .big .bh{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:7px 14px;background:#F3F2F1;border-bottom:1px solid #E1DFDD;}
+  .big .bh .ag{width:36px;height:36px;border-radius:9px;background:var(--mc-grad);display:flex;align-items:center;justify-content:center;color:#fff;font-size:17px;font-weight:900;}
+  .big .bh .nm{font-size:19px;font-weight:900;color:#242424;line-height:1.1;}
+  .big .bh .nm small{display:block;font-size:13.5px;font-weight:700;color:#616161;margin-top:2px;}
+  .big .bb{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:space-between;gap:8px;padding:9px 16px 10px;}
+  .st{flex:0 0 auto;display:flex;gap:8px;align-items:center;}
+  .st .sl{font-size:14px;font-weight:900;color:#6B7280;}
+  .st span.c{border:1.5px solid #A7E3D8;background:#F0FDFA;border-radius:8px;padding:2px 10px;font-size:15.5px;font-weight:700;color:var(--mc-dark);}
+  .ask{align-self:flex-end;max-width:80%;background:#E8F4F2;border:1.5px solid #A7E3D8;border-radius:13px 13px 3px 13px;padding:6px 14px;font-size:17.5px;font-weight:700;color:#1B2A44;line-height:1.4;}
+  .ask small{display:block;font-size:13.5px;color:#6B7280;font-weight:900;}
+  .ans{display:flex;gap:10px;align-items:flex-start;}
+  .ans .av{flex:0 0 auto;width:34px;height:34px;border-radius:9px;background:var(--mc-grad);display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;font-weight:900;}
+  .ans .bx{flex:1;background:#FAFAFA;border:1.5px solid #E1DFDD;border-radius:13px 13px 13px 3px;padding:8px 14px;font-size:17.5px;font-weight:700;color:#1B2A44;line-height:1.45;}
+  .ans .bx b{color:#B91C1C;}
+  .ans .bx sup{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:#DBEAFE;color:#1D4ED8;font-size:13.5px;font-weight:900;vertical-align:3px;margin-left:2px;}
+  .ans.no .bx{background:#FFFBEB;border-color:#FCD34D;}
+  .refs{margin-top:6px;display:flex;align-items:center;gap:8px;border-top:1.2px dashed #E5E7EB;padding-top:6px;}
+  .refs .rl{font-size:14px;font-weight:900;color:#6B7280;}
+  .cite{display:inline-flex;align-items:center;gap:7px;background:#EFF6FF;border:1.5px solid #BFDBFE;border-radius:8px;padding:2px 10px;font-size:15.5px;font-weight:900;color:#1D4ED8;}
+  .cite svg{width:17px;height:20px;flex:0 0 auto;}
+  .inp{flex:0 0 auto;display:flex;align-items:center;gap:10px;border:1.5px solid #D1D1D1;border-radius:10px;padding:6px 12px;}
+  .inp i{flex:1;height:8px;border-radius:4px;background:#E5E7EB;}
+  .inp .sd{width:28px;height:28px;border-radius:7px;background:var(--mc);color:#fff;padding:5px;}
+  .side{flex:1;min-width:0;display:flex;flex-direction:column;gap:9px;}
+  .pt{flex:1;min-height:0;display:flex;gap:12px;align-items:center;background:var(--mc-bg);border:2.5px solid var(--mc-line);border-radius:12px;padding:6px 12px;}
+  .pt .fig{flex:0 0 118px;height:96px;}
+  .pt .fig svg{width:100%;height:100%;display:block;}
+  .pt .t{font-size:20px;font-weight:900;color:var(--mc-dark);line-height:1.3;}
+  .pt .t small{display:block;font-size:15.5px;font-weight:700;color:#374151;margin-top:3px;line-height:1.4;}
+  .pt .t b{color:#EA580C;}
+  .pt.w{background:#FFFBEB;border-color:#FCD34D;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={arrow:'<path d="M4 12h15M13 6l6 6-6 6"/>',send:'<path d="M4 12l16-8-6 16-3-7z"/>'};
+const CPI=(w)=>`<img class="msi" src="${A}icons/ms/copilot.png" alt="" style="width:${w||24}px;height:${w||24}px">`;
+const DOC='<svg viewBox="0 0 16 18"><path d="M2 1h8l4 4v12H2z" fill="#fff" stroke="#1D4ED8" stroke-width="1.6"/><path d="M10 1v4h4" fill="none" stroke="#1D4ED8" stroke-width="1.6"/><path d="M5 9h6M5 12h6" stroke="#1D4ED8" stroke-width="1.4"/></svg>';
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="pills"><div class="vol-pill"><small>M365 Copilot</small>Vol.15-3</div><div class="lic-pill paid">社内資料はライセンスか従量課金</div></div>
+    <div class="title-text">できあがりの画面：<br><span class="hl">答え＋資料名、ないことは担当へ</span></div>
+    <div class="title-apps"><img class="msi" src="${A}icons/ms/copilot.png" alt=""></div>
+    <img class="title-chara" src="${A}chara/chara_smile.png" alt="">
+  </div>
+  <div class="concl">
+    <div class="chip app">${CPI(34)}</div>
+    <div class="txt">同僚は共有リンクから開いて質問するだけ。<b>答えには元の資料が付き</b>、<br>資料にないことは<b>指示に書いた担当者へ案内</b>されます</div>
+  </div>
+  <div class="stage">
+    <div class="big">
+      <div class="bh"><span class="ag">総</span><div class="nm">総務Q&amp;A<small>就業規則・経費・備品の質問に答えます</small></div><span class="repro">画面は説明用の再現・資料と回答は架空の例</span></div>
+      <div class="bb">
+        <div class="st"><span class="sl">スターター プロンプト</span><span class="c">出張の日当</span><span class="c">PCの貸出期間</span><span class="c">有給の申請期限</span></div>
+        <div class="ask"><small>佐藤</small>ノートPCは何日まで借りられますか</div>
+        <div class="ans"><span class="av">総</span><div class="bx">貸出は<b>最長14日間</b>です。<sup>1</sup><br>延長するときは、返却日の前日までに総務へ申請します。<sup>1</sup>
+          <div class="refs"><span class="rl">参照</span><span class="cite">${DOC}1 備品の貸出ルール.docx（第3項）</span></div></div></div>
+        <div class="ask"><small>鈴木</small>健康診断の再検査は出勤扱いですか</div>
+        <div class="ans no"><span class="av">総</span><div class="bx">3つの資料には、再検査の扱いの記載がありません。<br><b>総務の山田さん（内線 1234）</b>に確認してください。</div></div>
+        <div class="inp"><i></i><span class="sd">${svgw(P.send,2.2)}</span></div>
+      </div>
+    </div>
+    <div class="side">
+      <div class="pt"><div class="fig"><svg viewBox="0 0 118 96" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="10" width="70" height="40" rx="10" fill="#fff" stroke="#94A3B8" stroke-width="2"/><rect x="14" y="22" width="48" height="5" rx="2" fill="#94A3B8"/><rect x="14" y="33" width="36" height="5" rx="2" fill="#94A3B8"/><circle cx="66" cy="16" r="9" fill="#2563EB"/><text x="66" y="21" font-size="12" font-weight="900" fill="#fff" text-anchor="middle" font-family="Noto Sans JP">1</text><path d="M60 50q10 14 26 18" fill="none" stroke="#2563EB" stroke-width="2.4" stroke-dasharray="4 3"/><path d="M78 40h26l10 10v40H78z" fill="#fff" stroke="#1D4ED8" stroke-width="2.4"/><path d="M104 40v10h10" fill="none" stroke="#1D4ED8" stroke-width="2.4"/><rect x="84" y="60" width="22" height="4" rx="2" fill="#93C5FD"/><rect x="84" y="70" width="22" height="4" rx="2" fill="#FCD34D"/><rect x="84" y="80" width="16" height="4" rx="2" fill="#93C5FD"/></svg></div>
+        <div class="t">答えに<b>資料名</b>が付く<small>元の資料を開いて<br>自分で確かめられる</small></div></div>
+      <div class="pt w"><div class="fig"><svg viewBox="0 0 118 96" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="8" width="62" height="58" rx="6" fill="#fff" stroke="#94A3B8" stroke-width="2"/><rect x="12" y="20" width="44" height="5" rx="2" fill="#CBD5E1"/><rect x="12" y="32" width="44" height="5" rx="2" fill="#CBD5E1"/><rect x="12" y="44" width="30" height="5" rx="2" fill="#CBD5E1"/><circle cx="54" cy="62" r="13" fill="#DC2626"/><path d="M48 56l12 12M60 56l-12 12" stroke="#fff" stroke-width="3" stroke-linecap="round"/><path d="M70 46h16" stroke="#D97706" stroke-width="3" stroke-linecap="round"/><path d="M82 40l8 6-8 6z" fill="#D97706"/><circle cx="104" cy="36" r="10" fill="#FCD34D" stroke="#92400E" stroke-width="2"/><path d="M90 74q0-22 14-22t14 22z" fill="#0F766E"/><text x="104" y="92" font-size="12" font-weight="900" fill="#92400E" text-anchor="middle" font-family="Noto Sans JP">山田</text></svg></div>
+        <div class="t">資料にないことは<b>担当へ</b><small>指示に書いた<br>行き先を返す</small></div></div>
+      <div class="pt"><div class="fig"><svg viewBox="0 0 118 96" xmlns="http://www.w3.org/2000/svg"><rect x="4" y="10" width="64" height="46" rx="6" fill="#fff" stroke="#0F766E" stroke-width="2.4"/><rect x="4" y="10" width="64" height="10" rx="5" fill="#0F766E"/><rect x="28" y="56" width="16" height="8" fill="#94A3B8"/><rect x="18" y="64" width="36" height="5" rx="2" fill="#94A3B8"/><circle cx="36" cy="38" r="9" fill="#14B8A6"/><path d="M31 38l4 4 7-8" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round"/><rect x="74" y="30" width="40" height="30" rx="8" fill="#fff" stroke="#94A3B8" stroke-width="2"/><circle cx="86" cy="45" r="5" fill="#94A3B8"/><circle cx="102" cy="45" r="5" fill="#94A3B8"/><circle cx="104" cy="66" r="11" fill="#DC2626"/><path d="M99 61l10 10M109 61l-10 10" stroke="#fff" stroke-width="2.6" stroke-linecap="round"/><text x="36" y="88" font-size="12" font-weight="900" fill="#134E4A" text-anchor="middle" font-family="Noto Sans JP">使える</text><text x="94" y="92" font-size="11" font-weight="900" fill="#991B1B" text-anchor="middle" font-family="Noto Sans JP">グループ</text></svg></div>
+        <div class="t">Copilot Chat と Teams で使う<small>グループチャットと<br>1対1チャットでは使えない</small></div></div>
+    </div>
+  </div>
+  <div class="next">
+    <span class="na">${svgw(P.arrow,2.6)}</span>
+    <span><b>作る前に決めておく5つは4枚目へ</b></span>
+  </div>
+  <div class="src">出典：Microsoft Learn「エージェント ビルダーの概要」「エージェントの共有と管理」／Microsoft サポート「エージェントを共有する方法」／人名・資料は架空・画面は説明用の再現</div>
+`;
+</script>
+</body>
+</html>

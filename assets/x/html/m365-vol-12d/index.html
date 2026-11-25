@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>M365 Copilot Vol.12-4 コピーして貼る→横で聞く</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/mc-base.css">
+<style>
+  .stage{gap:10px;}
+  .col.bad{flex:0 0 410px;}
+  .col.good{flex:0 0 410px;}
+  .scene{height:132px;}
+  .scene .chara{height:118px;bottom:-4px;}
+  .steps{flex:1;min-height:0;display:flex;flex-direction:column;gap:5px;}
+  .st{flex:1;min-height:0;display:flex;align-items:center;gap:9px;background:#fff;border-radius:9px;padding:3px 10px;font-size:17px;font-weight:700;color:#1B2A44;line-height:1.25;}
+  .col.bad .st{border:1.5px solid var(--red-line);}
+  .col.good .st{border:1.5px solid var(--green-line);}
+  .st .n{flex:0 0 auto;width:26px;height:26px;border-radius:50%;color:#fff;font-size:15px;font-weight:900;display:flex;align-items:center;justify-content:center;}
+  .col.bad .st .n{background:#DC2626;} .col.good .st .n{background:#16A34A;}
+  .st .kb{flex:0 0 auto;margin-left:auto;font-family:"Segoe UI",sans-serif;font-size:15.5px;font-weight:700;color:#374151;background:#F3F4F6;border:1.5px solid #D1D5DB;border-bottom-width:3px;border-radius:6px;padding:0 7px;}
+  .st.skip{color:#9CA3AF;text-decoration:line-through;background:#F9FAFB;}
+  .st.skip .n{background:#D1D5DB;}
+  .badline{flex:0 0 auto;background:#DC2626;color:#fff;border-radius:8px;padding:6px 10px;font-size:17px;font-weight:900;line-height:1.3;}
+  .goodline{flex:0 0 auto;background:#16A34A;color:#fff;border-radius:8px;padding:6px 10px;font-size:17px;font-weight:900;line-height:1.3;}
+  /* 右：使えない場面 */
+  .nog{flex:1;min-width:0;display:flex;flex-direction:column;gap:7px;border-radius:14px;padding:8px 10px 9px;background:#FFF7ED;border:2.5px solid #FDBA74;}
+  .nog .ph{font-size:22px;color:#9A3412;}
+  .nog .ph .mk{background:linear-gradient(180deg,#FB923C,#EA580C);}
+  .ng{flex:1;min-height:0;display:flex;align-items:center;gap:9px;background:#fff;border:1.5px solid #FDBA74;border-radius:10px;padding:3px 9px;}
+  .ng svg.mi{flex:0 0 auto;width:84px;height:62px;}
+  .ng .t{font-size:17px;font-weight:900;color:#1B2A44;line-height:1.28;}
+  .ng .t small{display:block;font-size:15.5px;font-weight:700;color:#7C2D12;line-height:1.3;margin-top:1px;}
+  .bot2{flex:0 0 auto;display:flex;gap:10px;align-items:stretch;margin:8px 16px 0;}
+  .bot2 .metric{flex:0 0 auto;margin:0;padding:5px 14px;}
+  .bot2 .metric .mv{font-size:23px;}
+  .bot2 .uses{flex:1;background:#fff;border:1.5px solid var(--mc-line);border-radius:10px;padding:4px 10px;}
+  .warnbar{margin-top:8px;padding:7px 14px;}
+  .warnbar .ws{flex-wrap:nowrap;}
+  .warnbar .ws span{white-space:nowrap;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={x:'<path d="M6 6l12 12M18 6L6 18"/>',ok:'<path d="M5 12l5 5 9-10"/>',arrow:'<path d="M4 12h15M13 6l6 6-6 6"/>',
+  warn:'<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18v.5"/>'};
+const CPI=(w)=>`<img class="msi" src="${A}icons/ms/copilot.png" alt="" style="width:${w||24}px;height:${w||24}px">`;
+const NO=(cx,cy,r)=>`<circle cx="${cx}" cy="${cy}" r="${r}" fill="#fff" stroke="#DC2626" stroke-width="3.500"/><path d="M${cx-r*0.7} ${cy+r*0.7}L${cx+r*0.7} ${cy-r*0.7}" stroke="#DC2626" stroke-width="3.500" stroke-linecap="round"/>`;
+const PANE=`<rect x="44" y="6" width="38" height="50" rx="5" fill="#CCFBF1" stroke="#0F766E" stroke-width="2"/><path d="M50 16h26M50 24h26M50 32h18" stroke="#7DD3C4" stroke-width="3" stroke-linecap="round"/>`;
+const N1=`<svg class="mi" viewBox="0 0 84 62"><rect x="2" y="6" width="38" height="50" rx="4" fill="#fff" stroke="#94A3B8" stroke-width="1.600"/><rect x="2" y="6" width="38" height="12" rx="4" fill="#DC2626"/><path d="M8 26h26M8 33h26M8 40h18" stroke="#CBD5E1" stroke-width="3" stroke-linecap="round"/>
+ <path d="M21 42l6-3v-4a6 6 0 0 0-12 0v4z" fill="#FDE68A" stroke="#B45309" stroke-width="1.600"/><rect x="13" y="40" width="16" height="12" rx="2" fill="#F59E0B" stroke="#B45309" stroke-width="1.600"/>${PANE}${NO(63,44,10)}</svg>`;
+const N2=`<svg class="mi" viewBox="0 0 84 62"><rect x="2" y="6" width="38" height="50" rx="4" fill="#fff" stroke="#94A3B8" stroke-width="1.600"/><rect x="8" y="12" width="20" height="25" rx="2" fill="#2B579A"/><text x="18" y="30" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="15" font-weight="900" fill="#fff">W</text><path d="M8 44h26M8 50h18" stroke="#CBD5E1" stroke-width="3" stroke-linecap="round"/>${PANE}${NO(63,44,10)}</svg>`;
+const N3=`<svg class="mi" viewBox="0 0 84 62"><rect x="2" y="6" width="80" height="50" rx="5" fill="#fff" stroke="#94A3B8" stroke-width="1.600"/><path d="M2 16h80" stroke="#94A3B8" stroke-width="1.600"/><circle cx="9" cy="11" r="2" fill="#94A3B8"/><circle cx="15" cy="11" r="2" fill="#94A3B8"/>
+ <rect x="10" y="22" width="64" height="28" rx="4" fill="#ECFDF5" stroke="#16A34A" stroke-width="1.600"/><path d="M20 30h26M20 37h40M20 44h30" stroke="#86EFAC" stroke-width="3" stroke-linecap="round"/>
+ <path d="M68 2l10 4v6c0 6-4 10-10 12-6-2-10-6-10-12V6z" fill="#16A34A" stroke="#fff" stroke-width="1.500"/><path d="M63 12l4 4 6-7" fill="none" stroke="#fff" stroke-width="2.400" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+const N4=`<svg class="mi" viewBox="0 0 84 62"><rect x="2" y="10" width="38" height="46" rx="4" fill="#fff" stroke="#94A3B8" stroke-width="1.600"/><path d="M8 20h26M8 27h26M8 34h26M8 41h18" stroke="#CBD5E1" stroke-width="3" stroke-linecap="round"/>
+ <rect x="11" y="30" width="20" height="16" rx="3" fill="#FDE68A" stroke="#B45309" stroke-width="1.600"/><path d="M15 30v-4a6 6 0 0 1 12 0v4" fill="none" stroke="#B45309" stroke-width="2.200"/>
+ <rect x="44" y="6" width="38" height="50" rx="5" fill="#fff" stroke="#EA580C" stroke-width="2"/><path d="M63 16l12 22H51z" fill="#FED7AA" stroke="#EA580C" stroke-width="2" stroke-linejoin="round"/><path d="M63 24v7M63 34v.5" stroke="#9A3412" stroke-width="2.600" stroke-linecap="round"/><path d="M50 46h26" stroke="#FDBA74" stroke-width="3" stroke-linecap="round"/></svg>`;
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="pills"><div class="vol-pill"><small>M365 Copilot</small>Vol.12-4</div><div class="lic-pill free">無料の Copilot Chat でできる</div></div>
+    <div class="title-text">コピーして貼る・タブを行き来する、を<br><span class="hl">横で聞く</span>に置き換える</div>
+    <div class="title-apps"><img class="msi" src="${A}icons/ms/copilot.png" alt=""></div>
+    <img class="title-chara" src="${A}chara/chara_confident.png" alt="">
+  </div>
+  <div class="concl">
+    <div class="chip app">${CPI(34)}</div>
+    <div class="txt">聞くまでの手順が<b>6つから2つ</b>に減ります。<br>ただし Office 文書や、組織が<b>保護しているページ</b>では使えません</div>
+  </div>
+  <div class="stage">
+    <div class="col bad">
+      <div class="ph"><span class="mk">${svgw(P.x,3.2)}</span>コピーして貼る</div>
+      <div class="scene">
+        <svg viewBox="0 0 386 132" preserveAspectRatio="xMidYMid slice"><defs><filter id="sa" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#7F1D1D" flood-opacity=".25"/></filter></defs>
+          <rect width="386" height="132" fill="#FCE4E4"/>
+          <g filter="url(#sa)"><rect x="14" y="16" width="112" height="98" rx="7" fill="#fff" stroke="#CBD5E1" stroke-width="1.500"/><rect x="14" y="16" width="112" height="16" rx="7" fill="#DCE1E8"/></g>
+          <path d="M22 44h96M22 54h96M22 64h96M22 74h96M22 84h96M22 94h96M22 104h60" stroke="#CBD5E1" stroke-width="4" stroke-linecap="round"/>
+          <rect x="20" y="49" width="100" height="40" fill="#93C5FD" opacity=".55"/>
+          <g filter="url(#sa)"><rect x="172" y="16" width="100" height="98" rx="7" fill="#fff" stroke="#CBD5E1" stroke-width="1.500"/><rect x="172" y="16" width="100" height="16" rx="7" fill="#CCFBF1"/></g>
+          <rect x="180" y="88" width="84" height="18" rx="9" fill="#F1F5F9" stroke="#CBD5E1"/><path d="M186 97h50" stroke="#93C5FD" stroke-width="5" stroke-linecap="round"/>
+          <path d="M128 50q22-30 42 0" fill="none" stroke="#DC2626" stroke-width="3" stroke-dasharray="5 4"/><path d="M164 44l6 7 3-9" fill="none" stroke="#DC2626" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M170 82q-22 30-42 0" fill="none" stroke="#DC2626" stroke-width="3" stroke-dasharray="5 4"/><path d="M134 88l-6-7-3 9" fill="none" stroke="#DC2626" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+          <text x="149" y="72" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="15" font-weight="900" fill="#991B1B">×3</text>
+        </svg>
+        <img class="chara" src="${A}chara/chara_tired.png" alt="">
+      </div>
+      <div class="steps">
+        <div class="st"><span class="n">1</span>読みたい範囲を選ぶ</div>
+        <div class="st"><span class="n">2</span>コピーする<span class="kb">Ctrl+C</span></div>
+        <div class="st"><span class="n">3</span>Copilot のタブへ移る</div>
+        <div class="st"><span class="n">4</span>貼り付ける<span class="kb">Ctrl+V</span></div>
+        <div class="st"><span class="n">5</span>聞きたいことを書き足す</div>
+        <div class="st"><span class="n">6</span>答えと原文をタブで見比べる</div>
+      </div>
+      <div class="badline">長いページほど、範囲の選び直しが増える</div>
+    </div>
+    <div class="col good">
+      <div class="ph"><span class="mk">${svgw(P.ok,3.2)}</span>横で聞く</div>
+      <div class="scene">
+        <svg viewBox="0 0 386 132" preserveAspectRatio="xMidYMid slice"><defs><filter id="sb" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#065F46" flood-opacity=".25"/></filter></defs>
+          <rect width="386" height="132" fill="#DCF3E7"/>
+          <g filter="url(#sb)"><rect x="14" y="14" width="250" height="104" rx="8" fill="#fff" stroke="#AEB8C6" stroke-width="1.500"/><rect x="14" y="14" width="250" height="16" rx="8" fill="#DCE1E8"/></g>
+          <path d="M22 42h124M22 52h124M22 62h124M22 72h124M22 82h124M22 92h124M22 102h90" stroke="#CBD5E1" stroke-width="4" stroke-linecap="round"/>
+          <rect x="156" y="30" width="108" height="88" fill="#F0FDFA"/><path d="M156 30v88" stroke="#0F766E" stroke-width="2"/>
+          <rect x="190" y="38" width="66" height="16" rx="8" fill="#CCFBF1" stroke="#0F766E" stroke-width="1.500"/>
+          <rect x="164" y="60" width="92" height="50" rx="6" fill="#fff" stroke="#16A34A" stroke-width="1.500"/>
+          <g font-family="Segoe UI,sans-serif" font-size="10" font-weight="900" fill="#fff" text-anchor="middle"><circle cx="174" cy="71" r="6" fill="#0F766E"/><text x="174" y="74.500">1</text><circle cx="174" cy="85" r="6" fill="#0F766E"/><text x="174" y="88.500">2</text><circle cx="174" cy="99" r="6" fill="#0F766E"/><text x="174" y="102.500">3</text></g>
+          <path d="M184 71h64M184 85h64M184 99h44" stroke="#86EFAC" stroke-width="4" stroke-linecap="round"/>
+        </svg>
+        <img class="chara" src="${A}chara/chara_guts.png" alt="">
+      </div>
+      <div class="steps">
+        <div class="st skip"><span class="n">1</span>範囲を選ぶ</div>
+        <div class="st skip"><span class="n">2</span>コピーして貼る</div>
+        <div class="st skip"><span class="n">3</span>タブを移る</div>
+        <div class="st"><span class="n">1</span>右上の Copilot アイコンを選ぶ</div>
+        <div class="st"><span class="n">2</span>このページの〜と入力する</div>
+        <div class="st"><span class="n">✓</span>原文の横で答えを見比べる</div>
+      </div>
+      <div class="goodline">ページ全体が材料。範囲を選ばなくてよい</div>
+    </div>
+    <div class="nog">
+      <div class="ph"><span class="mk">${svgw(P.warn,3)}</span>横で聞けない場面</div>
+      <div class="ng">${N1}<div class="t">組織が保護しているページ<small>DLP で保護された所は<br>読めないと表示される</small></div></div>
+      <div class="ng">${N2}<div class="t">Office 文書<small>Word などは対象外。<br>SharePoint 埋め込みも</small></div></div>
+      <div class="ng">${N3}<div class="t">管理者が止めている<small>ページの中身を使う設定は<br>ポリシーで無効にできる</small></div></div>
+      <div class="ng">${N4}<div class="t">社外秘を開いたとき<small>表示中のタブが材料になる。<br>会社のルールに沿って使う</small></div></div>
+    </div>
+  </div>
+  <div class="bot2">
+    <div class="metric"><span class="ml">聞くまでの手順</span><span class="mv">6つ</span><span class="ar">${svgw(P.arrow,3)}</span><span class="mv to">2つ</span></div>
+    <div class="uses"><span class="ul">使いどころ</span><span class="u">官公庁のお知らせ</span><span class="u">取引先の製品ページ</span><span class="u">PDF の約款</span><span class="u">社内サイトの記事</span></div>
+  </div>
+  <div class="warnbar">
+    <span class="wl">使う前に確認</span>
+    <div class="ws"><span>職場アカウントでサインインした Edge で使う</span><span>答えの数字・日付は原文と照らし合わせる</span></div>
+  </div>
+  <div class="src">出典：Microsoft Learn「Copilot in Edge Web ページの概要作成の動作」「EdgeEntraCopilotPageContext」、サポート「職場で Edge で Microsoft Copilot を使用する」／手順の数は操作の例・画面は説明用の再現（実画面は未確認）</div>
+`;
+</script>
+</body>
+</html>

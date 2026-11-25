@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>コパスタ Vol.21-2 箱に入れて運んで公開する</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/cs-base.css">
+<style>
+  .body{gap:12px;}
+  .col{flex:1;min-height:0;display:flex;flex-direction:column;border-radius:14px;padding:10px 13px 11px;position:relative;
+    box-shadow:0 6px 14px rgba(0,0,0,.12);background:var(--cs-bg);border:2px solid var(--cs-line);}
+  .col.c3{background:var(--green-bg);border-color:var(--green-line);}
+  .kh{flex:0 0 auto;display:flex;align-items:center;gap:9px;margin-bottom:5px;}
+  .kn{flex:0 0 34px;height:34px;border-radius:50%;color:#fff;font-weight:900;font-size:19px;display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(135deg,#7C3AED,#C026D3);box-shadow:0 2px 4px rgba(0,0,0,.25);}
+  .c3 .kn{background:linear-gradient(135deg,#22C55E,#15803D);}
+  .kt{font-weight:900;font-size:22px;color:var(--navy);line-height:1.2;}
+  .kt small{display:block;font-size:14.5px;font-weight:700;color:var(--weak);}
+  .scene{flex:1;min-height:0;position:relative;}
+  .scene svg{width:100%;height:100%;display:block;}
+  .kcap{flex:0 0 auto;font-weight:700;font-size:15.5px;color:#374151;line-height:1.42;border-top:1.5px dashed #C9B4F4;padding-top:7px;margin-top:4px;}
+  .c3 .kcap{border-color:var(--green-line);}
+  .kcap b{color:var(--cs-dark);}
+  .arrow{position:absolute;top:46%;right:-21px;z-index:20;width:30px;height:30px;border-radius:50%;background:#fff;border:2px solid var(--cs);
+    color:var(--cs);font-weight:900;font-size:17px;display:flex;align-items:center;justify-content:center;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const T=(x,y,s,t,c='#1B2A44',w=800,a='middle')=>`<text x="${x}" y="${y}" text-anchor="${a}" font-size="${s}" font-weight="${w}" fill="${c}" font-family="Noto Sans JP">${t}</text>`;
+/* ① 箱に入れる */
+const S1=`<svg viewBox="0 0 360 290" preserveAspectRatio="xMidYMid meet">
+  <defs><linearGradient id="bx" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#E7C79A"/><stop offset="1" stop-color="#C79A60"/></linearGradient>
+  <filter id="sh" x="-10%" y="-10%" width="120%" height="140%"><feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-opacity=".22"/></filter></defs>
+  <!-- 入れる部品 -->
+  ${[[20,'エージェント','cs'],[132,'フロー','pa'],[244,'接続参照','cn']].map(([x,t,k])=>`<g transform="translate(${x},6)" filter="url(#sh)">
+    <rect width="96" height="74" rx="12" fill="#fff" stroke="#A78BFA" stroke-width="2"/>
+    ${k==='cs'?`<image href="${A}icons/cs_logo.png" x="28" y="8" width="40" height="40"/>`:k==='pa'?`<g transform="translate(30,12)"><path d="M0 0 h22 l14 16 l-14 16 h-22 l14 -16z" fill="#2563EB"/></g>`:`<g transform="translate(26,12)" stroke="#0F766E" stroke-width="4" fill="none"><circle cx="10" cy="16" r="8"/><circle cx="34" cy="16" r="8"/><path d="M18 16 h8"/></g>`}
+    ${T(48,66,13,t)}</g>
+    <path d="M${x+48} 84 L180 140" stroke="#A78BFA" stroke-width="2.5" stroke-dasharray="5 4"/>`).join('')}
+  <!-- 段ボール -->
+  <g transform="translate(90,140)" filter="url(#sh)">
+    <path d="M0 30 L90 10 L180 30 L90 50z" fill="#D9B07A"/>
+    <path d="M0 30 v90 l90 22 v-92z" fill="url(#bx)"/><path d="M180 30 v90 l-90 22 v-92z" fill="#B98A52"/>
+    <rect x="28" y="70" width="44" height="22" rx="3" fill="#fff" transform="skewY(14)"/>
+  </g>
+  ${T(180,282,15,'自分で作ったソリューション','#5B21B6',900)}
+</svg>`;
+/* ② パイプラインで運ぶ */
+const S2=`<svg viewBox="0 0 360 290" preserveAspectRatio="xMidYMid meet">
+  <defs><linearGradient id="pp" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#DDD6FE"/><stop offset=".5" stop-color="#8B5CF6"/><stop offset="1" stop-color="#5B21B6"/></linearGradient>
+  <filter id="sh2" x="-10%" y="-10%" width="120%" height="140%"><feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-opacity=".22"/></filter></defs>
+  <rect x="8" y="10" width="110" height="40" rx="10" fill="#F5F3FF" stroke="#7C3AED" stroke-width="2"/>${T(63,36,15,'開発','#5B21B6',900)}
+  <rect x="242" y="10" width="110" height="40" rx="10" fill="#ECFDF5" stroke="#16A34A" stroke-width="2"/>${T(297,36,15,'テスト・本番','#065F46',900)}
+  <rect x="20" y="70" width="320" height="46" rx="23" fill="url(#pp)" filter="url(#sh2)"/>
+  <g transform="translate(44,72)"><path d="M0 14 h30 l10 -10 v34 l-10 -10 h-30z" fill="#D9B07A" stroke="#92400E" stroke-width="1.5"/></g>
+  ${T(200,100,16,'🚀 展開','#fff',900)}
+  <path d="M124 30 H236" stroke="#7C3AED" stroke-width="3" stroke-dasharray="6 4"/><path d="M232 24 l8 6 l-8 6z" fill="#7C3AED"/>
+  <!-- 一緒に運ばれるもの -->
+  ${[['マネージドで運ぶ','本番ではそのまま直せない形'],['接続・接続参照・環境変数','行き先の値をその場で設定'],['実行履歴が残る','前の版を取っておける']].map(([a,b],i)=>`
+   <g transform="translate(12,${134+i*50})"><rect width="336" height="44" rx="10" fill="#fff" stroke="#C9B4F4" stroke-width="1.8"/>
+   <circle cx="22" cy="22" r="11" fill="#7C3AED"/><path d="M16 22 l4 5 l8 -9" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/>
+   ${T(42,20,14.5,a,'#1B2A44',900,'start')}${T(42,37,12.5,b,'#6B7280',700,'start')}</g>`).join('')}
+</svg>`;
+/* ③ 運んだ先で公開 */
+const S3=`<svg viewBox="0 0 400 290" preserveAspectRatio="xMidYMid meet">
+  <defs><filter id="sh3" x="-10%" y="-10%" width="120%" height="140%"><feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-opacity=".22"/></filter></defs>
+  <g filter="url(#sh3)"><rect x="10" y="6" width="380" height="58" rx="12" fill="#fff" stroke="#E1DFDD" stroke-width="1.5"/>
+  <image href="${A}icons/cs_logo.png" x="22" y="15" width="40" height="40"/>${T(72,40,15,'経費の質問窓口（本番）','#1B2A44',800,'start')}
+  <rect x="290" y="18" width="86" height="34" rx="6" fill="#7C3AED"/>${T(333,41,16,'公開','#fff',900)}</g>
+  <path d="M333 64 v10" stroke="#7C3AED" stroke-width="3"/>
+  ${[['公開し直す','公開しないと共有できない'],['認証の設定をし直す','手動で入れた認証は運ばれない'],['チャネルと共有をし直す','Teams などへの配置も確認']].map(([a,b],i)=>`
+   <g transform="translate(10,${82+i*66})" filter="url(#sh3)"><rect width="380" height="56" rx="11" fill="#fff" stroke="#7FCEA9" stroke-width="2"/>
+   <rect x="14" y="14" width="28" height="28" rx="6" fill="#ECFDF5" stroke="#16A34A" stroke-width="2"/><path d="M20 28 l6 6 l11 -12" stroke="#16A34A" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+   ${T(56,26,16,a,'#065F46',900,'start')}${T(56,46,13.5,b,'#4B5563',700,'start')}</g>`).join('')}
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">コパスタ Vol.21</div>
+    <div class="part-pill">ながれ <b>(2/4)</b></div>
+    <div class="title-text">箱に入れて、<span class="q">パイプラインで運び</span>、<br>運んだ先で公開する</div>
+    <div class="ibadge"><img src="${A}icons/cs_logo.png" alt=""><span class="pl">+</span><img src="${A}icons/ms/agent.png" alt=""></div>
+    <img class="title-chara" src="${A}chara/chara_smile_g.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">ながれ</div>
+    <div class="txt">エージェントは最初、<b>既定のソリューション</b>に入っている。運ぶには<b>自分のソリューション</b>に入れる。<br>
+      運んだあとの<em>公開</em>を忘れると、だれも使えない。</div>
+  </div>
+
+  <div class="body">
+    <div class="col">
+      <div class="kh"><span class="kn">1</span><span class="kt">ソリューションに入れる<small>運ぶための箱</small></span></div>
+      <div class="scene">${S1}</div>
+      <div class="kcap">エージェントと、使っている<b>フローや接続参照</b>を<br>同じ箱にまとめる。</div>
+      <div class="arrow">▶</div>
+    </div>
+    <div class="col">
+      <div class="kh"><span class="kn">2</span><span class="kt">パイプラインで展開<small>開発 → テスト → 本番</small></span></div>
+      <div class="scene">${S2}</div>
+      <div class="kcap">開発環境のソリューションから<b>展開</b>する。<br>本番側では中身を直接さわれない。</div>
+      <div class="arrow">▶</div>
+    </div>
+    <div class="col c3">
+      <div class="kh"><span class="kn">3</span><span class="kt">運んだ先で仕上げる<small>ここまでやって使える</small></span></div>
+      <div class="scene">${S3}</div>
+      <div class="kcap">運んだ先でやり直すのは<b>主に3つ</b>。<br>公開・認証・チャネルと共有。</div>
+    </div>
+  </div>
+
+  <div class="darkband">
+    <div class="nf">
+      <div class="label">運ぶときの決まりごと（公式）</div>
+      <div class="grid">
+        <div class="fc"><div class="ft">既定のソリューションは不可</div><div class="fd">パイプラインは<br>自分のソリューションから</div></div>
+        <div class="fc"><div class="ft">本番はマネージドで</div><div class="fd">アンマネージドは<br>運べない</div></div>
+        <div class="fc"><div class="ft">データは運ばれない</div><div class="fd">テーブルの中身は<br>別に用意する</div></div>
+      </div>
+    </div>
+    <div class="note">
+      <div class="label">⚠ 使う前に確認</div>
+      <div class="txt">アイコンが行き先で出るまで<br><b>最大24時間</b>かかることがある。</div>
+    </div>
+    <div class="src">出典：Microsoft Learn（ソリューションでエージェントを管理する／Power Platform のパイプライン／Copilot Studio の ALM ガイダンス）</div>
+  </div>
+  <img class="band-chara" src="${A}chara/chara_think_g.png" alt="">
+`;
+</script>
+</body>
+</html>

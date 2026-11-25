@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>コパスタ Vol.24-2 名前・説明・指示の3つ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/cs-base.css">
+<style>
+  .body{gap:12px;}
+  .col{flex:1;min-height:0;display:flex;flex-direction:column;border-radius:14px;padding:10px 13px 11px;position:relative;
+    box-shadow:0 6px 14px rgba(0,0,0,.12);background:var(--cs-bg);border:2px solid var(--cs-line);}
+  .col.c3{background:var(--green-bg);border-color:var(--green-line);}
+  .kh{flex:0 0 auto;display:flex;align-items:center;gap:9px;margin-bottom:5px;}
+  .kn{flex:0 0 34px;height:34px;border-radius:50%;color:#fff;font-weight:900;font-size:19px;display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(135deg,#7C3AED,#C026D3);box-shadow:0 2px 4px rgba(0,0,0,.25);}
+  .c3 .kn{background:linear-gradient(135deg,#22C55E,#15803D);}
+  .kt{font-weight:900;font-size:22px;color:var(--navy);line-height:1.2;}
+  .kt small{display:block;font-size:14.5px;font-weight:700;color:var(--weak);}
+  .scene{flex:1;min-height:0;position:relative;}
+  .scene svg{width:100%;height:100%;display:block;}
+  .kcap{flex:0 0 auto;font-weight:700;font-size:15.5px;color:#374151;line-height:1.42;border-top:1.5px dashed #C9B4F4;padding-top:7px;margin-top:4px;}
+  .c3 .kcap{border-color:var(--green-line);}
+  .kcap b{color:var(--cs-dark);}
+  .arrow{position:absolute;top:46%;right:-21px;z-index:20;width:30px;height:30px;border-radius:50%;background:#fff;border:2px solid var(--cs);
+    color:var(--cs);font-weight:900;font-size:17px;display:flex;align-items:center;justify-content:center;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const T=(x,y,s,t,c='#1B2A44',w=800,a='middle')=>`<text x="${x}" y="${y}" text-anchor="${a}" font-size="${s}" font-weight="${w}" fill="${c}" font-family="Noto Sans JP">${t}</text>`;
+const D=`<defs><filter id="sh" x="-10%" y="-10%" width="120%" height="140%"><feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-opacity=".2"/></filter></defs>`;
+/* ① 名前と説明 */
+const S1=`<svg viewBox="0 0 360 290" preserveAspectRatio="xMidYMid meet">${D}
+  <g filter="url(#sh)"><rect x="6" y="6" width="348" height="276" rx="12" fill="#fff" stroke="#E1DFDD" stroke-width="1.5"/>
+  ${T(20,34,14,'名前 *','#1B2A44',900,'start')}
+  <rect x="20" y="44" width="320" height="34" rx="6" fill="#fff" stroke="#7C3AED" stroke-width="2"/>${T(32,66,14,'keihi-check','#1B2A44',700,'start')}${T(340,94,11.5,'64文字まで','#6B7280',800,'end')}
+  ${['小文字','数字','ハイフン'].map((t,i)=>`<rect x="${20+i*70}" y="84" width="62" height="20" rx="10" fill="#F5F3FF" stroke="#C9B4F4"/>${T(51+i*70,99,11.5,t,'#5B21B6',800)}`).join('')}
+  ${T(20,134,14,'説明 *','#1B2A44',900,'start')}
+  <rect x="20" y="144" width="320" height="96" rx="6" fill="#fff" stroke="#7C3AED" stroke-width="2"/>
+  ${T(32,166,12.5,'経費精算の申請内容を、経費規程に','#1B2A44',700,'start')}${T(32,186,12.5,'沿って1項目ずつ確認するときに使う。','#1B2A44',700,'start')}
+  <rect x="28" y="196" width="304" height="38" rx="5" fill="#FEF9C3"/>${T(36,212,12.5,'領収書の金額・日付・勘定科目の','#713F12',800,'start')}${T(36,229,12.5,'チェックを頼まれたら起動する。','#713F12',800,'start')}
+  ${T(340,258,11.5,'1024文字まで','#6B7280',800,'end')}
+  ${T(20,274,12,'黄色＝「いつ使うか」','#92400E',900,'start')}</g>
+</svg>`;
+/* ② 指示に手順 */
+const S2=`<svg viewBox="0 0 360 290" preserveAspectRatio="xMidYMid meet">${D}
+  <g filter="url(#sh)"><rect x="6" y="6" width="348" height="276" rx="12" fill="#fff" stroke="#E1DFDD" stroke-width="1.5"/>
+  ${T(20,32,14,'指示 *','#1B2A44',900,'start')}${T(340,32,11.5,'Markdown で書く','#6B7280',800,'end')}
+  ${[['このスキルがアクティブ化されたとき:','#1B2A44',900],['1. 日付が申請月と合うか','#1B2A44',700],['2. 金額が上限以内か','#1B2A44',700],['3. 勘定科目が正しいか','#1B2A44',700],
+    ['## ガイドライン','#7C3AED',900],['- 足りない書類は差し戻す','#1B2A44',700],['## 例','#7C3AED',900],['- 「この申請OK？」→ 9項目で確認','#1B2A44',700],['## 注意','#7C3AED',900],['- 規程にないことは経理部へ','#1B2A44',700]]
+    .map(([t,c,w],i)=>T(22,58+i*22,12.5,t,c,w,'start')).join('')}
+  <rect x="236" y="138" width="106" height="24" rx="12" fill="#EDE9FE"/>${T(289,155,11.5,'ひな形が入る','#5B21B6',900)}</g>
+</svg>`;
+/* ③ 説明を見て呼ぶ */
+const S3=`<svg viewBox="0 0 400 290" preserveAspectRatio="xMidYMid meet">${D}
+  <defs><marker id="ag" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#16A34A"/></marker></defs>
+  <g filter="url(#sh)"><rect x="8" y="6" width="210" height="44" rx="10" fill="#E8EBFA"/>${T(20,33,13.5,'この交際費の申請、OK？','#1B2A44',800,'start')}</g>
+  <g transform="translate(250,2)"><image href="${A}icons/cs_logo.png" width="52" height="52"/></g>
+  <!-- スキルの棚 -->
+  ${[['keihi-check','経費の申請を確認するとき',true],['keiyaku-review','契約書を読むとき',false],['houkoku-format','報告書を書くとき',false]].map(([n,d,on],i)=>`
+   <g transform="translate(18,${74+i*62})" filter="url(#sh)"><rect width="300" height="52" rx="10" fill="${on?'#ECFDF5':'#fff'}" stroke="${on?'#16A34A':'#D1D5DB'}" stroke-width="${on?2.6:1.6}"/>
+   ${T(14,22,13.5,n,on?'#065F46':'#6B7280',900,'start')}${T(14,42,12,'説明：'+d,on?'#065F46':'#9CA3AF',700,'start')}
+   ${on?`<rect x="232" y="14" width="56" height="24" rx="12" fill="#16A34A"/>${T(260,31,12,'開く','#fff',900)}`:''}</g>`).join('')}
+  <path d="M276 56 Q350 70 322 98" stroke="#16A34A" stroke-width="3" fill="none" marker-end="url(#ag)"/>
+  <g transform="translate(18,262)">${T(0,14,12.5,'質問と説明を見比べて、合うものだけ読む','#065F46',900,'start')}</g>
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">コパスタ Vol.24</div>
+    <div class="part-pill">ながれ <b>(2/4)</b></div>
+    <div class="title-text">書くのは<span class="q">名前・説明・指示</span>の3つ。<br>決め手は「説明」</div>
+    <div class="ibadge"><img src="${A}icons/cs_logo.png" alt=""><span class="pl">+</span><img src="${A}icons/ms/agent.png" alt=""></div>
+    <img class="title-chara" src="${A}chara/chara_smile_g.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">ながれ</div>
+    <div class="txt">スキルは<b>名前・説明・指示</b>でできている。AIは質問と<b>説明</b>を見比べて呼ぶかどうかを決める。<br>
+      だから説明には、何をするかと<em>いつ使うか</em>の両方を書く。</div>
+  </div>
+
+  <div class="body">
+    <div class="col">
+      <div class="kh"><span class="kn">1</span><span class="kt">名前と説明<small>呼ばれるきっかけを書く</small></span></div>
+      <div class="scene">${S1}</div>
+      <div class="kcap">説明の後半に<b>「〜を頼まれたら」</b>を入れる。<br>ここが呼ばれる決め手になる。</div>
+      <div class="arrow">▶</div>
+    </div>
+    <div class="col">
+      <div class="kh"><span class="kn">2</span><span class="kt">指示に手順<small>ひな形を埋める</small></span></div>
+      <div class="scene">${S2}</div>
+      <div class="kcap">番号つきの手順と<b>ガイドライン・例・注意</b>の<br>見出しが最初から入っている。</div>
+      <div class="arrow">▶</div>
+    </div>
+    <div class="col c3">
+      <div class="kh"><span class="kn">3</span><span class="kt">合うときだけ開く<small>エージェントが判断</small></span></div>
+      <div class="scene">${S3}</div>
+      <div class="kcap">スキルを何個置いても、<b>使うのは合うものだけ</b>。<br>指示は短いまま増やせる。</div>
+    </div>
+  </div>
+
+  <div class="darkband">
+    <div class="nf">
+      <div class="label">決まりごと（公式）</div>
+      <div class="grid">
+        <div class="fc"><div class="ft">同じ名前は不可</div><div class="fd">1つのエージェントに<br>同名のスキルは置けない</div></div>
+        <div class="fc"><div class="ft">説明が長すぎると不可</div><div class="fd">読み込めないスキルは<br>飛ばされる</div></div>
+        <div class="fc"><div class="ft">ファイルでも入れられる</div><div class="fd">Markdown か<br>SKILL.md 入りの ZIP</div></div>
+      </div>
+    </div>
+    <div class="note">
+      <div class="label">⚠ 使う前に確認</div>
+      <div class="txt">使えるのは <b>Microsoft Copilot</b> の土台で<br>作ったエージェント。</div>
+    </div>
+    <div class="src">出典：Microsoft Learn（スキルの概要／スキルを作成する／既存のスキルを追加する）／手順の中身は説明用の再現</div>
+  </div>
+  <img class="band-chara" src="${A}chara/chara_think_g.png" alt="">
+`;
+</script>
+</body>
+</html>

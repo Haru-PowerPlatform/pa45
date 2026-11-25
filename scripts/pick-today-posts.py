@@ -40,7 +40,7 @@ def load_done(path):
 
 
 def x_tip_item(t, label):
-    key = {"tips": "tips", "copasta": "cs", "m365copilot": "mc"}.get(t.get("series", "tips"), "tips")
+    key = bxb.DONE_KEY.get(t.get("series", "tips"), "tips")
     f = t["folder"]
     return {
         "id": f"x-{key}-{t['vol']}", "platform": "x", "label": label,

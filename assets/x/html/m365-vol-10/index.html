@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>M365 Copilot Vol.10-1 Copilot がやらなかった6件</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/mc-base.css">
+<style>
+  .stage{gap:11px;}
+  .lft{flex:0 0 424px;min-height:0;display:flex;flex-direction:column;gap:8px;}
+  .pane{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:2.5px solid var(--red-line);border-radius:12px;overflow:hidden;box-shadow:0 4px 10px rgba(120,30,30,.14);position:relative;}
+  .pane .phd{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:6px 11px;background:#F3F2F1;border-bottom:1px solid #E1DFDD;font-size:16px;font-weight:700;color:#242424;}
+  .pane .pb{flex:1;min-height:0;display:flex;flex-direction:column;gap:9px;padding:10px 12px;justify-content:space-evenly;}
+  .ask{align-self:flex-end;max-width:92%;background:#E8F4F2;border:1.5px solid #A7E3D8;border-radius:12px 12px 3px 12px;padding:7px 12px;font-size:18.5px;font-weight:700;color:#1B2A44;line-height:1.4;}
+  .ask .pj{background:linear-gradient(transparent 55%,#FDE68A 55%);}
+  .ans{display:flex;gap:9px;align-items:flex-start;}
+  .ans .bb{flex:1;background:#FAFAFA;border:1.5px solid #E1DFDD;border-radius:12px 12px 12px 3px;padding:9px 12px;font-size:18px;font-weight:700;color:#1B2A44;line-height:1.5;}
+  .ans .bb b{font-size:27px;font-weight:900;color:#B91C1C;background:linear-gradient(transparent 60%,#FECACA 60%);}
+  .stamp{position:absolute;right:12px;bottom:10px;transform:rotate(-8deg);border:4px solid #DC2626;color:#DC2626;border-radius:10px;padding:1px 16px;font-size:31px;font-weight:900;letter-spacing:2px;background:rgba(255,255,255,.88);box-shadow:0 2px 6px rgba(220,38,38,.25);}
+  .tally{flex:0 0 150px;display:flex;gap:8px;background:#F8FAFC;border:2.5px solid #DCE3EE;border-radius:12px;padding:8px 10px;position:relative;}
+  .tally .tl{position:absolute;left:12px;top:-1px;font-size:14.5px;font-weight:900;color:#fff;background:var(--navy);border-radius:0 0 8px 8px;padding:1px 10px;}
+  .tiles{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:20px;}
+  .tile{display:flex;align-items:center;gap:7px;border-radius:9px;padding:0 9px;color:#fff;font-weight:900;}
+  .tile .nn{font-size:30px;line-height:1.3;}
+  .tile .lb{font-size:15.5px;line-height:1.15;}
+  .tile.r{background:linear-gradient(180deg,#EF6A6A,#DC2626);}
+  .tile.a{background:linear-gradient(180deg,#F5B041,#D97706);}
+  .tile.g{background:linear-gradient(180deg,#8A94A6,#5B6474);}
+  .tile.o{background:linear-gradient(180deg,#FB923C,#EA580C);}
+  .tally .ch{flex:0 0 auto;height:128px;align-self:flex-end;margin:0 -4px -6px 0;filter:drop-shadow(0 3px 4px rgba(0,0,0,.25));}
+  .rgt{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px;}
+  .th{flex:0 0 auto;display:flex;align-items:center;font-size:16px;font-weight:900;color:#fff;background:var(--mc);border-radius:9px;padding:5px 12px;}
+  .th .a{flex:0 0 404px;} .th .b{flex:1;}
+  .r{flex:1;min-height:0;display:flex;align-items:center;gap:8px;background:#F7FBFA;border:1.5px solid #D8EFEA;border-radius:9px;padding:0 9px;}
+  .r .no{flex:0 0 28px;height:28px;border-radius:8px;background:var(--mc);color:#fff;font-size:17px;font-weight:900;display:flex;align-items:center;justify-content:center;}
+  .r .app{flex:0 0 34px;height:34px;border-radius:8px;background:#fff;border:1.5px solid #D8EFEA;display:flex;align-items:center;justify-content:center;}
+  .r .k{flex:0 0 296px;font-size:17.5px;font-weight:900;color:var(--navy);line-height:1.22;}
+  .r .ar{flex:0 0 22px;height:22px;color:#94A3B8;}
+  .r .tg{flex:0 0 118px;text-align:center;font-size:15.5px;font-weight:900;color:#fff;border-radius:7px;padding:4px 0;}
+  .r .tg.tr{background:#DC2626;} .r .tg.ta{background:#D97706;} .r .tg.tg2{background:#5B6474;} .r .tg.to{background:#EA580C;}
+  .r .v{flex:1;min-width:0;font-size:16px;font-weight:700;color:#1B2A44;line-height:1.25;}
+  .r .v b{color:#B91C1C;font-weight:900;}
+  .r.hot{background:#FFF7ED;border:2.5px solid #FDBA74;}
+  .next{font-size:18.5px;padding:8px 18px;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={arrow:'<path d="M4 12h15M13 6l6 6-6 6"/>'};
+const CPI=(w)=>`<img class="msi" src="${A}icons/ms/copilot.png" alt="" style="width:${w||24}px;height:${w||24}px">`;
+const MS=(n,w)=>`<img class="msi" src="${A}icons/ms/${n}" alt="" style="width:${w||24}px;height:${w||24}px">`;
+const row=(n,app,k,tc,tg,v,hot)=>`<div class="r${hot?' hot':''}"><span class="no">${n}</span><span class="app">${app}</span><span class="k">${k}</span><span class="ar">${svgw(P.arrow,3)}</span><span class="tg ${tc}">${tg}</span><span class="v">${v}</span></div>`;
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="pills"><div class="vol-pill"><small>M365 Copilot</small>Vol.10-1</div><div class="lic-pill paid">M365 Copilot ライセンスが要る</div></div>
+    <div class="title-text">Copilot に頼んで、<br><span class="hl">やってくれなかった6件</span>の検証記録</div>
+    <div class="title-apps"><img class="msi" src="${A}icons/ms/copilot.png" alt=""><span class="pl">＋</span><img class="msi" src="${A}icons/ms/outlook.svg" alt=""></div>
+    <img class="title-chara" src="${A}chara/chara_think.png" alt="">
+  </div>
+  <div class="concl">
+    <div class="chip app">${CPI(34)}</div>
+    <div class="txt">断られた依頼、聞き返された依頼、<b>誤りがそのまま通った依頼</b>を並べました。<br>どれも実画面で確認した記録です（2026年10〜11月）</div>
+  </div>
+  <div class="stage">
+    <div class="lft">
+      <div class="pane">
+        <div class="phd">${CPI(24)}Copilot Chat<span class="repro">画面は説明用の再現</span></div>
+        <div class="pb">
+          <div class="ask">この予定で間に合うか、<br><span class="pj">確率を％で</span>教えて</div>
+          <div class="ans">${CPI(34)}<div class="bb"><b>％での推定は控えます</b><br>根拠になる情報が足りないためです</div></div>
+          <div style="height:34px"></div>
+        </div>
+        <div class="stamp">断られた</div>
+      </div>
+      <div class="tally">
+        <span class="tl">6件の内訳</span>
+        <div class="tiles">
+          <div class="tile r"><span class="nn">2</span><span class="lb">断られた</span></div>
+          <div class="tile a"><span class="nn">1</span><span class="lb">聞き返された</span></div>
+          <div class="tile g"><span class="nn">2</span><span class="lb">条件で<br>止まった</span></div>
+          <div class="tile o"><span class="nn">1</span><span class="lb">誤りが<br>通った</span></div>
+        </div>
+        <img class="ch chara" src="${A}chara/chara_surprise.png" alt="">
+      </div>
+    </div>
+    <div class="rgt">
+      <div class="th"><span class="a">頼んだこと</span><span class="b">返ってきたこと</span></div>
+      ${row(1,CPI(26),'間に合うかを、％で聞く','tr','断られた','<b>％での推定は控えます</b>')}
+      ${row(2,MS('outlook.svg',26),'自分の送信メールの<br>書き方のくせを聞く','tr','断られた','人物の評価にあたる、<br>という返答')}
+      ${row(3,MS('outlook.svg',26),'Outlook で<br>自動応答の設定を頼む','ta','聞き返された','下書きは出ず、<br>期間と本文を質問')}
+      ${row(4,MS('word.svg',26),'作ったばかりのファイルを<br>「/」で指定する','tg2','条件で止まった','候補に出てこない')}
+      ${row(5,MS('outlook.svg',26),'短い下書きで<br>「コーチングを受ける」','tg2','条件で止まった','本文が100文字以上<br>ないと使えない')}
+      ${row(6,MS('excel.svg',26),'Word と Excel の2ファイル<br>から案内メールを作る','to','誤りが通った','下書きは保存された。<br><b>11/5（水）</b>の誤りも写る',1)}
+    </div>
+  </div>
+  <div class="next">
+    <span class="na">${svgw(P.arrow,2.6)}</span>
+    <span><b>頼み直し方は2枚目</b>、誤りが写る流れは3枚目、送る前に確かめる場所は4枚目へ</span>
+  </div>
+  <div class="src">出典：Microsoft Learn「アプリケーション カード: Microsoft Copilot (組織向け)」／実画面で確認（2026年10〜11月）・画面は説明用の再現</div>
+`;
+</script>
+</body>
+</html>

@@ -8,7 +8,7 @@ PA45 の各回で使ったスライドです。\
 |---:|---|---|:---:|
 | 36 |  |  | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-36/) |
 | 35 |  |  | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-35/) |
-| 34 |  |  | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-34/) |
+| 34 | 2026/11/05（予定） | リストのステータスが変わったときだけTeamsに通知 | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-34/) |
 | 33 | 2026/10/29 | 内部名で困らない。内部名はフローが自動で調べる | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-33/) |
 | 32 | 2026/10/22 | 置くだけで月別フォルダに片付くファイル整理 | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-32/) |
 | 31 | 2026/10/15 | ファイルを選んで1クリックでPDFにして送る | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-31/) |
@@ -32,7 +32,7 @@ PA45 の各回で使ったスライドです。\
 | 13 | 2026/06/04 | Try-Catch でフロー運用を安心化 | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-13/) |
 | 12 | 2026/05/28 | 「式」アレルギー、今日で卒業 | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-12/) |
 
-- `index.html` は技術Tipsスライド（177本）の一覧です。元HTMLは `assets/x/html/` にあります。
+- `index.html` は技術Tipsスライド（184本）の一覧です。元HTMLは `assets/x/html/` にあります。
 - `links.html` は全回の目次です。どちらも `scripts/` のスクリプトで生成しています。
 - スライドは [CC BY-NC 4.0](../LICENSE-CONTENT.md) です。出典を書けば、社内勉強会や研修で使えます。販売は不可です。
 

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>コパスタ Vol.20-1 AIを作りたい人の受付もAIに</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/cs-base.css">
+<style>
+  /* D型：会話スレッド（左に困りごと・右にTeamsの会話） */
+  .body{gap:14px;}
+  .left{flex:0 0 360px;min-height:0;display:flex;flex-direction:column;border-radius:14px;padding:10px 13px 11px;background:var(--red-bg);
+    border:2px solid var(--red-line);box-shadow:0 6px 14px rgba(0,0,0,.12);position:relative;}
+  .lh{flex:0 0 auto;display:flex;align-items:center;gap:9px;margin-bottom:4px;}
+  .lh .tag{font-size:15px;font-weight:900;color:#fff;background:var(--red);border-radius:8px;padding:3px 11px;}
+  .lh .h{font-size:24px;font-weight:900;color:var(--navy);}
+  .scene{flex:1;min-height:0;position:relative;}
+  .scene svg{width:100%;height:100%;display:block;}
+  .lcap{flex:0 0 auto;font-size:15.5px;font-weight:700;color:#374151;line-height:1.42;border-top:1.5px dashed var(--red-line);padding-top:6px;}
+  .lcap b{color:var(--red-dark);}
+  .tchat{flex:1;min-width:0;min-height:0;display:flex;flex-direction:column;background:#fff;border:2.5px solid var(--cs);border-radius:12px;overflow:hidden;
+    box-shadow:0 6px 14px rgba(91,33,182,.18);}
+  .th{flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:7px 12px;background:#F5F5F5;border-bottom:1px solid #E1DFDD;}
+  .th .nm{font-size:16.5px;font-weight:700;}
+  .th .nm small{display:block;font-size:13px;font-weight:600;color:#616161;}
+  .th .tm{margin-left:auto;display:flex;align-items:center;gap:5px;font-size:13.5px;font-weight:700;color:#5B5FC7;background:#E8EBFA;border-radius:6px;padding:2px 8px;}
+  .tb{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:space-between;gap:6px;padding:8px 12px;background:#FAFAFA;}
+  .uq{align-self:flex-end;max-width:70%;background:#E8EBFA;border-radius:10px 10px 3px 10px;padding:6px 12px;font-size:15.5px;font-weight:600;line-height:1.42;}
+  .uq .who{display:block;font-size:12.5px;font-weight:700;color:#616161;}
+  .a{align-self:flex-start;max-width:92%;background:#fff;border:1px solid #E1DFDD;border-radius:10px 10px 10px 3px;padding:6px 12px;font-size:15.5px;
+    font-weight:600;line-height:1.45;box-shadow:0 1px 3px rgba(0,0,0,.08);}
+  .a ol{margin:2px 0 0 20px;}
+  .qs{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px;}
+  .qs span{font-size:14px;font-weight:700;background:#F5F3FF;border:1px solid #C9B4F4;border-radius:999px;padding:1px 10px;color:#5B21B6;}
+  .verdict{display:flex;gap:8px;margin-top:5px;}
+  .vc{flex:1;border-radius:9px;padding:5px 9px;font-size:14.5px;font-weight:700;line-height:1.4;}
+  .vc .t{display:block;font-size:14px;font-weight:900;}
+  .v1{background:#ECFDF5;border:1.5px solid #16A34A;} .v1 .t{color:#065F46;}
+  .v2{background:#FFFBEB;border:1.5px solid #F59E0B;} .v2 .t{color:#92400E;}
+  .a mark{background:linear-gradient(transparent 55%,#FDE68A 55%);color:inherit;font-weight:800;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+
+/* 左：同じようなAIが社内にいくつも生まれる */
+const S=`<svg viewBox="0 0 330 250" preserveAspectRatio="xMidYMid meet">
+  <defs>
+    <linearGradient id="bt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C4B5FD"/><stop offset="1" stop-color="#7C3AED"/></linearGradient>
+    <filter id="sh" x="-20%" y="-20%" width="140%" height="150%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-opacity=".22"/></filter>
+  </defs>
+  ${[[14,10,'営業部','経費FAQ'],[118,4,'総務部','経費のAI'],[222,14,'人事部','経費Q&A'],[60,92,'経理部','経費ボット'],[180,96,'情シス','経費質問']].map(([x,y,d,n])=>`
+  <g transform="translate(${x},${y})" filter="url(#sh)">
+    <rect width="96" height="70" rx="12" fill="#fff" stroke="#A78BFA" stroke-width="2"/>
+    <rect x="30" y="8" width="36" height="26" rx="8" fill="url(#bt)"/>
+    <circle cx="41" cy="21" r="3.5" fill="#fff"/><circle cx="55" cy="21" r="3.5" fill="#fff"/>
+    <text x="48" y="50" text-anchor="middle" font-size="13" font-weight="900" fill="#1B2A44" font-family="Noto Sans JP">${n}</text>
+    <text x="48" y="64" text-anchor="middle" font-size="11.5" font-weight="800" fill="#6B7280" font-family="Noto Sans JP">${d}</text>
+  </g>`).join('')}
+  <!-- 放置された難しい依頼 -->
+  <g transform="translate(20,184)" filter="url(#sh)">
+    <rect width="290" height="54" rx="10" fill="#FEF3C7" stroke="#F59E0B" stroke-width="2"/>
+    <text x="16" y="23" font-size="13.5" font-weight="900" fill="#92400E" font-family="Noto Sans JP">基幹システムとつなぐAI（認証が必要）</text>
+    <text x="16" y="43" font-size="13" font-weight="800" fill="#B45309" font-family="Noto Sans JP">作りかけのまま3か月…　誰に聞けばいい？</text>
+  </g>
+  <text x="165" y="178" text-anchor="middle" font-size="14" font-weight="900" fill="#B91C1C" font-family="Noto Sans JP">同じ「経費のAI」が5つ</text>
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">コパスタ Vol.20</div>
+    <div class="part-pill">前編 <b>(1/4)</b></div>
+    <div class="title-text">AIを作りたい人の<br><span class="q">"相談窓口"もAI</span>にする</div>
+    <div class="ibadge"><img src="${A}icons/cs_logo.png" alt=""><span class="pl">+</span><img src="${A}icons/ms/teams.svg" alt=""><span class="pl">+</span><img src="${A}icons/ms/sharepoint.svg" alt=""></div>
+    <img class="title-chara" src="${A}chara/chara_smile_g.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">結論</div>
+    <div class="txt">作りたいAIを聞き取り、<b>似たAIがあれば紹介</b>、かんたんなら作り方へ、むずかしければ専門チームへ。<br>
+      ServiceNow は社内の<em>エージェント作成ポータル</em>にこの受付エージェントを置いている。</div>
+  </div>
+
+  <div class="body">
+    <div class="left">
+      <div class="lh"><span class="tag">いま</span><span class="h">みんな勝手に作る</span></div>
+      <div class="scene">${S}</div>
+      <div class="lcap">似たAIが部署ごとに増え、<br><b>むずかしい相談は宙に浮く</b>。</div>
+    </div>
+    <div class="tchat seg">
+      <div class="th"><img class="msi" src="${A}icons/cs_logo.png" alt="" style="width:34px;height:34px">
+        <span class="nm">エージェント作成の相談窓口<small>エージェント・社内のエージェント一覧を読んでいます</small></span>
+        <span class="tm"><img class="msi" src="${A}icons/ms/teams.svg" alt="" style="width:18px;height:18px">Teams</span></div>
+      <div class="tb">
+        <div class="uq"><span class="who">高橋 由佳（営業部）</span>経費の精算ルールに答えるAIを作りたいです</div>
+        <div class="a">いくつか確認させてください。
+          <div class="qs"><span>① だれが使う？</span><span>② 使う資料は？</span><span>③ 何かを書き込む？</span></div>
+        </div>
+        <div class="uq">営業部の20人／経費規程のPDF／書き込みはなし</div>
+        <div class="a"><mark>似たエージェントがすでにあります</mark>：<b>経費の質問窓口</b>（経理部・全社公開）。まずはこれを試してください。
+          <div class="verdict">
+            <div class="vc v1"><span class="t">足りなければ：かんたん</span>資料を読ませるだけなので、自分で作れます。作り方の動画はこちら</div>
+            <div class="vc v2"><span class="t">専門チームへ回すもの</span>基幹システムとつなぐ・認証が要る・全社に公開する</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="darkband">
+    <div class="nf">
+      <div class="label">受付が振り分ける先</div>
+      <div class="grid">
+        <div class="fc"><div class="ft">似たAIがある</div><div class="fd">新しく作らず、<br>あるものを使い回す</div></div>
+        <div class="fc"><div class="ft">かんたん</div><div class="fd">資料を読ませるだけ。<br>作り方の動画で自分で作る</div></div>
+        <div class="fc"><div class="ft">むずかしい</div><div class="fd">認証・書き込み・全社公開。<br>専門チームに相談</div></div>
+      </div>
+    </div>
+    <div class="note">
+      <div class="label">⚠ 使う前に確認</div>
+      <div class="txt">判定の基準は<b>自社で決める</b>。<br>上の分け方は一例。</div>
+    </div>
+    <div class="src">出典：Microsoft 顧客事例（ServiceNow・2026-11-16）／画面・人名・部署は説明用の再現</div>
+  </div>
+  <img class="band-chara" src="${A}chara/chara_point_g.png" alt="">
+`;
+</script>
+</body>
+</html>

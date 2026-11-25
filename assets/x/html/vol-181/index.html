@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>Vol.181-1 自動通知メールの件名と1行目を書き直す</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/tips-base.css">
+<style>
+  .stage{gap:9px;}
+  .col{padding:7px 10px 9px;gap:6px;min-width:0;}
+  .card,.inbox,.mrow{min-width:0;}
+  .ph{font-size:25px;}
+  .scene{height:96px;}
+  .scene .chara{height:112px;bottom:-14px;right:6px;}
+  .scene .tagl{position:absolute;left:10px;top:8px;z-index:3;font-size:15.5px;font-weight:900;border-radius:999px;padding:2px 12px;color:#fff;}
+  .col.bad .scene .tagl{background:#B91C1C;} .col.good .scene .tagl{background:#15803D;}
+  .repro{font-size:12.5px;font-weight:700;color:#8A8886;margin-left:auto;white-space:nowrap;}
+  .card{font-family:'Segoe UI','Noto Sans JP',sans-serif;}
+  .cardh{padding:5px 10px;}
+  .col.bad .cardh,.col.good .cardh{background:#F3F2F1;color:#242424;border-bottom:1px solid #E1DFDD;}
+  .inbox{flex:1;min-height:0;display:flex;flex-direction:column;}
+  .mrow{flex:1;min-height:0;display:flex;align-items:center;gap:10px;padding:3px 10px 3px 8px;border-bottom:1px solid #EDEBE9;border-left:5px solid transparent;}
+  .mrow:last-child{border-bottom:none;}
+  .mrow .av{flex:0 0 auto;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:900;font-size:15.5px;}
+  .mrow .mx{flex:1;min-width:0;display:flex;flex-direction:column;}
+  .mrow .l1{display:flex;align-items:baseline;gap:8px;font-size:15.5px;font-weight:700;color:#605E5C;line-height:1.3;}
+  .mrow .l1 .dt{margin-left:auto;font-size:13.5px;color:#8A8886;white-space:nowrap;}
+  .mrow .sj{font-size:16.5px;font-weight:700;color:#424242;line-height:1.32;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .mrow .pv{font-size:15.5px;font-weight:500;color:#8A8886;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .mrow.t{border-left-color:#0F6CBD;}
+  .mrow.t .l1{color:#242424;font-weight:900;}
+  .mrow.t .sj{font-weight:900;color:#0F548C;font-size:17px;}
+  .col.bad .mrow.t{background:#FFF1F1;box-shadow:inset 0 0 0 2.5px #F0AEAE;}
+  .col.good .mrow.t{background:#EAF9F1;box-shadow:inset 0 0 0 2.5px #7FCEA9;}
+  .col.bad .mrow.t .sj{color:#6B7280;}
+  .col.good .mrow.t .sj b{color:#C2410C;}
+  .col.good .mrow.t .pv{color:#374151;font-weight:700;}
+  /* 中央 */
+  .mid{flex:0 0 172px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;gap:6px;background:#FFFBEB;border:2.5px solid #F59E0B;border-radius:14px;padding:9px 8px 10px;}
+  .mid .keep{font-size:15.5px;font-weight:900;color:#1E40AF;background:#fff;border:1.5px solid #A9C6F5;border-radius:9px;padding:4px 8px;text-align:center;line-height:1.3;display:flex;align-items:center;gap:6px;}
+  .mid .keep img{width:26px;height:26px;}
+  .mid .big{font-size:27px;font-weight:900;color:#B91C1C;line-height:1.2;text-align:center;}
+  .mid .big small{display:block;font-size:17px;color:#7C2D12;}
+  .mid .pill{width:100%;font-size:20px;font-weight:900;color:#fff;background:linear-gradient(180deg,#EF6A6A,#DC2626);border-radius:10px;padding:5px 0;text-align:center;box-shadow:0 2px 4px rgba(0,0,0,.2);}
+  .mid .arr{width:44px;height:44px;color:#16A34A;}
+  .mid .arr svg{max-width:44px;max-height:44px;}
+  .bot2{flex:0 0 auto;display:flex;gap:10px;align-items:stretch;margin:8px 16px 0;}
+  .bot2 .metric{flex:0 0 auto;margin:0;}
+  .bot2 .uses{flex:1;background:#fff;border:1.5px solid #A9C6F5;border-radius:10px;padding:4px 10px;}
+  .next{margin-top:8px;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={x:'<path d="M6 6l12 12M18 6L6 18"/>',ok:'<path d="M5 12l5 5 9-10"/>',arrow:'<path d="M4 12h15M13 6l6 6-6 6"/>',
+  warn:'<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18v.5"/>',bulb:'<path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0 0 12 3z"/>'};
+const MS=(n,w)=>`<img class="msi" src="${A}icons/ms/${n}" alt="" style="width:${w||24}px;height:${w||24}px">`;
+// 封筒（グラデ＋フラップ＋影）
+const env=(x,y,w,rot,id,lab,labc)=>{const h=w*0.64;return `<g transform="translate(${x} ${y}) rotate(${rot} ${w/2} ${h/2})">
+  <rect x="2" y="3" width="${w}" height="${h}" rx="5" fill="rgba(0,0,0,.16)"/>
+  <rect width="${w}" height="${h}" rx="5" fill="url(#${id})" stroke="${labc}" stroke-width="1.6"/>
+  <path d="M0 4 L${w/2} ${h*0.56} L${w} 4" fill="none" stroke="${labc}" stroke-width="1.6"/>
+  <path d="M0 ${h} L${w*0.36} ${h*0.44} M${w} ${h} L${w*0.64} ${h*0.44}" stroke="${labc}" stroke-width="1.1" opacity=".55"/>
+  ${lab?`<rect x="${w*0.14}" y="${h*0.62}" width="${w*0.72}" height="${h*0.27}" rx="4" fill="${labc}"/><text x="${w/2}" y="${h*0.82}" text-anchor="middle" font-size="${w*0.125}" font-weight="900" fill="#fff" font-family="Noto Sans JP">${lab}</text>`:''}
+</g>`;};
+const defs=`<defs><linearGradient id="eg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#E5E7EB"/></linearGradient>
+<linearGradient id="ew" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#FEF3C7"/></linearGradient></defs>`;
+const sceneBad=`<svg viewBox="0 0 510 96">${defs}
+  ${env(150,8,86,-9,'eg','自動送信','#9CA3AF')}${env(226,2,86,6,'eg','自動送信','#9CA3AF')}${env(300,14,86,-4,'eg','自動送信','#9CA3AF')}
+  ${env(120,42,86,5,'eg','自動送信','#9CA3AF')}${env(196,46,86,-7,'eg','自動送信','#9CA3AF')}${env(272,50,86,8,'eg','自動送信','#9CA3AF')}${env(40,50,86,-10,'eg','自動送信','#9CA3AF')}
+</svg>`;
+const sceneGood=`<svg viewBox="0 0 510 96">${defs}
+  ${env(26,52,70,-8,'eg','','#CBD5E1')}${env(300,54,70,7,'eg','','#CBD5E1')}
+  ${env(150,10,118,-3,'ew','','#D97706')}
+  <g transform="translate(232 6) rotate(6)"><rect width="150" height="36" rx="8" fill="#EA580C"/><circle cx="14" cy="18" r="5" fill="#fff"/><text x="84" y="25" text-anchor="middle" font-size="19" font-weight="900" fill="#fff" font-family="Noto Sans JP">11/27(金)まで</text></g>
+  <g transform="translate(160 52)"><rect width="98" height="28" rx="6" fill="#16A34A"/><text x="49" y="20" text-anchor="middle" font-size="16" font-weight="900" fill="#fff" font-family="Noto Sans JP">要回答</text></g>
+</svg>`;
+const row=(cls,av,avc,from,dt,sj,pv)=>`<div class="mrow ${cls}"><span class="av" style="background:${avc}">${av}</span><div class="mx"><div class="l1"><span>${from}</span><span class="dt">${dt}</span></div><div class="sj">${sj}</div><div class="pv">${pv}</div></div></div>`;
+const rowA=row('','鈴','#8764B8','鈴木 一郎','11/20(金) 9:12','Re: 来週の定例について','承知しました。資料は前日までに共有します。');
+const rowC=row('','高','#038387','高橋 健','11/19(木) 17:40','見積書をお送りします','添付のとおりお送りします。ご確認をお願いします。');
+const pen=`<svg width="92" height="74" viewBox="0 0 92 74"><defs><linearGradient id="pg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F87171"/><stop offset="1" stop-color="#B91C1C"/></linearGradient></defs>
+  <rect x="6" y="10" width="62" height="56" rx="5" fill="#fff" stroke="#D1D5DB" stroke-width="1.6"/>
+  <path d="M14 24h34" stroke="#9CA3AF" stroke-width="4" stroke-linecap="round"/><path d="M12 24h40" stroke="#DC2626" stroke-width="2.2"/>
+  <path d="M14 38h44M14 48h38M14 57h26" stroke="#D1D5DB" stroke-width="3.4" stroke-linecap="round"/>
+  <path d="M12 39c6-4 10 4 16 0s10-4 16 0" fill="none" stroke="#DC2626" stroke-width="2"/>
+  <g transform="translate(50 4) rotate(38)"><rect x="0" y="0" width="12" height="46" rx="3" fill="url(#pg)"/><rect x="0" y="0" width="12" height="8" rx="3" fill="#7F1D1D"/><path d="M0 46 L6 60 L12 46z" fill="#FDE68A"/><path d="M4 55 L6 60 L8 55z" fill="#DC2626"/></g>
+</svg>`;
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.181-1</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">読み飛ばされる自動通知メールを、<br><span class="hl">件名と1行目</span>から書き直す</div>
+    <img class="title-chara" src="${A}chara/chara_point.png" alt="">
+  </div>
+  <div class="concl">
+    <div class="chip">${svgw(P.bulb,2.2)}</div>
+    <div class="txt">フローは変えずに、通知の文面だけを直します。<b>件名の頭に、やることと期限</b>。<b>1行目に、誰が何をするか</b>。<br>受信トレイの一覧を見ただけで用件が伝わります</div>
+  </div>
+  <div class="stage">
+    <div class="col bad">
+      <div class="ph"><span class="mk">${svgw(P.x,3)}</span>直す前：一覧では用件が分からない</div>
+      <div class="scene">${sceneBad}<span class="tagl">どれも同じ件名</span><img class="chara" src="${A}chara/chara_tired.png" alt=""></div>
+      <div class="card"><div class="cardh">${MS('outlook.svg',26)}受信トレイ<span class="repro">画面は説明用の再現</span></div>
+        <div class="inbox">${rowA}
+          ${row('t','佐','#C2410C','佐藤 花子','11/20(金) 9:00','【自動送信】ワークフロー通知','このメールはシステムより自動送信されています。下記の内容をご確認ください。')}
+          ${rowC}</div></div>
+    </div>
+    <div class="mid">
+      <div class="keep"><img src="${A}icons/pa_logo.png" alt="">フローは<br>そのまま</div>
+      ${pen}
+      <div class="big"><small>直すのは</small>文面だけ</div>
+      <div class="pill">① 件名</div>
+      <div class="pill">② 1行目</div>
+      <div class="arr">${svgw(P.arrow,3)}</div>
+    </div>
+    <div class="col good">
+      <div class="ph"><span class="mk">${svgw(P.ok,3)}</span>直した後：やることと期限が見える</div>
+      <div class="scene">${sceneGood}<span class="tagl">件名で用件が分かる</span><img class="chara" src="${A}chara/chara_guts.png" alt=""></div>
+      <div class="card"><div class="cardh">${MS('outlook.svg',26)}受信トレイ<span class="repro">画面は説明用の再現</span></div>
+        <div class="inbox">${rowA}
+          ${row('t','佐','#C2410C','佐藤 花子','11/20(金) 9:00','<b>【11/27(金)まで・要回答】</b>備品の棚卸し','山田さん、会議室Aの備品10点があるかを、下のリンクから回答してください。')}
+          ${rowC}</div></div>
+    </div>
+  </div>
+  <div class="bot2">
+    <div class="metric"><span class="ml">一覧で伝わること</span><span class="mv">自動送信であること</span><span class="ar">${svgw(P.arrow,3)}</span><span class="mv to">やることと期限</span></div>
+    <div class="uses"><span class="ul">使いどころ</span><span class="u">回答依頼</span><span class="u">承認待ち</span><span class="u">期限のお知らせ</span><span class="u">エラー通知</span></div>
+  </div>
+  <div class="next">
+    <span class="na">${svgw(P.arrow,2.6)}</span>
+    <span><b>直す4か所は2枚目</b>、フローのどの欄に書くかは3枚目、件名のひな形6つは4枚目へ</span>
+  </div>
+  <div class="src">出典：Microsoft Learn「Office 365 Outlook」コネクタ（メールの送信 (V2)）／人名・日付・文面は架空・画面は説明用の再現・効果の数字は測っていません</div>
+`;
+</script>
+</body>
+</html>

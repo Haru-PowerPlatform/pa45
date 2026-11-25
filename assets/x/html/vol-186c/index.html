@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>Vol.186-3 Excel とリストの数字の早見表</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/tips-base.css">
+<style>
+  .msi{flex:0 0 auto;object-fit:contain;}
+  .repro{font-size:12.5px;font-weight:700;color:#8A8886;margin-left:auto;white-space:nowrap;}
+  .left{flex:0 0 392px;display:flex;flex-direction:column;gap:8px;}
+  .lt{flex:0 0 auto;font-size:19px;font-weight:900;color:#1E3A8A;display:flex;align-items:center;gap:8px;}
+  .lt .n{width:30px;height:30px;border-radius:8px;background:#2563EB;color:#fff;font-size:17px;display:flex;align-items:center;justify-content:center;}
+  .act{flex:1;min-height:0;display:flex;flex-direction:column;background:#fff;border:2.5px solid #C7D6EE;border-radius:11px;overflow:hidden;box-shadow:0 4px 10px rgba(20,40,90,.12);}
+  .act .h{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:6px 10px;background:#F2F7FD;border-bottom:1.5px solid #E2EAF5;font-size:16px;font-weight:900;color:#1B2A44;}
+  .tabs{flex:0 0 auto;display:flex;gap:16px;padding:4px 12px 0;border-bottom:1.5px solid #E5E7EB;font-size:15.5px;font-weight:900;color:#6B7280;}
+  .tabs span{padding-bottom:4px;}
+  .tabs .on{color:#1B2A44;border-bottom:3px solid #2563EB;}
+  .act .b{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:space-evenly;padding:4px 12px;}
+  .fld{display:flex;align-items:center;gap:10px;font-size:15.5px;font-weight:900;color:#374151;}
+  .fld .in{flex:1;border:1.5px solid #9CA3AF;border-radius:5px;padding:2px 8px;font-family:'Roboto Mono',monospace;font-weight:700;color:#1B2A44;background:#fff;}
+  .fld .in.hl{border:2.5px solid #EA580C;background:#FFF7ED;}
+  .tg{flex:0 0 auto;width:46px;height:24px;border-radius:12px;background:#2563EB;position:relative;}
+  .tg::after{content:"";position:absolute;right:3px;top:3px;width:18px;height:18px;border-radius:50%;background:#fff;}
+  .ring{outline:3px solid #EA580C;outline-offset:3px;border-radius:12px;}
+  .callout{font-size:15px;font-weight:900;color:#9A3412;background:#FFEDD5;border-radius:7px;padding:3px 8px;line-height:1.3;}
+  /* 表 */
+  .right{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px;}
+  .thd{flex:0 0 auto;display:flex;gap:6px;align-items:center;}
+  .thd div{display:flex;align-items:center;justify-content:center;gap:8px;font-size:18px;font-weight:900;border-radius:9px;padding:5px 8px;}
+  .c0{flex:0 0 210px;} .c1{flex:1;} .c2{flex:1;}
+  .thd .c1{background:#E7F4EC;color:#14532D;border:2px solid #86C49E;}
+  .thd .c2{background:#E6F4F4;color:#035E61;border:2px solid #7CC7C9;}
+  .tr{flex:1;min-height:0;display:flex;gap:6px;align-items:stretch;}
+  .tr > div{display:flex;align-items:center;border-radius:8px;padding:3px 10px;line-height:1.25;}
+  .tr .c0{background:#F1F5F9;border:1.5px solid #DCE3EE;font-size:17px;font-weight:900;color:#1B2A44;gap:8px;}
+  .tr .c0 svg{flex:0 0 auto;width:30px;height:30px;}
+  .tr .c1,.tr .c2{flex-wrap:wrap;align-content:center;column-gap:8px;row-gap:0;background:#fff;border:1.5px solid #E2EAF5;font-size:16px;font-weight:700;color:#1B2A44;gap:8px;}
+  .num{font-family:'Roboto Mono',monospace;font-size:24px;font-weight:700;color:#1E40AF;white-space:nowrap;}
+  .tr .bad{background:#FEF2F2;border-color:#F0AEAE;}
+  .tr .bad .num{color:#B91C1C;}
+  .tr .good{background:#ECFDF5;border-color:#7FCEA9;}
+  .tr .good .num{color:#047857;}
+  .sm{font-size:15px;color:#4B5563;font-weight:700;}
+.bars{display:flex;flex-direction:column;gap:6px;}
+  .br{display:flex;align-items:center;gap:8px;font-size:15.5px;font-weight:900;color:#1B2A44;}
+  .br .bl{flex:0 0 36px;color:#6B7280;}
+  .br .bv{height:18px;border-radius:5px;flex:0 0 auto;max-width:150px;}
+  .br .bn{white-space:nowrap;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={warn:'<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18v.5"/>',
+  bulb:'<path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0 0 12 3z"/>'};
+const MS=(n,w)=>`<img class="msi" src="${A}icons/ms/${n}" alt="" style="width:${w||24}px;height:${w||24}px">`;
+/* 行ラベルのミニ図 */
+const I={
+ trig:`<svg viewBox="0 0 30 30"><rect x="2" y="9" width="14" height="13" rx="3" fill="#BBF7D0" stroke="#16A34A" stroke-width="1.8"/><path d="M6 15.5h6M9 12.5v6" stroke="#065F46" stroke-width="2"/><path d="M22 4l-5 11h5l-3 11 9-14h-5l3-8z" fill="#FACC15" stroke="#B45309" stroke-width="1.2"/></svg>`,
+ rows:`<svg viewBox="0 0 30 30"><rect x="3" y="3" width="24" height="24" rx="3" fill="#fff" stroke="#2563EB" stroke-width="1.8"/>${[9,14,19].map(y=>`<line x1="6" y1="${y}" x2="24" y2="${y}" stroke="#93C5FD" stroke-width="2"/>`).join('')}<line x1="1" y1="23" x2="29" y2="23" stroke="#DC2626" stroke-width="2.4" stroke-dasharray="3 2"/></svg>`,
+ more:`<svg viewBox="0 0 30 30"><rect x="3" y="12" width="24" height="12" rx="6" fill="#2563EB"/><circle cx="21" cy="18" r="4.5" fill="#fff"/><path d="M15 3v6M12 6l3 3 3-3" stroke="#2563EB" stroke-width="2" fill="none"/></svg>`,
+ call:`<svg viewBox="0 0 30 30"><circle cx="15" cy="16" r="11" fill="#fff" stroke="#2563EB" stroke-width="2"/><path d="M15 8v8l6 3" stroke="#2563EB" stroke-width="2.4" fill="none" stroke-linecap="round"/><rect x="12" y="2" width="6" height="3" rx="1" fill="#2563EB"/></svg>`,
+ size:`<svg viewBox="0 0 30 30"><path d="M7 3h11l6 6v18H7z" fill="#fff" stroke="#2563EB" stroke-width="1.8"/><path d="M18 3v6h6" fill="none" stroke="#2563EB" stroke-width="1.8"/><text x="9" y="22" font-size="8" font-weight="900" fill="#1E40AF">MB</text></svg>`,
+ key:`<svg viewBox="0 0 30 30"><circle cx="10" cy="15" r="6" fill="#FDE68A" stroke="#B45309" stroke-width="2"/><circle cx="10" cy="15" r="2" fill="#B45309"/><path d="M16 15h12M24 15v5M28 15v4" stroke="#B45309" stroke-width="2.4" stroke-linecap="round"/></svg>`
+};
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.186-3</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">Excel と SharePoint リスト、<br><span class="hl">フローから見た数字</span>を1枚に並べる</div>
+    <img class="title-chara" src="${A}chara/chara_point.png" alt="">
+  </div>
+  <div class="concl">
+    <div class="chip">${svgw(P.bulb,2.2)}</div>
+    <div class="txt">どちらも、何も設定しないと全件は読みません。<br><b>Excel は256行・リストは100件</b>で止まるので、件数の設定は最初に入れておきます</div>
+  </div>
+  <div class="stage">
+    <div class="left">
+      <div class="lt"><span class="n">A</span>Excel：読む行を増やす場所</div>
+      <div class="act">
+        <div class="h">${MS('excel.svg',26)}表内に存在する行を一覧表示<span class="repro">再現</span></div>
+        <div class="tabs"><span>パラメーター</span><span class="on">設定</span><span>コード ビュー</span></div>
+        <div class="b">
+          <div class="fld">改ページ位置<span class="tg ring"></span><span class="callout">オンで全件</span></div>
+          <div class="bars">
+            <div class="br"><span class="bl">オフ</span><span class="bv" style="width:68%;background:#F87171"></span><span class="bn">256行で止まる</span></div>
+            <div class="br"><span class="bl">オン</span><span class="bv" style="width:80%;background:#34D399"></span><span class="bn">300行すべて</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="lt"><span class="n">B</span>リスト：読む件数を増やす場所</div>
+      <div class="act">
+        <div class="h">${MS('sharepoint.svg',26)}複数の項目の取得<span class="repro">再現</span></div>
+        <div class="tabs"><span class="on">パラメーター</span><span>設定</span><span>コード ビュー</span></div>
+        <div class="b">
+          <div class="fld">リスト名<span class="in">備品貸出</span></div>
+          <div class="fld">上位カウント<span class="in hl">5000</span></div>
+          <div class="callout">空欄なら100件。5,000を超える値はエラー</div>
+        </div>
+      </div>
+    </div>
+    <div class="right">
+      <div class="thd"><div class="c0"></div><div class="c1">${MS('excel.svg',28)}Excel（表）</div><div class="c2">${MS('lists.svg',28)}SharePoint リスト</div></div>
+      <div class="tr"><div class="c0">${I.trig}追加されたら<br>動くトリガー</div><div class="c1 bad"><span class="num" style="font-size:20px">なし</span><span class="sm">「選択した行に対して」は<br>人が選んで動かすトリガー</span></div><div class="c2 good">「項目が作成されたとき」</div></div>
+      <div class="tr"><div class="c0">${I.rows}何もしないで<br>読む件数</div><div class="c1 bad"><span class="num">256</span>行</div><div class="c2 bad"><span class="num">100</span>件</div></div>
+      <div class="tr"><div class="c0">${I.more}増やす場所</div><div class="c1">設定の「改ページ位置」</div><div class="c2">「上位カウント」<span class="num" style="font-size:20px">5,000</span>まで</div></div>
+      <div class="tr"><div class="c0">${I.call}接続ごとの<br>呼び出し</div><div class="c1 bad"><span class="num">100</span>回 / 60秒</div><div class="c2 good"><span class="num">600</span>回 / 60秒</div></div>
+      <div class="tr"><div class="c0">${I.size}大きさ</div><div class="c1">ブック <span class="num">25</span>MB<span class="sm">（1回の要求 5MB）</span></div><div class="c2">添付ファイル <span class="num">90</span>MB<span class="sm">（1項目）</span></div></div>
+      <div class="tr"><div class="c0">${I.key}1行の指定</div><div class="c1 bad">キー列の値<span class="sm">（重複は最初の1行だけ）</span></div><div class="c2 good">ID<span class="sm">（自動で振られる番号）</span></div></div>
+    </div>
+  </div>
+  <div class="warnbar">
+    <span class="na">${svgw(P.warn,2.4)}</span>
+    <div class="ws"><span>使う前に確認</span><span>5,000件を超えるリストでフィルター クエリを使うと、何も返らないことがある（改ページ位置をオン）</span><span>数字は2026-11 時点の Learn の値</span></div>
+  </div>
+  <div class="src">出典：Microsoft Learn「Excel Online (Business) コネクタ」「SharePoint コネクタ」「アイテムの取得とファイルの取得の操作」（機械翻訳ページ）／画面は説明用の再現</div>
+`;
+</script>
+</body>
+</html>

@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>コパスタ Vol.20-2 3つ聞いて行き先を分ける</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/cs-base.css">
+<style>
+  .body{gap:0;align-items:stretch;}
+  .qcol{flex:0 0 330px;min-height:0;display:flex;flex-direction:column;gap:8px;}
+  .qh{flex:0 0 auto;font-size:21px;font-weight:900;color:var(--navy);display:flex;align-items:center;gap:8px;}
+  .qh .n{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#7C3AED,#C026D3);color:#fff;font-size:18px;display:flex;align-items:center;justify-content:center;}
+  .qq{flex:1;min-height:0;display:flex;align-items:center;gap:10px;background:var(--cs-bg);border:2px solid var(--cs-line);border-radius:12px;padding:6px 10px;}
+  .qq svg{flex:0 0 70px;width:70px;height:62px;}
+  .qq .t{font-size:18.5px;font-weight:900;color:var(--navy);line-height:1.28;}
+  .qq .t small{display:block;font-size:14.5px;font-weight:700;color:#4B5563;}
+  .mid{flex:0 0 190px;min-height:0;position:relative;}
+  .mid svg{width:100%;height:100%;display:block;}
+  .rcol{flex:1;min-width:0;min-height:0;display:flex;flex-direction:column;gap:8px;}
+  .r{flex:1;min-height:0;display:flex;align-items:center;gap:12px;border-radius:13px;padding:7px 13px;box-shadow:0 4px 10px rgba(0,0,0,.10);}
+  .r svg{flex:0 0 96px;width:96px;height:78px;}
+  .r .t{font-size:21px;font-weight:900;color:var(--navy);line-height:1.25;}
+  .r .t small{display:block;font-size:15.5px;font-weight:700;color:#374151;line-height:1.4;margin-top:2px;}
+  .r .if{flex:0 0 auto;margin-left:auto;font-size:14px;font-weight:900;border-radius:8px;padding:4px 9px;text-align:center;line-height:1.3;max-width:170px;}
+  .r1{background:#EFF6FF;border:2.5px solid #3B82F6;} .r1 .if{background:#DBEAFE;color:#1E40AF;}
+  .r2{background:#ECFDF5;border:2.5px solid #16A34A;} .r2 .if{background:#D1FAE5;color:#065F46;}
+  .r3{background:#FFFBEB;border:2.5px solid #F59E0B;} .r3 .if{background:#FEF3C7;color:#92400E;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const Q1=`<svg viewBox="0 0 70 62">${[0,1,2,3,4].map(i=>`<g transform="translate(${4+i*13},${i%2?18:10})"><circle cx="6" cy="8" r="6" fill="#A78BFA"/><path d="M-2 30 q8 -16 16 0z" fill="#7C3AED"/></g>`).join('')}</svg>`;
+const Q2=`<svg viewBox="0 0 70 62"><rect x="8" y="6" width="30" height="40" rx="3" fill="#fff" stroke="#DC2626" stroke-width="2"/><text x="23" y="30" text-anchor="middle" font-size="10" font-weight="900" fill="#DC2626">PDF</text>
+  <rect x="32" y="12" width="30" height="40" rx="3" fill="#fff" stroke="#0F6CBD" stroke-width="2"/><rect x="37" y="20" width="20" height="3" fill="#BFDBFE"/><rect x="37" y="27" width="16" height="3" fill="#BFDBFE"/><rect x="37" y="34" width="20" height="3" fill="#BFDBFE"/></svg>`;
+const Q3=`<svg viewBox="0 0 70 62"><rect x="6" y="10" width="44" height="40" rx="4" fill="#fff" stroke="#16A34A" stroke-width="2"/>${[0,1,2].map(i=>`<rect x="11" y="${17+i*10}" width="34" height="6" fill="${i===2?'#BBF7D0':'#E5E7EB'}"/>`).join('')}
+  <g transform="translate(40,8) rotate(35)"><rect width="9" height="34" rx="2" fill="#F59E0B"/><path d="M0 34 l4.5 9 l4.5 -9z" fill="#78350F"/></g></svg>`;
+const MID=`<svg viewBox="0 0 190 470" preserveAspectRatio="xMidYMid meet">
+  <defs><marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#7C3AED"/></marker>
+  <linearGradient id="par" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7C3AED"/><stop offset="1" stop-color="#EC4899"/></linearGradient></defs>
+  <g stroke="#C9B4F4" stroke-width="3" fill="none"><path d="M0 78 C 40 78, 40 235, 70 235"/><path d="M0 235 H 70"/><path d="M0 392 C 40 392, 40 235, 70 235"/></g>
+  <rect x="62" y="180" width="116" height="110" rx="18" fill="url(#par)"/>
+  <image href="${A}icons/cs_logo.png" x="100" y="190" width="40" height="40"/>
+  <text x="120" y="252" text-anchor="middle" font-size="16" font-weight="900" fill="#fff" font-family="Noto Sans JP">受付の</text>
+  <text x="120" y="274" text-anchor="middle" font-size="16" font-weight="900" fill="#fff" font-family="Noto Sans JP">エージェント</text>
+  <g stroke="#7C3AED" stroke-width="3" fill="none" marker-end="url(#ar)"><path d="M178 210 C 186 150, 180 90, 188 78"/><path d="M178 235 H 188"/><path d="M178 262 C 186 320, 180 380, 188 392"/></g>
+</svg>`;
+const R1=`<svg viewBox="0 0 96 78"><g fill="none" stroke="#2563EB" stroke-width="6" stroke-linecap="round"><path d="M22 40 a26 26 0 0 1 44 -18"/><path d="M74 38 a26 26 0 0 1 -44 18"/></g>
+  <path d="M60 10 l10 12 l-14 3z" fill="#2563EB"/><path d="M36 68 l-10 -12 l14 -3z" fill="#2563EB"/><image href="${A}icons/ms/agent.png" x="34" y="25" width="28" height="28"/></svg>`;
+const R2=`<svg viewBox="0 0 96 78"><rect x="6" y="8" width="84" height="54" rx="7" fill="#1F2937"/><rect x="11" y="13" width="74" height="44" rx="3" fill="#ECFDF5"/>
+  <circle cx="48" cy="35" r="14" fill="#16A34A"/><path d="M44 28 l11 7 l-11 7z" fill="#fff"/><rect x="30" y="64" width="36" height="6" rx="3" fill="#6B7280"/></svg>`;
+const R3=`<svg viewBox="0 0 96 78">${[[22,'#F59E0B'],[48,'#D97706'],[74,'#B45309']].map(([x,c])=>`<circle cx="${x}" cy="26" r="11" fill="${c}"/><path d="M${x-15} 62 q15 -30 30 0z" fill="${c}"/>`).join('')}
+  <rect x="58" y="2" width="36" height="16" rx="8" fill="#fff" stroke="#B45309" stroke-width="1.5"/><text x="76" y="14" text-anchor="middle" font-size="10" font-weight="900" fill="#92400E" font-family="Noto Sans JP">専門</text></svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">コパスタ Vol.20</div>
+    <div class="part-pill">ながれ <b>(2/4)</b></div>
+    <div class="title-text">3つ聞いて、<br><span class="q">行き先を3つ</span>に分ける</div>
+    <div class="ibadge"><img src="${A}icons/cs_logo.png" alt=""><span class="pl">+</span><img src="${A}icons/ms/sharepoint.svg" alt=""></div>
+    <img class="title-chara" src="${A}chara/chara_think_g.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">ながれ</div>
+    <div class="txt">受付は<b>だれが・何の資料で・何を書き込むか</b>を聞き、社内のエージェント一覧と照らし合わせる。<br>
+      作る前に<em>重複</em>と<em>むずかしさ</em>が分かる。</div>
+  </div>
+
+  <div class="body">
+    <div class="qcol">
+      <div class="qh"><span class="n">?</span>受付が聞くこと</div>
+      <div class="qq">${Q1}<span class="t">だれが使う？<small>自分の部署だけか、全社か</small></span></div>
+      <div class="qq">${Q2}<span class="t">使う資料は？<small>PDF・Excel・SharePoint など</small></span></div>
+      <div class="qq">${Q3}<span class="t">何かを書き込む？<small>リスト登録・メール送信など</small></span></div>
+    </div>
+    <div class="mid">${MID}</div>
+    <div class="rcol">
+      <div class="r r1">${R1}<span class="t">似たAIを紹介する<small>一覧に同じ用途があれば、<br>新しく作らずそれを使う</small></span><span class="if">一覧に<br>似たAIがある</span></div>
+      <div class="r r2">${R2}<span class="t">自分で作れる<small>作り方の動画と手順を渡す。<br>資料を読ませるだけのAI</small></span><span class="if">部署だけ・<br>読むだけ</span></div>
+      <div class="r r3">${R3}<span class="t">専門チームへつなぐ<small>相談の中身を記録して、<br>担当に渡す</small></span><span class="if">全社公開・<br>書き込み・認証</span></div>
+    </div>
+  </div>
+
+  <div class="darkband">
+    <div class="nf">
+      <div class="label">ServiceNow の受付エージェントがしていること</div>
+      <div class="grid">
+        <div class="fc"><div class="ft">聞き取り</div><div class="fd">作りたいAIを<br>入力フォームで聞く</div></div>
+        <div class="fc"><div class="ft">むずかしさの判定</div><div class="fd">かんたんなら自分で<br>本番まで進める</div></div>
+        <div class="fc"><div class="ft">似たAIの紹介</div><div class="fd">重複を防いで<br>部品を使い回す</div></div>
+      </div>
+    </div>
+    <div class="note">
+      <div class="label">⚠ 使う前に確認</div>
+      <div class="txt">紹介できるのは<b>一覧に載っているAIだけ</b>。<br>一覧を最新に保つ人を決めておく。</div>
+    </div>
+    <div class="src">出典：Microsoft 顧客事例（ServiceNow・2026-11-16）／判定の基準は説明用の一例</div>
+  </div>
+  <img class="band-chara" src="${A}chara/chara_confident_g.png" alt="">
+`;
+</script>
+</body>
+</html>

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>コパスタ Vol.25-1 資料の説明は既定のままにしない</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/cs-base.css">
+<style>
+  .body{gap:0;}
+  .panel{position:relative;}
+  .pL{flex:1;} .pR{flex:1.15;}
+  .ph{flex:0 0 auto;display:flex;align-items:center;gap:10px;margin-bottom:4px;}
+  .ph .tag{flex:0 0 auto;font-size:15px;font-weight:900;color:#fff;border-radius:8px;padding:3px 11px;}
+  .p-ng .tag{background:var(--red);} .p-cs .tag{background:var(--cs);}
+  .ph .h{font-size:25px;font-weight:900;color:var(--navy);line-height:1.2;}
+  .scene{flex:1;min-height:0;position:relative;}
+  .scene svg{width:100%;height:100%;display:block;}
+  .cap{flex:0 0 auto;font-size:15.5px;font-weight:700;color:#374151;line-height:1.42;border-top:1.5px dashed #CBD5E1;padding-top:6px;}
+  .p-ng .cap b{color:var(--red-dark);} .p-cs .cap b{color:var(--cs-dark);}
+  .vs{flex:0 0 64px;display:flex;align-items:center;justify-content:center;z-index:5;}
+  .vs .b{width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,#7C3AED,#EC4899);color:#fff;font-weight:900;font-size:15px;
+    display:flex;align-items:center;justify-content:center;text-align:center;line-height:1.1;box-shadow:0 4px 10px rgba(124,58,237,.45);border:3px solid #fff;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const T=(x,y,s,t,c='#1B2A44',w=800,a='middle')=>`<text x="${x}" y="${y}" text-anchor="${a}" font-size="${s}" font-weight="${w}" fill="${c}" font-family="Noto Sans JP">${t}</text>`;
+const D=`<defs><filter id="sh" x="-10%" y="-10%" width="120%" height="140%"><feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-opacity=".2"/></filter>
+  <marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#16A34A"/></marker>
+  <marker id="ax" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#DC2626"/></marker></defs>`;
+const file=(x,y,n,ico,desc,col,bg,sw=1.8)=>`<g transform="translate(${x},${y})" filter="url(#sh)"><rect width="300" height="58" rx="10" fill="${bg}" stroke="${col}" stroke-width="${sw}"/>
+  <image href="${A}icons/ms/${ico}" x="10" y="9" width="24" height="24"/>${T(42,27,13.5,n,'#1B2A44',900,'start')}${T(12,49,11.5,desc,'#4B5563',700,'start')}</g>`;
+/* 左：説明が全部同じ */
+const SL=`<svg viewBox="0 0 440 290" preserveAspectRatio="xMidYMid meet">${D}
+  <g transform="translate(12,4)" filter="url(#sh)"><rect width="230" height="38" rx="10" fill="#E8EBFA"/>${T(12,25,13.5,'今月の締め日はいつ？','#1B2A44',800,'start')}</g>
+  ${file(12,58,'経理手順書_v3.docx','word.svg','説明：…v3.docx に含まれる情報を検索します','#D1D5DB','#fff')}
+  ${file(12,126,'経理手順書_v2.docx','word.svg','説明：…v2.docx に含まれる情報を検索します','#F87171','#FEF2F2',2.6)}
+  ${file(12,194,'例外対応の記録_2025.xlsx','excel.svg','説明：…2025.xlsx に含まれる情報を検索します','#D1D5DB','#fff')}
+  <g transform="translate(336,96)"><image href="${A}icons/cs_logo.png" width="56" height="56"/></g>
+  ${T(364,170,13,'どれも同じ','#B91C1C',900)}${T(364,188,13,'説明に見える','#B91C1C',900)}
+  <path d="M332 136 L316 152" stroke="#DC2626" stroke-width="3" marker-end="url(#ax)"/>
+  <g transform="translate(12,262)">${T(0,16,13,'→ 古い v2 の締め日で答えてしまう','#B91C1C',900,'start')}</g>
+</svg>`;
+/* 右：説明に「いつ使うか」 */
+const SR=`<svg viewBox="0 0 520 290" preserveAspectRatio="xMidYMid meet">${D}
+  <g transform="translate(12,4)" filter="url(#sh)"><rect width="230" height="38" rx="10" fill="#E8EBFA"/>${T(12,25,13.5,'今月の締め日はいつ？','#1B2A44',800,'start')}</g>
+  <g transform="translate(12,58)" filter="url(#sh)"><rect width="370" height="86" rx="10" fill="#ECFDF5" stroke="#16A34A" stroke-width="2.6"/>
+  <image href="${A}icons/ms/word.svg" x="10" y="9" width="24" height="24"/>${T(42,27,13.5,'経理手順書_v3.docx','#1B2A44',900,'start')}
+  <rect x="294" y="10" width="64" height="22" rx="11" fill="#16A34A"/>${T(326,26,11.5,'最新版','#fff',900)}
+  ${T(12,52,12,'説明：月次の締め作業と経費精算の手順（2026年4月改訂）。','#065F46',800,'start')}
+  ${T(12,72,12,'締め日・振込日・差し戻しを聞かれたときに使う。','#065F46',800,'start')}</g>
+  ${file(12,156,'例外対応の記録_2025.xlsx','excel.svg','説明：過去の例外対応。前例を聞かれたときに使う','#D1D5DB','#fff')}
+  <g transform="translate(12,224)" filter="url(#sh)"><rect width="370" height="50" rx="10" fill="#F3F4F6" stroke="#D1D5DB" stroke-dasharray="5 4"/>
+  ${T(14,31,13,'経理手順書_v2.docx → ナレッジから外した','#6B7280',800,'start')}</g>
+  <g transform="translate(430,70)"><image href="${A}icons/cs_logo.png" width="56" height="56"/></g>
+  <path d="M428 104 L390 104" stroke="#16A34A" stroke-width="3.5" marker-end="url(#ar)"/>
+  ${T(458,148,13,'質問と','#065F46',900)}${T(458,166,13,'説明が合う','#065F46',900)}
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">コパスタ Vol.25</div>
+    <div class="part-pill">前編 <b>(1/4)</b></div>
+    <div class="title-text">資料の"説明"は既定のままにしない。<br><span class="q">いつ使う資料か</span>を書く</div>
+    <div class="ibadge"><img src="${A}icons/cs_logo.png" alt=""><span class="pl">+</span><img src="${A}icons/ms/word.svg" alt=""></div>
+    <img class="title-chara" src="${A}chara/chara_point_g.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">結論</div>
+    <div class="txt">ナレッジの説明は、入れたままだと<b>「〜に含まれる情報を検索します」</b>だけ。<br>
+      AIは<b>説明</b>を見て資料を選ぶので、<em>何の資料で、いつ使うか</em>を書き足す。</div>
+  </div>
+
+  <div class="body">
+    <div class="panel p-ng pL">
+      <div class="ph"><span class="tag">いま</span><span class="h">説明が全部同じ文</span></div>
+      <div class="scene">${SL}</div>
+      <div class="cap">ファイル名しか違わないので、<b>どれを読むかが安定しない</b>。<br>古い版も同じ顔で並んでいる。</div>
+    </div>
+    <div class="vs"><div class="b">直す</div></div>
+    <div class="panel p-cs pR">
+      <div class="ph"><span class="tag">これから</span><span class="h">説明に「いつ使うか」</span></div>
+      <div class="scene">${SR}</div>
+      <div class="cap">質問と説明が合う資料を<b>迷わず選ぶ</b>。<br>古い版は説明で区別するより、<b>ナレッジから外す</b>。</div>
+    </div>
+  </div>
+
+  <div class="darkband">
+    <div class="nf">
+      <div class="label">AIが資料を選ぶ手がかり</div>
+      <div class="grid">
+        <div class="fc"><div class="ft">説明</div><div class="fd">いちばん効く。<br>何の資料で、いつ使うか</div></div>
+        <div class="fc"><div class="ft">名前</div><div class="fd">ナレッジの中で<br>重ならない名前に</div></div>
+        <div class="fc"><div class="ft">文書のタイトル</div><div class="fd">SharePoint では<br>タイトルも手がかり</div></div>
+      </div>
+    </div>
+    <div class="note">
+      <div class="label">⚠ 使う前に確認</div>
+      <div class="txt">説明どうしが似ていると、<br>どれを選ぶか<b>予測できなくなる</b>。</div>
+    </div>
+    <div class="src">出典：Microsoft Learn（生成オーケストレーション／ナレッジ ソースの概要／ナレッジ ソースを編集する）／資料と回答は説明用の再現</div>
+  </div>
+  <img class="band-chara" src="${A}chara/chara_confident_g.png" alt="">
+`;
+</script>
+</body>
+</html>

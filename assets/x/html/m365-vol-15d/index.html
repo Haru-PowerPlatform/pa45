@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>M365 Copilot Vol.15-4 作る前に決める5つ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/mc-base.css">
+<style>
+  .stage{gap:12px;}
+  .dlg{flex:0 0 430px;min-height:0;display:flex;flex-direction:column;background:#fff;border:2px solid var(--segline);border-radius:12px;overflow:hidden;box-shadow:0 5px 14px rgba(0,0,0,.16);}
+  .dlg .dh{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:7px 12px;background:#F3F2F1;border-bottom:1px solid #E1DFDD;font-size:16px;font-weight:900;color:#242424;}
+  .dlg .db{flex:1;min-height:0;display:flex;flex-direction:column;gap:7px;padding:9px 12px;}
+  .dlg .in{flex:0 0 auto;border:1.5px solid #0F766E;border-radius:6px;padding:4px 9px;font-size:15.5px;font-weight:700;color:#1B2A44;}
+  .dlg .in small{display:block;font-size:13.5px;color:#8A8886;font-weight:700;}
+  .who{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:space-around;border:1.2px solid #EDEBE9;border-radius:8px;padding:2px 8px;}
+  .pr{display:flex;align-items:center;gap:8px;font-size:15.5px;font-weight:700;color:#242424;}
+  .pr .av{flex:0 0 auto;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13.5px;font-weight:900;}
+  .pr .rl{margin-left:auto;font-size:14.5px;font-weight:900;border:1.5px solid #C8C6C4;border-radius:5px;padding:1px 8px;color:#424242;white-space:nowrap;}
+  .pr .rl.c{border-color:#0F766E;color:#0F766E;background:#F0FDFA;}
+  .ck{flex:0 0 auto;display:flex;align-items:center;gap:8px;font-size:15.5px;font-weight:700;color:#242424;}
+  .ck .bx{width:18px;height:18px;border-radius:3px;background:#0F766E;color:#fff;padding:2px;}
+  .ck .tgl{width:38px;height:20px;border-radius:999px;background:#C8C6C4;position:relative;flex:0 0 auto;}
+  .ck .tgl:after{content:"";position:absolute;left:3px;top:3px;width:14px;height:14px;border-radius:50%;background:#fff;}
+  .lk{flex:0 0 auto;display:flex;gap:8px;}
+  .lk span{border:1.5px solid #8A8886;border-radius:5px;padding:2px 9px;font-size:14.5px;font-weight:900;color:#242424;}
+  .lk span.p{background:var(--mc);border-color:var(--mc);color:#fff;}
+  .tbl5{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px;}
+  .tbl5 .th{flex:0 0 auto;display:flex;gap:10px;font-size:15px;font-weight:900;color:#fff;background:var(--mc);border-radius:8px;padding:4px 12px;}
+  .tr{flex:1;min-height:0;display:flex;align-items:center;gap:10px;background:#F7FBFA;border:1.5px solid #D8EFEA;border-radius:9px;padding:3px 10px;}
+  .tr .fg{flex:0 0 92px;height:54px;}
+  .tr .fg svg{width:100%;height:100%;display:block;}
+  .tr .k{flex:0 0 150px;font-size:19px;font-weight:900;color:var(--navy);line-height:1.2;}
+  .tr .k small{display:block;font-size:13.5px;color:var(--mc);font-weight:900;}
+  .tr .v{flex:1;font-size:15.5px;font-weight:700;color:var(--mc-dark);background:#E3F7F3;border-radius:7px;padding:4px 9px;line-height:1.35;}
+  .tr .v b{color:#B91C1C;}
+  .tr.hot{background:#FFF7ED;border-color:#FDBA74;}
+  .tr.hot .v{background:#FFEDD5;color:#7C2D12;}
+  .fee{display:flex;gap:6px;flex-wrap:wrap;}
+  .fee span{border-radius:6px;padding:1px 7px;font-weight:900;font-size:14.5px;}
+  .fee .f{background:#FEF9C3;color:#14532D;border:1.5px solid #FDE047;}
+  .fee .pd{background:#fff;color:#9A3412;border:1.5px solid #FDBA74;}
+  .cs{flex:0 0 auto;display:flex;align-items:center;gap:8px;background:#fff;border:1.5px dashed #7C3AED;border-radius:9px;padding:4px 10px;font-size:15.5px;font-weight:700;color:#4C1D95;}
+  .cs b{font-weight:900;color:#6D28D9;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={ok:'<path d="M5 12l5 5 9-10"/>'};
+const CPI=(w)=>`<img class="msi" src="${A}icons/ms/copilot.png" alt="" style="width:${w||24}px;height:${w||24}px">`;
+const S=(b)=>`<svg viewBox="0 0 92 54" xmlns="http://www.w3.org/2000/svg">${b}</svg>`;
+const D=(x,c)=>`<path d="M${x} 6h18l7 7v35h-25z" fill="#fff" stroke="${c}" stroke-width="2"/><rect x="${x+5}" y="22" width="15" height="3.5" rx="1.5" fill="${c}" opacity=".6"/><rect x="${x+5}" y="31" width="15" height="3.5" rx="1.5" fill="${c}" opacity=".6"/>`;
+const F1=S(D(4,'#2563EB')+D(33,'#D97706')+D(62,'#16A34A'));
+const F2=S('<rect x="2" y="6" width="44" height="28" rx="9" fill="#fff" stroke="#94A3B8" stroke-width="2"/><text x="24" y="26" font-size="14" font-weight="900" fill="#64748B" text-anchor="middle" font-family="Noto Sans JP">？</text><circle cx="40" cy="36" r="9" fill="#DC2626"/><path d="M36 32l8 8M44 32l-8 8" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/><path d="M52 26h12" stroke="#D97706" stroke-width="3" stroke-linecap="round"/><path d="M62 20l7 6-7 6z" fill="#D97706"/><circle cx="80" cy="18" r="8" fill="#FCD34D" stroke="#92400E" stroke-width="1.6"/><path d="M68 48q0-20 12-20t12 20z" fill="#0F766E"/>');
+const F3=S(D(8,'#0F766E')+'<g transform="translate(40 2) rotate(30)"><rect x="0" y="0" width="7" height="34" rx="1.5" fill="#F59E0B"/><path d="M0 34l3.5 8 3.5-8z" fill="#FDE68A"/></g><path d="M64 14a14 14 0 1 1-4 18" fill="none" stroke="#0F766E" stroke-width="3" stroke-linecap="round"/><path d="M56 26l4 8 7-5z" fill="#0F766E"/><text x="74" y="31" font-size="11" font-weight="900" fill="#0F766E" text-anchor="middle" font-family="Noto Sans JP">更新</text>');
+const F4=S('<circle cx="16" cy="16" r="8" fill="#93C5FD"/><path d="M4 46q0-20 12-20t12 20z" fill="#2563EB"/><circle cx="40" cy="16" r="8" fill="#C4B5FD"/><path d="M28 46q0-20 12-20t12 20z" fill="#7C3AED"/><rect x="58" y="22" width="30" height="24" rx="4" fill="#FCD34D" stroke="#92400E" stroke-width="2"/><path d="M64 22v-6a9 9 0 0 1 18 0v6" fill="none" stroke="#92400E" stroke-width="2.4"/><circle cx="73" cy="33" r="3" fill="#92400E"/>');
+const F5=S('<rect x="2" y="28" width="24" height="20" rx="4" fill="#FEF9C3" stroke="#CA8A04" stroke-width="2"/><text x="14" y="43" font-size="11" font-weight="900" fill="#14532D" text-anchor="middle" font-family="Noto Sans JP">0円</text><rect x="32" y="16" width="26" height="32" rx="4" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/><circle cx="45" cy="30" r="7" fill="#F59E0B" stroke="#B45309" stroke-width="1.6"/><rect x="64" y="4" width="26" height="44" rx="4" fill="#FFEDD5" stroke="#EA580C" stroke-width="2"/><circle cx="77" cy="18" r="7" fill="#F59E0B" stroke="#B45309" stroke-width="1.6"/><circle cx="77" cy="35" r="7" fill="#F59E0B" stroke="#B45309" stroke-width="1.6"/>');
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="pills"><div class="vol-pill"><small>M365 Copilot</small>Vol.15-4</div><div class="lic-pill paid">社内資料はライセンスか従量課金</div></div>
+    <div class="title-text">質問に答えるエージェントを、<br><span class="hl">作る前に決めておく5つ</span></div>
+    <div class="title-apps"><img class="msi" src="${A}icons/ms/copilot.png" alt=""></div>
+    <img class="title-chara" src="${A}chara/chara_confident.png" alt="">
+  </div>
+  <div class="concl">
+    <div class="chip app">${CPI(34)}</div>
+    <div class="txt">作る操作は短くても、<b>どの資料に答え、だれが直し、だれに渡し、どの料金で動くか</b>を、<br>作り始める前に決めておきます</div>
+  </div>
+  <div class="stage">
+    <div class="dlg seg">
+      <div class="dh">${CPI(22)}総務Q&amp;A を共有<span class="repro">画面は説明用の再現</span></div>
+      <div class="db">
+        <div class="in"><small>名前、グループ、またはメールの追加</small>営業部（グループ）</div>
+        <div class="who">
+          <div class="pr"><span class="av" style="background:#0F766E">山</span>山田 太郎（総務）<span class="rl">編集可能</span></div>
+          <div class="pr"><span class="av" style="background:#0891B2">高</span>高橋 由美（総務）<span class="rl">編集可能</span></div>
+          <div class="pr"><span class="av" style="background:#7C3AED">営</span>営業部<span class="rl c">チャット可能</span></div>
+          <div class="pr"><span class="av" style="background:#2563EB">佐</span>佐藤 花子<span class="rl c">チャット可能</span></div>
+        </div>
+        <div class="ck"><span class="bx">${svgw(P.ok,3)}</span>通知を送信する</div>
+        <div class="ck"><span class="tgl"></span>チャット アクセスの組織全体で共有</div>
+        <div class="lk"><span class="p">チャット リンクのコピー</span><span>追加</span></div>
+      </div>
+    </div>
+    <div class="tbl5">
+      <div class="th"><span style="flex:0 0 252px">決めること</span><span>決め方の例</span></div>
+      <div class="tr"><div class="fg">${F1}</div><div class="k">対象の資料<small>ナレッジ</small></div><div class="v">質問が多い資料だけに絞る。<br>SharePoint は<b>100ファイル</b>、アップロードは<b>20ファイル</b>まで</div></div>
+      <div class="tr"><div class="fg">${F2}</div><div class="k">答えない範囲<small>指示</small></div><div class="v">資料にないこと・個別の事情は、<br><b>担当者名を返す</b>と指示に書く</div></div>
+      <div class="tr"><div class="fg">${F3}</div><div class="k">更新する人<small>所有者</small></div><div class="v">資料を直す人を<b>編集可能</b>に。直したら<br>右上で更新するまで同僚には反映されない</div></div>
+      <div class="tr"><div class="fg">${F4}</div><div class="k">渡す相手<small>共有</small></div><div class="v">使う人は<b>チャット可能</b>で追加。<br>SharePoint の資料は<b>相手にも閲覧権限</b>が要る</div></div>
+      <div class="tr hot"><div class="fg">${F5}</div><div class="k">料金区分<small>読ませる資料で決まる</small></div><div class="v"><div class="fee"><span class="f">指示＋公開Web＝Copilot Chat で無料</span><span class="pd">SharePoint・アップロード＝ライセンスか従量課金</span></div></div></div>
+      <div class="cs">外部サービスとつなぐ処理やワークフローが要るなら、<b>Copilot Studio にコピーして作り込む</b></div>
+    </div>
+  </div>
+  <div class="warnbar">
+    <span class="wl">⚠ 使う前に確認</span>
+    <div class="ws"><span>アップロードした資料は、エージェントを使える全員がその内容で答えを受け取れる</span><span>使う人のライセンスで使える機能が変わり、足りないとエラーになることがある</span></div>
+  </div>
+  <div class="src">出典：Microsoft Learn「エージェントの共有と管理」「ナレッジ ソースを追加する」「開発環境をセットアップする（エージェントの機能とライセンス モデル）」／画面は説明用の再現（実画面は未確認）</div>
+`;
+</script>
+</body>
+</html>
