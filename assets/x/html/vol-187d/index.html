@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>Vol.187-4 再送信と再実行の使い分け</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/tips-base.css">
+<link rel="stylesheet" href="../vol-187/k187.css">
+<style>
+  .stage{gap:10px;}
+  .scene{height:112px;}
+  .col.info .scene{background:#DCEAFB;}
+  .col.info .ph{color:#1E40AF;}
+  .col.info .ph .mk{background:linear-gradient(180deg,#3B82F6,#2563EB);}
+  .ph .code{font-family:"Roboto Mono",monospace;font-size:18px;font-weight:700;border-radius:7px;padding:2px 8px;margin-left:auto;}
+  .col.info .ph .code{background:#DBEAFE;color:#1D4ED8;} .col.good .ph .code{background:#FFEDD5;color:#C2410C;}
+  .card .cardb{gap:6px;}
+  .ln{flex:1;min-height:0;display:flex;align-items:center;gap:8px;font-size:15.5px;font-weight:800;color:#1B2A44;border-bottom:1px solid #EDEBE9;padding:0 2px;}
+  .ln .s{margin-left:auto;font-size:14px;font-weight:900;border-radius:999px;padding:1px 10px;}
+  .ln .s.ng{background:#FDE7E9;color:#A80000;} .ln .s.ok{background:#DFF6DD;color:#107C10;}
+  .bar{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:4px 0 2px;}
+  .bar .btn{box-shadow:0 0 0 3px rgba(234,88,12,.35);}
+  .seq{flex:0 0 auto;display:flex;align-items:center;gap:6px;font-size:15.5px;font-weight:900;color:#065F46;}
+  .seq .sx{background:#fff;border:1.8px solid #7FCEA9;border-radius:7px;padding:2px 8px;}
+  .seq .ar{color:#16A34A;}
+  .mid{flex:0 0 190px;display:flex;flex-direction:column;justify-content:center;gap:8px;}
+  .mq{background:#fff;border:2.5px solid #A9C6F5;border-radius:12px;padding:8px;text-align:center;font-size:18.5px;font-weight:900;color:#1B2A44;line-height:1.3;box-shadow:0 3px 8px rgba(20,40,90,.1);}
+  .mq svg{width:60px;height:46px;display:block;margin:0 auto 2px;}
+  .ma{display:flex;align-items:center;gap:6px;border-radius:10px;padding:6px 8px;font-size:15.5px;font-weight:900;line-height:1.3;}
+  .ma.no{background:#DBEAFE;color:#1E40AF;} .ma.yes{background:#DCFCE7;color:#065F46;}
+  .ma .t{flex:0 0 auto;font-size:14px;color:#fff;border-radius:6px;padding:1px 6px;}
+  .ma.no .t{background:#2563EB;} .ma.yes .t{background:#16A34A;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={warn:'<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18h.01"/>',bulb:'<path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0 0 12 3z"/>',
+  re:'<path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/>',ok:'<path d="M5 12l5 5 9-10"/>'};
+const MS=(n,w)=>`<img class="msi" src="${A}icons/ms/${n}" alt="" style="width:${w||22}px;height:${w||22}px">`;
+const CH=(e,h)=>`<img class="chara" src="${A}chara/chara_${e}.png" alt="" style="height:${h||110}px">`;
+
+/* 同じ実行の箱を、そのままもう一度流す */
+const sA=`<svg viewBox="0 0 495 112" preserveAspectRatio="xMidYMid slice">
+ <defs><linearGradient id="bx" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FDE68A"/><stop offset="1" stop-color="#D97706"/></linearGradient></defs>
+ <path d="M30 70 h250" stroke="#93B4E6" stroke-width="6" stroke-linecap="round"/>
+ ${[0,1,2].map(i=>`<circle cx="${60+i*90}" cy="70" r="13" fill="#fff" stroke="#2563EB" stroke-width="3"/>`).join('')}
+ <g transform="translate(36,30)"><rect x="3" y="4" width="46" height="34" rx="5" fill="#000" opacity=".12"/><rect width="46" height="34" rx="5" fill="url(#bx)" stroke="#92400E" stroke-width="2"/><path d="M0 12 h46 M23 0 v34" stroke="#92400E" stroke-width="1.6"/></g>
+ <path d="M220 36 a40 26 0 1 0 54 30" fill="none" stroke="#2563EB" stroke-width="4" stroke-dasharray="7 5"/><path d="M274 56 l1 12 -11 -3" fill="none" stroke="#2563EB" stroke-width="4"/>
+ <text x="120" y="104" font-size="13" font-weight="900" fill="#1E40AF">同じ中身で、もう一度</text>
+</svg>`;
+/* 部品を直してから流す */
+const sB=`<svg viewBox="0 0 495 112" preserveAspectRatio="xMidYMid slice">
+ <path d="M30 70 h250" stroke="#7FCEA9" stroke-width="6" stroke-linecap="round"/>
+ ${[0,1,2].map(i=>`<circle cx="${60+i*90}" cy="70" r="13" fill="#fff" stroke="${i===1?'#16A34A':'#16A34A'}" stroke-width="3"/>`).join('')}
+ <g transform="translate(130,14)"><path d="M6 36 l26 -26 a10 10 0 0 1 14 14 l-26 26 -16 2z" fill="#F59E0B" stroke="#92400E" stroke-width="2"/><circle cx="40" cy="16" r="4" fill="#fff"/></g>
+ <circle cx="150" cy="70" r="13" fill="#DCFCE7" stroke="#16A34A" stroke-width="3"/><path d="M144 70 l4 5 8 -9" fill="none" stroke="#16A34A" stroke-width="3"/>
+ <g transform="translate(205,40)"><rect width="40" height="26" rx="5" fill="#0F6CBD"/><text x="7" y="18" font-size="12" font-weight="900" fill="#fff">保存</text></g>
+ <text x="96" y="104" font-size="13" font-weight="900" fill="#065F46">直した構成で、もう一度</text>
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.187-4</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">動かし直しは2通り：<br><span class="hl">フローを直したかどうかで、再送信と再実行</span>を選ぶ</div>
+    <img class="title-chara" src="${A}chara/chara_confident.png" alt="">
+  </div>
+  <div class="concl">
+    <div class="chip">${svgw(P.bulb,2.2)}</div>
+    <div class="txt">一時的な失敗なら、何も直さずに<b>「再送信」</b>。<br>フローの定義を直して保存したなら<b>「再実行」</b>で、直した構成のまま試します</div>
+  </div>
+  <div class="stage">
+    <div class="col info">
+      <div class="ph"><span class="mk">${svgw(P.re,2.8)}</span>再送信<span class="code">500・502</span></div>
+      <div class="scene">${sA}${CH('smile',106)}</div>
+      <div class="card">
+        <div class="cardh">${MS('../pa_logo.png',24)}請求リマインド ｜ 28 日間の実行履歴<span class="repro">再現</span></div>
+        <div class="cardb">
+          <div class="ln">11月26日 9:00<span class="s ng">失敗</span></div>
+          <div class="ln" style="color:#6B7280;font-weight:700">502 無効なゲートウェイ</div>
+          <div class="bar"><span class="btn sec">${svgw(P.re,2.6).replace('class="ic"','class="ic" style="width:18px;height:18px"')}再送信</span><span style="font-size:14px;font-weight:800;color:#6B7280">フローは開かない</span></div>
+        </div>
+      </div>
+      <div class="cap" style="background:#D6E6FB;color:#1E40AF">障害は一時的なもの。<br>フローを直さずに、同じ実行をもう一度試します</div>
+    </div>
+    <div class="mid">
+      <div class="mq"><svg viewBox="0 0 60 46"><rect x="6" y="4" width="48" height="38" rx="5" fill="#fff" stroke="#1B2A44" stroke-width="2"/>${[12,20,28].map(y=>`<rect x="12" y="${y}" width="${y===20?20:34}" height="5" rx="2" fill="#CBD5E1"/>`).join('')}<path d="M34 34 l14 -14 4 4 -14 14 -6 2z" fill="#F59E0B" stroke="#92400E" stroke-width="1.4"/></svg>フローの中を<br>直した？</div>
+      <div class="ma no"><span class="t">いいえ</span>一時的な失敗<br>→ 再送信</div>
+      <div class="ma yes"><span class="t">はい</span>定義を直して保存<br>→ 再実行</div>
+    </div>
+    <div class="col good">
+      <div class="ph"><span class="mk">${svgw(P.ok,3)}</span>再実行<span class="code">400・404</span></div>
+      <div class="scene">${sB}${CH('guts',106)}</div>
+      <div class="card">
+        <div class="cardh">${MS('outlook.svg',24)}メールの送信 (V2) を直す<span class="repro" style="color:#065F46">再現</span></div>
+        <div class="cardb">
+          <div class="ln">「宛先」の列名を、変更後の名前に選び直す</div>
+          <div class="seq"><span class="sx">編集</span><span class="ar">→</span><span class="sx">直す</span><span class="ar">→</span><span class="sx">保存</span><span class="ar">→</span><span class="btn pri" style="padding:2px 10px">再実行</span></div>
+          <div class="ln" style="border-bottom:none">11月26日 9:00<span class="s ok">成功</span></div>
+        </div>
+      </div>
+      <div class="cap">「編集」でフローの定義を直して保存し、<br>更新した構成でもう一度試します</div>
+    </div>
+  </div>
+  <div class="warnbar">
+    <span class="na">${svgw(P.warn,2.4)}</span>
+    <b style="font-size:17px;white-space:nowrap;">使う前に確認</b>
+    <div class="ws"><span>401・403 は先に接続を再接続してから、必要なら再送信</span><span>再送信が直した後の定義で動くかは Learn に記載なし</span></div>
+  </div>
+  <div class="src">出典：Microsoft Learn「クラウド フローのトラブルシューティング」（再送信＝500・502 の一時的な失敗／再実行＝編集して保存した構成で再試行）／フロー名・日付は架空・画面は説明用の再現（実画面は未確認）</div>
+`;
+</script>
+</body>
+</html>

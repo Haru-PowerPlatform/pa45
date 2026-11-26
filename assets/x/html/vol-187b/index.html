@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>Vol.187-2 エラーの番号ごとの直し方</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/tips-base.css">
+<link rel="stylesheet" href="../vol-187/k187.css">
+<style>
+  .stage{gap:12px;}
+  .tb{flex:1.62;min-height:0;display:flex;flex-direction:column;gap:7px;}
+  .th{flex:0 0 auto;display:flex;align-items:center;background:linear-gradient(180deg,#3B82F6,#2563EB);color:#fff;border-radius:10px;font-weight:900;font-size:17px;padding:6px 0;}
+  .th span{text-align:center;}
+  .c1{flex:0 0 190px;} .c2{flex:1;} .c3{flex:0 0 132px;}
+  .row{flex:1;min-height:0;display:flex;align-items:stretch;border-radius:12px;border:2.5px solid #E5E7EB;background:#fff;box-shadow:0 3px 8px rgba(20,40,90,.08);overflow:hidden;}
+  .row .c1{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:6px;}
+  .code{font-family:"Roboto Mono",monospace;font-size:27px;font-weight:700;line-height:1;}
+  .lbl{font-size:15.5px;font-weight:900;line-height:1.25;text-align:center;}
+  .row .c2{display:flex;align-items:center;gap:10px;padding:6px 10px;border-left:1.5px dashed #E5E7EB;border-right:1.5px dashed #E5E7EB;}
+  .row .c2 svg.pic{flex:0 0 92px;width:92px;height:70px;}
+  .row .c2 .how{font-size:18.5px;font-weight:900;color:#1B2A44;line-height:1.38;}
+  .row .c2 .how small{display:block;font-size:15.5px;font-weight:700;color:#4B5563;margin-top:2px;}
+  .row .c3{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;padding:6px;}
+  .row .c3 .sub{font-size:13.5px;font-weight:800;color:#6B7280;}
+  .r1{border-color:#C4B5FD;} .r1 .c1{background:#F5F3FF;} .r1 .code{color:#6D28D9;} .r1 .lbl{color:#5B21B6;}
+  .r2{border-color:#FDBA74;} .r2 .c1{background:#FFF7ED;} .r2 .code{color:#C2410C;} .r2 .lbl{color:#9A3412;}
+  .r3{border-color:#93C5FD;} .r3 .c1{background:#EFF6FF;} .r3 .code{color:#1D4ED8;} .r3 .lbl{color:#1E40AF;}
+  .side{flex:1;min-height:0;display:flex;flex-direction:column;gap:7px;background:#FFF7ED;border:2.5px solid #FDBA74;border-radius:14px;padding:8px 10px 9px;position:relative;}
+  .side .sh{flex:0 0 auto;font-size:21px;font-weight:900;color:#9A3412;line-height:1.2;}
+  .side .sh small{display:block;font-size:15px;color:#B45309;font-weight:800;}
+  .ex3{flex:1;min-height:0;display:flex;flex-direction:column;gap:6px;}
+  .exc{flex:1;min-height:0;display:flex;align-items:center;gap:9px;background:#fff;border:2px solid #FED7AA;border-radius:10px;padding:4px 9px;}
+  .exc svg{flex:0 0 112px;width:112px;height:62px;}
+  .exc .t{font-size:17px;font-weight:900;color:#7C2D12;line-height:1.3;}
+  .exc .t small{display:block;font-size:14.5px;font-weight:700;color:#9A3412;}
+  .side .chara{position:absolute;right:6px;top:-6px;height:112px;filter:drop-shadow(0 3px 5px rgba(0,0,0,.22));}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={warn:'<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18h.01"/>',bulb:'<path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0 0 12 3z"/>'};
+const CH=(e,h)=>`<img class="chara" src="${A}chara/chara_${e}.png" alt="" style="height:${h||112}px">`;
+
+/* 鍵のつなぎ直し */
+const pKey=`<svg class="pic" viewBox="0 0 92 70"><rect x="2" y="8" width="38" height="54" rx="6" fill="#EDE9FE" stroke="#7C3AED" stroke-width="2"/><circle cx="21" cy="26" r="7" fill="#A78BFA"/><rect x="11" y="37" width="20" height="14" rx="4" fill="#A78BFA"/>
+ <path d="M44 35 h12" stroke="#7C3AED" stroke-width="3" stroke-dasharray="4 3"/>
+ <circle cx="66" cy="35" r="10" fill="#FCD34D" stroke="#92400E" stroke-width="2.4"/><circle cx="66" cy="35" r="3.5" fill="#fff" stroke="#92400E" stroke-width="1.6"/><path d="M76 35 h14 M85 35 v7 M90 35 v5" stroke="#92400E" stroke-width="3.4"/>
+ <path d="M56 12 a16 16 0 0 1 24 4" fill="none" stroke="#16A34A" stroke-width="3"/><path d="M80 9 l1 8 -8 -1" fill="none" stroke="#16A34A" stroke-width="3"/></svg>`;
+/* 入力欄を直す */
+const pEdit=`<svg class="pic" viewBox="0 0 92 70"><rect x="2" y="6" width="74" height="58" rx="6" fill="#fff" stroke="#EA580C" stroke-width="2"/>
+ <rect x="9" y="14" width="40" height="8" rx="3" fill="#FED7AA"/><rect x="9" y="28" width="58" height="11" rx="3" fill="#FEE2E2" stroke="#DC2626" stroke-width="1.6"/><path d="M12 33.5 h40" stroke="#DC2626" stroke-width="2"/>
+ <rect x="9" y="45" width="58" height="11" rx="3" fill="#DCFCE7" stroke="#16A34A" stroke-width="1.6"/><path d="M13 50.5 h30" stroke="#16A34A" stroke-width="2.4"/>
+ <path d="M62 52 l20 -22 6 6 -20 22 -8 2z" fill="#F59E0B" stroke="#92400E" stroke-width="1.6"/></svg>`;
+/* 一時的：雲と時計、もう一度 */
+const pRetry=`<svg class="pic" viewBox="0 0 92 70"><path d="M14 44 a12 12 0 0 1 4-23 a16 16 0 0 1 30 -3 a12 12 0 0 1 10 22z" fill="#DBEAFE" stroke="#2563EB" stroke-width="2"/>
+ <path d="M24 52 l-4 10 M34 52 l-4 10 M44 52 l-4 10" stroke="#93C5FD" stroke-width="3" stroke-linecap="round"/>
+ <circle cx="72" cy="38" r="15" fill="#fff" stroke="#16A34A" stroke-width="3"/><path d="M72 30 v9 l6 4" stroke="#16A34A" stroke-width="3" fill="none" stroke-linecap="round"/>
+ <path d="M58 20 a20 20 0 0 1 28 4" fill="none" stroke="#16A34A" stroke-width="3"/><path d="M86 18 l1 8 -8 -1" fill="none" stroke="#16A34A" stroke-width="3"/></svg>`;
+
+/* 400 になりやすい入力の例（Learn の例）*/
+const e1=`<svg viewBox="0 0 112 62"><rect x="2" y="4" width="108" height="54" rx="5" fill="#fff" stroke="#038387" stroke-width="2"/><rect x="2" y="4" width="108" height="14" rx="5" fill="#038387"/>
+ <text x="8" y="15" font-size="9.5" font-weight="900" fill="#fff">備品貸出（リスト）</text>
+ <text x="8" y="33" font-size="11" font-weight="900" fill="#991B1B" text-decoration="line-through">返却日</text><path d="M48 29 h10 l-3 -3 M58 29 l-3 3" stroke="#6B7280" stroke-width="1.6" fill="none"/>
+ <text x="62" y="33" font-size="11" font-weight="900" fill="#065F46">返却期限</text>
+ <rect x="8" y="40" width="96" height="12" rx="3" fill="#FEE2E2"/><text x="12" y="49.5" font-size="9" font-weight="900" fill="#991B1B">古い名前で探して失敗</text></svg>`;
+const e2=`<svg viewBox="0 0 112 62"><rect x="2" y="10" width="108" height="26" rx="5" fill="#fff" stroke="#EA580C" stroke-width="2"/>
+ ${Array.from({length:12},(_,i)=>`<rect x="${7+i*8.4}" y="17" width="6.4" height="12" rx="1.5" fill="${i<10?'#FDBA74':'#DC2626'}"/>`).join('')}
+ <path d="M92 6 v34" stroke="#DC2626" stroke-width="2.4" stroke-dasharray="4 3"/>
+ <text x="6" y="54" font-size="10.5" font-weight="900" fill="#991B1B">欄の上限を超えた分</text></svg>`;
+const e3=`<svg viewBox="0 0 112 62"><rect x="2" y="12" width="108" height="26" rx="5" fill="#fff" stroke="#EA580C" stroke-width="2"/>
+ <text x="9" y="30" font-size="13" font-weight="900" fill="#1B2A44">報告書</text><rect x="50" y="17" width="18" height="16" rx="3" fill="#FEE2E2" stroke="#DC2626" stroke-width="1.6"/><text x="55" y="30" font-size="13" font-weight="900" fill="#DC2626">/</text><text x="72" y="30" font-size="13" font-weight="900" fill="#1B2A44">11月</text>
+ <text x="6" y="55" font-size="10.5" font-weight="900" fill="#991B1B">名前に使えない文字</text></svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.187-2</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">エラーの番号を見れば、<br><span class="hl">どこを直して何を押すか</span>が決まる</div>
+    <img class="title-chara" src="${A}chara/chara_point.png" alt="">
+  </div>
+  <div class="concl">
+    <div class="chip">${svgw(P.bulb,2.2)}</div>
+    <div class="txt">「詳細」に出る番号は、大きく3つに分かれます。<br><b>401・403 は接続、400・404 はアクションの中身、500・502 は直さずにもう一度</b></div>
+  </div>
+  <div class="stage">
+    <div class="tb">
+      <div class="th"><span class="c1">エラーの番号</span><span class="c2">直す場所</span><span class="c3">最後に押す</span></div>
+      <div class="row r1">
+        <div class="c1"><div class="code">401・403</div><div class="lbl">未認証<br>権限がありません</div></div>
+        <div class="c2">${pKey}<div class="how">フローの「接続」→「編集」<br>→「接続の管理」→「再接続」<small>権限がありませんと出ている接続を選び、資格情報を選び直す</small></div></div>
+        <div class="c3"><span class="btn sec">再送信</span><span class="sub">必要なとき</span></div>
+      </div>
+      <div class="row r2">
+        <div class="c1"><div class="code">400・404</div><div class="lbl">要求が正しくありません<br>見つかりません</div></div>
+        <div class="c2">${pEdit}<div class="how">失敗したアクションの<br>「入力」と「出力」を見て「編集」<small>フローの定義を直して保存する</small></div></div>
+        <div class="c3"><span class="btn pri">再実行</span><span class="sub">直した構成で</span></div>
+      </div>
+      <div class="row r3">
+        <div class="c1"><div class="code">500・502</div><div class="lbl">内部サーバー エラー<br>無効なゲートウェイ</div></div>
+        <div class="c2">${pRetry}<div class="how">フローは直さない<small>障害は一時的なもの。<br>同じ実行をもう一度試す</small></div></div>
+        <div class="c3"><span class="btn sec">再送信</span><span class="sub">そのまま</span></div>
+      </div>
+    </div>
+    <div class="side">
+      ${CH('think',112)}
+      <div class="sh">400・404 で多い原因<small>Learn に載っている例</small></div>
+      <div class="ex3">
+        <div class="exc">${e1}<div class="t">列の名前を<br>変えた<small>フロー側は古い名前のまま</small></div></div>
+        <div class="exc">${e2}<div class="t">文字数が<br>欄の上限を超えた</div></div>
+        <div class="exc">${e3}<div class="t">使えない文字が<br>入っていた</div></div>
+      </div>
+    </div>
+  </div>
+  <div class="warnbar">
+    <span class="na">${svgw(P.warn,2.4)}</span>
+    <b style="font-size:17px;white-space:nowrap;">使う前に確認</b>
+    <div class="ws"><span>SharePoint・Teams・Excel から動かすフローの認証エラーは、条件付きアクセスの設定（管理者）も確かめる</span><span>ほかの番号は Learn のエラー コードの一覧で</span></div>
+  </div>
+  <div class="src">出典：Microsoft Learn「クラウド フローのトラブルシューティング」（認証の失敗・アクションの構成・一時的な失敗）／リスト名・列名は架空・画面は説明用の再現</div>
+`;
+</script>
+</body>
+</html>

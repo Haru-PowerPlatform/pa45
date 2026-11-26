@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>Vol.187-3 失敗した実行の画面で見る3か所</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/tips-base.css">
+<link rel="stylesheet" href="../vol-187/k187.css">
+<style>
+  .stage{gap:12px;}
+  .win{flex:1.75;min-height:0;display:flex;flex-direction:column;background:#fff;border:2.5px solid #C7D6EE;border-radius:12px;overflow:hidden;box-shadow:0 5px 14px rgba(20,40,90,.14);}
+  .wh{flex:0 0 auto;display:flex;align-items:center;gap:9px;padding:7px 12px;background:#F3F2F1;border-bottom:1.5px solid #E1DFDD;font-size:15.5px;font-weight:900;color:#1B2A44;}
+  .wh img{width:24px;height:24px;}
+  .wh .bad{background:#FDE7E9;color:#A80000;border-radius:999px;padding:1px 10px;font-size:14px;}
+  .wb{flex:1;min-height:0;display:flex;gap:10px;padding:9px 10px;background:#FAFAFA;}
+  .flow{flex:0 0 300px;display:flex;flex-direction:column;justify-content:center;position:relative;}
+  .flow .step{position:relative;}
+  .rp .pane{position:relative;overflow:visible;}
+  .rp{flex:1;min-height:0;position:relative;}
+  .rp .pane{height:100%;}
+  .pane .ex.open{flex-direction:column;align-items:stretch;gap:0;padding:4px 8px 0;}
+  .pane .ex.open .eh{display:flex;align-items:center;gap:6px;}
+  .pane .ex.open .code187{margin:5px 0 7px;}
+  .mk{position:absolute;z-index:3;}
+  .side{flex:1;min-height:0;display:flex;flex-direction:column;gap:7px;}
+  .pt3{flex:1;min-height:0;display:flex;align-items:center;gap:10px;background:#fff;border:2.5px solid #FDBA74;border-radius:12px;padding:6px 10px;box-shadow:0 3px 8px rgba(20,40,90,.08);}
+  .pt3 svg.pic{flex:0 0 96px;width:96px;height:72px;}
+  .pt3 .tx{font-size:19px;font-weight:900;color:#1B2A44;line-height:1.3;}
+  .pt3 .tx small{display:block;font-size:15.5px;font-weight:700;color:#4B5563;margin-top:2px;line-height:1.35;}
+  .pt3 .num{align-self:flex-start;margin-top:4px;}
+  .uses{margin:9px 16px 18px;background:#F8FAFC;border:2px solid #DCE3EE;border-radius:12px;padding:7px 14px;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={bulb:'<path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0 0 12 3z"/>'};
+const MS=(n,w)=>`<img class="msi" src="${A}icons/ms/${n}" alt="" style="width:${w||22}px;height:${w||22}px">`;
+const PA=(w)=>`<img class="msi" src="${A}icons/pa_logo.png" alt="" style="width:${w||22}px;height:${w||22}px">`;
+const N=(n,st)=>`<span class="num mk" style="${st}">${n}</span>`;
+
+const q1=`<svg class="pic" viewBox="0 0 96 72">${[0,1,2,3].map(i=>`<rect x="4" y="${4+i*17}" width="66" height="12" rx="3" fill="${i===2?'#FEE2E2':'#fff'}" stroke="${i===2?'#DC2626':'#CBD5E1'}" stroke-width="${i===2?2.2:1.4}"/><circle cx="62" cy="${10+i*17}" r="4" fill="${i===3?'#CBD5E1':i===2?'#DC2626':'#16A34A'}"/>`).join('')}
+ <path d="M74 44 h14" stroke="#DC2626" stroke-width="3"/><path d="M84 38 l6 6 -6 6" fill="none" stroke="#DC2626" stroke-width="3"/>
+ <text x="4" y="71" font-size="9.5" font-weight="900" fill="#6B7280">ここから先は動かない</text></svg>`;
+const q2=`<svg class="pic" viewBox="0 0 96 72"><rect x="4" y="4" width="88" height="64" rx="6" fill="#fff" stroke="#9CA3AF" stroke-width="1.8"/><rect x="4" y="4" width="88" height="14" rx="6" fill="#F3F2F1"/><text x="10" y="15" font-size="10" font-weight="900" fill="#1B2A44">詳細</text>
+ <rect x="10" y="24" width="76" height="18" rx="3" fill="#FDE7E9"/><rect x="10" y="24" width="4" height="18" fill="#DC2626"/><rect x="18" y="30" width="48" height="6" rx="3" fill="#F87171"/>
+ <rect x="10" y="48" width="58" height="6" rx="3" fill="#CBD5E1"/><rect x="10" y="58" width="40" height="6" rx="3" fill="#CBD5E1"/></svg>`;
+const q3=`<svg class="pic" viewBox="0 0 96 72"><rect x="2" y="10" width="38" height="50" rx="6" fill="#DBEAFE" stroke="#2563EB" stroke-width="1.8"/><text x="8" y="40" font-size="11" font-weight="900" fill="#1E40AF">入力</text>
+ <path d="M42 28 h14" stroke="#2563EB" stroke-width="2.6"/><path d="M52 23 l5 5 -5 5" fill="none" stroke="#2563EB" stroke-width="2.6"/>
+ <path d="M56 44 h-14" stroke="#DC2626" stroke-width="2.6"/><path d="M46 39 l-5 5 5 5" fill="none" stroke="#DC2626" stroke-width="2.6"/>
+ <rect x="58" y="10" width="36" height="50" rx="6" fill="#FEE2E2" stroke="#DC2626" stroke-width="1.8"/><text x="62" y="32" font-size="10" font-weight="900" fill="#991B1B">出力</text><text x="62" y="49" font-size="13" font-weight="900" fill="#DC2626">401</text></svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.187-3</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">失敗した実行の画面で、<br><span class="hl">読むのはこの3か所</span></div>
+    <img class="title-chara" src="${A}chara/chara_laptop.png" alt="">
+  </div>
+  <div class="concl">
+    <div class="chip">${svgw(P.bulb,2.2)}</div>
+    <div class="txt">止まった場所は<b>赤い感嘆符</b>、理由は右の<b>「詳細」</b>、<br>相手のサービスが返した番号は<b>「出力」</b>に出ます</div>
+  </div>
+  <div class="stage">
+    <div class="win">
+      <div class="wh">${PA(24)}請求リマインド ＞ 実行の詳細　11月26日 9:00<span class="bad">失敗</span><span class="repro">画面は説明用の再現</span></div>
+      <div class="wb">
+        <div class="flow">
+          <div class="step">${MS('../pa_logo.png',22)}繰り返し<span class="st ok">✓</span></div>
+          <div class="vline" style="height:12px"></div>
+          <div class="step">${MS('sharepoint.svg',22)}複数の項目の取得<span class="st ok">✓</span></div>
+          <div class="vline" style="height:12px"></div>
+          <div class="step ng">${MS('outlook.svg',22)}メールの送信 (V2)<span class="st ng">!</span>${N(1,'right:-14px;top:-15px;')}</div>
+          <div class="vline" style="height:12px"></div>
+          <div class="step" style="opacity:.5">${MS('sharepoint.svg',22)}項目の更新<span class="st" style="background:#CBD5E1">–</span></div>
+        </div>
+        <div class="rp">
+          <div class="pane">
+            <div class="pt">メールの送信 (V2)　｜　詳細</div>
+            ${N(2,'left:-12px;top:34px;')}
+            <div class="er">401 Unauthorized<br><span style="font-weight:700;color:#7F1D1D">接続が未認証です。接続を確認してください</span></div>
+            <div class="ex"><span class="ar">▶</span>入力<span style="margin-left:auto;font-size:13.5px;color:#605E5C;font-weight:700">送った中身・要求 URL</span></div>
+            <div class="ex open" style="position:relative">
+              ${N(3,'left:-24px;top:2px;')}
+              <div class="eh"><span class="ar">▼</span>出力<span style="margin-left:auto;font-size:13.5px;color:#605E5C;font-weight:700">相手が返したエラー</span></div>
+              <div class="code187">{<br>&nbsp;&nbsp;"statusCode": <span class="r">401</span>,<br>&nbsp;&nbsp;"message": <span class="y">"Unauthorized"</span><br>}</div>
+            </div>
+            <div class="er" style="background:#DCFCE7;border-left-color:#16A34A;color:#065F46;margin-top:8px">直し方：フローの「接続」で、<br>権限がありませんと出ている接続を再接続</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="side">
+      <div class="pt3"><span class="num">1</span>${q1}<div class="tx">赤い感嘆符<small>止まったステップ。<br>この後ろは動いていません</small></div></div>
+      <div class="pt3"><span class="num">2</span>${q2}<div class="tx">右の「詳細」<small>エラーの中身と、<br>直し方が出ます</small></div></div>
+      <div class="pt3"><span class="num">3</span>${q3}<div class="tx">「入力」と「出力」<small>出力に、相手のサービスの<br>エラー文と番号が出ます</small></div></div>
+    </div>
+  </div>
+  <div class="uses">
+    <span class="ul">読んだあと</span>
+    <span class="u">番号を2枚目の早見表に当てはめる</span>
+    <span class="u">直したら4枚目の再送信・再実行へ</span>
+    <span class="u">新しいデザイナーでは Copilot がエラーの概要と解決策を出す</span>
+  </div>
+  <div class="src">出典：Microsoft Learn「クラウド フローのトラブルシューティング」（赤い感嘆符・詳細・入力と出力）／フロー名・日付・エラー文は架空・画面は説明用の再現（実画面は未確認）</div>
+`;
+</script>
+</body>
+</html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>Vol.187-1 止まったフローを自分で直すまでの3ステップ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/tips-base.css">
+<link rel="stylesheet" href="../vol-187/k187.css">
+<style>
+  .stage{gap:0;}
+  .col{flex:1;}
+  .arw{flex:0 0 26px;display:flex;align-items:center;justify-content:center;color:#2563EB;}
+  .arw svg{width:24px;height:24px;}
+  .scene{height:104px;}
+  .col.c1{background:#EFF6FF;border:2.5px solid #A9C6F5;}
+  .col.c2{background:#FFFBEB;border:2.5px solid #F5C56B;}
+  .col.c2 .ch2 .n{background:linear-gradient(180deg,#F59E0B,#B45309);}
+  .col.c2 .scene{background:#FDF0CF;} .col.c2 .cap{background:#FBE7B5;color:#7C2D12;}
+  .col.c3{background:#FEF2F2;border:2.5px solid #F0AEAE;}
+  .col.c3 .ch2 .n{background:linear-gradient(180deg,#EF6A6A,#DC2626);}
+  .col.c3 .scene{background:#FCE4E4;} .col.c3 .cap{background:#FBD9D9;color:#991B1B;}
+  .col.c3 .card{border-color:#F0AEAE;}
+  .steps{flex:1;min-height:0;display:flex;flex-direction:column;padding:7px 8px 0;}
+  .steps .pane{margin:7px 0 8px;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={arrow:'<path d="M4 12h15M13 6l6 6-6 6"/>',bulb:'<path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0 0 12 3z"/>'};
+const MS=(n,w)=>`<img class="msi" src="${A}icons/ms/${n}" alt="" style="width:${w||24}px;height:${w||24}px">`;
+const CH=(e,h,st)=>`<img class="chara" src="${A}chara/chara_${e}.png" alt="" style="height:${h||100}px;${st||''}">`;
+
+/* 情景1：封筒が飛んできてスマホ・PCに届く */
+const s1=`<svg viewBox="0 0 375 104" preserveAspectRatio="xMidYMid slice">
+ <defs><linearGradient id="env" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#DCE8F7"/></linearGradient></defs>
+ <path d="M20 84 C 70 20, 130 18, 178 46" fill="none" stroke="#93B4E6" stroke-width="3" stroke-dasharray="6 6"/>
+ <g transform="translate(24,52) rotate(-12)"><rect x="3" y="4" width="62" height="42" rx="5" fill="#000" opacity=".12"/><rect width="62" height="42" rx="5" fill="url(#env)" stroke="#0F6CBD" stroke-width="2"/><path d="M0 2 L31 24 L62 2" fill="none" stroke="#0F6CBD" stroke-width="2"/></g>
+ <g transform="translate(160,18)">
+  <rect x="5" y="6" width="96" height="70" rx="7" fill="#000" opacity=".13"/>
+  <rect width="96" height="70" rx="7" fill="url(#env)" stroke="#0F6CBD" stroke-width="2.4"/>
+  <path d="M0 3 L48 38 L96 3" fill="none" stroke="#0F6CBD" stroke-width="2.4"/>
+  <circle cx="90" cy="6" r="15" fill="#DC2626" stroke="#fff" stroke-width="3"/><text x="85" y="12" font-size="17" font-weight="900" fill="#fff">!</text>
+ </g>
+</svg>`;
+/* 情景2：カレンダー型の実行履歴、1日だけ赤 */
+const s2=`<svg viewBox="0 0 375 104" preserveAspectRatio="xMidYMid slice">
+ <g transform="translate(16,10)">
+  <rect x="5" y="6" width="226" height="84" rx="8" fill="#000" opacity=".12"/>
+  <rect width="226" height="84" rx="8" fill="#fff" stroke="#B45309" stroke-width="2.2"/>
+  <rect width="226" height="18" rx="8" fill="#B45309"/><text x="10" y="13.5" font-size="11.5" font-weight="900" fill="#fff">28 日間の実行履歴</text>
+  ${[0,1,2,3,4,5,6].map(i=>`<rect x="${10+i*30}" y="28" width="24" height="20" rx="4" fill="${i===5?'#FDE7E9':'#DFF6DD'}" stroke="${i===5?'#DC2626':'#16A34A'}" stroke-width="${i===5?2.6:1.4}"/><text x="${15+i*30}" y="42" font-size="10.5" font-weight="900" fill="${i===5?'#A80000':'#107C10'}">${i===5?'✕':'✓'}</text>`).join('')}
+  ${[0,1,2,3,4,5,6].map(i=>`<rect x="${10+i*30}" y="54" width="24" height="20" rx="4" fill="#DFF6DD" stroke="#16A34A" stroke-width="1.4"/><text x="${15+i*30}" y="68" font-size="10.5" font-weight="900" fill="#107C10">✓</text>`).join('')}
+ </g>
+ <g transform="translate(194,50)"><path d="M0 0 l22 30 -10 1 7 14 -6 3 -7 -14 -8 7z" fill="#fff" stroke="#1B2A44" stroke-width="2"/></g>
+</svg>`;
+/* 情景3：虫めがねが赤い感嘆符を拡大 */
+const s3=`<svg viewBox="0 0 375 104" preserveAspectRatio="xMidYMid slice">
+ <g transform="translate(18,14)">
+  ${[0,1,2].map(i=>`<rect x="0" y="${i*26}" width="150" height="20" rx="5" fill="#fff" stroke="${i===2?'#DC2626':'#C8CED8'}" stroke-width="${i===2?2.6:1.6}"/><circle cx="138" cy="${10+i*26}" r="7" fill="${i===2?'#DC2626':'#16A34A'}"/>${i===2?`<text x="135.5" y="${15+i*26}" font-size="11" font-weight="900" fill="#fff">!</text>`:''}<rect x="8" y="${7+i*26}" width="${[70,92,80][i]}" height="6" rx="3" fill="#CBD5E1"/>`).join('')}
+ </g>
+ <g transform="translate(176,10)">
+  <circle cx="40" cy="40" r="34" fill="#FFF5F5" stroke="#1B2A44" stroke-width="6"/>
+  <circle cx="40" cy="40" r="18" fill="#DC2626"/><text x="34" y="51" font-size="30" font-weight="900" fill="#fff">!</text>
+  <path d="M65 65 l22 22" stroke="#1B2A44" stroke-width="10" stroke-linecap="round"/>
+ </g>
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">Vol.187-1</div>
+    <img class="vol-logo" src="${A}icons/pa_logo.png" alt="">
+    <div class="title-text">止まったフローを、作った人に聞かずに<br><span class="hl">原因まで自分でたどる3ステップ</span></div>
+    <img class="title-chara" src="${A}chara/chara_think.png" alt="">
+  </div>
+  <div class="concl">
+    <div class="chip">${svgw(P.bulb,2.2)}</div>
+    <div class="txt">見る順番は決まっています。<br><b>修復のヒントのメール → 28 日間の実行履歴 → 赤い感嘆符のステップ</b>の順に開きます</div>
+  </div>
+  <div class="stage">
+    <div class="col c1">
+      <div class="ch2"><span class="n">1</span>メールで気づく</div>
+      <div class="scene">${s1}${CH('surprise',100)}</div>
+      <div class="card">
+        <div class="mail">
+          <div class="mh">${MS('outlook.svg',24)}受信トレイ<span class="repro" style="color:#DCEBFA">再現</span></div>
+          <div class="ms">修復のヒント：請求リマインド<small>Power Automate からフローの所有者へ</small></div>
+          <div class="sec"><span class="k">時間</span>11月26日 9:00 に最初に失敗</div>
+          <div class="sec"><span class="k">何が発生したか</span>メールの送信 (V2)</div>
+          <div class="sec"><span class="k">どうすれば修正できますか</span>接続</div>
+          <div class="fix">Fix my flow</div>
+        </div>
+      </div>
+      <div class="cap">エラーが出ると、所有者にメールが届きます。<br>要らなければプロパティでオフにできます</div>
+    </div>
+    <div class="arw">${svgw(P.arrow,3)}</div>
+    <div class="col c2">
+      <div class="ch2"><span class="n">2</span>失敗した日を開く</div>
+      <div class="scene">${s2}${CH('point',100)}</div>
+      <div class="card" style="border-color:#F5C56B">
+        <div class="cardh">${MS('../pa_logo.png',24)}マイ フロー ＞ 請求リマインド<span class="repro">再現</span></div>
+        <div class="runs">
+          <div class="rt">28 日間の実行履歴</div>
+          <div class="rr pick"><span class="d">11月26日 9:00</span><span class="s ng">失敗</span></div>
+          <div class="rr"><span class="d">11月25日 9:00</span><span class="s ok">成功</span></div>
+          <div class="rr"><span class="d">11月24日 9:00</span><span class="s ok">成功</span></div>
+          <div class="rr"><span class="d">11月21日 9:00</span><span class="s ok">成功</span></div>
+        </div>
+      </div>
+      <div class="cap">「マイ フロー」→ フローを開き、<br>「28 日間の実行履歴」で失敗した日を選ぶ</div>
+    </div>
+    <div class="arw">${svgw(P.arrow,3)}</div>
+    <div class="col c3">
+      <div class="ch2"><span class="n">3</span>赤い！のステップを読む</div>
+      <div class="scene">${s3}${CH('laptop',100)}</div>
+      <div class="card">
+        <div class="steps">
+          <div class="step">${MS('../pa_logo.png',22)}繰り返し<span class="st ok">✓</span></div>
+          <div class="vline"></div>
+          <div class="step">${MS('sharepoint.svg',22)}複数の項目の取得<span class="st ok">✓</span></div>
+          <div class="vline"></div>
+          <div class="step ng">${MS('outlook.svg',22)}メールの送信 (V2)<span class="st ng">!</span></div>
+          <div class="pane"><div class="pt">詳細</div><div class="er">401 Unauthorized（未認証）</div><div style="height:6px"></div></div>
+        </div>
+      </div>
+      <div class="cap">赤い感嘆符のステップを開くと、<br>右の「詳細」にエラーと直し方が出ます</div>
+    </div>
+  </div>
+  <div class="next">
+    <span class="na">${svgw(P.arrow,2.6)}</span>
+    <span><b>エラーの番号ごとの直し方は2枚目へ</b></span>
+    <span style="margin-left:auto;font-size:15.5px;">画面の3か所は3枚目・動かし直しは4枚目</span>
+  </div>
+  <div class="src">出典：Microsoft Learn「クラウド フローのトラブルシューティング」（修復のヒント・28 日間の実行履歴）／フロー名・日付は架空・画面は説明用の再現（実画面は未確認）</div>
+`;
+</script>
+</body>
+</html>
