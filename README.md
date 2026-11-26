@@ -24,17 +24,17 @@ Power Automate を初めて触る人が、45分で1本のフローを作り終�
 
 ## 数字で見る PA45
 
-第1回（2026/03/06）〜第33回（2026/10/29）の集計です。
+第1回（2026/03/06）〜第36回（2026/11/19）の集計です。
 
 | 項目 | 値 |
 |---|---|
-| 開催回数 | 33回 |
-| 延べ参加者 | 1,568名 |
-| 1回あたりの参加者 | 平均 47.5名／最多 76名 |
-| 参加者の推移 | 第1〜5回の平均 31.0名 → 直近5回の平均 68.4名 |
-| アンケート回答 | 415件 |
-| 理解度スコア（全回平均） | 88.3% |
-| 役立ち度スコア（全回平均） | 91.9% |
+| 開催回数 | 36回 |
+| 延べ参加者 | 1,745名 |
+| 1回あたりの参加者 | 平均 48.5名／最多 76名 |
+| 参加者の推移 | 第1〜5回の平均 31.0名 → 直近5回の平均 63.0名 |
+| アンケート回答 | 449件 |
+| 理解度スコア（全回平均） | 88.4% |
+| 役立ち度スコア（全回平均） | 92.2% |
 | 録画を公開した回 | 30回 |
 | 公開しているフローZIP | 24本 |
 | 技術Tipsスライド | 184本 |
@@ -59,10 +59,11 @@ Power Automate を初めて触る人が、45分で1本のフローを作り終�
 
 ## 全回の一覧
 
-次回は **第34回 リストのステータスが変わったときだけTeamsに通知**（11月5日（木） 20:15〜21:00）です。申込は [connpass](https://powerautomate-create.connpass.com/event/410848/) から。
-
 | 回 | 開催日 | テーマ | 参加 | スライド・資料 | フロー | 録画 | アンケート | レポート |
 |---:|---|---|---:|:---:|:---:|:---:|:---:|:---:|
+| 36 | 2026/11/19 | 届いたExcelを打ち直さなくていい。ボタン1つでリストへ | 52名 | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-36/) | [ZIP](https://haru-powerplatform.github.io/pa45/flows/vol-36/PA45-Vol36-ExcelImport.zip) | ― | ― | ― |
+| 35 | 2026/11/12 | 「資料どこ？」と探さなくていい。会議の前にTeamsに届く | 68名 | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-35/) | [ZIP](https://haru-powerplatform.github.io/pa45/flows/vol-35/PA45-Vol35-MeetingNotice.zip) | ― | ― | ― |
+| 34 | 2026/11/05 | リストのステータスが変わったときだけTeamsに通知 | 57名 | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-34/) | [ZIP](https://haru-powerplatform.github.io/pa45/flows/vol-34/PA45-Vol34-StatusNotify.zip) | ― | ― | ― |
 | 33 | 2026/10/29 | 内部名で困らない。内部名はフローが自動で調べる | 71名 | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-33/) | [ZIP](https://haru-powerplatform.github.io/pa45/flows/vol-33/PA45-Vol33-InternalNames.zip) | [見る](https://www.youtube.com/watch?v=eahDKL1qc98) | ― | ― |
 | 32 | 2026/10/22 | 置くだけで月別フォルダに片付くファイル整理 | 67名 | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-32/) | ― | [見る](https://www.youtube.com/watch?v=JvyOqWzQt-U) | [結果](https://haru-powerplatform.github.io/pa45/achievements/insights/vol-32.html) | ― |
 | 31 | 2026/10/15 | ファイルを選んで1クリックでPDFにして送る | 56名 | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-31/) | [ZIP](https://haru-powerplatform.github.io/pa45/flows/vol-31/PA45-Vol31-PdfSend.zip) | [見る](https://www.youtube.com/watch?v=-BgrN1pSsyo) | [結果](https://haru-powerplatform.github.io/pa45/achievements/insights/vol-31.html) | ― |
@@ -174,6 +175,7 @@ PA45 の外で、Power Platform／Copilot のコミュニティに関わった�
 | 2026/10/28 | Power Platform Community で回答：テナントをまたいでソリューションをインポートすると接続エラーになる | 回答者 | Power Platform Community（公開・英語） | [スレッド](https://community.powerplatform.com/forums/thread/details/?threadid=84bd5ce1-bad1-f111-a05b-00224834c045) |
 | 2026/10/29 | Microsoft へ製品フィードバックを提出：Power Automate の実行履歴で、入力・出力の項目名をデザイナーと同じラベルにする改善要望 | 報告者 | Power Automate Ideas（公開・投票可） | [公開ページ](https://ideas.powerautomate.com/d365community/idea/fe3d5e56-58d3-f111-aad1-7c1e52b8b616) |
 | 2026/10/29 | Microsoft へ製品フィードバック：Copilot Studio Evaluate で、範囲外の質問を正しく断っても 0%・失敗になる問題を既存アイデアに再現つきで追加 | 報告者 | Copilot Studio Ideas（公開・投票可） | [公開ページ](https://ideas.powervirtualagents.com/d365community/idea/98037dab-9da5-f111-85cd-6045bd856ac7) |
+| 2026/10/31 | 気ままに勉強会 #151 で登壇：SharePoint リストを Power Automate フローが動き出す操作盤にしよう | 登壇 | オンライン登壇・申込110名（connpass） | [connpass](https://kimamani.connpass.com/event/410972/) |
 
 すべての記録は [`data/activities/`](data/activities/) に1件1ファイルで置いています。サイト上では [活動の記録](https://haru-powerplatform.github.io/pa45/achievements/) で見られます。
 

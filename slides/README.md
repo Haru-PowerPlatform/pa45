@@ -6,9 +6,9 @@ PA45 の各回で使ったスライドです。\
 
 | 回 | 開催日 | テーマ | スライド |
 |---:|---|---|:---:|
-| 36 |  |  | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-36/) |
-| 35 |  |  | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-35/) |
-| 34 | 2026/11/05（予定） | リストのステータスが変わったときだけTeamsに通知 | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-34/) |
+| 36 | 2026/11/19 | 届いたExcelを打ち直さなくていい。ボタン1つでリストへ | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-36/) |
+| 35 | 2026/11/12 | 「資料どこ？」と探さなくていい。会議の前にTeamsに届く | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-35/) |
+| 34 | 2026/11/05 | リストのステータスが変わったときだけTeamsに通知 | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-34/) |
 | 33 | 2026/10/29 | 内部名で困らない。内部名はフローが自動で調べる | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-33/) |
 | 32 | 2026/10/22 | 置くだけで月別フォルダに片付くファイル整理 | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-32/) |
 | 31 | 2026/10/15 | ファイルを選んで1クリックでPDFにして送る | [開く](https://haru-powerplatform.github.io/pa45/slides/vol-31/) |
