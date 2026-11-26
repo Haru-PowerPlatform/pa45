@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>コパスタ Vol.27-1 メールが届いたらAIが先に読む</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/cs-base.css">
+<style>
+  .body{gap:15px;}
+  .panel{padding:10px 14px 12px;}
+  .panel.l{flex:1;} .panel.r{flex:1.25;}
+  .dlabel{font-size:21px;margin-bottom:6px;}
+  .dlabel .tag{font-size:15px;font-weight:900;color:#fff;border-radius:7px;padding:2px 10px;}
+  .p-ng .tag{background:var(--red);} .p-ok .tag{background:var(--green);}
+  .scene{flex:1;min-height:0;}
+  .scene svg{width:100%;height:100%;display:block;}
+  .chips{flex:0 0 auto;display:flex;gap:8px;margin-top:7px;}
+  .chips span{flex:1;text-align:center;font-size:16px;font-weight:900;border-radius:9px;padding:5px 6px;background:#fff;}
+  .p-ng .chips span{border:2px dashed #F87171;color:#B91C1C;}
+  .p-ok .chips span{border:2px solid #16A34A;color:#065F46;display:flex;align-items:center;justify-content:center;gap:6px;}
+  .flow{flex:0 0 74px;}
+  .flow svg{width:100%;height:100%;display:block;}
+  .tmsg{flex:1;min-height:0;display:flex;flex-direction:column;margin-top:6px;}
+  .tmsg .wh img{width:24px;height:24px;}
+  .tmsg .wh .tm{margin-left:auto;font-weight:600;color:#6B7280;font-size:13.5px;}
+  .tmsg .wb{flex:1;min-height:0;display:flex;gap:10px;padding:8px 12px;}
+  .av{flex:0 0 40px;width:40px;height:40px;border-radius:50%;background:#F5F3FF;border:2px solid #C9B4F4;display:flex;align-items:center;justify-content:center;}
+  .av img{width:26px;height:26px;}
+  .msg{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;}
+  .msg .who{font-size:14px;font-weight:700;color:#6B7280;}
+  .msg .who b{color:#242424;}
+  .msg .hd{font-size:17px;font-weight:900;color:#1B2A44;display:flex;align-items:center;gap:8px;}
+  .msg .hd .hot{background:#DC2626;color:#fff;font-size:13.5px;border-radius:6px;padding:1px 8px;}
+  .kv{display:grid;grid-template-columns:76px 1fr;row-gap:2px;font-size:15.5px;font-weight:700;color:#242424;line-height:1.35;}
+  .kv .k{color:#6B7280;font-weight:800;}
+  .kv b{color:#5B21B6;}
+  .reply{margin-top:3px;background:#F5F3FF;border-left:4px solid #7C3AED;border-radius:6px;padding:4px 10px;font-size:15.5px;font-weight:700;color:#1B2A44;line-height:1.4;}
+  .reply .l{font-size:13px;font-weight:900;color:#5B21B6;display:block;}
+  .band-chara{height:146px;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const T=(x,y,s,t,c='#1B2A44',w=800,a='middle')=>`<text x="${x}" y="${y}" text-anchor="${a}" font-size="${s}" font-weight="${w}" fill="${c}" font-family="Noto Sans JP">${t}</text>`;
+const ENV=(x,y,r,s)=>`<g transform="translate(${x},${y}) rotate(${r}) scale(${s})" filter="url(#sh)">
+  <rect x="-24" y="-16" width="48" height="32" rx="3" fill="url(#ev)" stroke="#C7CDD6" stroke-width="1.2"/>
+  <path d="M-24 -16 L0 4 L24 -16" fill="none" stroke="#AEB6C2" stroke-width="1.6"/>
+  <rect x="12" y="-12" width="8" height="9" rx="1" fill="#F87171"/></g>`;
+/* Before：未読が積もる受信トレイ */
+const ROWS=[['みなと商事','【至急】見積のお願い',1],['経理部','月次締めのご連絡',1],['総務','年末調整の書類',1],['ひかり印刷','校正データ送付',1],['社内報','12月号のお知らせ',0],['あおぞら物産','納期の確認',1],['システム部','メンテナンス予定',0]];
+const S_BEFORE=`<svg viewBox="0 0 518 268" preserveAspectRatio="xMidYMid meet">
+  <defs><filter id="sh" x="-20%" y="-20%" width="140%" height="160%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-opacity=".25"/></filter>
+   <linearGradient id="ev" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#E9EDF3"/></linearGradient></defs>
+  <g transform="translate(4,6)" filter="url(#sh)"><rect width="322" height="256" rx="9" fill="#fff" stroke="#D1D1D1"/>
+   <rect width="322" height="34" rx="9" fill="#F3F2F1"/><rect y="24" width="322" height="10" fill="#F3F2F1"/>
+   <image href="${A}icons/ms/outlook.svg" x="10" y="5" width="24" height="24"/>
+   ${T(42,23,15,'受信トレイ','#242424',900,'start')}
+   <rect x="212" y="7" width="100" height="21" rx="10" fill="#DC2626"/>${T(262,23,13.5,'未読 38件','#fff',900)}
+   <rect x="0" y="40" width="322" height="30" fill="#FEE2E2"/>
+   ${ROWS.map((r,i)=>`<g transform="translate(0,${40+i*31})">
+     ${r[2]?'<rect x="0" y="0" width="4" height="27" fill="#0F6CBD"/>':''}
+     ${T(14,13,12.5,r[0],'#242424',r[2]?900:500,'start')}
+     ${T(14,26,12.5,r[1],r[2]?'#0F6CBD':'#6B7280',r[2]?800:500,'start')}
+     <line x1="8" y1="30" x2="314" y2="30" stroke="#EDEBE9"/></g>`).join('')}
+  </g>
+  ${ENV(372,26,-14,1.05)}${ENV(430,18,12,.95)}${ENV(488,40,-6,.9)}${ENV(350,74,10,.9)}${ENV(404,62,-20,1)}${ENV(470,84,16,.95)}
+  ${ENV(500,128,-10,.85)}${ENV(345,120,-4,.85)}
+  <image href="${A}chara/chara_tired_g.png" x="360" y="100" width="136" height="136"/>
+  ${T(426,258,15,'開くだけで手が止まる','#991B1B',900)}
+</svg>`;
+/* After：届く→AI→Teams */
+const S_FLOW=`<svg viewBox="0 0 655 74" preserveAspectRatio="xMidYMid meet">
+  <defs><filter id="sh2" x="-20%" y="-20%" width="140%" height="160%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-opacity=".2"/></filter>
+   <linearGradient id="ev2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#E9EDF3"/></linearGradient>
+   <marker id="ag" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#16A34A"/></marker></defs>
+  <g transform="translate(6,8)" filter="url(#sh2)"><rect width="176" height="58" rx="10" fill="#fff" stroke="#9CA3AF"/>
+   <image href="${A}icons/ms/outlook.svg" x="10" y="13" width="32" height="32"/>${T(110,26,14,'メールが届く','#1B2A44',900)}${T(110,46,12.5,'見積依頼 1通','#6B7280',700)}</g>
+  <path d="M188 37 H232" stroke="#16A34A" stroke-width="3" marker-end="url(#ag)"/>${T(210,24,15,'⚡','#F59E0B',900)}
+  <g transform="translate(238,4)" filter="url(#sh2)"><rect width="190" height="66" rx="12" fill="#F5F3FF" stroke="#7C3AED" stroke-width="2"/>
+   <image href="${A}icons/cs_logo.png" x="10" y="15" width="36" height="36"/>${T(120,28,14,'エージェントが読む','#5B21B6',900)}${T(120,49,12.5,'話しかけなくても動く','#5B21B6',800)}</g>
+  <path d="M434 37 H478" stroke="#16A34A" stroke-width="3" marker-end="url(#ag)"/>
+  <g transform="translate(484,8)" filter="url(#sh2)"><rect width="164" height="58" rx="10" fill="#fff" stroke="#9CA3AF"/>
+   <image href="${A}icons/ms/teams.svg" x="10" y="13" width="32" height="32"/>${T(102,26,14,'Teams に届く','#1B2A44',900)}${T(102,46,12.5,'要点と返信案','#6B7280',700)}</g>
+</svg>`;
+
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="vol-pill">コパスタ Vol.27</div>
+    <div class="part-pill">概念 <b>(1/4)</b></div>
+    <div class="title-text">メールが届いたら、<br><span class="q">AIが先に読んで</span>知らせる</div>
+    <div class="ibadge"><img src="${A}icons/cs_logo.png" alt=""><span class="pl">+</span><img src="${A}icons/ms/outlook.svg" alt=""><span class="pl">+</span><img src="${A}icons/ms/teams.svg" alt=""></div>
+    <img class="title-chara" src="${A}chara/chara_smile_g.png" alt="">
+  </div>
+
+  <div class="concl">
+    <div class="chip">結論</div>
+    <div class="txt">エージェントに<b>トリガー</b>を付けると、話しかけなくても動く。<br>
+      メールが届くたびに<em>要点・期限・返信案が Teams に届く</em>ので、受信トレイを全部開かずに済む。</div>
+  </div>
+
+  <div class="body">
+    <div class="panel p-ng l">
+      <div class="dlabel"><span class="tag">Before</span>届いたメールを自分で開いて仕分ける</div>
+      <div class="scene">${S_BEFORE}</div>
+      <div class="chips"><span>急ぎの依頼が埋もれる</span><span>開く順番も自分で決める</span></div>
+    </div>
+    <div class="panel p-ok r">
+      <div class="dlabel"><span class="tag">After</span>届いた時点でAIが読み、Teams に要点</div>
+      <div class="flow">${S_FLOW}</div>
+      <div class="tmsg win seg">
+        <div class="wh"><img src="${A}icons/ms/teams.svg" alt="">チャット：見積受付エージェント<span class="tm">9:02</span></div>
+        <div class="wb">
+          <div class="av"><img src="${A}icons/cs_logo.png" alt=""></div>
+          <div class="msg">
+            <div class="hd">見積依頼が届きました<span class="hot">急ぎ</span></div>
+            <div class="kv">
+              <span class="k">差出人</span><span>みなと商事　高橋さん</span>
+              <span class="k">要件</span><span>会社案内パンフ <b>500部</b> の見積</span>
+              <span class="k">期限</span><span><b>12/5（金）</b>までに回答がほしい</span>
+            </div>
+            <div class="reply"><span class="l">返信案</span>お見積りは12/3までにお送りします。</div>
+          </div>
+        </div>
+      </div>
+      <div class="chips"><span>要点</span><span>期限</span><span>急ぎ度</span><span>返信案</span></div>
+    </div>
+  </div>
+
+  <div class="darkband">
+    <div class="nf">
+      <div class="label">裏側で起きていること（公式）</div>
+      <div class="grid">
+        <div class="fc"><div class="ft">トリガー</div><div class="fd">メール到着などの<br>出来事をAIに渡す</div></div>
+        <div class="fc"><div class="ft">指示とツール</div><div class="fd">受け取った中身を<br>どう扱うかを決める</div></div>
+        <div class="fc"><div class="ft">発行して有効化</div><div class="fd">ここから先は<br>自動で動き出す</div></div>
+      </div>
+    </div>
+    <div class="note">
+      <div class="label">⚠ 使う前に確認</div>
+      <div class="txt">プレビュー機能。<b>動くたびにクレジット</b>を使う<br>（作る・試す段階からも）。</div>
+    </div>
+    <div class="src">出典：Microsoft Learn（エージェントにトリガーを追加する（プレビュー）／使用量ベースの請求の概要）／画面と名前は説明用の再現</div>
+  </div>
+  <img class="band-chara" src="${A}chara/chara_point_g.png" alt="">
+`;
+</script>
+</body>
+</html>

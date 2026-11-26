@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>M365 Copilot Vol.16-1 見積書を開かずに比べる</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/mc-base.css">
+<style>
+  .stage{gap:10px;}
+  .col.bad{flex:0 0 418px;}
+  .col.good{flex:1;min-width:0;}
+  .sc{flex:0 0 128px;position:relative;border-radius:10px;overflow:hidden;background:#FCE4E4;}
+  .sc svg{position:absolute;inset:0;width:100%;height:100%;}
+  .sc .ch{position:absolute;right:2px;bottom:0;height:116px;z-index:2;filter:drop-shadow(0 3px 4px rgba(0,0,0,.25));}
+  .memo{flex:1;min-height:0;display:flex;flex-direction:column;background:#FFFDF2;border:2px solid var(--red-line);border-radius:10px;overflow:hidden;
+    background-image:repeating-linear-gradient(180deg,transparent 0 33px,#F3E3B5 33px 34px);}
+  .memo .mh{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:5px 10px;background:#FEF3C7;border-bottom:1.5px solid #F3D27A;font-size:15.5px;font-weight:900;color:#92400E;}
+  .memo .mh .cnt{margin-left:auto;font-size:14px;font-weight:900;color:#fff;background:#DC2626;border-radius:999px;padding:1px 10px;}
+  .memo .mb{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:space-around;padding:2px 10px;}
+  .mr{display:flex;align-items:center;gap:6px;font-size:16px;font-weight:700;color:#1B2A44;}
+  .mr .k{flex:0 0 74px;font-weight:900;color:#6B7280;font-size:15px;}
+  .mr .c{flex:1;text-align:center;border-radius:5px;padding:1px 0;}
+  .mr .c.q{color:#DC2626;font-weight:900;background:#FEE2E2;}
+  .mr .c.x{color:#9CA3AF;text-decoration:line-through;}
+  .badline{flex:0 0 auto;background:#DC2626;color:#fff;border-radius:8px;padding:6px 10px;font-size:16.5px;font-weight:900;line-height:1.3;text-align:center;}
+  .eng{flex:0 0 128px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;}
+  .eng .ai{width:96px;height:72px;border-radius:18px;background:#fff;box-shadow:0 3px 10px rgba(0,0,0,.15);display:flex;align-items:center;justify-content:center;gap:4px;}
+  .eng .pill{font-size:15px;font-weight:900;color:#fff;background:var(--mc);border-radius:999px;padding:3px 12px;white-space:nowrap;}
+  .eng .lb{font-size:15.5px;font-weight:900;color:var(--mc-dark);text-align:center;line-height:1.35;}
+  .eng .five{width:120px;height:92px;}
+  .eng .five svg{width:100%;height:100%;display:block;}
+  .eng .ar{width:56px;height:26px;color:var(--mc);}
+  .od{flex:1;min-height:0;display:flex;gap:8px;}
+  .fl{flex:0 0 236px;display:flex;flex-direction:column;background:#fff;border:1.5px solid var(--segline);border-radius:9px;overflow:hidden;box-shadow:0 3px 8px rgba(0,0,0,.10);}
+  .fl .wh{flex:0 0 auto;display:flex;align-items:center;gap:7px;padding:5px 9px;background:#F3F2F1;border-bottom:1px solid #E1DFDD;font-size:15.5px;font-weight:700;color:#242424;}
+  .fl .cb{flex:0 0 auto;display:flex;align-items:center;gap:6px;padding:4px 8px;border-bottom:1px solid #EDEBE9;}
+  .fl .cb .cp{display:inline-flex;align-items:center;gap:5px;border:2px solid var(--mc);background:#F0FDFA;border-radius:6px;padding:1px 8px;font-size:15px;font-weight:900;color:var(--mc-dark);}
+  .fl .cb .cnt{margin-left:auto;font-size:14px;font-weight:900;color:#0F766E;}
+  .fl .fb{flex:1;min-height:0;display:flex;flex-direction:column;justify-content:space-around;padding:3px 7px;}
+  .fr{display:flex;align-items:center;gap:6px;background:#E6F4F1;border-radius:6px;padding:4px 6px;font-size:15px;font-weight:700;color:#1B2A44;line-height:1.2;}
+  .fr .bx{flex:0 0 auto;width:18px;height:18px;border-radius:50%;background:#0F766E;color:#fff;padding:2px;}
+  .fr .pdf{flex:0 0 auto;width:22px;height:26px;}
+  .pane{flex:1;min-width:0;display:flex;flex-direction:column;background:#fff;border:2px solid var(--green-line);border-radius:10px;overflow:hidden;box-shadow:0 3px 8px rgba(20,90,60,.12);}
+  .pane .phd{flex:0 0 auto;display:flex;align-items:center;gap:7px;padding:5px 10px;background:#F3F2F1;border-bottom:1px solid #E1DFDD;font-size:15.5px;font-weight:700;color:#242424;}
+  .pane .pb{flex:1;min-height:0;display:flex;flex-direction:column;gap:5px;padding:6px 9px;}
+  .pane .ask{align-self:flex-end;background:#E8F4F2;border:1.5px solid #A7E3D8;border-radius:10px 10px 3px 10px;padding:2px 10px;font-size:15.5px;font-weight:700;color:#1B2A44;}
+  table.cmp{flex:1;width:100%;border-collapse:collapse;font-size:15.5px;font-weight:700;color:#1B2A44;}
+  table.cmp th{background:#E6F4F1;color:var(--mc-dark);font-weight:900;font-size:15px;padding:2px 4px;border:1px solid #CDE7E1;}
+  table.cmp td{border:1px solid #E5E7EB;padding:2px 4px;text-align:center;}
+  table.cmp td.k{text-align:left;color:#6B7280;font-weight:900;font-size:15px;background:#FAFAFA;}
+  table.cmp td.b{color:#065F46;font-weight:900;background:#DCFCE7;}
+  table.cmp td.w{color:#B91C1C;font-weight:900;background:#FEF2F2;}
+  .bot{flex:0 0 auto;display:flex;flex-direction:column;gap:6px;}
+  .bot .uses{background:#fff;border:1.5px solid #CFEFE0;border-radius:10px;padding:4px 9px;}
+  .metric .mv{font-size:22px;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={x:'<path d="M6 6l12 12M18 6L6 18"/>',ok:'<path d="M5 12l5 5 9-10"/>',arrow:'<path d="M4 12h15M13 6l6 6-6 6"/>'};
+const CPI=(w)=>`<img class="msi" src="${A}icons/ms/copilot.png" alt="" style="width:${w||24}px;height:${w||24}px">`;
+const MS=(n,w)=>`<img class="msi" src="${A}icons/ms/${n}" alt="" style="width:${w||24}px;height:${w||24}px">`;
+const PDF='<svg class="pdf" viewBox="0 0 22 26"><path d="M2 1h12l6 6v18H2z" fill="#fff" stroke="#B91C1C" stroke-width="1.6"/><path d="M14 1v6h6" fill="none" stroke="#B91C1C" stroke-width="1.6"/><rect x="0" y="13" width="16" height="8" rx="2" fill="#DC2626"/><text x="8" y="19.5" font-size="6.5" font-weight="900" fill="#fff" text-anchor="middle" font-family="Segoe UI">PDF</text></svg>';
+const WIN=(x,y,c,n,d)=>`<g filter="url(#s1)"><rect x="${x}" y="${y}" width="118" height="84" rx="6" fill="#fff" stroke="#CBD5E1"/><rect x="${x}" y="${y}" width="118" height="14" rx="6" fill="${c}"/><text x="${x+8}" y="${y+11}" font-size="9.5" font-weight="900" fill="#fff" font-family="Noto Sans JP">${n}</text><rect x="${x+10}" y="${y+24}" width="62" height="5" rx="2" fill="#CBD5E1"/><rect x="${x+10}" y="${y+35}" width="90" height="4" rx="2" fill="#E2E8F0"/><rect x="${x+10}" y="${y+44}" width="90" height="4" rx="2" fill="#E2E8F0"/><rect x="${x+10}" y="${y+53}" width="70" height="4" rx="2" fill="#E2E8F0"/><text x="${x+8}" y="${y+76}" font-size="13" font-weight="900" fill="#B91C1C" font-family="Noto Sans JP">${d}</text></g>`;
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="pills"><div class="vol-pill"><small>M365 Copilot</small>Vol.16-1</div><div class="lic-pill paid">M365 Copilot ライセンスが要る</div></div>
+    <div class="title-text">3社の見積書は、開かずに<br><span class="hl">OneDrive で選んで比べる</span></div>
+    <div class="title-apps">${MS('onedrive.svg',44)}<span class="pl">+</span><img class="msi" src="${A}icons/ms/copilot.png" alt=""></div>
+    <img class="title-chara" src="${A}chara/chara_point.png" alt="">
+  </div>
+  <div class="concl">
+    <div class="chip app">${MS('onedrive.svg',34)}</div>
+    <div class="txt">OneDrive（Web）で見積書を<b>最大5つ選び、Copilot の[ファイルの比較]</b>を押すと、<br>ファイルを1つずつ開かずに、金額・納期・条件の違いを並べて返します</div>
+  </div>
+  <div class="stage">
+    <div class="col bad">
+      <div class="ph"><span class="mk">${svgw(P.x,3.2)}</span>3つ開いて、手で書き写す</div>
+      <div class="sc"><svg viewBox="0 0 392 128" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><defs><filter id="s1" x="-20%" y="-20%" width="140%" height="160%"><feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#7F1D1D" flood-opacity=".25"/></filter></defs><rect width="392" height="128" fill="#FCE4E4"/>
+        ${WIN(10,38,'#2563EB','ひかり電機','412万円')}${WIN(76,26,'#D97706','みなと商会','389万円')}${WIN(142,40,'#7C3AED','さくら商事','436万円')}
+        <g filter="url(#s1)"><rect x="266" y="80" width="62" height="26" rx="10" fill="#fff" stroke="#F0AEAE"/></g><text x="297" y="98" font-size="12.5" font-weight="900" fill="#991B1B" text-anchor="middle" font-family="Noto Sans JP">保守は？</text>
+        <text x="150" y="18" font-size="15" font-weight="900" fill="#991B1B" text-anchor="middle" font-family="Noto Sans JP">どれが安い？　設置費は？</text>
+      </svg><img class="ch" src="${A}chara/chara_trouble.png" alt=""></div>
+      <div class="memo"><div class="mh">手書きの比較メモ<span class="cnt">抜け・写し間違い</span></div><div class="mb">
+        <div class="mr"><span class="k"></span><span class="c" style="font-weight:900;color:#2563EB">ひかり</span><span class="c" style="font-weight:900;color:#D97706">みなと</span><span class="c" style="font-weight:900;color:#7C3AED">さくら</span></div>
+        <div class="mr"><span class="k">金額</span><span class="c">412万</span><span class="c q">398万？</span><span class="c">436万</span></div>
+        <div class="mr"><span class="k">納期</span><span class="c">3週間</span><span class="c q">？</span><span class="c">2週間</span></div>
+        <div class="mr"><span class="k">設置費</span><span class="c q">？</span><span class="c q">？</span><span class="c">込み</span></div>
+      </div></div>
+      <div class="badline">ページを行き来して、条件の違いを見落とす</div>
+    </div>
+    <div class="eng">
+      <div class="ai">${MS('onedrive.svg',40)}${CPI(40)}</div>
+      <span class="pill">ファイルの比較</span>
+      <div class="five"><svg viewBox="0 0 120 92" xmlns="http://www.w3.org/2000/svg">
+        <g><path d="M8 8h18l6 6v26H8z" fill="#fff" stroke="#2563EB" stroke-width="2"/><circle cx="28" cy="38" r="7" fill="#0F766E"/><path d="M24.5 38l2.5 2.5 4.5-5" stroke="#fff" stroke-width="2" fill="none"/></g>
+        <g><path d="M46 8h18l6 6v26H46z" fill="#fff" stroke="#D97706" stroke-width="2"/><circle cx="66" cy="38" r="7" fill="#0F766E"/><path d="M62.5 38l2.5 2.5 4.5-5" stroke="#fff" stroke-width="2" fill="none"/></g>
+        <g><path d="M84 8h18l6 6v26H84z" fill="#fff" stroke="#7C3AED" stroke-width="2"/><circle cx="104" cy="38" r="7" fill="#0F766E"/><path d="M100.5 38l2.5 2.5 4.5-5" stroke="#fff" stroke-width="2" fill="none"/></g>
+        <g opacity=".55"><path d="M27 52h18l6 6v26H27z" fill="#fff" stroke="#94A3B8" stroke-width="2" stroke-dasharray="3 2"/><path d="M65 52h18l6 6v26H65z" fill="#fff" stroke="#94A3B8" stroke-width="2" stroke-dasharray="3 2"/></g>
+      </svg></div>
+      <div class="lb">最大5つ<br>選ぶだけ</div>
+      <span class="ar">${svgw(P.arrow,3)}</span>
+    </div>
+    <div class="col good">
+      <div class="ph"><span class="mk">${svgw(P.ok,3.2)}</span>違いを1つの表で受け取る</div>
+      <div class="od seg">
+        <div class="fl"><div class="wh">${MS('onedrive.svg',22)}見積_PC入替</div>
+          <div class="cb"><span class="cp">${CPI(18)}Copilot</span><span class="cnt">3 件選択</span></div>
+          <div class="fb">
+            <div class="fr"><span class="bx">${svgw(P.ok,3)}</span>${PDF}見積_ひかり電機.pdf</div>
+            <div class="fr"><span class="bx">${svgw(P.ok,3)}</span>${PDF}見積_みなと商会.pdf</div>
+            <div class="fr"><span class="bx">${svgw(P.ok,3)}</span>${PDF}見積_さくら商事.pdf</div>
+          </div></div>
+        <div class="pane"><div class="phd">${CPI(22)}Copilot<span class="repro">画面は説明用の再現・見積は架空</span></div>
+          <div class="pb">
+            <div class="ask">金額・納期・設置費・保守を表にして</div>
+            <table class="cmp"><tr><th></th><th>ひかり</th><th>みなと</th><th>さくら</th></tr>
+              <tr><td class="k">合計</td><td>412万円</td><td class="b">389万円</td><td>436万円</td></tr>
+              <tr><td class="k">納期</td><td>3週間</td><td class="w">5週間</td><td class="b">2週間</td></tr>
+              <tr><td class="k">設置費</td><td>込み</td><td class="w">別途</td><td>込み</td></tr>
+              <tr><td class="k">保守</td><td>3年</td><td class="w">1年</td><td>3年</td></tr>
+            </table>
+          </div></div>
+      </div>
+      <div class="bot">
+        <div class="metric"><span class="ml">見比べる作業</span><span class="mv">3つ開いて書き写す</span><span class="ar">${svgw(P.arrow,3)}</span><span class="mv to">選んで1回押す</span></div>
+        <div class="uses"><span class="ul">公式の使用例</span><span class="u">見積もりの比較</span><span class="u">契約書の版</span><span class="u">応募書類</span><span class="u">財務レポート</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="next">
+    <span class="na">${svgw(P.arrow,2.6)}</span>
+    <span><b>結果の画面は2枚目、押す場所は3枚目、比べるもの別の頼み方は4枚目へ</b></span>
+  </div>
+  <div class="src">出典：Microsoft サポート「Copilot in OneDrive を使用してファイルを比較する」「Copilot in OneDrive についてよく寄せられる質問」／社名・金額は架空・画面は説明用の再現</div>
+`;
+</script>
+</body>
+</html>

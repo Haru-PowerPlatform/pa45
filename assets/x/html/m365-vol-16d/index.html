@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=1280, initial-scale=1">
+<title>M365 Copilot Vol.16-4 比べるもの別の早見表</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Roboto+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../_base/mc-base.css">
+<style>
+  .stage{gap:12px;}
+  .dlg{flex:0 0 400px;min-height:0;display:flex;flex-direction:column;background:#fff;border:2px solid var(--segline);border-radius:12px;overflow:hidden;box-shadow:0 5px 14px rgba(0,0,0,.16);}
+  .dlg .dh{flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:7px 12px;background:#F3F2F1;border-bottom:1px solid #E1DFDD;font-size:16px;font-weight:900;color:#242424;}
+  .dlg .db{flex:1;min-height:0;display:flex;flex-direction:column;gap:4px;padding:7px 10px;}
+  .fr{flex:1;min-height:0;display:flex;align-items:center;gap:8px;border-radius:7px;padding:0 8px;font-size:15.5px;font-weight:700;color:#1B2A44;}
+  .fr.ok{background:#ECFDF5;}
+  .fr.ng{background:#FEF2F2;color:#9CA3AF;}
+  .fr .st{flex:0 0 auto;width:22px;height:22px;border-radius:50%;color:#fff;padding:3px;}
+  .fr.ok .st{background:#16A34A;} .fr.ng .st{background:#DC2626;}
+  .fr .ty{flex:0 0 auto;width:24px;height:28px;}
+  .fr .why{margin-left:auto;font-size:14px;font-weight:900;color:#B91C1C;white-space:nowrap;}
+  .fmt{flex:0 0 auto;border-top:1.5px dashed #E1DFDD;padding-top:6px;display:flex;flex-wrap:wrap;gap:5px;align-items:center;}
+  .fmt .fl{font-size:14px;font-weight:900;color:#6B7280;margin-right:2px;}
+  .fmt span.f{font-family:"Segoe UI",sans-serif;font-size:14px;font-weight:700;border:1.5px solid #A7E3D8;background:#F0FDFA;color:var(--mc-dark);border-radius:5px;padding:0 6px;}
+  .tbl5{flex:1;min-width:0;display:flex;flex-direction:column;gap:5px;}
+  .tbl5 .th{flex:0 0 auto;display:flex;gap:10px;font-size:15px;font-weight:900;color:#fff;background:var(--mc);border-radius:8px;padding:4px 12px;}
+  .tr{flex:1;min-height:0;display:flex;align-items:center;gap:10px;background:#F7FBFA;border:1.5px solid #D8EFEA;border-radius:9px;padding:3px 10px;}
+  .tr .fg{flex:0 0 88px;height:54px;}
+  .tr .fg svg{width:100%;height:100%;display:block;}
+  .tr .k{flex:0 0 168px;font-size:18.5px;font-weight:900;color:var(--navy);line-height:1.2;}
+  .tr .k small{display:block;font-size:14px;color:var(--mc);font-weight:900;margin-top:1px;}
+  .tr .v{flex:1;font-size:15.5px;font-weight:700;color:var(--mc-dark);background:#E3F7F3;border-radius:7px;padding:4px 9px;line-height:1.35;}
+  .tr .v b{color:#B91C1C;}
+  .tr.hot{background:#FFF7ED;border-color:#FDBA74;}
+  .tr.hot .v{background:#FFEDD5;color:#7C2D12;}
+</style>
+</head>
+<body>
+<div id="slide"></div>
+<script>
+const A="../../pptx/_assets/";
+const svgw=(p,sw)=>`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="${sw||2.4}" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+const P={ok:'<path d="M5 12l5 5 9-10"/>',x:'<path d="M6 6l12 12M18 6L6 18"/>'};
+const CPI=(w)=>`<img class="msi" src="${A}icons/ms/copilot.png" alt="" style="width:${w||24}px;height:${w||24}px">`;
+const MS=(n,w)=>`<img class="msi" src="${A}icons/ms/${n}" alt="" style="width:${w||24}px;height:${w||24}px">`;
+const TY=(c,t)=>`<svg class="ty" viewBox="0 0 24 28"><path d="M2 1h13l7 7v19H2z" fill="#fff" stroke="${c}" stroke-width="1.6"/><path d="M15 1v7h7" fill="none" stroke="${c}" stroke-width="1.6"/><rect x="0" y="14" width="18" height="9" rx="2" fill="${c}"/><text x="9" y="21" font-size="6.5" font-weight="900" fill="#fff" text-anchor="middle" font-family="Segoe UI">${t}</text></svg>`;
+const S=(b)=>`<svg viewBox="0 0 88 54" xmlns="http://www.w3.org/2000/svg">${b}</svg>`;
+const D=(x,c,y)=>`<path d="M${x} ${y||6}h18l7 7v35h-25z" fill="#fff" stroke="${c}" stroke-width="2"/><rect x="${x+5}" y="${(y||6)+16}" width="15" height="3.5" rx="1.5" fill="${c}" opacity=".6"/><rect x="${x+5}" y="${(y||6)+25}" width="15" height="3.5" rx="1.5" fill="${c}" opacity=".6"/>`;
+const F1=S(D(2,'#2563EB')+D(30,'#D97706')+D(58,'#7C3AED'));
+const F2=S(D(6,'#64748B')+'<path d="M36 28h12" stroke="#0F766E" stroke-width="3" stroke-linecap="round"/><path d="M46 22l7 6-7 6z" fill="#0F766E"/>'+D(58,'#0F766E')+'<rect x="61" y="27" width="19" height="5" rx="1.5" fill="#FDE047"/>');
+const F3=S(D(4,'#94A3B8',10)+D(14,'#64748B',6)+D(24,'#0F766E',2)+'<path d="M58 18h18M58 28h22M58 38h14" stroke="#16A34A" stroke-width="3" stroke-linecap="round"/><path d="M52 18h3M52 38h3" stroke="#DC2626" stroke-width="3" stroke-linecap="round"/>');
+const F4=S('<rect x="2" y="6" width="26" height="34" rx="3" fill="#fff" stroke="#2563EB" stroke-width="2"/><circle cx="15" cy="17" r="5" fill="#93C5FD"/><rect x="7" y="27" width="16" height="3" rx="1.5" fill="#93C5FD"/><rect x="31" y="6" width="26" height="34" rx="3" fill="#fff" stroke="#7C3AED" stroke-width="2"/><circle cx="44" cy="17" r="5" fill="#C4B5FD"/><rect x="36" y="27" width="16" height="3" rx="1.5" fill="#C4B5FD"/><rect x="60" y="6" width="26" height="34" rx="3" fill="#fff" stroke="#0891B2" stroke-width="2"/><circle cx="73" cy="17" r="5" fill="#67E8F9"/><rect x="65" y="27" width="16" height="3" rx="1.5" fill="#67E8F9"/><path d="M8 47h72" stroke="#0F766E" stroke-width="3" stroke-linecap="round"/>');
+const F5=S('<rect x="4" y="34" width="12" height="16" fill="#94A3B8"/><rect x="20" y="24" width="12" height="26" fill="#64748B"/><rect x="44" y="28" width="12" height="22" fill="#5EEAD4"/><rect x="60" y="12" width="12" height="38" fill="#0F766E"/><path d="M76 10l6 0 0 6" fill="none" stroke="#16A34A" stroke-width="2.4"/><path d="M66 6l16 4" stroke="#16A34A" stroke-width="2.4"/><path d="M38 4v48" stroke="#CBD5E1" stroke-width="2" stroke-dasharray="3 2"/>');
+document.getElementById('slide').innerHTML=`
+  <div class="titlebar">
+    <div class="pills"><div class="vol-pill"><small>M365 Copilot</small>Vol.16-4</div><div class="lic-pill paid">M365 Copilot ライセンスが要る</div></div>
+    <div class="title-text">比べるもの別に、<br><span class="hl">選ぶファイルと続けて聞くこと</span></div>
+    <div class="title-apps">${MS('onedrive.svg',44)}<span class="pl">+</span><img class="msi" src="${A}icons/ms/copilot.png" alt=""></div>
+    <img class="title-chara" src="${A}chara/chara_confident.png" alt="">
+  </div>
+  <div class="concl">
+    <div class="chip app">${CPI(34)}</div>
+    <div class="txt">見積書のほかにも、公式には<b>契約書の版・草案の版・応募書類・財務レポート</b>の比較が<br>使用例に挙がっています。選ぶファイルと、続けて聞くことの例をまとめました</div>
+  </div>
+  <div class="stage">
+    <div class="dlg seg">
+      <div class="dh">${MS('onedrive.svg',22)}選べるファイル<span class="repro">画面は説明用の再現</span></div>
+      <div class="db">
+        <div class="fr ok"><span class="st">${svgw(P.ok,3)}</span>${TY('#DC2626','PDF')}見積_ひかり電機.pdf</div>
+        <div class="fr ok"><span class="st">${svgw(P.ok,3)}</span>${MS('word.svg',24)}契約書_2026年版.docx</div>
+        <div class="fr ok"><span class="st">${svgw(P.ok,3)}</span>${MS('excel.svg',24)}決算資料_上期.xlsx</div>
+        <div class="fr ok"><span class="st">${svgw(P.ok,3)}</span>${TY('#C2410C','PPT')}説明会資料.pptx</div>
+        <div class="fr ng"><span class="st">${svgw(P.x,3)}</span>${TY('#9CA3AF','JPG')}現場写真.jpg<span class="why">画像は未対応</span></div>
+        <div class="fr ng"><span class="st">${svgw(P.x,3)}</span>${TY('#9CA3AF','MP4')}研修の録画.mp4<span class="why">動画は未対応</span></div>
+        <div class="fmt"><span class="fl">対応</span><span class="f">DOCX</span><span class="f">XLSX</span><span class="f">PPTX</span><span class="f">PDF</span><span class="f">TXT</span><span class="f">RTF</span><span class="f">LOOP</span><span class="f">HTML</span><span class="f">ODT</span><span class="fl">ほか・150 MB 未満</span></div>
+      </div>
+    </div>
+    <div class="tbl5">
+      <div class="th"><span style="flex:0 0 276px">比べるもの（公式の使用例）</span><span>選ぶファイルと、続けて聞くことの例</span></div>
+      <div class="tr hot"><div class="fg">${F1}</div><div class="k">見積もりの比較<small>ベンダー2〜5社</small></div><div class="v">各社の見積書。<b>金額・納期・保守</b>を表にして、<br>見積書に記載がない費用も挙げてもらう</div></div>
+      <div class="tr"><div class="fg">${F2}</div><div class="k">契約分析<small>旧版と新版</small></div><div class="v">前回と今回の契約書。<b>変わった条項</b>と、<br>支払・解約の条件の違いを聞く</div></div>
+      <div class="tr"><div class="fg">${F3}</div><div class="k">バージョン管理<small>草案の版どうし</small></div><div class="v">第1版〜第3版の草案。版ごとに<br><b>足された内容・消えた内容</b>を聞く</div></div>
+      <div class="tr"><div class="fg">${F4}</div><div class="k">応募書類の審査<small>履歴書・カバー レター</small></div><div class="v">候補者ごとの書類。<b>募集要件の経験・資格</b>を<br>人ごとに並べてもらう。判断は人が行う</div></div>
+      <div class="tr"><div class="fg">${F5}</div><div class="k">財務レポート分析<small>期間・法人ごと</small></div><div class="v">期ごとの決算資料。<b>売上・利益の増減</b>と、<br>大きく動いた項目を挙げてもらう</div></div>
+    </div>
+  </div>
+  <div class="warnbar">
+    <span class="wl">⚠ 使う前に確認</span>
+    <div class="ws"><span>一度に比べられるのは5ファイルまで</span><span>回答の数字は、発注・契約の前に原本で確かめる</span><span>職場のアカウントは Copilot ライセンスが必要</span></div>
+  </div>
+  <div class="src">出典：Microsoft サポート「Copilot in OneDrive を使用してファイルを比較する」「Copilot in OneDrive についてよく寄せられる質問」／ファイル名は架空・画面は説明用の再現</div>
+`;
+</script>
+</body>
+</html>
