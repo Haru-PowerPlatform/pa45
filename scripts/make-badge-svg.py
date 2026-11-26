@@ -56,6 +56,9 @@ SESSIONS = {
     30: ("One-Click To Do", "2026-10-08", "teamstodo"),
     31: ("One-Click PDF Send", "2026-10-15", "pdfsend"),
     32: ("Monthly Folder Sort", "2026-10-22", "monthfolder"),
+    33: ("Internal Name Finder", "2026-10-29", "internalname"),
+    35: ("Pre-Meeting Notice", "2026-11-12", "meetingnotice"),
+    36: ("Excel to List", "2026-11-19", "excellist"),
 }
 
 
@@ -109,11 +112,23 @@ PALETTE_OVERRIDE = {
     #          ファイルが矢印で今月（10）のフォルダへ入るiconが主役。
     32: dict(ring=("#fde4a8", "#4a2c05"), disc=("#c9780f", "#331d02"),
              gold=GOLD, title="#ffffff", sub="#fff0cc"),
+    # Vol.33：SharePoint リストの列の内部名をフローで調べる。SharePoint のティール×ゴールド（琥珀(32)からの変化）。
+    #          リストの1行（状態）から矢印で内部名の札（_x）が出てくるiconが主役。
+    33: dict(ring=("#a5f3fc", "#063a40"), disc=("#0e8a91", "#03262a"),
+             gold=GOLD, title="#ffffff", sub="#c9f7fb"),
+    # Vol.35：会議の前に資料のリンクがTeamsに届く。Teams のインディゴ×ゴールド（ティール(33)からの変化）。
+    #          予定表（今日のマスが金）から矢印で、Teamsの吹き出しに届くiconが主役。
+    35: dict(ring=("#c8caff", "#171a58"), disc=("#5b5fc7", "#0d0f38"),
+             gold=GOLD, title="#ffffff", sub="#dcdeff"),
+    # Vol.36：Excelの表をボタン1つでリストへ（For each）。Excel のグリーン×ゴールド（インディゴ(35)からの変化）。
+    #          表（Xの見出し）から矢印で、3行とも金に埋まったリストへ入るiconが主役。
+    36: dict(ring=("#8ef0ab", "#0a3b1c"), disc=("#15803d", "#052e13"),
+             gold=GOLD, title="#ffffff", sub="#b7f3c8"),
 }
 
 
 # 幅広の文字が多くて外周に迫る回だけ、タイトル文字サイズを個別に下げる
-TITLE_SIZE_OVERRIDE = {29: 52}
+TITLE_SIZE_OVERRIDE = {29: 52, 33: 52}
 
 
 def palette_for(vol):
@@ -619,6 +634,120 @@ def icon_monthfolder(g):
   </g>'''
 
 
+def icon_internalname(g):
+    """列の内部名を調べる。リスト（3行・2行目が主役）から矢印で、内部名の札（_x）が出てくる。"""
+    gl, gm, gd = g
+    fam = "'Segoe UI','Noto Sans JP',sans-serif"
+    mono = "Consolas,'Courier New',monospace"
+    lx, ly, lw, lh = 278, 300, 150, 170
+    rows = ""
+    for i in range(3):
+        y = ly + 34 + i * 44
+        on = (i == 1)
+        rows += (f'<rect x="{lx+10}" y="{y}" width="{lw-20}" height="34" rx="8" fill="{"url(#sparkgrad)" if on else "#fffaf0"}" '
+                 f'stroke="{gd}" stroke-width="{3.5 if on else 2.5}" opacity="{1 if on else 0.7}"/>'
+                 f'<rect x="{lx+22}" y="{y+13}" width="{70 if on else 90 - i*14}" height="8" rx="4" fill="{gd}" opacity="{0.9 if on else 0.4}"/>')
+    lst = (f'<rect x="{lx}" y="{ly}" width="{lw}" height="{lh}" rx="16" fill="#fffaf0" stroke="{gd}" stroke-width="4.5"/>'
+           f'<rect x="{lx}" y="{ly}" width="{lw}" height="26" rx="13" fill="{gm}"/>' + rows)
+    arrow = (f'<path d="M436 386 H486" fill="none" stroke="{gl}" stroke-width="9" stroke-linecap="round"/>'
+             f'<path d="M474 372 L492 386 L474 400" fill="none" stroke="{gl}" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>')
+    tx, ty, tw, th = 500, 344, 104, 84
+    tag = (f'<path d="M{tx+22} {ty} H{tx+tw-12} Q{tx+tw} {ty} {tx+tw} {ty+12} V{ty+th-12} Q{tx+tw} {ty+th} {tx+tw-12} {ty+th} H{tx+22} L{tx} {ty+th/2} Z" '
+           f'fill="url(#sparkgrad)" stroke="{gd}" stroke-width="4.5" stroke-linejoin="round"/>'
+           f'<circle cx="{tx+24}" cy="{ty+th/2}" r="7" fill="#fffaf0" stroke="{gd}" stroke-width="3.5"/>'
+           f'<text x="{tx+66}" y="{ty+th/2+14}" text-anchor="middle" font-family="{mono}" font-weight="900" font-size="38" fill="{gd}">_x</text>')
+    spark = "".join(f'<circle cx="{cx}" cy="{cy}" r="{cr}" fill="{gl}" opacity="0.85"/>'
+                    for cx, cy, cr in ((598, 326, 7), (488, 448, 5), (612, 446, 4)))
+    return f'''
+  <g filter="url(#ishadow)" transform="translate(0,4)">
+    {spark}
+    {lst}
+    {arrow}
+    {tag}
+  </g>'''
+
+
+def icon_meetingnotice(g):
+    """会議の前にTeamsに届く。予定表（1マスだけ金）から矢印で、吹き出し（資料リンクの行つき）に届く。"""
+    gl, gm, gd = g
+    # 予定表（左）
+    cx0, cy0, cw, ch = 278, 304, 150, 162
+    cells = ""
+    for r in range(3):
+        for c in range(3):
+            x = cx0 + 16 + c * 42
+            y = cy0 + 50 + r * 36
+            on = (r == 1 and c == 1)
+            cells += (f'<rect x="{x}" y="{y}" width="34" height="28" rx="7" '
+                      f'fill="{"url(#sparkgrad)" if on else gm}" stroke="{gd}" '
+                      f'stroke-width="{3.5 if on else 0}" opacity="{1 if on else 0.32}"/>')
+    cal = (f'<rect x="{cx0}" y="{cy0}" width="{cw}" height="{ch}" rx="16" fill="#fffaf0" stroke="{gd}" stroke-width="4.5"/>'
+           f'<path d="M{cx0} {cy0+38} V{cy0+16} Q{cx0} {cy0} {cx0+16} {cy0} H{cx0+cw-16} Q{cx0+cw} {cy0} {cx0+cw} {cy0+16} V{cy0+38} Z" '
+           f'fill="{gm}" stroke="{gd}" stroke-width="4.5" stroke-linejoin="round"/>'
+           f'<rect x="{cx0+34}" y="{cy0-14}" width="12" height="30" rx="6" fill="#fffaf0" stroke="{gd}" stroke-width="4"/>'
+           f'<rect x="{cx0+cw-46}" y="{cy0-14}" width="12" height="30" rx="6" fill="#fffaf0" stroke="{gd}" stroke-width="4"/>'
+           + cells)
+    arrow = (f'<path d="M438 386 H484" fill="none" stroke="{gl}" stroke-width="9" stroke-linecap="round"/>'
+             f'<path d="M472 372 L490 386 L472 400" fill="none" stroke="{gl}" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>')
+    # 吹き出し（右）
+    bx, by, bw, bh = 500, 330, 112, 92
+    bubble = (f'<path d="M{bx+16} {by} H{bx+bw-16} Q{bx+bw} {by} {bx+bw} {by+16} V{by+bh-16} Q{bx+bw} {by+bh} {bx+bw-16} {by+bh} '
+              f'H{bx+50} L{bx+26} {by+bh+24} V{by+bh} H{bx+16} Q{bx} {by+bh} {bx} {by+bh-16} V{by+16} Q{bx} {by} {bx+16} {by} Z" '
+              f'fill="url(#sparkgrad)" stroke="{gd}" stroke-width="4.5" stroke-linejoin="round"/>'
+              f'<rect x="{bx+18}" y="{by+22}" width="{bw-36}" height="9" rx="4.5" fill="{gd}" opacity="0.9"/>'
+              f'<rect x="{bx+18}" y="{by+42}" width="{bw-56}" height="9" rx="4.5" fill="{gd}" opacity="0.55"/>'
+              f'<rect x="{bx+18}" y="{by+62}" width="{bw-44}" height="9" rx="4.5" fill="#fffaf0" stroke="{gd}" stroke-width="2.5"/>')
+    spark = "".join(f'<circle cx="{cx}" cy="{cy}" r="{cr}" fill="{gl}" opacity="0.85"/>'
+                    for cx, cy, cr in ((612, 304, 7), (484, 452, 5), (620, 458, 4)))
+    return f'''
+  <g filter="url(#ishadow)" transform="translate(0,4)">
+    {spark}
+    {cal}
+    {arrow}
+    {bubble}
+  </g>'''
+
+
+def icon_excellist(g):
+    """Excelの表をリストへ。表（3行×3列のマス）から矢印で、リスト（3行がすべて金＝全行が入った）へ。"""
+    gl, gm, gd = g
+    fam = "'Segoe UI','Noto Sans JP',sans-serif"
+    # Excelの表（左）
+    sx, sy, sw, sh = 278, 304, 150, 162
+    cells = ""
+    for r in range(3):
+        for c in range(3):
+            x = sx + 14 + c * 42
+            y = sy + 48 + r * 36
+            cells += (f'<rect x="{x}" y="{y}" width="38" height="30" rx="5" fill="{gm}" '
+                      f'opacity="{0.55 if c == 0 else 0.3}"/>')
+    sheet = (f'<rect x="{sx}" y="{sy}" width="{sw}" height="{sh}" rx="16" fill="#fffaf0" stroke="{gd}" stroke-width="4.5"/>'
+             f'<path d="M{sx} {sy+38} V{sy+16} Q{sx} {sy} {sx+16} {sy} H{sx+sw-16} Q{sx+sw} {sy} {sx+sw} {sy+16} V{sy+38} Z" '
+             f'fill="{gm}" stroke="{gd}" stroke-width="4.5" stroke-linejoin="round"/>'
+             f'<text x="{sx+sw/2}" y="{sy+30}" text-anchor="middle" font-family="{fam}" font-weight="900" font-size="26" fill="#fffaf0">X</text>'
+             + cells)
+    arrow = (f'<path d="M438 386 H484" fill="none" stroke="{gl}" stroke-width="9" stroke-linecap="round"/>'
+             f'<path d="M472 372 L490 386 L472 400" fill="none" stroke="{gl}" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>')
+    # リスト（右）：3行とも入った
+    lx, ly, lw, lh = 500, 314, 116, 146
+    rows = ""
+    for i in range(3):
+        y = ly + 34 + i * 36
+        rows += (f'<rect x="{lx+10}" y="{y}" width="{lw-20}" height="28" rx="7" fill="url(#sparkgrad)" stroke="{gd}" stroke-width="3"/>'
+                 f'<rect x="{lx+20}" y="{y+10}" width="{60 - i*8}" height="8" rx="4" fill="{gd}" opacity="0.85"/>')
+    lst = (f'<rect x="{lx}" y="{ly}" width="{lw}" height="{lh}" rx="16" fill="#fffaf0" stroke="{gd}" stroke-width="4.5"/>'
+           f'<rect x="{lx}" y="{ly}" width="{lw}" height="24" rx="12" fill="{gm}"/>' + rows)
+    spark = "".join(f'<circle cx="{cx}" cy="{cy}" r="{cr}" fill="{gl}" opacity="0.85"/>'
+                    for cx, cy, cr in ((612, 296, 7), (484, 452, 5), (624, 470, 4)))
+    return f'''
+  <g filter="url(#ishadow)" transform="translate(0,4)">
+    {spark}
+    {sheet}
+    {arrow}
+    {lst}
+  </g>'''
+
+
 ICONS = {"foldermail": icon_foldermail, "copilot": icon_copilot,
          "deadline": icon_deadline, "approval": icon_approval,
          "dashboard": icon_dashboard, "card": icon_card,
@@ -630,7 +759,8 @@ ICONS = {"foldermail": icon_foldermail, "copilot": icon_copilot,
          "teamstodo": icon_teamstodo,
          "pdfsend": icon_pdfsend,
          "exprpick": icon_exprpick,
-         "monthfolder": icon_monthfolder}
+         "monthfolder": icon_monthfolder, "internalname": icon_internalname,
+         "meetingnotice": icon_meetingnotice, "excellist": icon_excellist}
 
 
 def knurl_dots(cx, cy, r, n, color):

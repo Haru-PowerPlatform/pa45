@@ -258,7 +258,8 @@ def _next_connpass_url():
 
 
 # ─── メール送信 ───────────────────────────────────
-def send_email(to_email: str, session_num: int, badge_path: Path, next_url_override: str = None):
+def send_email(to_email: str, session_num: int, badge_path: Path, next_url_override: str = None,
+               next_label: str = "次回のPA45はこちら"):
     smtp_user = os.environ.get("SMTP_USER", "").strip()
     smtp_pass = os.environ.get("SMTP_PASSWORD", "").strip()
     next_url  = next_url_override or _next_connpass_url()
@@ -290,6 +291,10 @@ def send_email(to_email: str, session_num: int, badge_path: Path, next_url_overr
         30: "Teamsの頼まれごとを1クリックでTo Doに入れる",
         31: "ファイルを選んで1クリックでPDFにして送る",
         32: "置くだけで月別フォルダに片付くファイル整理",
+        33: "SharePointリストの列の内部名をフローで調べる",
+        34: "リストのステータスが変わったときだけTeamsに通知",
+        35: "会議の前に資料のリンクがTeamsに届く",
+        36: "届いたExcelを打ち直さなくていい。ボタン1つでリストへ",
     }
     theme = THEMES_JP.get(session_num)
     theme_part = f"『{theme}』" if theme else ""
@@ -321,7 +326,7 @@ def send_email(to_email: str, session_num: int, badge_path: Path, next_url_overr
 
 <hr>
 
-<p>📅 <strong>次回のPA45はこちら</strong><br>
+<p>📅 <strong>{next_label}</strong><br>
 <a href="{next_url}">{next_url}</a></p>
 
 <p>またお会いしましょう！</p>
@@ -376,7 +381,10 @@ def main():
                         help="送信先リストを表示するだけ（送信しない）")
     parser.add_argument("--next-url", type=str, default=None,
                         help="メールの「次回」リンクを明示指定（Vol.N+1未作成時にグループURL等を渡す）")
+    parser.add_argument("--next-label", type=str, default="次回のPA45はこちら",
+                        help="メールの「次回」の見出し（次がPA45以外の回のとき。例: 次回の勉強会はこちら）")
     args = parser.parse_args()
+    print(f"  次回の見出し: {args.next_label}")
 
     session_num = args.session
 
@@ -485,7 +493,7 @@ def main():
     for i, entry in enumerate(to_send, 1):
         email = entry["email"]
         try:
-            send_email(email, session_num, badge_path, args.next_url)
+            send_email(email, session_num, badge_path, args.next_url, args.next_label)
             print(f"  [{i}/{len(to_send)}] ✅ {email}")
             newly_sent.add(email)
         except Exception as e:
