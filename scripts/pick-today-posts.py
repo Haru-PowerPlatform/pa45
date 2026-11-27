@@ -12,6 +12,7 @@ ArtifactData で書き出したファイル。[{id, done}] の配列か {id: {do
            PA45 の開催週は、月曜＝告知②、開催日＝告知③（昼）と④（開催15分前）を足す。
   LinkedIn 月曜・金曜に1本。data/linkedin-board.json の順番（MCT自己紹介の1本目 → ブログ紹介と
            Tips紹介を交互 → 4本ごとに MCT自己紹介の残り）で、まだ投稿していないもの。
+           ブログ紹介は lead（集客の優先度 A→B→C）の順に出す。
 本文と画像の場所は X投稿ボードと同じもの（build-x-board.py の関数をそのまま使う）。
 """
 import argparse
@@ -107,7 +108,9 @@ def announce_items(today):
 
 def li_queue(items):
     first = [p for p in items if p.get("group") == "mct"]
-    blog = [p for p in items if p.get("group") == "blog"]
+    # ブログ紹介は集客の優先度（lead：A→B→C→指定なし）の順。同じ優先度の中は JSON の並びのまま
+    blog = sorted([p for p in items if p.get("group") == "blog"],
+                  key=lambda p: {"A": 0, "B": 1, "C": 2}.get(p.get("lead"), 3))
     tips = [p for p in items if p.get("group") == "tips"]
     rest_mct = first[1:]
     q = first[:1]
