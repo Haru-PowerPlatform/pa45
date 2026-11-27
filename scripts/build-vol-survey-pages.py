@@ -10,8 +10,16 @@ achievements/insights/vol-NN.html を生成する。
   python scripts/build-vol-survey-pages.py 13       # 1回だけ
 
 数字は手打ちしない。すべて JSON から計算する。
+
+次の回への導線（はる 2026-11-27「A」）：
+KPI のすぐ後とページの一番下に、次の回の connpass ボタンを置く。
+data/config/upcoming-event.json の回がまだ開催前なら「第N回に参加登録する」、
+開催済み（次の回が connpass にまだ無い）なら「connpass のグループをフォローする」。
+生成時に決めた形を HTML に入れ、表示時にも JS で upcoming-event.json を読み直して切り替える
+（ページを作り直さなくても、upcoming を次の回へ進めた時点で全回のボタンが変わる）。
 """
 
+import datetime
 import json
 import html
 import re
@@ -23,6 +31,8 @@ SURVEY = ROOT / "data" / "surveys"
 INSIGHTS = ROOT / "data" / "insights.json"
 OUTDIR = ROOT / "achievements" / "insights"
 SHELL = OUTDIR / "can-do.html"
+UPCOMING = ROOT / "data" / "config" / "upcoming-event.json"
+GROUP_URL = "https://powerautomate-create.connpass.com/"
 SITE = "https://haru-powerplatform.github.io/pa45"
 
 E = html.escape
@@ -71,7 +81,95 @@ padding:12px 16px;text-decoration:none;color:#14528f;font-weight:700;font-size:1
 """
 
 
-def page(vol, sv, ses, prev_s, next_s, head, foot):
+# 次の回への導線。AB-730 側（build-ab730-survey-page.py）は CSS を import するので、
+# この CSS は PA45 の回別ページにだけ足す（CSS には入れない）。
+NEXT_CSS = """
+.vs-next{background:linear-gradient(135deg,#fff7ed,#ffedd5);border:2px solid #fb923c;border-radius:14px;
+padding:18px 22px;margin:18px 0;text-align:center;}
+.vs-next-h{font-weight:800;color:#9a3412;font-size:15.5px;margin:0 0 4px;}
+.vs-next-d{font-size:14px;color:#7c2d12;margin:0 0 12px;font-variant-numeric:tabular-nums;}
+.vs-next-btn{display:inline-block;background:#ea580c;color:#fff !important;font-weight:800;font-size:16px;
+padding:13px 30px;border-radius:999px;text-decoration:none;box-shadow:0 4px 12px rgba(234,88,12,.35);}
+.vs-next-btn:hover{background:#c2410c;}
+.vs-next-s{font-size:12.5px;color:#7c2d12;margin:12px 0 0;line-height:1.9;}
+.vs-next-s a{color:#9a3412;font-weight:700;}
+"""
+
+
+def load_upcoming():
+    try:
+        return json.loads(UPCOMING.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return None
+
+
+def upcoming_open(up, today=None):
+    """upcoming の回がまだ開催前（当日を含む）なら True。"""
+    if not up or not up.get("connpass_url") or not up.get("date_iso"):
+        return False
+    today = today or datetime.date.today().isoformat()
+    return up["date_iso"] >= today
+
+
+def next_cta_inner(up):
+    """ボタン枠の中身。JS 側（NEXT_JS）も同じ文言で組み立てる。"""
+    if upcoming_open(up):
+        lab = f'第{up["vol"]}回'
+        return (
+            f'<p class="vs-next-h">次回 PA45 {lab}</p>'
+            f'<p class="vs-next-d">{E(up.get("date_label",""))} {E(up.get("time_range",""))}（オンライン・無料）<br>'
+            f'{E(up.get("theme",""))}</p>'
+            f'<a class="vs-next-btn" href="{E(up["connpass_url"])}" target="_blank" rel="noopener">'
+            f'connpass で{lab}に参加登録する</a>'
+            '<p class="vs-next-s">前の回に出ていなくても参加できます。各回1つのテーマで完結します。<br>'
+            f'<a href="{GROUP_URL}" target="_blank" rel="noopener">connpass のグループ</a>'
+            'をフォローすると、次の回のお知らせが届きます。</p>')
+    return (
+        '<p class="vs-next-h">PA45 の次の回のお知らせを受け取る</p>'
+        '<p class="vs-next-d">オンライン・無料。日程が決まると connpass で案内します。</p>'
+        f'<a class="vs-next-btn" href="{GROUP_URL}" target="_blank" rel="noopener">'
+        'connpass のグループをフォローする</a>'
+        '<p class="vs-next-s">どの回からでも参加できます。各回1つのテーマで完結します。<br>'
+        '<a href="../../sessions/index.html">過去回の資料と録画</a>はいつでも見られます。</p>')
+
+
+def next_cta(up):
+    return f'<div class="vs-next" data-next-auto>{next_cta_inner(up)}</div>'
+
+
+# 表示時の切り替え。upcoming-event.json を読み直し、開催前なら申込みボタン、
+# そうでなければグループのフォローボタンにする。読めなければ生成時の形のまま。
+NEXT_JS = """<script>
+(function(){
+  var box=document.querySelectorAll('[data-next-auto]'); if(!box.length) return;
+  var G='""" + GROUP_URL + """';
+  function e(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+  fetch('../../data/config/upcoming-event.json',{cache:'no-store'}).then(function(r){return r.ok?r.json():null;}).then(function(u){
+    if(!u) return;
+    var d=new Date(), t=d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2);
+    var h;
+    if(u.connpass_url && u.date_iso && u.date_iso>=t){
+      var lab='第'+u.vol+'回';
+      h='<p class="vs-next-h">次回 PA45 '+lab+'</p>'
+       +'<p class="vs-next-d">'+e(u.date_label)+' '+e(u.time_range)+'（オンライン・無料）<br>'+e(u.theme)+'</p>'
+       +'<a class="vs-next-btn" href="'+e(u.connpass_url)+'" target="_blank" rel="noopener">connpass で'+lab+'に参加登録する</a>'
+       +'<p class="vs-next-s">前の回に出ていなくても参加できます。各回1つのテーマで完結します。<br>'
+       +'<a href="'+G+'" target="_blank" rel="noopener">connpass のグループ</a>をフォローすると、次の回のお知らせが届きます。</p>';
+    }else{
+      h='<p class="vs-next-h">PA45 の次の回のお知らせを受け取る</p>'
+       +'<p class="vs-next-d">オンライン・無料。日程が決まると connpass で案内します。</p>'
+       +'<a class="vs-next-btn" href="'+G+'" target="_blank" rel="noopener">connpass のグループをフォローする</a>'
+       +'<p class="vs-next-s">どの回からでも参加できます。各回1つのテーマで完結します。<br>'
+       +'<a href="../../sessions/index.html">過去回の資料と録画</a>はいつでも見られます。</p>';
+    }
+    for(var i=0;i<box.length;i++) box[i].innerHTML=h;
+  }).catch(function(){});
+})();
+</script>
+"""
+
+
+def page(vol, sv, ses, prev_s, next_s, head, foot, up=None):
     theme = ses.get("theme", "")
     date = ses.get("date", sv.get("date", ""))
     parts = ses.get("participants") or 0
@@ -133,17 +231,19 @@ def page(vol, sv, ses, prev_s, next_s, head, foot):
 
 <section class="section"><div class="vs-wrap">
   <div class="vs-kpi">{kpi}</div>
+  {next_cta(up)}
   {block("&#x1f4d8; 今日の内容は理解できましたか", sv.get("understanding"), "#2563eb")}
   {block("&#x1f4bc; 業務に役立ちそうですか", sv.get("usefulness"), "#0ea5e9")}
   {can_block}
   {voices}
+  {next_cta(up)}
   {nav_html}
   <div class="vs-nav">
     <a href="index.html"><small>まとめ</small>全回のアンケート集計を見る</a>
     <a href="can-do.html"><small>成長の記録</small>できるようになったことランキング</a>
   </div>
 </div></section>
-"""
+{NEXT_JS}"""
     title = f"第{vol}回 アンケート結果｜{theme}｜PA45"
     desc = (f"PA45 第{vol}回「{theme}」のアンケート結果。"
             f"回答{res}件、理解できた{und}%、役立ちそう{use}%。"
@@ -177,7 +277,7 @@ def page(vol, sv, ses, prev_s, next_s, head, foot):
         h = re.sub(r'(<meta name="twitter:image" content=")[^"]*(")',
                    lambda m: m.group(1) + f"{SITE}/assets/ogp/{ogp.name}" + m.group(2),
                    h, count=1)
-    h = h.replace("</head>", f"<style>{CSS}</style>\n</head>", 1)
+    h = h.replace("</head>", f"<style>{CSS}{NEXT_CSS}</style>\n</head>", 1)
     return h + body + foot
 
 
@@ -185,6 +285,7 @@ def main():
     ins = json.loads(INSIGHTS.read_text(encoding="utf-8"))
     sessions = {s["vol"]: s for s in ins["sessions"]}
     head, foot = shell()
+    up = load_upcoming()
 
     only = [int(a) for a in sys.argv[1:] if a.isdigit()]
     made = 0
@@ -201,7 +302,7 @@ def main():
         prev_s = sessions[vols[i - 1]] if i > 0 else None
         next_s = sessions[vols[i + 1]] if i + 1 < len(vols) else None
         out = OUTDIR / f"vol-{vol:02d}.html"
-        out.write_text(page(vol, sv, sessions[vol], prev_s, next_s, head, foot),
+        out.write_text(page(vol, sv, sessions[vol], prev_s, next_s, head, foot, up),
                        encoding="utf-8")
         made += 1
         print(f"  [OK] {out.name}  回答{sv.get('total_responses')}件 / "
