@@ -737,6 +737,7 @@ def group_announce(ev):
 #   no / group（サブタブのid）/ angle / title / sub / body
 #   link {title, url}  … ブログ紹介。本文の最後にURLを入れてあるので、貼るとリンクカードが出る
 #   tips_folder "vol-151" … Tips紹介。X技術Tipsと同じ画像を添付する
+#   video_file "Downloads/xxx.mp4" … 動画を添付する投稿（Documents からの相対パス）。image_file は一覧の見た目用
 # 本文の {{N}} {{PTC}} {{UND}} などは data/insights.json の最新値に置き換わる。
 # 集客の優先度（data/linkedin-board.json の lead：A/B/C と lead_why）。ブログ紹介はこの順に並べる。
 LEAD_LABEL = {"A": "集客 優先A", "B": "集客 B", "C": "集客 C"}
@@ -786,6 +787,16 @@ def card_linkedin(p, tokens):
         shots = f'<div class="shots one">{cells}</div>'
         folder_btn = (f'<button class="btn copyp" data-p="{html.escape(str(ROOT.parent / imgs_rel[0]))}">'
                       f"画像の場所をコピー</button>")
+
+    # video_file：Documents からの相対パス。動画を添付する投稿は、画像の代わりに動画の場所をコピーする
+    vf = p.get("video_file")
+    if vf:
+        vpath = (ROOT.parent / vf).resolve()
+        vp = html.escape(str(vpath))
+        state = "" if vpath.exists() else "（ファイルがありません）"
+        shots += (f'<div class="lilink"><b>添付する動画{state}</b><code>{vp}</code>'
+                  f'<span>画像は付けず、この動画を添付します</span></div>')
+        folder_btn = f'<button class="btn copyp" data-p="{vp}">動画の場所をコピー</button>'
 
     link_box = link_btns = ""
     lk = p.get("link")

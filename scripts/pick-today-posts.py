@@ -131,7 +131,10 @@ def li_item(p, tokens):
     it = {"id": f"li-{p['no']}", "platform": "linkedin", "label": p.get("angle", ""),
           "title": p["title"], "body": body,
           "openUrl": bxb.LI_COMPOSE, "openLabel": "LinkedInを開く", "when": "朝〜夜のどこかで"}
-    if p.get("tips_folder"):
+    if p.get("video_file"):
+        it["imagePath"] = str((ROOT.parent / p["video_file"]).resolve())
+        it["imageNote"] = "動画（画像は付けない）"
+    elif p.get("tips_folder"):
         it["imagePath"] = str(bxb.POST_IMG_ROOT / p["tips_folder"])
         it["imageNote"] = "フォルダ（開いて Ctrl+A で全部選ぶ）"
     elif p.get("image_file"):
